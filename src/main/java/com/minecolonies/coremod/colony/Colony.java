@@ -82,7 +82,7 @@ public class Colony implements IColony
      * List of achievements within the colony.
      */
     @NotNull
-    private final List<Achievement> colonyAchievements;
+    private final List<Advancement> colonyAchievements;
     /**
      * Work Manager of the colony (Request System).
      */

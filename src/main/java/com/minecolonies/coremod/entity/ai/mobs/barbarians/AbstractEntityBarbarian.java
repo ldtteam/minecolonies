@@ -210,7 +210,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     }
 
     @Override
-    protected SoundEvent getHurtSound()
+    protected SoundEvent getHurtSound(final DamageSource damageSourceIn)
     {
         return BarbarianSounds.barbarianHurt;
     }

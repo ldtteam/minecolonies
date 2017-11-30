@@ -3,13 +3,18 @@ package com.minecolonies.coremod.inventory;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.CitizenData;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ItemStackHelper;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ReportedException;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -499,24 +504,6 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * Decrement the number of animations remaining. Only called on client side. This is used to handle the animation of
-     * receiving a block.
-     */
-    public void decrementAnimations()
-    {
-        for (final NonNullList<ItemStack> nonnulllist : this.allInventories)
-        {
-            for (int i = 0; i < nonnulllist.size(); ++i)
-            {
-                if (!(nonnulllist.get(i)).isEmpty())
-                {
-                    (nonnulllist.get(i)).updateAnimation(this.citizen.world, this.citizen, i, this.currentItem == i);
-                }
-            }
-        }
-    }
-
-    /**
      * Adds the item stack to the inventory, returns false if it is impossible.
      *
      * @param itemStackIn stack to add.
@@ -690,7 +677,7 @@ public class InventoryCitizen implements IInventory
 
     private boolean canMergeStacks(final ItemStack stack1, final ItemStack stack2)
     {
-        return !ItemStackUtils.isEmpty(stack1) && InventoryCitizen.stackEqualExact(stack1, stack2) && stack1.isStackable()
+        return !ItemStackUtils.isEmpty(stack1) && ItemStack.areItemStacksEqual(stack1, stack2) && stack1.isStackable()
                  && ItemStackUtils.getSize(stack1) < stack1.getMaxStackSize() && ItemStackUtils.getSize(stack1) < this.getInventoryStackLimit();
     }
 

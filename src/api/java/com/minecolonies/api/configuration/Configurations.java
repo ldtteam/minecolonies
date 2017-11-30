@@ -75,12 +75,6 @@ public class Configurations
         @Config.Comment("The average amount of nights between raids")
         public int averageNumberOfNightsBetweenRaids = 3;
 
-            @Config.Comment("The time in hours to auto-delete a colony after")
-            public int autoDeleteColoniesInHours = 0;
-
-            /* schematics usage */
-            @Config.Comment("Should the default schematics be ignored (from the jar)?")
-            public  boolean ignoreSchematicsFromJar = false;
         @Config.Comment("Should players be allowed to build their colonies over existing villages?")
         public boolean protectVillages = false;
         /* schematics usage */
@@ -93,14 +87,14 @@ public class Configurations
         @Config.Comment("Max amount of schematics to be cached on the server")
         public int maxCachedSchematics = 100;
 
-            @Config.Comment("Should players be allowed to change names? -1 for false, 0 for specific groups, 1 for true")
-            public  int allowGlobalNameChanges = 1;
+        @Config.Comment("Should players be allowed to change names? -1 for false, 0 for specific groups, 1 for true")
+        public  int allowGlobalNameChanges = 1;
 
-            @Config.Comment("Players who have special permission (Patreons for example)")
-            public  String[] specialPermGroup = new String[]
-                    {
-                            "_Raycoms_"
-                    };
+        @Config.Comment("Players who have special permission (Patreons for example)")
+        public  String[] specialPermGroup = new String[]
+                {
+                        "_Raycoms_"
+                };
 
     /* Command configs */
 

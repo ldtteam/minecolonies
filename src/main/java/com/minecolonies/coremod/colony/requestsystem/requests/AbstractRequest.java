@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.requestsystem.requests;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -13,15 +14,17 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHandler;
 import com.minecolonies.api.util.Log;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Abstract skeleton implementation of a request.
@@ -51,6 +54,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      */
     @NotNull
     private ItemStack deliveryStack = ItemStackUtils.EMPTY;
+    private ImmutableList<ItemStack> itemExamples;
 
     protected AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final R requested)
     {
@@ -437,5 +441,34 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     public ResourceLocation getDisplayIcon()
     {
         return new ResourceLocation("missingno");
+    }
+
+    @Override
+    public List<ItemStack> getDisplayStacks()
+    {
+        if (!(getRequest() instanceof IDeliverable))
+            return Lists.newArrayList();
+
+        IDeliverable deliverable = (IDeliverable) getRequest();
+
+        if (itemExamples == null)
+        {
+            itemExamples =
+              ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
+                  NonNullList<ItemStack> stacks = NonNullList.create();
+                  try
+                  {
+                      item.getSubItems( null, stacks);
+                  }
+                  catch (Exception ex)
+                  {
+                      com.minecolonies.blockout.Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
+                  }
+
+                  return stacks.stream().filter(deliverable::matches);
+              }).collect(Collectors.toList()));
+        }
+
+        return itemExamples;
     }
 }

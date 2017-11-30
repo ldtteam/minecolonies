@@ -2,7 +2,6 @@ package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -19,7 +18,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
-import org.jetbrains.annotations.NotNull;
 
 
 public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall>
@@ -69,9 +67,9 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
      * Get the MapColor for this Block and the given BlockState
      */
     @Override
-    public MapColor getMapColor(final IBlockState state)
+    public MapColor getMapColor(final IBlockState state, final IBlockAccess worldIn, final BlockPos pos)
     {
-        return state.getValue(VARIANT).getMapColor();
+        return  state.getValue(VARIANT).getMapColor();
     }
 
     /**
@@ -99,8 +97,11 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
         return new ItemStack(Item.getItemFromBlock(this), 1, state.getValue(VARIANT).getMetadata());
     }
 
+    /**
+     * returns a list of blocks with the same ID, but different meta (eg: wood returns 4 blocks)
+     */
     @Override
-    public void getSubBlocks(final Item itemIn, final CreativeTabs tab, final NonNullList<ItemStack> list)
+    public void getSubBlocks(final CreativeTabs itemIn, final NonNullList<ItemStack> items)
     {
         for (final PaperwallType type : PaperwallType.values())
         {
@@ -179,7 +180,7 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
     {
         final BlockPos off = pos.offset(dir);
         final IBlockState state = world.getBlockState(off);
-        return canPaneConnectToBlock(state.getBlock())
+        return super.canPaneConnectTo(world, pos, dir)
                  || state.isSideSolid(world, off, dir.getOpposite()) || state.getBlock() instanceof BlockPaperwall;
     }
 }

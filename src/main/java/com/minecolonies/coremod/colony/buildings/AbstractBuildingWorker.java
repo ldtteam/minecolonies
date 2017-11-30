@@ -211,18 +211,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             @NotNull final NBTTagList workersTagList = new NBTTagList();
             for (@NotNull final CitizenData data : workers)
             {
-<<<<<<< HEAD
-                final NBTTagCompound idCompound = new NBTTagCompound();
-                idCompound.setInteger(TAG_ID, data.getId());
-                workersTagList.appendTag(idCompound);
-=======
                 if (data != null)
                 {
                     final NBTTagCompound idCompound = new NBTTagCompound();
                     idCompound.setInteger(TAG_ID, data.getId());
                     workersTagList.appendTag(idCompound);
                 }
->>>>>>> 14410e9... [RS] Request System - Version 1.0 - MC 1.11 (#1682)
             }
             compound.setTag(TAG_WORKER, workersTagList);
         }

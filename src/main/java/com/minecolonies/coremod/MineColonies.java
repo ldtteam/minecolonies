@@ -6,26 +6,20 @@ import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
-import com.minecolonies.coremod.event.ClientEventHandler;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.event.FMLEventHandler;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.util.RecipeHandler;
-import com.minecolonies.structures.event.RenderEventHandler;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -88,15 +82,6 @@ public class MineColonies
     public static Logger getLogger()
     {
         return logger;
-    }
-
-    @Optional.Method(modid = "gbook")
-    @SubscribeEvent
-    public static void registerBook(final BookRegistryEvent event)
-    {
-        System.out.println("Hello " + Constants.MOD_ID + ":book/minecolonies.xml");
-        System.out.println(new ResourceLocation(Constants.MOD_ID + ":book/minecolonies.xml"));
-        event.register(new ResourceLocation(Constants.MOD_ID + ":book/minecolonies.xml"));
     }
 
     /**

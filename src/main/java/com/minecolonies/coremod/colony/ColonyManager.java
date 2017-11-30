@@ -169,7 +169,7 @@ public final class ColonyManager
      *
      * @param id the colonies id.
      */
-    public static void deleteColony(final int id)
+    public static void deleteColony(final int id, final boolean canDestroy)
     {
         try
         {

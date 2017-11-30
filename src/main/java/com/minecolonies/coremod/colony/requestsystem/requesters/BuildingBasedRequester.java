@@ -119,7 +119,7 @@ public class BuildingBasedRequester implements IRequester
             return;
         }
 
-        final World world = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(getRequesterLocation().getDimension());
+        final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(getRequesterLocation().getDimension());
         final IColony colony = ColonyManager.getClosestIColony(world, getRequesterLocation().getInDimensionLocation());
 
         building = colony.getRequesterBuildingForPosition(getRequesterLocation().getInDimensionLocation());

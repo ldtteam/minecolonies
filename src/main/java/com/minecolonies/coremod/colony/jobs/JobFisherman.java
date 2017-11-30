@@ -174,7 +174,7 @@ public class JobFisherman extends AbstractJob
     public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
     {
         super.triggerDeathAchievement(source, citizen);
-        if (source.getEntity() instanceof EntityGuardian)
+        if (source.getTrueSource() instanceof EntityGuardian)
         {
             this.getColony().triggerAchievement(ModAchievements.achievementFisherDeathGuardian);
         }

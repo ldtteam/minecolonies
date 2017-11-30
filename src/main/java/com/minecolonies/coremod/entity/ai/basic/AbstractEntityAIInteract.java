@@ -326,7 +326,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         if (stillTicks > STUCK_WAIT_TICKS)
         {
             //Skip this item
-            worker.getNavigator().clearPathEntity();
+            worker.getNavigator().clearPath();
             if (items != null && !items.isEmpty())
             {
                 items.remove(0);

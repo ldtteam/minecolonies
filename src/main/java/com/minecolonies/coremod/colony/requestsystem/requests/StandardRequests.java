@@ -58,12 +58,6 @@ public final class StandardRequests
         {
             return new TextComponentTranslation(getRequest().getCount() + " " + getRequest().getStack().getTextComponent().getFormattedText());
         }
-
-        @Override
-        public List<ItemStack> getDisplayStacks()
-        {
-            return ImmutableList.of(getRequest().getStack().copy());
-        }
     }
 
     public static class DeliveryRequest extends AbstractRequest<Delivery>
@@ -119,9 +113,6 @@ public final class StandardRequests
 
     public static class ToolRequest extends AbstractRequest<Tool>
     {
-
-        private ImmutableList<ItemStack> toolExamples;
-
         public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Tool requested)
         {
             super(requester, token, requested);
@@ -166,30 +157,6 @@ public final class StandardRequests
         {
             return getRequest().getToolClass().getDisplayName();
         }
-
-        @Override
-        public List<ItemStack> getDisplayStacks()
-        {
-            if (toolExamples == null)
-            {
-                toolExamples =
-                  ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
-                      NonNullList<ItemStack> stacks = NonNullList.create();
-                      try
-                      {
-                          item.getSubItems(item, null, stacks);
-                      }
-                      catch (Exception ex)
-                      {
-                          Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
-                      }
-
-                      return stacks.stream().filter(getRequest()::matches);
-                  }).collect(Collectors.toList()));
-            }
-
-            return toolExamples;
-        }
     }
 
     public static class FoodRequest extends AbstractRequest<Food>
@@ -230,7 +197,7 @@ public final class StandardRequests
                                                           NonNullList<ItemStack> stacks = NonNullList.create();
                                                           try
                                                           {
-                                                              item.getSubItems(item, null, stacks);
+                                                              item.getSubItems( null, stacks);
                                                           }
                                                           catch (Exception ex)
                                                           {
@@ -282,7 +249,7 @@ public final class StandardRequests
                       NonNullList<ItemStack> stacks = NonNullList.create();
                       try
                       {
-                          item.getSubItems(item, null, stacks);
+                          item.getSubItems( null, stacks);
                       }
                       catch (Exception ex)
                       {

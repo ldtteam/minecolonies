@@ -20,7 +20,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -31,7 +30,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -313,10 +311,13 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
         worldIn.setBlockState(pos, tempState, 2);
     }
 
+    /**
+     * returns a list of blocks with the same ID, but different meta (eg: wood returns 4 blocks)
+     */
     @Override
-    public void getSubBlocks(final Item itemIn, final CreativeTabs tab, final NonNullList<ItemStack> list)
+    public void getSubBlocks(final CreativeTabs itemIn, final NonNullList<ItemStack> items)
     {
-        list.add(new ItemStack(this, 1, RackType.DEFAULT.getMetadata()));
+        items.add(new ItemStack(this, 1, RackType.DEFAULT.getMetadata()));
     }
 
     /**
