@@ -443,7 +443,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     }
 
     @NotNull
-    public <T extends R> Optional<T> getRequestOfType(final Class<T> tClass)
+    public <T> Optional<T> getRequestOfType(final Class<T> tClass)
     {
         final R request = getRequest();
         if (tClass.isInstance(request))
