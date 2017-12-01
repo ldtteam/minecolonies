@@ -33,17 +33,13 @@ public class InventoryCitizen implements IInventory
      */
     private static final int    MAX_STACK_SIZE  = 64;
     /**
-     * NBT tag to store and retrieve the inventory.
-     */
-    private static final String TAG_INVENTORY   = "Inventory";
-    /**
      * NBT tag to store and retrieve the custom name.
      */
     private static final String TAG_CUSTOM_NAME = "CustomName";
     /**
      * NBT tag to store and retrieve the custom name.
      */
-    private static final String TAG_ITEMS       = "Items";
+    public static final String TAG_ITEMS       = "Items";
     /**
      * NBT tag to store and retrieve the custom name.
      */
@@ -694,7 +690,6 @@ public class InventoryCitizen implements IInventory
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         @NotNull final NBTTagList nbttaglist = new NBTTagList();
-
         for (int i = 0; i < this.stacks.length; ++i)
         {
             if (!ItemStackUtils.isEmpty(this.stacks[i]))
@@ -712,7 +707,5 @@ public class InventoryCitizen implements IInventory
         {
             compound.setString(TAG_CUSTOM_NAME, this.customName);
         }
-
-        compound.setTag(TAG_INVENTORY, nbttaglist);
     }
 }
