@@ -1,15 +1,15 @@
 #X-Generator: crowdin.com
-tile.minecolonies.blockHutCitizen.name=Citizen's Hut
-tile.minecolonies.blockHutBaker.name=Bakery
-tile.minecolonies.blockHutBlacksmith.name=Forge
-tile.minecolonies.blockHutBuilder.name=Builder's Hut
+tile.minecolonies.blockHutCitizen.name=Polgári kunyhó
+tile.minecolonies.blockHutBaker.name=Pékség
+tile.minecolonies.blockHutBlacksmith.name=Kohó
+tile.minecolonies.blockHutBuilder.name=Építők kunyhója
 tile.minecolonies.blockHutFarmer.name=Farm
-tile.minecolonies.blockHutLumberjack.name=Sawmill
-tile.minecolonies.blockHutFisherman.name=Fisherman's Hut
-tile.minecolonies.blockHutMiner.name=Mine
-tile.minecolonies.blockHutStonemason.name=Quarry
-tile.minecolonies.blockHutTownHall.name=Town Hall
-tile.minecolonies.blockSubstitution.name=Placeholderblock
+tile.minecolonies.blockHutLumberjack.name=Fűrészmalom
+tile.minecolonies.blockHutFisherman.name=Halászkunyhó
+tile.minecolonies.blockHutMiner.name=Bánya
+tile.minecolonies.blockHutStonemason.name=Kőbánya
+tile.minecolonies.blockHutTownHall.name=Városháza
+tile.minecolonies.blockSubstitution.name=Helyőrző blokk
 tile.minecolonies.blockConstructionTapeCorner.name=Construction tape corner
 tile.minecolonies.blockConstructionTape.name=Construction tape
 tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
@@ -520,5 +520,6 @@ item.supplyChestDeployer.invalid=You must place it in a fitting pool of water.
 item.supplyChestDeployer.missing=Are you trying to trick me, pick up that Supplyship again?
 com.minecolonies.coremod.citizen.rename.same=Renaming failed: 2 Citizen are not allowed to have the same name!
 com.minecolonies.coremod.citizen.rename.notAllowed=Renaming failed: You're not allowed to rename your Citizen.
+
 
 
