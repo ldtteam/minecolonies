@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHandler;
 import com.minecolonies.api.util.Log;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -458,11 +459,11 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
                   NonNullList<ItemStack> stacks = NonNullList.create();
                   try
                   {
-                      item.getSubItems( null, stacks);
+                      item.getSubItems(CreativeTabs.SEARCH, stacks);
                   }
                   catch (Exception ex)
                   {
-                      com.minecolonies.blockout.Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
+                      Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
                   }
 
                   return stacks.stream().filter(deliverable::matches);

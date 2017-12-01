@@ -9,6 +9,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.blockout.Log;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
@@ -197,7 +198,7 @@ public final class StandardRequests
                                                           NonNullList<ItemStack> stacks = NonNullList.create();
                                                           try
                                                           {
-                                                              item.getSubItems( null, stacks);
+                                                              item.getSubItems( CreativeTabs.SEARCH, stacks);
                                                           }
                                                           catch (Exception ex)
                                                           {
@@ -249,7 +250,7 @@ public final class StandardRequests
                       NonNullList<ItemStack> stacks = NonNullList.create();
                       try
                       {
-                          item.getSubItems( null, stacks);
+                          item.getSubItems( CreativeTabs.SEARCH, stacks);
                       }
                       catch (Exception ex)
                       {
