@@ -124,42 +124,42 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         super(job);
         this.registerTargets(
 
-                /**
-                 * Pick up stuff which might've been
-                 */
-                new AITarget(PICK_UP_RESIDUALS, this::pickUpResiduals),
-                /**
-                 * Check if tasks should be executed.
-                 */
-                new AITarget(this::checkIfCanceled, IDLE),
-                /**
-                 * Select the appropriate State to do next.
-                 */
-                new AITarget(START_BUILDING, this::startBuilding),
-                /**
-                 * Check if we have to build something.
-                 */
-                new AITarget(IDLE, this::isThereAStructureToBuild, () -> AIState.START_BUILDING),
-                /**
-                 * Clear out the building area.
-                 */
-                new AITarget(CLEAR_STEP, generateStructureGenerator(this::clearStep, AIState.BUILDING_STEP)),
-                /**
-                 * Build the structure and foundation of the building.
-                 */
-                new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, AIState.SPAWN_STEP)),
-                /**
-                 * Spawn entities on the structure.
-                 */
-                new AITarget(SPAWN_STEP, generateStructureGenerator(this::spawnEntity, AIState.DECORATION_STEP)),
-                /**
-                 * Decorate the AbstractBuilding with torches etc.
-                 */
-                new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, AIState.COMPLETE_BUILD)),
-                /**
-                 * Finalize the building and give back control to the ai.
-                 */
-                new AITarget(COMPLETE_BUILD, this::completeBuild)
+          /**
+           * Pick up stuff which might've been
+           */
+          new AITarget(PICK_UP_RESIDUALS, this::pickUpResiduals),
+          /**
+           * Check if tasks should be executed.
+           */
+          new AITarget(this::checkIfCanceled, IDLE),
+          /**
+           * Select the appropriate State to do next.
+           */
+          new AITarget(START_BUILDING, this::startBuilding),
+          /**
+           * Check if we have to build something.
+           */
+          new AITarget(IDLE, this::isThereAStructureToBuild, () -> AIState.START_BUILDING),
+          /**
+           * Clear out the building area.
+           */
+          new AITarget(CLEAR_STEP, generateStructureGenerator(this::clearStep, AIState.BUILDING_STEP)),
+          /**
+           * Build the structure and foundation of the building.
+           */
+          new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, AIState.SPAWN_STEP)),
+          /**
+           * Spawn entities on the structure.
+           */
+          new AITarget(SPAWN_STEP, generateStructureGenerator(this::spawnEntity, AIState.DECORATION_STEP)),
+          /**
+           * Decorate the AbstractBuilding with torches etc.
+           */
+          new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, AIState.COMPLETE_BUILD)),
+          /**
+           * Finalize the building and give back control to the ai.
+           */
+          new AITarget(COMPLETE_BUILD, this::completeBuild)
         );
     }
 
@@ -229,8 +229,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
 
             if (structureBlock.block == null
-                    || structureBlock.doesStructureBlockEqualWorldBlock()
-                    || structureBlock.metadata.getMaterial().isSolid())
+                  || structureBlock.doesStructureBlockEqualWorldBlock()
+                  || structureBlock.metadata.getMaterial().isSolid())
             {
                 //findNextBlock count was reached and we can ignore this block
                 return true;
@@ -269,7 +269,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
 
             if (structureBlock.block == null
-                    || (!structureBlock.metadata.getMaterial().isSolid() && structureBlock.block != Blocks.AIR))
+                  || (!structureBlock.metadata.getMaterial().isSolid() && structureBlock.block != Blocks.AIR))
             {
                 //findNextBlock count was reached and we can ignore this block
                 return true;
@@ -285,7 +285,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             @Nullable Block block = structureBlock.block;
             @Nullable IBlockState blockState = structureBlock.metadata;
             if (block == ModBlocks.blockSolidSubstitution
-                    && shallReplaceSolidSubstitutionBlock(structureBlock.worldBlock, structureBlock.worldMetadata))
+                  && shallReplaceSolidSubstitutionBlock(structureBlock.worldBlock, structureBlock.worldMetadata))
             {
                 blockState = getSolidSubstitution(structureBlock.blockPosition);
                 block = blockState.getBlock();
@@ -340,7 +340,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             (which changes stuff, so only execute on valid block!)
             */
             if (currentBlock.block == null
-                    || evaluationFunction.apply(currentBlock))
+                  || evaluationFunction.apply(currentBlock))
             {
                 final Structure.Result result = advanceBlock.get();
                 if (result == Structure.Result.AT_END)
@@ -440,7 +440,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @return true if reset to idle.
      */
     protected abstract boolean checkIfCanceled();
-    
+
     /**
      * Let childs overwrite this if necessary.
      * @return true if so.
@@ -579,10 +579,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /*
-    * Get specific data of an entity.
-    * Workers should implement this correctly if they require this behavior.
-    * @return the entityInfo or null.
-    */
+     * Get specific data of an entity.
+     * Workers should implement this correctly if they require this behavior.
+     * @return the entityInfo or null.
+     */
     public Template.EntityInfo getEntityInfo()
     {
         return null;
@@ -610,10 +610,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     public static boolean isBlockFree(@Nullable final Block block, final int metadata)
     {
         return block == null
-                || BlockUtils.isWater(block.getDefaultState())
-                || block.equals(Blocks.LEAVES)
-                || block.equals(Blocks.LEAVES2)
-                || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08));
+                 || BlockUtils.isWater(block.getDefaultState())
+                 || block.equals(Blocks.LEAVES)
+                 || block.equals(Blocks.LEAVES2)
+                 || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08));
     }
 
     private boolean placeBlockAt(@NotNull final IBlockState blockState, @NotNull final BlockPos coords)
@@ -672,9 +672,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         //Move out of the way when placing blocks
         if (MathHelper.floor(worker.posX) == pos.getX()
-                && MathHelper.abs(pos.getY() - (int) worker.posY) <= 1
-                && MathHelper.floor(worker.posZ) == pos.getZ()
-                && worker.getNavigator().noPath())
+              && MathHelper.abs(pos.getY() - (int) worker.posY) <= 1
+              && MathHelper.floor(worker.posZ) == pos.getZ()
+              && worker.getNavigator().noPath())
         {
             worker.getNavigator().moveAwayFromXYZ(pos, RUN_AWAY_SPEED, 1.0);
         }
@@ -849,7 +849,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             {
                 for (final ItemStack stack : request)
                 {
-                    if (checkOrRequestItemsSynch(getTotalAmount(stack)))
+                    if (checkOrRequestItems(getTotalAmount(stack)))
                     {
                         return false;
                     }
@@ -873,11 +873,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
             entity.setUniqueId(UUID.randomUUID());
             entity.setLocationAndAngles(
-                    entity.posX,
-                    entity.posY,
-                    entity.posZ,
-                    entity.rotationYaw,
-                    entity.rotationPitch);
+              entity.posX,
+              entity.posY,
+              entity.posZ,
+              entity.rotationYaw,
+              entity.rotationPitch);
             if (!world.spawnEntity(entity))
             {
                 Log.getLogger().info("Failed to spawn entity");
