@@ -22,7 +22,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
@@ -66,6 +66,24 @@ public class BuildingBuilder extends AbstractBuildingWorker
     public BuildingBuilder(final Colony c, final BlockPos l)
     {
         super(c, l);
+
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
+    }
+
+    @Override
+    public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
+    {
+        final Map<Predicate<ItemStack>, Integer> toKeep = new HashMap<>(keepX);
+        toKeep.putAll(keepX);
+
+        for(final BuildingBuilderResource stack: neededResources.values())
+        {
+            toKeep.put(stack.getItemStack()::isItemEqual, stack.getAmount());
+        }
+
+        return toKeep;
     }
 
     /**
@@ -123,27 +141,11 @@ public class BuildingBuilder extends AbstractBuildingWorker
         return new JobBuilder(citizen);
     }
 
-    /**
-     * Can be overriden by implementations to specify which tools are useful for the worker.
-     * When dumping he will keep these.
-     *
-     * @param stack the stack to decide on
-     * @return if should be kept or not.
-     */
-    @Override
-    public boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return ItemStackUtils.hasToolLevel(stack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
-            || ItemStackUtils.hasToolLevel(stack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
-            || ItemStackUtils.hasToolLevel(stack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
-            || neededResources.containsKey(stack.getUnlocalizedName());
-    }
-
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        final NBTTagList neededResTagList = compound.getTagList(TAG_RESOURCE_LIST, Constants.NBT.TAG_COMPOUND);
+        final NBTTagList neededResTagList = compound.getTagList(TAG_RESOURCE_LIST, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < neededResTagList.tagCount(); ++i)
         {
             final NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * Hut for the shepherd.
  * No different from {@link AbstractBlockHut}
  */
-public class BlockHutChickenHerder extends AbstractBlockHut
+public class BlockHutChickenHerder extends AbstractBlockHut<BlockHutChickenHerder>
 {
     protected BlockHutChickenHerder()
     {

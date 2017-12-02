@@ -321,7 +321,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             return MINER_BUILDING_SHAFT;
         }
 
-        if (checkOrRequestItemsSynch(new ItemStack(Blocks.COBBLESTONE, 2), new ItemStack(Blocks.LADDER)))
+        if (checkOrRequestItems(new ItemStack(Blocks.COBBLESTONE, 2), new ItemStack(Blocks.LADDER)))
         {
             return state;
         }
@@ -586,7 +586,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                 setDelay(1);
                 return false;
             }
-            if (checkOrRequestItemsSynch(new ItemStack(Blocks.COBBLESTONE)))
+            if (checkOrRequestItems(new ItemStack(Blocks.COBBLESTONE)))
             {
                 return false;
             }

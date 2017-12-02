@@ -25,6 +25,7 @@ public class MinecoloniesCommand extends AbstractSplitCommand
     private final ImmutableMap<String, ISubCommand> subCommands =
       new ImmutableMap.Builder<String, ISubCommand>()
         .put(ColoniesCommand.DESC, new ColoniesCommand(DESC))
+        .put(DeleteCommand.DESC, new DeleteCommand(DESC))
         .put(ColonyCommand.DESC, new ColonyCommand(DESC))
         .put(CitizensCommand.DESC, new CitizensCommand(DESC))
         .put(RandomTeleportCommand.DESC, new RandomTeleportCommand(DESC))
@@ -33,6 +34,8 @@ public class MinecoloniesCommand extends AbstractSplitCommand
         .put(RaidAllTonightCommand.DESC, new RaidAllTonightCommand(DESC))
         .put(RaidAllNowCommand.DESC, new RaidAllNowCommand(DESC))
         .put(CheckForAutoDeletesCommand.DESC, new CheckForAutoDeletesCommand(DESC))
+        .put(WhereAmICommand.DESC, new WhereAmICommand(DESC))
+        .put(WhoAmICommand.DESC, new WhoAmICommand(DESC))
         .build();
 
     /**
@@ -57,7 +60,7 @@ public class MinecoloniesCommand extends AbstractSplitCommand
      */
     public static boolean canExecuteCommand(@NotNull EntityPlayer player)
     {
-        if (Configurations.teleportBuffer == 0)
+        if (Configurations.teleportBuffer == 0 || AbstractSingleCommand.isPlayerOpped(player))
         {
             return true;
         }

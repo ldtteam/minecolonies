@@ -9,6 +9,8 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockBed;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -97,6 +99,28 @@ public class BuildingHome extends AbstractBuildingHut
         {
             final NBTTagCompound bedCompound = bedTagList.getCompoundTagAt(i);
             bedList.add(NBTUtil.getPosFromTag(bedCompound));
+        }
+    }
+
+    @Override
+    public void onWakeUp()
+    {
+        final World world = getColony().getWorld();
+        if(world == null)
+        {
+            return;
+        }
+
+        for (final BlockPos pos : bedList)
+        {
+            IBlockState state = world.getBlockState(pos);
+            state = state.getBlock().getActualState(state, world, pos);
+            if (state.getBlock() instanceof BlockBed
+                    && !state.getValue(BlockBed.OCCUPIED)
+                    && state.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
+            {
+                world.setBlockState(pos, state.withProperty(BlockBed.OCCUPIED, false), 0x03);
+            }
         }
     }
 
@@ -226,8 +250,11 @@ public class BuildingHome extends AbstractBuildingHut
             // Move the citizen to a better hut
             if (citizen.getHomeBuilding() != null && citizen.getHomeBuilding().getBuildingLevel() < this.getBuildingLevel())
             {
-                // The citizen can move to this hut to improve conditions
-                citizen.getHomeBuilding().removeCitizen(citizen);
+                if(citizen.getHomeBuilding() instanceof BuildingHome)
+                {
+                    // The citizen can move to this hut to improve conditions
+                    citizen.getHomeBuilding().removeCitizen(citizen);
+                }
             }
             if (citizen.getHomeBuilding() == null)
             {

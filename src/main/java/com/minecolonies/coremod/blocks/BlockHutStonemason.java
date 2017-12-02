@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * Hut for the stone mason.
  * No different from {@link AbstractBlockHut}
  */
-public class BlockHutStonemason extends AbstractBlockHut
+public class BlockHutStonemason extends AbstractBlockHut<BlockHutStonemason>
 {
     protected BlockHutStonemason()
     {

@@ -6,7 +6,6 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
@@ -111,19 +110,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     }
 
     /**
-     * Override this method if you want to keep some items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @param stack the stack to decide on
-     * @return true if the stack should remain in inventory
-     */
-    public boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return false;
-    }
-
-    /**
      * Set the worker of the current building.
      *
      * @param citizen {@link CitizenData} of the worker
@@ -139,16 +125,16 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         if (citizen != null)
         {
             final EntityCitizen tempCitizen = citizen.getCitizenEntity();
-            if (tempCitizen != null && !tempCitizen.getLastJob().equals(getJobName()))
+            if (tempCitizen != null)
             {
-                citizen.resetExperienceAndLevel();
+                if(!tempCitizen.getLastJob().isEmpty() && !tempCitizen.getLastJob().equals(getJobName()))
+                {
+                    citizen.resetExperienceAndLevel();
+                }
+                tempCitizen.setLastJob(getJobName());
             }
             workers.add(citizen);
             citizen.setWorkBuilding(this);
-            if(this instanceof BuildingBarracksTower)
-            {
-                citizen.setHomeBuilding(this);
-            }
         }
 
         markDirty();
@@ -214,11 +200,14 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         if (!workers.isEmpty())
         {
             @NotNull final NBTTagList workersTagList = new NBTTagList();
-            for (@NotNull final CitizenData data : workers)
+            for (@Nullable final CitizenData data : workers)
             {
-                final NBTTagCompound idCompound = new NBTTagCompound();
-                idCompound.setInteger(TAG_ID, data.getId());
-                workersTagList.appendTag(idCompound);
+                if(data != null)
+                {
+                    final NBTTagCompound idCompound = new NBTTagCompound();
+                    idCompound.setInteger(TAG_ID, data.getId());
+                    workersTagList.appendTag(idCompound);
+                }
             }
             compound.setTag(TAG_WORKER, workersTagList);
         }
@@ -248,14 +237,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         }
 
         super.onDestroyed();
-    }
-
-    /**
-     * executed when a new day start.
-     */
-    public void onWakeUp()
-    {
-
     }
 
     /**

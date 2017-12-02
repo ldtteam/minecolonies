@@ -178,7 +178,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         for (final ItemStack item : itemsNeeded)
         {
-            checkOrRequestItemsAsynch(false, item);
+            checkOrRequestItems(item);
         }
 
         return HERDER_DECIDE;

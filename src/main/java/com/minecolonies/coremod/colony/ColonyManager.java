@@ -22,6 +22,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -154,7 +155,7 @@ public final class ColonyManager
      *
      * @param id the colonies id.
      */
-    public static void deleteColony(final int id)
+    public static void deleteColony(final int id, final boolean canDestroy)
     {
         try
         {
@@ -173,6 +174,8 @@ public final class ColonyManager
                     colonyWorlds.add(world);
                 }
             }
+            if(canDestroy)
+            {
             Log.getLogger().info("Removing buildings for " + id);
             for (final AbstractBuilding building : new ArrayList<>(colony.getBuildings().values()))
             {
@@ -189,7 +192,9 @@ public final class ColonyManager
                     }
                 }
             }
+        }
 
+            MinecraftForge.EVENT_BUS.unregister(colony.getEventHandler());
             Log.getLogger().info("Deleting colony: " + colony.getID());
             colonies.remove(id);
             coloniesByWorld.get(colony.getDimension()).remove(colony);

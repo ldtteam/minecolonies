@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * No different from {@link AbstractBlockHut}
  */
 
-public class BlockHutWareHouse extends AbstractBlockHut
+public class BlockHutWareHouse extends AbstractBlockHut<BlockHutWareHouse>
 {
     protected BlockHutWareHouse()
     {

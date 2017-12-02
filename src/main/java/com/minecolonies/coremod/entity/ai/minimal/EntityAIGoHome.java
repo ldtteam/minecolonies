@@ -66,8 +66,26 @@ public class EntityAIGoHome extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        return (citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP && (!citizen.isAtHome() || isCitizenHungry()))
-                || isCitizenStarving();
+        if(citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP && !citizen.isAtHome())
+        {
+            return true;
+        }
+
+        final BlockPos homePos = citizen.getHomePosition();
+
+        if(homePos == null)
+        {
+            return true;
+        }
+
+        final AbstractBuilding homeBuilding = citizen.getColony().getBuilding(homePos);
+
+        if(citizen.getDesiredActivity() != EntityCitizen.DesiredActivity.SLEEP)
+        {
+            return isCitizenStarving() && homeBuilding instanceof BuildingHome;
+        }
+
+        return !(homeBuilding instanceof BuildingHome) || (isCitizenHungry() && !((BuildingHome) homeBuilding).isFoodNeeded());
     }
 
     /**
@@ -151,7 +169,7 @@ public class EntityAIGoHome extends EntityAIBase
                             InventoryUtils.forceItemStackToItemHandler(
                                     new InvWrapper(citizen.getInventoryCitizen()),
                                     new ItemStack(stack.getItem(), 1),
-                                    stack1 -> citizen.getWorkBuilding() == null || !citizen.getWorkBuilding().neededForWorker(stack1));
+                                    stack1 -> citizen.getWorkBuilding() == null);
                         }
                         else
                         {

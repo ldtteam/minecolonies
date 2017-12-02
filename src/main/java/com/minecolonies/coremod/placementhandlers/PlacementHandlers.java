@@ -67,6 +67,7 @@ public final class PlacementHandlers
         handlers.add(new BlockSolidSubstitutionPlacementHandler());
         handlers.add(new ChestPlacementHandler());
         handlers.add(new WayPointBlockPlacementHandler());
+        handlers.add(new RackPlacementHandler());
         handlers.add(new GeneralBlockPlacementHandler());
     }
 
@@ -75,8 +76,8 @@ public final class PlacementHandlers
     {
         @Override
         public Object handle(
-                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final AbstractEntityAIStructure<?> placer,
-                final boolean infiniteResources, final boolean complete)
+          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final AbstractEntityAIStructure<?> placer,
+          final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockFire))
             {
@@ -87,14 +88,14 @@ public final class PlacementHandlers
             {
                 if (!infiniteResources)
                 {
-                    if (placer.checkOrRequestItemsSynch(false, new ItemStack(Items.FLINT_AND_STEEL, 1)))
+                    if (placer.checkOrRequestItems(false, new ItemStack(Items.FLINT_AND_STEEL, 1)))
                     {
                         return ActionProcessingResult.DENY;
                     }
 
                     final EntityCitizen citizen = placer.getWorker();
                     final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(citizen.getInventoryCitizen()), s ->
-                            s.getItem() == Items.FLINT_AND_STEEL);
+                                                                                                                                            s.getItem() == Items.FLINT_AND_STEEL);
                     final ItemStack item = slot == -1 ? ItemStackUtils.EMPTY : citizen.getInventoryCitizen().getStackInSlot(slot);
                     if (ItemStackUtils.isEmpty(item) || !(item.getItem() instanceof ItemFlintAndSteel))
                     {
@@ -114,8 +115,8 @@ public final class PlacementHandlers
     {
         @Override
         public Object handle(
-                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (blockState.getBlock() != Blocks.GRASS)
             {
@@ -124,7 +125,7 @@ public final class PlacementHandlers
 
             if (placer != null)
             {
-                if (!infiniteResources && placer.checkOrRequestItemsSynch(placer.getTotalAmount(new ItemStack(Blocks.DIRT))))
+                if (!infiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(new ItemStack(Blocks.DIRT))))
                 {
                     return ActionProcessingResult.DENY;
                 }
@@ -148,15 +149,15 @@ public final class PlacementHandlers
     {
         @Override
         public Object handle(
-                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockDoor))
             {
                 return ActionProcessingResult.IGNORE;
             }
 
-            if (placer != null && !infiniteResources && placer.checkOrRequestItemsSynch(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
+            if (placer != null && !infiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -178,8 +179,8 @@ public final class PlacementHandlers
     {
         @Override
         public Object handle(
-                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockBed))
             {
@@ -187,7 +188,7 @@ public final class PlacementHandlers
             }
 
             if (placer != null && !infiniteResources && blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT
-                    && placer.checkOrRequestItemsSynch(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
+                  && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -214,8 +215,8 @@ public final class PlacementHandlers
     {
         @Override
         public Object handle(
-                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockDoublePlant))
             {
@@ -223,7 +224,7 @@ public final class PlacementHandlers
             }
 
             if (placer != null && !infiniteResources && blockState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.LOWER)
-                    && placer.checkOrRequestItemsSynch(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
+                  && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -246,13 +247,13 @@ public final class PlacementHandlers
     {
         @Override
         public Object handle(
-                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (blockState instanceof BlockEndPortal
-                    || blockState instanceof BlockMobSpawner
-                    || blockState instanceof BlockDragonEgg
-                    || blockState instanceof BlockPortal)
+                  || blockState instanceof BlockMobSpawner
+                  || blockState instanceof BlockDragonEgg
+                  || blockState instanceof BlockPortal)
             {
                 return ActionProcessingResult.ACCEPT;
             }
@@ -264,8 +265,8 @@ public final class PlacementHandlers
     {
         @Override
         public Object handle(
-                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final AbstractEntityAIStructure<?> placer,
-                final boolean infiniteResources, final boolean complete)
+          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final AbstractEntityAIStructure<?> placer,
+          final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockFlowerPot))
             {
@@ -282,7 +283,7 @@ public final class PlacementHandlers
 
                     for (final ItemStack stack : itemList)
                     {
-                        if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItemsSynch(placer.getTotalAmount(stack)))
+                        if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
                         {
                             return ActionProcessingResult.DENY;
                         }
@@ -308,8 +309,8 @@ public final class PlacementHandlers
     {
         @Override
         public Object handle(
-                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (blockState.getBlock() instanceof BlockAir)
             {
@@ -321,7 +322,7 @@ public final class PlacementHandlers
                     if (placer.getEntityInfo() == null)
                     {
                         final List<Entity> entityList = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos),
-                                entity -> !(entity instanceof EntityLiving || entity instanceof EntityItem));
+                          entity -> !(entity instanceof EntityLiving || entity instanceof EntityItem));
                         if (!entityList.isEmpty())
                         {
                             for (final Entity entity : entityList)
@@ -345,8 +346,8 @@ public final class PlacementHandlers
     {
         @Override
         public Object handle(
-                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockGrassPath))
             {
@@ -355,7 +356,7 @@ public final class PlacementHandlers
 
             if (placer != null && !infiniteResources)
             {
-                if (!(placer.holdEfficientTool(blockState.getBlock()) || placer.checkOrRequestItemsSynch(placer.getTotalAmount(new ItemStack(Blocks.DIRT, 1)))))
+                if (!(placer.holdEfficientTool(blockState.getBlock()) || placer.checkOrRequestItems(placer.getTotalAmount(new ItemStack(Blocks.DIRT, 1)))))
                 {
                     return ActionProcessingResult.DENY;
                 }
@@ -375,14 +376,14 @@ public final class PlacementHandlers
     {
         @Override
         public Object handle(
-                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             //Workaround as long as we didn't rescan all of our buildings since BlockStairs now have different metadata values.
             if (blockState.getBlock() instanceof BlockStairs
-                    && world.getBlockState(pos).getBlock() instanceof BlockStairs
-                    && world.getBlockState(pos).getValue(BlockStairs.FACING) == blockState.getValue(BlockStairs.FACING)
-                    && blockState.getBlock() == world.getBlockState(pos).getBlock())
+                  && world.getBlockState(pos).getBlock() instanceof BlockStairs
+                  && world.getBlockState(pos).getValue(BlockStairs.FACING) == blockState.getValue(BlockStairs.FACING)
+                  && blockState.getBlock() == world.getBlockState(pos).getBlock())
             {
                 return ActionProcessingResult.ACCEPT;
             }
@@ -395,8 +396,8 @@ public final class PlacementHandlers
     {
         @Override
         public Object handle(
-                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockSolidSubstitution))
             {
@@ -407,7 +408,7 @@ public final class PlacementHandlers
 
             if (placer != null && !infiniteResources)
             {
-                if (placer.checkOrRequestItemsSynch(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(newBlockState))))
+                if (placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(newBlockState))))
                 {
                     return ActionProcessingResult.DENY;
                 }
@@ -437,9 +438,14 @@ public final class PlacementHandlers
     {
         @Override
         public Object handle(
-                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
+            if(world.getBlockState(pos).equals(blockState))
+            {
+                return ActionProcessingResult.ACCEPT;
+            }
+
             if (placer != null && !infiniteResources)
             {
                 final List<ItemStack> itemList = new ArrayList<>();
@@ -448,7 +454,7 @@ public final class PlacementHandlers
 
                 for (final ItemStack stack : itemList)
                 {
-                    if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItemsSynch(placer.getTotalAmount(stack)))
+                    if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
                     {
                         return ActionProcessingResult.DENY;
                     }
@@ -474,8 +480,8 @@ public final class PlacementHandlers
     {
         @Override
         public Object handle(
-                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockWaypoint))
             {
@@ -509,10 +515,10 @@ public final class PlacementHandlers
     {
         @Override
         public Object handle(
-                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
-            if (!(blockState.getBlock() instanceof BlockChest && !(blockState.getBlock() instanceof BlockMinecoloniesRack)))
+            if (!(blockState.getBlock() instanceof BlockChest))
             {
                 return ActionProcessingResult.IGNORE;
             }
@@ -525,7 +531,7 @@ public final class PlacementHandlers
 
                 for (final ItemStack stack : itemList)
                 {
-                    if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItemsSynch(placer.getTotalAmount(stack)))
+                    if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
                     {
                         return ActionProcessingResult.DENY;
                     }
@@ -533,6 +539,47 @@ public final class PlacementHandlers
             }
 
             final TileEntity entity = world.getTileEntity(pos);
+            if (entity instanceof TileEntityChest)
+            {
+                BuildingWareHouse.handleBuildingOverChest(pos, (TileEntityChest) entity, world);
+            }
+            else if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
+            {
+                return ActionProcessingResult.DENY;
+            }
+
+            return blockState;
+        }
+    }
+
+    public static class RackPlacementHandler implements IPlacementHandler
+    {
+        @Override
+        public Object handle(
+          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+        {
+            if (!(blockState.getBlock() instanceof BlockMinecoloniesRack))
+            {
+                return ActionProcessingResult.IGNORE;
+            }
+
+            if (placer != null && !infiniteResources)
+            {
+                final List<ItemStack> itemList = new ArrayList<>();
+                itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
+                itemList.addAll(placer.getItemsFromTileEntity());
+
+                for (final ItemStack stack : itemList)
+                {
+                    if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
+                    {
+                        return ActionProcessingResult.DENY;
+                    }
+                }
+            }
+
+            TileEntity entity = world.getTileEntity(pos);
             if (entity instanceof TileEntityChest)
             {
                 BuildingWareHouse.handleBuildingOverChest(pos, (TileEntityChest) entity, world);

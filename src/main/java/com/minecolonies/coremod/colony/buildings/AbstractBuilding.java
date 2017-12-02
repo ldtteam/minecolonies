@@ -16,6 +16,7 @@ import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.StructureWrapper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
@@ -38,6 +39,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_HAND;
 
@@ -242,6 +244,11 @@ public abstract class AbstractBuilding
      * Height of the building.
      */
     private int height;
+
+    /**
+     * List of items the worker should keep.
+     */
+    protected final Map<Predicate<ItemStack>, Integer> keepX = new HashMap<>();
 
     /**
      * Constructor for a AbstractBuilding.
@@ -462,6 +469,16 @@ public abstract class AbstractBuilding
             ConstructionTapeHelper.placeConstructionTape(building.getLocation(), corners, parent.getWorld());
         }
         return building;
+    }
+
+    /**
+     * executed when a new day start.
+     */
+    public void onWakeUp()
+    {
+        /**
+         * Buildings override this if required.
+         */
     }
 
     /**
@@ -1004,9 +1021,7 @@ public abstract class AbstractBuilding
     @SuppressWarnings("squid:S1172")
     public void registerBlockPosition(@NotNull Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        final TileEntity tile = world.getTileEntity(pos);
-
-        if (tile != null && !InventoryUtils.getItemHandlersFromProvider(tile).isEmpty())
+        if (block instanceof BlockContainer || block instanceof BlockMinecoloniesRack)
         {
             addContainerPosition(pos);
         }
@@ -1054,9 +1069,9 @@ public abstract class AbstractBuilding
      *
      * @return a list of objects which should be kept.
      */
-    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
+    public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
     {
-        return Collections.emptyMap();
+        return keepX;
     }
 
     /**
@@ -1243,6 +1258,41 @@ public abstract class AbstractBuilding
         {
             return InventoryUtils.addItemStackToProviderWithResult(tileEntity, stack);
         }
+    }
+
+    /**
+     * Check if the worker requires a certain amount of that item and the alreadykept list contains it.
+     * Always leave one stack behind if the worker requires a certain amount of it. Just to be sure.
+     *
+     * @param stack            the stack to check it with.
+     * @param localAlreadyKept already kept items.
+     * @return true if it should be leave it behind.
+     */
+    public boolean buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept)
+    {
+        for (final Map.Entry<Predicate<ItemStack>, Integer> entry : getRequiredItemsAndAmount().entrySet())
+        {
+            if (entry.getKey().test(stack))
+            {
+                final ItemStorage kept = ItemStorage.getItemStackOfListMatchingPredicate(localAlreadyKept, entry.getKey());
+                if(kept != null)
+                {
+                    if(kept.getAmount() >= entry.getValue())
+                    {
+                        return false;
+                    }
+
+                    localAlreadyKept.remove(kept);
+                    kept.setAmount(kept.getAmount() + ItemStackUtils.getSize(stack));
+                    localAlreadyKept.add(kept);
+                    return true;
+                }
+
+                localAlreadyKept.add(new ItemStorage(stack));
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
