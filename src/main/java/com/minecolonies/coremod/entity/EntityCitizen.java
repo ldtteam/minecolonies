@@ -483,7 +483,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             }
         }
 
-        if(hasChanged)
+        if(citizenData != null && hasChanged)
         {
             citizenData.markDirty();
         }
@@ -1188,14 +1188,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
             if(citizenData.getSaturation() < HIGH_SATURATION)
             {
                 tryToEat();
-            }
-            else
-            {
-                final AbstractBuilding home = getHomeBuilding();
-                if(home != null && home instanceof BuildingHome && ((BuildingHome)home).isFoodNeeded())
-                {
-                    ((BuildingHome)home).checkIfFoodNeeded();
-                }
             }
         }
 
@@ -2189,6 +2181,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.working"));
             this.getWorkBuilding().onWakeUp();
+        }
+        if(this.getColonyJob() != null)
+        {
+            this.getColonyJob().onWakeUp();
         }
 
         final AbstractBuilding homeBuilding = this.getHomeBuilding();

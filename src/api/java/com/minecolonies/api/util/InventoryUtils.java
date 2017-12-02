@@ -1316,6 +1316,14 @@ public final class InventoryUtils
         return false;
     }
 
+    /**
+     * Transfer X of sourceHandler to targetHandler matching a predicate.
+     * @param sourceHandler the source handler.
+     * @param itemStackSelectionPredicate the predicate.
+     * @param amount the amount.
+     * @param targetHandler the target handler.
+     * @return the result.
+     */
     public static boolean transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
             @NotNull final IItemHandler sourceHandler,
             @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
@@ -1334,6 +1342,43 @@ public final class InventoryUtils
             return false;
         }
         return InventoryUtils.addItemStackToItemHandler(targetHandler, returnStack);
+    }
+
+    /**
+     * Transfer X of sourceHandler to targetHandler matching a predicate.
+     * @param sourceHandler the source handler.
+     * @param itemStackSelectionPredicate the predicate.
+     * @param amount the amount.
+     * @param targetHandler the target handler.
+     * @param slot the next slot.
+     * @return the result.
+     */
+    public static boolean transferXOfFirstSlotInProviderWithIntoInItemHandler(
+            @NotNull final IItemHandler sourceHandler,
+            @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
+            @NotNull final int amount, @NotNull final IItemHandler targetHandler,
+                     final int slot)
+    {
+        final int desiredItemSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler,
+                itemStackSelectionPredicate::test);
+
+        if (desiredItemSlot == -1)
+        {
+            return false;
+        }
+        final ItemStack returnStack = sourceHandler.extractItem(desiredItemSlot, amount, false);
+        if (ItemStackUtils.isEmpty(returnStack))
+        {
+            return false;
+        }
+        final ItemStack result = targetHandler.insertItem(slot, returnStack, false);
+        final int returnAmount = ItemStackUtils.getSize(result);
+        if(!ItemStackUtils.isEmpty(returnStack))
+        {
+            sourceHandler.insertItem(desiredItemSlot, result, false);
+        }
+
+        return returnAmount < amount;
     }
 
     /**

@@ -4,9 +4,12 @@ import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -15,6 +18,7 @@ import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
@@ -123,6 +127,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private boolean waitForRequest = true;
 
     /**
+     * The restaurant this AI usually goes to.
+     */
+    private BlockPos restaurant = null;
+
+    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class
@@ -171,7 +180,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 /**
                  * Reset to idle if no specific tool is needed.
                  */
-                new AITarget(() -> getState() == NEEDS_TOOL && this.getOwnBuilding().needsTool(ToolType.NONE), IDLE)
+                new AITarget(() -> getState() == NEEDS_TOOL && this.getOwnBuilding().needsTool(ToolType.NONE), IDLE),
+                /**
+                 * Called when the citizen saturation falls too low.
+                 */
+                new AITarget(() -> (worker.getCitizenData().getSaturation() <= EntityCitizen.HIGH_SATURATION
+                        && !job.hasCheckedForFoodToday()) || worker.getCitizenData().getSaturation() <= 0, this::searchForFood)
         );
     }
 
@@ -218,6 +232,51 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             Log.getLogger().error("Caused by ai exception:");
             e.printStackTrace();
         }
+    }
+
+    private AIState searchForFood()
+    {
+        if(!job.hasCheckedForFoodToday())
+        {
+            if (walkToBuilding())
+            {
+                return IDLE;
+            }
+
+            job.setCheckedForFood();
+            if (isInHut(itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood) || worker.getCitizenData().getSaturation() > 0)
+            {
+                return IDLE;
+            }
+        }
+
+        if(restaurant == null)
+        {
+            double distance = Double.MAX_VALUE;
+            BlockPos goodCook = null;
+            for(final AbstractBuilding building : worker.getColony().getBuildings().values())
+            {
+                if(building instanceof BuildingCook)
+                {
+                    final double localDistance = building.getLocation().distanceSq(getOwnBuilding().getLocation());
+                    if(localDistance < distance)
+                    {
+                        distance = localDistance;
+                        goodCook = building.getLocation();
+                    }
+                }
+            }
+
+            if(goodCook == null)
+            {
+                chatSpamFilter.requestTextComponentWithoutSpam(new TextComponentTranslation("com.minecolonies.coremod.ai.noRestaurant"));
+                return getState();
+            }
+            restaurant = goodCook;
+        }
+
+        walkToBlock(restaurant);
+        return IDLE;
     }
 
     /**
@@ -439,6 +498,44 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Check all chests in the worker hut for a required item.
      *
+     * @param itemStackSelectionPredicate is the type of item requested (amount is ignored)
+     * @return true if a stack of that type was found
+     */
+    public boolean isInHut(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    {
+        @Nullable final AbstractBuildingWorker building = getOwnBuilding();
+
+        boolean hasItem;
+        if (building != null)
+        {
+            hasItem = isInTileEntity(building.getTileEntity(), itemStackSelectionPredicate);
+
+            if (hasItem)
+            {
+                return true;
+            }
+
+            for (final BlockPos pos : building.getAdditionalCountainers())
+            {
+                final TileEntity entity = world.getTileEntity(pos);
+                if (entity instanceof TileEntityChest)
+                {
+                    hasItem = isInTileEntity((TileEntityChest) entity, itemStackSelectionPredicate);
+
+                    if (hasItem)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check all chests in the worker hut for a required item.
+     *
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
      */
@@ -522,7 +619,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
-     * @param entity the tileEntity chest or building.
+     * @param entity                      the tileEntity chest or building.
      * @param itemStackSelectionPredicate the criteria.
      * @return true if found the stack.
      */
@@ -657,7 +754,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             getOwnBuilding().setNeedsTool(toolType, minimalLevel);
         }
-        else if(getOwnBuilding().needsTool(toolType))
+        else if (getOwnBuilding().needsTool(toolType))
         {
             getOwnBuilding().setNeedsTool(ToolType.NONE, TOOL_LEVEL_HAND);
         }
@@ -667,8 +764,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Check if we need a tool.
-     *
+     * <p>
      * Do not use it to find a pickaxe as it need a minimum level
+     *
      * @param tool tool required for block
      * @return true if we need a tool
      */
@@ -715,7 +813,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 }
                 else
                 {
-                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_ENCHTOOLREQUEST, toolType.getName(), maximumLevel-1);
+                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_ENCHTOOLREQUEST, toolType.getName(), maximumLevel - 1);
                 }
             }
         }
@@ -723,12 +821,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             // at least
             chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLATLEASTREQUEST, toolType.getName(), ItemStackUtils.swapToolGrade(minimalLevel));
-
         }
         else if (minimalLevel > maximumLevel)
         {
             // need to upgrade the worker's hut
-            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUESTBETTERHUT, minimalLevel+AbstractBuildingWorker.WOOD_HUT_LEVEL);
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUESTBETTERHUT, minimalLevel + AbstractBuildingWorker.WOOD_HUT_LEVEL);
         }
         else if (minimalLevel == maximumLevel)
         {
@@ -741,14 +838,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUEST,
                     ItemStackUtils.swapToolGrade(minimalLevel),
                     ItemStackUtils.swapToolGrade(maximumLevel));
-
         }
     }
 
     /**
      * Check all chests in the worker hut for a required tool.
      *
-     * @param toolType the type of tool requested (amount is ignored)
+     * @param toolType     the type of tool requested (amount is ignored)
      * @param minimalLevel the minimal level the tool should have.
      * @return true if a stack of that type was found
      */
@@ -861,7 +957,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 (handler, slot) ->
                         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(
                                 new InvWrapper(worker.getInventoryCitizen()), slot, new InvWrapper(buildingWorker.getTileEntity()))
-                ));
+        ));
     }
 
     /**
@@ -956,7 +1052,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 final int itemsLeft = ItemStackUtils.getSize(stack) - countOfItem;
                 @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, -1);
-                if(!isInNeededItems(tempStack))
+                if (!isInNeededItems(tempStack))
                 {
                     getOwnBuilding().addNeededItems(requiredStack);
                 }
@@ -984,7 +1080,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param shouldRequest determines if the request to the player should be made.
      * @return true if it fond it.
      */
-    public boolean tryToTakeFromListOrRequest(final boolean shouldRequest, final ItemStack...list)
+    public boolean tryToTakeFromListOrRequest(final boolean shouldRequest, final ItemStack... list)
     {
         for (final @Nullable ItemStack tempStack : list)
         {
@@ -1000,14 +1096,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Check if a certain itemStack is already in the neededItems list.
+     *
      * @param tempStack the stack to test for.
      * @return true if so.
      */
     private boolean isInNeededItems(final ItemStack tempStack)
     {
-        for(final ItemStack compareStack : getOwnBuilding().getCopyOfNeededItems())
+        for (final ItemStack compareStack : getOwnBuilding().getCopyOfNeededItems())
         {
-            if(compareStack.isItemEqual(tempStack))
+            if (compareStack.isItemEqual(tempStack))
             {
                 return true;
             }

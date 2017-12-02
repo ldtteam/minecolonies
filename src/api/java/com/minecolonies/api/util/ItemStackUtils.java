@@ -3,6 +3,8 @@ package com.minecolonies.api.util;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -456,6 +458,18 @@ public final class ItemStackUtils
     public static ItemStack deserializeFromNBT(@NotNull final NBTTagCompound compound)
     {
         return ItemStack.loadItemStackFromNBT(compound);
+    }
+
+    /**
+     * Check if the itemStack is some preferrable type of fuel.
+     * @param stack the itemStack to test.
+     * @return true if so.
+     */
+    public boolean isPreferrableFuel(@NotNull final ItemStack stack)
+    {
+        return stack.isItemEqualIgnoreDurability(new ItemStack(Items.COAL))
+                || stack.isItemEqualIgnoreDurability(new ItemStack(Blocks.LOG))
+                || stack.isItemEqualIgnoreDurability(new ItemStack(Blocks.LOG2));
     }
 }
 

@@ -24,6 +24,11 @@ public class ItemStorage
     private final boolean ignoreDamageValue;
 
     /**
+     * Set this to ignore the exact item, if you only want the class to be right.
+     */
+    private final boolean ignoreExactItem;
+
+    /**
      * Amount of the storage.
      */
     private int amount;
@@ -39,7 +44,23 @@ public class ItemStorage
     {
         this.stack = stack;
         this.ignoreDamageValue = ignoreDamageValue;
+        this.ignoreExactItem = false;
         this.amount = amount;
+    }
+
+    /**
+     * Creates an instance of the storage.
+     *
+     * @param stack             the stack.
+     * @param ignoreDamageValue should the damage value be ignored?
+     * @param ignoreDamageValue should the item be ignored?
+     */
+    public ItemStorage(@NotNull final ItemStack stack, final boolean ignoreDamageValue, final boolean ignoreExactItem)
+    {
+        this.stack = stack;
+        this.ignoreDamageValue = ignoreDamageValue;
+        this.ignoreExactItem = ignoreExactItem;
+        this.amount = ItemStackUtils.getSize(stack);
     }
 
     /**
@@ -52,6 +73,7 @@ public class ItemStorage
     {
         this.stack = stack;
         this.ignoreDamageValue = ignoreDamageValue;
+        this.ignoreExactItem = false;
         this.amount = ItemStackUtils.getSize(stack);
     }
 
@@ -64,6 +86,7 @@ public class ItemStorage
     {
         this.stack = stack;
         this.ignoreDamageValue = false;
+        this.ignoreExactItem = false;
         this.amount = ItemStackUtils.getSize(stack);
     }
 
@@ -100,7 +123,7 @@ public class ItemStorage
     @Override
     public int hashCode()
     {
-        return 31 * getItem().hashCode() + getDamageValue();
+        return 31 * getItem().hashCode() + (ignoreDamageValue? 0 : getDamageValue());
     }
 
     @Override
@@ -110,13 +133,17 @@ public class ItemStorage
         {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
+
+        if (!(o instanceof ItemStorage))
         {
             return false;
         }
 
         final ItemStorage that = (ItemStorage) o;
-
+        if(ignoreExactItem || that.ignoreExactItem)
+        {
+            return getItem().getClass().isAssignableFrom(that.getItem().getClass()) || that.getItem().getClass().isAssignableFrom(this.getItem().getClass());
+        }
 
         return getItem().equals(that.getItem()) && (this.ignoreDamageValue || that.getDamageValue() == this.getDamageValue());
     }

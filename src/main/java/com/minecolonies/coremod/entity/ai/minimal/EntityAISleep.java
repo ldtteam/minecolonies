@@ -25,7 +25,7 @@ public class EntityAISleep extends EntityAIBase
     /**
      * Bed the citizen is using atm.
      */
-    private BlockPos usedBed = null;
+    private BlockPos usedBed;
 
     /**
      * Initiate the sleep task.
@@ -37,6 +37,7 @@ public class EntityAISleep extends EntityAIBase
         super();
         this.setMutexBits(1);
         this.citizen = citizen;
+        usedBed = citizen.getHomePosition();
     }
 
     /**
@@ -64,13 +65,18 @@ public class EntityAISleep extends EntityAIBase
     {
         if (citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP)
         {
+            if(usedBed == null)
+            {
+                return true;
+            }
+
             final Colony colony = citizen.getColony();
             if(colony == null || colony.getBuilding(citizen.getHomePosition()) == null)
             {
                 return true;
             }
 
-            if(usedBed == null)
+            if(usedBed.equals(citizen.getHomePosition()))
             {
                 final AbstractBuilding hut = colony.getBuilding(citizen.getHomePosition());
                 if (hut instanceof BuildingHome)
@@ -93,13 +99,8 @@ public class EntityAISleep extends EntityAIBase
 
                 usedBed = citizen.getHomePosition();
             }
-            else
-            {
-                if (citizen.isWorkerAtSiteWithMove(usedBed, 1))
-                {
-                    return true;
-                }
-            }
+
+            citizen.isWorkerAtSiteWithMove(usedBed, 1);
             return true;
         }
 

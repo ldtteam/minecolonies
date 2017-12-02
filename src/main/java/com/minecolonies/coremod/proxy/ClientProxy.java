@@ -161,7 +161,8 @@ public class ClientProxy extends CommonProxy
                 new ModelResourceLocation(ModBlocks.blockHutBarracks.getRegistryName(), INVENTORY));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockHutBarracksTower), 0,
                 new ModelResourceLocation(ModBlocks.blockHutBarracksTower.getRegistryName(), INVENTORY));
-
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockHutCook), 0,
+                new ModelResourceLocation(ModBlocks.blockHutCook.getRegistryName(), INVENTORY));
 
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockSolidSubstitution), 0,
                 new ModelResourceLocation(ModBlocks.blockSolidSubstitution.getRegistryName(), INVENTORY));

@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.item.ItemFood;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
@@ -67,6 +69,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     public AbstractBuildingWorker(@NotNull final Colony c, final BlockPos l)
     {
         super(c, l);
+        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood, getBuildingLevel() * 2);
     }
 
     /**
@@ -237,6 +240,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         }
 
         super.onDestroyed();
+    }
+
+    /**
+     * Executed when a new day start.
+     */
+    @Override
+    public void onWakeUp()
+    {
+
     }
 
     /**

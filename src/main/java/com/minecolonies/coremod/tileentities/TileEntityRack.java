@@ -105,6 +105,14 @@ public class TileEntityRack extends TileEntity
             updateItemStorage();
             super.onContentsChanged(slot);
         }
+
+        @Override
+        public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
+        {
+            final ItemStack result = super.extractItem(slot, amount, simulate);
+            updateItemStorage();
+            return result;
+        }
     };
 
     /**
@@ -196,6 +204,23 @@ public class TileEntityRack extends TileEntity
             }
         }
         return false;
+    }
+
+    /**
+     * Get the amount of items matching a predicate in the inventory.
+     * @param predicate the predicate.
+     * @return the total count.
+     */
+    public int getItemCount(final Predicate<ItemStack> predicate)
+    {
+        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
+        {
+            if (predicate.test(entry.getKey().getItemStack()))
+            {
+                return entry.getValue();
+            }
+        }
+        return 0;
     }
 
     /**

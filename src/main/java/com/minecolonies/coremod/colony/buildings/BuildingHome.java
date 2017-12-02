@@ -343,15 +343,6 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     /**
-     * Checks if food in the home is required.
-     * If yes set foodNeeded to true, else to false.
-     */
-    public void checkIfFoodNeeded()
-    {
-        setFoodNeeded(residents.stream().filter(resident -> resident.getSaturation() < EntityCitizen.HIGH_SATURATION).findFirst().isPresent());
-    }
-
-    /**
      * The view of the citizen hut.
      */
     public static class View extends AbstractBuildingHut.View

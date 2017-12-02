@@ -1,18 +1,24 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Predicate;
 
 /**
  * Class which handles the tileEntity of our colonyBuildings.
@@ -169,6 +175,67 @@ public class TileEntityColonyBuilding extends TileEntityChest
         }
     }
 
+    /**
+     * Sets the colony of the tile entity.
+     *
+     * @param c Colony to set in references.
+     */
+    public void setColony(final Colony c)
+    {
+        colony = c;
+        colonyId = c.getID();
+        markDirty();
+    }
+
+    /**
+     * Check for a certain item and return the position of the chest containing it.
+     *
+     * @param itemStackSelectionPredicate the stack to search for.
+     * @return the position or null.
+     */
+    @Nullable
+    public BlockPos getPositionOfChestWithItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    {
+        @Nullable final AbstractBuilding building = getBuilding();
+
+        if (building != null)
+        {
+            if (isInTileEntity(building.getTileEntity(), itemStackSelectionPredicate))
+            {
+                return building.getLocation();
+            }
+
+            for (final BlockPos pos : building.getAdditionalCountainers())
+            {
+                final TileEntity entity = getWorld().getTileEntity(pos);
+                if ((entity instanceof TileEntityRack && ((TileEntityRack) entity).hasItemStack(itemStackSelectionPredicate))
+                        || (entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, itemStackSelectionPredicate)))
+                {
+                    return pos;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Finds the first @see ItemStack the type of {@code is}.
+     * It will be taken from the chest and placed in the workers inventory.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the stack.
+     *
+     * @param entity                      the tileEntity chest or building.
+     * @param itemStackSelectionPredicate the itemStack predicate.
+     * @return true if found the stack.
+     */
+    public static boolean isInTileEntity(final TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    {
+        return InventoryFunctions
+                .matchFirstInProvider(
+                        entity,
+                        itemStackSelectionPredicate);
+    }
+
     @Override
     public void update()
     {
@@ -182,18 +249,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
                 colonyId = tempColony.getID();
             }
         }
-    }
-
-    /**
-     * Sets the colony of the tile entity.
-     *
-     * @param c Colony to set in references.
-     */
-    public void setColony(final Colony c)
-    {
-        colony = c;
-        colonyId = c.getID();
-        markDirty();
     }
 
     /**

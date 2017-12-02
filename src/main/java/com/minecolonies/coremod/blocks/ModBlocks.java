@@ -42,6 +42,8 @@ public final class ModBlocks
     public static BlockHutBarracksTower       blockHutBarracksTower;
     public static BlockInfoPoster             blockInfoPoster;
     public static BlockPaperwall              blockPaperWall;
+    public static BlockHutCook                blockHutCook;
+
 
     /**
      * Private constructor to hide the implicit public one.
@@ -83,6 +85,7 @@ public final class ModBlocks
         blockHutBarracksTower = new BlockHutBarracksTower().registerBlock(registry);
         blockInfoPoster = new BlockInfoPoster().registerBlock(registry);
         blockPaperWall = new BlockPaperwall().registerBlock(registry);
+        blockHutCook   = new BlockHutCook().registerBlock(registry);
     }
 
     public static void registerItemBlock(final IForgeRegistry<Item> registry)
@@ -112,5 +115,6 @@ public final class ModBlocks
         blockHutBarracks.registerItemBlock(registry);
         blockInfoPoster.registerItemBlock(registry);
         blockPaperWall.registerItemBlock(registry);
+        blockHutCook.registerItemBlock(registry);
     }
 }

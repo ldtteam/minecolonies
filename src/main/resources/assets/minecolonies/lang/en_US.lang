@@ -468,6 +468,20 @@ com.minecolonies.coremod.gui.hiring.buttonFire=Fire
 com.minecolonies.coremod.worker.noUpgrade=No Upgrade available.
 com.minecolonies.coremod.worker.needBarracks=Please upgrade the Barracks first.
 com.minecolonies.coremod.gui.warehouse.upgrade=Upgrade Storage
+
+com.minecolonies.coremod.job.cook=Cook
+com.minecolonies.coremod.gui.workerHuts.cook=Cook
+tile.minecolonies.blockHutCook.name=Restaurant
+com.minecolonies.coremod.ai.noRestaurant=Please build a restaurant or get me something to eat!
+com.minecolonies.coremod.ai.noWarehouse=Build a warehouse or bring me food to serve to my clients!
+com.minecolonies.coremod.ai.noFood=I can't find any food in the warehouse.
+com.minecolonies.coremod.gui.workerHuts.Cook=Restaurant
+com.minecolonies.coremod.status.cooking=Cooking
+com.minecolonies.coremod.status.serving=Serving
+com.minecolonies.coremod.status.retrieving=Retrieving
+com.minecolonies.coremod.status.idling=Idling
+com.minecolonies.coremod.status.mining=Mining
+
 item.minecolonies.scepterPermission.name=PermissionScepter
 achievement.upgrade.guard.first=The killer
 achievement.upgrade.guard.last=Cleanup crew
