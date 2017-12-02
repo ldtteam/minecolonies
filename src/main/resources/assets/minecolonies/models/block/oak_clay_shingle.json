@@ -1,11 +1,29 @@
 {
 	"credit": "Made by d3miurge.vallek@gmail.com",
+    "display": {
+      "gui": {
+        "rotation": [ 30, 135, 0 ],
+        "translation": [ 0, 0, 0],
+        "scale":[ 0.5, 0.5, 0.5 ]
+      },
+      "head": {
+        "rotation": [ 0, 0, 0 ],
+        "translation": [ 0, 0, 0 ],
+        "scale": [ 0.025, 0.025, 0.025 ]
+     },
+     "thirdperson_lefthand": {
+       "rotation": [ 75, -135, 0 ],
+       "translation": [ 0, 2.5, 0],
+       "scale": [ 0.0175, 0.0175, 0.0175 ]
+     }
+    },
 	"textures": {
-		"0": "shingle/clay_shingle_1",
-		"1": "shingle/clay_shingle_2",
-		"2": "shingle/clay_shingle_3",
-		"3": "shingle/shingle_oak_support_1",
-		"4": "shingle/shingle_oak_support_2"
+		"0": "minecolonies:blocks/shingle/clay_shingle_1",
+		"1": "minecolonies:blocks/shingle/clay_shingle_2",
+		"2": "minecolonies:blocks/shingle/clay_shingle_3",
+		"3": "minecolonies:blocks/shingle/shingle_oak_support_1",
+		"4": "minecolonies:blocks/shingle/shingle_oak_support_2",
+        "particle": "minecolonies:blocks/shingle/shingle_oak_support_2"
 	},
 	"elements": [
 		{

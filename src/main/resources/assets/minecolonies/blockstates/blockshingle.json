@@ -1,78 +1,44 @@
 {
-  "multipart": [
-    {
-      "apply": {
-        "model": "minecolonies:birch_paperwall/blockPaperwall_post"
-      }
-    },
-    {
-      "when": {
-        "north": true
-      },
-      "apply": {
-        "model": "minecolonies:birch_paperwall/blockPaperwall_side"
-      }
-    },
-    {
-      "when": {
-        "east": true
-      },
-      "apply": {
-        "model": "minecolonies:birch_paperwall/blockPaperwall_side",
-        "y": 90
-      }
-    },
-    {
-      "when": {
-        "south": true
-      },
-      "apply": {
-        "model": "minecolonies:birch_paperwall/blockPaperwall_side_alt"
-      }
-    },
-    {
-      "when": {
-        "west": true
-      },
-      "apply": {
-        "model": "minecolonies:birch_paperwall/blockPaperwall_side_alt",
-        "y": 90
-      }
-    },
-    {
-      "when": {
-        "north": false
-      },
-      "apply": {
-        "model": "minecolonies:birch_paperwall/blockPaperwall_noside"
-      }
-    },
-    {
-      "when": {
-        "east": false
-      },
-      "apply": {
-        "model": "minecolonies:birch_paperwall/blockPaperwall_noside_alt"
-      }
-    },
-    {
-      "when": {
-        "south": false
-      },
-      "apply": {
-        "model": "minecolonies:birch_paperwall/blockPaperwall_noside_alt",
-        "y": 90
-      }
-    },
-    {
-      "when": {
-        "west": false
-      },
-      "apply": {
-        "model": "minecolonies:birch_paperwall/blockPaperwall_noside",
-        "y": 270
-      }
-    }
-  ]
+  "variants": {
+    "facing=east,half=bottom,shape=straight":  { "model": "minecolonies:oak_clay_shingle" },
+    "facing=west,half=bottom,shape=straight":  { "model": "minecolonies:oak_clay_shingle", "y": 180, "uvlock": true },
+    "facing=south,half=bottom,shape=straight": { "model": "minecolonies:oak_clay_shingle", "y": 90, "uvlock": true },
+    "facing=north,half=bottom,shape=straight": { "model": "minecolonies:oak_clay_shingle", "y": 270, "uvlock": true },
+    "facing=east,half=bottom,shape=outer_right":  { "model": "minecolonies:oak_clay_shingle_corner_convex" },
+    "facing=west,half=bottom,shape=outer_right":  { "model": "minecolonies:oak_clay_shingle_corner_convex", "y": 180, "uvlock": true },
+    "facing=south,half=bottom,shape=outer_right": { "model": "minecolonies:oak_clay_shingle_corner_convex", "y": 90, "uvlock": true },
+    "facing=north,half=bottom,shape=outer_right": { "model": "minecolonies:oak_clay_shingle_corner_convex", "y": 270, "uvlock": true },
+    "facing=east,half=bottom,shape=outer_left":  { "model": "minecolonies:oak_clay_shingle_corner_convex", "y": 270, "uvlock": true },
+    "facing=west,half=bottom,shape=outer_left":  { "model": "minecolonies:oak_clay_shingle_corner_convex", "y": 90, "uvlock": true },
+    "facing=south,half=bottom,shape=outer_left": { "model": "minecolonies:oak_clay_shingle_corner_convex" },
+    "facing=north,half=bottom,shape=outer_left": { "model": "minecolonies:oak_clay_shingle_corner_convex", "y": 180, "uvlock": true },
+    "facing=east,half=bottom,shape=inner_right":  { "model": "minecolonies:oak_clay_shingle_corner_concave" },
+    "facing=west,half=bottom,shape=inner_right":  { "model": "minecolonies:oak_clay_shingle_corner_concave", "y": 180, "uvlock": true },
+    "facing=south,half=bottom,shape=inner_right": { "model": "minecolonies:oak_clay_shingle_corner_concave", "y": 90, "uvlock": true },
+    "facing=north,half=bottom,shape=inner_right": { "model": "minecolonies:oak_clay_shingle_corner_concave", "y": 270, "uvlock": true },
+    "facing=east,half=bottom,shape=inner_left":  { "model": "minecolonies:oak_clay_shingle_corner_concave", "y": 270, "uvlock": true },
+    "facing=west,half=bottom,shape=inner_left":  { "model": "minecolonies:oak_clay_shingle_corner_concave", "y": 90, "uvlock": true },
+    "facing=south,half=bottom,shape=inner_left": { "model": "minecolonies:oak_clay_shingle_corner_concave" },
+    "facing=north,half=bottom,shape=inner_left": { "model": "minecolonies:oak_clay_shingle_corner_concave", "y": 180, "uvlock": true },
+    "facing=east,half=top,shape=straight":  { "model": "minecolonies:oak_clay_shingle", "x": 180, "uvlock": true },
+    "facing=west,half=top,shape=straight":  { "model": "minecolonies:oak_clay_shingle", "x": 180, "y": 180, "uvlock": true },
+    "facing=south,half=top,shape=straight": { "model": "minecolonies:oak_clay_shingle", "x": 180, "y": 90, "uvlock": true },
+    "facing=north,half=top,shape=straight": { "model": "minecolonies:oak_clay_shingle", "x": 180, "y": 270, "uvlock": true },
+    "facing=east,half=top,shape=outer_right":  { "model": "minecolonies:oak_clay_shingle_corner_convex", "x": 180, "y": 90, "uvlock": true },
+    "facing=west,half=top,shape=outer_right":  { "model": "minecolonies:oak_clay_shingle_corner_convex", "x": 180, "y": 270, "uvlock": true },
+    "facing=south,half=top,shape=outer_right": { "model": "minecolonies:oak_clay_shingle_corner_convex", "x": 180, "y": 180, "uvlock": true },
+    "facing=north,half=top,shape=outer_right": { "model": "minecolonies:oak_clay_shingle_corner_convex", "x": 180, "uvlock": true },
+    "facing=east,half=top,shape=outer_left":  { "model": "minecolonies:oak_clay_shingle_corner_convex", "x": 180, "uvlock": true },
+    "facing=west,half=top,shape=outer_left":  { "model": "minecolonies:oak_clay_shingle_corner_convex", "x": 180, "y": 180, "uvlock": true },
+    "facing=south,half=top,shape=outer_left": { "model": "minecolonies:oak_clay_shingle_corner_convex", "x": 180, "y": 90, "uvlock": true },
+    "facing=north,half=top,shape=outer_left": { "model": "minecolonies:oak_clay_shingle_corner_convex", "x": 180, "y": 270, "uvlock": true },
+    "facing=east,half=top,shape=inner_right":  { "model": "acacia_inner_stairs", "x": 180, "y": 90, "uvlock": true },
+    "facing=west,half=top,shape=inner_right":  { "model": "minecolonies:oak_clay_shingle_corner_concave", "x": 180, "y": 270, "uvlock": true },
+    "facing=south,half=top,shape=inner_right": { "model": "minecolonies:oak_clay_shingle_corner_concave", "x": 180, "y": 180, "uvlock": true },
+    "facing=north,half=top,shape=inner_right": { "model": "minecolonies:oak_clay_shingle_corner_concave", "x": 180, "uvlock": true },
+    "facing=east,half=top,shape=inner_left":  { "model": "minecolonies:oak_clay_shingle_corner_concave", "x": 180, "uvlock": true },
+    "facing=west,half=top,shape=inner_left":  { "model": "minecolonies:oak_clay_shingle_corner_concave", "x": 180, "y": 180, "uvlock": true },
+    "facing=south,half=top,shape=inner_left": { "model": "minecolonies:oak_clay_shingle_corner_concave", "x": 180, "y": 90, "uvlock": true },
+    "facing=north,half=top,shape=inner_left": { "model": "minecolonies:oak_clay_shingle_corner_concave", "x": 180, "y": 270, "uvlock": true }
+  }
 }
-

@@ -24,6 +24,9 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import com.minecolonies.structures.event.RenderEventHandler;
 import com.minecolonies.structures.helpers.Settings;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockPlanks;
+import net.minecraft.block.SoundType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
@@ -174,7 +177,9 @@ public class ClientProxy extends CommonProxy
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockRack), 0,
                 new ModelResourceLocation(ModBlocks.blockRack.getRegistryName(), INVENTORY));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockWayPoint), 0,
-                new ModelResourceLocation(ModBlocks.blockWayPoint.getRegistryName(), INVENTORY));
+          new ModelResourceLocation(ModBlocks.blockWayPoint.getRegistryName(), INVENTORY));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingle), 0,
+                new ModelResourceLocation(ModBlocks.blockShingle.getRegistryName(), INVENTORY));
 
 
         ModelLoader.setCustomModelResourceLocation(ModItems.buildTool, 0,
