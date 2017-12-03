@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
+
 /**
  * Wrapper class for a Manager.
  * Subclasses of this have custom behaviour on at least one method.
@@ -119,9 +121,10 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      *
      * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the given type T.
      */
+    @SuppressWarnings(RAWTYPES)
     @NotNull
     @Override
-    public <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull final IToken<?> token)
+    public IRequest getRequestForToken(@NotNull final IToken<?> token)
     {
         return RequestHandler.getRequestOrNull(wrappedManager, token);
     }
@@ -132,9 +135,10 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      * @param token@return The resolver registered with the given token.
      * @throws IllegalArgumentException when the token is unknown.
      */
+    @SuppressWarnings(RAWTYPES)
     @NotNull
     @Override
-    public <T extends IRequestable> IRequestResolver<T> getResolverForToken(@NotNull final IToken<?> token)
+    public IRequestResolver getResolverForToken(@NotNull final IToken<?> token)
     {
         return wrappedManager.getResolverForToken(token);
     }
@@ -147,9 +151,10 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      *
      * @throws IllegalArgumentException Thrown when the token is unknown.
      */
+    @SuppressWarnings(RAWTYPES)
     @Nullable
     @Override
-    public <T extends IRequestable> IRequestResolver<T> getResolverForRequest(@NotNull final IToken<?> requestToken)
+    public IRequestResolver getResolverForRequest(@NotNull final IToken<?> requestToken)
     {
         return wrappedManager.getResolverForRequest(requestToken);
     }

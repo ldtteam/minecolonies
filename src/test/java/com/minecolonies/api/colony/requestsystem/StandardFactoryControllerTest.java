@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import java.util.UUID;
 
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static org.junit.Assert.*;
 
 /**
@@ -75,13 +76,14 @@ public class StandardFactoryControllerTest
     public void serialize()
     {
         final StandardToken standardToken = new StandardToken(UUID.randomUUID());
-        final IToken token = standardToken;
 
-        final NBTTagCompound compound = StandardFactoryController.getInstance().serialize(token);
+        final NBTTagCompound compound = StandardFactoryController.getInstance().serialize(standardToken);
 
         assertTrue(compound.hasKey(StandardFactoryController.NBT_TYPE));
         assertTrue(compound.hasKey(StandardFactoryController.NBT_DATA));
-        assertEquals(compound.getString(StandardFactoryController.NBT_TYPE), new TypeToken<StandardToken>() {}.toString());
+        assertEquals(compound.getString(StandardFactoryController.NBT_TYPE), new TypeToken<StandardToken>() {
+            private static final long serialVersionUID = 0;
+        }.toString());
         assertEquals(compound.getCompoundTag(StandardFactoryController.NBT_DATA).getLong(StandardTokenFactory.NBT_MSB), standardToken.getIdentifier().getMostSignificantBits());
         assertEquals(compound.getCompoundTag(StandardFactoryController.NBT_DATA).getLong(StandardTokenFactory.NBT_LSB), standardToken.getIdentifier().getLeastSignificantBits());
     }
@@ -90,21 +92,20 @@ public class StandardFactoryControllerTest
     public void deserialize()
     {
         final StandardToken standardToken = new StandardToken(UUID.randomUUID());
-        final IToken token = standardToken;
 
-        final NBTTagCompound compound = StandardFactoryController.getInstance().serialize(token);
-        final IToken deserialize = StandardFactoryController.getInstance().deserialize(compound);
+        final NBTTagCompound compound = StandardFactoryController.getInstance().serialize(standardToken);
+        @SuppressWarnings(RAWTYPES) final IToken deserialize = StandardFactoryController.getInstance().deserialize(compound);
 
-        assertEquals(token, deserialize);
+        assertEquals(standardToken, deserialize);
     }
 
     @Test
     public void getNewInstance()
     {
         final UUID id = UUID.randomUUID();
-        final IToken token = new StandardToken(id);
+        @SuppressWarnings(RAWTYPES) final IToken token = new StandardToken(id);
 
-        final IToken output = StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN, id);
+        @SuppressWarnings(RAWTYPES) final IToken output = StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN, id);
 
         assertEquals(output, token);
     }

@@ -54,14 +54,14 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest requestToCheck)
+    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<?> requestToCheck)
     {
         return !manager.getColony().getWorld().isRemote;
     }
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest request)
+    public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         if (canResolve(manager, request))
         {
@@ -72,7 +72,7 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest request) throws RuntimeException
+    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         final IColony colony = manager.getColony();
         if (colony instanceof Colony)
@@ -103,7 +103,7 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
 
     @Nullable
     @Override
-    public IRequest getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest completedRequest)
+    public IRequest<?> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<?> completedRequest)
     {
         //This is not what this method is for, but this is the closest we are getting right now, so why not.
         if (assignedRequests.contains(completedRequest.getToken()))
@@ -116,7 +116,7 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
 
     @Nullable
     @Override
-    public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest request)
+    public IRequest<?> onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         return null;
     }

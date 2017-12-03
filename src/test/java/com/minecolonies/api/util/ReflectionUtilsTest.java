@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -19,10 +20,12 @@ public class ReflectionUtilsTest
     @Test
     public void getSuperClasses()
     {
-        final Set<TypeToken> types = ReflectionUtils.getSuperClasses(TypeConstants.STANDARDTOKEN);
+        @SuppressWarnings(RAWTYPES) final Set<TypeToken> types = ReflectionUtils.getSuperClasses(TypeConstants.STANDARDTOKEN);
         assertEquals(4, types.size());
 
-        final Set<TypeToken> interfaceTypes = ReflectionUtils.getSuperClasses(new TypeToken<IToken<UUID>>() {});
+        @SuppressWarnings(RAWTYPES) final Set<TypeToken> interfaceTypes = ReflectionUtils.getSuperClasses(new TypeToken<IToken<UUID>>() {
+            private static final long serialVersionUID = 0;
+        });
         assertEquals(2, interfaceTypes.size());
     }
 }
