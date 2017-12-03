@@ -34,7 +34,6 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
     public EntityAIWorkCowboy(@NotNull final JobCowboy job)
     {
         super(job, MAX_ANIMALS_PER_LEVEL);
-        itemsNiceToHave().add(new ItemStack(Items.BUCKET, 1));
         itemsNeeded.add(new ItemStack(Items.BUCKET));
         super.registerTargets(
           new AITarget(COWBOY_MILK, this::milkCows)
@@ -86,6 +85,15 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
         return START_WORKING;
     }
 
+    @NotNull
+    @Override
+    protected List<ItemStack> itemsNiceToHave()
+    {
+        final List<ItemStack> list = super.itemsNiceToHave();
+        list.add(new ItemStack(Items.BUCKET, 1));
+        return list;
+    }
+
     /**
      * Makes the Cowboy "Milk" the cows (Honestly all he does is swap an empty
      * bucket for a milk bucket, there's no actual "Milk" method in {@link EntityCow}
@@ -94,6 +102,18 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
      */
     private AIState milkCows()
     {
+        if (!worker.hasItemInInventory(getBreedingItem(), 0) && isInHut(new ItemStack(Items.BUCKET, 1)))
+        {
+            if (!walkToBuilding() && getOwnBuilding() != null)
+            {
+                isInTileEntity(getOwnBuilding().getTileEntity(), new ItemStack(Items.BUCKET, 1));
+            }
+            else
+            {
+                return HERDER_DECIDE;
+            }
+        }
+
         final EntityCow cow = searchForAnimals().stream().findFirst().orElse(null);
 
         if (cow == null)

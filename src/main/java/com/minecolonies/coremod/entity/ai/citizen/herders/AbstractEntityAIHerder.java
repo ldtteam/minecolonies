@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.entity.ai.citizen.herders;
 
+import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
@@ -103,6 +105,15 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         return ACTIONS_FOR_DUMP;
     }
 
+    @NotNull
+    @Override
+    protected List<ItemStack> itemsNiceToHave()
+    {
+        final List<ItemStack> list = super.itemsNiceToHave();
+        list.add(new ItemStack(getBreedingItem(), 2));
+        return list;
+    }
+
     /**
      * Decides what job the herder should switch to, breeding or Butchering.
      *
@@ -166,8 +177,6 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         toolsNeeded.add(ToolType.AXE);
         itemsNeeded.add(new ItemStack(getBreedingItem(), 2));
 
-        itemsNiceToHave().add(new ItemStack(getBreedingItem(), 2));
-
         for (final ToolType tool : toolsNeeded)
         {
             if (checkForToolOrWeapon(tool))
@@ -178,7 +187,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         for (final ItemStack item : itemsNeeded)
         {
-            checkOrRequestItems(item);
+            checkOrRequestItemsAsynch(false, item);
         }
 
         return HERDER_DECIDE;
@@ -393,6 +402,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         {
             if (!animal.isInLove() && !walkingToAnimal(animal))
             {
+                //noinspection ConstantConditions
                 animal.setInLove(null);
                 worker.swingArm(EnumHand.MAIN_HAND);
                 new InvWrapper(getInventory()).extractItem(getItemSlot(getBreedingItem()), 1, false);
