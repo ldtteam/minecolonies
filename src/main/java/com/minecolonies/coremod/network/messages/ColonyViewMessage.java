@@ -62,6 +62,6 @@ public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMe
     @Override
     public IMessage onMessage(@NotNull final ColonyViewMessage message, final MessageContext ctx)
     {
-        return ColonyManager.handleColonyViewMessage(message.colonyId, message.colonyBuffer, message.isNewSubscription);
+        return ColonyManager.handleColonyViewMessage(message.colonyId, message.colonyBuffer, ctx.getClientHandler().clientWorldController, message.isNewSubscription);
     }
 }
