@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.herders;
 
-import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
