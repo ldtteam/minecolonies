@@ -339,6 +339,8 @@ public class TileEntityRack extends TileEntity
             {
                 this.main = true;
             }
+            ((TileEntityRack) entity).setNeighbor(this.getPos());
+
             updateItemStorage();
         }
         else if (this.neighbor.equals(newNeighbor) && !(world.getBlockState(newNeighbor).getBlock() instanceof BlockMinecoloniesRack))
@@ -546,7 +548,7 @@ public class TileEntityRack extends TileEntity
             }
             else if (getOtherChest() != null)
             {
-                if (main)
+                if (main && getOtherChest() != null)
                 {
                     return (T) new CombinedInvWrapper(inventory, getOtherChest().inventory);
                 }
