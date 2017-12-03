@@ -76,14 +76,18 @@ public final class RecipeHandler
         addHutRecipe(new ItemStack(ModBlocks.blockHutBuilder, 1), Items.SPRUCE_DOOR);
         addHutRecipe(new ItemStack(ModBlocks.blockHutFarmer, 1), Items.WOODEN_HOE);
         addHutRecipe(new ItemStack(ModBlocks.blockHutFarmer, 2), Items.STONE_HOE);
-        addHutRecipe(new ItemStack(ModBlocks.blockHutCitizen, 1), "torch");
+        addHutRecipe(new ItemStack(ModBlocks.blockHutCitizen, 1), Blocks.TORCH);
         addHutRecipe(new ItemStack(ModBlocks.blockHutFisherman, 1), Items.FISHING_ROD);
         addHutRecipe(new ItemStack(ModBlocks.blockHutGuardTower, 2), Items.BOW);
-        addHutRecipe(new ItemStack(ModBlocks.blockHutWareHouse, 1), "chest");
+        addHutRecipe(new ItemStack(ModBlocks.blockHutWareHouse, 1), Blocks.CHEST);
         addHutRecipe(new ItemStack(ModBlocks.blockHutDeliveryman, 1), Items.LEATHER_BOOTS);
         addHutRecipe(new ItemStack(ModBlocks.blockHutBaker, 1), Items.WHEAT);
         addHutRecipe(new ItemStack(ModBlocks.blockHutBarracks, 1), Blocks.IRON_BLOCK);
-        
+        addHutRecipe(new ItemStack(ModBlocks.blockHutShepherd, 1), Blocks.WOOL);
+        addHutRecipe(new ItemStack(ModBlocks.blockHutCowboy, 1), Items.LEATHER);
+        addHutRecipe(new ItemStack(ModBlocks.blockHutSwineHerder, 1), Items.PORKCHOP);
+        addHutRecipe(new ItemStack(ModBlocks.blockHutChickenHerder, 1), Items.EGG);
+
         //Register Scepters
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.scanTool, 1), "  I", " S ", "S  ", 'I', Items.IRON_INGOT, 'S', WOODEN_STICK));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.scanTool, 1), "B", 'B', ModItems.buildTool));

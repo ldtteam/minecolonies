@@ -275,6 +275,58 @@ public enum AIState
     /**
      * Take the product out of the oven.
      */
-    BAKER_TAKE_OUT_OF_OVEN
+    BAKER_TAKE_OUT_OF_OVEN,
+
+    /*
+ ###Herder###
+     */
+
+    /**
+     * Searching for new animals.
+     */
+    HERDER_SEARCH,
+
+    /**
+     * Walk to animal.
+     */
+    HERDER_WALK,
+
+    /**
+     * Breed animals.
+     */
+    HERDER_BREED,
+
+    /**
+     * Butcher animals.
+     */
+    HERDER_BUTCHER,
+
+    /**
+     * Herder deciding what to do.
+     */
+    HERDER_DECIDE,
+
+    /**
+     * Pickup items around hut.
+     */
+    HERDER_PICKUP,
+
+    /*
+ ###Shepherd###
+     */
+
+    /**
+     * Shear all the sheep!
+     */
+    SHEPHERD_SHEAR,
+
+    /*
+ ###Cowboy###
+     */
+
+    /**
+     * Milk all the cows!
+     */
+    COWBOY_MILK
 
 }

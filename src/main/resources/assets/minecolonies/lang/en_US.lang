@@ -431,6 +431,7 @@ tile.minecolonies.blockTimberFrame.name=Plain Timber Frame
 tile.minecolonies.blockMinecoloniesRack.name=Rack
 
 com.minecolonies.coremod.status.waitingForWork=Searching job
+com.minecolonies.coremod.status.goingToHut=Going to Hut!
 com.minecolonies.coremod.status.sleeping=Let me sleep
 com.minecolonies.coremod.status.waiting=Waiting for:
 com.minecolonies.coremod.status.rainStop=the rain to stop
@@ -460,6 +461,30 @@ com.minecolonies.coremod.status.chopping=Chopping
 com.minecolonies.coremod.status.stuckinleaves=Stuck in leaves!
 tile.minecolonies.blockWayPoint.name=Waypoint placeholder
 tile.minecolonies.blockHutBarracksTower.name=BarracksTower
+
+com.minecolonies.coremod.status.herder.deciding=Deciding what to do!
+com.minecolonies.coremod.status.herder.goingToHut=Going to my Hut!
+com.minecolonies.coremod.status.herder.breeding=Breeding Animals!
+com.minecolonies.coremod.status.herder.searching=Searching for Animals!
+com.minecolonies.coremod.status.herder.goingToAnimal=Travelling to animal!
+com.minecolonies.coremod.status.herder.butchering=Butchering Animals!
+com.minecolonies.coremod.status.shepherd.shearing=Shearing!
+
+com.minecolonies.coremod.job.Cowboy=Cowboy
+com.minecolonies.coremod.gui.workerHuts.cowboyHut=Cowboy's Hut
+tile.minecolonies.blockHutCowboy.name=Cowboy
+com.minecolonies.coremod.job.Shepherd=Shepherd
+com.minecolonies.coremod.gui.workerHuts.shepherdHut=Shepherd's Hut
+tile.minecolonies.blockHutShepherd.name=Shepherd
+com.minecolonies.coremod.job.SwineHerder=Swine Herder
+com.minecolonies.coremod.gui.workerHuts.swineHerderHut=Swine Herder's Hut
+tile.minecolonies.blockHutSwineHerder.name=Swine Herder
+com.minecolonies.coremod.job.ChickenHerder=Chicken Herder
+com.minecolonies.coremod.gui.workerHuts.chickenHerderHut=Chicken Herder's Hut
+tile.minecolonies.blockHutChickenHerder.name=Chicken Herder
+
+tile.minecolonies.blockwaypoint.name=Waypoint placeholder
+tile.minecolonies.blockHutBarracksTower.name=Barracks Tower
 tile.minecolonies.blockHutBarracks.name=Barracks
 com.minecolonies.coremod.gui.workerHuts.buildBarracks=Barracks
 

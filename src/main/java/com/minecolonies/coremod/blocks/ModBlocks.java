@@ -7,10 +7,10 @@ import net.minecraftforge.fml.common.registry.IForgeRegistry;
 /**
  * Class to create the modBlocks.
  * References to the blocks can be made here
- *
+ * <p>
  * We disabled the following finals since we are neither able to mark the items as final, nor do we want to provide public accessors.
  */
-@SuppressWarnings({"squid:ClassVariableVisibilityCheck", "squid:S2444", "squid:S1444", "squid:S1820" , })
+@SuppressWarnings({"squid:ClassVariableVisibilityCheck", "squid:S2444", "squid:S1444", "squid:S1820",})
 public final class ModBlocks
 {
     /*
@@ -20,19 +20,23 @@ public final class ModBlocks
     public static BlockHutTownHall            blockHutTownHall;
     public static BlockHutCitizen             blockHutCitizen;
     public static BlockHutMiner               blockHutMiner;
-    public static BlockHutLumberjack          blockHutLumberjack;
-    public static BlockHutBaker               blockHutBaker;
-    public static BlockHutBuilder             blockHutBuilder;
-    public static BlockHutDeliveryman         blockHutDeliveryman;
-    public static BlockHutBlacksmith          blockHutBlacksmith;
-    public static BlockHutStonemason          blockHutStonemason;
-    public static BlockHutFarmer              blockHutFarmer;
-    public static BlockHutFisherman           blockHutFisherman;
-    public static BlockSubstitution           blockSubstitution;
-    public static BlockSolidSubstitution      blockSolidSubstitution;
-    public static BlockHutField               blockHutField;
-    public static BlockHutGuardTower          blockHutGuardTower;
-    public static BlockHutWareHouse           blockHutWareHouse;
+    public static BlockHutLumberjack     blockHutLumberjack;
+    public static BlockHutBaker          blockHutBaker;
+    public static BlockHutBuilder        blockHutBuilder;
+    public static BlockHutDeliveryman    blockHutDeliveryman;
+    public static BlockHutBlacksmith     blockHutBlacksmith;
+    public static BlockHutStonemason     blockHutStonemason;
+    public static BlockHutFarmer         blockHutFarmer;
+    public static BlockHutShepherd       blockHutShepherd;
+    public static BlockHutSwineHerder    blockHutSwineHerder;
+    public static BlockHutChickenHerder  blockHutChickenHerder;
+    public static BlockHutCowboy         blockHutCowboy;
+    public static BlockHutFisherman      blockHutFisherman;
+    public static BlockSubstitution      blockSubstitution;
+    public static BlockSolidSubstitution blockSolidSubstitution;
+    public static BlockHutField          blockHutField;
+    public static BlockHutGuardTower     blockHutGuardTower;
+    public static BlockHutWareHouse      blockHutWareHouse;
     public static BlockConstructionTape       blockConstructionTape;
     public static BlockConstructionTapeCorner blockConstructionTapeCorner;
     public static BlockMinecoloniesRack       blockRack;
@@ -68,6 +72,10 @@ public final class ModBlocks
         blockHutFarmer = new BlockHutFarmer().registerBlock(registry);
         blockHutField = new BlockHutField().registerBlock(registry);
         blockHutFisherman = new BlockHutFisherman().registerBlock(registry);
+        blockHutShepherd = new BlockHutShepherd().registerBlock(registry);
+        blockHutSwineHerder = new BlockHutSwineHerder().registerBlock(registry);
+        blockHutChickenHerder = new BlockHutChickenHerder().registerBlock(registry);
+        blockHutCowboy = new BlockHutCowboy().registerBlock(registry);
         blockHutGuardTower = new BlockHutGuardTower().registerBlock(registry);
         blockHutLumberjack = new BlockHutLumberjack().registerBlock(registry);
         blockHutMiner = new BlockHutMiner().registerBlock(registry);
@@ -97,6 +105,10 @@ public final class ModBlocks
         blockHutFarmer.registerItemBlock(registry);
         blockHutField.registerItemBlock(registry);
         blockHutFisherman.registerItemBlock(registry);
+        blockHutShepherd.registerItemBlock(registry);
+        blockHutSwineHerder.registerItemBlock(registry);
+        blockHutChickenHerder.registerItemBlock(registry);
+        blockHutCowboy.registerItemBlock(registry);
         blockHutGuardTower.registerItemBlock(registry);
         blockHutLumberjack.registerItemBlock(registry);
         blockHutMiner.registerItemBlock(registry);

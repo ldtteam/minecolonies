@@ -133,7 +133,10 @@ public abstract class AbstractBuilding
 
     /**
      * Map to resolve classNameHash to class.
+     *
+     * The suppression is to suppress "Remove reference to ***" for all of the following.
      */
+    @SuppressWarnings("squid:S2390")
     @NotNull
     private static final Map<Integer, Class<?>> classNameHashToViewClassMap = new HashMap<>();
 
@@ -144,6 +147,10 @@ public abstract class AbstractBuilding
     {
         addMapping("Baker", BuildingBaker.class, BuildingBaker.View.class, BlockHutBaker.class);
         addMapping("Blacksmith", BuildingBlacksmith.class, BuildingBlacksmith.View.class, BlockHutBlacksmith.class);
+        addMapping("Shepherd", BuildingShepherd.class, BuildingShepherd.View.class, BlockHutShepherd.class);
+        addMapping("Cowboy", BuildingCowboy.class, BuildingCowboy.View.class, BlockHutCowboy.class);
+        addMapping("SwineHerder", BuildingSwineHerder.class, BuildingSwineHerder.View.class, BlockHutSwineHerder.class);
+        addMapping("ChickenHerder", BuildingChickenHerder.class, BuildingChickenHerder.View.class, BlockHutChickenHerder.class);
         addMapping("Builder", BuildingBuilder.class, BuildingBuilderView.class, BlockHutBuilder.class);
         addMapping("Home", BuildingHome.class, BuildingHome.View.class, BlockHutCitizen.class);
         addMapping("Farmer", BuildingFarmer.class, BuildingFarmer.View.class, BlockHutFarmer.class);

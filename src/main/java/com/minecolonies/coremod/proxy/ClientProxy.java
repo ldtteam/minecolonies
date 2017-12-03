@@ -24,10 +24,13 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import com.minecolonies.structures.event.RenderEventHandler;
 import com.minecolonies.structures.helpers.Settings;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -107,6 +110,13 @@ public class ClientProxy extends CommonProxy
         window.open();
     }
 
+    public void registerBlockHut(final Block block)
+    {
+        final ItemModelMesher itemModelMesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
+
+        itemModelMesher.register(Item.getItemFromBlock(block), 0 , new ModelResourceLocation(block.getRegistryName(), INVENTORY));
+    }
+
     @Override
     public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final WindowBuildTool.FreeMode mode)
     {
@@ -120,6 +130,55 @@ public class ClientProxy extends CommonProxy
     }
 
     /**
+     * Registers one model for a block, with meta 0.
+     * @param block the block to register the model for.
+     */
+    private static void registerBlockModel(final Block block)
+    {
+        registerBlockModel(block, 0, block.getRegistryName().toString());
+    }
+
+    /**
+     * Registers one model for a block.
+     * @param block the block to register the model for.
+     * @param meta the meta of the block to register the model for.
+     * @param resourceName the name to use for the block
+     */
+    private static void registerBlockModel(final Block block, final int meta, final String resourceName)
+    {
+        final Item item = Item.getItemFromBlock(block);
+        if (item != null)
+        {
+            ModelLoader.setCustomModelResourceLocation(item, meta,
+              new ModelResourceLocation(resourceName, INVENTORY));
+        }
+    }
+
+    /**
+     * Registers one model for an item, with meta 0.
+     * @param item the item to register the model for.
+     */
+    private static void registerItemModel(final Item item)
+    {
+        registerItemModel(item, 0, item.getRegistryName().toString());
+    }
+
+    /**
+     * Registers one model for a item.
+     * @param item the item to register the model for.
+     * @param meta the meta of the item to register the model for.
+     * @param resourceName the name to use for the block
+     */
+    private static void registerItemModel(final Item item, final int meta, final String resourceName)
+    {
+        if (item != null)
+        {
+            ModelLoader.setCustomModelResourceLocation(item, meta,
+              new ModelResourceLocation(resourceName, INVENTORY));
+        }
+    }
+
+    /**
      * Event handler for forge ModelRegistryEvent event.
      *
      * @param event the forge pre ModelRegistryEvent event.
@@ -127,93 +186,56 @@ public class ClientProxy extends CommonProxy
     @SubscribeEvent
     public static void registerModels(@NotNull final ModelRegistryEvent event)
     {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockHutBaker), 0,
-                new ModelResourceLocation(ModBlocks.blockHutBaker.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockHutBlacksmith), 0,
-                new ModelResourceLocation(ModBlocks.blockHutBlacksmith.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockHutBuilder), 0,
-                new ModelResourceLocation(ModBlocks.blockHutBuilder.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockHutCitizen), 0,
-                new ModelResourceLocation(ModBlocks.blockHutCitizen.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockHutFarmer), 0,
-                new ModelResourceLocation(ModBlocks.blockHutFarmer.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockHutFisherman), 0,
-                new ModelResourceLocation(ModBlocks.blockHutFisherman.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockHutLumberjack), 0,
-                new ModelResourceLocation(ModBlocks.blockHutLumberjack.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockHutMiner), 0,
-                new ModelResourceLocation(ModBlocks.blockHutMiner.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockHutStonemason), 0,
-                new ModelResourceLocation(ModBlocks.blockHutStonemason.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockHutTownHall), 0,
-                new ModelResourceLocation(ModBlocks.blockHutTownHall.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockHutWareHouse), 0,
-                new ModelResourceLocation(ModBlocks.blockHutWareHouse.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockHutDeliveryman), 0,
-                new ModelResourceLocation(ModBlocks.blockHutDeliveryman.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockSubstitution), 0,
-                new ModelResourceLocation(ModBlocks.blockSubstitution.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockHutField), 0,
-                new ModelResourceLocation(ModBlocks.blockHutField.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockHutGuardTower), 0,
-                new ModelResourceLocation(ModBlocks.blockHutGuardTower.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockHutBarracks), 0,
-                new ModelResourceLocation(ModBlocks.blockHutBarracks.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockHutBarracksTower), 0,
-                new ModelResourceLocation(ModBlocks.blockHutBarracksTower.getRegistryName(), INVENTORY));
+        //Colony Buildings
+        registerBlockModel(ModBlocks.blockHutBaker);
+        registerBlockModel(ModBlocks.blockHutBlacksmith);
+        registerBlockModel(ModBlocks.blockHutBuilder);
+        registerBlockModel(ModBlocks.blockHutCitizen);
+        registerBlockModel(ModBlocks.blockHutFarmer);
+        registerBlockModel(ModBlocks.blockHutFisherman);
+        registerBlockModel(ModBlocks.blockHutLumberjack);
+        registerBlockModel(ModBlocks.blockHutMiner);
+        registerBlockModel(ModBlocks.blockHutStonemason);
+        registerBlockModel(ModBlocks.blockHutTownHall);
+        registerBlockModel(ModBlocks.blockHutWareHouse);
+        registerBlockModel(ModBlocks.blockHutDeliveryman);
+        registerBlockModel(ModBlocks.blockSubstitution);
+        registerBlockModel(ModBlocks.blockHutField);
+        registerBlockModel(ModBlocks.blockHutGuardTower);
+        registerBlockModel(ModBlocks.blockHutBarracks);
+        registerBlockModel(ModBlocks.blockHutBarracksTower);
 
-
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockSolidSubstitution), 0,
-                new ModelResourceLocation(ModBlocks.blockSolidSubstitution.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrame), 0,
-                new ModelResourceLocation(ModBlocks.blockTimberFrame.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockConstructionTape), 0,
-                new ModelResourceLocation(ModBlocks.blockConstructionTape.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockConstructionTapeCorner), 0,
-                new ModelResourceLocation(ModBlocks.blockConstructionTapeCorner.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockRack), 0,
-                new ModelResourceLocation(ModBlocks.blockRack.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockWayPoint), 0,
-                new ModelResourceLocation(ModBlocks.blockWayPoint.getRegistryName(), INVENTORY));
-
-
-        ModelLoader.setCustomModelResourceLocation(ModItems.buildTool, 0,
-                new ModelResourceLocation(ModItems.buildTool.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(ModItems.caliper, 0,
-                new ModelResourceLocation(ModItems.caliper.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(ModItems.scanTool, 0,
-                new ModelResourceLocation(ModItems.scanTool.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(ModItems.scepterGuard, 0,
-                new ModelResourceLocation(ModItems.scepterGuard.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(ModItems.supplyChest, 0,
-                new ModelResourceLocation(ModItems.supplyChest.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(ModItems.supplyCamp, 0,
-                new ModelResourceLocation(ModItems.supplyCamp.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(ModItems.permTool, 0,
-                new ModelResourceLocation(ModItems.permTool.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(ModItems.ancientTome, 0,
-                new ModelResourceLocation(ModItems.ancientTome.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(ModItems.chiefSword, 0,
-                new ModelResourceLocation(ModItems.chiefSword.getRegistryName(), INVENTORY));
-
-        // Achievement proxy Items
-        ModelLoader.setCustomModelResourceLocation(ModItems.itemAchievementProxySettlement, 0,
-                new ModelResourceLocation(ModItems.itemAchievementProxySettlement.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(ModItems.itemAchievementProxyTown, 0,
-                new ModelResourceLocation(ModItems.itemAchievementProxyTown.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(ModItems.itemAchievementProxyCity, 0,
-                new ModelResourceLocation(ModItems.itemAchievementProxyCity.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(ModItems.itemAchievementProxyMetropolis, 0,
-                new ModelResourceLocation(ModItems.itemAchievementProxyMetropolis.getRegistryName(), INVENTORY));
-
+        //Standard blocks
+        registerBlockModel(ModBlocks.blockSolidSubstitution);
+        registerBlockModel(ModBlocks.blockTimberFrame);
+        registerBlockModel(ModBlocks.blockConstructionTape);
+        registerBlockModel(ModBlocks.blockConstructionTapeCorner);
+        registerBlockModel(ModBlocks.blockRack);
+        registerBlockModel(ModBlocks.blockWayPoint);
 
         ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());
 
         for(final BlockPaperwall.EnumType type: BlockPaperwall.EnumType.values())
         {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockPaperWall), type.getMetadata(),
-                    new ModelResourceLocation(ModBlocks.blockPaperWall.getRegistryName()  + "_" + type.getName(), INVENTORY));
+            registerBlockModel(ModBlocks.blockPaperWall, type.getMetadata(), ModBlocks.blockPaperWall.getRegistryName()  + "_" + type.getName());
         }
+
+        //Items
+        registerItemModel(ModItems.buildTool);
+        registerItemModel(ModItems.caliper);
+        registerItemModel(ModItems.scanTool);
+        registerItemModel(ModItems.scepterGuard);
+        registerItemModel(ModItems.supplyChest);
+        registerItemModel(ModItems.supplyCamp);
+        registerItemModel(ModItems.permTool);
+        registerItemModel(ModItems.ancientTome);
+        registerItemModel(ModItems.chiefSword);
+
+        // Achievement proxy Items
+        registerItemModel(ModItems.itemAchievementProxySettlement);
+        registerItemModel(ModItems.itemAchievementProxyTown);
+        registerItemModel(ModItems.itemAchievementProxyCity);
+        registerItemModel(ModItems.itemAchievementProxyMetropolis);
     }
 
     @Override

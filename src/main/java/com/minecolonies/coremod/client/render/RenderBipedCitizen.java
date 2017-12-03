@@ -29,7 +29,15 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         idToMaleModelMap.put(Model.FARMER, new ModelEntityFarmerMale());
         idToMaleModelMap.put(Model.FISHERMAN, new ModelEntityFishermanMale());
         idToMaleModelMap.put(Model.BAKER, new ModelEntityBakerMale());
+        idToMaleModelMap.put(Model.CHICKEN_FARMER, new ModelEntityChickenFarmerMale());
+        idToMaleModelMap.put(Model.COW_FARMER, new ModelEntityCowFarmerMale());
+        idToMaleModelMap.put(Model.PIG_FARMER, new ModelEntityPigFarmerMale());
+        idToMaleModelMap.put(Model.SHEEP_FARMER, new ModelEntitySheepFarmerMale());
 
+        idToFemaleModelMap.put(Model.SHEEP_FARMER, new ModelEntityFarmerFemale());
+        idToFemaleModelMap.put(Model.PIG_FARMER, new ModelEntityFarmerFemale());
+        idToFemaleModelMap.put(Model.COW_FARMER, new ModelEntityFarmerFemale());
+        idToFemaleModelMap.put(Model.CHICKEN_FARMER, new ModelEntityFarmerFemale());
         idToFemaleModelMap.put(Model.NOBLE, new ModelEntityCitizenFemaleNoble());
         idToFemaleModelMap.put(Model.ARISTOCRAT, new ModelEntityCitizenFemaleAristocrat());
         idToFemaleModelMap.put(Model.BUILDER, new ModelEntityBuilderFemale());
@@ -94,7 +102,11 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         FISHERMAN("Fisherman", 1),
         ARCHER_GUARD("Archer", 1),
         KNIGHT_GUARD("Knight", 1),
-        BAKER("Baker", 1);
+        BAKER("Baker", 1),
+        CHICKEN_FARMER("ChickenFarmer", 1),
+        COW_FARMER("CowFarmer", 1),
+        PIG_FARMER("PigFarmer", 1),
+        SHEEP_FARMER("SheepFarmer", 1);
 
         /**
          * String describing the citizen.
