@@ -76,7 +76,10 @@ public class BuildingFarmer extends AbstractBuildingWorker
      * The last field tag.
      */
     private static final String LAST_FIELD_TAG = "lastField";
-
+    /**
+     * Sets the amount of saplings the lumberjack should keep.
+     */
+    private static final int SEEDS_TO_KEEP = 64;
     /**
      * The list of the fields the farmer manages.
      */
@@ -92,16 +95,10 @@ public class BuildingFarmer extends AbstractBuildingWorker
      */
     @Nullable
     private Field lastField;
-
     /**
      * Fields should be assigned manually to the farmer.
      */
     private boolean assignManually = false;
-
-    /**
-     * Sets the amount of saplings the lumberjack should keep.
-     */
-    private static final int SEEDS_TO_KEEP = 64;
 
     /**
      * Public constructor which instantiates the building.
@@ -207,57 +204,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
         return null;
     }
 
-    /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
-    @Override
-    public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
-    {
-        final Map<Predicate<ItemStack>, Integer> toKeep = new HashMap<>(keepX);
-        toKeep.putAll(keepX);
-        for (final Field field : farmerFields)
-        {
-            if (!ItemStackUtils.isEmpty(field.getSeed()))
-            {
-                final ItemStack seedStack = field.getSeed();
-                toKeep.put(seedStack::isItemEqual, SEEDS_TO_KEEP);
-            }
-        }
-        return toKeep;
-    }
-
-    @NotNull
-    @Override
-    public String getSchematicName()
-    {
-        return FARMER;
-    }
-
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return MAX_BUILDING_LEVEL;
-    }
-
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-
-        if (newLevel == 1)
-        {
-            getColony().triggerAchievement(ModAchievements.achievementBuildingFarmer);
-        }
-        if (newLevel >= getMaxBuildingLevel())
-        {
-            getColony().triggerAchievement(ModAchievements.achievementUpgradeFarmerMax);
-        }
-    }
-
     @NotNull
     @Override
     public AbstractJob createJob(@NotNull final CitizenData citizen)
@@ -350,12 +296,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
     }
 
-    @Override
-    public void onWakeUp()
-    {
-        resetFields();
-    }
-
     @NotNull
     @Override
     public String getJobName()
@@ -420,6 +360,75 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
     }
 
+    @Override
+    public void onWakeUp()
+    {
+        resetFields();
+    }
+
+    @NotNull
+    @Override
+    public String getSchematicName()
+    {
+        return FARMER;
+    }
+
+    @Override
+    public int getMaxBuildingLevel()
+    {
+        return MAX_BUILDING_LEVEL;
+    }
+
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+
+        if (newLevel == 1)
+        {
+            getColony().triggerAchievement(ModAchievements.achievementBuildingFarmer);
+        }
+        if (newLevel >= getMaxBuildingLevel())
+        {
+            getColony().triggerAchievement(ModAchievements.achievementUpgradeFarmerMax);
+        }
+    }
+
+    /**
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @return a list of objects which should be kept.
+     */
+    @Override
+    public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
+    {
+        final Map<Predicate<ItemStack>, Integer> toKeep = new HashMap<>(keepX);
+        toKeep.putAll(keepX);
+        for (final Field field : farmerFields)
+        {
+            if (!ItemStackUtils.isEmpty(field.getSeed()))
+            {
+                final ItemStack seedStack = field.getSeed();
+                toKeep.put(seedStack::isItemEqual, SEEDS_TO_KEEP);
+            }
+        }
+        return toKeep;
+    }
+
+    /**
+     * Resets the fields to need work again.
+     */
+    public void resetFields()
+    {
+        for (@NotNull final Field field : farmerFields)
+        {
+            field.setNeedsWork(true);
+            field.calculateSize(getColony().getWorld(), field.getLocation().down());
+        }
+    }
+
     /**
      * Synchronize field list with colony.
      *
@@ -458,18 +467,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
                     }
                 }
             }
-        }
-    }
-
-    /**
-     * Resets the fields to need work again.
-     */
-    public void resetFields()
-    {
-        for (@NotNull final Field field : farmerFields)
-        {
-            field.setNeedsWork(true);
-            field.calculateSize(getColony().getWorld(), field.getLocation().down());
         }
     }
 

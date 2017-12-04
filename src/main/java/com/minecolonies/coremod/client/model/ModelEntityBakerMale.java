@@ -15,7 +15,7 @@ public class ModelEntityBakerMale extends ModelBiped
     {
         textureWidth = 128;
         textureHeight = 64;
-        
+
         bipedRightArm = new ModelRenderer(this, 40, 16);
         bipedRightArm.addBox(-3F, -2F, -2F, 4, 12, 4);
         bipedRightArm.setRotationPoint(-5F, 2F, 0F);
@@ -95,13 +95,13 @@ public class ModelEntityBakerMale extends ModelBiped
 
     @Override
     public void setRotationAngles(
-            final float limbSwing,
-            final float limbSwingAmount,
-            final float ageInTicks,
-            final float netHeadYaw,
-            final float headPitch,
-            final float scaleFactor,
-            final Entity entityIn)
+                                   final float limbSwing,
+                                   final float limbSwingAmount,
+                                   final float ageInTicks,
+                                   final float netHeadYaw,
+                                   final float headPitch,
+                                   final float scaleFactor,
+                                   final Entity entityIn)
     {
         final float bodyX = bipedBody.rotateAngleX;
         final float headX = bipedHead.rotateAngleX;
@@ -112,5 +112,4 @@ public class ModelEntityBakerMale extends ModelBiped
         top.rotateAngleX = headX;
         super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
     }
-
 }

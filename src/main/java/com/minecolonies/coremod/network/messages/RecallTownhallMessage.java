@@ -75,7 +75,7 @@ public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage
                 for (final CitizenData citizenData : colony.getCitizens().values())
                 {
                     EntityCitizen citizen = citizenData.getCitizenEntity();
-                    if(citizen == null)
+                    if (citizen == null)
                     {
 
                         Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));

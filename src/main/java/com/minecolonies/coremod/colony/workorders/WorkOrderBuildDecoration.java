@@ -5,6 +5,7 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
@@ -62,7 +63,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     {
         super();
         //normalise structure name
-        final Structures.StructureName sn = new Structures.StructureName(structureName);
+        final StructureName sn = new StructureName(structureName);
         this.structureName = sn.toString();
         this.workOrderName = workOrderName;
         this.buildingRotation = rotation;
@@ -92,7 +93,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     {
         super.readFromNBT(compound);
         buildingLocation = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
-        final Structures.StructureName sn = new Structures.StructureName(compound.getString(TAG_SCHEMATIC_NAME));
+        final StructureName sn = new StructureName(compound.getString(TAG_SCHEMATIC_NAME));
         structureName = sn.toString();
         workOrderName = compound.getString(TAG_WORKORDER_NAME);
         cleared = compound.getBoolean(TAG_IS_CLEARED);
@@ -100,7 +101,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         if (!Structures.hasMD5(structureName))
         {
             // If the schematic move we can use the MD5 hash to find it
-            final Structures.StructureName newSN = Structures.getStructureNameByMD5(md5);
+            final StructureName newSN = Structures.getStructureNameByMD5(md5);
             if (newSN == null)
             {
                 Log.getLogger().error("WorkOrderBuildDecoration.readFromNBT: Could not find " + structureName);
@@ -149,6 +150,12 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         compound.setBoolean(TAG_IS_MIRRORED, isMirrored);
     }
 
+    @Override
+    public boolean isValid(final Colony colony)
+    {
+        return true;
+    }
+
     /**
      * Attempt to fulfill the Work Order.
      * Override this with an implementation for the Work Order to find a Citizen to perform the job
@@ -185,7 +192,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
             if (!job.hasWorkOrder() && canBuild(citizen))
             {
                 final double distance = citizen.getWorkBuilding().getID().distanceSq(this.buildingLocation);
-                if(claimedBy == null || distance < distanceToBuilder)
+                if (claimedBy == null || distance < distanceToBuilder)
                 {
                     claimedBy = citizen;
                     distanceToBuilder = distance;
@@ -193,7 +200,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
             }
         }
 
-        if(claimedBy != null)
+        if (claimedBy != null)
         {
             final JobBuilder job = claimedBy.getJob(JobBuilder.class);
             job.setWorkOrder(this);
@@ -202,6 +209,22 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         }
 
         sendBuilderMessage(colony, hasBuilder, sendMessage);
+    }
+
+    /**
+     * Checks if a builder may accept this workOrder.
+     * <p>
+     * Suppressing Sonar Rule squid:S1172
+     * This rule does "Unused method parameters should be removed"
+     * But in this case extending class may need to use the citizen parameter
+     *
+     * @param citizen which could build it or not
+     * @return true if he is able to.
+     */
+    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
+    protected boolean canBuild(@NotNull final CitizenData citizen)
+    {
+        return true;
     }
 
     /**
@@ -225,29 +248,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
 
         hasSentMessageForThisWorkOrder = true;
         LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
-                "entity.builder.messageNoBuilder");
-    }
-
-    /**
-     * Checks if a builder may accept this workOrder.
-     * <p>
-     * Suppressing Sonar Rule squid:S1172
-     * This rule does "Unused method parameters should be removed"
-     * But in this case extending class may need to use the citizen parameter
-     *
-     * @param citizen which could build it or not
-     * @return true if he is able to.
-     */
-    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
-    protected boolean canBuild(@NotNull final CitizenData citizen)
-    {
-        return true;
-    }
-
-    @Override
-    public boolean isValid(final Colony colony)
-    {
-        return true;
+          "entity.builder.messageNoBuilder");
     }
 
     @NotNull
@@ -261,6 +262,23 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     protected String getValue()
     {
         return workOrderName;
+    }
+
+    @Override
+    public void onAdded(final Colony colony)
+    {
+        super.onAdded(colony);
+        if (colony != null && colony.getWorld() != null)
+        {
+            ConstructionTapeHelper.placeConstructionTape(this, colony.getWorld());
+        }
+    }
+
+    @Override
+    public void onRemoved(final Colony colony)
+    {
+        super.onRemoved(colony);
+        ConstructionTapeHelper.removeConstructionTape(this, colony.getWorld());
     }
 
     /**
@@ -347,22 +365,5 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     public boolean isMirrored()
     {
         return isMirrored;
-    }
-
-    @Override
-    public void onAdded(final Colony colony)
-    {
-        super.onAdded(colony);
-        if (colony != null && colony.getWorld() != null)
-        {
-            ConstructionTapeHelper.placeConstructionTape(this, colony.getWorld());
-        }
-    }
-
-    @Override
-    public void onRemoved(final Colony colony)
-    {
-        super.onRemoved(colony);
-        ConstructionTapeHelper.removeConstructionTape(this, colony.getWorld());
     }
 }

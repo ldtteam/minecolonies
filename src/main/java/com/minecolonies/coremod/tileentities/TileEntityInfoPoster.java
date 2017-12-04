@@ -13,9 +13,24 @@ import javax.annotation.Nullable;
 public class TileEntityInfoPoster extends TileEntity
 {
     public final ITextComponent[] signText =
-            new ITextComponent[] {new TextComponentString(""), new TextComponentString(""), new TextComponentString(""), new TextComponentString("")};
+      new ITextComponent[] {new TextComponentString(""), new TextComponentString(""), new TextComponentString(""), new TextComponentString("")};
 
     private final CommandResultStats stats = new CommandResultStats();
+
+    @Override
+    public void readFromNBT(final NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+
+        for (int i = 0; i < signText.length; ++i)
+        {
+            final String s = compound.getString("Text" + (i + 1));
+            final ITextComponent itextcomponent = ITextComponent.Serializer.jsonToComponent(s);
+            this.signText[i] = itextcomponent;
+        }
+
+        this.stats.readStatsFromNBT(compound);
+    }
 
     @Override
     public NBTTagCompound writeToNBT(final NBTTagCompound compound)
@@ -38,21 +53,6 @@ public class TileEntityInfoPoster extends TileEntity
         this.setWorld(worldIn);
     }
 
-    @Override
-    public void readFromNBT(final NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-
-        for (int i = 0; i < signText.length; ++i)
-        {
-            final String s = compound.getString("Text" + (i + 1));
-            final ITextComponent itextcomponent = ITextComponent.Serializer.jsonToComponent(s);
-            this.signText[i] = itextcomponent;
-        }
-
-        this.stats.readStatsFromNBT(compound);
-    }
-
     @Nullable
     @Override
     public SPacketUpdateTileEntity getUpdatePacket()
@@ -68,6 +68,7 @@ public class TileEntityInfoPoster extends TileEntity
 
     /**
      * Return the stats of the poster.
+     *
      * @return the stats.
      */
     public CommandResultStats getStats()

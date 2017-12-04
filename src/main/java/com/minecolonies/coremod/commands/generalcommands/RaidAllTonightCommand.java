@@ -22,8 +22,8 @@ import java.util.List;
 public class RaidAllTonightCommand extends AbstractSingleCommand
 {
 
-    public static final  String              DESC                       = "raid-tonight";
-    private static final TextComponentString SUCCESSFUL                 = new TextComponentString("Command Successful");
+    public static final  String              DESC       = "raid-tonight";
+    private static final TextComponentString SUCCESSFUL = new TextComponentString("Command Successful");
 
     /**
      * Initialize this SubCommand with it's parents.

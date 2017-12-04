@@ -11,7 +11,6 @@ public class BarbarianKillCommand extends AbstractKillCommand<AbstractEntityBarb
 
     /**
      * Initialize this SubCommand with it's parents.
-     *
      */
     public BarbarianKillCommand()
     {

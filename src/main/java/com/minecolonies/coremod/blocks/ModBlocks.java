@@ -7,10 +7,10 @@ import net.minecraftforge.registries.IForgeRegistry;
 /**
  * Class to create the modBlocks.
  * References to the blocks can be made here
- *
+ * <p>
  * We disabled the following finals since we are neither able to mark the items as final, nor do we want to provide public accessors.
  */
-@SuppressWarnings({"squid:ClassVariableVisibilityCheck", "squid:S2444", "squid:S1444", "squid:S1820" , })
+@SuppressWarnings({"squid:ClassVariableVisibilityCheck", "squid:S2444", "squid:S1444", "squid:S1820",})
 public final class ModBlocks
 {
     /*

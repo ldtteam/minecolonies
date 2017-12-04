@@ -2,30 +2,27 @@ package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.colony.CitizenData;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -76,7 +73,7 @@ public class InventoryCitizen implements IInventory
     /**
      * The citizen which owns the inventory.
      */
-    private EntityCitizen citizen;
+    private CitizenData citizen;
 
     /**
      * Creates the inventory of the citizen.
@@ -85,7 +82,7 @@ public class InventoryCitizen implements IInventory
      * @param localeEnabled Boolean whether the inventory has a custom name.
      * @param citizen       Citizen owner of the inventory.
      */
-    public InventoryCitizen(final String title, final boolean localeEnabled, final EntityCitizen citizen)
+    public InventoryCitizen(final String title, final boolean localeEnabled, final CitizenData citizen)
     {
         this.citizen = citizen;
         if (localeEnabled)
@@ -186,40 +183,15 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * Checks if a certain slot is empty.
+     * Returns the number of slots in the inventory.
      *
-     * @param index the slot.
-     * @return true if empty.
+     * @return the size of the inventory.
      */
-    public boolean isSlotEmpty(final int index)
+    @Override
+    public int getSizeInventory()
     {
-        return getStackInSlot(index) == null || getStackInSlot(index) == ItemStackUtils.EMPTY;
-    }
-
-    /**
-     * Returns the item stack currently held by the player.
-     *
-     * @return the current itemstack.
-     */
-    public ItemStack getCurrentItem()
-    {
-        return this.mainInventory.get(this.currentItem);
-    }
-
-    /**
-     * Pick a item in a certain inventory slot.
-     * Probably won't need this.
-     *
-     * @param index the slot.
-     */
-    public void pickItem(final int index)
-    {
-        final ItemStack itemstack = this.mainInventory.get(this.currentItem);
-        this.mainInventory.set(this.currentItem, this.mainInventory.get(index));
-        this.mainInventory.set(index, itemstack);
-    }
-
-    /**
+        return this.mainInventory.size();
+    }    /**
      * Get the name of this object. For citizens this returns their name.
      *
      * @return the name of the inventory.
@@ -229,137 +201,6 @@ public class InventoryCitizen implements IInventory
     public String getName()
     {
         return this.hasCustomName() ? this.customName : "citizen.inventory";
-    }
-
-    /**
-     * Finds the stack or an equivalent one in the main inventory
-     *
-     * @param stack the stack to get the slot for.
-     * @return the slot it is in.
-     */
-    @SideOnly(Side.CLIENT)
-    public int getSlotFor(final ItemStack stack)
-    {
-        for (int i = 0; i < this.mainInventory.size(); ++i)
-        {
-            if (!(this.mainInventory.get(i)).isEmpty() && InventoryCitizen.stackEqualExact(stack, this.mainInventory.get(i)))
-            {
-                return i;
-            }
-        }
-
-        return NO_SLOT;
-    }
-
-    /**
-     * Checks item, NBT, and meta if the item is not damageable
-     */
-    private static boolean stackEqualExact(final ItemStack stack1, final ItemStack stack2)
-    {
-        return stack1.getItem() == stack2.getItem()
-                 && (!stack1.getHasSubtypes() || stack1.getMetadata() == stack2.getMetadata()) && ItemStack.areItemStackTagsEqual(stack1, stack2);
-    }
-
-    /**
-     * Checks if the inventory is named.
-     *
-     * @return true if the inventory has a custom name.
-     */
-    @Override
-    public boolean hasCustomName()
-    {
-        return this.customName != null;
-    }
-
-    /**
-     * Removes matching items from the inventory.
-     *
-     * @param itemIn      The item to match, null ignores.
-     * @param metadataIn  The metadata to match, -1 ignores.
-     * @param removeCount The number of items to remove. If less than 1, removes all matching items.
-     * @param itemNBT     The NBT data to match, null ignores.
-     * @return The number of items removed from the inventory.
-     */
-    public int clearMatchingItems(@javax.annotation.Nullable final Item itemIn, final int metadataIn, final int removeCount, @javax.annotation.Nullable final NBTTagCompound itemNBT)
-    {
-        int i = 0;
-
-        for (int j = 0; j < this.getSizeInventory(); ++j)
-        {
-            final ItemStack itemstack = this.getStackInSlot(j);
-
-            if (!itemstack.isEmpty() && (itemIn == null || itemstack.getItem() == itemIn)
-                  && (metadataIn <= NO_SLOT || itemstack.getMetadata() == metadataIn) && (itemNBT == null || NBTUtil
-                                                                                                               .areNBTEquals(itemNBT, itemstack.getTagCompound(), true)))
-            {
-                final int k = removeCount <= 0 ? ItemStackUtils.getSize(itemstack) : Math.min(removeCount - i, ItemStackUtils.getSize(itemstack));
-                i += k;
-
-                if (removeCount != 0)
-                {
-                    itemstack.shrink(k);
-
-                    if (itemstack.isEmpty())
-                    {
-                        this.setInventorySlotContents(j, ItemStackUtils.EMPTY);
-                    }
-
-                    if (removeCount > 0 && i >= removeCount)
-                    {
-                        return i;
-                    }
-                }
-            }
-        }
-
-        if (!this.itemStack.isEmpty())
-        {
-            if (itemIn != null && this.itemStack.getItem() != itemIn)
-            {
-                return i;
-            }
-
-            if (metadataIn > NO_SLOT && this.itemStack.getMetadata() != metadataIn)
-            {
-                return i;
-            }
-
-            if (itemNBT != null && !NBTUtil.areNBTEquals(itemNBT, this.itemStack.getTagCompound(), true))
-            {
-                return i;
-            }
-
-            final int l = removeCount <= 0 ? ItemStackUtils.getSize(this.itemStack) : Math.min(removeCount - i, ItemStackUtils.getSize(this.itemStack));
-            i += l;
-
-            if (removeCount != 0)
-            {
-                this.itemStack.shrink(l);
-
-                if (this.itemStack.isEmpty())
-                {
-                    this.itemStack = ItemStackUtils.EMPTY;
-                }
-
-                if (removeCount > 0 && i >= removeCount)
-                {
-                    return i;
-                }
-            }
-        }
-
-        return i;
-    }
-
-    /**
-     * Returns the number of slots in the inventory.
-     *
-     * @return the size of the inventory.
-     */
-    @Override
-    public int getSizeInventory()
-    {
-        return this.mainInventory.size();
     }
 
     /**
@@ -395,6 +236,15 @@ public class InventoryCitizen implements IInventory
         }
 
         return true;
+    }    /**
+     * Checks if the inventory is named.
+     *
+     * @return true if the inventory has a custom name.
+     */
+    @Override
+    public boolean hasCustomName()
+    {
+        return this.customName != null;
     }
 
     /**
@@ -531,18 +381,8 @@ public class InventoryCitizen implements IInventory
         this.inventoryChanged = true;
         if (this.citizen != null)
         {
-            this.citizen.onInventoryChanged();
+            this.citizen.markDirty();
         }
-    }
-
-    /**
-     * Get the formatted TextComponent that will be used for the sender's username in chat.
-     */
-    @NotNull
-    @Override
-    public ITextComponent getDisplayName()
-    {
-        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
     }
 
     /**
@@ -554,6 +394,16 @@ public class InventoryCitizen implements IInventory
     @Override
     public boolean isUsableByPlayer(@NotNull final EntityPlayer player)
     {
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+        {
+            return true;
+        }
+
+        if (this.citizen == null)
+        {
+            return false;
+        }
+
         return this.citizen.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS);
     }
 
@@ -581,6 +431,14 @@ public class InventoryCitizen implements IInventory
         /*
          * This may be filled in order to specify some custom handling.
          */
+    }    /**
+     * Get the formatted TextComponent that will be used for the sender's username in chat.
+     */
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName()
+    {
+        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
     }
 
     /**
@@ -642,24 +500,6 @@ public class InventoryCitizen implements IInventory
         for (final List<ItemStack> list : this.allInventories)
         {
             list.clear();
-        }
-    }
-
-    /**
-     * Decrement the number of animations remaining. Only called on client side. This is used to handle the animation of
-     * receiving a block.
-     */
-    public void decrementAnimations()
-    {
-        for (final NonNullList<ItemStack> nonnulllist : this.allInventories)
-        {
-            for (int i = 0; i < nonnulllist.size(); ++i)
-            {
-                if (!(nonnulllist.get(i)).isEmpty())
-                {
-                    (nonnulllist.get(i)).updateAnimation(this.citizen.world, this.citizen, i, this.currentItem == i);
-                }
-            }
         }
     }
 
@@ -837,7 +677,7 @@ public class InventoryCitizen implements IInventory
 
     private boolean canMergeStacks(final ItemStack stack1, final ItemStack stack2)
     {
-        return !ItemStackUtils.isEmpty(stack1) && InventoryCitizen.stackEqualExact(stack1, stack2) && stack1.isStackable()
+        return !ItemStackUtils.isEmpty(stack1) && ItemStack.areItemStacksEqual(stack1, stack2) && stack1.isStackable()
                  && ItemStackUtils.getSize(stack1) < stack1.getMaxStackSize() && ItemStackUtils.getSize(stack1) < this.getInventoryStackLimit();
     }
 
@@ -960,56 +800,6 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * Checks if the entity can harvest a block.
-     *
-     * @param state the block.
-     * @return true if so.
-     */
-    public boolean canHarvestBlock(final IBlockState state)
-    {
-        if (state.getMaterial().isToolNotRequired())
-        {
-            return true;
-        }
-        else
-        {
-            final ItemStack itemstack = this.getStackInSlot(this.currentItem);
-            return !itemstack.isEmpty() && itemstack.canHarvestBlock(state);
-        }
-    }
-
-    /**
-     * returns a player armor item (as itemstack) contained in specified armor slot.
-     *
-     * @param slotIn the slot.
-     * @return the itemStack.
-     */
-    public ItemStack armorItemInSlot(final int slotIn)
-    {
-        return this.armorInventory.get(slotIn);
-    }
-
-    /**
-     * Drop all armor and main inventory items.
-     */
-    public void dropAllItems()
-    {
-        for (final List<ItemStack> list : this.allInventories)
-        {
-            for (int i = 0; i < list.size(); ++i)
-            {
-                final ItemStack itemstack = list.get(i);
-
-                if (!ItemStackUtils.isEmpty(itemstack))
-                {
-                    this.citizen.dropItem(itemstack.getItem(), ItemStackUtils.getSize(itemstack));
-                    list.set(i, ItemStackUtils.EMPTY);
-                }
-            }
-        }
-    }
-
-    /**
      * Stack helds by mouse, used in GUI and Containers
      *
      * @return the hold stack.
@@ -1027,56 +817,6 @@ public class InventoryCitizen implements IInventory
     public void setItemStack(final ItemStack itemStackIn)
     {
         this.itemStack = itemStackIn;
-    }
-
-    /**
-     * Returns true if the specified ItemStack exists in the inventory.
-     *
-     * @param itemStackIn the stack to be searched for.
-     * @return true if it exists.
-     */
-    public boolean hasItemStack(final ItemStack itemStackIn)
-    {
-        label19:
-
-        for (final List<ItemStack> list : this.allInventories)
-        {
-            final Iterator<ItemStack> iterator = list.iterator();
-
-            while (true)
-            {
-                if (!iterator.hasNext())
-                {
-                    continue label19;
-                }
-
-                final ItemStack itemstack = iterator.next();
-
-                if (!itemstack.isEmpty() && itemstack.isItemEqual(itemStackIn))
-                {
-                    break;
-                }
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Copy the ItemStack contents from another InventoryCitizen instance
-     *
-     * @param inventoryCitizen the citizens inventory to copy.
-     */
-    public void copyInventory(final InventoryPlayer inventoryCitizen)
-    {
-        for (int i = 0; i < this.getSizeInventory(); ++i)
-        {
-            this.setInventorySlotContents(i, inventoryCitizen.getStackInSlot(i));
-        }
-
-        this.currentItem = inventoryCitizen.currentItem;
     }
 
 

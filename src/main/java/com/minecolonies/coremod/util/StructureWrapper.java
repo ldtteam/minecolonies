@@ -59,14 +59,14 @@ public final class StructureWrapper
      */
     private final StructureProxy structure;
     /**
+     * The name this structure has.
+     */
+    private final String         name;
+    /**
      * The anchor position this structure will be
      * placed on in the minecraft world.
      */
     private       BlockPos       position;
-    /**
-     * The name this structure has.
-     */
-    private final String         name;
 
     /**
      * Load a structure into this world.
@@ -105,9 +105,9 @@ public final class StructureWrapper
      * @param complete  paste it complete (with structure blocks) or without
      */
     public static void loadAndPlaceStructureWithRotation(
-            final World worldObj, @NotNull final String name,
-            @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror,
-            final boolean complete)
+                                                          final World worldObj, @NotNull final String name,
+                                                          @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror,
+                                                          final boolean complete)
     {
         try
         {
@@ -119,39 +119,6 @@ public final class StructureWrapper
         {
             Log.getLogger().warn("Could not load structure!", e);
         }
-    }
-
-    /**
-     * Load a structure into this world
-     * and place it in the right position and rotation.
-     *
-     * @param worldObj  the world to load it in
-     * @param name      the structures name
-     * @param pos       coordinates
-     * @param rotations number of times rotated
-     * @param mirror    the mirror used.
-     * @return true if succesful.
-     */
-    public static boolean tryToLoadAndPlaceSupplyCampWithRotation(
-            final World worldObj, @NotNull final String name,
-            @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror)
-    {
-        try
-        {
-            @NotNull final StructureWrapper structureWrapper = new StructureWrapper(worldObj, name);
-            structureWrapper.rotate(rotations, worldObj, pos, mirror);
-            if (structureWrapper.checkForFreeSpace(pos))
-            {
-                structureWrapper.placeStructure(pos, false);
-                return true;
-            }
-            return false;
-        }
-        catch (final IllegalStateException e)
-        {
-            Log.getLogger().warn("Could not load structure!", e);
-        }
-        return false;
     }
 
     /**
@@ -170,48 +137,8 @@ public final class StructureWrapper
     /**
      * Place a structure into the world.
      *
-     * @param pos coordinates
-     */
-    private boolean checkForFreeSpace(@NotNull final BlockPos pos)
-    {
-        setLocalPosition(pos);
-        //structure.getBlockInfo()[0].pos
-        for (int j = 0; j < structure.getHeight(); j++)
-        {
-            for (int k = 0; k < structure.getLength(); k++)
-            {
-                for (int i = 0; i < structure.getWidth(); i++)
-                {
-                    @NotNull final BlockPos localPos = new BlockPos(i, j, k);
-
-                    final BlockPos worldPos = pos.add(localPos);
-
-                    if (worldPos.getY() <= pos.getY() && !world.getBlockState(worldPos.down()).getMaterial().isSolid())
-                    {
-                        return false;
-                    }
-
-                    final IBlockState worldState = world.getBlockState(worldPos);
-                    if (worldState.getBlock() == Blocks.BEDROCK)
-                    {
-                        return false;
-                    }
-
-                    if (worldPos.getY() > pos.getY() && worldState.getBlock() != Blocks.AIR)
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Place a structure into the world.
-     *
-     * @param pos       coordinates
-     * @param complete  paste it complete (with structure blocks) or without
+     * @param pos      coordinates
+     * @param complete paste it complete (with structure blocks) or without
      */
     private void placeStructure(@NotNull final BlockPos pos, final boolean complete)
     {
@@ -237,7 +164,7 @@ public final class StructureWrapper
                         continue;
                     }
 
-                    if(localState.getMaterial().isSolid())
+                    if (localState.getMaterial().isSolid())
                     {
                         handleBlockPlacement(worldPos, localState, complete);
                     }
@@ -301,16 +228,97 @@ public final class StructureWrapper
         }
     }
 
+    /**
+     * @return Where the hut (or any offset) is in the structure.
+     */
+    public BlockPos getOffset()
+    {
+        return structure.getOffset();
+    }
+
     private void handleBlockPlacement(final BlockPos pos, final IBlockState localState, final boolean complete)
     {
         for (final IPlacementHandler handlers : PlacementHandlers.handlers)
         {
             final Object result = handlers.handle(world, pos, localState, null, true, complete);
-            if(!(result instanceof IPlacementHandler.ActionProcessingResult) || result != IGNORE)
+            if (!(result instanceof IPlacementHandler.ActionProcessingResult) || result != IGNORE)
             {
                 return;
             }
         }
+    }
+
+    /**
+     * Load a structure into this world
+     * and place it in the right position and rotation.
+     *
+     * @param worldObj  the world to load it in
+     * @param name      the structures name
+     * @param pos       coordinates
+     * @param rotations number of times rotated
+     * @param mirror    the mirror used.
+     * @return true if succesful.
+     */
+    public static boolean tryToLoadAndPlaceSupplyCampWithRotation(
+                                                                   final World worldObj, @NotNull final String name,
+                                                                   @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror)
+    {
+        try
+        {
+            @NotNull final StructureWrapper structureWrapper = new StructureWrapper(worldObj, name);
+            structureWrapper.rotate(rotations, worldObj, pos, mirror);
+            if (structureWrapper.checkForFreeSpace(pos))
+            {
+                structureWrapper.placeStructure(pos, false);
+                return true;
+            }
+            return false;
+        }
+        catch (final IllegalStateException e)
+        {
+            Log.getLogger().warn("Could not load structure!", e);
+        }
+        return false;
+    }
+
+    /**
+     * Place a structure into the world.
+     *
+     * @param pos coordinates
+     */
+    private boolean checkForFreeSpace(@NotNull final BlockPos pos)
+    {
+        setLocalPosition(pos);
+        //structure.getBlockInfo()[0].pos
+        for (int j = 0; j < structure.getHeight(); j++)
+        {
+            for (int k = 0; k < structure.getLength(); k++)
+            {
+                for (int i = 0; i < structure.getWidth(); i++)
+                {
+                    @NotNull final BlockPos localPos = new BlockPos(i, j, k);
+
+                    final BlockPos worldPos = pos.add(localPos);
+
+                    if (worldPos.getY() <= pos.getY() && !world.getBlockState(worldPos.down()).getMaterial().isSolid())
+                    {
+                        return false;
+                    }
+
+                    final IBlockState worldState = world.getBlockState(worldPos);
+                    if (worldState.getBlock() == Blocks.BEDROCK)
+                    {
+                        return false;
+                    }
+
+                    if (worldPos.getY() > pos.getY() && worldState.getBlock() != Blocks.AIR)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -402,8 +410,8 @@ public final class StructureWrapper
             return BlockMinecoloniesRack.shouldBlockBeReplacedWithRack(structureBlock);
         }
         else if ((structureBlock instanceof BlockStairs && structureBlockState == worldBlockState)
-                || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState)
-                || structureBlock instanceof BlockWaypoint)
+                   || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState)
+                   || structureBlock instanceof BlockWaypoint)
         {
             return true;
         }
@@ -417,7 +425,7 @@ public final class StructureWrapper
 
         //had this problem in a super flat world, causes builder to sit doing nothing because placement failed
         return worldPos.getY() <= 0
-                || structureBlockState == worldBlockState;
+                 || structureBlockState == worldBlockState;
     }
 
     /**
@@ -461,14 +469,6 @@ public final class StructureWrapper
     public BlockPos getOffsetPosition()
     {
         return position.subtract(getOffset());
-    }
-
-    /**
-     * @return Where the hut (or any offset) is in the structure.
-     */
-    public BlockPos getOffset()
-    {
-        return structure.getOffset();
     }
 
     /**
@@ -534,22 +534,6 @@ public final class StructureWrapper
             return null;
         }
         return this.structure.getBlockState(this.progressPos);
-    }
-
-    /**
-     * Calculate the current block in the structure.
-     *
-     * @return the current block or null if not initialized.
-     */
-    @Nullable
-    public Block getBlock()
-    {
-        @Nullable final IBlockState state = getBlockState();
-        if (state == null)
-        {
-            return null;
-        }
-        return state.getBlock();
     }
 
     /**
@@ -672,6 +656,22 @@ public final class StructureWrapper
         }
 
         return null;
+    }
+
+    /**
+     * Calculate the current block in the structure.
+     *
+     * @return the current block or null if not initialized.
+     */
+    @Nullable
+    public Block getBlock()
+    {
+        @Nullable final IBlockState state = getBlockState();
+        if (state == null)
+        {
+            return null;
+        }
+        return state.getBlock();
     }
 
     /**

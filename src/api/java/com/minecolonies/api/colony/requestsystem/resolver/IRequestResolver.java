@@ -1,7 +1,9 @@
 package com.minecolonies.api.colony.requestsystem.resolver;
 
-import com.minecolonies.api.colony.requestsystem.IRequestManager;
+import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +20,7 @@ import java.util.List;
  *
  * @param <R> The request type that this resolver can provide.
  */
-public interface IRequestResolver<R> extends IRequester
+public interface IRequestResolver<R extends IRequestable> extends IRequester
 {
 
     /**
@@ -26,7 +28,7 @@ public interface IRequestResolver<R> extends IRequester
      *
      * @return The class that represents this Type of Request this resolver can resolve.
      */
-    Class<? extends R> getRequestType();
+    TypeToken<? extends R> getRequestType();
 
     /**
      * A PreCheck used to determine if this request resolver is able to resolve a given request.
@@ -36,31 +38,34 @@ public interface IRequestResolver<R> extends IRequester
      * @param manager        The manager that is checking if this resolver could resolve that request.
      * @return True when this resolver COULD resolve the given request, false when not.
      */
-    boolean canResolve(@NotNull IRequestManager manager, IRequest<R> requestToCheck);
+    boolean canResolve(@NotNull IRequestManager manager, IRequest<? extends R> requestToCheck);
 
     /**
      * Method used to attempt a resolving operation.
-     *
+     * <p>
      * When this attempt was successful a List with tokens of required requests is returned.
      * This list maybe empty.
      * The list should indicate all sub requests that should be fullfilled before the @code{resolve(IRequest request)} method is called.
-     *
+     * <p>
      * When this attempt was not successful, eg. this resolver could not schedule a crafting operation, a Null object should be returned.
      * In that case the next resolver will be tried by the manager.
+     * <p>
+     * IT IS VITAL THAT THE REQUEST RETURNED ARE NOT YET ASSIGNED. SIMULATION AND OTHER STRATEGIES WILL FAIL ELSE!
+     * THE MANAGER GIVEN WILL HANDLE ASSIGNING HIMSELF!
      *
      * @param request The request to resolve.
      * @param manager The manager that is attempting to resolve using this resolver.
      * @return The tokens of required requests if the attempt was successful (an empty list is allowed to indicate no requirements), null if the attempt failed.
      */
     @Nullable
-    List<IToken> attemptResolve(@NotNull IRequestManager manager, @NotNull IRequest<R> request);
+    List<IToken> attemptResolve(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
 
     /**
      * Method used to resolve a given request.
      * Is called the moment all Child requests are resolved.
-     *
+     * <p>
      * The resolver should update the state through the given manager.
-     *
+     * <p>
      * When this method is called all requirements need be fullfilled for this resolver.
      * If this is not the case it will throw a RunTimeException
      *
@@ -70,7 +75,7 @@ public interface IRequestResolver<R> extends IRequester
      *                          and all requirements should be available to this resolver at this point in time.
      */
     @Nullable
-    void resolve(@NotNull IRequestManager manager, @NotNull IRequest<R> request) throws RuntimeException;
+    void resolve(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request) throws RuntimeException;
 
     /**
      * Method called by the given manager to request a followup request.
@@ -81,37 +86,25 @@ public interface IRequestResolver<R> extends IRequester
      * @return The followup request for the completed request. Null if none is needed.
      */
     @Nullable
-    IRequest getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<R> completedRequest);
+    IRequest getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> completedRequest);
 
     /**
      * Method used to indicate to this resolver that a parent of a request assigned to him has been cancelled,
      * and that the resolver of the parent did not return a cleanup request.
-     *
+     * <p>
      * If a followup request is needed (For example picking up crafting results to bring them to storage) a request can be made to the given manager
      * which will properly handle the processing of the new request.
-     *
+     * <p>
      * The returned request will then be used as the new parent and should be used to clean up the results of this request.
      *
      * @param manager The manager that indicates the cancelling or overrulling
      * @param request The request that has been cancelled or overrulled.
+     * @return the new request if necessary. It should not be assigned yet.
+     *
      * @throws IllegalArgumentException is thrown when the cancelling or overrulling failed.
-     * @return the new request if necessary.
      */
     @Nullable
-    IRequest onParentCancelled(@NotNull IRequestManager manager, @NotNull IRequest<R> request) throws IllegalArgumentException;
-
-    /**
-     * Method used to indicate to this resolver that a request that has been made is already fullfilled by a player (Overruled).
-     *
-     * If a followup request is needed (For example picking up crafting results to bring them to storage) a request can be made to the given manager
-     * which will properly handle the processing of the new request.
-     *
-     * @param manager The manager that indicates the overrulling.
-     * @param request The request that has been overruled.
-     * @throws IllegalArgumentException is thrown when the overrulling failed.
-     */
-    @Nullable
-    void onResolvingOverruled(@NotNull IRequestManager manager, @NotNull IRequest<R> request) throws IllegalArgumentException;
+    IRequest onRequestCancelledOrOverruled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request) throws IllegalArgumentException;
 
     /**
      * The priority of this resolver.

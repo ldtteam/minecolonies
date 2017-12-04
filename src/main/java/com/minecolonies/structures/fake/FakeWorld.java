@@ -29,8 +29,8 @@ public class FakeWorld extends World
     private final Map<BlockPos, TileEntity>  entityHashMap = new HashMap<>();
 
     private final IBlockState blockState;
-    private final TileEntity entity;
-    private final boolean simulateWorld;
+    private final TileEntity  entity;
+    private final boolean     simulateWorld;
 
     /**
      * Creates a fake world.
@@ -69,14 +69,14 @@ public class FakeWorld extends World
      * @param simulateWorld if it is required to simulate the world.
      */
     public FakeWorld(
-            final IBlockState blockState,
-            final ISaveHandler saveHandlerIn,
-            final WorldInfo info,
-            final WorldProvider providerIn,
-            final Profiler profilerIn,
-            final boolean client,
-            final TileEntity entity,
-            final boolean simulateWorld)
+                      final IBlockState blockState,
+                      final ISaveHandler saveHandlerIn,
+                      final WorldInfo info,
+                      final WorldProvider providerIn,
+                      final Profiler profilerIn,
+                      final boolean client,
+                      final TileEntity entity,
+                      final boolean simulateWorld)
     {
         super(saveHandlerIn, info, providerIn, profilerIn, client);
         this.blockState = blockState;
@@ -110,23 +110,13 @@ public class FakeWorld extends World
         return true;
     }
 
-    @Override
-    public void setTileEntity(final BlockPos pos, @Nullable final TileEntity tileEntityIn)
-    {
-        if(tileEntityIn != null)
-        {
-            entityHashMap.put(pos, tileEntityIn);
-            tileEntityIn.setWorld(this);
-        }
-    }
-
     @NotNull
     @Override
     public IBlockState getBlockState(final BlockPos pos)
     {
-        if(simulateWorld)
+        if (simulateWorld)
         {
-            if(stateHashMap.containsKey(pos))
+            if (stateHashMap.containsKey(pos))
             {
                 return stateHashMap.get(pos);
             }
@@ -138,10 +128,20 @@ public class FakeWorld extends World
     @Override
     public TileEntity getTileEntity(final BlockPos pos)
     {
-        if(simulateWorld)
+        if (simulateWorld)
         {
             return entityHashMap.get(pos);
         }
         return entity;
+    }
+
+    @Override
+    public void setTileEntity(final BlockPos pos, @Nullable final TileEntity tileEntityIn)
+    {
+        if (tileEntityIn != null)
+        {
+            entityHashMap.put(pos, tileEntityIn);
+            tileEntityIn.setWorld(this);
+        }
     }
 }

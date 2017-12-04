@@ -18,7 +18,7 @@ public interface IFactory<Input, Output>
      * @return The type of request this factory can produce.
      */
     @NotNull
-    TypeToken<Output> getFactoryOutputType();
+    TypeToken<? extends Output> getFactoryOutputType();
 
     /**
      * Used to determine which type this can produce.
@@ -26,29 +26,30 @@ public interface IFactory<Input, Output>
      * @return The class that represents the Type of Request this can produce.
      */
     @NotNull
-    TypeToken<Input> getFactoryInputType();
+    TypeToken<? extends Input> getFactoryInputType();
 
     /**
      * Method to get a new instance of the output given the input and additional context data.
      *
-     * @param input   The input to build a new output for.
-     * @param context The context of the request.
+     * @param factoryController The controller calling this factory method.
+     * @param input             The input to build a new output for.
+     * @param context           The context of the request.
      * @return The new output instance for a given input.
      *
      * @throws IllegalArgumentException is thrown when the factory cannot produce a new instance out of the given context and input.
      */
     @NotNull
-    Output getNewInstance(@NotNull Input input, @NotNull Object... context) throws IllegalArgumentException;
+    Output getNewInstance(@NotNull IFactoryController factoryController, @NotNull Input input, @NotNull Object... context) throws IllegalArgumentException;
 
     /**
      * Method to serialize a given constructable.
      *
      * @param controller The controller that can be used to serialize complicated types.
-     * @param request    The request to serialize.
+     * @param output     The request to serialize.
      * @return The serialized data of the given requets.
      */
     @NotNull
-    NBTTagCompound serialize(@NotNull IFactoryController controller, @NotNull Output request);
+    NBTTagCompound serialize(@NotNull IFactoryController controller, @NotNull Output output);
 
     /**
      * Method to deserialize a given constructable.

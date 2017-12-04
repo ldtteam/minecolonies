@@ -9,6 +9,7 @@ import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.event.EventHandler;
@@ -163,7 +164,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
     @Override
     public void messageOnServerThread(final BuildToolPasteMessage message, final EntityPlayerMP player)
     {
-        final Structures.StructureName sn = new Structures.StructureName(message.structureName);
+        final StructureName sn = new StructureName(message.structureName);
         if (!Structures.hasMD5(sn))
         {
             player.sendMessage(new TextComponentString("Can not build " + message.workOrderName + ": schematic missing!"));
@@ -177,7 +178,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
                 handleHut(CompatibilityUtils.getWorld(player), player, sn, message.rotation, message.pos, message.mirror);
             }
             StructureWrapper.loadAndPlaceStructureWithRotation(player.world, message.structureName,
-                    message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete);
+              message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete);
         }
         else if(message.freeMode !=  null )
         {
@@ -243,20 +244,19 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      * @param world         World the hut is being placed into.
      * @param player        Who placed the hut.
      * @param sn            The name of the structure.
-     * @param workOrderName The name of the work order.
      * @param rotation      The number of times the structure should be rotated.
      * @param buildPos      The location the hut is being placed.
      * @param mirror        Whether or not the strcture is mirrored.
      */
     private static void handleHut(
-            @NotNull final World world, @NotNull final EntityPlayer player,
-            final Structures.StructureName sn,
-            final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+                                   @NotNull final World world, @NotNull final EntityPlayer player,
+                                   final StructureName sn,
+                                   final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
         final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
         if (tempColony != null
-                && !tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
-                && BlockPosUtil.getDistance2D(tempColony.getCenter(), buildPos) >= Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)
+              && !tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
+              && BlockPosUtil.getDistance2D(tempColony.getCenter(), buildPos) >= Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)
         {
             return;
         }
@@ -278,15 +278,14 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      * @param world         World the hut is being placed into.
      * @param player        Who placed the hut.
      * @param sn            The name of the structure.
-     * @param workOrderName The name of the work order.
      * @param rotation      The number of times the structure should be rotated.
      * @param buildPos      The location the hut is being placed.
      * @param mirror        Whether or not the strcture is mirrored.
      */
     private static void setupBuilding(
-            @NotNull final World world, @NotNull final EntityPlayer player,
-            final Structures.StructureName sn,
-            final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+                                       @NotNull final World world, @NotNull final EntityPlayer player,
+                                       final StructureName sn,
+                                       final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
         @Nullable final AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
 
@@ -309,14 +308,14 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
                 }
             }
             String name = sn.toString();
-            name = name.substring(name.length()-1);
+            name = name.substring(name.length() - 1);
 
             try
             {
                 final int level = Integer.parseInt(name);
                 building.setBuildingLevel(level);
             }
-            catch(final NumberFormatException e)
+            catch (final NumberFormatException e)
             {
                 Log.getLogger().warn("Couldn't parse the level.", e);
             }

@@ -1,23 +1,38 @@
 package com.minecolonies.api.colony.requestsystem.request;
 
 import com.google.common.collect.ImmutableCollection;
-import com.minecolonies.api.colony.requestsystem.IRequestManager;
-import com.minecolonies.api.colony.requestsystem.RequestState;
+import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.manager.AssigningStrategy;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Used to represent requests, of type R, made to the internal market of the colony.
  *
  * @param <R> The type of request, eg ItemStack, FluidStack etc.
  */
-public interface IRequest<R>
+public interface IRequest<R extends IRequestable>
 {
+
+    /**
+     * Method to get the assigning strategy for this request.
+     *
+     * @return The assigning strategy for this request.
+     */
+    default AssigningStrategy getStrategy()
+    {
+        return AssigningStrategy.PRIORITY_BASED;
+    }
 
     /**
      * The unique token representing the request outside of the management system.
@@ -34,7 +49,7 @@ public interface IRequest<R>
      * @return The class that represents this Type of Request.
      */
     @NotNull
-    Class<? extends R> getRequestType();
+    TypeToken<? extends R> getRequestType();
 
     /**
      * Returns the current state of the request.
@@ -49,7 +64,7 @@ public interface IRequest<R>
      * It is not recommended to call this method from outside of the request management system.
      *
      * @param manager the request manager.
-     * @param state The new state of this request.
+     * @param state   The new state of this request.
      */
     void setState(@NotNull IRequestManager manager, @NotNull RequestState state);
 
@@ -108,7 +123,7 @@ public interface IRequest<R>
     /**
      * Method used to set the parent of a request.
      *
-     * @param <T> generic token.
+     * @param <T>    generic token.
      * @param parent The new parent, or null to clear the existing one.
      */
     <T extends IToken> void setParent(@Nullable T parent);
@@ -123,7 +138,7 @@ public interface IRequest<R>
     /**
      * Method used to add a single Child.
      *
-     * @param <T> generic token.
+     * @param <T>   generic token.
      * @param child The new child request to add.
      */
     <T extends IToken> void addChild(@NotNull T child);
@@ -131,7 +146,7 @@ public interface IRequest<R>
     /**
      * Method to add multiple children in a single call.
      *
-     * @param <T> generic token.
+     * @param <T>      generic token.
      * @param children An array of children to add.
      */
     <T extends IToken> void addChildren(@NotNull T... children);
@@ -139,7 +154,7 @@ public interface IRequest<R>
     /**
      * Method to add multiple children in a single call.
      *
-     * @param <T> generic token.
+     * @param <T>      generic token.
      * @param children A collection of children to add.
      */
     <T extends IToken> void addChildren(@NotNull Collection<T> children);
@@ -147,7 +162,7 @@ public interface IRequest<R>
     /**
      * Method used to remove a single Child.
      *
-     * @param <T> generic token.
+     * @param <T>   generic token.
      * @param child The new child request to remove.
      */
     <T extends IToken> void removeChild(@NotNull T child);
@@ -155,7 +170,7 @@ public interface IRequest<R>
     /**
      * Method to remove multiple children in a single call.
      *
-     * @param <T> generic token.
+     * @param <T>      generic token.
      * @param children An array of children to remove.
      */
     <T extends IToken> void removeChildren(@NotNull T... children);
@@ -163,7 +178,7 @@ public interface IRequest<R>
     /**
      * Method to remove multiple children in a single call.
      *
-     * @param <T> generic token.
+     * @param <T>      generic token.
      * @param children A collection of children to remove.
      */
     <T extends IToken> void removeChildren(@NotNull Collection<T> children);
@@ -206,4 +221,50 @@ public interface IRequest<R>
      */
     @NotNull
     ItemStack getDelivery();
+
+    /**
+     * Method used to set the delivery on a Request.
+     * Should set the result.
+     * <p>
+     * Noop this if it is not supported.
+     *
+     * @param delivery The delivery that is being made.
+     */
+    void setDelivery(@Nullable final ItemStack delivery);
+
+    /**
+     * Method used to get a {@link ITextComponent} that can be displayed to the Player and describes the request in short.
+     * Should represent the request, in case the player needs to fulfill it, or information about this request is required.
+     *
+     * @return The text that describes this Request.
+     */
+    @NotNull
+    ITextComponent getShortDisplayString();
+
+    /**
+     * Method used to get a {@link ITextComponent} that can be displayed to the Player and describes so that the player can complete it.
+     * Should represent the request, in case the player needs to fulfill it, or information about this request is required.
+     *
+     * @return The text that describes this Request.
+     */
+    @NotNull
+    ITextComponent getLongDisplayString();
+
+    /**
+     * Method used to get a List of ItemStacks that represents the stack.
+     * This list is used in GUI to show what the request is. If an empty list is returned then no stack is shown.
+     * If a list with multiple stacks is returned it will switch between the stacks once every second unless the player holds the shift key.
+     *
+     * @return A List of ItemStacks that represents this request.
+     */
+    @NotNull
+    List<ItemStack> getDisplayStacks();
+
+    /**
+     * Method used to get a ResourceLocation that is displayed instead of the {@link #getDisplayStacks()}, when {@link #getDisplayStacks()} returns an empty list.
+     *
+     * @return The ResourceLocation of the Image dat is displayed when their are no DisplayStacks.
+     */
+    @NotNull
+    ResourceLocation getDisplayIcon();
 }

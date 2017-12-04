@@ -121,8 +121,8 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         }
         InventoryFunctions.matchFirstInProviderWithSimpleAction(worker,
           stack -> !ItemStackUtils.isEmpty(stack)
-                  && ItemStackUtils.doesItemServeAsWeapon(stack)
-                  && ItemStackUtils.hasToolLevel(stack, ToolType.SWORD, 0, getOwnBuilding().getMaxToolLevel()),
+                     && ItemStackUtils.doesItemServeAsWeapon(stack)
+                     && ItemStackUtils.hasToolLevel(stack, ToolType.SWORD, 0, getOwnBuilding().getMaxToolLevel()),
           worker::setHeldItem);
         return super.searchTarget();
     }
@@ -193,7 +193,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             damgeToBeDealt *= 2;
         }
 
-        damgeToBeDealt+= ((AbstractBuildingGuards)getOwnBuilding()).getOffenceBonus();
+        damgeToBeDealt += ((AbstractBuildingGuards) getOwnBuilding()).getOffenceBonus();
 
         final ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
         if (heldItem != null)

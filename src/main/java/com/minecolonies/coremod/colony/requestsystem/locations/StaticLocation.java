@@ -62,6 +62,12 @@ public class StaticLocation implements ILocation
         return location.getDimension() == getDimension();
     }
 
+    @Override
+    public String toString()
+    {
+        return "Dim: " + dimension + " " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + " ";
+    }
+
     /**
      * Internal factory class.
      */
@@ -85,7 +91,7 @@ public class StaticLocation implements ILocation
          */
         public TypeToken<StaticLocation> getFactoryOutputType()
         {
-            return new TypeToken<StaticLocation>() {};
+            return TypeToken.of(StaticLocation.class);
         }
 
         @NotNull
@@ -96,7 +102,7 @@ public class StaticLocation implements ILocation
          */
         public TypeToken<BlockPos> getFactoryInputType()
         {
-            return new TypeToken<BlockPos>() {};
+            return TypeToken.of(BlockPos.class);
         }
 
         /**
@@ -134,7 +140,7 @@ public class StaticLocation implements ILocation
 
         @NotNull
         @Override
-        public StaticLocation getNewInstance(@NotNull final BlockPos blockPos, @NotNull final Object... context)
+        public StaticLocation getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final BlockPos blockPos, @NotNull final Object... context)
         {
             if (context.length != NUMBER_OR_CONTEXTS)
             {
@@ -158,7 +164,7 @@ public class StaticLocation implements ILocation
          */
         @NotNull
         @Override
-        public StaticLocation getNewInstance(@NotNull final BlockPos input)
+        public StaticLocation getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final BlockPos input)
         {
             return new StaticLocation(input, 0);
         }

@@ -28,12 +28,12 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     /**
      * Id of the list in the pane.
      */
-    private static final String LIST_SAPLINGS               = "trees";
+    private static final String LIST_SAPLINGS = "trees";
 
     /**
      * Page the sapling selector is at.
      */
-    private static final String PAGE_SAPLINGS               = "saplingActions";
+    private static final String PAGE_SAPLINGS = "saplingActions";
 
     /**
      * Id of the button to change between true and false of the sapling.
@@ -43,7 +43,7 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     /**
      * String describing on for the gui.
      */
-    private static final String ON  = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON);
+    private static final String ON = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON);
 
     /**
      * String describing off for the gui.
@@ -53,22 +53,19 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     /**
      * Id of the pages view.
      */
-    private static final String VIEW_PAGES                           = "pages";
-
-    /**
-     * Scrolling list containing the saplings.
-     */
-    private       ScrollingList saplingsList;
-
+    private static final String VIEW_PAGES = "pages";
     /**
      * List of saplings the lumberjack should, or should not fell (true if should, false if should not).
      */
     private final Map<ItemStorage, Boolean> treesToFell = new LinkedHashMap<>();
-
     /**
      * The building of the lumberjack (Client side representation).
      */
     private final BuildingLumberjack.View ownBuilding;
+    /**
+     * Scrolling list containing the saplings.
+     */
+    private ScrollingList saplingsList;
 
     /**
      * Constructor for the window of the fisherman.
@@ -81,7 +78,6 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
         this.ownBuilding = building;
         pullLevelsFromHut();
     }
-
 
     /**
      * Retrieve levels from the building to display in GUI.
@@ -117,7 +113,7 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
 
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_CURRENT_SAPLING, Button.class);
 
-                if(treesToFell.get(new ItemStorage(sapling)))
+                if (treesToFell.get(new ItemStorage(sapling)))
                 {
                     switchButton.setLabel(ON);
                 }
@@ -129,27 +125,16 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
         });
     }
 
+    /**
+     * Returns the name of a building.
+     *
+     * @return Name of a building.
+     */
+    @NotNull
     @Override
-    public void onButtonClicked(@NotNull final Button button)
+    public String getBuildingName()
     {
-        if(button.getID().equals(BUTTON_CURRENT_SAPLING))
-        {
-            final int row = saplingsList.getListElementIndexByPane(button);
-
-            final ItemStorage saplingStack = treesToFell.keySet().toArray(new ItemStorage[treesToFell.size()])[row];
-
-            final boolean shouldCut = !treesToFell.get(saplingStack);
-            treesToFell.put(saplingStack, shouldCut);
-            MineColonies.getNetwork().sendToServer(new LumberjackSaplingSelectorMessage(building, saplingStack.getItemStack(), shouldCut));
-
-            this.ownBuilding.treesToFell.clear();
-            this.ownBuilding.treesToFell.putAll(treesToFell);
-
-        }
-        else
-        {
-            super.onButtonClicked(button);
-        }
+        return COM_MINECOLONIES_COREMOD_GUI_LUMBERJACK;
     }
 
     @Override
@@ -165,17 +150,26 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
         }
     }
 
-
-    /**
-     * Returns the name of a building.
-     *
-     * @return Name of a building.
-     */
-    @NotNull
     @Override
-    public String getBuildingName()
+    public void onButtonClicked(@NotNull final Button button)
     {
-        return COM_MINECOLONIES_COREMOD_GUI_LUMBERJACK;
+        if (button.getID().equals(BUTTON_CURRENT_SAPLING))
+        {
+            final int row = saplingsList.getListElementIndexByPane(button);
+
+            final ItemStorage saplingStack = treesToFell.keySet().toArray(new ItemStorage[treesToFell.size()])[row];
+
+            final boolean shouldCut = !treesToFell.get(saplingStack);
+            treesToFell.put(saplingStack, shouldCut);
+            MineColonies.getNetwork().sendToServer(new LumberjackSaplingSelectorMessage(building, saplingStack.getItemStack(), shouldCut));
+
+            this.ownBuilding.treesToFell.clear();
+            this.ownBuilding.treesToFell.putAll(treesToFell);
+        }
+        else
+        {
+            super.onButtonClicked(button);
+        }
     }
 }
 

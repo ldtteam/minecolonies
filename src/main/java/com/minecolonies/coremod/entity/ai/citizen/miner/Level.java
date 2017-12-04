@@ -31,33 +31,33 @@ public class Level
     /**
      * Possible rotations.
      */
-    private static final int                    ROTATE_ONCE        = 1;
-    private static final int                    ROTATE_TWICE       = 2;
-    private static final int                    ROTATE_THREE_TIMES = 3;
-    private static final int                    MAX_ROTATIONS      = 4;
+    private static final int              ROTATE_ONCE        = 1;
+    private static final int              ROTATE_TWICE       = 2;
+    private static final int              ROTATE_THREE_TIMES = 3;
+    private static final int              MAX_ROTATIONS      = 4;
     /**
      * Random object needed for some tasks.
      */
-    private static final Random                 rand               = new Random();
+    private static final Random           rand               = new Random();
     /**
      * Number to choose random types. It's random.nextInt(RANDOM_TYPES),
      */
-    private static final int                  RANDOM_TYPES    = 4;
+    private static final int              RANDOM_TYPES       = 4;
     /**
      * Comparator to compare two nodes, for the priority queue.
      */
     @NotNull
-    private static final Comparator<Node>     NODE_COMPARATOR = (Node n1, Node n2) -> rand.nextInt(100) > 50 ? 1 : -1;
+    private static final Comparator<Node> NODE_COMPARATOR    = (Node n1, Node n2) -> rand.nextInt(100) > 50 ? 1 : -1;
     /**
      * The hashMap of nodes, check for nodes with the tuple of the parent x and z.
      */
     @NotNull
-    private final        Map<Vec2i, Node> nodes               = new HashMap<>();
+    private final        Map<Vec2i, Node> nodes              = new HashMap<>();
     /**
      * The queue of open Nodes. Get a new node to work on here.
      */
     @NotNull
-    private final        Queue<Node>          openNodes       = new PriorityQueue<>(11, NODE_COMPARATOR);
+    private final        Queue<Node>      openNodes          = new PriorityQueue<>(11, NODE_COMPARATOR);
 
     /**
      * The depth of the level stored as the y coordinate.
@@ -212,21 +212,6 @@ public class Level
         nodes.get(new Vec2i(tempNode.getX(), tempNode.getZ())).setStatus(Node.NodeStatus.COMPLETED);
     }
 
-    private static Node.NodeType getRandomNodeType()
-    {
-        final int randNumber = rand.nextInt(RANDOM_TYPES);
-        if (randNumber <= 1)
-        {
-            return TUNNEL;
-        }
-        else if (randNumber == 2)
-        {
-            return BEND;
-        }
-
-        return CROSSROAD;
-    }
-
     /**
      * GEts the next node position from the currentNode the rotation of it and the additional rotation.
      *
@@ -249,6 +234,21 @@ public class Level
             default:
                 return node.getEastNodeCenter();
         }
+    }
+
+    private static Node.NodeType getRandomNodeType()
+    {
+        final int randNumber = rand.nextInt(RANDOM_TYPES);
+        if (randNumber <= 1)
+        {
+            return TUNNEL;
+        }
+        else if (randNumber == 2)
+        {
+            return BEND;
+        }
+
+        return CROSSROAD;
     }
 
     @NotNull

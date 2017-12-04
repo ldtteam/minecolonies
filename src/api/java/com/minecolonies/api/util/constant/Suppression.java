@@ -105,6 +105,12 @@ public final class Suppression
     public static final String BIG_CLASS = "squid:S2972";
 
     /**
+     * Sometimes classes are used in many places.
+     */
+    @NonNls
+    public static final String SPLIT_CLASS = "squid:S1200";
+
+    /**
      * Sometimes it would decrease the readability of the code.
      * <p>
      * Use this sparely!
@@ -120,6 +126,17 @@ public final class Suppression
     @NonNls
     public static final String MAKE_PROTECTED = "squid:S2386";
 
+    /**
+     * Yeah generics are complicated. No reason to not use fully though.
+     */
+    @NonNls
+    public static final String GENERIC_WILDCARD = "squid:S1452";
+
+    /**
+     * Sometimes it is just needed to have many returns so the code is easily readable.
+     */
+    @NonNls
+    public static final String TOO_MANY_RETURNS = "squid:S1142";
     private Suppression()
     {
         //empty default

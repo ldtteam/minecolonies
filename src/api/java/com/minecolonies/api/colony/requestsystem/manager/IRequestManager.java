@@ -1,20 +1,30 @@
-package com.minecolonies.api.colony.requestsystem;
+package com.minecolonies.api.colony.requestsystem.manager;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
+import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
+import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ITickable;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 /**
  * Interface used to describe classes that function as managers for requests inside a colony.
  * Extends INBTSerializable to allow for easy reading and writing from NBT.
  */
-public interface IRequestManager extends INBTSerializable<NBTTagCompound>
+public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITickable
 {
 
     /**
@@ -44,7 +54,7 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>
      * @throws IllegalArgumentException is thrown when this manager cannot produce a request for the given types.
      */
     @NotNull
-    <T> IToken createRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException;
+    <T extends IRequestable> IToken createRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException;
 
     /**
      * Method used to assign a request to a resolver.
@@ -66,7 +76,18 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>
      * @throws IllegalArgumentException when either createRequest or assignRequest have thrown an IllegalArgumentException
      */
     @NotNull
-    <T> IToken createAndAssignRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException;
+    <T extends IRequestable> IToken createAndAssignRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException;
+
+    /**
+     * Method used to reassign a given request.
+     *
+     * @param token The token of the request that should be reassigned.
+     * @return The token of the resolver that has gotten the assignment, null if none was found.
+     *
+     * @throws IllegalArgumentException when the token is not known to this manager.
+     */
+    @Nullable
+    IToken reassignRequest(@NotNull IToken token, @NotNull Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException;
 
     /**
      * Method to get a request for a given token.
@@ -75,10 +96,33 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>
      * @param <T>   The type of request that is being looked for.
      * @return The request of the given type for that token.
      *
-     * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the given type T.
+     * @throws IllegalArgumentException when the token does not produce a request of the given type T.
+     */
+    @Nullable
+    <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull final IToken token) throws IllegalArgumentException;
+
+    /**
+     * Method to get a resolver from its token.
+     *
+     * @param <T> The type of request that the resolver can process.
+     * @return The resolver registered with the given token.
+     *
+     * @throws IllegalArgumentException when the token is unknown.
      */
     @NotNull
-    <T> IRequest<T> getRequestForToken(@NotNull IToken token) throws IllegalArgumentException;
+    <T extends IRequestable> IRequestResolver<T> getResolverForToken(@NotNull final IToken token) throws IllegalArgumentException;
+
+    /**
+     * Method to get a resolver for a given request.
+     *
+     * @param requestToken The token of the request to get resolver for.
+     * @param <T>          The type of request that the resolver can process.
+     * @return Null if the request is not yet resolved, or else the assigned resolver.
+     *
+     * @throws IllegalArgumentException Thrown when the token is unknown.
+     */
+    @Nullable
+    <T extends IRequestable> IRequestResolver<T> getResolverForRequest(@NotNull final IToken requestToken) throws IllegalArgumentException;
 
     /**
      * Method to update the state of a given request.
@@ -89,6 +133,16 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>
      */
     @NotNull
     void updateRequestState(@NotNull IToken token, @NotNull RequestState state) throws IllegalArgumentException;
+
+    /**
+     * Method used to overrule a request.
+     * Updates the state and sets the delivery if applicable.
+     *
+     * @param token The token of the request that is being overruled.
+     * @param stack The stack that should be treated as delivery. If no delivery is possible, this is null.
+     * @throws IllegalArgumentException Thrown when either token does not match to a request.
+     */
+    void overruleRequest(@NotNull IToken token, @Nullable ItemStack stack) throws IllegalArgumentException;
 
     /**
      * Method used to indicate to this manager that a new Provider has been added to the colony.
@@ -105,4 +159,20 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>
      * @throws IllegalArgumentException is thrown when no provider with the same token is registered.
      */
     void onProviderRemovedFromColony(@NotNull IRequestResolverProvider provider) throws IllegalArgumentException;
+
+    /**
+     * Get the player resolve.
+     *
+     * @return the player resolver object.
+     */
+    @NotNull
+    IPlayerRequestResolver getPlayerResolver();
+
+    /**
+     * Get the retrying request resolver.
+     *
+     * @return The retrying request resolver.
+     */
+    @NotNull
+    IRetryingRequestResolver getRetryingRequestResolver();
 }

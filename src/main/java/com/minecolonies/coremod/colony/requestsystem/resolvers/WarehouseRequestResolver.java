@@ -1,28 +1,36 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
-import com.minecolonies.api.colony.requestsystem.requester.IRequester;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * ----------------------- Not Documented Object ---------------------
  */
-public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
+public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverable>
 {
 
     public WarehouseRequestResolver(
@@ -33,26 +41,20 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
     }
 
     @Override
-    public Class<? extends ItemStack> getRequestType()
+    public TypeToken<? extends IDeliverable> getRequestType()
     {
-        return ItemStack.class;
+        return TypeToken.of(IDeliverable.class);
     }
 
     @Override
-    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<ItemStack> requestToCheck)
+    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
     {
-        if (ItemStackUtils.isEmpty(requestToCheck.getRequest()))
+        if (!manager.getColony().getWorld().isRemote)
         {
-            return false;
-        }
+            Colony colony = (Colony) manager.getColony();
+            Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
 
-        final TileEntity tileEntity = manager.getColony().getWorld().getTileEntity(getLocation().getInDimensionLocation());
-
-        if (tileEntity instanceof TileEntityWareHouse)
-        {
-            final TileEntityWareHouse wareHouse = (TileEntityWareHouse) tileEntity;
-
-            return wareHouse.isInHut(requestToCheck.getRequest());
+            return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchinItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack)));
         }
 
         return false;
@@ -65,21 +67,34 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
      * Moving the curly braces really makes the code hard to read.
      */
     public List<IToken> attemptResolve(
-                                        @NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> request)
+                                        @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
-        final TileEntity tileEntity = manager.getColony().getWorld().getTileEntity(getLocation().getInDimensionLocation());
-
-        if (tileEntity instanceof TileEntityWareHouse)
+        if (manager.getColony().getWorld().isRemote)
         {
-            final TileEntityWareHouse wareHouse = (TileEntityWareHouse) tileEntity;
-            final BlockPos pos = wareHouse.getPositionOfChestWithItemStack(request.getRequest());
+            return null;
+        }
 
-            request.setResult(request.getRequest().copy());
-            return Lists.newArrayList(manager.createRequest(new WarehouseChestDeliveryRequester(this, manager.getFactoryController().getNewInstance(UUID.randomUUID(),
-              new TypeToken<IToken>() {}), manager.getFactoryController().getNewInstance(pos, new TypeToken<ILocation>() {}), request.getToken()),
-              new Delivery(manager.getFactoryController().getNewInstance(
-                pos,
-                new TypeToken<ILocation>() {}), request.getRequester().getDeliveryLocation(), request.getRequest())));
+        Colony colony = (Colony) manager.getColony();
+        Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
+
+        for (TileEntityWareHouse wareHouse : wareHouses)
+        {
+            ItemStack matchingStack = wareHouse.getFirstMatchingItemStackInWarehouse(itemStack -> request.getRequest().matches(itemStack));
+            if (ItemStackUtils.isEmpty(matchingStack))
+            {
+                continue;
+            }
+
+            request.setDelivery(matchingStack.copy());
+
+            BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> ItemStack.areItemsEqual(itemStack, matchingStack));
+            ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().provider.getDimension());
+
+            Delivery delivery = new Delivery(itemStackLocation, request.getRequester().getRequesterLocation(), matchingStack.copy());
+
+            IToken requestToken = manager.createRequest(new WarehouseRequestResolver(request.getRequester().getRequesterLocation(), request.getToken()), delivery);
+
+            return ImmutableList.of(requestToken);
         }
 
         return Lists.newArrayList();
@@ -87,15 +102,15 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
 
     @Nullable
     @Override
-    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> request)
+    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
-        //Noop delivery has been completed
+        manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
     }
 
     @Nullable
     @Override
     public IRequest getFollowupRequestForCompletion(
-                                                     @NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> completedRequest)
+                                                     @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
     {
         //No followup needed.
         return null;
@@ -103,67 +118,42 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
 
     @Nullable
     @Override
-    public IRequest onParentCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> request)
+    public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
-        //TODO Release the stack from the warehouse.
         return null;
     }
 
-    @Nullable
-    @Override
-    public void onResolvingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> request)
+    private Set<TileEntityWareHouse> getWareHousesInColony(Colony colony)
     {
-        //TODO Release the stack from the warehouse.
-    }
-
-    @SuppressWarnings("squid:S2972")
-    /**
-     * We have this class the way it is for a reason.
-     */
-    private final class WarehouseChestDeliveryRequester implements IRequester
-    {
-        private final WarehouseRequestResolver warehouseRequestResolver;
-        private final IToken                   id;
-        private final ILocation                location;
-        private final IToken                   itemStackRequestToken;
-
-        private WarehouseChestDeliveryRequester(
-                                                 final WarehouseRequestResolver warehouseRequestResolver,
-                                                 final IToken id,
-                                                 final ILocation location,
-                                                 final IToken itemStackRequestToken)
-        {
-            this.warehouseRequestResolver = warehouseRequestResolver;
-            this.id = id;
-            this.location = location;
-            this.itemStackRequestToken = itemStackRequestToken;
-        }
-
-        @Override
-        public IToken getID()
-        {
-            return id;
-        }
-
-        @NotNull
-        @Override
-        public ILocation getLocation()
-        {
-            return location;
-        }
-
-        @NotNull
-        @Override
-        public void onRequestComplete(@NotNull final IToken token)
-        {
-            warehouseRequestResolver.onRequestComplete(itemStackRequestToken);
-        }
+        return colony.getBuildings().values().stream()
+                 .filter(building -> building instanceof BuildingWareHouse)
+                 .map(building -> (TileEntityWareHouse) building.getTileEntity())
+                 .collect(Collectors.toSet());
     }
 
     @NotNull
     @Override
     public void onRequestComplete(@NotNull final IToken token)
     {
-        //TODO Release the DMan that did the job.
+    }
+
+    @NotNull
+    @Override
+    public void onRequestCancelled(@NotNull final IToken token)
+    {
+
+    }
+
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName(@NotNull final IToken token)
+    {
+        return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME);
+    }
+
+    @Override
+    public int getPriority()
+    {
+        return CONST_DEFAULT_RESOLVER_PRIORITY + 50;
     }
 }

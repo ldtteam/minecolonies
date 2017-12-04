@@ -78,7 +78,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
                 sender.sendMessage(new TextComponentString("Successful"));
                 for (final Colony col : coloniesToDelete)
                 {
-                    server.addScheduledTask(() -> ColonyManager.deleteColony(col.getID()));
+                    server.addScheduledTask(() -> ColonyManager.deleteColony(col.getID(), Configurations.gameplay.autoDestroyColonyBlocks));
                 }
             }
         }

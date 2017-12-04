@@ -20,21 +20,24 @@ public abstract class AbstractWorkerSounds
 
     /**
      * Plays the sounds for a certain worker.
-     * @param worldIn  the world to play the sound in.
-     * @param position the position to play the sound at.
-     * @param isFemale the gender.
+     *
+     * @param worldIn    the world to play the sound in.
+     * @param position   the position to play the sound at.
+     * @param isFemale   the gender.
      * @param saturation the saturation.
      */
     public abstract void playSound(final World worldIn, final BlockPos position, final boolean isFemale, final double saturation);
 
     /**
      * Get the string describing the worker of the sound event.
+     *
      * @return a string describing the worker.
      */
     public abstract String getWorkerString();
 
     /**
      * Get phrase chance.
+     *
      * @return the chance to play a phrase.
      */
     public int getPhraseChance()
@@ -44,6 +47,7 @@ public abstract class AbstractWorkerSounds
 
     /**
      * Get basic sound chance.
+     *
      * @return the chance to play a basic sound/noise.
      */
     public int getBasicSoundChance()
@@ -53,9 +57,10 @@ public abstract class AbstractWorkerSounds
 
     /**
      * Play an interaction sound for a certain worker.
-     * @param world the world.
+     *
+     * @param world    the world.
      * @param position the positon.
-     * @param female if female.
+     * @param female   if female.
      */
     public abstract void playInteractionSound(final World world, final BlockPos position, final boolean female);
 }

@@ -245,7 +245,7 @@ public class ColonyPermissionEventHandler
                 }
 
                 final ItemStack stack = event.getItemStack();
-                if(ItemStackUtils.isEmpty(stack) || stack.getItem() instanceof ItemFood)
+                if (ItemStackUtils.isEmpty(stack) || stack.getItem() instanceof ItemFood)
                 {
                     return;
                 }
@@ -303,7 +303,6 @@ public class ColonyPermissionEventHandler
     /**
      * Check if the event should be canceled for a given player and minimum rank.
      *
-     * @param rankIn   the minimum rank.
      * @param playerIn the player.
      * @param world    the world.
      * @param event    the event.
@@ -446,7 +445,7 @@ public class ColonyPermissionEventHandler
                 return;
             }
 
-            if (!(event.getTarget() instanceof  EntityMob) && !perms.hasPermission(event.getEntityPlayer(), Action.ATTACK_ENTITY))
+            if (!(event.getTarget() instanceof EntityMob) && !perms.hasPermission(event.getEntityPlayer(), Action.ATTACK_ENTITY))
             {
                 cancelEvent(event, player);
             }

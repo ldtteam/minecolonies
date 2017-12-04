@@ -11,7 +11,6 @@ public class SheepKillCommand extends AbstractKillCommand<EntitySheep>
 
     /**
      * Initialize this SubCommand with it's parents.
-     *
      */
     public SheepKillCommand()
     {

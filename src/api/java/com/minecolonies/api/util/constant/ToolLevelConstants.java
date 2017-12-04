@@ -11,27 +11,27 @@ public final class ToolLevelConstants
      * Tool level for hand.
      */
     @NonNls
-    public static final int TOOL_LEVEL_HAND  = -1;
+    public static final int TOOL_LEVEL_HAND                = -1;
     /**
      * Tool level for gold or wood.
      */
     @NonNls
-    public static final int TOOL_LEVEL_WOOD_OR_GOLD  = 0;
+    public static final int TOOL_LEVEL_WOOD_OR_GOLD        = 0;
     /**
      * Tool level for stone.
      */
     @NonNls
-    public static final int TOOL_LEVEL_STONE = 1;
+    public static final int TOOL_LEVEL_STONE               = 1;
     /**
      * Tool level for iron.
      */
     @NonNls
-    public static final int TOOL_LEVEL_IRON = 2;
+    public static final int TOOL_LEVEL_IRON                = 2;
     /**
      * Tool level for diamond.
      */
     @NonNls
-    public static final int TOOL_LEVEL_DIAMOND = 3;
+    public static final int TOOL_LEVEL_DIAMOND             = 3;
     /**
      * Tool level for better than diamond.
      */
@@ -41,7 +41,7 @@ public final class ToolLevelConstants
      * Tool level for maximum.
      */
     @NonNls
-    public static final int TOOL_LEVEL_MAXIMUM = Integer.SIZE;
+    public static final int TOOL_LEVEL_MAXIMUM             = Integer.SIZE;
 
     private ToolLevelConstants()
     {

@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAM
  */
 public abstract class AbstractWorkOrder
 {
-    private static final String TAG_TYPE = "type";
+    private static final String                                          TAG_TYPE       = "type";
     private static final String                                          TAG_ID         = "id";
     private static final String                                          TAG_CLAIMED_BY = "claimedBy";
     //  Job and View Class Mapping
@@ -286,10 +286,11 @@ public abstract class AbstractWorkOrder
 
     /**
      * Is this WorkOrder still valid?  If not, it will be deleted.
-     *
+     * <p>
      * Suppressing Sonar Rule squid:S1172
      * This rule does " Unused method parameters should be removed"
      * But in this case extending class may need to use the colony parameter
+     *
      * @param colony The colony that owns the Work Order
      * @return True if the WorkOrder is still valid, or False if it should be deleted
      */
@@ -338,17 +339,10 @@ public abstract class AbstractWorkOrder
     protected abstract String getValue();
 
     /**
-     * Contains all classes which inherit directly from this class.
-     */
-    public enum WorkOrderType
-    {
-        BUILD
-    }
-
-    /**
      * Executed when a work order is added.
-     *
+     * <p>
      * Override this when something need to be done when the work order is added
+     *
      * @param colony in which the work order exist
      */
     public void onAdded(final Colony colony)
@@ -357,8 +351,9 @@ public abstract class AbstractWorkOrder
 
     /**
      * Executed when a work order is completed.
-     *
+     * <p>
      * Override this when something need to be done when the work order is completed
+     *
      * @param colony in which the work order exist
      */
     public void onCompleted(final Colony colony)
@@ -367,12 +362,20 @@ public abstract class AbstractWorkOrder
 
     /**
      * Executed when a work order is removed.
-     *
+     * <p>
      * Override this when something need to be done when the work order is removed
+     *
      * @param colony in which the work order exist
      */
     public void onRemoved(final Colony colony)
     {
     }
 
+    /**
+     * Contains all classes which inherit directly from this class.
+     */
+    public enum WorkOrderType
+    {
+        BUILD
+    }
 }

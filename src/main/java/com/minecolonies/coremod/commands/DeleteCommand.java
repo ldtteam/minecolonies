@@ -40,5 +40,4 @@ public class DeleteCommand extends AbstractSplitCommand
     {
         return subCommands;
     }
-
 }
