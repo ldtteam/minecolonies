@@ -13,7 +13,7 @@ import java.util.function.*;
  * Most methods will be remapping of parameters to reduce duplication.
  * Because of erasure clashes, not all combinations are supported.
  */
-public class InventoryFunctions
+public final class InventoryFunctions
 {
     /**
      * Search for a stack in an Inventory matching the predicate.
@@ -77,7 +77,7 @@ public class InventoryFunctions
      * @param tester   the function to use for testing slots
      * @return true if it found a stack
      */
-    private static boolean matchFirstInProvider(
+    private static boolean matchFirstInProviderWithCapability(
                                                  final ICapabilityProvider provider,
                                                  @NotNull final Function<ICapabilityProvider, Function<Integer, Predicate<ItemStack>>> tester)
     {

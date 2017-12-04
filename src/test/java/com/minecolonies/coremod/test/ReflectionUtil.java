@@ -22,7 +22,7 @@ public class ReflectionUtil
         field.set(object, newValue);
     }
 
-    public static void setStaticFinalField(final Class clazz, final String fieldName, final Object newValue)
+    public static void setStaticFinalField(final Class<?> clazz, final String fieldName, final Object newValue)
       throws NoSuchFieldException, IllegalAccessException
     {
         final Field field = clazz.getField(fieldName);

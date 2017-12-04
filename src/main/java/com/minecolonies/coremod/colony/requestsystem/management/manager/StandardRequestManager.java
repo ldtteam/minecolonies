@@ -21,7 +21,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHandler;
@@ -44,6 +43,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.Suppression.*;
+
 /**
  * Main class of the request system.
  * Default implementation of the IRequestManager interface.
@@ -51,7 +52,7 @@ import java.util.stream.Collectors;
  * Uses
  */
 
-@SuppressWarnings(Suppression.BIG_CLASS)
+@SuppressWarnings(BIG_CLASS)
 public class StandardRequestManager implements IStandardRequestManager
 {
     ////---------------------------NBTTags-------------------------\\\\
@@ -76,13 +77,13 @@ public class StandardRequestManager implements IStandardRequestManager
      * BiMap that holds unique token to resolver lookup.
      */
     @NotNull
-    private final BiMap<IToken<?>, IRequestResolver> resolverBiMap = HashBiMap.create();
+    private final BiMap<IToken<?>, IRequestResolver<? extends IRequestable>> resolverBiMap = HashBiMap.create();
 
     /**
      * BiMap that holds unique token to request lookup.
      */
     @NotNull
-    private final BiMap<IToken<?>, IRequest> requestBiMap = HashBiMap.create();
+    private final BiMap<IToken<?>, IRequest<?>> requestBiMap = HashBiMap.create();
 
     /**
      * Map that holds the resolvers that are linked to a given provider.
@@ -106,7 +107,7 @@ public class StandardRequestManager implements IStandardRequestManager
      * Map that holds the class that resolver can resolve. Used during lookup.
      */
     @NotNull
-    private final Map<TypeToken, Collection<IRequestResolver>> requestClassResolverMap = new HashMap<>();
+    private final Map<TypeToken<?>, Collection<IRequestResolver<?>>> requestClassResolverMap = new HashMap<>();
     /**
      * Colony of the manager.
      */
@@ -231,7 +232,7 @@ public class StandardRequestManager implements IStandardRequestManager
     @Nullable
     public IToken<?> reassignRequest(@NotNull final IToken<?> token, @NotNull final Collection<IToken<?>> resolverTokenBlackList)
     {
-        final IRequest request = RequestHandler.getRequest(this, token);
+        final IRequest<?> request = RequestHandler.getRequest(this, token);
         return RequestHandler.reassignRequest(this, request, resolverTokenBlackList);
     }
 
@@ -245,12 +246,12 @@ public class StandardRequestManager implements IStandardRequestManager
      *
      * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the given type T.
      */
-    @SuppressWarnings(Suppression.UNCHECKED)
+    @SuppressWarnings({UNCHECKED,RAWTYPES})
     @Nullable
     @Override
-    public <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull final IToken<?> token)
+    public IRequest getRequestForToken(@NotNull final IToken<?> token)
     {
-        final IRequest<T> internalRequest = RequestHandler.getRequestOrNull(this, token);
+        final IRequest internalRequest = RequestHandler.getRequestOrNull(this, token);
 
         if (internalRequest == null)
         {
@@ -261,21 +262,22 @@ public class StandardRequestManager implements IStandardRequestManager
 
         return getFactoryController().deserialize(requestData);
     }
-
+    @SuppressWarnings(RAWTYPES)
     @NotNull
     @Override
-    public <T extends IRequestable> IRequestResolver<T> getResolverForToken(@NotNull final IToken<?> token)
+    public IRequestResolver getResolverForToken(@NotNull final IToken<?> token)
     {
-        final IRequestResolver<T> resolver = ResolverHandler.getResolver(this, token);
+        final IRequestResolver resolver = ResolverHandler.getResolver(this, token);
 
         return getFactoryController().deserialize(getFactoryController().serialize(resolver));
     }
 
+    @SuppressWarnings(RAWTYPES)
     @Nullable
     @Override
-    public <T extends IRequestable> IRequestResolver<T> getResolverForRequest(@NotNull final IToken<?> requestToken)
+    public IRequestResolver getResolverForRequest(@NotNull final IToken<?> requestToken)
     {
-        final IRequest request = RequestHandler.getRequest(this, requestToken);
+        final IRequest<?> request = RequestHandler.getRequest(this, requestToken);
 
         return getResolverForToken(ResolverHandler.getResolverForRequest(this, request).getRequesterId());
     }
@@ -290,7 +292,7 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public void updateRequestState(@NotNull final IToken<?> token, @NotNull final RequestState state)
     {
-        final IRequest request = RequestHandler.getRequest(this, token);
+        final IRequest<?> request = RequestHandler.getRequest(this, token);
 
         LogHandler.log("Updating request state from:" + token + ". With original state: " + request.getState() + " to : " + state);
 
@@ -326,7 +328,7 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public void overruleRequest(@NotNull final IToken<?> token, @Nullable final ItemStack stack)
     {
-        final IRequest request = RequestHandler.getRequest(this, token);
+        final IRequest<?> request = RequestHandler.getRequest(this, token);
 
         if (!ItemStackUtils.isEmpty(stack))
         {
@@ -475,7 +477,7 @@ public class StandardRequestManager implements IStandardRequestManager
         requestBiMap.clear();
         NBTUtils.streamCompound(requestIdentityList).forEach(identityCompound -> {
             final IToken<?> token = getFactoryController().deserialize(identityCompound.getCompoundTag(NBT_TOKEN));
-            final IRequest request = getFactoryController().deserialize(identityCompound.getCompoundTag(NBT_REQUEST));
+            final IRequest<?> request = getFactoryController().deserialize(identityCompound.getCompoundTag(NBT_REQUEST));
 
             requestBiMap.put(token, request);
         });
@@ -525,14 +527,14 @@ public class StandardRequestManager implements IStandardRequestManager
 
     @Override
     @NotNull
-    public BiMap<IToken<?>, IRequestResolver> getResolverBiMap()
+    public BiMap<IToken<?>, IRequestResolver<? extends IRequestable>> getResolverBiMap()
     {
         return resolverBiMap;
     }
 
     @Override
     @NotNull
-    public BiMap<IToken<?>, IRequest> getRequestBiMap()
+    public BiMap<IToken<?>, IRequest<?>> getRequestBiMap()
     {
         return requestBiMap;
     }
@@ -560,7 +562,7 @@ public class StandardRequestManager implements IStandardRequestManager
 
     @Override
     @NotNull
-    public Map<TypeToken, Collection<IRequestResolver>> getRequestClassResolverMap()
+    public Map<TypeToken<?>, Collection<IRequestResolver<?>>> getRequestClassResolverMap()
     {
         return requestClassResolverMap;
     }

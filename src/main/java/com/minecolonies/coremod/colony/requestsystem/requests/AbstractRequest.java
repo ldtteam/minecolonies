@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Abstract skeleton implementation of a request.
@@ -34,15 +35,15 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     @NotNull
     private final IToken<?>       token;
     @NotNull
-    private final R            requested;
+    private final R               requested;
     @NotNull
     private final List<IToken<?>> children;
     @NotNull
-    private final IRequester   requester;
+    private final IRequester      requester;
     @NotNull
     private RequestState state = RequestState.CREATED;
     @Nullable
-    private R      result;
+    private R         result;
     @Nullable
     private IToken<?> parent;
     @SuppressWarnings("squid:S1170")
@@ -140,7 +141,8 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         {
             try
             {
-                manager.getRequestForToken(getParent()).childStateUpdated(manager, getToken());
+                final IRequest<?> requestForToken = manager.getRequestForToken(getParent());
+                requestForToken.childStateUpdated(manager, getToken());
             }
             catch (final IllegalArgumentException ex)
             {
@@ -253,8 +255,9 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      *
      * @param children An array of children to add.
      */
+    @SafeVarargs
     @Override
-    public <T extends IToken<?>> void addChildren(@NotNull final T... children)
+    public final <T extends IToken<?>> void addChildren(@NotNull final T... children)
     {
         for (final IToken<?> theToken : children)
         {
@@ -293,8 +296,9 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      *
      * @param children An array of children to remove.
      */
+    @SafeVarargs
     @Override
-    public <T extends IToken<?>> void removeChildren(@NotNull final T... children)
+    public final <T extends IToken<?>> void removeChildren(@NotNull final T... children)
     {
         for (final IToken<?> theToken : children)
         {
@@ -437,5 +441,16 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     public ResourceLocation getDisplayIcon()
     {
         return new ResourceLocation("missingno");
+    }
+
+    @NotNull
+    public <T> Optional<T> getRequestOfType(final Class<T> tClass)
+    {
+        final R request = getRequest();
+        if (tClass.isInstance(request))
+        {
+            return Optional.of(tClass.cast(request));
+        }
+        return Optional.empty();
     }
 }

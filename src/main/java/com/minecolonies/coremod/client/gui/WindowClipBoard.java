@@ -27,6 +27,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
+
 /**
  * ClipBoard window.
  */
@@ -105,13 +107,13 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     {
         resourceList.setDataProvider(() -> getOpenRequests().size(), (index, rowPane) ->
         {
-            final ImmutableList<IRequest> openRequests = getOpenRequests();
+            @SuppressWarnings(RAWTYPES) final ImmutableList<IRequest> openRequests = getOpenRequests();
             if (index < 0 || index >= openRequests.size())
             {
                 return;
             }
 
-            final IRequest request = openRequests.get(index);
+            final IRequest<?> request = openRequests.get(index);
             final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
             final List<ItemStack> displayStacks = request.getDisplayStacks();
 
@@ -133,9 +135,10 @@ public class WindowClipBoard extends AbstractWindowSkeleton
         });
     }
 
+    @SuppressWarnings(RAWTYPES)
     private ImmutableList<IRequest> getOpenRequests()
     {
-        final ArrayList<IRequest> requests = Lists.newArrayList();
+        @SuppressWarnings(RAWTYPES)  final List<IRequest> requests = Lists.newArrayList();
         final ColonyView view = ColonyManager.getColonyView(colonyId);
 
         if (view == null)
@@ -206,7 +209,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
         if (getOpenRequests().size() > row && row >= 0)
         {
-            @NotNull final IRequest request = getOpenRequests().get(row);
+            @NotNull final IRequest<?> request = getOpenRequests().get(row);
             MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(colonyId, request.getToken(), RequestState.CANCELLED, null));
         }
     }

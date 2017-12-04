@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -12,6 +13,8 @@ import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequest
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 
 /**
  * Class used to handle the inner workings of the request system with regards to providers.
@@ -136,7 +139,7 @@ public final class ProviderHandler
                 LogHandler.log("Cancelling all child requests of:" + requestToken);
 
                 //Check if the request has children.
-                final IRequest assignedRequest = RequestHandler.getRequest(manager, requestToken);
+                final IRequest<?> assignedRequest = RequestHandler.getRequest(manager, requestToken);
                 if (assignedRequest.hasChildren())
                 {
                     //Iterate over all children and call there onRequestCancelledOrOverruled method to get a new cleanup parent.
@@ -146,14 +149,16 @@ public final class ProviderHandler
                         if (objectToken instanceof IToken)
                         {
                             final IToken<?> childToken = (IToken<?>) objectToken;
+                            // rawtype because of java generics
+                            @SuppressWarnings(RAWTYPES)
                             final IRequest childRequest = RequestHandler.getRequest(manager, childToken);
 
                             //Check if the child has been assigned. If not, no work done, no cleanup needed.
                             if (RequestHandler.isAssigned(manager, childToken))
                             {
                                 //Get the child request
-                                final IRequestResolver childResolver = ResolverHandler.getResolverForRequest(manager, childToken);
-                                final IRequest cleanUpRequest = childResolver.onRequestCancelledOrOverruled(manager, childRequest);
+                                final IRequestResolver<? extends IRequestable> childResolver = ResolverHandler.getResolverForRequest(manager, childToken);
+                                final IRequest<?> cleanUpRequest = childResolver.onRequestCancelledOrOverruled(manager, childRequest);
 
                                 //Switch out the parent, and add the old child to the followup request as new child
                                 if (cleanUpRequest != null)

@@ -8,6 +8,6 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
  *
  * @param <Resolver> The type of {@link IRequestResolver} this factory can produce.
  */
-public interface IRequestResolverFactory<Resolver extends IRequestResolver> extends IFactory<ILocation, Resolver>
+public interface IRequestResolverFactory<Resolver extends IRequestResolver<?>> extends IFactory<ILocation, Resolver>
 {
 }

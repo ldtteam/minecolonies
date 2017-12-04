@@ -22,6 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
+
 /**
  * Class of the deliveryman job.
  */
@@ -146,7 +148,8 @@ public class JobDeliveryman extends AbstractJob
      *
      * @return {@link IRequest} of the current Task.
      */
-    public IRequest<? extends Delivery> getCurrentTask()
+    @SuppressWarnings(UNCHECKED)
+    public IRequest<Delivery> getCurrentTask()
     {
         if (taskQueue.isEmpty())
         {
@@ -188,7 +191,7 @@ public class JobDeliveryman extends AbstractJob
      *
      * @param token token of the task to be deleted.
      */
-    public void onTaskDeletion(@NotNull final IToken token)
+    public void onTaskDeletion(@NotNull final IToken<?> token)
     {
         if (taskQueue.contains(token))
         {
