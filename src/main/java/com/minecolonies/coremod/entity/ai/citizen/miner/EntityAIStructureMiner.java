@@ -114,7 +114,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     }
 
     @Override
-    protected BuildingMiner getOwnBuilding()
+    public BuildingMiner getOwnBuilding()
     {
         return (BuildingMiner) worker.getWorkBuilding();
     }
@@ -190,13 +190,13 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             if (getOwnBuilding().getNumberOfLevels() == 0)
             {
                 chatSpamFilter.talkWithoutSpam("entity.miner.messageRequiresBetterHut");
-                getOwnBuilding().clearedShaft = false;
+                getOwnBuilding().setClearedShaft(false);
                 return IDLE;
             }
-            getOwnBuilding().clearedShaft = true;
+            getOwnBuilding().setClearedShaft(true);
             return MINER_MINING_NODE;
         }
-        getOwnBuilding().clearedShaft = false;
+        getOwnBuilding().setClearedShaft(false);
         return MINER_MINING_SHAFT;
     }
 
@@ -315,7 +315,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             return MINER_BUILDING_SHAFT;
         }
 
-        if (checkOrRequestItems(new ItemStack(Blocks.COBBLESTONE, 2), new ItemStack(Blocks.LADDER)))
+        if (checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.COBBLESTONE, 2), new ItemStack(Blocks.LADDER)))
         {
             return state;
         }
@@ -492,33 +492,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return CLEAR_STEP;
     }
 
-    @Override
-    protected boolean checkIfCanceled()
-    {
-        if(!isThereAStructureToBuild())
-        {
-            switch (getState())
-            {
-                case CLEAR_STEP:
-                case BUILDING_STEP:
-                case DECORATION_STEP:
-                case SPAWN_STEP:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    protected void onStartWithoutStructure()
-    {
-        /**
-         * Nothing to do here.
-         */
-    }
-
     @NotNull
     private AIState executeNodeMining()
     {
@@ -580,7 +553,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                 setDelay(1);
                 return false;
             }
-            if (checkOrRequestItems(new ItemStack(Blocks.COBBLESTONE)))
+            if (checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.COBBLESTONE)))
             {
                 return false;
             }
@@ -741,28 +714,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
     }
 
-    /**
-     * Calculates the working position.
-     * <p>
-     * Takes a min distance from width and length.
-     * <p>
-     * Then finds the floor level at that distance and then check if it does contain two air levels.
-     *
-     * @param targetPosition the position to work at.
-     * @return BlockPos position to work from.
-     */
-    @Override
-    public BlockPos getWorkingPosition(final BlockPos targetPosition)
-    {
-        return getNodeMiningPosition(targetPosition);
-    }
-
     @Override
     public void executeSpecificCompleteActions()
     {
         final BuildingMiner minerBuilding = getOwnBuilding();
         //If shaft isn't cleared we're in shaft clearing mode.
-        if (minerBuilding.clearedShaft)
+        if (minerBuilding.hasClearedShaft())
         {
             minerBuilding.getCurrentLevel().closeNextNode(getRotation());
         }
@@ -779,10 +736,20 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         job.setStructure(null);
     }
 
+    /**
+     * Calculates the working position.
+     * <p>
+     * Takes a min distance from width and length.
+     * <p>
+     * Then finds the floor level at that distance and then check if it does contain two air levels.
+     *
+     * @param targetPosition the position to work at.
+     * @return BlockPos position to work from.
+     */
     @Override
-    public IBlockState getSolidSubstitution(final BlockPos ignored)
+    public BlockPos getWorkingPosition(final BlockPos targetPosition)
     {
-        return Blocks.COBBLESTONE.getDefaultState();
+        return getNodeMiningPosition(targetPosition);
     }
 
     /**
@@ -816,5 +783,38 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     public boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final IBlockState worldMetadata)
     {
         return worldBlock instanceof BlockOre && worldMetadata.getMaterial().isSolid();
+    }
+
+    @Override
+    public IBlockState getSolidSubstitution(final BlockPos ignored)
+    {
+        return Blocks.COBBLESTONE.getDefaultState();
+    }
+
+    @Override
+    protected boolean checkIfCanceled()
+    {
+        if (!isThereAStructureToBuild())
+        {
+            switch (getState())
+            {
+                case CLEAR_STEP:
+                case BUILDING_STEP:
+                case DECORATION_STEP:
+                case SPAWN_STEP:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected void onStartWithoutStructure()
+    {
+        /**
+         * Nothing to do here.
+         */
     }
 }

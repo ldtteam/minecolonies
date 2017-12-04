@@ -182,8 +182,8 @@ public final class BlockPosUtil
     public static boolean isPositionSafe(@NotNull final ICommandSender sender, final BlockPos blockPos)
     {
         return sender.getEntityWorld().getBlockState(blockPos).getBlock() != Blocks.AIR
-                && !sender.getEntityWorld().getBlockState(blockPos).getMaterial().isLiquid()
-                && !sender.getEntityWorld().getBlockState(blockPos.up()).getMaterial().isLiquid();
+                 && !sender.getEntityWorld().getBlockState(blockPos).getMaterial().isLiquid()
+                 && !sender.getEntityWorld().getBlockState(blockPos.up()).getMaterial().isLiquid();
     }
 
     /**
@@ -227,7 +227,7 @@ public final class BlockPosUtil
      * Returns the right height for the given position (ground block).
      *
      * @param position Current position of the entity.
-     * @param world the world object.
+     * @param world    the world object.
      * @return Ground level at (position.x, position.z).
      */
     public static double getValidHeight(@NotNull final Vec3d position, @NotNull final World world)
@@ -473,7 +473,8 @@ public final class BlockPosUtil
 
     /**
      * Calculate in which direction a pos is facing.
-     * @param pos the pos.
+     *
+     * @param pos      the pos.
      * @param neighbor the block its facing.
      * @return the directions its facing.
      */

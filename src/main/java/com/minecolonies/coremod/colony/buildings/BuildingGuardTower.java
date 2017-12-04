@@ -5,7 +5,6 @@ import com.minecolonies.coremod.colony.ColonyView;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-
 /**
  * Building class of the BarracksTower.
  */
@@ -20,7 +19,7 @@ public class BuildingGuardTower extends AbstractBuildingGuards
     /**
      * Defence bonus related to this building.
      */
-    private static final int DEFENCE_BONUS  = 5;
+    private static final int DEFENCE_BONUS = 5;
 
     /**
      * Constructor for the BarracksTower building.

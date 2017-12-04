@@ -4,21 +4,26 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
-import com.minecolonies.api.colony.requestsystem.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
@@ -33,28 +38,28 @@ public final class ColonyView implements IColony
 {
     //  General Attributes
     private final int id;
-    private final Map<Integer, WorkOrderView>          workOrders  = new HashMap<>();
+    private final Map<Integer, WorkOrderView>         workOrders  = new HashMap<>();
     //  Administration/permissions
     @NotNull
-    private final Permissions.View                     permissions = new Permissions.View();
+    private final Permissions.View                    permissions = new Permissions.View();
     @NotNull
-    private final Map<BlockPos, AbstractBuilding.View> buildings   = new HashMap<>();
+    private final Map<BlockPos, AbstractBuildingView> buildings   = new HashMap<>();
     //  Citizenry
     @NotNull
-    private final Map<Integer, CitizenDataView>        citizens    = new HashMap<>();
-    private       String                               name        = "Unknown";
+    private final Map<Integer, CitizenDataView>       citizens    = new HashMap<>();
+    private       String                              name        = "Unknown";
     private int      dimensionId;
     private BlockPos center = BlockPos.ORIGIN;
 
     /**
      * Defines if workers are hired manually or automatically.
      */
-    private       boolean          manualHiring = false;
+    private boolean manualHiring = false;
 
     /**
      * Defines if workers are housed manually or automatically.
      */
-    private       boolean          manualHousing = false;
+    private boolean manualHousing = false;
 
     //  Buildings
     @Nullable
@@ -90,6 +95,16 @@ public final class ColonyView implements IColony
      * The hours the colony is without contact with its players.
      */
     private int lastContactInHours = 0;
+
+    /**
+     * The request manager on the colony view side.
+     */
+    private IRequestManager requestManager;
+
+    /**
+     * The world.
+     */
+    private World world;
 
     /**
      * Base constructor for a colony.
@@ -149,7 +164,7 @@ public final class ColonyView implements IColony
         buf.writeBoolean(colony.hasWarehouse());
 
         buf.writeInt(waypoints.size());
-        for(final BlockPos block: waypoints)
+        for (final BlockPos block : waypoints)
         {
             BlockPosUtil.writeToByteBuf(buf, block);
         }
@@ -157,6 +172,8 @@ public final class ColonyView implements IColony
         buf.writeInt(colony.getLastContactInHours());
         buf.writeBoolean(colony.isManualHousing());
         //  Citizens are sent as a separate packet
+
+        ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
     }
 
     /**
@@ -287,10 +304,10 @@ public final class ColonyView implements IColony
      * @param x x-coordinate.
      * @param y y-coordinate.
      * @param z z-coordinate.
-     * @return {@link AbstractBuilding.View} of a AbstractBuilding for the given
+     * @return {@link AbstractBuildingView} of a AbstractBuilding for the given
      * Coordinates/ID, or null.
      */
-    public AbstractBuilding.View getBuilding(final int x, final int y, final int z)
+    public AbstractBuildingView getBuilding(final int x, final int y, final int z)
     {
         return getBuilding(new BlockPos(x, y, z));
     }
@@ -300,10 +317,10 @@ public final class ColonyView implements IColony
      * ChunkCoordinates.
      *
      * @param buildingId Coordinates/ID of the AbstractBuilding.
-     * @return {@link AbstractBuilding.View} of a AbstractBuilding for the given
+     * @return {@link AbstractBuildingView} of a AbstractBuilding for the given
      * Coordinates/ID, or null.
      */
-    public AbstractBuilding.View getBuilding(final BlockPos buildingId)
+    public AbstractBuildingView getBuilding(final BlockPos buildingId)
     {
         return buildings.get(buildingId);
     }
@@ -411,8 +428,9 @@ public final class ColonyView implements IColony
      * @return null == no response.
      */
     @Nullable
-    public IMessage handleColonyViewMessage(@NotNull final ByteBuf buf, final boolean isNewSubscription)
+    public IMessage handleColonyViewMessage(@NotNull final ByteBuf buf, @NotNull final World world, final boolean isNewSubscription)
     {
+        this.world = world;
         //  General Attributes
         name = ByteBufUtils.readUTF8String(buf);
         dimensionId = buf.readInt();
@@ -447,12 +465,15 @@ public final class ColonyView implements IColony
         this.hasWarehouse = buf.readBoolean();
 
         final int wayPointListSize = buf.readInt();
-        for(int i = 0; i < wayPointListSize; i++)
+        for (int i = 0; i < wayPointListSize; i++)
         {
             wayPoints.add(BlockPosUtil.readFromByteBuf(buf));
         }
         this.lastContactInHours = buf.readInt();
         this.manualHousing = buf.readBoolean();
+
+        this.requestManager = new StandardRequestManager(this);
+        this.requestManager.deserializeNBT(ByteBufUtils.readTag(buf));
         return null;
     }
 
@@ -504,7 +525,7 @@ public final class ColonyView implements IColony
         final CitizenDataView citizen = CitizenData.createCitizenDataView(id, buf);
         if (citizen != null)
         {
-            citizens.put(citizen.getID(), citizen);
+            citizens.put(citizen.getId(), citizen);
         }
 
         return null;
@@ -532,7 +553,7 @@ public final class ColonyView implements IColony
     @Nullable
     public IMessage handleColonyViewRemoveBuildingMessage(final BlockPos buildingId)
     {
-        final AbstractBuilding.View building = buildings.remove(buildingId);
+        final AbstractBuildingView building = buildings.remove(buildingId);
         if (townHall == building)
         {
             townHall = null;
@@ -566,7 +587,7 @@ public final class ColonyView implements IColony
     @Nullable
     public IMessage handleColonyBuildingViewMessage(final BlockPos buildingId, @NotNull final ByteBuf buf)
     {
-        @Nullable final AbstractBuilding.View building = AbstractBuilding.createBuildingView(this, buildingId, buf);
+        @Nullable final AbstractBuildingView building = AbstractBuilding.createBuildingView(this, buildingId, buf);
         if (building != null)
         {
             buildings.put(building.getID(), building);
@@ -602,6 +623,7 @@ public final class ColonyView implements IColony
 
     /**
      * Getter for the overall happiness.
+     *
      * @return the happiness, a double.
      */
     public double getOverallHappiness()
@@ -660,15 +682,6 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Get a list of all waypoints in the colony view.
-     * @return a copy of the list.
-     */
-    public Set<BlockPos> getWayPoints()
-    {
-        return new HashSet<>(wayPoints);
-    }
-
-    /**
      * Returns the ID of the view.
      *
      * @return ID of the view.
@@ -694,7 +707,7 @@ public final class ColonyView implements IColony
     @Override
     public World getWorld()
     {
-        return null;
+        return world;
     }
 
     @Nullable
@@ -703,13 +716,20 @@ public final class ColonyView implements IColony
     {
         //No request system on the client side.
         //At least for now.
-        return null;
+        return requestManager;
     }
 
     @Override
     public boolean hasWillRaidTonight()
     {
         return false;
+    }
+
+    @Override
+    public void markDirty()
+    {
+        //NOOP
+        return;
     }
 
     @Override
@@ -728,5 +748,22 @@ public final class ColonyView implements IColony
     public boolean isHasRaidBeenCalculated()
     {
         return false;
+    }
+
+    @Nullable
+    @Override
+    public IRequester getRequesterBuildingForPosition(@NotNull final BlockPos pos)
+    {
+        return getBuilding(pos);
+    }
+
+    /**
+     * Get a list of all waypoints in the colony view.
+     *
+     * @return a copy of the list.
+     */
+    public Set<BlockPos> getWayPoints()
+    {
+        return new HashSet<>(wayPoints);
     }
 }

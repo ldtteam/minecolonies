@@ -19,8 +19,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class SchematicSaveMessage implements IMessage, IMessageHandler<SchematicSaveMessage, IMessage>
 {
-    private byte[] data = null;
-    private static final int MAX_TOTAL_SIZE = 32_767;
+    private static final int    MAX_TOTAL_SIZE = 32_767;
+    private              byte[] data           = null;
 
     /**
      * Public standard constructor.

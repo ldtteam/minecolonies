@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.ModBlocks;
@@ -60,18 +63,22 @@ import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.Actio
 public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends AbstractEntityAIInteract<J>
 {
     /**
+     * String which shows if something is a waypoint.
+     */
+    public static final String WAYPOINT_STRING = "infrastructure";
+    /**
      * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally).
      */
-    private static final double XP_EACH_BUILDING = 10.0D;
+    private static final double XP_EACH_BUILDING              = 10.0D;
     /**
      * Amount of xp the builder gains for placing a block.
      */
-    private static final double XP_EACH_BLOCK = 0.1D;
+    private static final double XP_EACH_BLOCK                 = 0.1D;
     /**
      * Increase this value to make the building speed slower.
      * Used to balance worker level speed increase.
      */
-    private static final int PROGRESS_MULTIPLIER = 10;
+    private static final int    PROGRESS_MULTIPLIER           = 10;
     /**
      * Speed the builder should run away when he castles himself in.
      */
@@ -85,6 +92,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private static final int    UNLIMITED_RESOURCES_TIMEOUT   = 5;
     /**
+     * The standard range the builder should reach until his target.
+     */
+    private static final int STANDARD_WORKING_RANGE = 5;
+    /**
+     * The minimum range the builder has to reach in order to construct or clear.
+     */
+    private static final int MIN_WORKING_RANGE      = 12;
+    /**
      * The current structure task to be build.
      */
     private Structure currentStructure;
@@ -93,23 +108,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private BlockPos  workFrom;
     /**
-     * The standard range the builder should reach until his target.
-     */
-    private static final int STANDARD_WORKING_RANGE = 5;
-    /**
-     * The minimum range the builder has to reach in order to construct or clear.
-     */
-    private static final int MIN_WORKING_RANGE      = 12;
-
-    /**
      * The rotation of the current build.
      */
     private int rotation = 0;
-
-    /**
-     * String which shows if something is a waypoint.
-     */
-    public static final String WAYPOINT_STRING = "infrastructure";
 
     /**
      * Creates this ai base class and set's up important things.
@@ -123,197 +124,44 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         super(job);
         this.registerTargets(
 
-                /**
-                 * Pick up stuff which might've been
-                 */
-                new AITarget(PICK_UP_RESIDUALS, this::pickUpResiduals),
-                /**
-                 * Check if tasks should be executed.
-                 */
-                new AITarget(this::checkIfCanceled, IDLE),
-                /**
-                 * Select the appropriate State to do next.
-                 */
-                new AITarget(START_BUILDING, this::startBuilding),
-                /**
-                 * Check if we have to build something.
-                 */
-                new AITarget(IDLE, this::isThereAStructureToBuild, () -> AIState.START_BUILDING),
-                /**
-                 * Clear out the building area.
-                 */
-                new AITarget(CLEAR_STEP, generateStructureGenerator(this::clearStep, AIState.BUILDING_STEP)),
-                /**
-                 * Build the structure and foundation of the building.
-                 */
-                new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, AIState.SPAWN_STEP)),
-                /**
-                 * Spawn entities on the structure.
-                 */
-                new AITarget(SPAWN_STEP, generateStructureGenerator(this::spawnEntity, AIState.DECORATION_STEP)),
-                /**
-                 * Decorate the AbstractBuilding with torches etc.
-                 */
-                new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, AIState.COMPLETE_BUILD)),
-                /**
-                 * Finalize the building and give back control to the ai.
-                 */
-                new AITarget(COMPLETE_BUILD, this::completeBuild)
+          /**
+           * Pick up stuff which might've been
+           */
+          new AITarget(PICK_UP_RESIDUALS, this::pickUpResiduals),
+          /**
+           * Check if tasks should be executed.
+           */
+          new AITarget(this::checkIfCanceled, IDLE),
+          /**
+           * Select the appropriate State to do next.
+           */
+          new AITarget(START_BUILDING, this::startBuilding),
+          /**
+           * Check if we have to build something.
+           */
+          new AITarget(IDLE, this::isThereAStructureToBuild, () -> AIState.START_BUILDING),
+          /**
+           * Clear out the building area.
+           */
+          new AITarget(CLEAR_STEP, generateStructureGenerator(this::clearStep, AIState.BUILDING_STEP)),
+          /**
+           * Build the structure and foundation of the building.
+           */
+          new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, AIState.SPAWN_STEP)),
+          /**
+           * Spawn entities on the structure.
+           */
+          new AITarget(SPAWN_STEP, generateStructureGenerator(this::spawnEntity, AIState.DECORATION_STEP)),
+          /**
+           * Decorate the AbstractBuilding with torches etc.
+           */
+          new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, AIState.COMPLETE_BUILD)),
+          /**
+           * Finalize the building and give back control to the ai.
+           */
+          new AITarget(COMPLETE_BUILD, this::completeBuild)
         );
     }
-
-    private AIState pickUpResiduals()
-    {
-        if (getItemsForPickUp() == null)
-        {
-            fillItemsList();
-        }
-
-        if (getItemsForPickUp() != null && !getItemsForPickUp().isEmpty())
-        {
-            gatherItems();
-            return getState();
-        }
-        resetGatheringItems();
-        workFrom = null;
-        currentStructure = null;
-
-        return AIState.IDLE;
-    }
-
-
-    /**
-     * Fill the list of the item positions to gather.
-     */
-    @Override
-    public void fillItemsList()
-    {
-        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.gathering"));
-
-        if(currentStructure == null)
-        {
-            return;
-        }
-
-        final BlockPos centerPos = currentStructure.getCenter();
-        if(centerPos.getY() == 0)
-        {
-            return;
-        }
-
-        searchForItems(new AxisAlignedBB(centerPos).expand(currentStructure.getLength() / 2.0, currentStructure.getHeight(), currentStructure.getWidth()));
-    }
-
-    private AIState completeBuild()
-    {
-        if (job instanceof AbstractJobStructure)
-        {
-            executeSpecificCompleteActions();
-            worker.addExperience(XP_EACH_BUILDING);
-        }
-
-        return AIState.PICK_UP_RESIDUALS;
-    }
-
-    private Boolean decorationStep(final Structure.StructureBlock structureBlock)
-    {
-        if (!BlockUtils.shouldNeverBeMessedWith(structureBlock.worldBlock))
-        {
-            worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.decorating"));
-
-            //Fill workFrom with the position from where the builder should build.
-            //also ensure we are at that position.
-            if (!walkToConstructionSite())
-            {
-                return false;
-            }
-
-            if (structureBlock.block == null
-                    || structureBlock.doesStructureBlockEqualWorldBlock()
-                    || structureBlock.metadata.getMaterial().isSolid())
-            {
-                //findNextBlock count was reached and we can ignore this block
-                return true;
-            }
-
-            worker.faceBlock(structureBlock.blockPosition);
-
-            @Nullable final Block block = structureBlock.block;
-
-            //should never happen
-            if (block == null)
-            {
-                @NotNull final BlockPos local = structureBlock.blockPosition;
-                Log.getLogger().error(String.format("StructureProxy has null block at %s - local(%s)", currentStructure.getCurrentBlockPosition(), local));
-                return true;
-            }
-
-            @Nullable final IBlockState blockState = structureBlock.metadata;
-            //We need to deal with materials
-            return placeBlockAt(blockState, structureBlock.blockPosition);
-        }
-        return true;
-    }
-
-    private Boolean structureStep(final Structure.StructureBlock structureBlock)
-    {
-        if (!BlockUtils.shouldNeverBeMessedWith(structureBlock.worldBlock))
-        {
-            worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.building"));
-
-            //Fill workFrom with the position from where the builder should build.
-            //also ensure we are at that position.
-            if (!walkToConstructionSite())
-            {
-                return false;
-            }
-
-            if (structureBlock.block == null
-                    || (!structureBlock.metadata.getMaterial().isSolid() && structureBlock.block != Blocks.AIR))
-            {
-                //findNextBlock count was reached and we can ignore this block
-                return true;
-            }
-
-            if (structureBlock.doesStructureBlockEqualWorldBlock())
-            {
-                connectBlockToBuildingIfNecessary(structureBlock.block, structureBlock.blockPosition);
-                //findNextBlock count was reached and we can ignore this block
-                return true;
-            }
-
-            @Nullable Block block = structureBlock.block;
-            @Nullable IBlockState blockState = structureBlock.metadata;
-            if (block == ModBlocks.blockSolidSubstitution
-                    && shallReplaceSolidSubstitutionBlock(structureBlock.worldBlock, structureBlock.worldMetadata))
-            {
-                blockState = getSolidSubstitution(structureBlock.blockPosition);
-                block = blockState.getBlock();
-            }
-
-            worker.faceBlock(structureBlock.blockPosition);
-
-            //should never happen
-            if (block == null)
-            {
-                @NotNull final BlockPos local = structureBlock.blockPosition;
-                Log.getLogger().error(String.format("StructureProxy has null block at %s - local(%s)", currentStructure.getCurrentBlockPosition(), local));
-                return true;
-            }
-
-            return placeBlockAt(blockState, structureBlock.blockPosition);
-        }
-        return true;
-    }
-
-    /**
-     * Check if a solid substitution block should be overwritten in a specific case.
-     *
-     * @param worldBlock    the worldblock.
-     * @param worldMetadata the world metadata.
-     * @return true if should be overwritten.
-     */
-    public abstract boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final IBlockState worldMetadata);
 
     /**
      * Generate a function that will iterate over a structure.
@@ -340,7 +188,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             (which changes stuff, so only execute on valid block!)
             */
             if (currentBlock.block == null
-                    || evaluationFunction.apply(currentBlock))
+                  || evaluationFunction.apply(currentBlock))
             {
                 final Structure.Result result = advanceBlock.get();
                 if (result == Structure.Result.AT_END)
@@ -380,10 +228,351 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
     }
 
+    private AIState pickUpResiduals()
+    {
+        if (getItemsForPickUp() == null)
+        {
+            fillItemsList();
+        }
+
+        if (getItemsForPickUp() != null && !getItemsForPickUp().isEmpty())
+        {
+            gatherItems();
+            return getState();
+        }
+        resetGatheringItems();
+        workFrom = null;
+        currentStructure = null;
+
+        return AIState.IDLE;
+    }
+
+    /**
+     * Fill the list of the item positions to gather.
+     */
+    @Override
+    public void fillItemsList()
+    {
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.gathering"));
+
+        if (currentStructure == null)
+        {
+            return;
+        }
+
+        final BlockPos centerPos = currentStructure.getCenter();
+        if (centerPos.getY() == 0)
+        {
+            return;
+        }
+
+        searchForItems(new AxisAlignedBB(centerPos).expand(currentStructure.getLength() / 2.0, currentStructure.getHeight(), currentStructure.getWidth()));
+    }
+
+    private AIState completeBuild()
+    {
+        if (job instanceof AbstractJobStructure)
+        {
+            executeSpecificCompleteActions();
+            worker.addExperience(XP_EACH_BUILDING);
+        }
+
+        return AIState.PICK_UP_RESIDUALS;
+    }
+
     /**
      * Execute specific actions on loading a structure.
      */
     protected abstract void executeSpecificCompleteActions();
+
+    private Boolean decorationStep(final Structure.StructureBlock structureBlock)
+    {
+        if (!BlockUtils.shouldNeverBeMessedWith(structureBlock.worldBlock))
+        {
+            worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.decorating"));
+
+            //Fill workFrom with the position from where the builder should build.
+            //also ensure we are at that position.
+            if (!walkToConstructionSite())
+            {
+                return false;
+            }
+
+            if (structureBlock.block == null
+                  || structureBlock.doesStructureBlockEqualWorldBlock()
+                  || structureBlock.metadata.getMaterial().isSolid())
+            {
+                //findNextBlock count was reached and we can ignore this block
+                return true;
+            }
+
+            worker.faceBlock(structureBlock.blockPosition);
+
+            @Nullable final Block block = structureBlock.block;
+
+            //should never happen
+            if (block == null)
+            {
+                @NotNull final BlockPos local = structureBlock.blockPosition;
+                Log.getLogger().error(String.format("StructureProxy has null block at %s - local(%s)", currentStructure.getCurrentBlockPosition(), local));
+                return true;
+            }
+
+            @Nullable final IBlockState blockState = structureBlock.metadata;
+            //We need to deal with materials
+            return placeBlockAt(blockState, structureBlock.blockPosition);
+        }
+        return true;
+    }
+
+    /**
+     * Walk to the current construction site.
+     * <p>
+     * Calculates and caches the position where to walk to.
+     *
+     * @return true while walking to the site.
+     */
+    public boolean walkToConstructionSite()
+    {
+        if (workFrom == null)
+        {
+            workFrom = getWorkingPosition(currentStructure.getCurrentBlockPosition());
+        }
+
+        //The miner shouldn't search for a save position. Just let him build from where he currently is.
+        return worker.isWorkerAtSiteWithMove(workFrom, STANDARD_WORKING_RANGE) || MathUtils.twoDimDistance(worker.getPosition(), workFrom) < MIN_WORKING_RANGE;
+    }
+
+    private boolean placeBlockAt(@NotNull final IBlockState blockState, @NotNull final BlockPos coords)
+    {
+        final ItemStack item = BlockUtils.getItemStackFromBlockState(blockState);
+        worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? ItemStackUtils.EMPTY : item);
+        final IBlockState decrease;
+        for (final IPlacementHandler handlers : PlacementHandlers.handlers)
+        {
+            final Object result = handlers.handle(world, coords, blockState, this, Configurations.gameplay.builderInfiniteResources, false);
+            if (result instanceof IPlacementHandler.ActionProcessingResult)
+            {
+                if (result == ACCEPT)
+                {
+                    return true;
+                }
+
+                if (result == DENY)
+                {
+                    return false;
+                }
+                continue;
+            }
+
+            if (result instanceof IBlockState)
+            {
+                decrease = (IBlockState) result;
+                decreaseInventory(coords, decrease.getBlock(), decrease);
+                worker.swingArm(worker.getActiveHand());
+                worker.addExperience(XP_EACH_BLOCK);
+
+                return true;
+            }
+        }
+
+        Log.getLogger().warn("Couldn't handle block: " + blockState.getBlock().getUnlocalizedName());
+        return true;
+    }
+
+    /**
+     * Calculates the working position.
+     * <p>
+     * Takes a min distance from width and length.
+     * <p>
+     * Then finds the floor level at that distance and then check if it does contain two air levels.
+     *
+     * @param targetPosition the position to work at.
+     * @return BlockPos position to work from.
+     */
+    @Override
+    public BlockPos getWorkingPosition(final BlockPos targetPosition)
+    {
+        //get length or width either is larger.
+        final int length = currentStructure.getLength();
+        final int width = currentStructure.getWidth();
+        final int distance = Math.max(width, length) + MIN_ADDITIONAL_RANGE_TO_BUILD;
+
+        return getWorkingPosition(distance, targetPosition, 0);
+    }
+
+    private boolean decreaseInventory(@NotNull final BlockPos pos, final Block block, @NotNull final IBlockState state)
+    {
+        @NotNull final IBlockState stateToPlace = state;
+
+        //Move out of the way when placing blocks
+        if (MathHelper.floor(worker.posX) == pos.getX()
+              && MathHelper.abs(pos.getY() - (int) worker.posY) <= 1
+              && MathHelper.floor(worker.posZ) == pos.getZ()
+              && worker.getNavigator().noPath())
+        {
+            worker.getNavigator().moveAwayFromXYZ(pos, RUN_AWAY_SPEED, 1.0);
+        }
+
+        @NotNull final Block blockToPlace = block;
+        connectBlockToBuildingIfNecessary(blockToPlace, pos);
+
+        //It will crash at blocks like water which is actually free, we don't have to decrease the stacks we have.
+        if (isBlockFree(blockToPlace, blockToPlace.getMetaFromState(stateToPlace)))
+        {
+            return true;
+        }
+
+        @Nullable final ItemStack stack = BlockUtils.getItemStackFromBlockState(stateToPlace);
+        if (ItemStackUtils.isEmpty(stack))
+        {
+            Log.getLogger().error("Block causes NPE: " + stateToPlace.getBlock());
+            return false;
+        }
+
+        final List<ItemStack> itemList = new ArrayList<>();
+        itemList.add(stack);
+        itemList.addAll(getItemsFromTileEntity());
+
+        for (final ItemStack tempStack : itemList)
+        {
+            if (!ItemStackUtils.isEmpty(tempStack))
+            {
+                final int slot = worker.findFirstSlotInInventoryWith(tempStack.getItem(), tempStack.getItemDamage());
+                if (slot != -1)
+                {
+                    new InvWrapper(getInventory()).extractItem(slot, 1, false);
+                    reduceNeededResources(tempStack);
+                }
+            }
+        }
+
+        if (Configurations.gameplay.builderBuildBlockDelay > 0 && blockToPlace != Blocks.AIR)
+        {
+            setDelay(Configurations.gameplay.builderBuildBlockDelay * PROGRESS_MULTIPLIER / (worker.getLevel() + PROGRESS_MULTIPLIER));
+        }
+
+        return true;
+    }
+
+    /**
+     * On placement of a Block execute this to store the location in the regarding building when needed.
+     *
+     * @param block itself
+     * @param pos   the position of the block.
+     */
+    public void connectBlockToBuildingIfNecessary(@NotNull final Block block, @NotNull final BlockPos pos)
+    {
+        /**
+         * Classes can overwrite this if necessary.
+         */
+    }
+
+    /**
+     * Defines blocks that can be built for free.
+     *
+     * @param block    The block to check if it is free.
+     * @param metadata The metadata of the block.
+     * @return true or false.
+     */
+    public static boolean isBlockFree(@Nullable final Block block, final int metadata)
+    {
+        return block == null
+                 || BlockUtils.isWater(block.getDefaultState())
+                 || block.equals(Blocks.LEAVES)
+                 || block.equals(Blocks.LEAVES2)
+                 || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08));
+    }
+
+    /*
+     * Get specific data of a tileEntity.
+     * Workers should implement this correctly if they require this behavior.
+     * @return list of items of the tile.
+     */
+    public List<ItemStack> getItemsFromTileEntity()
+    {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Reduces the needed resources by 1.
+     *
+     * @param stack the stack which has been used now.
+     */
+    public void reduceNeededResources(final ItemStack stack)
+    {
+        /**
+         * Nothing to be done here. Workers overwrite this if necessary.
+         */
+    }
+
+    private Boolean structureStep(final Structure.StructureBlock structureBlock)
+    {
+        if (!BlockUtils.shouldNeverBeMessedWith(structureBlock.worldBlock))
+        {
+            worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.building"));
+
+            //Fill workFrom with the position from where the builder should build.
+            //also ensure we are at that position.
+            if (!walkToConstructionSite())
+            {
+                return false;
+            }
+
+            if (structureBlock.block == null
+                  || (!structureBlock.metadata.getMaterial().isSolid() && structureBlock.block != Blocks.AIR))
+            {
+                //findNextBlock count was reached and we can ignore this block
+                return true;
+            }
+
+            if (structureBlock.doesStructureBlockEqualWorldBlock())
+            {
+                connectBlockToBuildingIfNecessary(structureBlock.block, structureBlock.blockPosition);
+                //findNextBlock count was reached and we can ignore this block
+                return true;
+            }
+
+            @Nullable Block block = structureBlock.block;
+            @Nullable IBlockState blockState = structureBlock.metadata;
+            if (block == ModBlocks.blockSolidSubstitution
+                  && shallReplaceSolidSubstitutionBlock(structureBlock.worldBlock, structureBlock.worldMetadata))
+            {
+                blockState = getSolidSubstitution(structureBlock.blockPosition);
+                block = blockState.getBlock();
+            }
+
+            worker.faceBlock(structureBlock.blockPosition);
+
+            //should never happen
+            if (block == null)
+            {
+                @NotNull final BlockPos local = structureBlock.blockPosition;
+                Log.getLogger().error(String.format("StructureProxy has null block at %s - local(%s)", currentStructure.getCurrentBlockPosition(), local));
+                return true;
+            }
+
+            return placeBlockAt(blockState, structureBlock.blockPosition);
+        }
+        return true;
+    }
+
+    /**
+     * Check if a solid substitution block should be overwritten in a specific case.
+     *
+     * @param worldBlock    the worldblock.
+     * @param worldMetadata the world metadata.
+     * @return true if should be overwritten.
+     */
+    public abstract boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final IBlockState worldMetadata);
+
+    /**
+     * Searches a handy block to substitute a non-solid space which should be guaranteed solid.
+     *
+     * @param location the location the block should be at.
+     * @return the Block.
+     */
+    public abstract IBlockState getSolidSubstitution(BlockPos location);
 
     /**
      * Requests Materials if required.
@@ -394,14 +583,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
          * Extending entities implement this if required.
          */
     }
-
-    /**
-     * Searches a handy block to substitute a non-solid space which should be guaranteed solid.
-     *
-     * @param location the location the block should be at.
-     * @return the Block.
-     */
-    public abstract IBlockState getSolidSubstitution(BlockPos location);
 
     /**
      * Loads the structure given the name, rotation and position.
@@ -440,15 +621,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @return true if reset to idle.
      */
     protected abstract boolean checkIfCanceled();
-
-    /**
-     * Let childs overwrite this if necessary.
-     * @return true if so.
-     */
-    protected boolean isAlreadyCleared()
-    {
-        return false;
-    }
 
     /**
      * Works on clearing the area of unneeded blocks.
@@ -498,6 +670,16 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
+     * Let childs overwrite this if necessary.
+     *
+     * @return true if so.
+     */
+    protected boolean isAlreadyCleared()
+    {
+        return false;
+    }
+
+    /**
      * Get the current working position for the worker. If workFrom is null calculate a new one.
      */
     private BlockPos getCurrentWorkingPosition()
@@ -512,29 +694,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     protected boolean isThereAStructureToBuild()
     {
-        if(currentStructure == null)
+        if (currentStructure == null)
         {
             worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waitingForBuild"));
         }
         return currentStructure != null;
-    }
-
-    /**
-     * Walk to the current construction site.
-     * <p>
-     * Calculates and caches the position where to walk to.
-     *
-     * @return true while walking to the site.
-     */
-    public boolean walkToConstructionSite()
-    {
-        if (workFrom == null)
-        {
-            workFrom = getWorkingPosition(currentStructure.getCurrentBlockPosition());
-        }
-
-        //The miner shouldn't search for a save position. Just let him build from where he currently is.
-        return worker.isWorkerAtSiteWithMove(workFrom, STANDARD_WORKING_RANGE) || MathUtils.twoDimDistance(worker.getPosition(), workFrom) < MIN_WORKING_RANGE;
     }
 
     /**
@@ -570,16 +734,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     protected abstract void onStartWithoutStructure();
 
     /*
-     * Get specific data of a tileEntity.
-     * Workers should implement this correctly if they require this behavior.
-     * @return list of items of the tile.
-     */
-    public List<ItemStack> getItemsFromTileEntity()
-    {
-        return Collections.emptyList();
-    }
-
-    /*
     * Get specific data of an entity.
     * Workers should implement this correctly if they require this behavior.
     * @return the entityInfo or null.
@@ -602,60 +756,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
-     * Defines blocks that can be built for free.
-     *
-     * @param block    The block to check if it is free.
-     * @param metadata The metadata of the block.
-     * @return true or false.
-     */
-    public static boolean isBlockFree(@Nullable final Block block, final int metadata)
-    {
-        return block == null
-                || BlockUtils.isWater(block.getDefaultState())
-                || block.equals(Blocks.LEAVES)
-                || block.equals(Blocks.LEAVES2)
-                || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08));
-    }
-
-    private boolean placeBlockAt(@NotNull final IBlockState blockState, @NotNull final BlockPos coords)
-    {
-        final ItemStack item = BlockUtils.getItemStackFromBlockState(blockState);
-        worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? ItemStackUtils.EMPTY : item);
-        final IBlockState decrease;
-        for(final IPlacementHandler handlers :PlacementHandlers.handlers)
-        {
-            final Object result = handlers.handle(world, coords, blockState, this, Configurations.gameplay.builderInfiniteResources, false);
-            if(result instanceof IPlacementHandler.ActionProcessingResult)
-            {
-                if(result == ACCEPT)
-                {
-                    return true;
-                }
-
-                if(result == DENY)
-                {
-                    return false;
-                }
-                continue;
-            }
-
-            if(result  instanceof IBlockState)
-            {
-                decrease = (IBlockState) result;
-                decreaseInventory(coords, decrease.getBlock(), decrease);
-                worker.swingArm(worker.getActiveHand());
-                worker.addExperience(XP_EACH_BLOCK);
-
-                return true;
-            }
-        }
-
-        Log.getLogger().warn("Couldn't handle block: " + blockState.getBlock().getUnlocalizedName());
-        return true;
-    }
-
-    /**
      * Specific actions to execute when building over a block.
+     *
      * @param pos the position to build at.
      */
     public void handleBuildingOverBlock(@NotNull final BlockPos pos)
@@ -667,62 +769,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
     }
 
-    private boolean decreaseInventory(@NotNull final BlockPos pos, final Block block, @NotNull final IBlockState state)
-    {
-        @NotNull final IBlockState stateToPlace = state;
-
-        //Move out of the way when placing blocks
-        if (MathHelper.floor(worker.posX) == pos.getX()
-                && MathHelper.abs(pos.getY() - (int) worker.posY) <= 1
-                && MathHelper.floor(worker.posZ) == pos.getZ()
-                && worker.getNavigator().noPath())
-        {
-            worker.getNavigator().moveAwayFromXYZ(pos, RUN_AWAY_SPEED, 1.0);
-        }
-
-        @NotNull final Block blockToPlace = block;
-        connectBlockToBuildingIfNecessary(blockToPlace, pos);
-
-        //It will crash at blocks like water which is actually free, we don't have to decrease the stacks we have.
-        if (isBlockFree(blockToPlace, blockToPlace.getMetaFromState(stateToPlace)))
-        {
-            return true;
-        }
-
-        @Nullable final ItemStack stack = BlockUtils.getItemStackFromBlockState(stateToPlace);
-        if (ItemStackUtils.isEmpty(stack))
-        {
-            Log.getLogger().error("Block causes NPE: " + stateToPlace.getBlock());
-            return false;
-        }
-
-        final List<ItemStack> itemList = new ArrayList<>();
-        itemList.add(stack);
-        itemList.addAll(getItemsFromTileEntity());
-
-        for (final ItemStack tempStack : itemList)
-        {
-            if (!ItemStackUtils.isEmpty(tempStack))
-            {
-                final int slot = worker.findFirstSlotInInventoryWith(tempStack.getItem(), tempStack.getItemDamage());
-                if (slot != -1)
-                {
-                    new InvWrapper(getInventory()).extractItem(slot, 1, false);
-                    reduceNeededResources(tempStack);
-                }
-            }
-        }
-
-        if (Configurations.gameplay.builderBuildBlockDelay > 0 && blockToPlace != Blocks.AIR)
-        {
-            setDelay(Configurations.gameplay.builderBuildBlockDelay * PROGRESS_MULTIPLIER / (worker.getLevel() + PROGRESS_MULTIPLIER));
-        }
-
-        return true;
-    }
-
     /**
      * Handle flower pots and spawn the right flower in it.
+     *
      * @param pos the position.
      */
     public void handleTileEntityPlacement(@NotNull final BlockPos pos)
@@ -730,60 +779,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         /**
          * Should be overwritten and implemented by certain entity if required.
          */
-    }
-
-    /**
-     * On placement of a Block execute this to store the location in the regarding building when needed.
-     *
-     * @param block itself
-     * @param pos the position of the block.
-     */
-    public void connectBlockToBuildingIfNecessary(@NotNull final Block block, @NotNull final BlockPos pos)
-    {
-        /**
-         * Classes can overwrite this if necessary.
-         */
-    }
-
-    /**
-     * Reduces the needed resources by 1.
-     *
-     * @param stack the stack which has been used now.
-     */
-    public void reduceNeededResources(final ItemStack stack)
-    {
-        /**
-         * Nothing to be done here. Workers overwrite this if necessary.
-         */
-    }
-
-    /**
-     * Get the worker of the AI.
-     * @return the EntityCitizen object.
-     */
-    public EntityCitizen getWorker()
-    {
-        return this.worker;
-    }
-
-    /**
-     * Get the entity of an entityInfo object.
-     *
-     * @param entityInfo the input.
-     * @return the output object or null.
-     */
-    @Nullable
-    public Entity getEntityFromEntityInfoOrNull(final Template.EntityInfo entityInfo)
-    {
-        try
-        {
-            return EntityList.createEntityFromNBT(entityInfo.entityData, world);
-        }
-        catch (final RuntimeException e)
-        {
-            Log.getLogger().info("Couldn't restore entitiy", e);
-            return null;
-        }
     }
 
     /**
@@ -842,8 +837,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             {
                 for (final ItemStack stack : request)
                 {
-                    if (checkOrRequestItems(stack))
+                    if (getOwnBuilding().getOpenRequestsOfTypeFiltered(getWorker().getCitizenData(),
+                      TypeToken.of(Stack.class),
+                      (IRequest<? extends Stack> r) -> r.getRequest().matches(stack)).isEmpty())
                     {
+                        Stack stackRequest = new Stack(stack);
+                        worker.getCitizenData().createRequest(stackRequest);
+
                         return false;
                     }
                 }
@@ -866,11 +866,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
             entity.setUniqueId(UUID.randomUUID());
             entity.setLocationAndAngles(
-                    entity.posX,
-                    entity.posY,
-                    entity.posZ,
-                    entity.rotationYaw,
-                    entity.rotationPitch);
+              entity.posX,
+              entity.posY,
+              entity.posZ,
+              entity.rotationYaw,
+              entity.rotationPitch);
             if (!world.spawnEntity(entity))
             {
                 Log.getLogger().info("Failed to spawn entity");
@@ -881,24 +881,23 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
-     * Calculates the working position.
-     * <p>
-     * Takes a min distance from width and length.
-     * <p>
-     * Then finds the floor level at that distance and then check if it does contain two air levels.
+     * Get the entity of an entityInfo object.
      *
-     * @param targetPosition the position to work at.
-     * @return BlockPos position to work from.
+     * @param entityInfo the input.
+     * @return the output object or null.
      */
-    @Override
-    public BlockPos getWorkingPosition(final BlockPos targetPosition)
+    @Nullable
+    public Entity getEntityFromEntityInfoOrNull(final Template.EntityInfo entityInfo)
     {
-        //get length or width either is larger.
-        final int length = currentStructure.getLength();
-        final int width = currentStructure.getWidth();
-        final int distance = Math.max(width, length) + MIN_ADDITIONAL_RANGE_TO_BUILD;
-
-        return getWorkingPosition(distance, targetPosition, 0);
+        try
+        {
+            return EntityList.createEntityFromNBT(entityInfo.entityData, world);
+        }
+        catch (final RuntimeException e)
+        {
+            Log.getLogger().info("Couldn't restore entitiy", e);
+            return null;
+        }
     }
 
     /**
@@ -914,7 +913,18 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
+     * Get the worker of the AI.
+     *
+     * @return the EntityCitizen object.
+     */
+    public EntityCitizen getWorker()
+    {
+        return this.worker;
+    }
+
+    /**
      * Get the rotation of the current build.
+     *
      * @return the rotation
      */
     public int getRotation()
@@ -924,11 +934,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
     /**
      * Adds a waypoint to the AI's colony.
+     *
      * @param pos the position of the point
      */
     public void addWayPoint(final BlockPos pos)
     {
         worker.getColony().addWayPoint(pos, world.getBlockState(pos));
     }
-
 }

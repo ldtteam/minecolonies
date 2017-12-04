@@ -22,7 +22,7 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
     private static final int    MUTEX_BITS              = 3;
     private final AbstractEntityBarbarian entity;
     private       EntityLivingBase        target;
-    private              int    lastAttack              = 0;
+    private int lastAttack = 0;
 
     /**
      * Constructor method for AI

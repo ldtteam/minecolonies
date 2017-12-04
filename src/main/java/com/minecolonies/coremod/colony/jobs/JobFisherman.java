@@ -170,6 +170,16 @@ public class JobFisherman extends AbstractJob
         return null;
     }
 
+    @Override
+    public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
+    {
+        super.triggerDeathAchievement(source, citizen);
+        if (source.getTrueSource() instanceof EntityGuardian)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementFisherDeathGuardian);
+        }
+    }
+
     /**
      * Getter for current water.
      *
@@ -219,16 +229,6 @@ public class JobFisherman extends AbstractJob
     public void removeFromPonds(final BlockPos pond)
     {
         this.ponds.remove(pond);
-    }
-
-    @Override
-    public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
-    {
-        super.triggerDeathAchievement(source, citizen);
-        if (source.getTrueSource() instanceof EntityGuardian)
-        {
-            this.getColony().triggerAchievement(ModAchievements.achievementFisherDeathGuardian);
-        }
     }
 }
 

@@ -77,13 +77,13 @@ public class ContainerRack extends net.minecraft.inventory.Container
      * Creates an instance of our field container, this may be serve to open the GUI.
      *
      * @param tileEntityRack  the tileEntity of the field containing the inventory.
-     * @param neighborRack the neighboring rack.
+     * @param neighborRack    the neighboring rack.
      * @param playerInventory the player inventory.
      * @param location        the position of the field.
      */
     public ContainerRack(
-            @NotNull final TileEntityRack tileEntityRack, @Nullable final TileEntityRack neighborRack,
-            final InventoryPlayer playerInventory, @NotNull final BlockPos location)
+                          @NotNull final TileEntityRack tileEntityRack, @Nullable final TileEntityRack neighborRack,
+                          final InventoryPlayer playerInventory, @NotNull final BlockPos location)
     {
         super();
         if (neighborRack != null)
@@ -118,9 +118,9 @@ public class ContainerRack extends net.minecraft.inventory.Container
                 if (index < size)
                 {
                     this.addSlotToContainer(
-                            new SlotItemHandler(inventory, index,
-                                    INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
-                                    PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH));
+                      new SlotItemHandler(inventory, index,
+                                           INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
+                                           PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH));
                     index++;
                 }
             }
@@ -134,11 +134,11 @@ public class ContainerRack extends net.minecraft.inventory.Container
             for (int j = 0; j < INVENTORY_COLUMNS; j++)
             {
                 addSlotToContainer(new Slot(
-                        playerInventory,
-                        j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
-                        PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
-                        PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
-                                + i * PLAYER_INVENTORY_OFFSET_EACH
+                                             playerInventory,
+                                             j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
+                                             PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
+                                             PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
+                                               + i * PLAYER_INVENTORY_OFFSET_EACH
                 ));
             }
         }
@@ -146,10 +146,10 @@ public class ContainerRack extends net.minecraft.inventory.Container
         for (i = 0; i < INVENTORY_COLUMNS; i++)
         {
             addSlotToContainer(new Slot(
-                    playerInventory, i,
-                    PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
-                    PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
-                            INVENTORY_BAR_SIZE)
+                                         playerInventory, i,
+                                         PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
+                                         PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
+                                           INVENTORY_BAR_SIZE)
             ));
         }
     }
@@ -158,12 +158,6 @@ public class ContainerRack extends net.minecraft.inventory.Container
     protected final Slot addSlotToContainer(final Slot slotToAdd)
     {
         return super.addSlotToContainer(slotToAdd);
-    }
-
-    @Override
-    public boolean canInteractWith(final EntityPlayer playerIn)
-    {
-        return true;
     }
 
     @Override
@@ -207,5 +201,11 @@ public class ContainerRack extends net.minecraft.inventory.Container
             neighborRack.updateItemStorage();
         }
         return stackCopy;
+    }
+
+    @Override
+    public boolean canInteractWith(final EntityPlayer playerIn)
+    {
+        return true;
     }
 }

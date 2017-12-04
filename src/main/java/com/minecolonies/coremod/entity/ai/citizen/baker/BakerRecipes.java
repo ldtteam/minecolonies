@@ -62,7 +62,6 @@ public final class BakerRecipes
      * Amount of cookies, for more cookies, increase this value!
      */
     private static final int COOKIES = 8;
-
     static
     {
         final List<ItemStack> inputCake = new ArrayList<>();
@@ -79,9 +78,9 @@ public final class BakerRecipes
         inputBread.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT));
 
         recipes = new ImmutableList.Builder<RecipeStorage>()
-                .add(new RecipeStorage(inputCookie, GRID_SIZE, new ItemStack(Items.COOKIE, COOKIES)))
-                .add(new RecipeStorage(inputCake, GRID_SIZE, new ItemStack(Items.CAKE, 1), new ItemStack(Items.BUCKET, BUCKET_COUNT)))
-                .add(new RecipeStorage(inputBread, GRID_SIZE, new ItemStack(Items.BREAD, 1))).build();
+                    .add(new RecipeStorage(inputCookie, GRID_SIZE, new ItemStack(Items.COOKIE, COOKIES)))
+                    .add(new RecipeStorage(inputCake, GRID_SIZE, new ItemStack(Items.CAKE, 1), new ItemStack(Items.BUCKET, BUCKET_COUNT)))
+                    .add(new RecipeStorage(inputBread, GRID_SIZE, new ItemStack(Items.BREAD, 1))).build();
     }
     /**
      * Private constructor to hide implicit one.

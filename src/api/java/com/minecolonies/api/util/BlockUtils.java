@@ -250,7 +250,7 @@ public final class BlockUtils
         {
             return Item.getItemFromBlock(Blocks.DIRT);
         }
-        else if(blockState.getBlock() instanceof BlockFire)
+        else if (blockState.getBlock() instanceof BlockFire)
         {
             return Items.FLINT_AND_STEEL;
         }
@@ -372,35 +372,6 @@ public final class BlockUtils
     }
 
     /**
-     * Compares two blocks and checks if they are equally dirt.
-     * Meaning dirt and grass are equal. But podzol and coarse dirt not.
-     *
-     * @param structureBlock the block of the structure.
-     * @param worldBlock the world block.
-     * @param structureMetaData the structure metadata.
-     * @param worldMetadata the world metadata.
-     * @return true if equal.
-     */
-    public static boolean isGrassOrDirt(@NotNull final Block structureBlock, @NotNull final Block worldBlock,
-            @NotNull final IBlockState structureMetaData, @NotNull final IBlockState worldMetadata)
-    {
-        if((structureBlock == Blocks.DIRT || structureBlock == Blocks.GRASS) && (worldBlock == Blocks.DIRT || worldBlock == Blocks.GRASS))
-        {
-            if(structureBlock == Blocks.DIRT
-                    && (structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.COARSE_DIRT
-                    || structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.PODZOL))
-            {
-                return false;
-            }
-
-            return worldBlock != Blocks.DIRT
-                    || (worldMetadata.getValue(BlockDirt.VARIANT) != BlockDirt.DirtType.COARSE_DIRT
-                    && worldMetadata.getValue(BlockDirt.VARIANT) != BlockDirt.DirtType.PODZOL);
-        }
-        return  false;
-    }
-
-    /**
      * Get the damage value from a block and blockState, where the block is the
      * placeable and obtainable block. The blockstate might differ from the
      * block.
@@ -454,6 +425,36 @@ public final class BlockUtils
             //todo farmland doesn't have damage at all, sucker!
             return block.damageDropped(blockState);
         }
+    }
+
+    /**
+     * Compares two blocks and checks if they are equally dirt.
+     * Meaning dirt and grass are equal. But podzol and coarse dirt not.
+     *
+     * @param structureBlock    the block of the structure.
+     * @param worldBlock        the world block.
+     * @param structureMetaData the structure metadata.
+     * @param worldMetadata     the world metadata.
+     * @return true if equal.
+     */
+    public static boolean isGrassOrDirt(
+                                         @NotNull final Block structureBlock, @NotNull final Block worldBlock,
+                                         @NotNull final IBlockState structureMetaData, @NotNull final IBlockState worldMetadata)
+    {
+        if ((structureBlock == Blocks.DIRT || structureBlock == Blocks.GRASS) && (worldBlock == Blocks.DIRT || worldBlock == Blocks.GRASS))
+        {
+            if (structureBlock == Blocks.DIRT
+                  && (structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.COARSE_DIRT
+                        || structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.PODZOL))
+            {
+                return false;
+            }
+
+            return worldBlock != Blocks.DIRT
+                     || (worldMetadata.getValue(BlockDirt.VARIANT) != BlockDirt.DirtType.COARSE_DIRT
+                           && worldMetadata.getValue(BlockDirt.VARIANT) != BlockDirt.DirtType.PODZOL);
+        }
+        return false;
     }
 
     /**

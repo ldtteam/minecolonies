@@ -92,18 +92,19 @@ public final class RenderUtils
 
     /**
      * Render informal signs at the citizen.
-     * @param clientWorld the client world.
-     * @param partialTicks the partial ticks.
+     *
+     * @param clientWorld     the client world.
+     * @param partialTicks    the partial ticks.
      * @param citizenDataView the citizen data.
-     * @param player the player.
-     * @param citizen the citizen position
+     * @param player          the player.
+     * @param citizen         the citizen position
      */
     public static void renderSigns(
-            final WorldClient clientWorld,
-            final float partialTicks,
-            final CitizenDataView citizenDataView,
-            final EntityPlayer player,
-            final BlockPos citizen)
+                                    final WorldClient clientWorld,
+                                    final float partialTicks,
+                                    final CitizenDataView citizenDataView,
+                                    final EntityPlayer player,
+                                    final BlockPos citizen)
     {
         final Block block = ModBlocks.blockInfoPoster;
         final BlockPos vector = citizen.subtract(player.getPosition());
@@ -116,9 +117,9 @@ public final class RenderUtils
         final TileEntityInfoPoster sign = new TileEntityInfoPoster();
         sign.setPos(pos);
 
-        for(int i = 0; i < sign.signText.length; i++)
+        for (int i = 0; i < sign.signText.length; i++)
         {
-            if(i < citizenDataView.getLatestStatus().length)
+            if (i < citizenDataView.getLatestStatus().length)
             {
                 sign.signText[i] = citizenDataView.getLatestStatus()[i];
             }
@@ -140,11 +141,11 @@ public final class RenderUtils
      * @param colonyBorder the border of the colony.
      */
     public static void renderColonyBorder(
-            final BlockPos position,
-            final WorldClient clientWorld,
-            final float partialTicks,
-            final EntityPlayer thePlayer,
-            final List<BlockPos> colonyBorder)
+                                           final BlockPos position,
+                                           final WorldClient clientWorld,
+                                           final float partialTicks,
+                                           final EntityPlayer thePlayer,
+                                           final List<BlockPos> colonyBorder)
     {
         if (colonyBorder.isEmpty())
         {

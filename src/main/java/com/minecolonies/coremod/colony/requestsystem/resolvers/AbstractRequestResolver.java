@@ -1,14 +1,17 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * ----------------------- Not Documented Object ---------------------
  */
-public abstract class AbstractRequestResolver<R> implements IRequestResolver<R>
+public abstract class AbstractRequestResolver<R extends IRequestable> implements IRequestResolver<R>
 {
 
     /**
@@ -30,16 +33,23 @@ public abstract class AbstractRequestResolver<R> implements IRequestResolver<R>
     }
 
     @Override
-    public IToken getID()
+    public IToken getRequesterId()
     {
         return token;
     }
 
     @NotNull
     @Override
-    public ILocation getLocation()
+    public ILocation getRequesterLocation()
     {
         return location;
+    }
+
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName(@NotNull final IToken token)
+    {
+        return new TextComponentString("Request System");
     }
 
     @Override

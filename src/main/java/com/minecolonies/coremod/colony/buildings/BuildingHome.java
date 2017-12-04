@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHomeBuilding;
@@ -42,6 +44,11 @@ public class BuildingHome extends AbstractBuildingHut
      * List storing all beds which have been registered to the building.
      */
     private static final String TAG_BEDS = "beds";
+
+    /**
+     * Constant determining how big of food request to start.
+     */
+    private static final int CONST_FOOD_REQUEST_SIZE = 5;
 
     /**
      * The string describing the hut.
@@ -110,7 +117,7 @@ public class BuildingHome extends AbstractBuildingHut
     public void onWakeUp()
     {
         final World world = getColony().getWorld();
-        if(world == null)
+        if (world == null)
         {
             return;
         }
@@ -126,12 +133,6 @@ public class BuildingHome extends AbstractBuildingHut
                 world.setBlockState(pos, state.withProperty(BlockBed.OCCUPIED, false), 0x03);
             }
         }
-    }
-
-    @NotNull
-    public List<BlockPos> getBedList()
-    {
-        return new ArrayList<>(bedList);
     }
 
     @NotNull
@@ -179,8 +180,8 @@ public class BuildingHome extends AbstractBuildingHut
     public void onDestroyed()
     {
         residents.stream()
-                .filter(Objects::nonNull)
-                .forEach(citizen -> citizen.setHomeBuilding(null));
+          .filter(Objects::nonNull)
+          .forEach(citizen -> citizen.setHomeBuilding(null));
         residents.clear();
         super.onDestroyed();
     }
@@ -212,33 +213,6 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public boolean needsAnything()
-    {
-        return super.needsAnything() || isFoodNeeded();
-    }
-
-
-    /**
-     * Set food requirements for the building.
-     *
-     * @param foodNeeded set true if required.
-     */
-    public void setFoodNeeded(final boolean foodNeeded)
-    {
-        isFoodNeeded = foodNeeded;
-    }
-
-    /**
-     * Check food requirements of the building.
-     *
-     * @return true of false.
-     */
-    public boolean isFoodNeeded()
-    {
-        return isFoodNeeded;
-    }
-
-    @Override
     public int getMaxInhabitants()
     {
         return getBuildingLevel();
@@ -253,13 +227,9 @@ public class BuildingHome extends AbstractBuildingHut
         for (@NotNull final CitizenData citizen : getColony().getCitizens().values())
         {
             // Move the citizen to a better hut
-            if (citizen.getHomeBuilding() != null && citizen.getHomeBuilding().getBuildingLevel() < this.getBuildingLevel())
+            if (citizen.getHomeBuilding() instanceof BuildingHome && citizen.getHomeBuilding().getBuildingLevel() < this.getBuildingLevel())
             {
-                if(citizen.getHomeBuilding() instanceof BuildingHome)
-                {
-                    // The citizen can move to this hut to improve conditions
-                    citizen.getHomeBuilding().removeCitizen(citizen);
-                }
+                citizen.getHomeBuilding().removeCitizen(citizen);
             }
             if (citizen.getHomeBuilding() == null)
             {
@@ -274,16 +244,6 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     /**
-     * Checks if the building is full.
-     *
-     * @return true if so.
-     */
-    public boolean isFull()
-    {
-        return residents.size() >= getMaxInhabitants();
-    }
-
-    /**
      * Adds the citizen to the building.
      *
      * @param citizen Citizen to add.
@@ -294,6 +254,16 @@ public class BuildingHome extends AbstractBuildingHut
         citizen.setHomeBuilding(this);
 
         markDirty();
+    }
+
+    /**
+     * Checks if the building is full.
+     *
+     * @return true if so.
+     */
+    public boolean isFull()
+    {
+        return residents.size() >= getMaxInhabitants();
     }
 
     @Override
@@ -336,6 +306,12 @@ public class BuildingHome extends AbstractBuildingHut
         getColony().calculateMaxCitizens();
     }
 
+    @NotNull
+    public List<BlockPos> getBedList()
+    {
+        return new ArrayList<>(bedList);
+    }
+
     /**
      * Returns whether the citizen has this as home or not.
      *
@@ -353,7 +329,13 @@ public class BuildingHome extends AbstractBuildingHut
      */
     public void checkIfFoodNeeded()
     {
-        setFoodNeeded(residents.stream().filter(resident -> resident.getSaturation() < EntityCitizen.HIGH_SATURATION).findFirst().isPresent());
+        residents.stream()
+          .filter(resident -> resident.getSaturation() < EntityCitizen.HIGH_SATURATION)
+          .filter(resident -> !hasWorkerOpenRequestsOfType(resident, TypeToken.of(Food.class)))
+          .forEach(resident -> {
+              Food foodRequest = new Food(CONST_FOOD_REQUEST_SIZE);
+              createRequest(resident, foodRequest);
+          });
     }
 
     /**

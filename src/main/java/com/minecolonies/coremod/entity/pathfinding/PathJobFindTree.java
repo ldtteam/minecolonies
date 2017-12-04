@@ -33,18 +33,19 @@ public class PathJobFindTree extends AbstractPathJob
 
     /**
      * AbstractPathJob constructor.
-     * @param world the world within which to path.
-     * @param start the start position from which to path from.
-     * @param home  the position of the workers hut.
-     * @param range maximum path range.
+     *
+     * @param world      the world within which to path.
+     * @param start      the start position from which to path from.
+     * @param home       the position of the workers hut.
+     * @param range      maximum path range.
      * @param treesToCut the trees the lj is supposed to cut.
      */
     public PathJobFindTree(
-            final World world,
-            @NotNull final BlockPos start,
-            final BlockPos home,
-            final int range,
-            final Map<ItemStorage, Boolean> treesToCut)
+                            final World world,
+                            @NotNull final BlockPos start,
+                            final BlockPos home,
+                            final int range,
+                            final Map<ItemStorage, Boolean> treesToCut)
     {
         super(world, start, start, range, new TreePathResult());
         this.treesToCut = treesToCut;

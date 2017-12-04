@@ -25,7 +25,7 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
     /**
      * buttonid when done is pressed.
      */
-    public static final int DONE   = 1;
+    public static final int DONE = 1;
 
     /**
      * Resource suffix.
@@ -35,22 +35,22 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
     /**
      * Label for the title of the dialog.
      */
-    protected final Label   titleLabel;
+    protected final Label titleLabel;
 
     /**
      * Text for the text content of the dialog.
      */
-    protected final Text    contentText;
+    protected final Text contentText;
 
     /**
      * Done button.
      */
-    protected final Button  doneButton;
+    protected final Button doneButton;
 
     /**
      * Cancel button.
      */
-    protected final Button  cancelButton;
+    protected final Button cancelButton;
 
     /**
      * Handler for the onCloseDialog event.
@@ -76,16 +76,6 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
     }
 
     /**
-     * Set the title of the dialog.
-     *
-     * @param title for the dialog
-     */
-    public void setTitle(final String title)
-    {
-        titleLabel.setLabelText(title);
-    }
-
-    /**
      * Get the title of the dialog.
      *
      * @return title for the dialog
@@ -96,13 +86,13 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
     }
 
     /**
-     * Set the textual content of the dialog.
+     * Set the title of the dialog.
      *
-     * @param content to display in the dialog
+     * @param title for the dialog
      */
-    public void setTextContent(final String content)
+    public void setTitle(final String title)
     {
-        contentText.setTextContent(content);
+        titleLabel.setLabelText(title);
     }
 
     /**
@@ -113,6 +103,16 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
     public String getTextContent()
     {
         return contentText.getTextContent();
+    }
+
+    /**
+     * Set the textual content of the dialog.
+     *
+     * @param content to display in the dialog
+     */
+    public void setTextContent(final String content)
+    {
+        contentText.setTextContent(content);
     }
 
     /**

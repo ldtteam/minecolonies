@@ -53,9 +53,10 @@ public class LumberjackSaplingSelectorMessage extends AbstractMessage<Lumberjack
 
     /**
      * Creates a message which will be sent to set the new settings in the lumberjack.
-     * @param building the building view of the lumberjack.
+     *
+     * @param building     the building view of the lumberjack.
      * @param saplingStack the stack to set.
-     * @param shouldCut wether or not the tree should be cut.
+     * @param shouldCut    wether or not the tree should be cut.
      */
     public LumberjackSaplingSelectorMessage(final BuildingLumberjack.View building, final ItemStack saplingStack, final boolean shouldCut)
     {

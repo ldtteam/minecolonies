@@ -235,11 +235,25 @@ public class CommonProxy implements IProxy
     }
 
     @Override
+    public void openClipBoardWindow(final int ColonyId)
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
+    @Override
     public void registerRenderer()
     {
         /*
          * Intentionally left empty.
          */
+    }
+
+    @Override
+    public File getSchematicsFolder()
+    {
+        return null;
     }
 
     /**
@@ -248,11 +262,5 @@ public class CommonProxy implements IProxy
     private int getNextEntityId()
     {
         return nextEntityId++;
-    }
-
-    @Override
-    public File getSchematicsFolder()
-    {
-        return null;
     }
 }

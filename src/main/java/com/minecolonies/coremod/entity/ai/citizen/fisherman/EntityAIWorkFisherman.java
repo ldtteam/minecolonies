@@ -221,7 +221,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * @return building instance
      */
     @Override
-    protected BuildingFisherman getOwnBuilding()
+    public BuildingFisherman getOwnBuilding()
     {
         return (BuildingFisherman) worker.getWorkBuilding();
     }
@@ -586,8 +586,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private int getRodSlot()
     {
-        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.FISHINGROD, 
-                                                                        TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding().getMaxToolLevel());
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.FISHINGROD,
+          TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding().getMaxToolLevel());
     }
 
     /**

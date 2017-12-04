@@ -35,23 +35,6 @@ public class CommandEntryPoint extends CommandBase
         root = new MinecoloniesCommand();
     }
 
-    /**
-     * Check if the player has the permission to use commands.
-     *
-     * @param server the server to check for.
-     * @param sender the sender of the command.
-     * @return true if so.
-     */
-    @Override
-    public boolean checkPermission(final MinecraftServer server, final ICommandSender sender)
-    {
-        if (sender instanceof EntityPlayer)
-        {
-            return AbstractSingleCommand.isPlayerOpped(sender) || Configurations.gameplay.opLevelForServer <= 0;
-        }
-        return true;
-    }
-
     @NotNull
     @Override
     public String getName()
@@ -85,6 +68,23 @@ public class CommandEntryPoint extends CommandBase
     public List<String> getAliases()
     {
         return Arrays.asList("mc", "col", "mcol", "mcolonies", "minecol", "minecolonies");
+    }
+
+    /**
+     * Check if the player has the permission to use commands.
+     *
+     * @param server the server to check for.
+     * @param sender the sender of the command.
+     * @return true if so.
+     */
+    @Override
+    public boolean checkPermission(final MinecraftServer server, final ICommandSender sender)
+    {
+        if (sender instanceof EntityPlayer)
+        {
+            return AbstractSingleCommand.isPlayerOpped(sender) || Configurations.gameplay.opLevelForServer <= 0;
+        }
+        return true;
     }
 
     @NotNull

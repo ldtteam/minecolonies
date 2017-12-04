@@ -1,6 +1,6 @@
 {
-    "parent": "block/pane_noside_alt",
-    "textures": {
-        "pane": "minecolonies:blocks/paperwall/paperwall_oak_white"
-    }
+  "parent": "block/pane_noside_alt",
+  "textures": {
+    "pane": "minecolonies:blocks/paperwall/paperwall_oak_white"
+  }
 }
