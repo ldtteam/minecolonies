@@ -51,9 +51,16 @@ public class PlayerRequestResolverFactory implements IFactory<IRequestManager, P
                                                  @NotNull final Object... context)
       throws IllegalArgumentException
     {
-        final ILocation location =
-          factoryController.getNewInstance(TypeConstants.ILOCATION, iRequestManager.getColony().getCenter(), iRequestManager.getColony().getWorld().provider.getDimension());
-        final IToken token = factoryController.getNewInstance(TypeConstants.ITOKEN, iRequestManager.getColony().getID() * CONST_PLAYER_RESOLVER_ID_SCALE);
+        ILocation location;
+        try {
+            location =
+            factoryController.getNewInstance(TypeConstants.ILOCATION, iRequestManager.getColony().getCenter(), iRequestManager.getColony().getWorld().provider.getDimension());
+        } catch (Exception ex)
+        {
+            throw ex;
+        }
+
+        final IToken<?> token = factoryController.getNewInstance(TypeConstants.ITOKEN, iRequestManager.getColony().getID() * CONST_PLAYER_RESOLVER_ID_SCALE);
         return new PlayerRequestResolver(location, token);
     }
 
