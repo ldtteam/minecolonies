@@ -3,6 +3,9 @@ package com.minecolonies.coremod.proxy;
 import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -91,4 +94,12 @@ public interface IProxy
      */
     @Nullable
     File getSchematicsFolder();
+
+    /**
+     * Method to get a side specific world from a message context during networking.
+     * @param context The context to get the world from.
+     * @return The world.
+     */
+    @Nullable
+    World getWorldFromMessage(@NotNull final MessageContext context);
 }
