@@ -9,9 +9,9 @@ import org.jetbrains.annotations.NotNull;
  * Restricts the output type of the general factory interface to IToken
  *
  * @param <T>  The type of requesttoken.
- * @param <RT> The requesttoken type.
+ * @param <R> The requesttoken type.
  */
-public interface ITokenFactory<T, RT extends IToken> extends IFactory<T, RT>
+public interface ITokenFactory<T, R extends IToken<?>> extends IFactory<T, R>
 {
 
     /**
@@ -26,7 +26,7 @@ public interface ITokenFactory<T, RT extends IToken> extends IFactory<T, RT>
      */
     @NotNull
     @Override
-    default RT getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final T t, @NotNull final Object... context) throws IllegalArgumentException
+    default R getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final T t, @NotNull final Object... context) throws IllegalArgumentException
     {
         if (context.length != 0)
         {
@@ -43,5 +43,5 @@ public interface ITokenFactory<T, RT extends IToken> extends IFactory<T, RT>
      * @return The new output instance for a given input.
      */
     @NotNull
-    RT getNewInstance(@NotNull T input);
+    R getNewInstance(@NotNull T input);
 }

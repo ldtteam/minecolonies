@@ -91,7 +91,7 @@ public abstract class AbstractJob
     /**
      * A set of tokens that point to requests for which we do not wait.
      */
-    private Set<IToken> asyncRequests = new HashSet<>();
+    private final Set<IToken<?>> asyncRequests = new HashSet<>();
 
     /**
      * Check if the worker has searched for food today.
@@ -195,7 +195,7 @@ public abstract class AbstractJob
         {
             this.asyncRequests.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_ASYNC_REQUESTS, Constants.NBT.TAG_COMPOUND))
                                         .map(StandardFactoryController.getInstance()::deserialize)
-                                        .map(o -> (IToken) o)
+                                        .map(o -> (IToken<?>) o)
                                         .collect(Collectors.toSet()));
         }
     }
@@ -245,7 +245,7 @@ public abstract class AbstractJob
         compound.setTag(TAG_ASYNC_REQUESTS, getAsyncRequests().stream().map(StandardFactoryController.getInstance()::serialize).collect(NBTUtils.toNBTTagList()));
     }
 
-    public Set<IToken> getAsyncRequests()
+    public Set<IToken<?>> getAsyncRequests()
     {
         return asyncRequests;
     }

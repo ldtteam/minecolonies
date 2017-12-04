@@ -35,7 +35,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     public WarehouseRequestResolver(
                                      @NotNull final ILocation location,
-                                     @NotNull final IToken token)
+                                     @NotNull final IToken<?> token)
     {
         super(location, token);
     }
@@ -66,7 +66,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     /**
      * Moving the curly braces really makes the code hard to read.
      */
-    public List<IToken> attemptResolve(
+    public List<IToken<?>> attemptResolve(
                                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         if (manager.getColony().getWorld().isRemote)
@@ -92,7 +92,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
             Delivery delivery = new Delivery(itemStackLocation, request.getRequester().getRequesterLocation(), matchingStack.copy());
 
-            IToken requestToken = manager.createRequest(new WarehouseRequestResolver(request.getRequester().getRequesterLocation(), request.getToken()), delivery);
+            IToken<?> requestToken = manager.createRequest(new WarehouseRequestResolver(request.getRequester().getRequesterLocation(), request.getToken()), delivery);
 
             return ImmutableList.of(requestToken);
         }
@@ -100,7 +100,6 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         return Lists.newArrayList();
     }
 
-    @Nullable
     @Override
     public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
@@ -109,7 +108,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     @Nullable
     @Override
-    public IRequest getFollowupRequestForCompletion(
+    public IRequest<?> getFollowupRequestForCompletion(
                                                      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
     {
         //No followup needed.
@@ -118,12 +117,12 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     @Nullable
     @Override
-    public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public IRequest<?> onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         return null;
     }
 
-    private Set<TileEntityWareHouse> getWareHousesInColony(Colony colony)
+    private static Set<TileEntityWareHouse> getWareHousesInColony(Colony colony)
     {
         return colony.getBuildings().values().stream()
                  .filter(building -> building instanceof BuildingWareHouse)
@@ -131,22 +130,20 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
                  .collect(Collectors.toSet());
     }
 
-    @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IToken token)
+    public void onRequestComplete(@NotNull final IToken<?> token)
     {
     }
 
-    @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IToken<?> token)
     {
 
     }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken token)
+    public ITextComponent getDisplayName(@NotNull final IToken<?> token)
     {
         return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME);
     }

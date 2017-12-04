@@ -135,6 +135,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
     /**
      * @deprecated but we still need this because there is nothing better.
      */
+    @Deprecated
     @Override
     public IBlockState getActualState(final IBlockState state, final IBlockAccess worldIn, final BlockPos pos)
     {
@@ -230,6 +231,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
         return false;
     }
 
+    @Deprecated
     @Override
     public void neighborChanged(final IBlockState state, final World worldIn, final BlockPos pos, final Block blockIn)
     {

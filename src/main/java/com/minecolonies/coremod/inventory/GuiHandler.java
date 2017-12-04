@@ -55,7 +55,7 @@ public class GuiHandler implements IGuiHandler
                                                               citizen.getCitizenEntity().getInventoryCitizen(),
                                                               player,
                                                               colony.getID(),
-                                                              building.getID(),
+                                                              building == null ? null : building.getID(),
                                                               citizen.getId());
         }
 

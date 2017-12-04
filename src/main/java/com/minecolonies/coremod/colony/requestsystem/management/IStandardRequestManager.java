@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -21,29 +22,27 @@ import java.util.Set;
 public interface IStandardRequestManager extends IRequestManager
 {
     @NotNull
-    BiMap<IToken, IRequestResolverProvider> getProviderBiMap();
+    BiMap<IToken<?>, IRequestResolverProvider> getProviderBiMap();
 
     @NotNull
-    BiMap<IToken, IRequestResolver> getResolverBiMap();
+    BiMap<IToken<?>, IRequestResolver<? extends IRequestable>> getResolverBiMap();
 
     @NotNull
-    BiMap<IToken, IRequest> getRequestBiMap();
+    BiMap<IToken<?>, IRequest<?>> getRequestBiMap();
 
     @NotNull
-    Map<IToken, ImmutableCollection<IToken>> getProviderResolverMap();
+    Map<IToken<?>, ImmutableCollection<IToken<?>>> getProviderResolverMap();
 
     @NotNull
-    Map<IToken, Set<IToken>> getResolverRequestMap();
+    Map<IToken<?>, Set<IToken<?>>> getResolverRequestMap();
 
     @NotNull
-    Map<IToken, IToken> getRequestResolverMap();
+    Map<IToken<?>, IToken<?>> getRequestResolverMap();
 
     @NotNull
-    Map<TypeToken, Collection<IRequestResolver>> getRequestClassResolverMap();
+    Map<TypeToken<?>, Collection<IRequestResolver<?>>> getRequestClassResolverMap();
 
-    @NotNull
     boolean isDataSimulation();
 
-    @NotNull
     boolean isResolvingSimulation();
 }

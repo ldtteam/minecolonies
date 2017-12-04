@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.requestsystem.management.handlers;
 
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
 
 import java.util.UUID;
@@ -18,9 +19,10 @@ public final class TokenHandler
      * @param manager The manager to generate a new token for.
      * @return The new token.
      */
-    public static IToken generateNewToken(final IRequestManager manager)
+    @SuppressWarnings(Suppression.UNCHECKED)
+    public static IToken<UUID> generateNewToken(final IRequestManager manager)
     {
         //Force generic type to be correct.
-        return manager.getFactoryController().getNewInstance(TypeConstants.ITOKEN, UUID.randomUUID());
+        return (IToken<UUID>) manager.getFactoryController().getNewInstance(TypeConstants.ITOKEN, UUID.randomUUID());
     }
 }

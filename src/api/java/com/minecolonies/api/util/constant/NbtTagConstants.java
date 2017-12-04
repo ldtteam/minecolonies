@@ -47,6 +47,8 @@ public final class NbtTagConstants
     public static final String TAG_LUMBERJACK_SAPLINGS   = "saplings";
     public static final String TAG_FIELDS                = "fields";
 
+    public static final String TAG_INVENTORY = "inventory";
+
     /**
      * Tag used to store the containers to NBT.
      */

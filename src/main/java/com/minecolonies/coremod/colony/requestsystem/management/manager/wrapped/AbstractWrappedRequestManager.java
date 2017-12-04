@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
+
 /**
  * Wrapper class for a Manager.
  * Subclasses of this have custom behaviour on at least one method.
@@ -70,7 +72,7 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      */
     @NotNull
     @Override
-    public <T extends IRequestable> IToken createRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
+    public <T extends IRequestable> IToken<?> createRequest(@NotNull final IRequester requester, @NotNull final T object)
     {
         return wrappedManager.createRequest(requester, object);
     }
@@ -81,9 +83,8 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      * @param token The token of the request to assign.
      * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
      */
-    @NotNull
     @Override
-    public void assignRequest(@NotNull final IToken token) throws IllegalArgumentException
+    public void assignRequest(@NotNull final IToken<?> token)
     {
         wrappedManager.assignRequest(token);
     }
@@ -99,15 +100,15 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      */
     @NotNull
     @Override
-    public <T extends IRequestable> IToken createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
+    public <T extends IRequestable> IToken<?> createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object)
     {
-        final IToken token = createRequest(requester, object);
+        final IToken<?> token = createRequest(requester, object);
         assignRequest(token);
         return token;
     }
 
     @Override
-    public IToken reassignRequest(@NotNull final IToken token, @NotNull final Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException
+    public IToken<?> reassignRequest(@NotNull final IToken<?> token, @NotNull final Collection<IToken<?>> resolverTokenBlackList)
     {
         return wrappedManager.reassignRequest(token, resolverTokenBlackList);
     }
@@ -120,9 +121,10 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      *
      * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the given type T.
      */
+    @SuppressWarnings(RAWTYPES)
     @NotNull
     @Override
-    public <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull final IToken token) throws IllegalArgumentException
+    public IRequest getRequestForToken(@NotNull final IToken<?> token)
     {
         return RequestHandler.getRequestOrNull(wrappedManager, token);
     }
@@ -133,9 +135,10 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      * @param token@return The resolver registered with the given token.
      * @throws IllegalArgumentException when the token is unknown.
      */
+    @SuppressWarnings(RAWTYPES)
     @NotNull
     @Override
-    public <T extends IRequestable> IRequestResolver<T> getResolverForToken(@NotNull final IToken token) throws IllegalArgumentException
+    public IRequestResolver getResolverForToken(@NotNull final IToken<?> token)
     {
         return wrappedManager.getResolverForToken(token);
     }
@@ -148,9 +151,10 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      *
      * @throws IllegalArgumentException Thrown when the token is unknown.
      */
+    @SuppressWarnings(RAWTYPES)
     @Nullable
     @Override
-    public <T extends IRequestable> IRequestResolver<T> getResolverForRequest(@NotNull final IToken requestToken) throws IllegalArgumentException
+    public IRequestResolver getResolverForRequest(@NotNull final IToken<?> requestToken)
     {
         return wrappedManager.getResolverForRequest(requestToken);
     }
@@ -162,15 +166,14 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      * @param state The new state of that request.
      * @throws IllegalArgumentException when the token is unknown to this manager.
      */
-    @NotNull
     @Override
-    public void updateRequestState(@NotNull final IToken token, @NotNull final RequestState state) throws IllegalArgumentException
+    public void updateRequestState(@NotNull final IToken<?> token, @NotNull final RequestState state)
     {
         wrappedManager.updateRequestState(token, state);
     }
 
     @Override
-    public void overruleRequest(@NotNull final IToken token, @Nullable final ItemStack stack) throws IllegalArgumentException
+    public void overruleRequest(@NotNull final IToken<?> token, @Nullable final ItemStack stack)
     {
         wrappedManager.overruleRequest(token, stack);
     }
@@ -182,7 +185,7 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      * @throws IllegalArgumentException is thrown when a provider with the same token is already registered.
      */
     @Override
-    public void onProviderAddedToColony(@NotNull final IRequestResolverProvider provider) throws IllegalArgumentException
+    public void onProviderAddedToColony(@NotNull final IRequestResolverProvider provider)
     {
         wrappedManager.onProviderAddedToColony(provider);
     }
@@ -194,7 +197,7 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      * @throws IllegalArgumentException is thrown when no provider with the same token is registered.
      */
     @Override
-    public void onProviderRemovedFromColony(@NotNull final IRequestResolverProvider provider) throws IllegalArgumentException
+    public void onProviderRemovedFromColony(@NotNull final IRequestResolverProvider provider)
     {
         wrappedManager.onProviderRemovedFromColony(provider);
     }

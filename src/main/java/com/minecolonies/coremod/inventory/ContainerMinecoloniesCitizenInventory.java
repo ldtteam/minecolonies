@@ -56,7 +56,7 @@ public class ContainerMinecoloniesCitizenInventory extends Container
                     @Override
                     public void putStack(final ItemStack stack)
                     {
-                        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !ItemStackUtils.isEmpty(stack))
+                        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !ItemStackUtils.isEmpty(stack) && buildingId != null)
                         {
                             final Colony colony = ColonyManager.getColony(colonyId);
                             final AbstractBuilding building = colony.getBuilding(buildingId);

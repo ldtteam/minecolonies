@@ -15,7 +15,7 @@ public interface IRequester
      *
      * @return The id of this requester.
      */
-    IToken getRequesterId();
+    IToken<?> getRequesterId();
 
     /**
      * Method used to get the location that a delivery has to be brought to.
@@ -43,7 +43,7 @@ public interface IRequester
      * @param token the token of the request.
      */
     @NotNull
-    void onRequestComplete(@NotNull final IToken token);
+    void onRequestComplete(@NotNull final IToken<?> token);
 
     /**
      * Method called by the request system to notify this requester that a request has been overruled.
@@ -51,7 +51,7 @@ public interface IRequester
      * @param token The token of the request.
      */
     @NotNull
-    void onRequestCancelled(@NotNull final IToken token);
+    void onRequestCancelled(@NotNull final IToken<?> token);
 
     /**
      * Gets the name of the requester that requested the request given by the token.
@@ -60,5 +60,5 @@ public interface IRequester
      * @return The display name of the requester.
      */
     @NotNull
-    ITextComponent getDisplayName(@NotNull final IToken token);
+    ITextComponent getDisplayName(@NotNull final IToken<?> token);
 }

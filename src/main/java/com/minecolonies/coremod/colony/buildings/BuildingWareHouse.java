@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.BlockHutDeliveryman;
 import com.minecolonies.coremod.blocks.BlockHutWareHouse;
@@ -35,7 +34,6 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -287,10 +285,10 @@ public class BuildingWareHouse extends AbstractBuilding
     }
 
     @Override
-    public ImmutableCollection<IRequestResolver> getResolvers()
+    public ImmutableCollection<IRequestResolver<?>> getResolvers()
     {
-        ImmutableCollection<IRequestResolver> supers = super.getResolvers();
-        ImmutableList.Builder<IRequestResolver> builder = ImmutableList.builder();
+        final ImmutableCollection<IRequestResolver<?>> supers = super.getResolvers();
+        final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
 
         builder.addAll(supers);
         builder.add(new WarehouseRequestResolver(getRequester().getRequesterLocation(),

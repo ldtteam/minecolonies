@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
 /**
  * The class of the citizen hut.
@@ -93,7 +94,7 @@ public class BuildingHome extends AbstractBuildingHut
         {
             final NBTTagCompound bedCompound = bedTagList.getCompoundTagAt(i);
             final BlockPos bedPos = NBTUtil.getPosFromTag(bedCompound);
-            if(!bedList.contains(bedPos))
+            if (!bedList.contains(bedPos))
             {
                 bedList.add(bedPos);
             }
@@ -111,13 +112,13 @@ public class BuildingHome extends AbstractBuildingHut
 
         for (final BlockPos pos : bedList)
         {
-            IBlockState state = world.getBlockState(pos);
-            state = state.getBlock().getActualState(state, world, pos);
-            if (state.getBlock() instanceof BlockBed
-                    && state.getValue(BlockBed.OCCUPIED)
-                    && state.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
+            final IBlockState state = world.getBlockState(pos);
+            @SuppressWarnings(DEPRECATION) final IBlockState actualState = state.getBlock().getActualState(state, world, pos);
+            if (actualState.getBlock() instanceof BlockBed
+                  && actualState.getValue(BlockBed.OCCUPIED)
+                  && actualState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
             {
-                world.setBlockState(pos, state.withProperty(BlockBed.OCCUPIED, false), 0x03);
+                world.setBlockState(pos, actualState.withProperty(BlockBed.OCCUPIED, false), 0x03);
             }
         }
     }

@@ -168,7 +168,23 @@ processResources {
 
 compileJava {
     options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint"
+    options.compilerArgs << "-Xlint:all"
+    options.compilerArgs << "-Xmaxwarns"
+    options.compilerArgs << "9999"
+}
+
+compileApiJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint:all"
+    options.compilerArgs << "-Xmaxwarns"
+    options.compilerArgs << "9999"
+}
+
+compileBlockOutJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint:all"
+    options.compilerArgs << "-Xmaxwarns"
+    options.compilerArgs << "9999"
 }
 
 task apiJar(type: Jar) {
@@ -317,7 +333,7 @@ task("createChangelog") {
     group = 'upload'
 
     doLast {
-        def teamCityURL = "http://teamcity.minecolonies.com/"
+        def teamCityURL = "https://teamcity.minecolonies.com/"
         def file = new FileOutputStream("build/changelog.md")
         def out = new BufferedOutputStream(file)
         def changesXML = new XmlSlurper().parse(teamCityURL + "guestAuth/app/rest/changes?locator=build:(id:" + teamcity["teamcity.build.id"] + ")")

@@ -4,7 +4,6 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -18,6 +17,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -67,6 +67,8 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
     /**
      * Get the MapColor for this Block and the given BlockState
      */
+    @NotNull
+    @Deprecated
     @Override
     public MapColor getMapColor(final IBlockState state)
     {
@@ -76,6 +78,8 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
     /**
      * Convert the given metadata into a BlockState for this Block
      */
+    @NotNull
+    @Deprecated
     @Override
     public IBlockState getStateFromMeta(final int meta)
     {
@@ -92,6 +96,7 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
         return state.getValue(VARIANT).getMetadata();
     }
 
+    @NotNull
     @Override
     protected ItemStack getSilkTouchDrop(final IBlockState state)
     {
@@ -107,6 +112,7 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
         }
     }
 
+    @NotNull
     @Override
     @SideOnly(Side.CLIENT)
     public BlockRenderLayer getBlockLayer()
@@ -127,6 +133,7 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
      * Returns the blockstate with the given rotation from the passed blockstate. If inapplicable, returns the passed
      * blockstate.
      */
+    @NotNull
     @Override
     public IBlockState withRotation(final IBlockState state, final Rotation rot)
     {
@@ -153,6 +160,7 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
      * Returns the blockstate with the given mirror of the passed blockstate. If inapplicable, returns the passed
      * blockstate.
      */
+    @NotNull
     @Override
     public IBlockState withMirror(final IBlockState state, final Mirror mirrorIn)
     {
@@ -167,10 +175,11 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
         }
     }
 
+    @NotNull
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, new IProperty[] {NORTH, EAST, WEST, SOUTH, VARIANT});
+        return new BlockStateContainer(this, NORTH, EAST, WEST, SOUTH, VARIANT);
     }
 
     @Override

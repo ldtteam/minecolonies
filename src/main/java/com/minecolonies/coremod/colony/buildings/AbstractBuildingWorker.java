@@ -48,7 +48,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     /**
      * List of workers assosiated to the building.
      */
-    private final List<CitizenData> workers = new ArrayList();
+    private final List<CitizenData> workers = new ArrayList<>();
 
     /**
      * The abstract constructor of the building.
@@ -100,7 +100,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
 
         for (final CitizenData data : getWorker())
         {
-            for (final IRequest request : getOpenRequests(data))
+            for (final IRequest<?> request : getOpenRequests(data))
             {
                 if (request.getDelivery().isItemEqualIgnoreDurability(stack))
                 {

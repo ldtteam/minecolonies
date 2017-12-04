@@ -43,6 +43,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -443,7 +444,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return;
         }
 
-        IRequest request = getOwnBuilding().getCompletedRequests(worker.getCitizenData()).stream().findFirst().orElse(null);
+        IRequest<?> request = getOwnBuilding().getCompletedRequests(worker.getCitizenData()).stream().findFirst().orElse(null);
         if (request == null)
         {
             request = getOwnBuilding().getOpenRequests(worker.getCitizenData()).stream().findFirst().orElse(null);
@@ -467,10 +468,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             delay += DELAY_RECHECK;
 
-            ImmutableList<IRequest> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
+            @SuppressWarnings(RAWTYPES)
+            final ImmutableList<IRequest> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
 
             completedRequests.stream().filter(r -> !(r.canBeDelivered())).forEach(r -> getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), r.getToken()));
-            IRequest firstDeliverableRequest = completedRequests.stream().filter(r -> r.canBeDelivered()).findFirst().orElse(null);
+            @SuppressWarnings(RAWTYPES) final IRequest<?> firstDeliverableRequest = completedRequests.stream().filter(IRequest::canBeDelivered).findFirst().orElse(null);
 
             if (firstDeliverableRequest != null)
             {
@@ -1156,7 +1158,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           TypeToken.of(IDeliverable.class),
           (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
-            Stack stackRequest = new Stack(stack);
+            final Stack stackRequest = new Stack(stack);
             worker.getCitizenData().createRequest(stackRequest);
         }
 
@@ -1203,7 +1205,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeToken.of(IDeliverable.class),
           (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
-            Stack stackRequest = new Stack(stack);
+            final Stack stackRequest = new Stack(stack);
             worker.getCitizenData().createRequestAsync(stackRequest);
         }
 

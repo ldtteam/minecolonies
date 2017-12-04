@@ -22,6 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
+
 /**
  * Class of the deliveryman job.
  */
@@ -30,7 +32,7 @@ public class JobDeliveryman extends AbstractJob
     private static final String TAG_CURRENT_TASK = "currentTask";
     private static final String TAG_RETURNING    = "returning";
 
-    private LinkedList<IToken> taskQueue = new LinkedList<>();
+    private LinkedList<IToken<?>> taskQueue = new LinkedList<>();
 
     private boolean returning;
 
@@ -51,7 +53,7 @@ public class JobDeliveryman extends AbstractJob
         taskQueue.clear();
         if (compound.hasKey(TAG_CURRENT_TASK))
         {
-            NBTTagList queuItems = compound.getTagList(TAG_CURRENT_TASK, Constants.NBT.TAG_COMPOUND);
+            final NBTTagList queuItems = compound.getTagList(TAG_CURRENT_TASK, Constants.NBT.TAG_COMPOUND);
             NBTUtils.streamCompound(queuItems)
               .map(tokenCompound -> (IToken) StandardFactoryController.getInstance().deserialize(tokenCompound))
               .forEach(taskQueue::add);
@@ -82,7 +84,7 @@ public class JobDeliveryman extends AbstractJob
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        NBTTagList queuList = taskQueue.stream().map(iToken -> StandardFactoryController.getInstance().serialize(iToken)).collect(NBTUtils.toNBTTagList());
+        final NBTTagList queuList = taskQueue.stream().map(iToken -> StandardFactoryController.getInstance().serialize(iToken)).collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_CURRENT_TASK, queuList);
         compound.setBoolean(TAG_RETURNING, returning);
     }
@@ -146,7 +148,8 @@ public class JobDeliveryman extends AbstractJob
      *
      * @return {@link IRequest} of the current Task.
      */
-    public IRequest<? extends Delivery> getCurrentTask()
+    @SuppressWarnings(UNCHECKED)
+    public IRequest<Delivery> getCurrentTask()
     {
         if (taskQueue.isEmpty())
         {
@@ -160,7 +163,7 @@ public class JobDeliveryman extends AbstractJob
      *
      * @param token The token of the requests to add.
      */
-    public void addRequest(@NotNull final IToken token)
+    public void addRequest(@NotNull final IToken<?> token)
     {
         taskQueue.add(token);
     }
@@ -170,7 +173,7 @@ public class JobDeliveryman extends AbstractJob
      *
      * @param successful True when the processing was successful, false when not.
      */
-    public void finishRequest(@NotNull final boolean successful)
+    public void finishRequest(final boolean successful)
     {
         if (taskQueue.isEmpty())
         {
@@ -178,7 +181,7 @@ public class JobDeliveryman extends AbstractJob
         }
 
         this.setReturning(true);
-        IToken current = taskQueue.removeFirst();
+        final IToken<?> current = taskQueue.removeFirst();
 
         getColony().getRequestManager().updateRequestState(current, successful ? RequestState.COMPLETED : RequestState.CANCELLED);
     }
@@ -188,7 +191,7 @@ public class JobDeliveryman extends AbstractJob
      *
      * @param token token of the task to be deleted.
      */
-    public void onTaskDeletion(@NotNull final IToken token)
+    public void onTaskDeletion(@NotNull final IToken<?> token)
     {
         if (taskQueue.contains(token))
         {
@@ -206,7 +209,7 @@ public class JobDeliveryman extends AbstractJob
      *
      * @return The task queue.
      */
-    public List<IToken> getTaskQueue()
+    public List<IToken<?>> getTaskQueue()
     {
         return ImmutableList.copyOf(taskQueue);
     }

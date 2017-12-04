@@ -84,7 +84,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     /**
      * The request itself.
      */
-    private final IRequest request;
+    private final IRequest<?> request;
     /**
      * The colony id.
      */
@@ -100,7 +100,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
      * @param c       the colony view.
      * @param request the building position.
      */
-    public WindowRequestDetail(@Nullable final CitizenDataView c, final IRequest request, final int colonyId)
+    public WindowRequestDetail(@Nullable final CitizenDataView c, final IRequest<?> request, final int colonyId)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.citizen = c;

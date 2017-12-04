@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.ReflectionUtils;
-import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -30,6 +29,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZEN_BY_REQUEST;
+import static com.minecolonies.api.util.constant.Suppression.*;
 import static com.minecolonies.coremod.colony.buildings.AbstractBuilding.NO_WORK_ORDER;
 import static com.minecolonies.coremod.colony.buildings.AbstractBuilding.processIntegerKeyTokenList;
 
@@ -46,7 +46,7 @@ public abstract class AbstractBuildingView implements IRequester
     /**
      * Keeps track of which citizen created what request. Request -> Citizen direction.
      */
-    private final HashMap<IToken, Integer> requestsByCitizen = new HashMap<>();
+    private final HashMap<IToken<?>, Integer> requestsByCitizen = new HashMap<>();
     private int buildingLevel    = 0;
     private int buildingMaxLevel = 0;
     private int buildingDmPrio   = 1;
@@ -54,7 +54,7 @@ public abstract class AbstractBuildingView implements IRequester
     /**
      * Keeps track of which citizen created what request. Citizen -> Request direction.
      */
-    private HashMap<Integer, Collection<IToken>> citizensByRequests = new HashMap<>();
+    private HashMap<Integer, Collection<IToken<?>>> citizensByRequests = new HashMap<>();
 
     /**
      * Creates a building view.
@@ -189,12 +189,12 @@ public abstract class AbstractBuildingView implements IRequester
         loadRequestSystemFromNBT(ByteBufUtils.readTag(buf));
     }
 
-    private void loadRequestSystemFromNBT(NBTTagCompound compound)
+    private void loadRequestSystemFromNBT(final NBTTagCompound compound)
     {
         this.citizensByRequests.clear();
         if (compound.hasKey(TAG_CITIZEN_BY_REQUEST))
         {
-            NBTTagList citizensByRequestList = compound.getTagList(TAG_CITIZEN_BY_REQUEST, Constants.NBT.TAG_COMPOUND);
+            final NBTTagList citizensByRequestList = compound.getTagList(TAG_CITIZEN_BY_REQUEST, Constants.NBT.TAG_COMPOUND);
             NBTUtils.streamCompound(citizensByRequestList).forEach(cbrc -> processIntegerKeyTokenList(cbrc, citizensByRequests));
         }
 
@@ -203,18 +203,20 @@ public abstract class AbstractBuildingView implements IRequester
         this.citizensByRequests.keySet().forEach(citizen -> this.citizensByRequests.get(citizen).forEach(requestToken -> this.requestsByCitizen.put(requestToken, citizen)));
     }
 
-    @SuppressWarnings(Suppression.GENERIC_WILDCARD)
+    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(@NotNull final CitizenDataView citizenData, final Class<R> requestType)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
                                           Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          //TODO: Check on the types of this, it is TypeToken and Class, possible mismatch
                                           return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
                                       .iterator());
     }
 
+    @SuppressWarnings(RAWTYPES)
     public ImmutableList<IRequest> getOpenRequests(@NotNull final CitizenDataView data)
     {
         if (!citizensByRequests.containsKey(data.getId()))
@@ -235,15 +237,16 @@ public abstract class AbstractBuildingView implements IRequester
         return colony;
     }
 
-    @SuppressWarnings(Suppression.GENERIC_WILDCARD)
+    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
                                                                                                @NotNull final CitizenDataView citizenData,
                                                                                                final Class<R> requestType,
-                                                                                               Predicate<IRequest<? extends R>> filter)
+                                                                                               final Predicate<IRequest<? extends R>> filter)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
                                           Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          //TODO: Check on the types of this, it is TypeToken and Class, possible mismatch
                                           return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
@@ -252,7 +255,7 @@ public abstract class AbstractBuildingView implements IRequester
     }
 
     @Override
-    public IToken getRequesterId()
+    public IToken<?> getRequesterId()
     {
         //NOOP; Is Client side view.
         return null;
@@ -268,21 +271,21 @@ public abstract class AbstractBuildingView implements IRequester
 
     @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IToken token)
+    public void onRequestComplete(@NotNull final IToken<?> token)
     {
         //NOOP; Is Client side view.
     }
 
     @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IToken<?> token)
     {
         //NOOP; Is Client side view.
     }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken token)
+    public ITextComponent getDisplayName(@NotNull final IToken<?> token)
     {
         if (!requestsByCitizen.containsKey(token))
         {

@@ -17,12 +17,12 @@ public interface IRequestResolverProvider
      *
      * @return the token.
      */
-    IToken getToken();
+    IToken<?> getToken();
 
     /**
      * Method to get the resolvers that this provider provides.
      *
      * @return a list of resolvers.
      */
-    ImmutableCollection<IRequestResolver> getResolvers();
+    ImmutableCollection<IRequestResolver<?>> getResolvers();
 }
