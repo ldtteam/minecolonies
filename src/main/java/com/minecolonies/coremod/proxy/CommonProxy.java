@@ -249,7 +249,7 @@ public class CommonProxy implements IProxy
     }
 
     @Override
-    public void openClipBoardWindow(final int ColonyId)
+    public void openClipBoardWindow(final int colonyId)
     {
         /*
          * Intentionally left empty.
@@ -274,7 +274,7 @@ public class CommonProxy implements IProxy
     @Override
     public World getWorldFromMessage(@NotNull final MessageContext context)
     {
-        return context.getServerHandler().playerEntity.getServerWorld();
+        return context.getServerHandler().player.getServerWorld();
     }
 
     /**
