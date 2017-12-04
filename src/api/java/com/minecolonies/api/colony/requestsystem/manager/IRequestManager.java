@@ -93,7 +93,6 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
     /**
      * Method to get a request for a given token.
      *
-     * @param <T>   The type of request that is being looked for.
      * @param token The token to get a request for.
      * @return The request of the given type for that token.
      *
@@ -106,7 +105,6 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
     /**
      * Method to get a resolver from its token.
      *
-     * @param <T> The type of request that the resolver can process.
      * @return The resolver registered with the given token.
      *
      * @throws IllegalArgumentException when the token is unknown.
