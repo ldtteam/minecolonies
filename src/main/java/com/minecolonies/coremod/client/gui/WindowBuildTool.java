@@ -373,7 +373,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         {
             sname = schematics.get(schematicsDropDownList.getSelectedIndex());
         }
-        final Structures.StructureName structureName = new Structures.StructureName(sname);
+        final StructureName structureName = new StructureName(sname);
         if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
             //We need to check that the server have it too using the md5
@@ -883,7 +883,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             sname = schematics.get(schematicsDropDownList.getSelectedIndex());
         }
 
-        final Structures.StructureName structureName = new Structures.StructureName(sname);
+        final StructureName structureName = new StructureName(sname);
         final Structure structure = new Structure(null,
                 structureName.toString(),
                 new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror()));

@@ -306,15 +306,6 @@ public class BuildingHome extends AbstractBuildingHut
         getColony().calculateMaxCitizens();
     }
 
-    @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
-    {
-        if (block == Blocks.BED)
-        {
-            bedList.add(pos);
-        }
-    }
-
     @NotNull
     public List<BlockPos> getBedList()
     {
