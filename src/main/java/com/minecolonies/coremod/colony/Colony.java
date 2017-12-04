@@ -2132,8 +2132,8 @@ public class Colony implements IColony
      */
     public BlockPos getRandomOutsiderInDirection(final EnumFacing directionX, final EnumFacing directionZ)
     {
-        final List<BlockPos> positions = wayPoints.keySet().stream().filter(pos -> isInDirection(directionX, directionZ, center.subtract(pos))).collect(Collectors.toList());
-        positions.addAll(buildings.keySet().stream().filter(pos -> isInDirection(directionX, directionZ, center.subtract(pos))).collect(Collectors.toList()));
+        final List<BlockPos> positions = wayPoints.keySet().stream().filter(pos -> isInDirection(directionX, directionZ, pos.subtract(center))).collect(Collectors.toList());
+        positions.addAll(buildings.keySet().stream().filter(pos -> isInDirection(directionX, directionZ, pos.subtract(center))).collect(Collectors.toList()));
 
         BlockPos thePos = center;
         double distance = 0;
@@ -2168,16 +2168,15 @@ public class Colony implements IColony
             radius += DEFAULT_SPAWN_RADIUS;
         }
 
-        thePos = thePos.offset(directionX, Math.max(minDistance, Math.min(radius, MAX_SPAWN_RADIUS)));
-        thePos = thePos.offset(directionZ, Math.max(minDistance, Math.min(radius, MAX_SPAWN_RADIUS)));
+        final int dist = Math.max(minDistance, Math.min(radius, MAX_SPAWN_RADIUS));
+        thePos = thePos.offset(directionX, dist);
+        thePos = thePos.offset(directionZ, dist);
 
         final int randomDegree = world.rand.nextInt((int) WHOLE_CIRCLE);
-
         final double rads = (double) randomDegree / HALF_A_CIRCLE * Math.PI;
 
         final double x = Math.round(thePos.getX() + 3 * Math.sin(rads));
         final double z = Math.round(thePos.getZ() + 3 * Math.cos(rads));
-
 
         Log.getLogger().info("Spawning at: " + x + " " + z);
         return new BlockPos(x, thePos.getY(), z);
