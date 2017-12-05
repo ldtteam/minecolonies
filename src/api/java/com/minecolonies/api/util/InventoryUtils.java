@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1347,6 +1348,11 @@ public class InventoryUtils
                                                                            @NotNull final IItemHandler targetHandler)
     {
         ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
+
+        if(ItemStackUtils.isEmpty(sourceStack))
+        {
+            return true;
+        }
         final ItemStack originalStack = sourceStack.copy();
 
         for (int i = 0; i < targetHandler.getSlots(); i++)
@@ -1387,6 +1393,37 @@ public class InventoryUtils
             return false;
         }
         return InventoryUtils.addItemStackToItemHandler(targetHandler, returnStack);
+    }
+
+    /**
+     * Takes an item matching a predicate and moves it form one handler to the other to a specific slot.
+     * @param sourceHandler the source handler.
+     * @param itemStackSelectionPredicate the predicate.
+     * @param amount the amount.
+     * @param targetHandler the target.
+     * @param slot the slot to put it in.
+     * @return true if succesful.
+     */
+    public static boolean transferXOfFirstSlotInProviderWithIntoInItemHandler(
+            final InvWrapper sourceHandler,
+            final Predicate<ItemStack> itemStackSelectionPredicate,
+            final int amount,
+            final InvWrapper targetHandler, final int slot)
+    {
+        final int desiredItemSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler,
+                itemStackSelectionPredicate::test);
+
+        if (desiredItemSlot == -1)
+        {
+            return false;
+        }
+        final ItemStack returnStack = sourceHandler.extractItem(desiredItemSlot, amount, false);
+        if (ItemStackUtils.isEmpty(returnStack))
+        {
+            return false;
+        }
+        targetHandler.setStackInSlot(slot, returnStack);
+        return true;
     }
 
     /**

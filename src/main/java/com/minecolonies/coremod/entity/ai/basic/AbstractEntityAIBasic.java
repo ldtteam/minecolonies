@@ -11,9 +11,12 @@ import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -22,6 +25,7 @@ import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
@@ -53,31 +57,31 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * The maximum range to keep from the current building place.
      */
-    public static final  int EXCEPTION_TIMEOUT             = 100;
+    public static final    int EXCEPTION_TIMEOUT             = 100;
     /**
      * Buffer time in ticks he will accept a last attacker as valid.
      */
-    protected static final int ATTACK_TIME_BUFFER = 50;
+    protected static final int ATTACK_TIME_BUFFER            = 50;
     /**
      * The maximum range to keep from the current building place.
      */
-    private static final int MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
+    private static final   int MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
     /**
      * Time in ticks to wait until the next check for items.
      */
-    private static final int DELAY_RECHECK                 = 10;
+    private static final   int DELAY_RECHECK                 = 10;
     /**
      * The default range for any walking to blocks.
      */
-    private static final int DEFAULT_RANGE_FOR_DELAY       = 4;
+    private static final   int DEFAULT_RANGE_FOR_DELAY       = 4;
     /**
      * The number of actions done before item dump.
      */
-    private static final int ACTIONS_UNTIL_DUMP            = 32;
+    private static final   int ACTIONS_UNTIL_DUMP            = 32;
     /**
      * Hit a block every x ticks when mining.
      */
-    private static final int HIT_EVERY_X_TICKS             = 5;
+    private static final   int HIT_EVERY_X_TICKS             = 5;
 
     /**
      * The block the ai is currently working at or wants to work.
@@ -115,6 +119,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private int exceptionTimer = 1;
 
     /**
+     * The restaurant this AI usually goes to.
+     */
+    private BlockPos restaurant = null;
+
+    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class
@@ -123,46 +132,73 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         super(job);
         super.registerTargets(
-                /*
-                 * Init safety checks and transition to IDLE
-                 */
+          /*
+            Init safety checks and transition to IDLE
+           */
           new AITarget(this::initSafetyChecks),
-                /*
-                 * Update chestbelt and nametag
-                 * Will be executed every time
-                 * and does not stop execution
-                 */
+          /*
+            Update chestbelt and nametag
+            Will be executed every time
+            and does not stop execution
+           */
           new AITarget(this::updateVisualState),
-                /*
-                 * If waitingForSomething returns true
-                 * stop execution to wait for it.
-                 * this keeps the current state
-                 * (returning null would not stop execution)
-                 */
+          /*
+            If waitingForSomething returns true
+            stop execution to wait for it.
+            this keeps the current state
+            (returning null would not stop execution)
+           */
           new AITarget(this::waitingForSomething, this::getState),
-                /*
-                 * Check if any items are needed.
-                 * If yes, transition to NEEDS_ITEM.
-                 * and wait for new items.
-                 */
-          new AITarget(() -> getState() == NEEDS_ITEM || this.getOwnBuilding()
-                                                           .hasWorkerOpenRequestsFiltered(worker.getCitizenData(), r -> !worker.getCitizenData().isRequestAsync(r.getToken()))
-                               || this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()), this::waitForRequests),
-                /*
-                 * Dumps inventory as long as needs be.
-                 * If inventory is dumped, execution continues
-                 * to resolve state.
-                 */
+          /*
+            Check if any items are needed.
+            If yes, transition to NEEDS_ITEM.
+            and wait for new items.
+           */
+          new AITarget(() -> {
+              return getState() == NEEDS_ITEM
+                       || this.getOwnBuilding()
+                            .hasWorkerOpenRequestsFiltered(
+                              worker.getCitizenData(),
+                              r -> !worker.getCitizenData().isRequestAsync(r.getToken()))
+                       || this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData());
+          }, this::waitForRequests),
+          /*
+            Dumps inventory as long as needs be.
+            If inventory is dumped, execution continues
+            to resolve state.
+           */
           new AITarget(INVENTORY_FULL, this::dumpInventory),
-                /*
-                 * Check if inventory has to be dumped.
-                 */
+          /*
+            Check if inventory has to be dumped.
+           */
           new AITarget(this::inventoryNeedsDump, INVENTORY_FULL),
-          /**
+          /*
            * Reset to idle if no specific tool is needed.
            */
-          new AITarget(() -> getState() == NEEDS_TOOL && this.getOwnBuilding().getOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Tool.class)).isEmpty(), IDLE)
+          new AITarget(() -> {
+              return getState() == NEEDS_TOOL
+                       && this.getOwnBuilding().getOpenRequestsOfType(
+                worker.getCitizenData(),
+                TypeToken.of(Tool.class)
+              ).isEmpty();
+          }, IDLE),
+          /*
+           * Called when the citizen saturation falls too low.
+           */
+          new AITarget(this::shouldGetFood, this::searchForFood)
         );
+    }
+
+    /**
+     * Check if the citizen should get food, meaning, check if he checked for food today already and check if his saturation is decent.
+     *
+     * @return true if he should go search for food.
+     */
+    private boolean shouldGetFood()
+    {
+        return (worker.getCitizenData().getSaturation() <= EntityCitizen.HIGH_SATURATION
+                  && !job.hasCheckedForFoodToday())
+                 || worker.getCitizenData().getSaturation() <= 0;
     }
 
     /**
@@ -208,6 +244,51 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             Log.getLogger().error("Caused by ai exception:");
             e.printStackTrace();
         }
+    }
+
+    private AIState searchForFood()
+    {
+        if (!job.hasCheckedForFoodToday())
+        {
+            if (walkToBuilding())
+            {
+                return IDLE;
+            }
+
+            job.setCheckedForFood();
+            if (isInHut(itemStack -> (!ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood) || worker.getCitizenData().getSaturation() > 0))
+            {
+                return IDLE;
+            }
+        }
+
+        if (restaurant == null)
+        {
+            double distance = Double.MAX_VALUE;
+            BlockPos goodCook = null;
+            for (final AbstractBuilding building : worker.getColony().getBuildings().values())
+            {
+                if (building instanceof BuildingCook)
+                {
+                    final double localDistance = building.getLocation().distanceSq(getOwnBuilding().getLocation());
+                    if (localDistance < distance)
+                    {
+                        distance = localDistance;
+                        goodCook = building.getLocation();
+                    }
+                }
+            }
+
+            if (goodCook == null)
+            {
+                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.ai.noRestaurant");
+                return getState();
+            }
+            restaurant = goodCook;
+        }
+
+        walkToBlock(restaurant);
+        return IDLE;
     }
 
     /**
@@ -400,7 +481,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             delay += DELAY_RECHECK;
 
-            ImmutableList<IRequest> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
+            final ImmutableList<IRequest> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
 
             completedRequests.stream().filter(r -> !(r.canBeDelivered())).forEach(r -> getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), r.getToken()));
             IRequest firstDeliverableRequest = completedRequests.stream().filter(r -> r.canBeDelivered()).findFirst().orElse(null);
@@ -457,8 +538,45 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Check all chests in theorker hut for a required item.
-     * w
+     * Check all chests in the worker hut for a required item matching a certain predicate
+     *
+     * @param is the type of item requested (amount is ignored)
+     * @return true if a stack of that type was found
+     */
+    public boolean isInHut(@Nullable final Predicate<ItemStack> is)
+    {
+        @Nullable final AbstractBuildingWorker building = getOwnBuilding();
+
+        boolean hasItem;
+        if (building != null)
+        {
+            hasItem = isInTileEntity(building.getTileEntity(), is);
+
+            if (hasItem)
+            {
+                return true;
+            }
+
+            for (final BlockPos pos : building.getAdditionalCountainers())
+            {
+                final TileEntity entity = world.getTileEntity(pos);
+                if (entity instanceof TileEntityChest)
+                {
+                    hasItem = isInTileEntity((TileEntityChest) entity, is);
+
+                    if (hasItem)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check all chests in the worker hut for a required item.
      *
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
@@ -522,7 +640,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  && InventoryFunctions
                       .matchFirstInProviderWithAction(
                         entity,
-                        stack -> stack != null && is.isItemEqualIgnoreDurability(stack),
+                        stack -> !ItemStackUtils.isEmpty(stack) && is.isItemEqualIgnoreDurability(stack),
                         this::takeItemStackFromProvider
                       );
     }
@@ -663,7 +781,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 final Tool request = new Tool(toolType, minimalLevel, getOwnBuilding().getMaxToolLevel() < minimalLevel ? minimalLevel : getOwnBuilding().getMaxToolLevel());
                 worker.getCitizenData().createRequest(request);
             }
-
             return true;
         }
 
@@ -673,10 +790,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Check if we need a tool.
      * <p>
-     * Do not use it to find a pickaxe as it need a minimum level
+     * Do not use it to find a pickaxe as it need a minimum level.
      *
-     * @param toolType tool required for block
-     * @return true if we need a tool
+     * @param toolType     tool required for block.
+     * @param minimalLevel the minimal level.
+     * @return true if we need a tool.
      */
     private boolean checkForNeededTool(@NotNull final IToolType toolType, final int minimalLevel)
     {

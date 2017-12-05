@@ -56,7 +56,9 @@ public class Burnable implements IDeliverable
     public boolean matches(@NotNull final ItemStack stack)
     {
         return TileEntityFurnace.isItemFuel(stack) && stack.getCount() >= getCount();
-    }    @Override
+    }
+
+    @Override
     public void setResult(@NotNull final ItemStack result)
     {
         this.result = result;
@@ -66,7 +68,9 @@ public class Burnable implements IDeliverable
     public int getCount()
     {
         return count;
-    }    @NotNull
+    }
+
+    @NotNull
     @Override
     public ItemStack getResult()
     {
