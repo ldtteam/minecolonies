@@ -66,14 +66,12 @@ public class Food implements IDeliverable
     public int getCount()
     {
         return count;
-    }    @NotNull
+    }
+
+    @NotNull
     @Override
     public ItemStack getResult()
     {
         return result;
     }
-
-
-
-
 }

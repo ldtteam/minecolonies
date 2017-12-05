@@ -26,6 +26,7 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.util.BuildingUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.StructureWrapper;
 import io.netty.buffer.ByteBuf;
@@ -41,6 +42,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -122,6 +124,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         addMapping("Fisherman", BuildingFisherman.class, BuildingFisherman.View.class, BlockHutFisherman.class);
         addMapping("GuardTower", BuildingGuardTower.class, BuildingGuardTower.View.class, BlockHutGuardTower.class);
         addMapping("WareHouse", BuildingWareHouse.class, BuildingWareHouse.View.class, BlockHutWareHouse.class);
+        addMapping("Cook", BuildingCook.class, BuildingCook.View.class, BlockHutCook.class);
         addMapping("Barracks", BuildingBarracks.class, BuildingBarracks.View.class, BlockHutBarracks.class);
         addMapping("BarracksTower", BuildingBarracksTower.class, BuildingBarracksTower.View.class, BlockHutBarracksTower.class);
     }
@@ -534,7 +537,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      * @param z1 the first z corner.
      * @param z2 the second z corner.
      */
-    private void setCorners(final int x1, final int x2, final int z1, final int z2)
+    public void setCorners(final int x1, final int x2, final int z1, final int z2)
     {
         this.cornerX1 = x1;
         this.cornerX2 = x2;
@@ -1023,6 +1026,15 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     }
 
     /**
+     * Get the height of the building.
+     * @return the height..
+     */
+    public int getHeight()
+    {
+        return this.height;
+    }
+
+    /**
      * Called upon completion of an upgrade process.
      * We suppress this warning since this parameter will be used in child classes which override this method.
      *
@@ -1201,6 +1213,16 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     public void setBeingGathered(final boolean gathering)
     {
         this.beingGathered = gathering;
+    }
+
+    /**
+     * Calculates the area of the building.
+     * @param world the world.
+     * @return the AxisAlignedBB.
+     */
+    public AxisAlignedBB getTargetableArea(final World world)
+    {
+        return BuildingUtils.getTargetAbleArea(world, this);
     }
 
     //------------------------- Starting Required Tools/Item handling -------------------------//

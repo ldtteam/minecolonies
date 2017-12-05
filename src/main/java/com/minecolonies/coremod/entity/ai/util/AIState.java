@@ -74,6 +74,10 @@ public enum AIState
      * Pick up left over items after building.
      */
     PICK_UP_RESIDUALS,
+    /**
+     * Go search food.
+     */
+    HUNGRY,
     /*
 ###FISHERMAN###
      */
@@ -253,7 +257,7 @@ public enum AIState
      */
     DUMPING,
 
- /*
+     /*
 ###Baker###
     */
 
@@ -275,6 +279,34 @@ public enum AIState
     /**
      * Take the product out of the oven.
      */
-    BAKER_TAKE_OUT_OF_OVEN
+    BAKER_TAKE_OUT_OF_OVEN,
 
+    /*
+###Cook###
+     */
+
+    /**
+     * Get some burnable material for the furnace.
+     */
+    COOK_GET_FIREWOOD,
+
+    /**
+     * Cook cooks food until its cooked.
+     */
+    COOK_COOK_FOOD,
+
+    /**
+     * Gathering food from his building.
+     */
+    COOK_GATHERING,
+
+    /**
+     * Retrieve the food from the furnace.
+     */
+    COOK_RETRIEVE_FOOD,
+
+    /**
+     * Serve food to the citizen inside the building.
+     */
+    COOK_SERVE
 }
