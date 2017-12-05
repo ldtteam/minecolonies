@@ -154,20 +154,22 @@ public class TileEntityColonyBuilding extends TileEntityChest
     @Nullable
     public BlockPos getPositionOfChestWithItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        @Nullable final AbstractBuilding building = getBuilding();
+        @Nullable final AbstractBuilding theBuilding = getBuilding();
 
-        if (building != null)
+        if (theBuilding != null)
         {
-            if (isInTileEntity(building.getTileEntity(), itemStackSelectionPredicate))
+            if (isInTileEntity(theBuilding.getTileEntity(), itemStackSelectionPredicate))
             {
-                return building.getLocation();
+                return theBuilding.getLocation();
             }
 
-            for (final BlockPos pos : building.getAdditionalCountainers())
+            for (final BlockPos pos : theBuilding.getAdditionalCountainers())
             {
                 final TileEntity entity = getWorld().getTileEntity(pos);
-                if ((entity instanceof TileEntityRack && ((TileEntityRack) entity).hasItemStack(itemStackSelectionPredicate))
-                        || (entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, itemStackSelectionPredicate)))
+                if ((entity instanceof TileEntityRack
+                        && ((TileEntityRack) entity).hasItemStack(itemStackSelectionPredicate))
+                        || (entity instanceof TileEntityChest
+                        && isInTileEntity((TileEntityChest) entity, itemStackSelectionPredicate)))
                 {
                     return pos;
                 }
@@ -188,10 +190,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      */
     public static boolean isInTileEntity(final TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        return InventoryFunctions
-                .matchFirstInProvider(
-                        entity,
-                        itemStackSelectionPredicate);
+        return InventoryFunctions.matchFirstInProvider(entity, itemStackSelectionPredicate);
     }
 
     /**
@@ -301,12 +300,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        /*
-        if (colonyId == 0 && colony == null)
-        {
-            //todo: actually do something about it and not spam the server
-        }
-        */
         compound.setInteger(TAG_COLONY, colonyId);
         compound.setBoolean(TAG_MIRROR, mirror);
         compound.setString(TAG_STYLE, style);

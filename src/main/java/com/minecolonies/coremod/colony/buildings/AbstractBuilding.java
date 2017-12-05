@@ -40,7 +40,9 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -73,6 +75,11 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 {
 
     protected static final int CONST_DEFAULT_MAX_BUILDING_LEVEL = 5;
+
+    /**
+     * Base height considered for the restaurant.
+     */
+    private static final int BASE_HEIGHT = 10;
 
     /**
      * Tag if the building has no workOrder.
@@ -1211,6 +1218,54 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     public void setBeingGathered(final boolean gathering)
     {
         this.beingGathered = gathering;
+    }
+
+    /**
+     * Calculates the area of the building.
+     * @param world the world.
+     * @return the AxisAlignedBB.
+     */
+    public AxisAlignedBB getTargetableArea(final World world)
+    {
+        final int x1;
+        final int z1;
+        final int x3;
+        final int z3;
+        final int y1 = getLocation().getY() - 2;
+        final int y3;
+
+        if(getHeight() == 0)
+        {
+            final StructureName sn =
+                    new StructureName(Structures.SCHEMATICS_PREFIX,
+                            getStyle(),
+                            getSchematicName() + getBuildingLevel());
+
+            final String structureName = sn.toString();
+
+            final StructureWrapper wrapper = new StructureWrapper(world, structureName);
+            wrapper.rotate(getRotation(), world, getLocation(), isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
+
+            final BlockPos pos = getLocation();
+            wrapper.setPosition(pos);
+
+            x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
+            z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;
+            x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX());
+            z3 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ());
+            y3 = getLocation().getY() + BASE_HEIGHT;
+        }
+        else
+        {
+            final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = getCorners();
+            x1 = corners.getFirst().getFirst();
+            x3 = corners.getFirst().getSecond();
+            z1 = corners.getSecond().getFirst();
+            z3 = corners.getSecond().getSecond();
+            y3 = getLocation().getY() + getHeight();
+        }
+
+        return new AxisAlignedBB(x1, y1, z1, x3, y3, z3);
     }
 
     //------------------------- Starting Required Tools/Item handling -------------------------//

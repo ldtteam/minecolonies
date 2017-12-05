@@ -20,16 +20,18 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
+
 /**
  * Class of the cook building.
  */
-@SuppressWarnings("squid:S2160")
+@SuppressWarnings(OVERRIDE_EQUALS)
 public class BuildingCook extends AbstractBuildingWorker
 {
     /**
      * The cook string.
      */
-    private static final String COOK = "Cook";
+    private static final String COOK_JOBNAME = "Cook";
 
     /**
      * Max building level of the cook.
@@ -76,7 +78,7 @@ public class BuildingCook extends AbstractBuildingWorker
     @Override
     public String getSchematicName()
     {
-        return COOK;
+        return COOK_JOBNAME;
     }
 
     @Override
@@ -96,7 +98,7 @@ public class BuildingCook extends AbstractBuildingWorker
     @Override
     public String getJobName()
     {
-        return COOK;
+        return COOK_JOBNAME;
     }
 
     /**
@@ -187,7 +189,7 @@ public class BuildingCook extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<>(this, COOK);
+            return new WindowHutWorkerPlaceholder<>(this, COOK_JOBNAME);
         }
 
         @NotNull

@@ -6,6 +6,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.*;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import org.jetbrains.annotations.NotNull;
@@ -61,6 +62,24 @@ public final class ItemStackUtils
         /*
          * Intentionally left empty.
          */
+    }
+
+    /**
+     * Getter for the predicate describing food in minecolonies.
+     * @return it.
+     */
+    public static Predicate<ItemStack> getFoodPredicate()
+    {
+        return itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood;
+    }
+
+    /**
+     * Getter for the predicate describing cookable food in minecolonies.
+     * @return it.
+     */
+    public static Predicate<ItemStack> getCookablePredicate()
+    {
+        return getFoodPredicate().and(itemStack -> !ItemStackUtils.isEmpty(FurnaceRecipes.instance().getSmeltingResult(itemStack)));
     }
 
     /**

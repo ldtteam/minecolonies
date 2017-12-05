@@ -6,10 +6,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.StructureName;
-import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.BuildingCook;
-import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
@@ -17,16 +14,11 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 
 import com.minecolonies.coremod.tileentities.TileEntityRack;
-import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -76,24 +68,24 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
     private static final int STANDARD_DELAY = 5;
 
     /**
-     * Predicate describing food.
-     */
-    private static final Predicate<ItemStack> isFood = itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood;
-
-    /**
-     * Predicate describing a cookable itemStack.
-     */
-    private static final Predicate<ItemStack> isCookable = isFood.and(itemStack -> !ItemStackUtils.isEmpty(FurnaceRecipes.instance().getSmeltingResult(itemStack)));
-
-    /**
      * Wait this amount of ticks after requesting a burnable material.
      */
     private static final int WAIT_AFTER_REQUEST = 400;
 
     /**
-     * Base height considered for the restaurant.
+     * Slot with the result of the furnace.
      */
-    private static final int BASE_HEIGHT        = 10;
+    private static final int RESULT_SLOT = 2;
+
+    /**
+     * Slot where cookables should be put in the furnace.
+     */
+    private static final int COOK_SLOT   = 0;
+
+    /**
+     * Slot where the fuel should be put in the furnace.
+     */
+    private static final int FUEL_SLOT   = 1;
 
     /**
      * The citizen the worker is currently trying to serve.
@@ -197,8 +189,8 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         final TileEntity entity = world.getTileEntity(walkTo);
         if (!(entity instanceof TileEntityFurnace)
                 || ((TileEntityFurnace) entity).isBurning()
-                || (ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(2))
-                && ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(0))))
+                || (ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(RESULT_SLOT))
+                && ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(COOK_SLOT))))
         {
             walkTo = null;
             return START_WORKING;
@@ -206,10 +198,10 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         walkTo = null;
 
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(
-                new InvWrapper((TileEntityFurnace) entity), 2,
+                new InvWrapper((TileEntityFurnace) entity), RESULT_SLOT,
                 new InvWrapper(worker.getInventoryCitizen()));
 
-        if (!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(0)))
+        if (!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(COOK_SLOT)))
         {
             if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel))
             {
@@ -232,7 +224,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
     {
         if(needsCurrently == null)
         {
-            needsCurrently = isFood;
+            needsCurrently = ItemStackUtils.getFoodPredicate();
         }
 
         if(InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), needsCurrently))
@@ -256,7 +248,6 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         {
             return COOK_SERVE;
         }
-        //todo
         setDelay(STANDARD_DELAY);
         return START_WORKING;
     }
@@ -276,7 +267,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
         InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                 new InvWrapper(worker.getInventoryCitizen()),
-                isFood,
+                ItemStackUtils.getFoodPredicate(),
                 AMOUNT_OF_FOOD_TO_SERVE,
                 new InvWrapper(citizenToServe.get(0).getInventoryCitizen()));
 
@@ -293,11 +284,12 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             return START_WORKING;
         }
 
-        if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), isCookable)
+        if (!InventoryUtils.hasItemInItemHandler(
+                new InvWrapper(worker.getInventoryCitizen()), ItemStackUtils.getCookablePredicate())
                 && (walkTo == null || world.getBlockState(walkTo).getBlock() != Blocks.FURNACE))
         {
             walkTo = null;
-            needsCurrently = isCookable;
+            needsCurrently = ItemStackUtils.getCookablePredicate();
             return COOK_GATHERING;
         }
 
@@ -306,7 +298,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             for (final BlockPos pos : ((BuildingCook) getOwnBuilding()).getFurnaces())
             {
                 final TileEntity entity = world.getTileEntity(pos);
-                if (ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(0)))
+                if (ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(COOK_SLOT)))
                 {
                     walkTo = pos;
                 }
@@ -328,10 +320,10 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         if (entity instanceof TileEntityFurnace)
         {
             InventoryUtils.transferXOfFirstSlotInProviderWithIntoInItemHandler(
-                    new InvWrapper(worker.getInventoryCitizen()), isCookable, Constants.STACKSIZE,
-                    new InvWrapper((TileEntityFurnace) entity), 0);
+                    new InvWrapper(worker.getInventoryCitizen()), ItemStackUtils.getCookablePredicate(), Constants.STACKSIZE,
+                    new InvWrapper((TileEntityFurnace) entity), COOK_SLOT);
 
-            if (ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(1)))
+            if (ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(FUEL_SLOT)))
             {
                 if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel))
                 {
@@ -341,7 +333,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
                 InventoryUtils.transferXOfFirstSlotInProviderWithIntoInItemHandler(
                         new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel, Constants.STACKSIZE,
-                        new InvWrapper((TileEntityFurnace) entity), 1);
+                        new InvWrapper((TileEntityFurnace) entity), FUEL_SLOT);
             }
 
             ((BuildingCook) getOwnBuilding()).setIsSomethingInOven(true);
@@ -388,7 +380,9 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         {
             final TileEntity entity = world.getTileEntity(pos);
             if (entity instanceof TileEntityFurnace && !((TileEntityFurnace) entity).isBurning()
-                    && (!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(2)) || !ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(0))))
+                    && (!ItemStackUtils.isEmpty(((TileEntityFurnace) entity)
+                    .getStackInSlot(RESULT_SLOT))
+                    || !ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(COOK_SLOT))))
             {
                 worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.retrieving"));
                 return pos;
@@ -416,8 +410,10 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             }
         }
 
-        final int amountOfFood = getOwnBuilding().getCountOfPredicateInHut(isFood, getOwnBuilding().getBuildingLevel() * LEAST_KEEP_FOOD_MULTIPLIER, world)
-                + InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), isFood);
+        final int amountOfFood = getOwnBuilding()
+                .getCountOfPredicateInHut(ItemStackUtils.getFoodPredicate(),
+                        getOwnBuilding().getBuildingLevel() * LEAST_KEEP_FOOD_MULTIPLIER, world)
+                + InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), ItemStackUtils.getFoodPredicate());
 
         if (amountOfFood <= 0)
         {
@@ -431,7 +427,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
         if (range == null)
         {
-            range = getTargetableArea();
+            range = getOwnBuilding().getTargetableArea(world);
         }
 
         citizenToServe.clear();
@@ -453,8 +449,8 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             return getState();
         }
 
-        if (getOwnBuilding().getCountOfPredicateInHut(isCookable, 1, world) >= 1
-                || InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), isCookable) >= 1)
+        if (getOwnBuilding().getCountOfPredicateInHut(ItemStackUtils.getCookablePredicate(), 1, world) >= 1
+                || InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), ItemStackUtils.getCookablePredicate()) >= 1)
         {
             worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.cooking"));
             return COOK_COOK_FOOD;
@@ -474,12 +470,12 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             if (entity instanceof TileEntityFurnace && !((TileEntityFurnace) entity).isBurning())
             {
                 walkTo = pos;
-                if(!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(2)))
+                if(!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(RESULT_SLOT)))
                 {
                     worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.retrieving"));
                     return COOK_RETRIEVE_FOOD;
                 }
-                else if(!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(0)))
+                else if(!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(COOK_SLOT)))
                 {
                     worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.cooking"));
                     return COOK_COOK_FOOD;
@@ -490,53 +486,5 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.idling"));
         setDelay(STANDARD_DELAY);
         return START_WORKING;
-    }
-
-    /**
-     * Creates a simple area around the Shepherd Hut used for AABB calculations for finding sheep
-     *
-     * @return The AABB
-     */
-    private AxisAlignedBB getTargetableArea()
-    {
-        final int x1;
-        final int z1;
-        final int x3;
-        final int z3;
-        final int y1 = getOwnBuilding().getLocation().getY() - 2;
-        final int y3;
-
-        if(getOwnBuilding().getHeight() == 0)
-        {
-            final StructureName sn =
-                    new StructureName(Structures.SCHEMATICS_PREFIX,
-                            getOwnBuilding().getStyle(),
-                            getOwnBuilding().getSchematicName() + getOwnBuilding().getBuildingLevel());
-
-            final String structureName = sn.toString();
-
-            final StructureWrapper wrapper = new StructureWrapper(world, structureName);
-            wrapper.rotate(getOwnBuilding().getRotation(), world, getOwnBuilding().getLocation(), getOwnBuilding().isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
-
-            final BlockPos pos = getOwnBuilding().getLocation();
-            wrapper.setPosition(pos);
-
-            x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
-            z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;
-            x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX());
-            z3 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ());
-            y3 = getOwnBuilding().getLocation().getY() + BASE_HEIGHT;
-        }
-        else
-        {
-            final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = getOwnBuilding().getCorners();
-            x1 = corners.getFirst().getFirst();
-            x3 = corners.getFirst().getSecond();
-            z1 = corners.getSecond().getFirst();
-            z3 = corners.getSecond().getSecond();
-            y3 = getOwnBuilding().getLocation().getY() + getOwnBuilding().getHeight();
-        }
-
-        return new AxisAlignedBB(x1, y1, z1, x3, y3, z3);
     }
 }

@@ -120,11 +120,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private int exceptionTimer = 1;
 
     /**
-     * Check to see if the worker wants to stand still waiting for the request to be fullfilled.
-     */
-    private boolean waitForRequest = true;
-
-    /**
      * The restaurant this AI usually goes to.
      */
     private BlockPos restaurant = null;
@@ -180,9 +175,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 /**
                  * Called when the citizen saturation falls too low.
                  */
-                new AITarget(() -> (worker.getCitizenData().getSaturation() <= EntityCitizen.HIGH_SATURATION
-                        && !job.hasCheckedForFoodToday()) || worker.getCitizenData().getSaturation() <= 0, this::searchForFood)
+                new AITarget(this::shouldGetFood, this::searchForFood)
         );
+    }
+
+    /**
+     * Check if the citizen should get food, meaning, check if he checked for food today already and check if his saturation is decent.
+     * @return true if he should go search for food.
+     */
+    private boolean shouldGetFood()
+    {
+        return (worker.getCitizenData().getSaturation() <= EntityCitizen.HIGH_SATURATION
+                && !job.hasCheckedForFoodToday()) || worker.getCitizenData().getSaturation() <= 0;
     }
 
     /**
@@ -777,11 +781,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * <p>
      * Do not use it to find a pickaxe as it need a minimum level
      *
-<<<<<<< HEAD
      * @param toolType tool required for block
-=======
      * @param tool tool required for block
->>>>>>> 75d3b73... Just for cherrypick (#1716)
      * @return true if we need a tool
      */
     private boolean checkForNeededTool(@NotNull final IToolType toolType, final int minimalLevel)
