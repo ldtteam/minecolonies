@@ -12,11 +12,6 @@ import net.minecraft.world.World;
 public final class BuildingUtils
 {
     /**
-     * Base height considered for the buildings.
-     */
-    private static final int BASE_HEIGHT = 10;
-
-    /**
      * Private constructor to hide public one.
      */
     private BuildingUtils()
@@ -34,11 +29,12 @@ public final class BuildingUtils
      */
     public static AxisAlignedBB getTargetAbleArea(final World world, final AbstractBuilding building)
     {
+        final BlockPos location = building.getLocation();
         final int x1;
         final int z1;
         final int x3;
         final int z3;
-        final int y1 = building.getLocation().getY() - 2;
+        final int y1 = location.getY() - 2;
         final int y3;
 
         if(building.getHeight() == 0)
@@ -51,16 +47,19 @@ public final class BuildingUtils
             final String structureName = sn.toString();
 
             final StructureWrapper wrapper = new StructureWrapper(world, structureName);
-            wrapper.rotate(building.getRotation(), world, building.getLocation(), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
+            wrapper.rotate(building.getRotation(), world, location, building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
 
-            final BlockPos pos = building.getLocation();
+            final BlockPos pos = location;
             wrapper.setPosition(pos);
 
             x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
             z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;
             x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX());
             z3 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ());
-            y3 = building.getLocation().getY() + BASE_HEIGHT;
+            y3 = location.getY() + wrapper.getHeight();
+
+            building.setCorners(x1, x3, z1, z3);
+            building.setHeight(wrapper.getHeight());
         }
         else
         {
@@ -69,7 +68,7 @@ public final class BuildingUtils
             x3 = corners.getFirst().getSecond();
             z1 = corners.getSecond().getFirst();
             z3 = corners.getSecond().getSecond();
-            y3 = building.getLocation().getY() + building.getHeight();
+            y3 = location.getY() + building.getHeight();
         }
 
         return new AxisAlignedBB(x1, y1, z1, x3, y3, z3);

@@ -55,6 +55,17 @@ public final class ItemStackUtils
     private static final int FORTUNE_ENCHANT_ID = 35;
 
     /**
+     * Predicate describing food.
+     */
+    public static final Predicate<ItemStack> ISFOOD = itemStack -> !ItemStackUtils.isEmpty(itemStack)
+            && itemStack.getItem() instanceof ItemFood;
+
+    /**
+     * Predicate describing cookables.
+     */
+    public static final Predicate<ItemStack> ISCOOKABLE = ISFOOD.and(itemStack -> !ItemStackUtils.isEmpty(FurnaceRecipes.instance().getSmeltingResult(itemStack)));
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private ItemStackUtils()
@@ -62,24 +73,6 @@ public final class ItemStackUtils
         /*
          * Intentionally left empty.
          */
-    }
-
-    /**
-     * Getter for the predicate describing food in minecolonies.
-     * @return it.
-     */
-    public static Predicate<ItemStack> getFoodPredicate()
-    {
-        return itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood;
-    }
-
-    /**
-     * Getter for the predicate describing cookable food in minecolonies.
-     * @return it.
-     */
-    public static Predicate<ItemStack> getCookablePredicate()
-    {
-        return getFoodPredicate().and(itemStack -> !ItemStackUtils.isEmpty(FurnaceRecipes.instance().getSmeltingResult(itemStack)));
     }
 
     /**

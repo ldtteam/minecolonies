@@ -537,7 +537,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      * @param z1 the first z corner.
      * @param z2 the second z corner.
      */
-    private void setCorners(final int x1, final int x2, final int z1, final int z2)
+    public void setCorners(final int x1, final int x2, final int z1, final int z2)
     {
         this.cornerX1 = x1;
         this.cornerX2 = x2;
