@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
-import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -155,9 +154,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  * If yes, transition to NEEDS_ITEM.
                  * and wait for new items.
                  */
-          new AITarget(() -> getState() == NEEDS_ITEM || this.getOwnBuilding()
-                                                           .hasWorkerOpenRequestsFiltered(worker.getCitizenData(), r -> !worker.getCitizenData().isRequestAsync(r.getToken()))
-                               || this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()), this::waitForRequests),
+          new AITarget(() -> {
+              return getState() == NEEDS_ITEM
+                       || this.getOwnBuilding()
+                            .hasWorkerOpenRequestsFiltered(
+                              worker.getCitizenData(),
+                              r -> !worker.getCitizenData().isRequestAsync(r.getToken()))
+                       || this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData());
+          }, this::waitForRequests),
                 /*
                  * Dumps inventory as long as needs be.
                  * If inventory is dumped, execution continues
