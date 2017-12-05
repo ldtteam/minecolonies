@@ -3,7 +3,10 @@ package com.minecolonies.api.util;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.*;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import org.jetbrains.annotations.NotNull;
@@ -50,6 +53,17 @@ public final class ItemStackUtils
      * The compound id for fortune enchantment.
      */
     private static final int FORTUNE_ENCHANT_ID = 35;
+
+    /**
+     * Predicate describing food.
+     */
+    public static final Predicate<ItemStack> ISFOOD = itemStack -> !ItemStackUtils.isEmpty(itemStack)
+            && itemStack.getItem() instanceof ItemFood;
+
+    /**
+     * Predicate describing cookables.
+     */
+    public static final Predicate<ItemStack> ISCOOKABLE = ISFOOD.and(itemStack -> !ItemStackUtils.isEmpty(FurnaceRecipes.instance().getSmeltingResult(itemStack)));
 
     /**
      * Private constructor to hide the implicit one.
@@ -428,6 +442,18 @@ public final class ItemStackUtils
     public static ItemStack deserializeFromNBT(@NotNull final NBTTagCompound compound)
     {
         return ItemStack.loadItemStackFromNBT(compound);
+    }
+
+    /**
+     * Check if the itemStack is some preferrable type of fuel.
+     * @param stack the itemStack to test.
+     * @return true if so.
+     */
+    public boolean isPreferrableFuel(@NotNull final ItemStack stack)
+    {
+        return stack.isItemEqualIgnoreDurability(new ItemStack(Items.COAL))
+                || stack.isItemEqualIgnoreDurability(new ItemStack(Blocks.LOG))
+                || stack.isItemEqualIgnoreDurability(new ItemStack(Blocks.LOG2));
     }
 }
 

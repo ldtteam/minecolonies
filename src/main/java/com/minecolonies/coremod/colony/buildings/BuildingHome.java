@@ -1,14 +1,11 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHomeBuilding;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
@@ -47,11 +44,6 @@ public class BuildingHome extends AbstractBuildingHut
     private static final String TAG_BEDS = "beds";
 
     /**
-     * Constant determining how big of food request to start.
-     */
-    private static final int CONST_FOOD_REQUEST_SIZE = 5;
-
-    /**
      * The string describing the hut.
      */
     private static final String CITIZEN = "Citizen";
@@ -67,11 +59,6 @@ public class BuildingHome extends AbstractBuildingHut
      */
     @NotNull
     private final List<BlockPos> bedList = new ArrayList<>();
-
-    /**
-     * Boolean value describing if any citizen needs food.
-     */
-    private boolean isFoodNeeded = false;
 
     /**
      * Instantiates a new citizen hut.
@@ -322,21 +309,6 @@ public class BuildingHome extends AbstractBuildingHut
     public boolean hasResident(final CitizenData citizen)
     {
         return residents.contains(citizen);
-    }
-
-    /**
-     * Checks if food in the home is required.
-     * If yes set foodNeeded to true, else to false.
-     */
-    public void checkIfFoodNeeded()
-    {
-        residents.stream()
-          .filter(resident -> resident.getSaturation() < EntityCitizen.HIGH_SATURATION)
-          .filter(resident -> !hasWorkerOpenRequestsOfType(resident, TypeToken.of(Food.class)))
-          .forEach(resident -> {
-              final Food foodRequest = new Food(CONST_FOOD_REQUEST_SIZE);
-              createRequest(resident, foodRequest);
-          });
     }
 
     /**
