@@ -286,11 +286,6 @@ public enum AIState
      */
 
     /**
-     * Get some food from the warehouse.
-     */
-    COOK_GET_FOOD,
-
-    /**
      * Get some burnable material for the furnace.
      */
     COOK_GET_FIREWOOD,

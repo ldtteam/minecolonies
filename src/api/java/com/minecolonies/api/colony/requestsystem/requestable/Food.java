@@ -6,6 +6,7 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Eatable requestable.
@@ -73,7 +74,7 @@ public class Food implements IDeliverable
         return count;
     }
 
-    @NotNull
+    @Nullable
     @Override
     public ItemStack getResult()
     {

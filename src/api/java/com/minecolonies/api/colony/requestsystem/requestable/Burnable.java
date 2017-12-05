@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Burnable requestable.
@@ -65,7 +66,9 @@ public class Burnable implements IDeliverable
     public int getCount()
     {
         return count;
-    }    @NotNull
+    }
+
+    @Nullable
     @Override
     public ItemStack getResult()
     {
