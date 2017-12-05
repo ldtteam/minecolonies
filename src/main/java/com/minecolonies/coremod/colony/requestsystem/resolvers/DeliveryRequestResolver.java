@@ -47,7 +47,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         final CitizenData freeDeliveryMan = colony.getCitizens()
                                         .values()
                                         .stream()
-                                        .filter(c -> requestToCheck.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
+                                        .filter(c -> c.getCitizenEntity() != null && requestToCheck.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
                                         .filter(c -> c.getJob() instanceof JobDeliveryman)
                                         .findFirst()
                                         .orElse(null);
@@ -74,7 +74,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         final CitizenData freeDeliveryMan = colony.getCitizens()
                                         .values()
                                         .stream()
-                                        .filter(c -> request.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
+                                        .filter(c -> c.getCitizenEntity() != null && request.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
                                         .filter(c -> c.getJob() instanceof JobDeliveryman)
                                         .sorted(Comparator.comparing((CitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
                                                   .thenComparing(Comparator.comparing(c -> {
@@ -106,7 +106,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @Nullable
     @Override
-    public IRequest getFollowupRequestForCompletion(
+    public IRequest<?> getFollowupRequestForCompletion(
                                                      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> completedRequest)
     {
         return null;
@@ -114,7 +114,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @Nullable
     @Override
-    public IRequest onRequestCancelledOrOverruled(
+    public IRequest<?> onRequestCancelledOrOverruled(
                                                    @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
         if (!manager.getColony().getWorld().isRemote)

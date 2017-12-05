@@ -10,6 +10,7 @@ import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 import static com.minecolonies.coremod.entity.EntityCitizen.Status.SLEEPING;
 
 /**
@@ -78,8 +79,8 @@ public class EntityAISleep extends EntityAIBase
                     for (final BlockPos pos : ((BuildingHome) hut).getBedList())
                     {
                         final World world = citizen.world;
-                        IBlockState state = world.getBlockState(pos);
-                        state = state.getBlock().getActualState(state, world, pos);
+                        final IBlockState worldBlockState = world.getBlockState(pos);
+                        @SuppressWarnings(DEPRECATION) final IBlockState state = worldBlockState.getBlock().getActualState(worldBlockState, world, pos);
                         if (state.getBlock() instanceof BlockBed
                               && !state.getValue(BlockBed.OCCUPIED)
                               && state.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))

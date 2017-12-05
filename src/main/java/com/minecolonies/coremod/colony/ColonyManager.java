@@ -876,7 +876,7 @@ public final class ColonyManager
      * @return the response message.
      */
     @Nullable
-    public static IMessage handleColonyViewMessage(final int colonyId, @NotNull final ByteBuf colonyData, final boolean isNewSubscription)
+    public static IMessage handleColonyViewMessage(final int colonyId, @NotNull final ByteBuf colonyData, @NotNull final World world, final boolean isNewSubscription)
     {
         ColonyView view = getColonyView(colonyId);
         if (view == null)
@@ -885,7 +885,7 @@ public final class ColonyManager
             colonyViews.add(view);
         }
 
-        return view.handleColonyViewMessage(colonyData, isNewSubscription);
+        return view.handleColonyViewMessage(colonyData, world, isNewSubscription);
     }
 
     /**

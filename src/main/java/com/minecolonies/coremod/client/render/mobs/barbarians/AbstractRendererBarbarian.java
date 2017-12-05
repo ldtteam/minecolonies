@@ -26,7 +26,7 @@ public abstract class AbstractRendererBarbarian extends RenderLiving<AbstractEnt
      * @param barbarian       the barbarian class to render.
      * @param renderManagerIn the renderManager
      */
-    public AbstractRendererBarbarian(final RenderManager renderManagerIn, final Class barbarian)
+    public AbstractRendererBarbarian(final RenderManager renderManagerIn, final Class<? extends AbstractEntityBarbarian> barbarian)
     {
         super(renderManagerIn, new ModelBiped(), SHADOW_SIZE);
 

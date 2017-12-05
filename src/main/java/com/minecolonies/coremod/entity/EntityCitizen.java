@@ -463,8 +463,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             if (this.getColonyJob() != null && Configurations.gameplay.enableInDevelopmentFeatures)
             {
-                setCustomNameTag(citizenData.getName() + " (" + getStatus() + ")[" + this.getColonyJob()
-                                                                                       .getNameTagDescription() + "]");
+                setCustomNameTag(citizenData.getName() + " (" + getStatus() + ")[" + this.getColonyJob().getNameTagDescription() + "]");
             }
             else
             {
@@ -1123,7 +1122,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if(citizenData != null && name != null)
         {
-            if(!citizenData.getName().equals(name) && Configurations.gameplay.allowGlobalNameChanges >= 0)
+            if(!name.contains(citizenData.getName()) && Configurations.gameplay.allowGlobalNameChanges >= 0)
             {
                 if (Configurations.gameplay.allowGlobalNameChanges == 0 &&
                         Arrays.stream(Configurations.gameplay.specialPermGroup).noneMatch(owner -> owner.equals(colony.getPermissions().getOwnerName())))

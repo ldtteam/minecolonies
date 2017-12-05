@@ -23,6 +23,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
@@ -99,6 +100,11 @@ public final class ColonyView implements IColony
      * The request manager on the colony view side.
      */
     private IRequestManager requestManager;
+
+    /**
+     * The world.
+     */
+    private World world;
 
     /**
      * Base constructor for a colony.
@@ -422,8 +428,9 @@ public final class ColonyView implements IColony
      * @return null == no response.
      */
     @Nullable
-    public IMessage handleColonyViewMessage(@NotNull final ByteBuf buf, final boolean isNewSubscription)
+    public IMessage handleColonyViewMessage(@NotNull final ByteBuf buf, @NotNull final World world, final boolean isNewSubscription)
     {
+        this.world = world;
         //  General Attributes
         name = ByteBufUtils.readUTF8String(buf);
         dimensionId = buf.readInt();
@@ -700,7 +707,7 @@ public final class ColonyView implements IColony
     @Override
     public World getWorld()
     {
-        return Minecraft.getMinecraft().world;
+        return world;
     }
 
     @Nullable

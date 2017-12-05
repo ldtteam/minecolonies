@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -68,6 +69,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
         final List<TileEntity> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
+        tileEntities.removeIf(Objects::isNull);
 
         return tileEntities.stream()
                  .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> requestToCheck.getRequest().matches(itemStack)))
@@ -109,7 +111,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
 
     @Nullable
     @Override
-    public IRequest getFollowupRequestForCompletion(
+    public IRequest<?> getFollowupRequestForCompletion(
                                                      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
     {
         return null;
@@ -117,7 +119,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
 
     @Nullable
     @Override
-    public IRequest onRequestCancelledOrOverruled(
+    public IRequest<?> onRequestCancelledOrOverruled(
                                                    @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         return null;
