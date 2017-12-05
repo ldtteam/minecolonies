@@ -341,6 +341,15 @@ public class TileEntityRack extends TileEntity
     }
 
     /**
+     * Method to change the main attribute of the rack.
+     * @param main the boolean value defining it.
+     */
+    public void setMain(final boolean main)
+    {
+        this.main = main;
+    }
+
+    /**
      * On neighbor changed this will be called from the block.
      *
      * @param newNeighbor the blockPos which has changed.
@@ -364,10 +373,12 @@ public class TileEntityRack extends TileEntity
             if (entity instanceof TileEntityRack && !((TileEntityRack) entity).isMain())
             {
                 this.main = true;
+                ((TileEntityRack) entity).setMain(false);
             }
             ((TileEntityRack) entity).setNeighbor(this.getPos());
-
+            entity.markDirty();
             updateItemStorage();
+            this.markDirty();
         }
         else if (this.neighbor.equals(newNeighbor) && !(world.getBlockState(newNeighbor).getBlock() instanceof BlockMinecoloniesRack))
         {
