@@ -181,6 +181,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Check if the citizen should get food, meaning, check if he checked for food today already and check if his saturation is decent.
+     *
      * @return true if he should go search for food.
      */
     private boolean shouldGetFood()
