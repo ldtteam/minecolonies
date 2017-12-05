@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -8,12 +9,17 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Predicate;
 
 /**
  * Class which handles the tileEntity of our colonyBuildings.
@@ -113,8 +119,8 @@ public class TileEntityColonyBuilding extends TileEntityChest
                 {
                     //log on the server
                     Log.getLogger()
-                      .warn(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] had colony.",
-                        getWorld().getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
+                            .warn(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] had colony.",
+                                    getWorld().getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
                 }
             }
         }
@@ -137,6 +143,54 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public BlockPos getPosition()
     {
         return pos;
+    }
+
+    /**
+     * Check for a certain item and return the position of the chest containing it.
+     *
+     * @param itemStackSelectionPredicate the stack to search for.
+     * @return the position or null.
+     */
+    @Nullable
+    public BlockPos getPositionOfChestWithItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    {
+        @Nullable final AbstractBuilding theBuilding = getBuilding();
+
+        if (theBuilding != null)
+        {
+            if (isInTileEntity(theBuilding.getTileEntity(), itemStackSelectionPredicate))
+            {
+                return theBuilding.getLocation();
+            }
+
+            for (final BlockPos pos : theBuilding.getAdditionalCountainers())
+            {
+                final TileEntity entity = getWorld().getTileEntity(pos);
+                if ((entity instanceof TileEntityRack
+                        && ((TileEntityRack) entity).hasItemStack(itemStackSelectionPredicate))
+                        || (entity instanceof TileEntityChest
+                        && isInTileEntity((TileEntityChest) entity, itemStackSelectionPredicate)))
+                {
+                    return pos;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Finds the first @see ItemStack the type of {@code is}.
+     * It will be taken from the chest and placed in the workers inventory.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the stack.
+     *
+     * @param entity                      the tileEntity chest or building.
+     * @param itemStackSelectionPredicate the itemStack predicate.
+     * @return true if found the stack.
+     */
+    public static boolean isInTileEntity(final TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    {
+        return InventoryFunctions.matchFirstInProvider(entity, itemStackSelectionPredicate);
     }
 
     /**
@@ -246,12 +300,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        /*
-        if (colonyId == 0 && colony == null)
-        {
-            //todo: actually do something about it and not spam the server
-        }
-        */
         compound.setInteger(TAG_COLONY, colonyId);
         compound.setBoolean(TAG_MIRROR, mirror);
         compound.setString(TAG_STYLE, style);

@@ -51,6 +51,7 @@ public abstract class AbstractJob
     private static final String MAPPING_FISHERMAN   = "Fisherman";
     private static final String MAPPING_TOWER_GUARD = "GuardTower";
     private static final String MAPPING_BAKER       = "Baker";
+    private static final String MAPPING_COOK        = "Cook";
 
     /**
      * The priority assigned with every main AI job.
@@ -74,15 +75,28 @@ public abstract class AbstractJob
         addMapping(MAPPING_FISHERMAN, JobFisherman.class);
         addMapping(MAPPING_TOWER_GUARD, JobGuard.class);
         addMapping(MAPPING_BAKER, JobBaker.class);
+        addMapping(MAPPING_COOK, JobCook.class);
     }
 
+    /**
+     * Citizen connected with the job.
+     */
     private final CitizenData citizen;
+
+    /**
+     * The name tag of the job.
+     */
     private String nameTag = "";
 
     /**
      * A set of tokens that point to requests for which we do not wait.
      */
     private Set<IToken> asyncRequests = new HashSet<>();
+
+    /**
+     * Check if the worker has searched for food today.
+     */
+    private boolean searchedForFoodToday;
 
     /**
      * Initialize citizen data.
@@ -264,6 +278,23 @@ public abstract class AbstractJob
     public abstract AbstractAISkeleton<? extends AbstractJob> generateAI();
 
     /**
+     * Check if the citizen already checked for food in his chest today.
+     * @return true if so.
+     */
+    public boolean hasCheckedForFoodToday()
+    {
+        return searchedForFoodToday;
+    }
+
+    /**
+     * Sets that the citizen on this day already searched for food in his chest.
+     */
+    public void setCheckedForFood()
+    {
+        searchedForFoodToday = true;
+    }
+
+    /**
      * This method can be used to display the current status.
      * That a citizen is having.
      *
@@ -361,5 +392,13 @@ public abstract class AbstractJob
     public CitizenData getCitizen()
     {
         return citizen;
+    }
+
+    /**
+     * Executed every time the colony woke up.
+     */
+    public void onWakeUp()
+    {
+        searchedForFoodToday = false;
     }
 }
