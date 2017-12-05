@@ -437,6 +437,11 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         {
             citizenToServe.addAll(citizenList);
             worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.serving"));
+            if(InventoryUtils.hasItemInItemHandler(
+                    new InvWrapper(worker.getInventoryCitizen()), ItemStackUtils.ISFOOD))
+            {
+                return COOK_SERVE;
+            }
             return COOK_GATHERING;
         }
 
