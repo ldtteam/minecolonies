@@ -120,8 +120,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private int exceptionTimer = 1;
 
     /**
-<<<<<<< HEAD
-=======
      * Check to see if the worker wants to stand still waiting for the request to be fullfilled.
      */
     private boolean waitForRequest = true;
@@ -132,7 +130,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private BlockPos restaurant = null;
 
     /**
->>>>>>> 75d3b73... Just for cherrypick (#1716)
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class
