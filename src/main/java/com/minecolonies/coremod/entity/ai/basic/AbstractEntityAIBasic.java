@@ -185,8 +185,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean shouldGetFood()
     {
-        return (worker.getCitizenData().getSaturation() <= EntityCitizen.HIGH_SATURATION
-                && !job.hasCheckedForFoodToday()) || worker.getCitizenData().getSaturation() <= 0;
+        return (worker.getCitizenData().getSaturation() <= EntityCitizen.HIGH_SATURATION && !job.hasCheckedForFoodToday())
+                || worker.getCitizenData().getSaturation() <= 0;
     }
 
     /**
@@ -779,11 +779,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Check if we need a tool.
      * <p>
-     * Do not use it to find a pickaxe as it need a minimum level
+     * Do not use it to find a pickaxe as it need a minimum level.
      *
-     * @param toolType tool required for block
-     * @param tool tool required for block
-     * @return true if we need a tool
+     * @param toolType tool required for block.
+     * @param minimalLevel the minimal level.
+     * @return true if we need a tool.
      */
     private boolean checkForNeededTool(@NotNull final IToolType toolType, final int minimalLevel)
     {

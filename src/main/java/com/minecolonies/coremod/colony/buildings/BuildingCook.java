@@ -31,7 +31,7 @@ public class BuildingCook extends AbstractBuildingWorker
     /**
      * The cook string.
      */
-    private static final String COOK_JOBNAME = "Cook";
+    private static final String COOK_DESC = "Cook";
 
     /**
      * Max building level of the cook.
@@ -78,7 +78,7 @@ public class BuildingCook extends AbstractBuildingWorker
     @Override
     public String getSchematicName()
     {
-        return COOK_JOBNAME;
+        return COOK_DESC;
     }
 
     @Override
@@ -98,7 +98,7 @@ public class BuildingCook extends AbstractBuildingWorker
     @Override
     public String getJobName()
     {
-        return COOK_JOBNAME;
+        return COOK_DESC;
     }
 
     /**
@@ -189,7 +189,7 @@ public class BuildingCook extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<>(this, COOK_JOBNAME);
+            return new WindowHutWorkerPlaceholder<>(this, COOK_DESC);
         }
 
         @NotNull
