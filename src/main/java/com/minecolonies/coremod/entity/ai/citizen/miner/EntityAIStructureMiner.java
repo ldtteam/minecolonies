@@ -34,7 +34,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
      */
     private static final int OTHER_SIDE_OF_SHAFT = 6;
 
-    private static final String RENDER_META_TORCH   = "Torch";
+    private static final String RENDER_META_TORCH   = "torch";
     private static final int    NODE_DISTANCE       = 7;
     /**
      * Return to chest after 3 stacks.
