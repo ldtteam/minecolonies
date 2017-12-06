@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
@@ -117,9 +118,9 @@ public class BuildingBasedRequester implements IRequester
             return;
         }
 
-        final World world = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(getRequesterLocation().getDimension());
-        final IColony colony = ColonyManager.getClosestIColony(world, getRequesterLocation().getInDimensionLocation());
+        final World world = MineColonies.proxy.getWorld(location.getDimension());
+        final IColony colony = ColonyManager.getClosestIColony(world, location.getInDimensionLocation());
 
-        building = colony.getRequesterBuildingForPosition(getRequesterLocation().getInDimensionLocation());
+        building = colony.getRequesterBuildingForPosition(location.getInDimensionLocation());
     }
 }
