@@ -270,6 +270,10 @@ public class ClientProxy extends CommonProxy
     @Override
     public World getWorld(final int dimension)
     {
+        if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
+        {
+            return super.getWorld(dimension);
+        }
         return Minecraft.getMinecraft().world;
     }
 }
