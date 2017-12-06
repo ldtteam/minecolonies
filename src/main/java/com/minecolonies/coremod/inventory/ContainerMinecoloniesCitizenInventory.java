@@ -14,73 +14,106 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
+import static com.minecolonies.api.util.constant.InventoryConstants.*;
+
 /**
  * Container for Mie
  */
 public class ContainerMinecoloniesCitizenInventory extends Container
 {
     /**
-     * Amount of columns in the player inventory.
+     * Lower chest inventory.
      */
-    private static final int INVENTORY_COLUMNS = 9;
+    private final IInventory chestInventory;
 
-    private final IInventory lowerChestInventory;
+    /**
+     * Player inventory.
+     */
     private final IInventory playerInventory;
-    private final int        numRows;
 
-    private final int      colonyId;
-    private final BlockPos buildingId;
-    private final int      citizenId;
+    /**
+     * Amount of rows.
+     */
+    private final int inventorySize;
 
+    /**
+     * Public constructor to create the minecolonies citizen container.
+     * @param playerInventory the player inv.
+     * @param inventory the inv itself.
+     * @param colonyId the colony id.
+     * @param buildingId the building id.
+     * @param citizenId the citizen id.
+     */
     public ContainerMinecoloniesCitizenInventory(
-                                                  IInventory playerInventory,
-                                                  IInventory chestInventory,
-                                                  EntityPlayer player,
-                                                  final int colonyId,
-                                                  final BlockPos buildingId, final int citizenId)
+            final IInventory playerInventory,
+            final IInventory inventory,
+            final int colonyId,
+            final BlockPos buildingId,
+            final int citizenId)
     {
-        this.lowerChestInventory = chestInventory;
-        this.numRows = chestInventory.getSizeInventory() / 9;
-        this.colonyId = colonyId;
-        this.buildingId = buildingId;
-        this.citizenId = citizenId;
-        chestInventory.openInventory(player);
-        int i = (this.numRows - 4) * 18;
+        this.chestInventory = inventory;
+        this.inventorySize = inventory.getSizeInventory() / INVENTORY_COLUMNS;
+        final int size = inventory.getSizeInventory();
 
-        for (int j = 0; j < this.numRows; ++j)
+        final int columns = inventorySize <= INVENTORY_BAR_SIZE ? INVENTORY_COLUMNS : ((size / INVENTORY_BAR_SIZE) + 1);
+        final int extraOffset = inventorySize <= INVENTORY_BAR_SIZE ? 0 : 2;
+        int index = 0;
+
+        for (int j = 0; j < Math.min(this.inventorySize, INVENTORY_BAR_SIZE); ++j)
         {
-            for (int k = 0; k < 9; ++k)
+            for (int k = 0; k < columns; ++k)
             {
-                this.addSlotToContainer(new Slot(chestInventory, k + j * 9, 8 + k * 18, 18 + j * 18)
+                if (index < size)
                 {
-                    @Override
-                    public void putStack(final ItemStack stack)
-                    {
-                        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !ItemStackUtils.isEmpty(stack))
-                        {
-                            final Colony colony = ColonyManager.getColony(colonyId);
-                            final AbstractBuilding building = colony.getBuilding(buildingId);
-                            final CitizenData citizenData = colony.getCitizen(citizenId);
+                    this.addSlotToContainer(
+                            new Slot(inventory, index,
+                                    INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
+                                    PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH)
+                            {
+                                @Override
+                                public void putStack(final ItemStack stack)
+                                {
+                                    if (buildingId != null && FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !ItemStackUtils.isEmpty(stack))
+                                    {
+                                        final Colony colony = ColonyManager.getColony(colonyId);
+                                        final AbstractBuilding building = colony.getBuilding(buildingId);
+                                        final CitizenData citizenData = colony.getCitizen(citizenId);
 
-                            building.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);
-                        }
-                        super.putStack(stack);
-                    }
-                });
+                                        building.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);
+                                    }
+                                    super.putStack(stack);
+                                }
+                            });
+                    index++;
+                }
             }
         }
 
-        for (int l = 0; l < 3; ++l)
+        // Player inventory slots
+        // Note: The slot numbers are within the player inventory and may be the same as the field inventory.
+        int i;
+        for (i = 0; i < INVENTORY_ROWS; i++)
         {
-            for (int j1 = 0; j1 < 9; ++j1)
+            for (int j = 0; j < INVENTORY_COLUMNS; j++)
             {
-                this.addSlotToContainer(new Slot(playerInventory, j1 + l * 9 + 9, 8 + j1 * 18, 103 + l * 18 + i));
+                addSlotToContainer(new Slot(
+                        playerInventory,
+                        j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
+                        PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
+                        PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
+                                + i * PLAYER_INVENTORY_OFFSET_EACH
+                ));
             }
         }
 
-        for (int i1 = 0; i1 < 9; ++i1)
+        for (i = 0; i < INVENTORY_COLUMNS; i++)
         {
-            this.addSlotToContainer(new Slot(playerInventory, i1, 8 + i1 * 18, 161 + i));
+            addSlotToContainer(new Slot(
+                    playerInventory, i,
+                    PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
+                    PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
+                            INVENTORY_BAR_SIZE)
+            ));
         }
         this.playerInventory = playerInventory;
     }
@@ -105,7 +138,7 @@ public class ContainerMinecoloniesCitizenInventory extends Container
 
         final ItemStack stackCopy = slot.getStack().copy();
 
-        final int maxIndex = this.numRows * INVENTORY_COLUMNS;
+        final int maxIndex = this.inventorySize * INVENTORY_COLUMNS;
 
         if (index < maxIndex)
         {
@@ -134,10 +167,11 @@ public class ContainerMinecoloniesCitizenInventory extends Container
     /**
      * Called when the container is closed.
      */
+    @Override
     public void onContainerClosed(EntityPlayer playerIn)
     {
         super.onContainerClosed(playerIn);
-        this.lowerChestInventory.closeInventory(playerIn);
+        this.chestInventory.closeInventory(playerIn);
     }
 
     /**
@@ -145,7 +179,7 @@ public class ContainerMinecoloniesCitizenInventory extends Container
      */
     public boolean canInteractWith(EntityPlayer playerIn)
     {
-        return this.lowerChestInventory.isUsableByPlayer(playerIn);
+        return this.chestInventory.isUsableByPlayer(playerIn);
     }
 
     /**
@@ -153,7 +187,7 @@ public class ContainerMinecoloniesCitizenInventory extends Container
      */
     public IInventory getLowerChestInventory()
     {
-        return this.lowerChestInventory;
+        return this.chestInventory;
     }
 
     public IInventory getPlayerInventory()

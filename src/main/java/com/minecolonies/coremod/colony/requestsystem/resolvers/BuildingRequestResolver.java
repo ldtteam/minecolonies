@@ -10,7 +10,9 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import net.minecraft.tileentity.TileEntity;
 import org.jetbrains.annotations.NotNull;
@@ -64,7 +66,16 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
             return false;
         }
 
-        AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) requestToCheck.getRequester()).getBuilding();
+        AbstractBuilding building;
+
+        if(((BuildingBasedRequester) requestToCheck.getRequester()).getBuilding() instanceof AbstractBuildingView && manager.getColony() instanceof Colony)
+        {
+            building = ((Colony) manager.getColony()).getBuilding(((AbstractBuildingView) ((BuildingBasedRequester) requestToCheck.getRequester()).getBuilding()).getID());
+        }
+        else
+        {
+            building = (AbstractBuilding) ((BuildingBasedRequester) requestToCheck.getRequester()).getBuilding();
+        }
 
         List<TileEntity> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
@@ -94,7 +105,16 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
     public void resolve(
                          @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws RuntimeException
     {
-        AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding();
+        AbstractBuilding building;
+
+        if(((BuildingBasedRequester) request.getRequester()).getBuilding() instanceof AbstractBuildingView && manager.getColony() instanceof Colony)
+        {
+            building = ((Colony) manager.getColony()).getBuilding(((AbstractBuildingView) ((BuildingBasedRequester) request.getRequester()).getBuilding()).getID());
+        }
+        else
+        {
+            building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding();
+        }
 
         List<TileEntity> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());

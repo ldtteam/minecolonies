@@ -21,6 +21,7 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
+import com.minecolonies.coremod.network.messages.TransferItemsToCitizenRequestMessage;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.client.Minecraft;
@@ -672,7 +673,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
             final AbstractBuildingView building = ColonyManager.getColonyView(citizen.getColonyId()).getBuilding(citizen.getWorkBuilding());
 
-            MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(building, itemStack, isCreative ? amount : count, false));
+            MineColonies.getNetwork().sendToServer(new TransferItemsToCitizenRequestMessage(citizen, itemStack, isCreative ? amount : count, citizen.getColonyId()));
             MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.OVERRULED, itemStack));
         }
     }
