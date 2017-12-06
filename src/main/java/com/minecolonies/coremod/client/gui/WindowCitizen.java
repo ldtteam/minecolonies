@@ -550,7 +550,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
             requests.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getWorkBuilding()));
         }
 
-        if (citizen.getHomeBuilding() != null)
+        if (citizen.getHomeBuilding() != null && !citizen.getHomeBuilding().equals(citizen.getWorkBuilding()))
         {
             requests.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getHomeBuilding()));
         }
