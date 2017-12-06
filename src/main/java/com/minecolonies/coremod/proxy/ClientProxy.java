@@ -2,7 +2,6 @@ package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.BlockPaperwall;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.blocks.PaperwallType;
