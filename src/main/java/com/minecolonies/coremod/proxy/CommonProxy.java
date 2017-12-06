@@ -272,7 +272,7 @@ public class CommonProxy implements IProxy
     @Override
     public World getWorld(final int dimension)
     {
-        return FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension);
+        return FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(dimension);
     }
 
     /**
