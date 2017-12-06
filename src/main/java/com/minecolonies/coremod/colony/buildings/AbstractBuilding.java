@@ -1506,10 +1506,13 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         {
             getColony().getRequestManager().updateRequestState(request.getToken(), RequestState.CANCELLED);
 
-            openRequests.get(request.getRequest().getClass()).remove(request.getToken());
             if (openRequests.get(request.getRequest().getClass()).isEmpty())
             {
                 openRequests.remove(request.getRequest().getClass());
+            }
+            else
+            {
+                openRequests.get(request.getRequest().getClass()).remove(request.getToken());
             }
 
             requestsByCitizen.remove(request.getToken());

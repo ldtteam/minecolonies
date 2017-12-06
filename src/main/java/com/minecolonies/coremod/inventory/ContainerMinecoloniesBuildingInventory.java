@@ -13,50 +13,38 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
+import static com.minecolonies.api.util.constant.InventoryConstants.*;
+
 /**
  * Container for Mie
  */
 public class ContainerMinecoloniesBuildingInventory extends Container
 {
     /**
-     * Amount of columns in the player inventory.
+     * Lower chest inventory.
      */
-    private static final int INVENTORY_COLUMNS = 9;
-    /**
-     * Initial x-offset of the inventory slot.
-     */
-    private static final int PLAYER_INVENTORY_INITIAL_X_OFFSET = 8;
-    /**
-     * Initial y-offset of the inventory slot.
-     */
-    private static final int PLAYER_INVENTORY_INITIAL_Y_OFFSET = 30;
-    /**
-     * Each offset of the inventory slots.
-     */
-    private static final int PLAYER_INVENTORY_OFFSET_EACH = 18;
-    /**
-     * Initial y-offset of the inventory slots in the hotbar.
-     */
-    private static final int PLAYER_INVENTORY_HOTBAR_OFFSET = 88;
-    /**
-     * Amount of rows in the player inventory.
-     */
-    private static final int INVENTORY_ROWS = 3;
-    /**
-     * The size of the the inventory hotbar.
-     */
-    private static final int INVENTORY_BAR_SIZE = 8;
     private final IInventory lowerChestInventory;
+
+    /**
+     * Player inventory.
+     */
     private final IInventory playerInventory;
+
     /**
      * Amount of rows.
      */
     private final int inventorySize;
 
+    /**
+     * Public constructor to create the minecolonies building container.
+     * @param playerInventory the player inv.
+     * @param inventory the inv itself.
+     * @param colonyId the colony id.
+     * @param buildingId the building id.
+     */
     public ContainerMinecoloniesBuildingInventory(
                                                    final IInventory playerInventory,
                                                    final IInventory inventory,
-                                                   final EntityPlayer player,
                                                    final int colonyId,
                                                    final BlockPos buildingId)
     {
@@ -177,6 +165,7 @@ public class ContainerMinecoloniesBuildingInventory extends Container
     /**
      * Called when the container is closed.
      */
+    @Override
     public void onContainerClosed(EntityPlayer playerIn)
     {
         super.onContainerClosed(playerIn);

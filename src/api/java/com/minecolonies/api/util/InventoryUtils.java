@@ -410,7 +410,10 @@ public class InventoryUtils
 
         for (final IItemHandler handler : getItemHandlersFromProvider(provider))
         {
-            combinedList.addAll(filterItemHandler(handler, predicate));
+            if(handler != null)
+            {
+                combinedList.addAll(filterItemHandler(handler, predicate));
+            }
         }
         return combinedList;
     }
