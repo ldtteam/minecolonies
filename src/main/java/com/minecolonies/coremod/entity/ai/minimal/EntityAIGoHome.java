@@ -92,9 +92,9 @@ public class EntityAIGoHome extends EntityAIBase
         }
         else
         {
-                citizen.isWorkerAtSiteWithMove(pos, 2);
+            citizen.isWorkerAtSiteWithMove(pos, 2);
         }
-
+        
         playGoHomeSounds();
     }
 

@@ -6,8 +6,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.File;
 
 /**
@@ -102,4 +102,11 @@ public interface IProxy
      */
     @Nullable
     World getWorldFromMessage(@NotNull final MessageContext context);
+
+    /**
+     * Method to get a side specific world from a message context anywhere.
+     * @return The world.
+     */
+    @Nullable
+    World getWorld(final int dimension);
 }

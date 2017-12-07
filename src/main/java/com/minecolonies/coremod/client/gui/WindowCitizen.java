@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Alignment;
@@ -21,7 +20,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
-import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
+import com.minecolonies.coremod.network.messages.TransferItemsToCitizenRequestMessage;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.client.Minecraft;
@@ -554,7 +553,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
             requests.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getWorkBuilding()));
         }
 
-        if (citizen.getHomeBuilding() != null)
+        if (citizen.getHomeBuilding() != null && !citizen.getHomeBuilding().equals(citizen.getWorkBuilding()))
         {
             requests.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getHomeBuilding()));
         }
@@ -648,36 +647,41 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
         if (getOpenRequestsOfCitizen().size() > row && row >= 0)
         {
-            @NotNull final IRequest<?> tRequest = getOpenRequestsOfCitizen().get(row);
+            @NotNull final IRequest tRequest = getOpenRequestsOfCitizen().get(row);
 
-            tRequest.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable request) -> {
-                final Predicate<ItemStack> requestPredicate = request::matches;
-                final int amount = request.getCount();
+            if (!(tRequest.getRequest() instanceof IDeliverable))
+            {
+                return;
+            }
 
-                final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
+            @NotNull final IRequest<? extends IDeliverable> request = (IRequest<? extends IDeliverable>) tRequest;
 
-                if (!isCreative && count <= 0)
-                {
-                    return;
-                }
+            final Predicate<ItemStack> requestPredicate = stack -> request.getRequest().matches(stack);
+            final int amount = request.getRequest().getCount();
 
-                // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
-                // and use quantity for the size
-                @NotNull final ItemStack itemStack;
-                if (isCreative)
-                {
-                    itemStack = tRequest.getDisplayStacks().stream().findFirst().orElse(ItemStackUtils.EMPTY);
-                }
-                else
-                {
-                    itemStack = inventory.getStackInSlot(InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(inventory), requestPredicate));
-                }
+            final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
 
-                final AbstractBuildingView building = ColonyManager.getColonyView(citizen.getColonyId()).getBuilding(citizen.getWorkBuilding());
+            if (!isCreative && count <= 0)
+            {
+                return;
+            }
 
-                MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(building, itemStack, isCreative ? amount : count, false));
-                MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), tRequest.getToken(), RequestState.OVERRULED, itemStack));
-            });
+            // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
+            // and use quantity for the size
+            @NotNull final ItemStack itemStack;
+            if (isCreative)
+            {
+                itemStack = request.getDisplayStacks().stream().findFirst().orElse(null);
+            }
+            else
+            {
+                itemStack = inventory.getStackInSlot(InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(inventory), requestPredicate));
+            }
+
+            MineColonies.getNetwork().sendToServer(
+                    new TransferItemsToCitizenRequestMessage(citizen, itemStack, isCreative ? amount : count, citizen.getColonyId()));
+            MineColonies.getNetwork().sendToServer(
+                    new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.OVERRULED, itemStack));
         }
     }
 }
