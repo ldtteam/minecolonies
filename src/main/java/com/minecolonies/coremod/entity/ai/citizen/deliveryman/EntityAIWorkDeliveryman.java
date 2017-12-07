@@ -336,18 +336,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         gatherTarget = null;
         worker.setHeldItem(SLOT_HAND);
 
-        if (job.getReturning())
-        {
-            job.setReturning(false);
-        }
-
-
         final Set<IToken> finallyAssignedTokens = worker.getColony().getRequestManager().getPlayerResolver()
                 .getAllAssignedRequests().stream().collect(Collectors.toSet());
         final List<IToken> nullTokens = finallyAssignedTokens.stream().filter(
                 iToken -> worker.getColony().getRequestManager().getRequestForToken(iToken) == null).collect(Collectors.toList());
 
-        if(nullTokens.isEmpty())
+        if(!nullTokens.isEmpty())
         {
             final IRequestManager requestManager = worker.getColony().getRequestManager();
             Log.getLogger().warn("Things are not going as they're supposed to, several requests have been found which are not set in the requestManager,"
@@ -355,17 +349,15 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             Log.getLogger().warn("------------------------------------------------*------------------------------------------------");
             for (final IToken token : nullTokens)
             {
-                Log.getLogger().warn("Request in PlayerResolver: " + requestManager.getPlayerResolver().getDisplayName(token));
+                Log.getLogger().warn("Request in PlayerResolver: " + token.toString());
             }
             Log.getLogger().warn(" ");
-
-
             if(requestManager instanceof StandardRequestManager)
             {
                 Log.getLogger().warn("Manager missing the requests is the StandardRequestManager");
                 for(final IRequest request : ((StandardRequestManager) requestManager).getRequestBiMap().values())
                 {
-                    Log.getLogger().warn("Request in Manager: " + request.getRequester().getDisplayName(request.getToken()));
+                    Log.getLogger().warn("Request in Manager: " + request.getRequester().getDeliveryLocation().toString() + " " + request.getToken().toString());
                 }
             }
             else
@@ -380,6 +372,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         finallyAssignedTokens.forEach(iToken -> worker.getColony().getRequestManager().reassignRequest(iToken, ImmutableList.of()));
+
+        if (job.getReturning())
+        {
+            job.setReturning(false);
+        }
 
         return START_WORKING;
     }
