@@ -26,6 +26,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -33,8 +34,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -275,6 +276,13 @@ public class CommonProxy implements IProxy
     public World getWorldFromMessage(@NotNull final MessageContext context)
     {
         return context.getServerHandler().player.getServerWorld();
+    }
+
+    @Nullable
+    @Override
+    public World getWorld(final int dimension)
+    {
+        return FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(dimension);
     }
 
     /**
