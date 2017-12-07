@@ -54,7 +54,8 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
             Colony colony = (Colony) manager.getColony();
             Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
 
-            return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchinItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack)));
+            return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchinItemStackInWarehouse(itemStack ->
+                    !ItemStackUtils.isEmpty(itemStack) && requestToCheck.getRequest().matches(itemStack)));
         }
 
         return false;
