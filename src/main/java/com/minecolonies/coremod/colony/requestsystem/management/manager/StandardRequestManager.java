@@ -262,6 +262,7 @@ public class StandardRequestManager implements IStandardRequestManager
 
         return getFactoryController().deserialize(requestData);
     }
+
     @SuppressWarnings(RAWTYPES)
     @NotNull
     @Override

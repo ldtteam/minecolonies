@@ -269,7 +269,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             BlockPos goodCook = null;
             for (final AbstractBuilding building : worker.getColony().getBuildings().values())
             {
-                if (building instanceof BuildingCook)
+                if (building instanceof BuildingCook && building.getBuildingLevel() > 0)
                 {
                     final double localDistance = building.getLocation().distanceSq(getOwnBuilding().getLocation());
                     if (localDistance < distance)
@@ -478,7 +478,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             return IDLE;
         }
-        if (getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()) && !walkToBuilding())
+        if (!walkToBuilding() && getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
             delay += DELAY_RECHECK;
 
@@ -495,14 +495,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                     async = true;
                     job.getAsyncRequests().remove(firstDeliverableRequest.getToken());
                 }
-                getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getToken());
 
                 final ItemStack deliveredItemStack = firstDeliverableRequest.getDelivery();
-                //Takes one Stack from the hut if existent
-                if (InventoryUtils.findFirstSlotInItemHandlerWith(
-                  new InvWrapper(worker.getInventoryCitizen()), deliveredItemStack::isItemEqualIgnoreDurability) != -1
-                      || isInHut(deliveredItemStack))
+                if(InventoryUtils.findFirstSlotInItemHandlerWith(
+                        new InvWrapper(worker.getInventoryCitizen()), deliveredItemStack::isItemEqualIgnoreDurability) != -1)
                 {
+                    getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getToken());
+                    return NEEDS_ITEM;
+                }
+
+                //Takes one Stack from the hut if existent
+                if (isInHut(deliveredItemStack)  && !walkToBuilding())
+                {
+                    getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getToken());
                     return NEEDS_ITEM;
                 }
                 else
@@ -1159,7 +1164,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     public boolean checkIfRequestForItemExistOrCreate(@NotNull final ItemStack stack)
     {
         if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
-          s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack) && s.getCount() >= stack.getCount()))
+          s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack)))
         {
             return true;
         }
