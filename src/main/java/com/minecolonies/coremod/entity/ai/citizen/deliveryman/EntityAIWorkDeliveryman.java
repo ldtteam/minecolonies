@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.deliveryman;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -11,6 +12,8 @@ import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
+import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.PlayerRequestResolver;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -27,10 +30,8 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -335,13 +336,47 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         gatherTarget = null;
         worker.setHeldItem(SLOT_HAND);
 
+        final Set<IToken<?>> finallyAssignedTokens = worker.getColony().getRequestManager().getPlayerResolver()
+                .getAllAssignedRequests().stream().collect(Collectors.toSet());
+        final List<IToken> nullTokens = finallyAssignedTokens.stream().filter(
+                iToken -> worker.getColony().getRequestManager().getRequestForToken(iToken) == null).collect(Collectors.toList());
+
+        if(!nullTokens.isEmpty())
+        {
+            final IRequestManager requestManager = worker.getColony().getRequestManager();
+            Log.getLogger().warn("Things are not going as they're supposed to, several requests have been found which are not set in the requestManager,"
+                    + " please report this to the mod authors, debug information appended to this message:");
+            Log.getLogger().warn("------------------------------------------------*------------------------------------------------");
+            for (final IToken token : nullTokens)
+            {
+                Log.getLogger().warn("Request in PlayerResolver: " + token.toString());
+            }
+            Log.getLogger().warn(" ");
+            if(requestManager instanceof StandardRequestManager)
+            {
+                Log.getLogger().warn("Manager missing the requests is the StandardRequestManager");
+                for(final IRequest request : ((StandardRequestManager) requestManager).getRequestBiMap().values())
+                {
+                    Log.getLogger().warn("Request in Manager: " + request.getRequester().getDeliveryLocation().toString() + " " + request.getToken().toString());
+                }
+            }
+            else
+            {
+                Log.getLogger().warn("Manager missing the requests is the AbstractWrappedRequestManager");
+            }
+
+            Log.getLogger().warn("------------------------------------------------*------------------------------------------------");
+
+            finallyAssignedTokens.removeAll(nullTokens);
+            ((PlayerRequestResolver) requestManager.getPlayerResolver()).setAllAssignedRequests(finallyAssignedTokens);
+        }
+
+        finallyAssignedTokens.forEach(iToken -> worker.getColony().getRequestManager().reassignRequest(iToken, ImmutableList.of()));
+
         if (job.getReturning())
         {
             job.setReturning(false);
         }
-
-        final Collection<IToken<?>> finallyAssignedTokens = worker.getColony().getRequestManager().getPlayerResolver().getAllAssignedRequests();
-        finallyAssignedTokens.forEach(iToken -> worker.getColony().getRequestManager().reassignRequest(iToken, ImmutableList.of()));
 
         return START_WORKING;
     }

@@ -46,12 +46,6 @@ public class DoRaidNowCommand extends AbstractSingleCommand
     }
 
     @Override
-    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
-    {
-        return colony.getPermissions().getRank(player).equals(Rank.OWNER);
-    }
-
-    @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
