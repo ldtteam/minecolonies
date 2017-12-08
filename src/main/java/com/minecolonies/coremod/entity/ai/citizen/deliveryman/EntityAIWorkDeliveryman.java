@@ -336,7 +336,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         gatherTarget = null;
         worker.setHeldItem(SLOT_HAND);
 
-        final Set<IToken> finallyAssignedTokens = worker.getColony().getRequestManager().getPlayerResolver()
+        final Set<IToken<?>> finallyAssignedTokens = worker.getColony().getRequestManager().getPlayerResolver()
                 .getAllAssignedRequests().stream().collect(Collectors.toSet());
         final List<IToken> nullTokens = finallyAssignedTokens.stream().filter(
                 iToken -> worker.getColony().getRequestManager().getRequestForToken(iToken) == null).collect(Collectors.toList());
