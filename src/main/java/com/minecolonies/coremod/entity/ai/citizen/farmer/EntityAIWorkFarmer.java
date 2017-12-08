@@ -364,7 +364,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         @Nullable final BuildingFarmer buildingFarmer = getOwnBuilding();
 
-        if (buildingFarmer == null || checkForToolOrWeapon(ToolType.HOE) || buildingFarmer.getCurrentField() == null)
+        if (buildingFarmer == null || !checkForToolOrWeapon(ToolType.HOE) || buildingFarmer.getCurrentField() == null)
         {
             return PREPARING;
         }
@@ -428,7 +428,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean hoeIfAble(final BlockPos position)
     {
-        if (shouldHoe(position) && !checkForToolOrWeapon(ToolType.HOE))
+        if (shouldHoe(position) && checkForToolOrWeapon(ToolType.HOE))
         {
             if (mineBlock(position.up()))
             {

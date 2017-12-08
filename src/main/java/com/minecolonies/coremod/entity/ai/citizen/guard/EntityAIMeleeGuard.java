@@ -114,7 +114,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     @Override
     protected AIState searchTarget()
     {
-        if (checkForToolOrWeapon(ToolType.SWORD))
+        if (!checkForToolOrWeapon(ToolType.SWORD))
         {
             return AIState.GUARD_SEARCH_TARGET;
         }
@@ -143,7 +143,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             targetEntity = this.worker.getLastAttacker();
         }
 
-        if (targetEntity != null && (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD)))
+        if (targetEntity != null && (!targetEntity.isEntityAlive() || !checkForToolOrWeapon(ToolType.SWORD)))
         {
             targetEntity = null;
             worker.addExperience(EXP_PER_MOD_DEATH);
