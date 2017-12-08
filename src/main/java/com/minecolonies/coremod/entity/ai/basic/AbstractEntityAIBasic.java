@@ -268,7 +268,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             BlockPos goodCook = null;
             for (final AbstractBuilding building : worker.getColony().getBuildings().values())
             {
-                if (building instanceof BuildingCook)
+                if (building instanceof BuildingCook && building.getBuildingLevel() > 0)
                 {
                     final double localDistance = building.getLocation().distanceSq(getOwnBuilding().getLocation());
                     if (localDistance < distance)
