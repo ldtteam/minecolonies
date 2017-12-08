@@ -171,7 +171,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     @Override
     protected AIState searchTarget()
     {
-        if (checkForToolOrWeapon(ToolType.BOW))
+        if (!checkForToolOrWeapon(ToolType.BOW))
         {
             return AIState.GUARD_SEARCH_TARGET;
         }
@@ -204,7 +204,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
             return AIState.GUARD_SEARCH_TARGET;
         }
 
-        if (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.BOW))
+        if (!targetEntity.isEntityAlive() || !checkForToolOrWeapon(ToolType.BOW))
         {
             targetEntity = null;
             worker.addExperience(EXP_PER_MOD_DEATH);

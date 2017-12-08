@@ -18,6 +18,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.Suppression.EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS;
+
 /**
  * Window for the request detail.
  */
@@ -181,9 +183,18 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
         targetLabel.setLabelText(request.getRequester().getDeliveryLocation().toString());
 
-        findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " +
-                                                                 ColonyManager.getColony(colonyId).getRequestManager().getResolverForRequest(
-                                                                   request.getToken()).getDisplayName(request.getToken()).getFormattedText());
+        try
+        {
+            findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " +
+                    ColonyManager.getColony(colonyId).getRequestManager().getResolverForRequest(
+                            request.getToken()).getDisplayName(request.getToken()).getFormattedText());
+        }
+        catch(@SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS) final IllegalArgumentException e)
+        {
+            /**
+             * Do nothing we just need to know if it has a resolver or not.
+             */
+        }
 
         box.setSize(box.getWidth(), y);
     }
