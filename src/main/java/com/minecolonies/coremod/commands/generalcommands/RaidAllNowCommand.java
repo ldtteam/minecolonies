@@ -44,14 +44,14 @@ public class RaidAllNowCommand extends AbstractSingleCommand
     }
 
     @Override
-    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
-    {
-        return colony.getPermissions().getRank(player).equals(Rank.OWNER);
-    }
-
-    @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
+        if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
+        {
+            sender.sendMessage(new TextComponentString("Must be OP to use command"));
+            return;
+        }
+
         for (final Colony colony : ColonyManager.getColonies())
         {
             MobEventsUtils.barbarianEvent(colony.getWorld(), colony);

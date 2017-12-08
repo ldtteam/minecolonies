@@ -554,7 +554,9 @@ public class WindowCitizen extends AbstractWindowSkeleton
         }
 
         final BlockPos playerPos = Minecraft.getMinecraft().player.getPosition();
-        requests.sort(Comparator.comparing((IRequest request) -> request.getRequester().getDeliveryLocation().getInDimensionLocation().getDistance(playerPos.getX(), playerPos.getY(), playerPos.getZ())).thenComparingInt(Object::hashCode));
+        requests.sort(Comparator.comparing((IRequest request) -> request.getRequester()
+                .getDeliveryLocation().getInDimensionLocation().getDistance(playerPos.getX(), playerPos.getY(), playerPos.getZ()))
+                .thenComparingInt(request -> request.getToken().hashCode()));
 
         return ImmutableList.copyOf(requests);
     }
