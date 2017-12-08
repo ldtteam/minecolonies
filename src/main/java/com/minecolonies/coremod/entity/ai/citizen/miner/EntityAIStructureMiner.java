@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.miner;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
@@ -33,6 +34,16 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
      * Lead the miner to the other side of the shaft.
      */
     private static final int OTHER_SIDE_OF_SHAFT = 6;
+
+    /**
+     * Batchsizes of cobblestone to request.
+     */
+    private static final int COBBLE_REQUEST_BATCHES = 32;
+
+    /**
+     * Batch sizes of ladders to request.
+     */
+    private static final int LADDER_REQUEST_BATCHES = 10;
 
     private static final String RENDER_META_TORCH   = "Torch";
     private static final int    NODE_DISTANCE       = 7;
@@ -315,7 +326,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             return MINER_BUILDING_SHAFT;
         }
 
-        if (checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.COBBLESTONE, 2), new ItemStack(Blocks.LADDER)))
+        if (!checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.COBBLESTONE, COBBLE_REQUEST_BATCHES), new ItemStack(Blocks.LADDER, LADDER_REQUEST_BATCHES)))
         {
             return state;
         }
@@ -553,7 +564,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                 setDelay(1);
                 return false;
             }
-            if (checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.COBBLESTONE)))
+            if (!checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.COBBLESTONE, COBBLE_REQUEST_BATCHES)))
             {
                 return false;
             }
