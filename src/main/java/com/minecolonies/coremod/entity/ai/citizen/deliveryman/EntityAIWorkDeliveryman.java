@@ -70,12 +70,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     /**
      * The inventory's slot which is held in hand.
      */
-    private static final int SLOT_HAND = 0;
+    private static final int SLOT_HAND      = 0;
 
     /**
-     * Warehouse the deliveryman is assigned to.
+     * Chance to dump after an empty gathering.
      */
-    private BuildingWareHouse wareHouse = null;
+    private static final int CHANCE_TO_DUMP = 3;
 
     /**
      * Next target the deliveryman should gather stuff at.
@@ -169,7 +169,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 {
                     building.alterPickUpPriority(-1);
 
-                    if (job.getCurrentTask() == null)
+                    if (job.getCurrentTask() == null && worker.getRandom().nextInt(CHANCE_TO_DUMP) < 1)
                     {
                         gatherTarget = null;
                         return GATHERING;
