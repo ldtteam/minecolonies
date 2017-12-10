@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
@@ -13,7 +14,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.PlayerRequestResolver;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.StandardPlayerRequestResolver;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -83,6 +84,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private BlockPos gatherTarget = null;
 
     /**
+     * Tracks how many buildings the DMan visited to gather resources.
+     */
+    private int gatherCount = 0;
+
+    /**
      * Amount of stacks left to gather from the inventory at the gathering step.
      */
     private int currentSlot = 0;
@@ -131,6 +137,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     {
         if (gatherTarget == null)
         {
+            if (gatherCount == Configurations.requestSystem.maximalBuildingsToGather)
+            {
+                gatherCount = 0;
+                return DUMPING;
+            }
+
             gatherTarget = getRandomBuilding();
         }
 
@@ -160,6 +172,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 this.alreadyKept = new ArrayList<>();
                 this.currentSlot = 0;
                 building.setBeingGathered(false);
+
+                gatherCount ++;
+
                 if (hasGathered)
                 {
                     this.hasGathered = false;
@@ -368,7 +383,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             Log.getLogger().warn("------------------------------------------------*------------------------------------------------");
 
             finallyAssignedTokens.removeAll(nullTokens);
-            ((PlayerRequestResolver) requestManager.getPlayerResolver()).setAllAssignedRequests(finallyAssignedTokens);
+            ((StandardPlayerRequestResolver) requestManager.getPlayerResolver()).setAllAssignedRequests(finallyAssignedTokens);
         }
 
         finallyAssignedTokens.forEach(iToken -> worker.getColony().getRequestManager().reassignRequest(iToken, ImmutableList.of()));
