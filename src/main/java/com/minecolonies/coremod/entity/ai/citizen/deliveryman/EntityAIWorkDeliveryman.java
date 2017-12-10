@@ -30,6 +30,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import sun.security.krb5.Config;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -74,11 +75,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private static final int SLOT_HAND      = 0;
 
     /**
-     * Chance to dump after an empty gathering.
-     */
-    private static final int CHANCE_TO_DUMP = 3;
-
-    /**
      * Next target the deliveryman should gather stuff at.
      */
     private BlockPos gatherTarget = null;
@@ -87,6 +83,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * Tracks how many buildings the DMan visited to gather resources.
      */
     private int gatherCount = 0;
+
+    /**
+     * Tracks what the current maximal gather count is.
+     */
+    private int maximalGatherCount = -1;
 
     /**
      * Amount of stacks left to gather from the inventory at the gathering step.
@@ -135,10 +136,16 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     public AIState gather()
     {
+        if (maximalGatherCount < 0)
+        {
+            maximalGatherCount = Configurations.requestSystem.minimalBuildingsToGather + worker.getRandom().nextInt(Math.max(1, Configurations.requestSystem.maximalBuildingsToGather - Configurations.requestSystem.minimalBuildingsToGather));
+        }
+
         if (gatherTarget == null)
         {
-            if (gatherCount == Configurations.requestSystem.maximalBuildingsToGather)
+            if (gatherCount == maximalGatherCount)
             {
+                maximalGatherCount = Configurations.requestSystem.minimalBuildingsToGather + worker.getRandom().nextInt(Math.max(1, Configurations.requestSystem.maximalBuildingsToGather - Configurations.requestSystem.minimalBuildingsToGather));
                 gatherCount = 0;
                 return DUMPING;
             }
@@ -184,7 +191,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 {
                     building.alterPickUpPriority(-1);
 
-                    if (job.getCurrentTask() == null && worker.getRandom().nextInt(CHANCE_TO_DUMP) < 1)
+                    if (job.getCurrentTask() == null)
                     {
                         gatherTarget = null;
                         return GATHERING;
