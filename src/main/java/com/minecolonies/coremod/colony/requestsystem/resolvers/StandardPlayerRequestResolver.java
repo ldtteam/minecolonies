@@ -121,7 +121,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     @Override
     public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest request) throws IllegalArgumentException
     {
-        return null;
+        return getFollowupRequestForCompletion(manager, request);
     }
 
     @Override

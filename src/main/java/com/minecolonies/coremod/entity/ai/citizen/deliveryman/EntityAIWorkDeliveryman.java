@@ -383,7 +383,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             Log.getLogger().warn("------------------------------------------------*------------------------------------------------");
 
             finallyAssignedTokens.removeAll(nullTokens);
-            ((PlayerRequestResolver) requestManager.getPlayerResolver()).setAllAssignedRequests(finallyAssignedTokens);
+            ((StandardPlayerRequestResolver) requestManager.getPlayerResolver()).setAllAssignedRequests(finallyAssignedTokens);
         }
 
         finallyAssignedTokens.forEach(iToken -> worker.getColony().getRequestManager().reassignRequest(iToken, ImmutableList.of()));
