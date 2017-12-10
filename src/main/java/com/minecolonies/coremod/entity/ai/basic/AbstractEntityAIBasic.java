@@ -786,10 +786,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 final Tool request = new Tool(toolType, minimalLevel, getOwnBuilding().getMaxToolLevel() < minimalLevel ? minimalLevel : getOwnBuilding().getMaxToolLevel());
                 worker.getCitizenData().createRequest(request);
             }
-            return true;
+            return false;
         }
 
-        return false;
+        return true;
     }
 
     /**
