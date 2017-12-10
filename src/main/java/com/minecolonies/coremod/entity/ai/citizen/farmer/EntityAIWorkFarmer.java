@@ -160,7 +160,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 return FARMER_HARVEST;
             }
-            else if (currentField.getFieldStage() == Field.FieldStage.HOED && !checkForToolOrWeapon(ToolType.HOE))
+            else if (currentField.getFieldStage() == Field.FieldStage.HOED && checkForToolOrWeapon(ToolType.HOE)) 
             {
                 return canGoPlanting(currentField, building, true);
             }
