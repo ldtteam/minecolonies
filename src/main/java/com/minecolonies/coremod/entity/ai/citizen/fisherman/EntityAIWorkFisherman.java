@@ -191,7 +191,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private AIState prepareForFishing()
     {
-        if (!checkForToolOrWeapon(ToolType.FISHINGROD))
+        if (checkForToolOrWeapon(ToolType.FISHINGROD))
         {
             playNeedRodSound();
             return getState();
