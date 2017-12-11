@@ -467,6 +467,7 @@ com.minecolonies.coremod.gui.warehouse.upgrade=Upgrade Storage
 
 com.minecolonies.coremod.job.cook=Cook
 com.minecolonies.coremod.gui.workerHuts.cook=Cook
+com.minecolonies.coremod.gui.townHall.population.cooks=Cooks: %d
 tile.minecolonies.blockHutCook.name=Restaurant
 com.minecolonies.coremod.ai.noRestaurant=Please build a restaurant or get me something to eat!
 com.minecolonies.coremod.ai.noWarehouse=Build a warehouse or bring me food to serve to my clients!

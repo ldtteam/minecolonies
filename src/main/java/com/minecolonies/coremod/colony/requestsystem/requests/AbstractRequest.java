@@ -375,12 +375,6 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
                 setState(manager, RequestState.IN_PROGRESS);
                 LogHandler.log("First child entering progression: " + child + " setting progression state for: " + getToken());
             }
-            if (childRequest.getState() == RequestState.COMPLETED)
-            {
-                this.removeChild(child);
-                LogHandler.log("Removed child: " + child + " from: " + getToken() + " as it was completed!");
-                manager.updateRequestState(child, RequestState.RECEIVED);
-            }
         }
         catch (final IllegalArgumentException ex)
         {
