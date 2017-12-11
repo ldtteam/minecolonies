@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -16,7 +15,6 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
@@ -89,16 +87,16 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                 players.remove(owner);
 
                 LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
-                  request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
-                  request.getShortDisplayString().getFormattedText(),
-                  request.getRequester().getRequesterLocation().toString()
+                        request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
+                        request.getShortDisplayString().getFormattedText(),
+                        request.getRequester().getRequesterLocation().toString()
                 );
             }
 
             LanguageHandler.sendPlayersMessage(players, "com.minecolonies.requestsystem.playerresolver",
-              colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
-              request.getShortDisplayString().getFormattedText(),
-              request.getRequester().getRequesterLocation().toString());
+                    colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
+                    request.getShortDisplayString().getFormattedText(),
+                    request.getRequester().getRequesterLocation().toString());
         }
 
         assignedRequests.add(request.getToken());
@@ -167,12 +165,12 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public ImmutableList<IToken> getAllAssignedRequests()
+    public ImmutableList<IToken<?>> getAllAssignedRequests()
     {
         return ImmutableList.copyOf(assignedRequests);
     }
 
-    public void setAllAssignedRequests(final Set<IToken> assignedRequests)
+    public void setAllAssignedRequests(final Set<IToken<?>> assignedRequests)
     {
         this.assignedRequests.clear();
         this.assignedRequests.addAll(assignedRequests);
