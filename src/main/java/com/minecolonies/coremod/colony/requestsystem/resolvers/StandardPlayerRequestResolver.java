@@ -38,7 +38,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     private final IToken token;
 
     @NotNull
-    private final Set<IToken> assignedRequests = new HashSet<>();
+    private final Set<IToken<?>> assignedRequests = new HashSet<>();
 
     public StandardPlayerRequestResolver(@NotNull final ILocation location, @NotNull final IToken token)
     {
