@@ -28,19 +28,19 @@ import java.util.Set;
 /**
  * Resolver that checks if a deliverable request is already in the building it is being requested from.
  */
-public class PlayerRequestResolver implements IPlayerRequestResolver
+public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 {
 
     @NotNull
     private final ILocation location;
 
     @NotNull
-    private final IToken<?> token;
+    private final IToken token;
 
     @NotNull
     private final Set<IToken<?>> assignedRequests = new HashSet<>();
 
-    public PlayerRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
+    public StandardPlayerRequestResolver(@NotNull final ILocation location, @NotNull final IToken token)
     {
         super();
         this.location = location;
@@ -54,14 +54,14 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<?> requestToCheck)
+    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest requestToCheck)
     {
         return !manager.getColony().getWorld().isRemote;
     }
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    public List<IToken> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest request)
     {
         if (canResolve(manager, request))
         {
@@ -71,8 +71,9 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
         return null;
     }
 
+    @Nullable
     @Override
-    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest request) throws RuntimeException
     {
         final IColony colony = manager.getColony();
         if (colony instanceof Colony)
@@ -86,16 +87,16 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
                 players.remove(owner);
 
                 LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
-                  request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
-                  request.getShortDisplayString().getFormattedText(),
-                  request.getRequester().getRequesterLocation().toString()
+                        request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
+                        request.getShortDisplayString().getFormattedText(),
+                        request.getRequester().getRequesterLocation().toString()
                 );
             }
 
             LanguageHandler.sendPlayersMessage(players, "com.minecolonies.requestsystem.playerresolver",
-              colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
-              request.getShortDisplayString().getFormattedText(),
-              request.getRequester().getRequesterLocation().toString());
+                    colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
+                    request.getShortDisplayString().getFormattedText(),
+                    request.getRequester().getRequesterLocation().toString());
         }
 
         assignedRequests.add(request.getToken());
@@ -103,7 +104,7 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
 
     @Nullable
     @Override
-    public IRequest<?> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<?> completedRequest)
+    public IRequest getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest completedRequest)
     {
         //This is not what this method is for, but this is the closest we are getting right now, so why not.
         if (assignedRequests.contains(completedRequest.getToken()))
@@ -116,9 +117,9 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
 
     @Nullable
     @Override
-    public IRequest<?> onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest request) throws IllegalArgumentException
     {
-        return null;
+        return getFollowupRequestForCompletion(manager, request);
     }
 
     @Override
@@ -128,7 +129,7 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public IToken<?> getRequesterId()
+    public IToken getRequesterId()
     {
         return token;
     }
@@ -140,23 +141,25 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
         return location;
     }
 
+    @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IToken<?> token)
+    public void onRequestComplete(@NotNull final IToken token)
     {
-        /*
-          Nothing to do here right now.
+        /**
+         * Nothing to do here right now.
          */
     }
 
+    @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IToken<?> token)
+    public void onRequestCancelled(@NotNull final IToken token)
     {
 
     }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken<?> token)
+    public ITextComponent getDisplayName(@NotNull final IToken token)
     {
         return new TextComponentString("Player");
     }
