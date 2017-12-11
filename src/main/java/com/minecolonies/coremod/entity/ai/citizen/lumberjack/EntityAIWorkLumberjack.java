@@ -213,7 +213,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private AIState prepareForWoodcutting()
     {
-        if (!checkForToolOrWeapon(ToolType.AXE))
+        if (checkForToolOrWeapon(ToolType.AXE))
         {
             return getState();
         }
@@ -307,7 +307,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private AIState chopWood()
     {
-        if (!checkForToolOrWeapon(ToolType.AXE))
+        if (checkForToolOrWeapon(ToolType.AXE))
         {
             return IDLE;
         }
