@@ -1695,13 +1695,18 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     @Override
     public ITextComponent getDisplayName(@NotNull final IToken token)
     {
+        return new TextComponentString(getCitizenForRequest(token).map(CitizenData::getName).orElse("<UNKNOWN>"));
+    }
+
+    public Optional<CitizenData> getCitizenForRequest(@NotNull final IToken token)
+    {
         if (!requestsByCitizen.containsKey(token))
         {
-            return new TextComponentString(this.getSchematicName() + " <UNKNOWN>");
+            return Optional.empty();
         }
 
         Integer citizenData = requestsByCitizen.get(token);
-        return new TextComponentString(this.getSchematicName() + " " + getColony().getCitizen(citizenData).getName());
+        return Optional.of(getColony().getCitizen(citizenData));
     }
 
     //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//

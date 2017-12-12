@@ -495,18 +495,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                     job.getAsyncRequests().remove(firstDeliverableRequest.getToken());
                 }
 
+                getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getToken());
+
                 final ItemStack deliveredItemStack = firstDeliverableRequest.getDelivery();
                 if(InventoryUtils.findFirstSlotInItemHandlerWith(
                         new InvWrapper(worker.getInventoryCitizen()), deliveredItemStack::isItemEqualIgnoreDurability) != -1)
                 {
-                    getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getToken());
                     return NEEDS_ITEM;
                 }
 
                 //Takes one Stack from the hut if existent
                 if (isInHut(deliveredItemStack)  && !walkToBuilding())
                 {
-                    getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getToken());
                     return NEEDS_ITEM;
                 }
                 else

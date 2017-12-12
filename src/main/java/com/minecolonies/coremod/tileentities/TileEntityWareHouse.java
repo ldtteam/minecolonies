@@ -12,7 +12,8 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -72,12 +73,12 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         if (getBuilding() != null)
         {
             Set<TileEntity> tileEntities = getBuilding().getAdditionalCountainers().stream().map(pos -> getWorld().getTileEntity(pos)).collect(Collectors.toSet());
-            tileEntities.removeIf(t -> t == null);
+            tileEntities.removeIf(Objects::isNull);
             tileEntities.add(this);
 
             return tileEntities.stream()
                      .filter(tileEntity -> InventoryUtils.hasItemInProvider(tileEntity, itemStackSelectionPredicate))
-                     .map(tileEntity -> tileEntity.getPos())
+                     .map(TileEntity::getPos)
                      .findFirst().orElse(null);
         }
 

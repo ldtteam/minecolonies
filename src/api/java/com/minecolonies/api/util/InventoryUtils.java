@@ -599,7 +599,7 @@ public class InventoryUtils
      */
     public static int getItemCountInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        return getItemHandlersFromProvider(provider).stream()
+        return getItemHandlersFromProvider(provider).stream().filter(Objects::nonNull)
                  .mapToInt(handler -> filterItemHandler(handler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum())
                  .sum();
     }
