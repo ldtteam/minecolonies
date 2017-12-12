@@ -193,6 +193,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                         return GATHERING;
                     }
                 }
+
+                gatherCount = 0;
                 return DUMPING;
             }
             currentSlot++;
