@@ -237,14 +237,21 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
     /**
      * Id of the total farmers label in the GUI.
+     * Id of the total bakers label in the GUI.
      */
     private static final String BAKERS_LABEL = "bakers";
 
     /**
+<<<<<<< HEAD
      * Id of the total farmers label in the GUI.
      */
     private static final String COOKS_LABEL = "cooks";
    
+     * Id of the total cooks label in the GUI.
+     */
+    private static final String COOKS_LABEL = "cooks";
+
+>>>>>>> 1d8f7b2540a02a12138a2af329f3b8d9e1dda56a
     /**
      * Id of the total assignee label in the GUI.
      */
@@ -898,7 +905,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             }
         }
 
+<<<<<<< HEAD
         workers += deliverymen + builders + miners + fishermen + lumberjacks + farmers + guards + bakers+ cooks;
+=======
+        workers += deliverymen + builders + miners + fishermen + lumberjacks + farmers + guards + bakers + cooks;
+>>>>>>> 1d8f7b2540a02a12138a2af329f3b8d9e1dda56a
 
         final String numberOfCitizens =
           LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
