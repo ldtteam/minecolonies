@@ -14,8 +14,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
@@ -271,18 +269,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     private AIState createNewProduct()
     {
         progress = 0;
-        final List<IItemHandler> handlers = new ArrayList<>();
-        handlers.add(new InvWrapper(worker.getInventoryCitizen()));
-        handlers.add(new InvWrapper(getOwnBuilding().getTileEntity()));
-
-        for (final BlockPos pos : getOwnBuilding().getAdditionalCountainers())
-        {
-            final TileEntity entity = world.getTileEntity(pos);
-            if (entity instanceof TileEntityChest)
-            {
-                handlers.add(new InvWrapper((TileEntityChest) entity));
-            }
-        }
+        final List<IItemHandler> handlers = getOwnBuilding().getHandlers();
 
         RecipeStorage storage = null;
         int recipeId = 0;

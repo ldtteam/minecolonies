@@ -2,6 +2,9 @@ package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.client.gui.WindowGuiCrafting;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.Field;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
@@ -12,6 +15,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Class which handles the GUI inventory.
@@ -57,8 +61,15 @@ public class GuiHandler implements IGuiHandler
                                                               building.getID(),
                                                               citizen.getId());
         }
-
-        return null;
+        else
+        {
+            @Nullable final AbstractBuilding.View building = ColonyManager.getBuildingView(pos);
+            if (building != null)
+            {
+                return new CraftingGUIBuilding(player.inventory, world);
+            }
+            return null;
+        }
     }
 
     @Override
@@ -94,6 +105,14 @@ public class GuiHandler implements IGuiHandler
             return new GuiChest(player.inventory, citizenDataView.getInventory());
         }
 
+        else
+        {
+            @Nullable final AbstractBuilding.View building = ColonyManager.getBuildingView(pos);
+            if (building != null)
+            {
+                return new WindowGuiCrafting(player.inventory, world, building);
+            }
+        }
         return null;
     }
 

@@ -1,0 +1,23 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
+        lightbox="true"
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+
+    <label size="100% 11" pos="0 50" textalign="TOP_MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.workerHuts.listRecipes)"/>
+    <list id="recipes" size="70% 120" pos="60 70" align="TOP_MIDDLE">
+        <view size="70% 30">
+
+
+            <itemicon id="output" size="16 16" pos="60 5"/>
+            <box size="100% 30" linewidth="2">
+                <itemicon id="resource1" size="16 16" pos="20 1"/>
+                <itemicon id="resource2" size="16 16" pos="20 14"/>
+                <itemicon id="resource3" size="16 16" pos="34 14"/>
+                <itemicon id="resource4" size="16 16" pos="34 1"/>
+            </box>
+            <button id="up" size="15 15" label="↥" pos="0 0"/>
+            <button id="down" size="15 15" label="↧" pos="0 15"/>
+            <button id="remove" size="45 15" pos="125 3" label="$(com.minecolonies.coremod.gui.recipe.remove)"/>
+        </view>
+    </list>
+    <button id="cancel" size="200 20" pos="110 194" label="$(gui.cancel)"/>
+</window>

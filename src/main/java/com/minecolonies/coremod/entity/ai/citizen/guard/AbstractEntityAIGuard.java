@@ -362,7 +362,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     {
         if (huntDownlastAttacker())
         {
-            targetEntity = this.worker.getLastAttacker();
+            targetEntity = this.worker.getLastAttackedEntity();
             return AIState.GUARD_HUNT_DOWN_TARGET;
         }
 
