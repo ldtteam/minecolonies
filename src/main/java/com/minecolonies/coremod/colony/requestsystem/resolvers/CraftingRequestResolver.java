@@ -56,7 +56,7 @@ public class CraftingRequestResolver extends AbstractRequestResolver<IDeliverabl
         {
             Colony colony = (Colony) manager.getColony();
             final ILocation requesterLocation = requestToCheck.getRequester().getRequesterLocation();
-            final AbstractBuilding building = colony.getBuilding(requesterLocation.getInDimensionLocation())
+            final AbstractBuilding building = colony.getBuilding(requesterLocation.getInDimensionLocation());
             if(building instanceof AbstractBuildingWorker)
             {
                 final ItemStack stack = requestToCheck.getRequest().getResult();
@@ -92,8 +92,8 @@ public class CraftingRequestResolver extends AbstractRequestResolver<IDeliverabl
 
         final Colony colony = (Colony) manager.getColony();
         final ILocation requesterLocation = request.getRequester().getRequesterLocation();
-        final AbstractBuilding building = colony.getBuilding(requesterLocation.getInDimensionLocation())
-        if(canResolve(manager, request))
+        final AbstractBuilding building = colony.getBuilding(requesterLocation.getInDimensionLocation());
+        if(canResolve(manager, request) && building instanceof AbstractBuildingWorker)
         {
             final ItemStack stack = request.getRequest().getResult();
             if(ItemStackUtils.isEmpty(stack))
@@ -101,8 +101,13 @@ public class CraftingRequestResolver extends AbstractRequestResolver<IDeliverabl
                 return Lists.newArrayList();
             }
 
-            final RecipeStorage storage = building.getFirstFullFillableRecipe(stack);
-            return storage != null && building.fullFillRecipe(storage);
+            final RecipeStorage storage = ((AbstractBuildingWorker) building).getFirstFullFillableRecipe(stack);
+
+            if(storage == null)
+            {
+                return null;
+            }
+            ((AbstractBuildingWorker) building).fullFillRecipe(storage);
 
             return Lists.newArrayList();
         }
