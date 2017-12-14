@@ -17,6 +17,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
+import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -100,7 +101,9 @@ public class CraftingRequestResolver extends AbstractRequestResolver<IDeliverabl
                 return Lists.newArrayList();
             }
 
-            building.craftItem(stack);
+            final RecipeStorage storage = building.getFirstFullFillableRecipe(stack);
+            return storage != null && building.fullFillRecipe(storage);
+
             return Lists.newArrayList();
         }
 
