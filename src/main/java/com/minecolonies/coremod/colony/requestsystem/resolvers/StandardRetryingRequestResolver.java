@@ -24,15 +24,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.RSConstants.CONST_RETRYING_RESOLVER_PRIORITY;
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
-import static com.minecolonies.coremod.colony.requestsystem.resolvers.AbstractRequestResolver.CONST_DEFAULT_RESOLVER_PRIORITY;
 
 public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 {
-    /**
-     * The default priority of the resolver.
-     */
-    protected static final int CONST_RETRYING_RESOLVER_PRIORITY = CONST_DEFAULT_RESOLVER_PRIORITY - 50;
+
 
     private static final Integer CONST_RETRYING_ID_SCALE = -20000;
 

@@ -16,6 +16,7 @@ public final class RSConstants
     public static final int CONST_CRAFTING_RESOLVER_PRIORITY = CONST_DEFAULT_RESOLVER_PRIORITY + 75;
     public static final int CONST_WAREHOUSE_RESOLVER_PRIORITY = CONST_DEFAULT_RESOLVER_PRIORITY + 50;
     public static final int STANDARD_PLAYER_REQUEST_PRIORITY = 0;
+    public static final int CONST_RETRYING_RESOLVER_PRIORITY = CONST_DEFAULT_RESOLVER_PRIORITY - 50;
 
     /**
      * Private constructor to hide the public one.
