@@ -27,12 +27,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.RSConstants.CONST_WAREHOUSE_RESOLVER_PRIORITY;
+
 /**
  * ----------------------- Not Documented Object ---------------------
  */
 public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverable>
 {
-
     public WarehouseRequestResolver(
                                      @NotNull final ILocation location,
                                      @NotNull final IToken<?> token)
@@ -151,6 +152,6 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     @Override
     public int getPriority()
     {
-        return CONST_DEFAULT_RESOLVER_PRIORITY + 50;
+        return CONST_WAREHOUSE_RESOLVER_PRIORITY;
     }
 }

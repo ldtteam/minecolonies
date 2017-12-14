@@ -25,6 +25,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.minecolonies.api.util.RSConstants.STANDARD_PLAYER_REQUEST_PRIORITY;
+
 /**
  * Resolver that checks if a deliverable request is already in the building it is being requested from.
  */
@@ -125,7 +127,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     @Override
     public int getPriority()
     {
-        return AbstractRequestResolver.CONST_DEFAULT_RESOLVER_PRIORITY - 100;
+        return STANDARD_PLAYER_REQUEST_PRIORITY;
     }
 
     @Override

@@ -30,12 +30,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.RSConstants.CONST_CRAFTING_RESOLVER_PRIORITY;
+
 /**
  * ----------------------- Not Documented Object ---------------------
  */
 public class CraftingRequestResolver extends AbstractRequestResolver<IDeliverable>
 {
-
     public CraftingRequestResolver(
                                      @NotNull final ILocation location,
                                      @NotNull final IToken<?> token)
@@ -158,6 +159,6 @@ public class CraftingRequestResolver extends AbstractRequestResolver<IDeliverabl
     @Override
     public int getPriority()
     {
-        return CONST_DEFAULT_RESOLVER_PRIORITY + 100;
+        return CONST_CRAFTING_RESOLVER_PRIORITY;
     }
 }

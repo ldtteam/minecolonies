@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.RSConstants.CONST_BUILDING_RESOLVER_PRIORITY;
+
 /**
  * Resolver that checks if a deliverable request is already in the building it is being requested from.
  */
@@ -38,7 +40,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
     @Override
     public int getPriority()
     {
-        return CONST_DEFAULT_RESOLVER_PRIORITY + 100;
+        return CONST_BUILDING_RESOLVER_PRIORITY;
     }
 
     @Override

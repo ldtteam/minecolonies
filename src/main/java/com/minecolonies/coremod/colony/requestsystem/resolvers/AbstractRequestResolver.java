@@ -8,18 +8,13 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.RSConstants.CONST_DEFAULT_RESOLVER_PRIORITY;
+
 /**
  * ----------------------- Not Documented Object ---------------------
  */
 public abstract class AbstractRequestResolver<R extends IRequestable> implements IRequestResolver<R>
 {
-
-    /**
-     * The default priority of a resolver.
-     * 100
-     */
-    protected static final int CONST_DEFAULT_RESOLVER_PRIORITY = 100;
-
     @NotNull
     private final ILocation location;
 
