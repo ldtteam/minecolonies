@@ -8,10 +8,10 @@ import net.minecraftforge.registries.IForgeRegistry;
 /**
  * Class to create the modBlocks.
  * References to the blocks can be made here
- *
+ * <p>
  * We disabled the following finals since we are neither able to mark the items as final, nor do we want to provide public accessors.
  */
-@SuppressWarnings({"squid:ClassVariableVisibilityCheck", "squid:S2444", "squid:S1444", "squid:S1820" , })
+@SuppressWarnings({"squid:ClassVariableVisibilityCheck", "squid:S2444", "squid:S1444", "squid:S1820",})
 public final class ModBlocks
 {
     /*
@@ -43,7 +43,9 @@ public final class ModBlocks
     public static BlockHutBarracksTower       blockHutBarracksTower;
     public static BlockInfoPoster             blockInfoPoster;
     public static BlockPaperwall              blockPaperWall;
+    public static BlockHutCook                blockHutCook;
     public static BlockShingle                blockShingle;
+
 
     /**
      * Private constructor to hide the implicit public one.
@@ -85,6 +87,7 @@ public final class ModBlocks
         blockHutBarracksTower = new BlockHutBarracksTower().registerBlock(registry);
         blockInfoPoster = new BlockInfoPoster().registerBlock(registry);
         blockPaperWall = new BlockPaperwall().registerBlock(registry);
+        blockHutCook   = new BlockHutCook().registerBlock(registry);
         blockShingle = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK)).registerBlock(registry);
     }
 
@@ -115,6 +118,7 @@ public final class ModBlocks
         blockHutBarracks.registerItemBlock(registry);
         blockInfoPoster.registerItemBlock(registry);
         blockPaperWall.registerItemBlock(registry);
+        blockHutCook.registerItemBlock(registry);
         blockShingle.registerItemBlock(registry);
     }
 }

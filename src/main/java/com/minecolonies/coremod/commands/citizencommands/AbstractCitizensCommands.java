@@ -111,6 +111,30 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
         executeSpecializedCode(server, sender, colony, citizenId);
     }
 
+    @NotNull
+    @Override
+    public List<String> getTabCompletionOptions(
+                                                 @NotNull final MinecraftServer server,
+                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final String[] args,
+                                                 @Nullable final BlockPos pos)
+    {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean isUsernameIndex(@NotNull final String[] args, final int index)
+    {
+        return false;
+    }
+
+    /**
+     * Returns the command enum describing this command.
+     *
+     * @return the command.
+     */
+    abstract Commands getCommand();
+
     /**
      * Get a valid citizenid from the arguments.
      *
@@ -150,34 +174,10 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
     /**
      * Citizen commands have to overwrite this to handle their specialized code.
      *
-     * @param server the minecraft server.
-     * @param sender the command sender.
+     * @param server    the minecraft server.
+     * @param sender    the command sender.
      * @param colonyId  the id for the colony
      * @param citizenId the id for the citizen
      */
     abstract void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colonyId, final int citizenId);
-
-    @NotNull
-    @Override
-    public List<String> getTabCompletionOptions(
-                                                 @NotNull final MinecraftServer server,
-                                                 @NotNull final ICommandSender sender,
-                                                 @NotNull final String[] args,
-                                                 @Nullable final BlockPos pos)
-    {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public boolean isUsernameIndex(@NotNull final String[] args, final int index)
-    {
-        return false;
-    }
-
-    /**
-     * Returns the command enum describing this command.
-     *
-     * @return the command.
-     */
-    abstract Commands getCommand();
 }

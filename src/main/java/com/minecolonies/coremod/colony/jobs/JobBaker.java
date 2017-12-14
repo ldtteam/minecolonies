@@ -65,22 +65,22 @@ public class JobBaker extends AbstractJob
 
     @Nullable
     @Override
-    public SoundEvent getBadWeatherSound()
+    public SoundEvent getBedTimeSound()
     {
         if (getCitizen() != null)
         {
-            return getCitizen().isFemale() ? BakerSounds.Female.badWeather : null;
+            return getCitizen().isFemale() ? BakerSounds.Female.offToBed : null;
         }
         return null;
     }
 
     @Nullable
     @Override
-    public SoundEvent getBedTimeSound()
+    public SoundEvent getBadWeatherSound()
     {
         if (getCitizen() != null)
         {
-            return getCitizen().isFemale() ? BakerSounds.Female.offToBed : null;
+            return getCitizen().isFemale() ? BakerSounds.Female.badWeather : null;
         }
         return null;
     }

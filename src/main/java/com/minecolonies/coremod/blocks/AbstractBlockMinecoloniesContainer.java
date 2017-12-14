@@ -23,6 +23,7 @@ public abstract class AbstractBlockMinecoloniesContainer<B extends AbstractBlock
 
     /**
      * Registery block at gameregistry.
+     *
      * @param registry the registry to use.
      * @return the block itself.
      */
@@ -36,6 +37,7 @@ public abstract class AbstractBlockMinecoloniesContainer<B extends AbstractBlock
 
     /**
      * Registery block at gameregistry.
+     *
      * @param registry the registry to use.
      */
     @Override

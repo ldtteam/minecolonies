@@ -34,16 +34,20 @@ public final class AchievementUtils
     {
         @NotNull final List<Player> players = PermissionUtils.getPlayersWithAtLeastRank(colony, Rank.OFFICER);
 
-        @NotNull final List<EntityPlayer> lPlayer = ServerUtils.getPlayersFromPermPlayer(players, colony.getWorld());
 
-        for (@Nullable final EntityPlayer player : lPlayer)
+        if (colony.getWorld() != null)
         {
             for (final Advancement achievement : colony.getAchievements())
             {
                 //todo
                 /*if (player == null || ModAchievements.ad == achievement)
                 {
-                    continue;
+                    if (player == null || ModAchievements.achievementGetSupply == achievement)
+                    {
+                        continue;
+                    }
+
+                    player.addStat(achievement);
                 }
 
                 player.addStat(achievement);*/

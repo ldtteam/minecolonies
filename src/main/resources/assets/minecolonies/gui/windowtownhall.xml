@@ -77,7 +77,7 @@
                 <button id="changeSpec" align="TOP_LEFT" size="116 20"
                         label="$(com.minecolonies.coremod.gui.townHall.togglespec)"/>
                 <button id="rename" align="TOP_LEFT" size="116 20"
-                        label="$(com.minecolonies.coremod.gui.townHall.rename)" />
+                        label="$(com.minecolonies.coremod.gui.townHall.rename)"/>
             </group>
 
         </view>
@@ -101,6 +101,7 @@
                 <label id="lumberjacks" label="Unkown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
                 <label id="farmers" label="Unkown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
                 <label id="bakers" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
+                <label id="cooks" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
                 <label id="Guards" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
             </group>
         </view>
@@ -131,7 +132,7 @@
                                 <box size="100% 20" linewidth="2">
                                     <label id="name" size="60 12" textscale="0.7" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                                     <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
-                                    <label id="index" pos = "100 100"></label>
+                                    <label id="index" pos="100 100"></label>
                                 </box>
                             </list>
                         </view>
@@ -140,7 +141,7 @@
                                 <box size="100% 20" linewidth="2">
                                     <label id="name" size="60 12" textscale="0.7" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                                     <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
-                                    <label id="index" pos = "100 100"></label>
+                                    <label id="index" pos="100 100"></label>
                                 </box>
                             </list>
                         </view>
@@ -149,7 +150,7 @@
                                 <box size="100% 20" linewidth="2">
                                     <label id="name" size="60 12" textscale="0.7" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                                     <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
-                                    <label id="index" pos = "100 100"></label>
+                                    <label id="index" pos="100 100"></label>
                                 </box>
                             </list>
                         </view>
@@ -158,15 +159,15 @@
                                 <box size="100% 20" linewidth="2">
                                     <label id="name" size="60 12" textscale="0.7" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                                     <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
-                                    <label id="index" pos = "100 100"></label>
+                                    <label id="index" pos="100 100"></label>
                                 </box>
                             </list>
                         </view>
                     </switch>
-                    <button id="officerPage"  size="42 15" pos="50 105" label="Officer"/>
-                    <button id="friendPage"   size="42 15" pos="50 125" label="Friend"/>
-                    <button id="neutralPage"  size="42 15" pos="50 145" label="Neutral"/>
-                    <button id="hostilePage"  size="42 15" pos="50 165" label="Hostile"/>
+                    <button id="officerPage" size="42 15" pos="50 105" label="Officer"/>
+                    <button id="friendPage" size="42 15" pos="50 125" label="Friend"/>
+                    <button id="neutralPage" size="42 15" pos="50 145" label="Neutral"/>
+                    <button id="hostilePage" size="42 15" pos="50 165" label="Hostile"/>
                 </view>
 
                 <view id="freeBlockList">

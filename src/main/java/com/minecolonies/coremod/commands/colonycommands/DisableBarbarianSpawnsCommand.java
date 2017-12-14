@@ -21,8 +21,8 @@ import java.util.List;
 public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand
 {
 
-    public static final String DESC = "barbarians";
-    private static final String NO_ARGUMENTS = "Please define a colony";
+    public static final  String DESC                       = "barbarians";
+    private static final String NO_ARGUMENTS               = "Please define a colony";
     private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
 
     /**

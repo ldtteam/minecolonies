@@ -236,9 +236,14 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private static final String FARMERS_LABEL = "farmers";
 
     /**
-     * Id of the total farmers label in the GUI.
+     * Id of the total bakers label in the GUI.
      */
     private static final String BAKERS_LABEL = "bakers";
+
+    /**
+     * Id of the total cooks label in the GUI.
+     */
+    private static final String COOKS_LABEL = "cooks";
 
     /**
      * Id of the total assignee label in the GUI.
@@ -498,14 +503,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Re-sorts the WorkOrders list according to the priorities inside the list.
-     */
-    private void sortWorkOrders()
-    {
-        workOrders.sort(Comparator.comparing(WorkOrderView::getPriority, Comparator.reverseOrder()));
-    }
-
-    /**
      * Clears and resets all citizens.
      */
     private void updateWorkOrders()
@@ -513,6 +510,14 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         workOrders.clear();
         workOrders.addAll(townHall.getColony().getWorkOrders());
         sortWorkOrders();
+    }
+
+    /**
+     * Re-sorts the WorkOrders list according to the priorities inside the list.
+     */
+    private void sortWorkOrders()
+    {
+        workOrders.sort(Comparator.comparing(WorkOrderView::getPriority, Comparator.reverseOrder()));
     }
 
     private void removeBlock(final Button button)
@@ -806,7 +811,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     {
         super.onOpened();
 
-        if(lastTabButton != null)
+        if (lastTabButton != null)
         {
             return;
         }
@@ -853,6 +858,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         int lumberjacks = 0;
         int farmers = 0;
         int bakers = 0;
+        int cooks = 0;
 
         for (@NotNull final CitizenDataView citizen : citizens)
         {
@@ -882,6 +888,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 case COM_MINECOLONIES_COREMOD_JOB_BAKER:
                     bakers++;
                     break;
+                case COM_MINECOLONIES_COREMOD_JOB_COOK:
+                    cooks++;
+                    break;
                 case "":
                     break;
                 default:
@@ -889,7 +898,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             }
         }
 
-        workers += deliverymen + builders + miners + fishermen + lumberjacks + farmers + guards + bakers;
+        workers += deliverymen + builders + miners + fishermen + lumberjacks + farmers + guards + bakers + cooks;
 
         final String numberOfCitizens =
           LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
@@ -902,6 +911,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         final String numberOfLumberjacks = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.lumberjacks", lumberjacks);
         final String numberOfFarmers = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.farmers", farmers);
         final String numberOfbakers = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.bakers", bakers);
+        final String numberOfcooks = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.cooks", cooks);
 
         final DecimalFormat df = new DecimalFormat("#.#");
         df.setRoundingMode(RoundingMode.CEILING);
@@ -918,6 +928,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         findPaneOfTypeByID(LUMBERJACKS_LABEL, Label.class).setLabelText(numberOfLumberjacks);
         findPaneOfTypeByID(FARMERS_LABEL, Label.class).setLabelText(numberOfFarmers);
         findPaneOfTypeByID(BAKERS_LABEL, Label.class).setLabelText(numberOfbakers);
+        findPaneOfTypeByID(COOKS_LABEL, Label.class).setLabelText(numberOfcooks);
     }
 
     /**
@@ -1014,7 +1025,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 //Searches citizen of id x
                 for (@NotNull final CitizenDataView citizen : citizens)
                 {
-                    if (citizen.getID() == workOrder.getClaimedBy())
+                    if (citizen.getId() == workOrder.getClaimedBy())
                     {
                         claimingCitizen = citizen.getName();
                         break;
@@ -1094,6 +1105,17 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         lastTabButton.setPosition(lastTabButton.getX() + RIBBON_OFFSET, findPaneOfTypeByID(lastTabButton.getID() + "1", ButtonImage.class).getY());
     }
 
+    /**
+     * Returns the name of a building.
+     *
+     * @return Name of a building.
+     */
+    @Override
+    public String getBuildingName()
+    {
+        return townHall.getColony().getName();
+    }
+
     @Override
     public void onUpdate()
     {
@@ -1112,17 +1134,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         }
         updateWorkOrders();
         window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
-    }
-
-    /**
-     * Returns the name of a building.
-     *
-     * @return Name of a building.
-     */
-    @Override
-    public String getBuildingName()
-    {
-        return townHall.getColony().getName();
     }
 
     /**

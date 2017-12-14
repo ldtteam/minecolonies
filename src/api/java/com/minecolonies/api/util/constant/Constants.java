@@ -3,7 +3,7 @@ package com.minecolonies.api.util.constant;
 /**
  * Some constants needed for the whole mod.
  */
-public class Constants
+public final class Constants
 {
     public static final String MOD_ID                           = "minecolonies";
     public static final String MOD_NAME                         = "MineColonies";
@@ -37,4 +37,15 @@ public class Constants
     public static final double WHOLE_CIRCLE                     = 360.0;
     public static final double HALF_A_CIRCLE                    = 180;
     public static final int    UPDATE_FLAG                      = 0x03;
+    public static final int    TICKS_HOUR                       = TICKS_SECOND * SECONDS_A_MINUTE * SECONDS_A_MINUTE;
+
+    /**
+     * Private constructor to hide implicit public one.
+     */
+    private Constants()
+    {
+        /**
+         * Intentionally left empty.
+          */
+    }
 }

@@ -113,5 +113,4 @@ public class JobLumberjack extends AbstractJob
             citizen.getColony().triggerAchievement(ModAchievements.achievementLumberjackDeathTree);
         }
     }
-
 }

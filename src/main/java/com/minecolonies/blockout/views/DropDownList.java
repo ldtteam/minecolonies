@@ -32,7 +32,7 @@ public class DropDownList extends View implements ButtonHandler
     /**
      * date required to fill the list.
      */
-    protected DataProvider dataProvider;
+    protected DataProvider  dataProvider;
 
     /**
      * handler for the accept method.
@@ -93,8 +93,9 @@ public class DropDownList extends View implements ButtonHandler
 
     /**
      * handle when the button is clicked on.
-     *
+     * <p>
      * The list is shown or hidden depending of the previous state.
+     *
      * @param button which have been clicked on.
      */
     public void onButtonClicked(@NotNull final Button button)
@@ -111,11 +112,29 @@ public class DropDownList extends View implements ButtonHandler
                 overlay.putInside(button.getWindow());
                 open();
             }
-       }
-       else
-       {
+        }
+        else
+        {
             onButtonClickedFromList(button);
-       }
+        }
+    }
+
+    /**
+     * close the dropdown list.
+     */
+    public void close()
+    {
+        overlay.setVisible(false);
+    }
+
+    /**
+     * open the dropdown list.
+     */
+    public void open()
+    {
+        refreshElementPanes();
+        overlay.setVisible(true);
+        overlay.setFocus();
     }
 
     /**
@@ -134,6 +153,21 @@ public class DropDownList extends View implements ButtonHandler
         }
     }
 
+    /**
+     * Use the data provider to update all the element panes.
+     */
+    public void refreshElementPanes()
+    {
+        list.refreshElementPanes();
+        if (list.getContentHeight() < dropDownHeight)
+        {
+            list.setSize(dropDownWidth, list.getContentHeight());
+        }
+        else
+        {
+            list.setSize(dropDownWidth, dropDownHeight);
+        }
+    }
 
     /**
      * get the index of the selected item in the list.
@@ -222,79 +256,11 @@ public class DropDownList extends View implements ButtonHandler
     }
 
     /**
-     * Use the data provider to update all the element panes.
-     */
-    public void refreshElementPanes()
-    {
-        list.refreshElementPanes();
-        if (list.getContentHeight() < dropDownHeight)
-        {
-            list.setSize(dropDownWidth, list.getContentHeight());
-        }
-        else
-        {
-            list.setSize(dropDownWidth, dropDownHeight);
-        }
-    }
-
-    @Override
-    public void setEnabled(final boolean e)
-    {
-        button.setEnabled(e);
-    }
-
-    @Override
-    public void setVisible(final boolean v)
-    {
-        button.setVisible(v);
-    }
-
-    @Override
-    protected void drawSelf(final int mx, final int my)
-    {
-        button.drawSelf(mx,my);
-    }
-
-    @Override
-    public void click(final int mx, final int my)
-    {
-        button.click(mx, my);
-    }
-
-    /**
-     * open the dropdown list.
-     */
-    public void open()
-    {
-        refreshElementPanes();
-        overlay.setVisible(true);
-        overlay.setFocus();
-    }
-
-    /**
-     * close the dropdown list.
-     */
-    public void close()
-    {
-        overlay.setVisible(false);
-    }
-
-    /**
-     * Interface for a data provider that updates pane scrolling list pane info.
-     */
-    public interface DataProvider
-    {
-        int getElementCount();
-
-        String getLabel(final int index);
-    }
-
-    /**
      * Update an pane item in the list.
      *
      * @param rowPane which need the update
-     * @param index of the item
-     * @param label use for this item
+     * @param index   of the item
+     * @param label   use for this item
      */
     private void updateDropDownItem(@NotNull final Pane rowPane, final int index, final String label)
     {
@@ -309,7 +275,31 @@ public class DropDownList extends View implements ButtonHandler
             }
             choiceButton.setLabel(label);
             choiceButton.setHandler(this);
-       }
+        }
+    }
+
+    @Override
+    public void setVisible(final boolean v)
+    {
+        button.setVisible(v);
+    }
+
+    @Override
+    public void setEnabled(final boolean e)
+    {
+        button.setEnabled(e);
+    }
+
+    @Override
+    protected void drawSelf(final int mx, final int my)
+    {
+        button.drawSelf(mx, my);
+    }
+
+    @Override
+    public void click(final int mx, final int my)
+    {
+        button.click(mx, my);
     }
 
     /**
@@ -320,5 +310,15 @@ public class DropDownList extends View implements ButtonHandler
     public void setHandler(final Consumer<DropDownList> h)
     {
         handler = h;
+    }
+
+    /**
+     * Interface for a data provider that updates pane scrolling list pane info.
+     */
+    public interface DataProvider
+    {
+        int getElementCount();
+
+        String getLabel(final int index);
     }
 }

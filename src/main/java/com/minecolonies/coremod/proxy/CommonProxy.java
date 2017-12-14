@@ -19,14 +19,18 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.HashMap;
@@ -235,11 +239,39 @@ public class CommonProxy implements IProxy
     }
 
     @Override
+    public void openClipBoardWindow(final int colonyId)
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
+    @Override
     public void registerRenderer()
     {
         /*
          * Intentionally left empty.
          */
+    }
+
+    @Override
+    public File getSchematicsFolder()
+    {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public World getWorldFromMessage(@NotNull final MessageContext context)
+    {
+        return context.getServerHandler().player.getServerWorld();
+    }
+
+    @Nullable
+    @Override
+    public World getWorld(final int dimension)
+    {
+        return FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension);
     }
 
     /**
@@ -248,11 +280,5 @@ public class CommonProxy implements IProxy
     private int getNextEntityId()
     {
         return nextEntityId++;
-    }
-
-    @Override
-    public File getSchematicsFolder()
-    {
-        return null;
     }
 }

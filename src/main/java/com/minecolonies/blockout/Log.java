@@ -30,7 +30,7 @@ public final class Log
     {
         if (logger == null)
         {
-            Log.logger = LogManager.getLogger("Minecolonies:blockout");
+            Log.logger = LogManager.getLogger("minecolonies");
         }
         return logger;
     }

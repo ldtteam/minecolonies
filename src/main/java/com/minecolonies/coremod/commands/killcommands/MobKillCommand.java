@@ -11,7 +11,6 @@ public class MobKillCommand extends AbstractKillCommand<EntityMob>
 
     /**
      * Initialize this SubCommand with it's parents.
-     *
      */
     public MobKillCommand()
     {

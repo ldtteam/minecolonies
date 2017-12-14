@@ -8,15 +8,15 @@ import java.util.function.Consumer;
 @FunctionalInterface
 public interface ButtonHandler extends Consumer<Button>
 {
+    default void accept(final Button button)
+    {
+        onButtonClicked(button);
+    }
+
     /**
      * Called when a button is clicked.
      *
      * @param button the button that was clicked.
      */
     void onButtonClicked(Button button);
-
-    default void accept(final Button button)
-    {
-        onButtonClicked(button);
-    }
 }

@@ -16,39 +16,34 @@ import java.util.Random;
  */
 public class PathJobMoveAwayFromLocation extends AbstractPathJob
 {
-    private static final double TIE_BREAKER    = 1.001D;
+    private static final double TIE_BREAKER = 1.001D;
 
     /**
      * All directions to try to avoid to.
      */
     private static final int DIRECTIONS_TO_TRY = 4;
-
+    /**
+     * Random object.
+     */
+    private static final Random rand = new Random();
     /**
      * Position to run to, in order to avoid something.
      */
     @NotNull
     protected final BlockPos avoid;
-
     /**
      * Heuristic point used for calculation.
      */
     @NotNull
     protected final BlockPos heuristicPoint;
-
     /**
      * Required avoidDistance.
      */
     protected final int avoidDistance;
-
     /**
      * Direction he should run off to.
      */
     private final EnumFacing direction;
-
-    /**
-     * Random object.
-     */
-    private static final Random rand = new Random();
 
     /**
      * Prepares the PathJob for the path finding system.
@@ -75,17 +70,17 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
 
         final int randomValue = rand.nextInt(DIRECTIONS_TO_TRY);
 
-        if(randomValue == 0)
+        if (randomValue == 0)
         {
             heuristicPoint = new BlockPos(start.getX() + (int) dx, start.getY(), start.getZ());
             direction = EnumFacing.EAST;
         }
-        else if(randomValue == 1)
+        else if (randomValue == 1)
         {
             heuristicPoint = new BlockPos(start.getX() - (int) dx, start.getY(), start.getZ());
             direction = EnumFacing.WEST;
         }
-        else if(randomValue == 2)
+        else if (randomValue == 2)
         {
             heuristicPoint = new BlockPos(start.getX(), start.getY(), start.getZ() - (int) dz);
             direction = EnumFacing.NORTH;

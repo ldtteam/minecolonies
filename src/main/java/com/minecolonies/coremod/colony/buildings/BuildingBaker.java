@@ -68,32 +68,26 @@ public class BuildingBaker extends AbstractBuildingWorker
      * Tag used to store the furnaces map.
      */
     private static final String TAG_FURNACES = "furnaces";
-
-    /**
-     * List of furnaces added to this building.
-     */
-    private final Map<BlockPos, BakingProduct> furnaces = new HashMap<>();
-
-    /**
-     * Map of tasks for the baker to work on.
-     */
-    private final Map<ProductState, List<BakingProduct>> tasks = new EnumMap<>(ProductState.class);
-
     /**
      * Wait this amount of ticks before checking again.
      */
     private static final int WAIT_TICKS = 320;
-
     /**
      * Always try to keep at least 2 stacks of wheat in the inventory and in the workers chest.
      */
     private static final int WHEAT_TO_KEEP = 128;
-
+    /**
+     * List of furnaces added to this building.
+     */
+    private final Map<BlockPos, BakingProduct> furnaces = new HashMap<>();
+    /**
+     * Map of tasks for the baker to work on.
+     */
+    private final Map<ProductState, List<BakingProduct>> tasks = new EnumMap<>(ProductState.class);
     /**
      * Ticks past since the last check.
      */
     private int ticksPassed = 0;
-
 
     /**
      * Constructor for the baker building.
@@ -104,9 +98,9 @@ public class BuildingBaker extends AbstractBuildingWorker
     public BuildingBaker(final Colony c, final BlockPos l)
     {
         super(c, l);
-        for(final RecipeStorage storage: BakerRecipes.getRecipes())
+        for (final RecipeStorage storage : BakerRecipes.getRecipes())
         {
-            for(final ItemStack stack: storage.getInput())
+            for (final ItemStack stack : storage.getInput())
             {
                 keepX.put(stack::isItemEqual, WHEAT_TO_KEEP);
             }
@@ -136,37 +130,15 @@ public class BuildingBaker extends AbstractBuildingWorker
         return BAKER_HUT_MAX_LEVEL;
     }
 
-    /**
-     * Create a Baker job.
-     *
-     * @param citizen the citizen to take the job.
-     * @return The new Baker job.
-     */
-    @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        return new JobBaker(citizen);
-    }
-
-    /**
-     * The name of the baker's job.
-     *
-     * @return The name of the baker's job.
-     */
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return BAKER;
-    }
-
-    /**
-     * Clear the furnaces list.
-     */
-    public void clearFurnaces()
-    {
-        furnaces.clear();
+        super.registerBlockPosition(block, pos, world);
+        if (block instanceof BlockFurnace && !furnaces.containsKey(pos))
+        {
+            addToFurnaces(pos);
+        }
+        markDirty();
     }
 
     /**
@@ -180,91 +152,16 @@ public class BuildingBaker extends AbstractBuildingWorker
     }
 
     /**
-     * Remove a furnace from the building.
+     * Create a Baker job.
      *
-     * @param pos the position of it.
+     * @param citizen the citizen to take the job.
+     * @return The new Baker job.
      */
-    public void removeFromFurnaces(final BlockPos pos)
-    {
-        furnaces.remove(pos);
-    }
-
-    /**
-     * Remove a product from the furnace.
-     * @param pos the position the furnace is at.
-     */
-    public void removeProductFromFurnace(final BlockPos pos)
-    {
-        furnaces.replace(pos, null);
-    }
-
-    /**
-     * Return a list of furnaces assigned to this hut.
-     *
-     * @return copy of the list
-     */
-    public List<BlockPos> getFurnaces()
-    {
-        return new ArrayList<>(furnaces.keySet());
-    }
-
-    /**
-     * Return the map of furnaces assigned to this hut and the product in it.
-     *
-     * @return a hashmap with BlockPos, BakingProduct.
-     */
-    public Map<BlockPos, BakingProduct> getFurnacesWithProduct()
-    {
-        return Collections.unmodifiableMap(furnaces);
-    }
-
-    /**
-     * Get the map of current tasks in the baker.
-     *
-     * @return the map of states and products.
-     */
-    public Map<ProductState, List<BakingProduct>> getTasks()
-    {
-        return Collections.unmodifiableMap(new HashMap<>(tasks));
-    }
-
+    @NotNull
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public AbstractJob createJob(final CitizenData citizen)
     {
-        super.writeToNBT(compound);
-        @NotNull final NBTTagList tasksTagList = new NBTTagList();
-        for (@NotNull final Map.Entry<ProductState, List<BakingProduct>> entry : tasks.entrySet())
-        {
-            if(!entry.getValue().isEmpty())
-            {
-                @NotNull final NBTTagCompound taskCompound = new NBTTagCompound();
-                taskCompound.setInteger(TAG_STATE, entry.getKey().ordinal());
-
-                @NotNull final NBTTagList productsTaskList = new NBTTagList();
-                for (@NotNull final BakingProduct bakingProduct : entry.getValue())
-                {
-                    @NotNull final NBTTagCompound productCompound = new NBTTagCompound();
-                    bakingProduct.writeToNBT(productCompound);
-                }
-                taskCompound.setTag(TAG_PRODUCTS, productsTaskList);
-                tasksTagList.appendTag(taskCompound);
-            }
-        }
-        compound.setTag(TAG_TASKS, tasksTagList);
-
-        @NotNull final NBTTagList furnacesTagList = new NBTTagList();
-        for (@NotNull final Map.Entry<BlockPos, BakingProduct> entry : furnaces.entrySet())
-        {
-            @NotNull final NBTTagCompound furnaceCompound = new NBTTagCompound();
-            BlockPosUtil.writeToNBT(furnaceCompound, TAG_FURNACE_POS, entry.getKey());
-
-            if(entry.getValue() != null)
-            {
-                entry.getValue().writeToNBT(furnaceCompound);
-            }
-            furnacesTagList.appendTag(furnaceCompound);
-        }
-        compound.setTag(TAG_FURNACES, furnacesTagList);
+        return new JobBaker(citizen);
     }
 
     @Override
@@ -301,20 +198,178 @@ public class BuildingBaker extends AbstractBuildingWorker
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        super.registerBlockPosition(block, pos, world);
-        if (block instanceof BlockFurnace && !furnaces.containsKey(pos))
+        super.writeToNBT(compound);
+        @NotNull final NBTTagList tasksTagList = new NBTTagList();
+        for (@NotNull final Map.Entry<ProductState, List<BakingProduct>> entry : tasks.entrySet())
         {
-            addToFurnaces(pos);
+            if (!entry.getValue().isEmpty())
+            {
+                @NotNull final NBTTagCompound taskCompound = new NBTTagCompound();
+                taskCompound.setInteger(TAG_STATE, entry.getKey().ordinal());
+
+                @NotNull final NBTTagList productsTaskList = new NBTTagList();
+                for (@NotNull final BakingProduct bakingProduct : entry.getValue())
+                {
+                    @NotNull final NBTTagCompound productCompound = new NBTTagCompound();
+                    bakingProduct.writeToNBT(productCompound);
+                }
+                taskCompound.setTag(TAG_PRODUCTS, productsTaskList);
+                tasksTagList.appendTag(taskCompound);
+            }
         }
-        markDirty();
+        compound.setTag(TAG_TASKS, tasksTagList);
+
+        @NotNull final NBTTagList furnacesTagList = new NBTTagList();
+        for (@NotNull final Map.Entry<BlockPos, BakingProduct> entry : furnaces.entrySet())
+        {
+            @NotNull final NBTTagCompound furnaceCompound = new NBTTagCompound();
+            BlockPosUtil.writeToNBT(furnaceCompound, TAG_FURNACE_POS, entry.getKey());
+
+            if (entry.getValue() != null)
+            {
+                entry.getValue().writeToNBT(furnaceCompound);
+            }
+            furnacesTagList.appendTag(furnaceCompound);
+        }
+        compound.setTag(TAG_FURNACES, furnacesTagList);
+    }
+
+    /**
+     * The name of the baker's job.
+     *
+     * @return The name of the baker's job.
+     */
+    @NotNull
+    @Override
+    public String getJobName()
+    {
+        return BAKER;
+    }
+
+    @Override
+    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
+    {
+        super.onWorldTick(event);
+
+        if (ticksPassed != WAIT_TICKS)
+        {
+            ticksPassed++;
+            return;
+        }
+        ticksPassed = 0;
+
+
+        checkFurnaces();
+    }
+
+    /**
+     * Checks the furnaces of the baker if they're ready.
+     */
+    private void checkFurnaces()
+    {
+        final World worldObj = getColony().getWorld();
+
+        if (worldObj == null)
+        {
+            return;
+        }
+
+        final List<Map.Entry<BlockPos, BakingProduct>> copyOfList = new ArrayList<>(this.getFurnacesWithProduct().entrySet());
+        for (final Map.Entry<BlockPos, BakingProduct> entry : copyOfList)
+        {
+            if(!worldObj.isBlockLoaded(entry.getKey()))
+            {
+                return;
+            }
+            final IBlockState furnace = worldObj.getBlockState(entry.getKey());
+            if (!(furnace.getBlock() instanceof BlockFurnace))
+            {
+                if (worldObj.getTileEntity(entry.getKey()) instanceof TileEntityFurnace)
+                {
+                    return;
+                }
+                Log.getLogger().warn(getColony().getName() + " Removed furnace at: " + entry.getKey() + " because it went missing!");
+                this.removeFromFurnaces(entry.getKey());
+                continue;
+            }
+
+            final BakingProduct bakingProduct = entry.getValue();
+            if (bakingProduct != null && bakingProduct.getState() == ProductState.BAKING)
+            {
+                bakingProduct.increaseBakingProgress();
+                worldObj.setBlockState(entry.getKey(), Blocks.LIT_FURNACE.getDefaultState().withProperty(BlockFurnace.FACING, furnace.getValue(BlockFurnace.FACING)));
+            }
+            else
+            {
+                worldObj.setBlockState(entry.getKey(), Blocks.FURNACE.getDefaultState().withProperty(BlockFurnace.FACING, furnace.getValue(BlockFurnace.FACING)));
+            }
+        }
+    }
+
+    /**
+     * Return the map of furnaces assigned to this hut and the product in it.
+     *
+     * @return a hashmap with BlockPos, BakingProduct.
+     */
+    public Map<BlockPos, BakingProduct> getFurnacesWithProduct()
+    {
+        return Collections.unmodifiableMap(furnaces);
+    }
+
+    /**
+     * Remove a furnace from the building.
+     *
+     * @param pos the position of it.
+     */
+    public void removeFromFurnaces(final BlockPos pos)
+    {
+        furnaces.remove(pos);
+    }
+
+    /**
+     * Clear the furnaces list.
+     */
+    public void clearFurnaces()
+    {
+        furnaces.clear();
+    }
+
+    /**
+     * Remove a product from the furnace.
+     *
+     * @param pos the position the furnace is at.
+     */
+    public void removeProductFromFurnace(final BlockPos pos)
+    {
+        furnaces.replace(pos, null);
+    }
+
+    /**
+     * Return a list of furnaces assigned to this hut.
+     *
+     * @return copy of the list
+     */
+    public List<BlockPos> getFurnaces()
+    {
+        return new ArrayList<>(furnaces.keySet());
+    }
+
+    /**
+     * Get the map of current tasks in the baker.
+     *
+     * @return the map of states and products.
+     */
+    public Map<ProductState, List<BakingProduct>> getTasks()
+    {
+        return Collections.unmodifiableMap(new HashMap<>(tasks));
     }
 
     /**
      * Add a task to the tasks list.
      *
-     * @param state   the state of the task.
+     * @param state         the state of the task.
      * @param bakingProduct the regarding bakingProduct.
      */
     public void addToTasks(final ProductState state, final BakingProduct bakingProduct)
@@ -332,71 +387,10 @@ public class BuildingBaker extends AbstractBuildingWorker
         markDirty();
     }
 
-    @Override
-    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
-    {
-        super.onWorldTick(event);
-
-        if(ticksPassed != WAIT_TICKS)
-        {
-            ticksPassed++;
-            return;
-        }
-        ticksPassed = 0;
-
-
-        checkFurnaces();
-    }
-
-    /**
-     * Checks the furnaces of the baker if they're ready.
-     * @param building the building they belong to.
-     */
-    private void checkFurnaces()
-    {
-        final World worldObj = getColony().getWorld();
-
-        if(worldObj == null)
-        {
-            return;
-        }
-
-        final List<Map.Entry<BlockPos, BakingProduct>> copyOfList = new ArrayList<>(this.getFurnacesWithProduct().entrySet());
-        for(final Map.Entry<BlockPos, BakingProduct> entry: copyOfList)
-        {
-            if(!worldObj.isBlockLoaded(entry.getKey()))
-            {
-                return;
-            }
-            final IBlockState furnace = worldObj.getBlockState(entry.getKey());
-            if(!(furnace.getBlock() instanceof BlockFurnace))
-            {
-                if(worldObj.getTileEntity(entry.getKey()) instanceof TileEntityFurnace)
-                {
-                    return;
-                }
-                Log.getLogger().warn(getColony().getName() + " Removed furnace at: " + entry.getKey() + " because it went missing!");
-                this.removeFromFurnaces(entry.getKey());
-                continue;
-            }
-
-            final BakingProduct bakingProduct = entry.getValue();
-            if(bakingProduct != null && bakingProduct.getState() == ProductState.BAKING)
-            {
-                bakingProduct.increaseBakingProgress();
-                worldObj.setBlockState(entry.getKey(), Blocks.LIT_FURNACE.getDefaultState().withProperty(BlockFurnace.FACING, furnace.getValue(BlockFurnace.FACING)));
-            }
-            else
-            {
-                worldObj.setBlockState(entry.getKey(), Blocks.FURNACE.getDefaultState().withProperty(BlockFurnace.FACING, furnace.getValue(BlockFurnace.FACING)));
-            }
-        }
-    }
-
     /**
      * Add a task to the tasks list.
      *
-     * @param state   the state of the task.
+     * @param state         the state of the task.
      * @param bakingProduct the regarding bakingProduct.
      */
     public void removeFromTasks(final ProductState state, final BakingProduct bakingProduct)
@@ -416,7 +410,7 @@ public class BuildingBaker extends AbstractBuildingWorker
      * Put a certain BakingProduct in the furnace.
      *
      * @param currentFurnace the furnace to put it in.
-     * @param bakingProduct        the BakingProduct.
+     * @param bakingProduct  the BakingProduct.
      */
     public void putInFurnace(final BlockPos currentFurnace, final BakingProduct bakingProduct)
     {

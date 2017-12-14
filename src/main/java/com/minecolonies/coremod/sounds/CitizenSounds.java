@@ -72,6 +72,12 @@ public final class CitizenSounds extends AbstractWorkerSounds
     }
 
     @Override
+    public String getWorkerString()
+    {
+        return "";
+    }
+
+    @Override
     public int getPhraseChance()
     {
         return PHRASE_CHANCE;
@@ -83,11 +89,5 @@ public final class CitizenSounds extends AbstractWorkerSounds
         /**
          * Do nothing we don't have this implemented for this here yet.
          */
-    }
-
-    @Override
-    public String getWorkerString()
-    {
-        return "";
     }
 }

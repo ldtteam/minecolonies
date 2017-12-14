@@ -11,13 +11,11 @@ import org.jetbrains.annotations.NotNull;
 public class ScrollingView extends View
 {
     private static final int DEFAULT_SCROLLBAR_WIDTH = 8;
-
-    //  Params
-    private int scrollbarWidth = DEFAULT_SCROLLBAR_WIDTH;
-
     //  Runtime
     protected ScrollingContainer container;
     protected Scrollbar          scrollbar;
+    //  Params
+    private int scrollbarWidth = DEFAULT_SCROLLBAR_WIDTH;
 
     /**
      * Required default constructor.
@@ -52,19 +50,19 @@ public class ScrollingView extends View
         scrollbar.putInside(this);
     }
 
-    @Override
-    public void setSize(final int w, final int h)
-    {
-        super.setSize(w,h);
-        container.setSize(getInteriorWidth() - scrollbarWidth, getInteriorHeight());
-        scrollbar.setPosition(getInteriorWidth() - scrollbarWidth, 0);
-        scrollbar.setSize(scrollbarWidth, getInteriorHeight());
-    }
-
     @NotNull
     protected ScrollingContainer createScrollingContainer()
     {
         return new ScrollingContainer(this);
+    }
+
+    @Override
+    public void setSize(final int w, final int h)
+    {
+        super.setSize(w, h);
+        container.setSize(getInteriorWidth() - scrollbarWidth, getInteriorHeight());
+        scrollbar.setPosition(getInteriorWidth() - scrollbarWidth, 0);
+        scrollbar.setSize(scrollbarWidth, getInteriorHeight());
     }
 
     public ScrollingContainer getContainer()
@@ -112,5 +110,4 @@ public class ScrollingView extends View
     {
         return container.getContentHeight();
     }
-
 }

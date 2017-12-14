@@ -23,7 +23,7 @@ public abstract class AbstractRendererBarbarian extends RenderLiving<AbstractEnt
     /**
      * Constructor method for renderer.
      *
-     * @param barbarian the barbarian class to render.
+     * @param barbarian       the barbarian class to render.
      * @param renderManagerIn the renderManager
      */
     public AbstractRendererBarbarian(final RenderManager renderManagerIn, final Class barbarian)

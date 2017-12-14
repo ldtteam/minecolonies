@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -63,6 +64,6 @@ public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMe
     @Override
     public IMessage onMessage(@NotNull final ColonyViewMessage message, final MessageContext ctx)
     {
-        return ColonyManager.handleColonyViewMessage(message.colonyId, message.colonyBuffer, message.isNewSubscription);
+        return ColonyManager.handleColonyViewMessage(message.colonyId, message.colonyBuffer, MineColonies.proxy.getWorldFromMessage(ctx), message.isNewSubscription);
     }
 }

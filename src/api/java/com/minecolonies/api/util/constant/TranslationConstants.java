@@ -92,6 +92,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_JOB_FARMER                            = "com.minecolonies.coremod.job.Farmer";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_JOB_COOK                             = "com.minecolonies.coremod.job.cook";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN                       = "com.minecolonies.coremod.gui.home.assign";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF                        = "com.minecolonies.coremod.gui.hiring.off";
@@ -105,6 +107,46 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0                = "com.minecolonies.coremod.gui.workerHuts.level0";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_LUMBERJACK                        = "com.minecolonies.coremod.job.Lumberjack";
+    @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_DELIVERY                             = "com.minecolonies.coremod.request.delivery";
+    @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_FOOD                                 = "com.minecolonies.coremod.request.food";
+    @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_BURNABLE                             = "com.minecolonies.coremod.request.burnable";
+    @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_TOOL_PRETYPE                         = "com.minecolonies.coremod.request.tool.pretype";
+    @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_TOOL_PREMINLEVEL                     = "com.minecolonies.coremod.request.tool.preminlevel";
+    @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_TOOL_PREMAXLEVEL                     = "com.minecolonies.coremod.request.tool.premaxlevel";
+    @NonNls
+    public static final String COM_MINECOLONIES_GENERAL_AND                                   = "com.minecolonies.coremod.general.and";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_NONE                                 = "com.minecolonies.coremod.tooltype.none";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_PICKAXE                              = "com.minecolonies.coremod.tooltype.pickaxe";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_SHOVEL                               = "com.minecolonies.coremod.tooltype.shovel";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_AXE                                  = "com.minecolonies.coremod.tooltype.axe";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_HOE                                  = "com.minecolonies.coremod.tooltype.hoe";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_SWORD                                = "com.minecolonies.coremod.tooltype.sword";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_BOW                                  = "com.minecolonies.coremod.tooltype.bow";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_FISHINGROD                           = "com.minecolonies.coremod.tooltype.fishingrod";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_SHEARS                               = "com.minecolonies.coremod.tooltype.shears";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_SHIELD                               = "com.minecolonies.coremod.tooltype.shield";
+    @NonNls
+    public static final String COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME                       = "com.minecolonies.coremod.buildings.warehouse.name";
+    @NonNls
+    public static final String COM_MINECOLONIES_CLIPBOARD_NEED_COLONY                         = "com.minecolonies.coremod.item.clipboard.needColony";
+    @NonNls
+    public static final String COM_MINECOLONIES_CLIPBOARD_COLONY_SET                          = "com.minecolonies.coremod.item.clipboard.registered";
     @NonNls
     public static final String CITIZEN_RENAME_SAME                                            = "com.minecolonies.coremod.citizen.rename.same";
     @NonNls

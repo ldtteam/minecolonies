@@ -76,10 +76,10 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     private static final String BUTTON_SET_TARGET = "setTarget";
 
     private static final String VIEW_PAGES                      = "pages";
-    private static final String AUTO   = LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.modeA");
-    private static final String MANUAL = LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.modeM");
-    private static final String ON  = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON);
-    private static final String OFF = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF);
+    private static final String AUTO                            = LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.modeA");
+    private static final String MANUAL                          = LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.modeM");
+    private static final String ON                              = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON);
+    private static final String OFF                             = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF);
     private static final String HUT_GUARD_TOWER_RESOURCE_SUFFIX = ":gui/windowhutguardtower.xml";
     /**
      * Buttons used in the application.
@@ -91,15 +91,15 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     /**
      * Assign the job manually, knight or ranger.
      */
-    private boolean                     assignManually      = false;
+    private boolean                         assignManually      = false;
     /**
      * Retrieve the guard ON low health.
      */
-    private boolean                     retrieveOnLowHealth = false;
+    private boolean                         retrieveOnLowHealth = false;
     /**
      * Patrol manually or automatically.
      */
-    private boolean                     patrolManually      = false;
+    private boolean                         patrolManually      = false;
     /**
      * The task of the guard, following the Task enum.
      */
@@ -111,7 +111,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     /**
      * The list of MANUAL patrol targets.
      */
-    private List<BlockPos>              patrolTargets       = new ArrayList<>();
+    private List<BlockPos>                  patrolTargets       = new ArrayList<>();
     /**
      * The patrol list.
      */
@@ -397,6 +397,13 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         }
     }
 
+    @NotNull
+    @Override
+    public String getBuildingName()
+    {
+        return "com.minecolonies.coremod.gui.workerHuts.GuardTower";
+    }
+
     @Override
     public void onUpdate()
     {
@@ -416,13 +423,6 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             pullInfoFromHut();
             window.findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class).refreshElementPanes();
         }
-    }
-
-    @NotNull
-    @Override
-    public String getBuildingName()
-    {
-        return "com.minecolonies.coremod.gui.workerHuts.GuardTower";
     }
 }
 

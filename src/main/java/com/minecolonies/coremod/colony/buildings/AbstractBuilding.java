@@ -1,23 +1,39 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.requester.IRequester;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.blockout.views.Window;
+import com.minecolonies.api.util.constant.Suppression;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
+import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.util.BuildingUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.StructureWrapper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
@@ -27,12 +43,16 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,73 +60,31 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_HAND;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Base building class, has all the foundation for what a building stores and does.
- *
+ * <p>
  * We suppress the warning which warns you about referencing child classes in the parent because that's how we register the instances of the childClasses
  * to their views and blocks.
- *
  */
 @SuppressWarnings("squid:S2390")
-public abstract class AbstractBuilding
+public abstract class AbstractBuilding implements IRequestResolverProvider, IRequester
 {
-    /**
-     * Tag used to store the containers to NBT.
-     */
-    private static final String TAG_CONTAINERS = "Containers";
 
-    /**
-     * The tag to store the building type.
-     */
-    private static final String TAG_BUILDING_TYPE = "type";
-
-    /**
-     * The tag to store the building location.
-     * Location is unique (within a Colony) and so can double as the Id.
-     */
-    private static final String TAG_LOCATION = "location";
-
-    /**
-     * The tag to store the level of the building.
-     */
-    private static final String TAG_BUILDING_LEVEL = "level";
-
-    /**
-     * The tag to store the rotation of the building.
-     */
-    private static final String TAG_ROTATION = "rotation";
-
-    /**
-     * The tag to store the md5 hash of the schematic.
-     */
-    private static final String TAG_SCHEMATIC_MD5 = "schematicMD5";
-
-    /**
-     * The tag to store the mirror of the building.
-     */
-    private static final String TAG_MIRROR = "mirror";
-
-    /**
-     * The tag to store the style of the building.
-     */
-    private static final String TAG_STYLE = "style";
+    protected static final int CONST_DEFAULT_MAX_BUILDING_LEVEL = 5;
 
     /**
      * Tag if the building has no workOrder.
      */
-    private static final int NO_WORK_ORDER = 0;
+    public static final int NO_WORK_ORDER = 0;
 
     /**
-     * Tags used to store the building corners to nbt and retrieve them.
+     * Max priority of a building.
      */
-    private static final String TAG_CORNER1 = "corner1";
-    private static final String TAG_CORNER2 = "corner2";
-    private static final String TAG_CORNER3 = "corner3";
-    private static final String TAG_CORNER4 = "corner4";
-    private static final String TAG_HEIGHT  = "height";
+    private static final int MAX_PRIO = 10;
 
     /**
      * Map to resolve names to class.
@@ -127,8 +105,7 @@ public abstract class AbstractBuilding
      * Map to resolve classNameHash to class.
      */
     @NotNull
-    private static final Map<Integer, Class<?>> classNameHashToViewClassMap = new HashMap<>();
-
+    private static final Map<Integer, Class<?>>  classNameHashToViewClassMap  = new HashMap<>();
     /*
      * Add all the mappings.
      */
@@ -147,9 +124,14 @@ public abstract class AbstractBuilding
         addMapping("Fisherman", BuildingFisherman.class, BuildingFisherman.View.class, BlockHutFisherman.class);
         addMapping("GuardTower", BuildingGuardTower.class, BuildingGuardTower.View.class, BlockHutGuardTower.class);
         addMapping("WareHouse", BuildingWareHouse.class, BuildingWareHouse.View.class, BlockHutWareHouse.class);
+        addMapping("Cook", BuildingCook.class, BuildingCook.View.class, BlockHutCook.class);
         addMapping("Barracks", BuildingBarracks.class, BuildingBarracks.View.class, BlockHutBarracks.class);
         addMapping("BarracksTower", BuildingBarracksTower.class, BuildingBarracksTower.View.class, BlockHutBarracksTower.class);
     }
+    /**
+     * List of items the worker should keep.
+     */
+    protected final Map<Predicate<ItemStack>, Integer> keepX = new HashMap<>();
     /**
      * A list which contains the position of all containers which belong to the
      * worker building.
@@ -165,78 +147,74 @@ public abstract class AbstractBuilding
     @NotNull
     private final Colony colony;
     /**
-     * A list of ItemStacks with needed items and their quantity.
-     * This list is a diff between itemsNeeded in AbstractEntityAiBasic and
-     * the players inventory and their hut combined.
-     * So look here for what is currently still needed
-     * to fulfill the workers needs.
+     * List of all open requests made by this building.
      * <p>
-     * Will be cleared on restart, be aware!
+     * The key in this map is the class for the request type.
+     * The value is a list of tokens that represent the open requests inside the colony.
      */
     @NotNull
-    private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
+    private final Map<TypeToken, Collection<IToken>> openRequests = new HashMap<>();
     /**
-     * the tool currenly needed by the worker.
+     * Keeps track of which citizen created what request. Citizen -> Request direction.
      */
-    private IToolType        neededTool          = ToolType.NONE;
+    private final HashMap<Integer, Collection<IToken>> citizensByRequests = new HashMap<>();
+
     /**
-     * The minimum tool level we need to fulfill the tool request.
+     * Keeps track of which citizen has completed requests. Citizen -> Request direction.
      */
-    private int             needsToolLevel       = TOOL_LEVEL_HAND;
+    private final HashMap<Integer, Collection<IToken>> citizensByCompletedRequests = new HashMap<>();
+
     /**
-     * Checks if there is a ongoing delivery for the currentItem.
+     * Keeps track of which citizen created what request. Request -> Citizen direction.
      */
-    private boolean         onGoingDelivery      = false;
+    private final HashMap<IToken, Integer> requestsByCitizen = new HashMap<>();
+    /**
+     * The ID of the building. Needed in the request system to identify it.
+     */
+    private IRequester requester;
     /**
      * The tileEntity of the building.
      */
     private TileEntityColonyBuilding tileEntity;
-
     /**
      * The level of the building.
      */
     private int buildingLevel = 0;
-
     /**
      * The rotation of the building.
      */
     private int rotation = 0;
-
     /**
      * The mirror of the building.
      */
     private boolean isMirrored = false;
-
     /**
      * The building style.
      */
     private String style = "wooden";
-
     /**
      * Made to check if the building has to update the server/client.
      */
     private boolean dirty = false;
-
     /**
      * Corners of the building.
      */
     private int cornerX1;
-
     private int cornerX2;
-
     private int cornerZ1;
-
     private int cornerZ2;
-
+    /**
+     * Priority of the building in the pickUpList.
+     */
+    private int pickUpPriority = 1;
+    /**
+     * Is being gathered right now
+     */
+    private boolean beingGathered = false;
     /**
      * Height of the building.
      */
     private int height;
-
-    /**
-     * List of items the worker should keep.
-     */
-    protected final Map<Predicate<ItemStack>, Integer> keepX = new HashMap<>();
 
     /**
      * Constructor for a AbstractBuilding.
@@ -248,6 +226,8 @@ public abstract class AbstractBuilding
     {
         location = pos;
         this.colony = colony;
+
+        this.requester = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(BuildingBasedRequester.class), this);
     }
 
     /**
@@ -261,10 +241,10 @@ public abstract class AbstractBuilding
      * @param parentBlock   subclass of Block, located in {@link com.minecolonies.coremod.blocks}.
      */
     private static void addMapping(
-            final String name,
-            @NotNull final Class<? extends AbstractBuilding> buildingClass,
-            @NotNull final Class<? extends AbstractBuilding.View> viewClass,
-            @NotNull final Class<? extends AbstractBlockHut> parentBlock)
+                                    final String name,
+                                    @NotNull final Class<? extends AbstractBuilding> buildingClass,
+                                    @NotNull final Class<? extends AbstractBuildingView> viewClass,
+                                    @NotNull final Class<? extends AbstractBlockHut> parentBlock)
     {
         final int buildingHashCode = buildingClass.getName().hashCode();
 
@@ -345,7 +325,7 @@ public abstract class AbstractBuilding
         catch (final RuntimeException ex)
         {
             Log.getLogger().error(String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                    compound.getString(TAG_BUILDING_TYPE), oclass.getName()), ex);
+              compound.getString(TAG_BUILDING_TYPE), oclass.getName()), ex);
             building = null;
         }
 
@@ -367,14 +347,14 @@ public abstract class AbstractBuilding
 
         final String md5 = compound.getString(TAG_SCHEMATIC_MD5);
         final int testLevel = buildingLevel == 0 ? 1 : buildingLevel;
-        final Structures.StructureName sn = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + testLevel);
+        final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + testLevel);
 
         if (!Structures.hasMD5(sn))
         {
-            final Structures.StructureName newStructureName = Structures.getStructureNameByMD5(md5);
+            final StructureName newStructureName = Structures.getStructureNameByMD5(md5);
             if (newStructureName != null
-                    && newStructureName.getPrefix().equals(sn.getPrefix())
-                    && newStructureName.getSchematic().equals(sn.getSchematic()))
+                  && newStructureName.getPrefix().equals(sn.getPrefix())
+                  && newStructureName.getSchematic().equals(sn.getSchematic()))
             {
                 //We found the new location for the schematic, update the style accordingly
                 style = newStructureName.getStyle();
@@ -404,10 +384,89 @@ public abstract class AbstractBuilding
             this.cornerZ2 = compound.getInteger(TAG_CORNER4);
         }
 
-        if(compound.hasKey(TAG_HEIGHT))
+        if (compound.hasKey(TAG_HEIGHT))
         {
             this.height = compound.getInteger(TAG_HEIGHT);
         }
+
+        loadRequestSystemFromNBT(compound);
+
+        if (compound.hasKey(TAG_PRIO))
+        {
+            this.pickUpPriority = compound.getInteger(TAG_PRIO);
+        }
+    }
+
+    /**
+     * Children must return the name of their structure.
+     *
+     * @return StructureProxy name.
+     */
+    public abstract String getSchematicName();
+
+    private void loadRequestSystemFromNBT(NBTTagCompound compound)
+    {
+        if (compound.hasKey(TAG_REQUESTOR_ID))
+        {
+            this.requester = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(TAG_REQUESTOR_ID));
+        }
+        else
+        {
+            this.requester = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(BuildingBasedRequester.class), this);
+        }
+
+        this.openRequests.clear();
+        if (compound.hasKey(TAG_OPEN_REQUESTS))
+        {
+            NBTTagList requests = compound.getTagList(TAG_OPEN_REQUESTS, Constants.NBT.TAG_COMPOUND);
+            NBTUtils.streamCompound(requests).forEach(orc -> {
+                Class clazz;
+                try
+                {
+                    clazz = Class.forName(orc.getString(TAG_TOKEN));
+                }
+                catch (final ClassNotFoundException e)
+                {
+                    Log.getLogger().error("Missing request type from game: " + orc.getString(TAG_TOKEN), e);
+                    return;
+                }
+
+                NBTTagList assigned = orc.getTagList(TAG_ASSIGNMENTS, Constants.NBT.TAG_COMPOUND);
+                Collection<IToken> tokens = NBTUtils.streamCompound(assigned)
+                                              .map(tc -> (IToken) StandardFactoryController.getInstance().deserialize(tc))
+                                              .collect(Collectors.toList());
+
+                openRequests.put(TypeToken.of(clazz), tokens);
+            });
+        }
+
+        this.citizensByRequests.clear();
+        if (compound.hasKey(TAG_CITIZEN_BY_REQUEST))
+        {
+            NBTTagList citizensByRequestList = compound.getTagList(TAG_CITIZEN_BY_REQUEST, Constants.NBT.TAG_COMPOUND);
+            NBTUtils.streamCompound(citizensByRequestList).forEach(cbrc -> processIntegerKeyTokenList(cbrc, citizensByRequests));
+        }
+
+        this.citizensByCompletedRequests.clear();
+        if (compound.hasKey(TAG_CITIZEN_BY_COMPLETED_REQUEST))
+        {
+            NBTTagList citizensByCompletedRequestList = compound.getTagList(TAG_CITIZEN_BY_COMPLETED_REQUEST, Constants.NBT.TAG_COMPOUND);
+            NBTUtils.streamCompound(citizensByCompletedRequestList).forEach(cbrc -> processIntegerKeyTokenList(cbrc, citizensByCompletedRequests));
+        }
+
+        this.requestsByCitizen.clear();
+        this.citizensByRequests.keySet().forEach(citizen -> this.citizensByRequests.get(citizen).forEach(requestToken -> this.requestsByCitizen.put(requestToken, citizen)));
+    }
+
+    public static void processIntegerKeyTokenList(NBTTagCompound compound, Map<Integer, Collection<IToken>> outputMap)
+    {
+        Integer key = compound.getInteger(TAG_TOKEN);
+        NBTTagList assignments = compound.getTagList(TAG_ASSIGNMENTS, Constants.NBT.TAG_COMPOUND);
+        Collection<IToken> tokens = NBTUtils.streamCompound(assignments)
+                                      .map(tc -> (IToken) StandardFactoryController.getInstance().deserialize(tc))
+                                      .collect(Collectors.toList());
+
+        outputMap.put(key, tokens);
     }
 
     /**
@@ -447,11 +506,11 @@ public abstract class AbstractBuilding
             final WorkOrderBuild workOrder = new WorkOrderBuild(building, 1);
             final StructureWrapper wrapper = new StructureWrapper(parent.getWorld(), workOrder.getStructureName());
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-                    = ColonyUtils.calculateCorners(building.getLocation(),
-                    parent.getWorld(),
-                    wrapper,
-                    workOrder.getRotation(parent.getWorld()),
-                    workOrder.isMirrored());
+              = ColonyUtils.calculateCorners(building.getLocation(),
+              parent.getWorld(),
+              wrapper,
+              workOrder.getRotation(parent.getWorld()),
+              workOrder.isMirrored());
             building.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
             building.setHeight(wrapper.getHeight());
             ConstructionTapeHelper.placeConstructionTape(building.getLocation(), corners, parent.getWorld());
@@ -460,13 +519,13 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * executed when a new day start.
+     * Returns the {@link BlockPos} of the current object, also used as ID.
+     *
+     * @return {@link BlockPos} of the current object.
      */
-    public void onWakeUp()
+    public BlockPos getLocation()
     {
-        /**
-         * Buildings override this if required.
-         */
+        return location;
     }
 
     /**
@@ -477,7 +536,7 @@ public abstract class AbstractBuilding
      * @param z1 the first z corner.
      * @param z2 the second z corner.
      */
-    private void setCorners(final int x1, final int x2, final int z1, final int z2)
+    public void setCorners(final int x1, final int x2, final int z1, final int z2)
     {
         this.cornerX1 = x1;
         this.cornerX2 = x2;
@@ -486,13 +545,13 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Get all the corners of the building based on the schematic.
+     * Set the height of the building.
      *
-     * @return the corners.
+     * @param height the height to set.
      */
-    public Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> getCorners()
+    public void setHeight(final int height)
     {
-        return new Tuple<>(new Tuple<>(cornerX1, cornerX2), new Tuple<>(cornerZ1, cornerZ2));
+        this.height = height;
     }
 
     /**
@@ -501,12 +560,12 @@ public abstract class AbstractBuilding
      * @param colony The owning colony.
      * @param id     Chunk coordinate of the block a view is created for.
      * @param buf    The network data.
-     * @return {@link AbstractBuilding.View} created from reading the buf.
+     * @return {@link AbstractBuildingView} created from reading the buf.
      */
     @Nullable
-    public static View createBuildingView(final ColonyView colony, final BlockPos id, @NotNull final ByteBuf buf)
+    public static AbstractBuildingView createBuildingView(final ColonyView colony, final BlockPos id, @NotNull final ByteBuf buf)
     {
-        @Nullable View view = null;
+        @Nullable AbstractBuildingView view = null;
         @Nullable Class<?> oclass = null;
 
         try
@@ -517,7 +576,7 @@ public abstract class AbstractBuilding
             if (oclass != null)
             {
                 final Constructor<?> constructor = oclass.getDeclaredConstructor(ColonyView.class, BlockPos.class);
-                view = (View) constructor.newInstance(colony, id);
+                view = (AbstractBuildingView) constructor.newInstance(colony, id);
             }
         }
         catch (@NotNull NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException exception)
@@ -538,8 +597,8 @@ public abstract class AbstractBuilding
         catch (final IndexOutOfBoundsException ex)
         {
             Log.getLogger().error(
-                    String.format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author",
-                            oclass.getName()), ex);
+              String.format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author",
+                oclass.getName()), ex);
             return null;
         }
 
@@ -547,11 +606,14 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Children must return the name of their structure.
-     *
-     * @return StructureProxy name.
+     * executed when a new day start.
      */
-    public abstract String getSchematicName();
+    public void onWakeUp()
+    {
+        /**
+         * Buildings override this if required.
+         */
+    }
 
     /**
      * Checks if a block matches the current object.
@@ -583,7 +645,7 @@ public abstract class AbstractBuilding
         {
             compound.setString(TAG_BUILDING_TYPE, s);
             BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
-            final Structures.StructureName  structureName = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
+            final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
             if (Structures.hasMD5(structureName))
             {
                 compound.setString(TAG_SCHEMATIC_MD5, Structures.getMD5(structureName.toString()));
@@ -610,16 +672,39 @@ public abstract class AbstractBuilding
 
         compound.setInteger(TAG_HEIGHT, this.height);
 
+        writeRequestSystemToNBT(compound);
+
+        compound.setInteger(TAG_PRIO, this.pickUpPriority);
     }
 
-    /**
-     * Returns the {@link BlockPos} of the current object, also used as ID.
-     *
-     * @return {@link BlockPos} of the current object.
-     */
-    public BlockPos getLocation()
+    private void writeRequestSystemToNBT(NBTTagCompound compound)
     {
-        return location;
+        compound.setTag(TAG_REQUESTOR_ID, StandardFactoryController.getInstance().serialize(this.requester));
+
+        compound.setTag(TAG_OPEN_REQUESTS, this.openRequests.keySet().stream().map(clazz -> {
+            NBTTagCompound requestTypeCompound = new NBTTagCompound();
+
+            requestTypeCompound.setString(TAG_TOKEN, clazz.getRawType().getName());
+            requestTypeCompound.setTag(TAG_ASSIGNMENTS, this.openRequests.get(clazz)
+                                                          .stream().map(token -> StandardFactoryController.getInstance().serialize(token)).collect(NBTUtils.toNBTTagList()));
+
+            return requestTypeCompound;
+        }).collect(NBTUtils.toNBTTagList()));
+
+        compound.setTag(TAG_CITIZEN_BY_REQUEST, writeIntegerKeyTokenListToNBT(this.citizensByRequests));
+        compound.setTag(TAG_CITIZEN_BY_COMPLETED_REQUEST, writeIntegerKeyTokenListToNBT(this.citizensByCompletedRequests));
+    }
+
+    private static NBTTagList writeIntegerKeyTokenListToNBT(Map<Integer, Collection<IToken>> input)
+    {
+        return input.keySet().stream().map(key -> {
+            NBTTagCompound compound = new NBTTagCompound();
+
+            compound.setInteger(TAG_TOKEN, key);
+            compound.setTag(TAG_ASSIGNMENTS, input.get(key).stream().map(token -> StandardFactoryController.getInstance().serialize(token)).collect(NBTUtils.toNBTTagList()));
+
+            return compound;
+        }).collect(NBTUtils.toNBTTagList());
     }
 
     /**
@@ -651,23 +736,6 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Deconstruct the building on destroyed.
-     */
-    public void deconstruct()
-    {
-        for(int x = cornerX1; x < cornerX2; x++)
-        {
-            for(int z = cornerZ1; z < cornerZ2; z++)
-            {
-                for(int y = getLocation().getY() - 1; y < getLocation().getY() + this.height; y++)
-                {
-                    getColony().getWorld().destroyBlock(new BlockPos(x,y,z), false);
-                }
-            }
-        }
-    }
-
-    /**
      * Method to do things when a block is destroyed.
      */
     public void onDestroyed()
@@ -692,7 +760,12 @@ public abstract class AbstractBuilding
      */
     public TileEntityColonyBuilding getTileEntity()
     {
-        if ((tileEntity == null || tileEntity.isInvalid()) && colony.getWorld().getBlockState(location).getBlock() != null)
+        if ((tileEntity == null || tileEntity.isInvalid())
+              && colony != null
+              && colony.getWorld() != null
+              && getLocation() != null
+              && colony.getWorld().getBlockState(getLocation())
+                   != null && colony.getWorld().getBlockState(this.getLocation()).getBlock() instanceof AbstractBlockHut)
         {
             final TileEntity te = getColony().getWorld().getTileEntity(location);
             if (te instanceof TileEntityColonyBuilding)
@@ -710,13 +783,13 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Sets the tile entity for the building.
+     * Get all the corners of the building based on the schematic.
      *
-     * @param te {@link TileEntityColonyBuilding} that will fill the {@link #tileEntity} field.
+     * @return the corners.
      */
-    public void setTileEntity(final TileEntityColonyBuilding te)
+    public Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> getCorners()
     {
-        tileEntity = te;
+        return new Tuple<>(new Tuple<>(cornerX1, cornerX2), new Tuple<>(cornerZ1, cornerZ2));
     }
 
     /**
@@ -728,6 +801,33 @@ public abstract class AbstractBuilding
     public Colony getColony()
     {
         return colony;
+    }
+
+    /**
+     * Sets the tile entity for the building.
+     *
+     * @param te {@link TileEntityColonyBuilding} that will fill the {@link #tileEntity} field.
+     */
+    public void setTileEntity(final TileEntityColonyBuilding te)
+    {
+        tileEntity = te;
+    }
+
+    /**
+     * Deconstruct the building on destroyed.
+     */
+    public void deconstruct()
+    {
+        for (int x = cornerX1; x < cornerX2; x++)
+        {
+            for (int z = cornerZ1; z < cornerZ2; z++)
+            {
+                for (int y = getLocation().getY() - 1; y < getLocation().getY() + this.height; y++)
+                {
+                    getColony().getWorld().destroyBlock(new BlockPos(x, y, z), false);
+                }
+            }
+        }
     }
 
     /**
@@ -813,6 +913,18 @@ public abstract class AbstractBuilding
     {
         // Location doubles as ID.
         return location;
+    }
+
+    /**
+     * Marks the instance and the building dirty.
+     */
+    public final void markDirty()
+    {
+        dirty = true;
+        if (colony != null)
+        {
+            colony.markBuildingsDirty();
+        }
     }
 
     /**
@@ -913,12 +1025,12 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Set the height of the building.
-     * @param height the height to set.
+     * Get the height of the building.
+     * @return the height..
      */
-    public void setHeight(final int height)
+    public int getHeight()
     {
-        this.height = height;
+        return this.height;
     }
 
     /**
@@ -933,11 +1045,11 @@ public abstract class AbstractBuilding
         final WorkOrderBuild workOrder = new WorkOrderBuild(this, newLevel);
         final StructureWrapper wrapper = new StructureWrapper(colony.getWorld(), workOrder.getStructureName());
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-                = ColonyUtils.calculateCorners(this.getLocation(),
-                colony.getWorld(),
-                wrapper,
-                workOrder.getRotation(colony.getWorld()),
-                workOrder.isMirrored());
+          = ColonyUtils.calculateCorners(this.getLocation(),
+          colony.getWorld(),
+          wrapper,
+          workOrder.getRotation(colony.getWorld()),
+          workOrder.isMirrored());
         this.height = wrapper.getHeight();
         this.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
     }
@@ -956,7 +1068,13 @@ public abstract class AbstractBuilding
         buf.writeInt(this.getClass().getName().hashCode());
         buf.writeInt(getBuildingLevel());
         buf.writeInt(getMaxBuildingLevel());
+        buf.writeInt(getPickUpPriority());
         buf.writeInt(getCurrentWorkOrderLevel());
+
+        NBTTagCompound requestSystemCompound = new NBTTagCompound();
+        writeRequestSystemToNBT(requestSystemCompound);
+
+        ByteBufUtils.writeTag(buf, requestSystemCompound);
     }
 
     /**
@@ -987,15 +1105,23 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Marks the instance and the building dirty.
+     * Get the pick up priority of the building.
+     *
+     * @return the priority, an integer.
      */
-    public final void markDirty()
+    public int getPickUpPriority()
     {
-        dirty = true;
-        if (colony != null)
-        {
-            colony.markBuildingsDirty();
-        }
+        return this.pickUpPriority;
+    }
+
+    /**
+     * Returns the mirror of the current building.
+     *
+     * @return boolean value of the mirror.
+     */
+    public boolean isMirrored()
+    {
+        return isMirrored;
     }
 
     /**
@@ -1003,7 +1129,7 @@ public abstract class AbstractBuilding
      * We suppress this warning since this parameter will be used in child classes which override this method.
      *
      * @param block to be registered
-     * @param pos of the block
+     * @param pos   of the block
      */
     @SuppressWarnings("squid:S1172")
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
@@ -1047,88 +1173,58 @@ public abstract class AbstractBuilding
         return new ArrayList<>(containerList);
     }
 
+    /**
+     * Increase or decrease the current pickup priority.
+     *
+     * @param value the new prio to add to.
+     */
+    public void alterPickUpPriority(final int value)
+    {
+        if (this.pickUpPriority + value < 1)
+        {
+            this.pickUpPriority = 1;
+        }
+        else if (this.pickUpPriority + value > MAX_PRIO)
+        {
+            this.pickUpPriority = MAX_PRIO;
+        }
+        else
+        {
+            this.pickUpPriority += value;
+        }
+    }
+
+    /**
+     * Check if a building is being gathered.
+     *
+     * @return true if so.
+     */
+    public boolean isBeingGathered()
+    {
+        return this.beingGathered;
+    }
+
+    /**
+     * Set if a building is being gathered.
+     *
+     * @param gathering value to set.
+     */
+    public void setBeingGathered(final boolean gathering)
+    {
+        this.beingGathered = gathering;
+    }
+
+    /**
+     * Calculates the area of the building.
+     * @param world the world.
+     * @return the AxisAlignedBB.
+     */
+    public AxisAlignedBB getTargetableArea(final World world)
+    {
+        return BuildingUtils.getTargetAbleArea(world, this);
+    }
+
     //------------------------- Starting Required Tools/Item handling -------------------------//
-
-    /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
-    public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
-    {
-        return keepX;
-    }
-
-    /**
-     * Check if the building is receiving the required items.
-     *
-     * @return true if so.
-     */
-    public boolean hasOnGoingDelivery()
-    {
-        return onGoingDelivery;
-    }
-
-    /**
-     * Check if the building is receiving the required items.
-     *
-     * @param valueToSet true or false
-     */
-    public void setOnGoingDelivery(final boolean valueToSet)
-    {
-        this.onGoingDelivery = valueToSet;
-    }
-
-    /**
-     * Check if the worker needs anything. Tool or item.
-     *
-     * @return true if so.
-     */
-    public boolean needsAnything()
-    {
-        return !itemsCurrentlyNeeded.isEmpty() || neededTool != ToolType.NONE;
-    }
-
-    /**
-     * Check if any items are needed at the moment.
-     *
-     * @return true if so.
-     */
-    public boolean areItemsNeeded()
-    {
-        return !itemsCurrentlyNeeded.isEmpty();
-    }
-
-    /**
-     * Check if the worker requires a specific tool.
-     *
-     * @param toolType type of tool to check for
-     * @return true if so.
-     */
-    public boolean needsTool(final IToolType toolType)
-    {
-        return neededTool.equals(toolType);
-    }
-
-    /**
-     * Set which tool the worker needs.
-     *
-     * @param neededTool    which tool is needed
-     * @param minimalLevel which minimal level for the tool
-     */
-    public void setNeedsTool(final IToolType neededTool, final int minimalLevel)
-    {
-        this.neededTool     = neededTool;
-        this.needsToolLevel = minimalLevel;
-    }
-
-    @Override
-    public boolean equals(final Object o)
-    {
-        return o instanceof AbstractBuilding && ((AbstractBuilding) o).getID().equals(this.getID());
-    }
 
     @Override
     public int hashCode()
@@ -1136,83 +1232,10 @@ public abstract class AbstractBuilding
         return (int) (31 * this.getID().toLong());
     }
 
-    /**
-     * Get which tool the worker needs.
-     *
-     * @return which tool is needed
-     */
-    public IToolType getNeedsTool()
+    @Override
+    public boolean equals(final Object o)
     {
-        return neededTool;
-    }
-
-    /**
-     * Get which tool level the worker needs.
-     *
-     * @return the tool level needed by the worker
-     */
-    public int getNeededToolLevel()
-    {
-        return needsToolLevel;
-    }
-
-    /**
-     * Add a neededItem to the currentlyNeededItem list.
-     *
-     * @param stack the stack to add.
-     */
-    public void addNeededItems(@Nullable final ItemStack stack)
-    {
-        if (stack != null)
-        {
-            itemsCurrentlyNeeded.add(stack);
-        }
-    }
-
-    /**
-     * This method makes a copy of the itemsCurrentlyNeeded.
-     * Currently every call to this method needs a copy, if for some reason an outside
-     * class needs this list and a copy isn't desired, a new method should be created,
-     * and this doc should be changed to point to that new method.
-     *
-     * @return a copy of the itemsCurrentlyNeeded list.
-     */
-    public List<ItemStack> getCopyOfNeededItems()
-    {
-        return new ArrayList<>(itemsCurrentlyNeeded);
-    }
-
-    /**
-     * Getter for the first of the currentlyNeededItems.
-     *
-     * @return copy of the itemStack.
-     */
-    @Nullable
-    public ItemStack getFirstNeededItem()
-    {
-        if (itemsCurrentlyNeeded.isEmpty())
-        {
-            return null;
-        }
-        return itemsCurrentlyNeeded.get(0).copy();
-    }
-
-    /**
-     * Clear the currentlyNeededItem list.
-     */
-    public void clearNeededItems()
-    {
-        itemsCurrentlyNeeded.clear();
-    }
-
-    /**
-     * Overwrite the itemsCurrentlyNeededList with a new one.
-     *
-     * @param newList the new list to set.
-     */
-    public void setItemsCurrentlyNeeded(@NotNull final List<ItemStack> newList)
-    {
-        this.itemsCurrentlyNeeded = new ArrayList<>(newList);
+        return o instanceof AbstractBuilding && ((AbstractBuilding) o).getID().equals(this.getID());
     }
 
     /**
@@ -1262,9 +1285,9 @@ public abstract class AbstractBuilding
             if (entry.getKey().test(stack))
             {
                 final ItemStorage kept = ItemStorage.getItemStackOfListMatchingPredicate(localAlreadyKept, entry.getKey());
-                if(kept != null)
+                if (kept != null)
                 {
-                    if(kept.getAmount() >= entry.getValue())
+                    if (kept.getAmount() >= entry.getValue())
                     {
                         return false;
                     }
@@ -1280,6 +1303,18 @@ public abstract class AbstractBuilding
             }
         }
         return false;
+    }
+
+    /**
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @return a list of objects which should be kept.
+     */
+    public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
+    {
+        return keepX;
     }
 
     /**
@@ -1317,16 +1352,6 @@ public abstract class AbstractBuilding
         return InventoryUtils.forceItemStackToProvider(provider, itemStack, (ItemStack stack) -> EntityAIWorkDeliveryman.workerRequiresItem(this, stack, localAlreadyKept));
     }
 
-    /**
-     * Returns the mirror of the current building.
-     *
-     * @return boolean value of the mirror.
-     */
-    public boolean isMirrored()
-    {
-        return isMirrored;
-    }
-
     //------------------------- Ending Required Tools/Item handling -------------------------//
 
     /**
@@ -1337,159 +1362,347 @@ public abstract class AbstractBuilding
         this.isMirrored = !isMirrored;
     }
 
-    /**
-     * The AbstractBuilding View is the client-side representation of a AbstractBuilding.
-     * Views contain the AbstractBuilding's data that is relevant to a Client, in a more client-friendly form.
-     * Mutable operations on a View result in a message to the server to perform the operation.
-     */
-    public static class View
+    //------------------------- !START! RequestSystem handling for minecolonies buildings -------------------------//
+
+    public <R extends IRequestable> IToken createRequest(@NotNull CitizenData citizenData, @NotNull R requested)
     {
-        private final ColonyView colony;
-        @NotNull
-        private final BlockPos   location;
+        IToken requestToken = colony.getRequestManager().createRequest(requester, requested);
 
-        private int buildingLevel    = 0;
-        private int buildingMaxLevel = 0;
-        private int workOrderLevel   = NO_WORK_ORDER;
+        addRequestToMaps(citizenData.getId(), requestToken, TypeToken.of(requested.getClass()));
 
-        /**
-         * Creates a building view.
-         *
-         * @param c ColonyView the building is in.
-         * @param l The location of the building.
-         */
-        protected View(final ColonyView c, @NotNull final BlockPos l)
+        colony.getRequestManager().assignRequest(requestToken);
+
+        markDirty();
+
+        return requestToken;
+    }
+
+    /**
+     * Internal method used to register a new Request to the request maps.
+     * Helper method.
+     *
+     * @param citizenId    The id of the citizen.
+     * @param requestToken The {@link IToken} that is used to represent the request.
+     * @param requested    The class of the type that has been requested eg. {@code ItemStack.class}
+     */
+    private void addRequestToMaps(@NotNull Integer citizenId, @NotNull IToken requestToken, @NotNull TypeToken requested)
+    {
+        if (!openRequests.containsKey(requested))
         {
-            colony = c;
-            location = new BlockPos(l);
+            openRequests.put(requested, new ArrayList<>());
+        }
+        openRequests.get(requested).add(requestToken);
+
+        requestsByCitizen.put(requestToken, citizenId);
+
+        if (!citizensByRequests.containsKey(citizenId))
+        {
+            citizensByRequests.put(citizenId, new ArrayList<>());
+        }
+        citizensByRequests.get(citizenId).add(requestToken);
+    }
+
+    public boolean hasWorkerOpenRequests(@NotNull CitizenData citizen)
+    {
+        return !getOpenRequests(citizen).isEmpty();
+    }
+
+    public ImmutableList<IRequest> getOpenRequests(@NotNull final CitizenData data)
+    {
+        if (!citizensByRequests.containsKey(data.getId()))
+        {
+            return ImmutableList.of();
         }
 
-        /**
-         * Gets the id for this building.
-         *
-         * @return A BlockPos because the building ID is its location.
-         */
-        @NotNull
-        public BlockPos getID()
+        return ImmutableList.copyOf(citizensByRequests.get(data.getId()).stream().map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
+    }
+
+    public boolean hasWorkerOpenRequestsFiltered(@NotNull CitizenData citizen, @NotNull Predicate<IRequest> selectionPredicate)
+    {
+        return getOpenRequests(citizen).stream().anyMatch(selectionPredicate);
+    }
+
+    public <R> boolean hasWorkerOpenRequestsOfType(@NotNull final CitizenData citizenData, final TypeToken<R> requestType)
+    {
+        return !getOpenRequestsOfType(citizenData, requestType).isEmpty();
+    }
+
+    @SuppressWarnings(Suppression.GENERIC_WILDCARD)
+    public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(
+                                                                           @NotNull final CitizenData citizenData,
+                                                                           final TypeToken<R> requestType)
+    {
+        return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
+                                      .filter(request -> {
+                                          Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          return requestTypes.contains(requestType);
+                                      })
+                                      .map(request -> (IRequest<? extends R>) request)
+                                      .iterator());
+    }
+
+    public boolean hasCitizenCompletedRequests(@NotNull final CitizenData data)
+    {
+        return !getCompletedRequests(data).isEmpty();
+    }
+
+    public ImmutableList<IRequest> getCompletedRequests(@NotNull final CitizenData data)
+    {
+        if (!citizensByCompletedRequests.containsKey(data.getId()))
         {
-            // Location doubles as ID
-            return location;
+            return ImmutableList.of();
         }
 
-        /**
-         * Gets the location of this building.
-         *
-         * @return A BlockPos, where this building is.
-         */
-        @NotNull
-        public BlockPos getLocation()
+        return ImmutableList.copyOf(citizensByCompletedRequests.get(data.getId()).stream()
+                                      .map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
+    }
+
+    public <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfType(@NotNull final CitizenData citizenData, final TypeToken<R> requestType)
+    {
+        return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
+                                      .filter(request -> {
+                                          Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          return requestTypes.contains(requestType);
+                                      })
+                                      .map(request -> (IRequest<? extends R>) request)
+                                      .iterator());
+    }
+
+    public <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfTypeFiltered(
+                                                                                        @NotNull final CitizenData citizenData,
+                                                                                        final TypeToken<R> requestType,
+                                                                                        final Predicate<IRequest<? extends R>> filter)
+    {
+        return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
+                                      .filter(request -> {
+                                          Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          return requestTypes.contains(requestType);
+                                      })
+                                      .map(request -> (IRequest<? extends R>) request)
+                                      .filter(filter)
+                                      .iterator());
+    }
+
+    public void markRequestAsAccepted(@NotNull final CitizenData data, @NotNull final IToken token) throws IllegalArgumentException
+    {
+        if (!citizensByCompletedRequests.containsKey(data.getId()) || !citizensByCompletedRequests.get(data.getId()).contains(token))
         {
-            return location;
+            throw new IllegalArgumentException("The given token " + token + " is not known as a completed request waiting for acceptance by the citizen.");
         }
 
-        /**
-         * Gets the ColonyView that this building belongs to.
-         *
-         * @return ColonyView, client side interpretations of Colony.
-         */
-        public ColonyView getColony()
+        citizensByCompletedRequests.get(data.getId()).remove(token);
+        if (citizensByCompletedRequests.get(data.getId()).isEmpty())
         {
-            return colony;
+            citizensByCompletedRequests.remove(data.getId());
         }
 
-        /**
-         * Get the current level of the building.
-         *
-         * @return AbstractBuilding current level.
-         */
-        public int getBuildingLevel()
-        {
-            return buildingLevel;
-        }
+        getColony().getRequestManager().updateRequestState(token, RequestState.RECEIVED);
+        markDirty();
+    }
 
-        /**
-         * Get the max level of the building.
-         *
-         * @return AbstractBuilding max level.
-         */
-        public int getBuildingMaxLevel()
+    public void cancelAllRequestsOfCitizen(@NotNull final CitizenData data)
+    {
+        getOpenRequests(data).forEach(request ->
         {
-            return buildingMaxLevel;
-        }
+            getColony().getRequestManager().updateRequestState(request.getToken(), RequestState.CANCELLED);
 
-        /**
-         * Checks if this building is at its max level.
-         *
-         * @return true if the building is at its max level.
-         */
-        public boolean isBuildingMaxLevel()
-        {
-            return buildingLevel >= buildingMaxLevel;
-        }
-
-        /**
-         * Get the current work order level.
-         *
-         * @return 0 if none, othewise the current level worked on
-         */
-        public int getCurrentWorkOrderLevel()
-        {
-            return workOrderLevel;
-        }
-
-        /**
-         * Get the current work order level.
-         *
-         * @return 0 if none, othewise the current level worked on
-         */
-        public boolean hasWorkOrder()
-        {
-            return workOrderLevel != NO_WORK_ORDER;
-        }
-
-        public boolean isBuilding()
-        {
-            return workOrderLevel != NO_WORK_ORDER && workOrderLevel > buildingLevel;
-        }
-
-        public boolean isRepairing()
-        {
-            return workOrderLevel != NO_WORK_ORDER && workOrderLevel == buildingLevel;
-        }
-
-        /**
-         * Open the associated BlockOut window for this building.
-         */
-        public void openGui()
-        {
-            @Nullable final Window window = getWindow();
-            if (window != null)
+            if (openRequests.get(request.getRequest().getClass()).isEmpty())
             {
-                window.open();
+                openRequests.remove(request.getRequest().getClass());
             }
+            else
+            {
+                openRequests.get(request.getRequest().getClass()).remove(request.getToken());
+            }
+
+            requestsByCitizen.remove(request.getToken());
+        });
+
+        getCompletedRequests(data).forEach(request -> getColony().getRequestManager().updateRequestState(request.getToken(), RequestState.RECEIVED));
+
+        if (citizensByRequests.containsKey(data.getId()))
+        {
+            citizensByRequests.remove(data.getId());
         }
 
-        /**
-         * Will return the window if this building has an associated BlockOut window.
-         *
-         * @return BlockOut window.
-         */
-        @Nullable
-        public Window getWindow()
+        if (citizensByCompletedRequests.containsKey(data.getId()))
         {
-            return null;
+            citizensByCompletedRequests.remove(data.getId());
         }
 
-        /**
-         * Read this view from a {@link ByteBuf}.
-         *
-         * @param buf The buffer to read this view from.
-         */
-        public void deserialize(@NotNull final ByteBuf buf)
+        markDirty();
+    }
+
+    /**
+     * Overrule the next open request with a give stack.
+     * <p>
+     * We squid:s135 which takes care that there are not too many continue statements in a loop since it makes sense here
+     * out of performance reasons.
+     *
+     * @param stack the stack.
+     */
+    @SuppressWarnings("squid:S135")
+    public void overruleNextOpenRequestWithStack(@NotNull final ItemStack stack)
+    {
+        if (ItemStackUtils.isEmpty(stack))
         {
-            buildingLevel = buf.readInt();
-            buildingMaxLevel = buf.readInt();
-            workOrderLevel = buf.readInt();
+            return;
+        }
+
+        for (int citizenId : citizensByRequests.keySet())
+        {
+            final CitizenData data = getColony().getCitizen(citizenId);
+
+            if (data == null)
+            {
+                continue;
+            }
+
+            final IRequest<? extends IDeliverable> target = getOpenRequestsOfTypeFiltered(data, TypeToken.of(IDeliverable.class),
+              request -> request.getRequest().matches(stack)).stream().findFirst().orElse(null);
+
+            if (target == null)
+            {
+                continue;
+            }
+
+            getColony().getRequestManager().overruleRequest(target.getToken(), stack.copy());
+            return;
         }
     }
+
+    public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
+                                                                                   @NotNull final CitizenData citizenData,
+                                                                                   final TypeToken<R> requestType,
+                                                                                   final Predicate<IRequest<? extends R>> filter)
+    {
+        return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
+                                      .filter(request -> {
+                                          Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          return requestTypes.contains(requestType);
+                                      })
+                                      .map(request -> (IRequest<? extends R>) request)
+                                      .filter(filter)
+                                      .iterator());
+    }
+
+    public boolean overruleNextOpenRequestOfCitizenWithStack(@NotNull final CitizenData citizenData, @NotNull final ItemStack stack)
+    {
+        if (ItemStackUtils.isEmpty(stack))
+        {
+            return false;
+        }
+
+        final IRequest target = getOpenRequestsOfTypeFiltered(citizenData, TypeToken.of(IDeliverable.class), request -> request.getRequest().matches(stack)).stream()
+                                  .findFirst()
+                                  .orElse(null);
+
+        if (target == null)
+        {
+            return false;
+        }
+
+        getColony().getRequestManager().overruleRequest(target.getToken(), stack.copy());
+        return true;
+    }
+
+    @Override
+    public IToken getRequesterId()
+    {
+        return getToken();
+    }
+
+    @Override
+    public IToken getToken()
+    {
+        return requester.getRequesterId();
+    }
+
+    @Override
+    public ImmutableCollection<IRequestResolver> getResolvers()
+    {
+        return ImmutableList.of(new BuildingRequestResolver(getRequester().getRequesterLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(
+          TypeConstants.ITOKEN)));
+    }
+
+    public IRequester getRequester()
+    {
+        return requester;
+    }
+
+    @NotNull
+    @Override
+    public ILocation getRequesterLocation()
+    {
+        return getRequester().getRequesterLocation();
+    }
+
+    @NotNull
+    public void onRequestComplete(@NotNull final IToken token)
+    {
+        Integer citizenThatRequested = requestsByCitizen.remove(token);
+        citizensByRequests.get(citizenThatRequested).remove(token);
+
+        if (citizensByRequests.get(citizenThatRequested).isEmpty())
+        {
+            citizensByRequests.remove(citizenThatRequested);
+        }
+
+        IRequest requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
+        openRequests.get(TypeToken.of(requestThatCompleted.getRequest().getClass())).remove(token);
+
+        if (openRequests.get(TypeToken.of(requestThatCompleted.getRequest().getClass())).isEmpty())
+        {
+            openRequests.remove(TypeToken.of(requestThatCompleted.getRequest().getClass()));
+        }
+
+        if (!citizensByCompletedRequests.containsKey(citizenThatRequested))
+        {
+            citizensByCompletedRequests.put(citizenThatRequested, new ArrayList<>());
+        }
+        citizensByCompletedRequests.get(citizenThatRequested).add(token);
+
+        markDirty();
+    }
+
+    @NotNull
+    public void onRequestCancelled(@NotNull final IToken token)
+    {
+        Integer citizenThatRequested = requestsByCitizen.remove(token);
+        citizensByRequests.get(citizenThatRequested).remove(token);
+
+        if (citizensByRequests.get(citizenThatRequested).isEmpty())
+        {
+            citizensByRequests.remove(citizenThatRequested);
+        }
+
+        IRequest requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
+        openRequests.get(TypeToken.of(requestThatCompleted.getRequest().getClass())).remove(token);
+
+        if (openRequests.get(TypeToken.of(requestThatCompleted.getRequest().getClass())).isEmpty())
+        {
+            openRequests.remove(TypeToken.of(requestThatCompleted.getRequest().getClass()));
+        }
+
+        //Check if the citizen did not die.
+        if (getColony().getCitizen(citizenThatRequested) != null)
+            getColony().getCitizen(citizenThatRequested).onRequestCancelled(token);
+
+        markDirty();
+    }
+
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName(@NotNull final IToken token)
+    {
+        if (!requestsByCitizen.containsKey(token))
+        {
+            return new TextComponentString(this.getSchematicName() + " <UNKNOWN>");
+        }
+
+        Integer citizenData = requestsByCitizen.get(token);
+        return new TextComponentString(this.getSchematicName() + " " + getColony().getCitizen(citizenData).getName());
+    }
+
+    //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//
 }

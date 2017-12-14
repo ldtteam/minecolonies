@@ -22,8 +22,8 @@ import java.util.List;
 public class RaidAllTonightCommand extends AbstractSingleCommand
 {
 
-    public static final  String              DESC                       = "raid-tonight";
-    private static final TextComponentString SUCCESSFUL                 = new TextComponentString("Command Successful");
+    public static final  String              DESC       = "raid-tonight";
+    private static final TextComponentString SUCCESSFUL = new TextComponentString("Command Successful");
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -43,14 +43,14 @@ public class RaidAllTonightCommand extends AbstractSingleCommand
     }
 
     @Override
-    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
-    {
-        return colony.getPermissions().getRank(player).equals(Rank.OWNER);
-    }
-
-    @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
+        if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
+        {
+            sender.sendMessage(new TextComponentString("Must be OP to use command"));
+            return;
+        }
+
         for (final Colony colony : ColonyManager.getColonies())
         {
             colony.setWillRaidTonight(true);

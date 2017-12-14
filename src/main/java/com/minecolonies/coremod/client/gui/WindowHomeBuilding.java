@@ -40,16 +40,14 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
      * Id to identify the list of the citizen in the view.
      */
     private static final String LIST_CITIZEN = "assignedCitizen";
-
-    /**
-     * The list of citizen assigned to this hut.
-     */
-    private ScrollingList citizen;
-
     /**
      * The building the view is relates to.
      */
     private final BuildingHome.View home;
+    /**
+     * The list of citizen assigned to this hut.
+     */
+    private ScrollingList citizen;
 
     /**
      * Creates the Window object.
@@ -63,20 +61,6 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
         super.registerButton(BUTTON_ASSIGN, this::assignClicked);
         super.registerButton(BUTTON_REMOVE, this::removeClicked);
         this.home = building;
-    }
-
-    /**
-     * Refresh the view.
-     */
-    private void refreshView()
-    {
-        final Button buttonAssign = findPaneOfTypeByID(BUTTON_ASSIGN, Button.class);
-
-        final int sparePlaces = building.getBuildingLevel() - building.getResidents().size();
-        buttonAssign.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN, sparePlaces));
-        buttonAssign.setEnabled(sparePlaces > 0 && building.getColony().isManualHousing());
-
-        citizen.refreshElementPanes();
     }
 
     @Override
@@ -97,7 +81,7 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final CitizenDataView citizenDataView = home.getColony().getCitizen((home.getResidents().get(index)));
-                if(citizenDataView!= null)
+                if (citizenDataView != null)
                 {
                     rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(citizenDataView.getName());
                     rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class).setEnabled(isManualHousing);
@@ -109,9 +93,21 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
     }
 
     /**
+     * Refresh the view.
+     */
+    private void refreshView()
+    {
+        final Button buttonAssign = findPaneOfTypeByID(BUTTON_ASSIGN, Button.class);
+
+        final int sparePlaces = building.getBuildingLevel() - building.getResidents().size();
+        buttonAssign.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN, sparePlaces));
+        buttonAssign.setEnabled(sparePlaces > 0 && building.getColony().isManualHousing());
+
+        citizen.refreshElementPanes();
+    }
+
+    /**
      * Action when an assign button is clicked.
-     *
-     * @param button the clicked button.
      */
     private void assignClicked()
     {

@@ -2,27 +2,37 @@ package com.minecolonies.coremod.colony.requestsystem.requests;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.requestsystem.IRequestManager;
-import com.minecolonies.api.colony.requestsystem.RequestState;
+import com.google.common.collect.Lists;
+import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHandler;
 import com.minecolonies.api.util.Log;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Abstract skeleton implementation of a request.
  *
  * @param <R> The type of request this is.
  */
-public abstract class AbstractRequest<R> implements IRequest<R>
+public abstract class AbstractRequest<R extends IRequestable> implements IRequest<R>
 {
 
     @NotNull
@@ -44,9 +54,10 @@ public abstract class AbstractRequest<R> implements IRequest<R>
      * We don't want this field static.
      */
     @NotNull
-    private final ItemStack deliveryStack = ItemStackUtils.EMPTY;
+    private ItemStack deliveryStack = ItemStackUtils.EMPTY;
+    private ImmutableList<ItemStack> itemExamples;
 
-    AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final R requested)
+    protected AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final R requested)
     {
         this.requester = requester;
         this.token = token;
@@ -55,7 +66,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
         children = new ArrayList<>();
     }
 
-    AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final R requested)
+    protected AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final R requested)
     {
         this.requester = requester;
         this.token = token;
@@ -74,9 +85,9 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     @NotNull
     @Override
     @SuppressWarnings("unchecked")
-    public Class<? extends R> getRequestType()
+    public TypeToken<? extends R> getRequestType()
     {
-        return (Class<? extends R>) getRequest().getClass();
+        return TypeToken.of((Class<? extends R>) getRequest().getClass());
     }
 
     /**
@@ -128,7 +139,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     public void setState(@NotNull final IRequestManager manager, @NotNull final RequestState state)
     {
         this.state = state;
-        Log.getLogger().debug("Updated state from: " + getToken() + " to: " + state);
+        LogHandler.log("Updated state from: " + getToken() + " to: " + state);
 
         if (this.hasParent() && this.getParent() != null)
         {
@@ -239,7 +250,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     public <T extends IToken> void addChild(@NotNull final T child)
     {
         this.children.add(child);
-        Log.getLogger().debug("Added child:" + child + " to: " + getToken());
+        LogHandler.log("Added child:" + child + " to: " + getToken());
     }
 
     /**
@@ -279,7 +290,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     public <T extends IToken> void removeChild(@NotNull final T child)
     {
         this.children.remove(child);
-        Log.getLogger().debug("Removed child: " + child + " from: " + getToken());
+        LogHandler.log("Removed child: " + child + " from: " + getToken());
     }
 
     /**
@@ -353,7 +364,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     {
         if (!this.children.contains(child))
         {
-            //WHAT? Log and return.
+            //WHAT? log and return.
             Log.getLogger().warn("The given child:" + child + " could not update the parent:" + getToken() + " as it was not registered.");
         }
 
@@ -363,12 +374,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
             if (childRequest.getState() == RequestState.IN_PROGRESS && getState().ordinal() < RequestState.IN_PROGRESS.ordinal())
             {
                 setState(manager, RequestState.IN_PROGRESS);
-                Log.getLogger().debug("First child entering progression: " + child + " setting progression state for: " + getToken());
-            }
-            if (childRequest.getState() == RequestState.COMPLETED)
-            {
-                this.removeChild(child);
-                Log.getLogger().debug("Removed child:" + child + " from: " + getToken() + " as it was completed!");
+                LogHandler.log("First child entering progression: " + child + " setting progression state for: " + getToken());
             }
         }
         catch (final IllegalArgumentException ex)
@@ -397,11 +403,67 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     @Override
     public ItemStack getDelivery()
     {
-        if (getResult() instanceof ItemStack)
+        if (getRequest() instanceof IDeliverable)
         {
-            return (ItemStack) getResult();
+            return ((IDeliverable) getRequest()).getResult();
         }
 
         return deliveryStack;
+    }
+
+    @Override
+    public void setDelivery(@Nullable final ItemStack delivery)
+    {
+        if (getRequest() instanceof IDeliverable)
+        {
+            ((IDeliverable) getRequest()).setResult(delivery);
+        }
+        else
+        {
+            this.deliveryStack = delivery;
+        }
+    }
+
+    @NotNull
+    @Override
+    public ITextComponent getLongDisplayString()
+    {
+        return getShortDisplayString();
+    }
+
+    @NotNull
+    @Override
+    public ResourceLocation getDisplayIcon()
+    {
+        return new ResourceLocation("missingno");
+    }
+
+    @Override
+    public List<ItemStack> getDisplayStacks()
+    {
+        if (!(getRequest() instanceof IDeliverable))
+            return Lists.newArrayList();
+
+        IDeliverable deliverable = (IDeliverable) getRequest();
+
+        if (itemExamples == null)
+        {
+            itemExamples =
+              ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
+                  NonNullList<ItemStack> stacks = NonNullList.create();
+                  try
+                  {
+                      item.getSubItems(CreativeTabs.SEARCH, stacks);
+                  }
+                  catch (Exception ex)
+                  {
+                      Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
+                  }
+
+                  return stacks.stream().filter(deliverable::matches);
+              }).collect(Collectors.toList()));
+        }
+
+        return itemExamples;
     }
 }

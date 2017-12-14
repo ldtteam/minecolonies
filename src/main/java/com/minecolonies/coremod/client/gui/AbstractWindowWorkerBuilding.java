@@ -117,6 +117,6 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
         findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class)
           .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.workerLevel", workerLevel));
 
-        findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabelText("xxxxxxxx");
+        findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabelText(building.getBuildingDmPrio() + "/10");
     }
 }

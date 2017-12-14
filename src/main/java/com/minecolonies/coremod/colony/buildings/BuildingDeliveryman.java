@@ -1,5 +1,10 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -7,6 +12,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -23,7 +29,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
     /**
      * Building the deliveryman will deliver somethingTo
      */
-    private AbstractBuilding buildingToDeliver;
+    private ILocation buildingToDeliver;
 
     /**
      * Instantiates a new warehouse building.
@@ -41,7 +47,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
      *
      * @return the building.
      */
-    public AbstractBuilding getBuildingToDeliver()
+    public ILocation getBuildingToDeliver()
     {
         return this.buildingToDeliver;
     }
@@ -51,7 +57,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
      *
      * @param building building to deliver to.
      */
-    public void setBuildingToDeliver(final AbstractBuilding building)
+    public void setBuildingToDeliver(final ILocation building)
     {
         this.buildingToDeliver = building;
     }
@@ -66,7 +72,20 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
     @Override
     public int getMaxBuildingLevel()
     {
-        return 5;
+        return CONST_DEFAULT_MAX_BUILDING_LEVEL;
+    }
+
+    @Override
+    public ImmutableCollection<IRequestResolver> getResolvers()
+    {
+        ImmutableCollection<IRequestResolver> supers = super.getResolvers();
+        ImmutableList.Builder<IRequestResolver> builder = ImmutableList.builder();
+
+        builder.addAll(supers);
+        builder.add(new DeliveryRequestResolver(getRequester().getRequesterLocation(),
+                                                 getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+
+        return builder.build();
     }
 
     @NotNull

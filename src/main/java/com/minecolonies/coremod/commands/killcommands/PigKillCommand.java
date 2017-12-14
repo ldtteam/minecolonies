@@ -11,7 +11,6 @@ public class PigKillCommand extends AbstractKillCommand<EntityPig>
 
     /**
      * Initialize this SubCommand with it's parents.
-     *
      */
     public PigKillCommand()
     {

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  * Class used to represent deliveries inside the request system.
  * This class can be used to request a getDelivery of a given ItemStack from a source to a target.
  */
-public class Delivery
+public class Delivery implements IRequestable
 {
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
@@ -35,13 +35,15 @@ public class Delivery
     }
 
     @NotNull
-    public static Delivery deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound compound)
+    public static NBTTagCompound serialize(@NotNull final IFactoryController controller, final Delivery delivery)
     {
-        final ILocation start = controller.deserialize(compound.getCompoundTag(NBT_START));
-        final ILocation target = controller.deserialize(compound.getCompoundTag(NBT_TARGET));
-        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_STACK));
+        final NBTTagCompound compound = new NBTTagCompound();
 
-        return new Delivery(start, target, stack);
+        compound.setTag(NBT_START, controller.serialize(delivery.getStart()));
+        compound.setTag(NBT_TARGET, controller.serialize(delivery.getTarget()));
+        compound.setTag(NBT_STACK, delivery.getStack().serializeNBT());
+
+        return compound;
     }
 
     @NotNull
@@ -51,15 +53,9 @@ public class Delivery
     }
 
     @NotNull
-    public NBTTagCompound serialize(@NotNull final IFactoryController controller)
+    public ILocation getTarget()
     {
-        final NBTTagCompound compound = new NBTTagCompound();
-
-        compound.setTag(NBT_START, controller.serialize(getStack()));
-        compound.setTag(NBT_TARGET, controller.serialize(getTarget()));
-        compound.setTag(NBT_STACK, getStack().serializeNBT());
-
-        return compound;
+        return target;
     }
 
     @NotNull
@@ -69,8 +65,12 @@ public class Delivery
     }
 
     @NotNull
-    public ILocation getTarget()
+    public static Delivery deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound compound)
     {
-        return target;
+        final ILocation start = controller.deserialize(compound.getCompoundTag(NBT_START));
+        final ILocation target = controller.deserialize(compound.getCompoundTag(NBT_TARGET));
+        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_STACK));
+
+        return new Delivery(start, target, stack);
     }
 }

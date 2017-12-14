@@ -35,32 +35,32 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     /**
      * The amount of xp the entity gains per block mined.
      */
-    public static final double XP_PER_BLOCK         = 0.05D;
+    public static final double XP_PER_BLOCK = 0.05D;
 
     /**
      * The percentage of time needed if we are one level higher.
      */
-    private static final double LEVEL_MODIFIER       = 0.85D;
+    private static final double LEVEL_MODIFIER = 0.85D;
 
     /**
      * The minimum range the builder has to reach in order to construct or clear.
      */
-    private static final int    MIN_WORKING_RANGE    = 12;
+    private static final int MIN_WORKING_RANGE = 12;
 
     /**
      * Range around the worker to pickup items.
      */
-    private static final int   ITEM_PICKUP_RANGE       = 3;
+    private static final int ITEM_PICKUP_RANGE = 3;
 
     /**
      * Ticks to wait until discovering that is stuck.
      */
-    private static final int   STUCK_WAIT_TICKS        = 20;
+    private static final int STUCK_WAIT_TICKS = 20;
 
     /**
      * The amount of time to wait while walking to items.
      */
-    private static final int   WAIT_WHILE_WALKING      = 5;
+    private static final int WAIT_WHILE_WALKING = 5;
 
     /**
      * Horizontal range in which the worker picks up items.
@@ -75,13 +75,13 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     /**
      * Number of ticks the worker is standing still.
      */
-    private              int   stillTicks              = 0;
+    private int stillTicks = 0;
 
     /**
      * Used to store the path index
      * to check if the worker is still walking.
      */
-    private              int   previousIndex           = 0;
+    private int previousIndex = 0;
 
     /**
      * Positions of all items that have to be collected.
@@ -200,7 +200,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         final ItemStack tool = worker.getHeldItemMainhand();
 
         if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.BEDROCK
-                && curBlock.getHarvestTool(curBlock.getDefaultState()) != null)
+              && curBlock.getHarvestTool(curBlock.getDefaultState()) != null)
         {
             Log.getLogger().info(String.format(
               "ForgeHook not in sync with EfficientTool for %s and %s\n"
@@ -223,11 +223,11 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     private void triggerMinedBlock(@NotNull final BlockPos blockToMine)
     {
         if (world.getBlockState(blockToMine).getBlock() == (Blocks.COAL_ORE)
-                || world.getBlockState(blockToMine).getBlock() == (Blocks.IRON_ORE)
-                || world.getBlockState(blockToMine).getBlock() == (Blocks.LAPIS_ORE)
-                || world.getBlockState(blockToMine).getBlock() == (Blocks.GOLD_ORE)
-                || world.getBlockState(blockToMine).getBlock() == (Blocks.REDSTONE_ORE)
-                || world.getBlockState(blockToMine).getBlock() == (Blocks.EMERALD_ORE))
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.IRON_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.LAPIS_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.GOLD_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.REDSTONE_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.EMERALD_ORE))
         {
             this.getOwnBuilding().getColony().incrementStatistic("ores");
         }
@@ -282,15 +282,16 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     /**
      * Search for all items around the worker.
      * and store them in the items list.
+     *
      * @param boundingBox the area to search.
      */
     public void searchForItems(final AxisAlignedBB boundingBox)
     {
         items = world.getEntitiesWithinAABB(EntityItem.class, boundingBox)
-                .stream()
-                .filter(item -> item != null && !item.isDead)
-                .map(BlockPosUtil::fromEntity)
-                .collect(Collectors.toList());
+                  .stream()
+                  .filter(item -> item != null && !item.isDead)
+                  .map(BlockPosUtil::fromEntity)
+                  .collect(Collectors.toList());
     }
 
     /**
@@ -326,29 +327,11 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         {
             //Skip this item
             worker.getNavigator().clearPath();
-            if(items != null && !items.isEmpty())
+            if (items != null && !items.isEmpty())
             {
                 items.remove(0);
             }
         }
-    }
-
-    /**
-     * Reset the gathering items to null.
-     */
-    public void resetGatheringItems()
-    {
-        items = null;
-    }
-
-    /**
-     * Get the items to gather list.
-     * @return a copy of it.
-     */
-    @Nullable
-    public List<BlockPos> getItemsForPickUp()
-    {
-        return items == null ? null : new ArrayList<>(items);
     }
 
     /**
@@ -372,5 +355,24 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         }
 
         return items.remove(index);
+    }
+
+    /**
+     * Reset the gathering items to null.
+     */
+    public void resetGatheringItems()
+    {
+        items = null;
+    }
+
+    /**
+     * Get the items to gather list.
+     *
+     * @return a copy of it.
+     */
+    @Nullable
+    public List<BlockPos> getItemsForPickUp()
+    {
+        return items == null ? null : new ArrayList<>(items);
     }
 }

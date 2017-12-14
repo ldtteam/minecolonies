@@ -34,31 +34,31 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     /**
      * String to store the existing time to NBT.
      */
-    private static final String TAG_TIME      = "time";
+    private static final String TAG_TIME = "time";
 
     /**
      * The amount of EXP to drop on entity death.
      */
     private static final int BARBARIAN_EXP_DROP = 1;
 
-    private static final int    BARBARIAN_HORDE_DIFFICULTY_FIVE = 5;
+    private static final int BARBARIAN_HORDE_DIFFICULTY_FIVE = 5;
 
     /**
      * Values used to choose whether or not to play sound
      */
-    private static final int    OUT_OF_ONE_HUNDRED              = 100;
+    private static final int OUT_OF_ONE_HUNDRED = 100;
 
-    private static final int    ONE                             = 1;
-    
+    private static final int ONE = 1;
+
     /**
      * Values used for sword effect.
      */
-    private static final Potion SPEED_EFFECT                    = Potion.getPotionById(1);
-    private static final int    TIME_TO_COUNTDOWN               = 240;
-    private static final int    COUNTDOWN_SECOND_MULTIPLIER     = 4;
-    private static final int    SPEED_EFFECT_DISTANCE           = 7;
-    private static final int    SPEED_EFFECT_DURATION           = 160;
-    private static final int    SPEED_EFFECT_MULTIPLIER         = 2;
+    private static final Potion SPEED_EFFECT                = Potion.getPotionById(1);
+    private static final int    TIME_TO_COUNTDOWN           = 240;
+    private static final int    COUNTDOWN_SECOND_MULTIPLIER = 4;
+    private static final int    SPEED_EFFECT_DISTANCE       = 7;
+    private static final int    SPEED_EFFECT_DURATION       = 160;
+    private static final int    SPEED_EFFECT_MULTIPLIER     = 2;
 
     /**
      * Amount of ticks to despawn the barbarian.
@@ -74,22 +74,18 @@ public abstract class AbstractEntityBarbarian extends EntityMob
      * Sets the barbarians target colony on spawn Thus it never changes.
      */
     private final Colony colony = ColonyManager.getClosestColony(CompatibilityUtils.getWorld(this), this.getPosition());
-
-    /**
-     * Current count of ticks.
-     */
-    private int currentCount = 0;
-
-    /**
-     * The world time when the barbarian spawns.
-     */
-    private long worldTimeAtSpawn = 0;
-
     /**
      * Random object.
      */
     private final Random random = new Random();
-
+    /**
+     * Current count of ticks.
+     */
+    private int currentCount = 0;
+    /**
+     * The world time when the barbarian spawns.
+     */
+    private long worldTimeAtSpawn = 0;
     /**
      * The current tick since creation.
      */
@@ -144,19 +140,20 @@ public abstract class AbstractEntityBarbarian extends EntityMob
         return BarbarianSpawnUtils.getBarbarianLootTable(this);
     }
 
+    @Override
+    protected boolean canDespawn()
+    {
+        return shouldDespawn() || colony == null;
+    }
+
     /**
      * Should the barbs despawn.
+     *
      * @return true if so.
      */
     private boolean shouldDespawn()
     {
         return worldTimeAtSpawn != 0 && (world.getTotalWorldTime() - worldTimeAtSpawn) >= TICKS_TO_DESPAWN;
-    }
-
-    @Override
-    protected boolean canDespawn()
-    {
-        return shouldDespawn() || colony == null;
     }
 
     /**
@@ -182,21 +179,21 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     @Override
     public void onLivingUpdate()
     {
-        if(currentTick % (random.nextInt(EVERY_X_TICKS) + 1) == 0)
+        if (currentTick % (random.nextInt(EVERY_X_TICKS) + 1) == 0)
         {
-            if(worldTimeAtSpawn == 0)
+            if (worldTimeAtSpawn == 0)
             {
                 worldTimeAtSpawn = world.getTotalWorldTime();
             }
 
-            if(shouldDespawn())
+            if (shouldDespawn())
             {
                 this.setDead();
             }
 
             if (this.getHeldItemMainhand() != null && SPEED_EFFECT != null && this.getHeldItemMainhand().getItem() instanceof ItemChiefSword
-                    && Configurations.gameplay.barbarianHordeDifficulty >= BARBARIAN_HORDE_DIFFICULTY_FIVE
-                    && currentCount <= 0)
+                  && Configurations.gameplay.barbarianHordeDifficulty >= BARBARIAN_HORDE_DIFFICULTY_FIVE
+                  && currentCount <= 0)
             {
                 final Stream<AbstractEntityBarbarian> barbarians = BarbarianUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE).stream();
                 barbarians.forEach(entity -> entity.addPotionEffect(new PotionEffect(SPEED_EFFECT, SPEED_EFFECT_DURATION, SPEED_EFFECT_MULTIPLIER)));
@@ -210,20 +207,6 @@ public abstract class AbstractEntityBarbarian extends EntityMob
         currentTick++;
 
         super.onLivingUpdate();
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(final NBTTagCompound compound)
-    {
-        compound.setLong(TAG_TIME, worldTimeAtSpawn);
-        return super.writeToNBT(compound);
-    }
-
-    @Override
-    public void readFromNBT(final NBTTagCompound compound)
-    {
-        worldTimeAtSpawn = compound.getLong(TAG_TIME);
-        super.readFromNBT(compound);
     }
 
     @Override
@@ -243,6 +226,20 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     {
         super.applyEntityAttributes();
         BarbarianSpawnUtils.setBarbarianAttributes(this, colony);
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(final NBTTagCompound compound)
+    {
+        compound.setLong(TAG_TIME, worldTimeAtSpawn);
+        return super.writeToNBT(compound);
+    }
+
+    @Override
+    public void readFromNBT(final NBTTagCompound compound)
+    {
+        worldTimeAtSpawn = compound.getLong(TAG_TIME);
+        super.readFromNBT(compound);
     }
 
     @Override

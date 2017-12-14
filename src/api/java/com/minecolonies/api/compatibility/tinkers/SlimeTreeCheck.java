@@ -14,6 +14,7 @@ import slimeknights.tconstruct.world.block.BlockSlimeGrass;
 public final class SlimeTreeCheck extends SlimeTreeProxy
 {
     private static final String TCONSTRUCT = "tconstruct";
+
     /**
      * Check if block is slime block.
      *
@@ -23,50 +24,6 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     public static boolean isSlimeBlock(@NotNull final Block block)
     {
         return new SlimeTreeCheck().checkForTinkersSlimeBlock(block);
-    }
-
-    /**
-     * Check if block is slime leaf.
-     *
-     * @param block the block.
-     * @return if the block is a slime leaf.
-     */
-    public static boolean isSlimeLeaf(@NotNull final Block block)
-    {
-        return new SlimeTreeCheck().checkForTinkersSlimeLeaves(block);
-    }
-
-    /**
-     * Check if block is slime sapling.
-     *
-     * @param block the block.
-     * @return if the block is a slime sapling.
-     */
-    public static boolean isSlimeSapling(@NotNull final Block block)
-    {
-        return new SlimeTreeCheck().checkForTinkersSlimeSapling(block);
-    }
-
-    /**
-     * Check if block is slime sapling.
-     *
-     * @param block the block.
-     * @return if the block is a slime sapling.
-     */
-    public static boolean isSlimeDirtOrGrass(@NotNull final Block block)
-    {
-        return new SlimeTreeCheck().checkForTinkersSlimeDirtOrGrass(block);
-    }
-
-    /**
-     * Get the Slime leaf variant.
-     *
-     * @param leaf the leaf.
-     * @return the variant.
-     */
-    public static int getLeafVariant(@NotNull final IBlockState leaf)
-    {
-        return new SlimeTreeCheck().getTinkersLeafVariant(leaf);
     }
 
     /**
@@ -132,5 +89,49 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     public int getTinkersLeafVariant(@NotNull final IBlockState leaf)
     {
         return leaf.getValue(BlockSlimeGrass.FOLIAGE).getMeta();
+    }
+
+    /**
+     * Check if block is slime leaf.
+     *
+     * @param block the block.
+     * @return if the block is a slime leaf.
+     */
+    public static boolean isSlimeLeaf(@NotNull final Block block)
+    {
+        return new SlimeTreeCheck().checkForTinkersSlimeLeaves(block);
+    }
+
+    /**
+     * Check if block is slime sapling.
+     *
+     * @param block the block.
+     * @return if the block is a slime sapling.
+     */
+    public static boolean isSlimeSapling(@NotNull final Block block)
+    {
+        return new SlimeTreeCheck().checkForTinkersSlimeSapling(block);
+    }
+
+    /**
+     * Check if block is slime sapling.
+     *
+     * @param block the block.
+     * @return if the block is a slime sapling.
+     */
+    public static boolean isSlimeDirtOrGrass(@NotNull final Block block)
+    {
+        return new SlimeTreeCheck().checkForTinkersSlimeDirtOrGrass(block);
+    }
+
+    /**
+     * Get the Slime leaf variant.
+     *
+     * @param leaf the leaf.
+     * @return the variant.
+     */
+    public static int getLeafVariant(@NotNull final IBlockState leaf)
+    {
+        return new SlimeTreeCheck().getTinkersLeafVariant(leaf);
     }
 }

@@ -46,14 +46,14 @@ public class DoRaidNowCommand extends AbstractSingleCommand
     }
 
     @Override
-    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
-    {
-        return colony.getPermissions().getRank(player).equals(Rank.OWNER);
-    }
-
-    @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
+        if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
+        {
+            sender.sendMessage(new TextComponentString("Must be OP to use command"));
+            return;
+        }
+
         if (args.length != 0)
         {
             final Colony colony = ColonyManager.getColony(Integer.parseInt(args[0]));
@@ -63,7 +63,7 @@ public class DoRaidNowCommand extends AbstractSingleCommand
                 return;
             }
 
-            MobEventsUtils.barbarianEvent(colony.getWorld(),colony);
+            MobEventsUtils.barbarianEvent(colony.getWorld(), colony);
 
             sender.sendMessage(SUCCESSFUL);
         }
