@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.client.gui.WindowGuiCrafting;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -50,7 +51,7 @@ public class BlockHutStonemason extends AbstractBlockHut<BlockHutStonemason>
          */
         if (worldIn.isRemote)
         {
-            @Nullable final AbstractBuilding.View building = ColonyManager.getBuildingView(pos);
+            @Nullable final AbstractBuildingView building = ColonyManager.getBuildingView(pos);
             if (building != null
                     && building.getColony() != null
                     && building.getColony().getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS))

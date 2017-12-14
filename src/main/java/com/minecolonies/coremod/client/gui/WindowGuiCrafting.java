@@ -5,6 +5,7 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.inventory.CraftingGUIBuilding;
 import com.minecolonies.coremod.network.messages.AddRemoveRecipeMessage;
 import net.minecraft.client.Minecraft;
@@ -76,7 +77,7 @@ public class WindowGuiCrafting extends GuiContainer
     /**
      * The building the window belongs to.
      */
-    private final AbstractBuilding.View building;
+    private final AbstractBuildingView building;
 
     /**
      * Create a crafting gui window.
@@ -85,7 +86,7 @@ public class WindowGuiCrafting extends GuiContainer
      * @param worldIn       the world.
      * @param building      the building.
      */
-    public WindowGuiCrafting(final InventoryPlayer playerInv, final World worldIn, final AbstractBuilding.View building)
+    public WindowGuiCrafting(final InventoryPlayer playerInv, final World worldIn, final AbstractBuildingView building)
     {
         super(new CraftingGUIBuilding(playerInv, worldIn));
         this.building = building;

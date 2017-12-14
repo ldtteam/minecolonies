@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -52,7 +53,7 @@ public class ChangeRecipePriorityMessage extends AbstractMessage<ChangeRecipePri
      * @param location     the recipeLocation.
      * @param up            up or down?
      */
-    public ChangeRecipePriorityMessage(@NotNull final AbstractBuilding.View building, final int location, final boolean up)
+    public ChangeRecipePriorityMessage(@NotNull final AbstractBuildingView building, final int location, final boolean up)
     {
         super();
         this.colonyId = building.getColony().getID();

@@ -7,6 +7,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -56,7 +57,7 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
             final List<ItemStack> input,
             final int gridSize,
             final ItemStack primaryOutput,
-            final List<ItemStack> secondaryOutput, final AbstractBuilding.View building, final boolean remove)
+            final List<ItemStack> secondaryOutput, final AbstractBuildingView building, final boolean remove)
     {
         super();
         storage = new RecipeStorage(input, gridSize, primaryOutput, null, secondaryOutput.toArray(new ItemStack[secondaryOutput.size()]));
@@ -79,7 +80,7 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
      * @param building the building.
      * @param remove true if remove.
      */
-    public AddRemoveRecipeMessage(final RecipeStorage data, final AbstractBuilding.View building, final boolean remove)
+    public AddRemoveRecipeMessage(final RecipeStorage data, final AbstractBuildingView building, final boolean remove)
     {
         super();
         this.storage = data;

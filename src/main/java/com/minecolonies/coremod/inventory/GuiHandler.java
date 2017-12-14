@@ -5,6 +5,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.client.gui.WindowGuiCrafting;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.Field;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
@@ -63,13 +64,14 @@ public class GuiHandler implements IGuiHandler
         }
         else
         {
-            @Nullable final AbstractBuilding.View building = ColonyManager.getBuildingView(pos);
+            @Nullable final AbstractBuildingView building = ColonyManager.getBuildingView(new BlockPos(x,y,z));
             if (building != null)
             {
                 return new CraftingGUIBuilding(player.inventory, world);
             }
             return null;
         }
+        return null;
     }
 
     @Override
@@ -107,7 +109,7 @@ public class GuiHandler implements IGuiHandler
 
         else
         {
-            @Nullable final AbstractBuilding.View building = ColonyManager.getBuildingView(pos);
+            @Nullable final AbstractBuildingView building = ColonyManager.getBuildingView(new BlockPos(x,y,z));
             if (building != null)
             {
                 return new WindowGuiCrafting(player.inventory, world, building);

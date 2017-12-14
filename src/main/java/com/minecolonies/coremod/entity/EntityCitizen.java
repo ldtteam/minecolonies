@@ -683,12 +683,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
     {
-        final Entity sourceEntity = damageSource.getTrueSource();
+        final Entity sourceEntity = damageSource.getSourceOfDamage();
         if (sourceEntity instanceof EntityCitizen && ((EntityCitizen) sourceEntity).colonyId == this.colonyId)
         {
             return false;
         }
-        setLastAttackedEntity(damageSource.getTrueSource());
+        setLastAttacker(damageSource.getSourceOfDamage());
 
         final boolean result = super.attackEntityFrom(damageSource, damage);
 
@@ -1915,7 +1915,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             }
 
 
-            final ItemStack itemStack = entityItem.getItem();
+            final ItemStack itemStack = entityItem.getEntityItem();
             final ItemStack compareStack = itemStack.copy();
 
             final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(getInventoryCitizen()), itemStack);
