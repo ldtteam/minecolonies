@@ -35,9 +35,9 @@ import static com.minecolonies.api.util.RSConstants.CONST_CRAFTING_RESOLVER_PRIO
 /**
  * ----------------------- Not Documented Object ---------------------
  */
-public class CraftingRequestResolver extends AbstractRequestResolver<IDeliverable>
+public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolver<IDeliverable>
 {
-    public CraftingRequestResolver(
+    public PrivateWorkerCraftingRequestResolver(
                                      @NotNull final ILocation location,
                                      @NotNull final IToken<?> token)
     {
@@ -67,7 +67,7 @@ public class CraftingRequestResolver extends AbstractRequestResolver<IDeliverabl
                     return false;
                 }
 
-                if ((((AbstractBuildingWorker) building).canCraft(stack)))
+                if (((AbstractBuildingWorker) building).canCraft(stack))
                 {
                     return true;
                 }
@@ -97,19 +97,13 @@ public class CraftingRequestResolver extends AbstractRequestResolver<IDeliverabl
         if(canResolve(manager, request) && building instanceof AbstractBuildingWorker)
         {
             final ItemStack stack = request.getRequest().getResult();
-            if(ItemStackUtils.isEmpty(stack))
-            {
-                return Lists.newArrayList();
-            }
-
             final RecipeStorage storage = ((AbstractBuildingWorker) building).getFirstFullFillableRecipe(stack);
 
             if(storage == null)
             {
+                //todo create a request to request the first possible resolving, ask Orion how to possibly request different resolving methods (to not annoy the player about this)
                 return null;
             }
-            ((AbstractBuildingWorker) building).fullFillRecipe(storage);
-
             return Lists.newArrayList();
         }
 
@@ -119,7 +113,19 @@ public class CraftingRequestResolver extends AbstractRequestResolver<IDeliverabl
     @Override
     public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
-        manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
+        final Colony colony = (Colony) manager.getColony();
+        final ILocation requesterLocation = request.getRequester().getRequesterLocation();
+        final AbstractBuilding building = colony.getBuilding(requesterLocation.getInDimensionLocation());
+        final ItemStack stack = request.getRequest().getResult();
+
+        final RecipeStorage storage = ((AbstractBuildingWorker) building).getFirstFullFillableRecipe(stack);
+
+        if(storage == null)
+        {
+            return;
+        }
+
+        ((AbstractBuildingWorker) building).fullFillRecipe(storage);
     }
 
     @Nullable
@@ -135,6 +141,7 @@ public class CraftingRequestResolver extends AbstractRequestResolver<IDeliverabl
     @Override
     public IRequest<?> onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
+        //todo clean up the requests we made.
         return null;
     }
 
@@ -153,7 +160,7 @@ public class CraftingRequestResolver extends AbstractRequestResolver<IDeliverabl
     @Override
     public ITextComponent getDisplayName(@NotNull final IToken<?> token)
     {
-        return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME);
+        return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_CRAFTING_RESOLVER_NAME);
     }
 
     @Override

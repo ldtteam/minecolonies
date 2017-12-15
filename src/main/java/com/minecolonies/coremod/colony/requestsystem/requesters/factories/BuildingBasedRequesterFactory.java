@@ -45,8 +45,7 @@ public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding,
 
     @NotNull
     @Override
-    public NBTTagCompound serialize(
-                                     @NotNull final IFactoryController controller, @NotNull final BuildingBasedRequester output)
+    public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final BuildingBasedRequester output)
     {
         return output.serialize(controller);
     }

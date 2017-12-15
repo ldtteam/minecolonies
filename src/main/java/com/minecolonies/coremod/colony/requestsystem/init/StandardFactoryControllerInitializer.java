@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.InitializedTokenFactory;
 import com.minecolonies.api.colony.requestsystem.token.RandomSeededTokenFactory;
 import com.minecolonies.api.colony.requestsystem.token.StandardTokenFactory;
+import com.minecolonies.api.crafting.RecipeStorageFactory;
 import com.minecolonies.coremod.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
 import com.minecolonies.coremod.colony.requestsystem.requesters.factories.BuildingBasedRequesterFactory;
@@ -42,6 +43,7 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new BuildingRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardPlayerRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRetryingRequestResolverFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new RecipeStorageFactory());
 
         StandardFactoryController.getInstance().registerNewClassRenaming("com.minecolonies.coremod.colony.requestsystem.resolvers.PlayerRequestResolver", "com.minecolonies.coremod.colony.requestsystem.resolvers.StandardPlayerRequestResolver");
     }

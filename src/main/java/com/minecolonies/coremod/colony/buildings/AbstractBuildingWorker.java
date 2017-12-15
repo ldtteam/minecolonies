@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -18,19 +18,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemFood;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Collections;
+import java.util.*;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
 
@@ -235,11 +232,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
 
         for (final BlockPos pos : getAdditionalCountainers())
         {
-            final TileEntity entity = colony.getWorld().getTileEntity(pos);
-            if (entity instanceof TileEntityChest)
-            {
-                handlers.add(new InvWrapper((TileEntityChest) entity));
-            }
+            handlers.addAll(InventoryUtils.getItemHandlersFromProvider(colony.getWorld().getTileEntity(pos)));
         }
         return handlers;
     }
@@ -501,7 +494,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         buf.writeInt(recipes.size());
         for(final IToken token: recipes)
         {
-            ColonyManager.getRecipes().get(token).writeToBuffer(buf);
+            ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(token));
         }
     }
 
@@ -613,7 +606,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             final int recipesSize = buf.readInt();
             for(int i = 0; i < recipesSize; i++)
             {
-                recipes.add(RecipeStorage.createFromByteBuffer(buf));
+                final IToken token = StandardFactoryController.getInstance().deserialize(ByteBufUtils.readTag(buf));
+                recipes.add(ColonyManager.getRecipes().get(token));
             }
         }
 

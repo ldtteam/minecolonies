@@ -6,12 +6,11 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverFactory;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.CraftingRequestResolver;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
-public class CraftingRequestResolverFactory implements IRequestResolverFactory<CraftingRequestResolver>
+public class CraftingRequestResolverFactory implements IRequestResolverFactory<PrivateWorkerCraftingRequestResolver>
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_TOKEN    = "Token";
@@ -20,9 +19,9 @@ public class CraftingRequestResolverFactory implements IRequestResolverFactory<C
 
     @NotNull
     @Override
-    public TypeToken<? extends CraftingRequestResolver> getFactoryOutputType()
+    public TypeToken<? extends PrivateWorkerCraftingRequestResolver> getFactoryOutputType()
     {
-        return TypeToken.of(CraftingRequestResolver.class);
+        return TypeToken.of(PrivateWorkerCraftingRequestResolver.class);
     }
 
     @NotNull
@@ -34,33 +33,33 @@ public class CraftingRequestResolverFactory implements IRequestResolverFactory<C
 
     @NotNull
     @Override
-    public CraftingRequestResolver getNewInstance(
+    public PrivateWorkerCraftingRequestResolver getNewInstance(
                                                     @NotNull final IFactoryController factoryController,
                                                     @NotNull final ILocation iLocation,
                                                     @NotNull final Object... context)
       throws IllegalArgumentException
     {
-        return new CraftingRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));
+        return new PrivateWorkerCraftingRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));
     }
 
     @NotNull
     @Override
     public NBTTagCompound serialize(
-                                     @NotNull final IFactoryController controller, @NotNull final CraftingRequestResolver craftingRequestResolverFactory)
+                                     @NotNull final IFactoryController controller, @NotNull final PrivateWorkerCraftingRequestResolver privateWorkerCraftingRequestResolverFactory)
     {
         final NBTTagCompound compound = new NBTTagCompound();
-        compound.setTag(NBT_TOKEN, controller.serialize(craftingRequestResolverFactory.getRequesterId()));
-        compound.setTag(NBT_LOCATION, controller.serialize(craftingRequestResolverFactory.getRequesterLocation()));
+        compound.setTag(NBT_TOKEN, controller.serialize(privateWorkerCraftingRequestResolverFactory.getRequesterId()));
+        compound.setTag(NBT_LOCATION, controller.serialize(privateWorkerCraftingRequestResolverFactory.getRequesterLocation()));
         return compound;
     }
 
     @NotNull
     @Override
-    public CraftingRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+    public PrivateWorkerCraftingRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
     {
         final IToken<?> token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
         final ILocation location = controller.deserialize(nbt.getCompoundTag(NBT_LOCATION));
 
-        return new CraftingRequestResolver(location, token);
+        return new PrivateWorkerCraftingRequestResolver(location, token);
     }
 }
