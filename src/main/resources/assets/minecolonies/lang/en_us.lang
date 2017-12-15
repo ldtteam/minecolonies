@@ -14,7 +14,7 @@ tile.minecolonies.blockConstructionTape.name=Construction tape
 tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
 tile.blockHut.messageNoPermissionPlace=You don't have permission to place huts in %s.
 tile.blockHutTownHall.messageMaxSize=%d has reached max size
-tile.blockHutTownHall.messageColonistDead=The colonist %s has died at %d %d %d!
+tile.blockHutTownHall.messageColonistDead=The colonist %s has died at %d %d %d of %s!
 tile.blockHutTownHall.messagePlacedAlready=You have placed a Town Hall already
 tile.blockHutTownHall.messageInvalidWorld=You can't place a town hall in this world type
 tile.blockHutTownHall.messageTooClose=Too close to existing town hall
@@ -30,7 +30,7 @@ event.minecolonies.raidMessage=Buckle up cowboy! There's some darn raiders commi
 item.minecolonies.scepterGold.name=Building Tool
 item.minecolonies.scepterSteel.name=Scan Tool
 item.minecolonies.caliper.name=Caliper
-item.supplyChestDeployer.invalid=You must be near a big pool of water
+
 item.scepterSteel.point=Point one saved
 item.scepterSteel.point2=Point two saved, right click again to save the schematic
 item.scepterSteel.samePoint=That was the same point
@@ -104,7 +104,7 @@ achievement.upgrade.townhall.max.desc=What a King!
 achievement.upgrade.townhall.first=We need a townhall!
 achievement.upgrade.townhall.first.desc=Build a townhall!
 tile.minecolonies.blockHutGuardTower.name=GuardTower
-tile.blockHutTownHall.messageGuardDead=The guard %s has died at %d %d %d!
+tile.blockHutTownHall.messageGuardDead=The guard %s has died at %d %d %d of %s !
 item.minecolonies.scepterGuard.name=Guard-scepter
 
 com.minecolonies.configgui.title=MineColonies Config
@@ -427,13 +427,6 @@ com.minecolonies.coremod.gui.workerHuts.saplingList=Tasklist
 com.minecolonies.coremod.gui.townHall.housing=Housing assignment mode:
 com.minecolonies.coremod.gui.home.assign=Assign %d citizens
 com.minecolonies.coremod.gui.workerHuts.unassign=Remove citizen
-
-tile.minecolonies.blockMinecoloniesRack.name=Rack
-
-com.minecolonies.coremod.gui.workerHuts.crafting=Teach recipe
-com.minecolonies.coremod.gui.recipe.done=Succesfully saved recipe!
-com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
-com.minecolonies.coremod.gui.recipe.remove=Remove
 tile.minecolonies.blockTimberFrame.name=Plain Timber Frame
 tile.minecolonies.blockMinecoloniesRack.name=Rack
 
@@ -476,3 +469,64 @@ com.minecolonies.coremod.worker.noUpgrade=No Upgrade available.
 com.minecolonies.coremod.worker.needBarracks=Please upgrade the Barracks first.
 com.minecolonies.coremod.gui.warehouse.upgrade=Upgrade Storage
 
+com.minecolonies.coremod.job.cook=Cook
+com.minecolonies.coremod.gui.workerHuts.cook=Cook
+com.minecolonies.coremod.gui.townHall.population.cooks=Cooks: %d
+tile.minecolonies.blockHutCook.name=Restaurant
+com.minecolonies.coremod.ai.noRestaurant=Please build a restaurant or get me something to eat!
+com.minecolonies.coremod.ai.noWarehouse=Build a warehouse or bring me food to serve to my clients!
+com.minecolonies.coremod.ai.noFood=I can't find any food in the warehouse.
+com.minecolonies.coremod.gui.workerHuts.Cook=Restaurant
+com.minecolonies.coremod.status.cooking=Cooking
+com.minecolonies.coremod.status.serving=Serving
+com.minecolonies.coremod.status.retrieving=Retrieving
+com.minecolonies.coremod.status.idling=Idling
+com.minecolonies.coremod.status.mining=Mining
+
+item.minecolonies.scepterPermission.name=PermissionScepter
+
+com.minecolonies.coremod.request.delivery=Delivery of:
+com.minecolonies.coremod.request.food=Food
+com.minecolonies.coremod.request.burnable=Fuel
+com.minecolonies.coremod.request.tool.pretype=Tool of class:
+com.minecolonies.coremod.request.tool.preminlevel=with minimal level:
+com.minecolonies.coremod.request.tool.premaxlevel=with maximal level:
+
+com.minecolonies.coremod.general.and= and
+
+com.minecolonies.coremod.tooltype.none=Unknown
+com.minecolonies.coremod.tooltype.pickaxe=Pickaxe
+com.minecolonies.coremod.tooltype.shovel=Shovel
+com.minecolonies.coremod.tooltype.axe=Axe
+com.minecolonies.coremod.tooltype.hoe=Hoe
+com.minecolonies.coremod.tooltype.sword=Sword
+com.minecolonies.coremod.tooltype.bow=Bow
+com.minecolonies.coremod.tooltype.fishingrod=Fishingrod
+com.minecolonies.coremod.tooltype.shears=Shears
+com.minecolonies.coremod.tooltype.shield=Shield
+
+com.minecolonies.coremod.gui.citizen.requests=Open requests:
+com.minecolonies.coremod.gui.citizen.requestTitle=Requests
+com.minecolonies.coremod.gui.citizen.requestsCancel=Cancel
+com.minecolonies.coremod.gui.citizen.requestsFulfill=Fulfill
+
+item.minecolonies.clipboard.name=Clipboard
+
+com.minecolonies.coremod.item.clipboard.needColony=Please shift-right click the colony to register your clipboard to it.
+com.minecolonies.coremod.item.clipboard.registered=Registered to colony %d.
+achievement.upgrade.guard.first=The killer
+achievement.upgrade.guard.last=Cleanup crew
+com.minecolonies.requestsystem.playerresolver=%s is in need of %s at %s.
+com.minecolonies.coremod.buildings.warehouse.name=Warehouse
+tile.minecolonies.blockPaperwall.name=Paper wall
+
+com.minecolonies.coremod.gui.workerHuts.buildPrio=Delivery Priority:
+item.supplyChestDeployer.invalid=You must place it in a fitting pool of water.
+item.supplyChestDeployer.missing=Are you trying to trick me, pick up that Supplyship again?
+com.minecolonies.coremod.citizen.rename.same=Renaming failed: 2 Citizen are not allowed to have the same name!
+com.minecolonies.coremod.citizen.rename.notAllowed=Renaming failed: You're not allowed to rename your Citizen.
+
+
+com.minecolonies.coremod.gui.workerHuts.crafting=Teach recipe
+com.minecolonies.coremod.gui.recipe.done=Succesfully saved recipe!
+com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
