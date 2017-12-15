@@ -111,6 +111,9 @@ public final class RecipeHandler
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockPaperWall, EIGHT_BLOCKS, 1), "WWW", "PPP", "WWW", 'P', PAPER, 'W', new ItemStack(Blocks.PLANKS, 1, 1)));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockPaperWall, EIGHT_BLOCKS, 2), "WWW", "PPP", "WWW", 'P', PAPER, 'W', new ItemStack(Blocks.PLANKS, 1, 2)));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockPaperWall, EIGHT_BLOCKS, 3), "WWW", "PPP", "WWW", 'P', PAPER, 'W', new ItemStack(Blocks.PLANKS, 1, 3)));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockPaperWall, EIGHT_BLOCKS, 3), "WWB", "WBB", "PPP", 'P', PAPER, 'P', new ItemStack(Blocks.PLANKS, 1), 'B', new ItemStack(Items.BRICK, 1)));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockPaperWall, EIGHT_BLOCKS, 3), "BWW", "BBW", "PPP", 'P', PAPER, 'P', new ItemStack(Blocks.PLANKS, 1), 'B', new ItemStack(Items.BRICK, 1)));
+        
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.clipboard), "WBW", "WLW", "WWW", 'L', Items.LEATHER, 'W', WOODEN_STICK, 'B', ModItems.buildTool));
         //Field
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutField, 1),
