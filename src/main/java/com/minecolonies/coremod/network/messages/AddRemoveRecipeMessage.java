@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
@@ -8,7 +10,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
+import com.minecolonies.api.crafting.RecipeStorage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -60,7 +62,7 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
             final List<ItemStack> secondaryOutput, final AbstractBuildingView building, final boolean remove)
     {
         super();
-        storage = new RecipeStorage(input, gridSize, primaryOutput, null, secondaryOutput.toArray(new ItemStack[secondaryOutput.size()]));
+        storage = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(RecipeStorage.class), input, gridSize, primaryOutput, null);
         this.remove = remove;
         this.building = building.getLocation();
         this.colonyId = building.getColony().getID();
@@ -98,7 +100,7 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
     public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
-        storage = RecipeStorage.createFromByteBuffer(buf);
+        storage = StandardFactoryController.getInstance().readFromBuffer(buf);
         remove = buf.readBoolean();
         building = BlockPosUtil.readFromByteBuf(buf);
     }
@@ -112,7 +114,7 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
     public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
-        storage.writeToBuffer(buf);
+        StandardFactoryController.getInstance().writeToBuffer(buf, storage);
         buf.writeBoolean(remove);
         BlockPosUtil.writeToByteBuf(buf, building);
     }
@@ -137,7 +139,7 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
         final AbstractBuilding buildingWorker = colony.getBuilding(message.building);
         if(buildingWorker instanceof AbstractBuildingWorker)
         {
-            final IToken token = ColonyManager.checkOrAddRecipe(message.storage);
+            final IToken token = ColonyManager.getRecipeManager().checkOrAddRecipe(message.storage);
 
             if(message.remove)
             {

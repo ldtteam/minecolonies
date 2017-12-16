@@ -1,22 +1,26 @@
-package com.minecolonies.coremod.colony.requestsystem.management;
+package com.minecolonies.api.crafting;
 
-import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
+/**
+ * The Interface describing the recipeManager which takes care of the recipes discovered by the colonies in this world.
+ */
 public interface IRecipeManager
 {
     /**
      * Get a unmodifiable copy of the recipes map.
      * @return a map of Token, RecipeStorage.
      */
-    ImmutableMap<Object, Object> getRecipes();
+    Map<IToken, RecipeStorage> getRecipes();
 
     /**
      * Add a recipe to the map.
      * @param storage the recipe to add
+     * @return the IToken.
      */
     IToken addRecipe(final RecipeStorage storage);
 
@@ -24,6 +28,7 @@ public interface IRecipeManager
      * Check if recipe is in map already, if not.
      * Add a recipe to the map.
      * @param storage the recipe to add
+     * @return the iToken.
      */
     IToken checkOrAddRecipe(final RecipeStorage storage);
 

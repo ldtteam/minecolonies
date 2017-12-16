@@ -12,7 +12,7 @@ import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
 import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
-import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
+import com.minecolonies.api.crafting.RecipeStorage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.state.IBlockState;

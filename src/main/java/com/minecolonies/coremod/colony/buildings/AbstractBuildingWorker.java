@@ -12,7 +12,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
+import com.minecolonies.api.crafting.RecipeStorage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemFood;
@@ -160,7 +160,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     {
         for(final IToken token : recipes)
         {
-            final RecipeStorage storage = ColonyManager.getRecipes().get(token);
+            final RecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
             if(storage != null && storage.getPrimaryOutput().isItemEqual(tempStack))
             {
                 final List<IItemHandler> handlers = getHandlers();
@@ -607,7 +607,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             for(int i = 0; i < recipesSize; i++)
             {
                 final IToken token = StandardFactoryController.getInstance().deserialize(ByteBufUtils.readTag(buf));
-                recipes.add(ColonyManager.getRecipes().get(token));
+                recipes.add(ColonyManager.getRecipeManager().getRecipes().get(token));
             }
         }
 

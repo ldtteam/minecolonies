@@ -10,7 +10,7 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
+import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.coremod.network.messages.AddRemoveRecipeMessage;
 import com.minecolonies.coremod.network.messages.ChangeRecipePriorityMessage;
 import net.minecraft.util.math.BlockPos;

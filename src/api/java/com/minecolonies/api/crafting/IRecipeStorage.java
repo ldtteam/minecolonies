@@ -1,4 +1,5 @@
 package com.minecolonies.api.crafting;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
@@ -55,4 +56,10 @@ public interface IRecipeStorage
      * @return true if succesful.
      */
     boolean fullfillRecipe(final List<IItemHandler> handlers);
+
+    /**
+     * Get the unique token of the recipe.
+     * @return the IToken.
+     */
+    IToken getToken();
 }

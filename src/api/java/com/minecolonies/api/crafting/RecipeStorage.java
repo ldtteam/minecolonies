@@ -1,6 +1,6 @@
-package com.minecolonies.coremod.entity.ai.util;
+package com.minecolonies.api.crafting;
 
-import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.block.Block;
@@ -40,20 +40,9 @@ public class RecipeStorage implements IRecipeStorage
     private final int gridSize;
 
     /**
-     * Create an instance of the recipe storage.
-     *
-     * @param input           the list of input items (required for the recipe).
-     * @param gridSize        the required grid size to make it.
-     * @param primaryOutput   the primary output of the recipe.
-     * @param secondaryOutput the secondary output (like buckets or similar).
+     * The token of the RecipeStorage.
      */
-    public RecipeStorage(final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput)
-    {
-        this.input = Collections.unmodifiableList(input);
-        this.primaryOutput = primaryOutput;
-        this.gridSize = gridSize;
-        this.intermediate = null;
-    }
+    private final IToken token;
 
     /**
      * Create an instance of the recipe storage.
@@ -62,14 +51,15 @@ public class RecipeStorage implements IRecipeStorage
      * @param gridSize        the required grid size to make it.
      * @param primaryOutput   the primary output of the recipe.
      * @param intermediate    the intermediate to use (e.g furnace).
-     * @param secondaryOutput the secondary output (like buckets or similar).
+     * @param token the token of the storage.
      */
-    public RecipeStorage(final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final Block intermediate)
+    public RecipeStorage(final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final Block intermediate, final IToken token)
     {
         this.input = Collections.unmodifiableList(input);
         this.primaryOutput = primaryOutput;
         this.gridSize = gridSize;
         this.intermediate = intermediate;
+        this.token = token;
     }
 
     @Override
@@ -241,6 +231,12 @@ public class RecipeStorage implements IRecipeStorage
 
         insertCraftedItems(handlers);
         return true;
+    }
+
+    @Override
+    public IToken getToken()
+    {
+        return token;
     }
 
     /**

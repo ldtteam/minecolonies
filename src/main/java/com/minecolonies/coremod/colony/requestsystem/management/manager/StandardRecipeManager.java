@@ -1,17 +1,17 @@
 package com.minecolonies.coremod.colony.requestsystem.management.manager;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.requestsystem.management.IRecipeManager;
-import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
+import com.minecolonies.api.crafting.IRecipeManager;
+import com.minecolonies.api.crafting.RecipeStorage;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class StandardRecipeManager implements IRecipeManager
@@ -29,21 +29,19 @@ public class StandardRecipeManager implements IRecipeManager
     /**
      * Map of all recipes which have been discovered globally already.
      */
-    private static final Map<IToken, RecipeStorage> recipes = new HashMap<>();
+    private static final BiMap<IToken, RecipeStorage> recipes = HashBiMap.create();
 
     @Override
-    public ImmutableMap<Object, Object> getRecipes()
+    public Map<IToken, RecipeStorage> getRecipes()
     {
-        return ImmutableMap.builder().putAll(recipes).build();
+        return ImmutableMap.copyOf(recipes);
     }
 
     @Override
     public IToken addRecipe(final RecipeStorage storage)
     {
-        //todo make this correctly.
-        final IToken token = StandardFactoryController.getNewInstance(TypeConstants.ITOKEN);
-        recipes.put(token, storage);
-        return token;
+        recipes.put(storage.getToken(), storage);
+        return storage.getToken();
     }
 
     @Override
@@ -78,7 +76,7 @@ public class StandardRecipeManager implements IRecipeManager
         {
             @NotNull final NBTTagCompound recipeTagCompound = new NBTTagCompound();
             recipeTagCompound.setTag(TOKEN_TAG, StandardFactoryController.getInstance().serialize(entry.getKey()));
-            entry.getValue().writeToNBT(recipeTagCompound);
+            StandardFactoryController.getInstance().serialize(entry.getValue());
             recipesTagList.appendTag(recipeTagCompound);
         }
         compound.setTag(TAG_RECIPES, recipesTagList);
@@ -92,7 +90,8 @@ public class StandardRecipeManager implements IRecipeManager
         {
             final NBTTagCompound recipeTag = recipesTags.getCompoundTagAt(i);
             final IToken token = StandardFactoryController.getInstance().deserialize(recipeTag.getCompoundTag(TOKEN_TAG));
-            final RecipeStorage storage = RecipeStorage.readFromNBT(recipeTag);
+            final RecipeStorage storage = StandardFactoryController.getInstance().deserialize(recipeTag);
+
             recipes.put(token, storage);
         }
     }

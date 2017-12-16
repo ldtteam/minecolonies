@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.entity.ai.citizen.baker;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
+import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.crafting.RecipeStorage;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -22,11 +24,6 @@ public final class BakerRecipes
      * Amount of wheat required for recipe.
      */
     private static final int REQUIRED_WHEAT = 3;
-
-    /**
-     * Amount of milk buckets required for the recipe.
-     */
-    private static final int REQUIRED_MILK = 3;
 
     /**
      * Amount of sugar required for a recipe.
@@ -54,11 +51,6 @@ public final class BakerRecipes
     private static final ImmutableList<RecipeStorage> recipes;
 
     /**
-     * Amount of buckets he should give back after a cake
-     */
-    private static final int BUCKET_COUNT = 3;
-
-    /**
      * Amount of cookies, for more cookies, increase this value!
      */
     private static final int COOKIES = 8;
@@ -66,7 +58,9 @@ public final class BakerRecipes
     {
         final List<ItemStack> inputCake = new ArrayList<>();
         inputCake.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT));
-        inputCake.add(new ItemStack(Items.MILK_BUCKET, REQUIRED_MILK));
+        inputCake.add(new ItemStack(Items.MILK_BUCKET, 1));
+        inputCake.add(new ItemStack(Items.MILK_BUCKET, 1));
+        inputCake.add(new ItemStack(Items.MILK_BUCKET, 1));
         inputCake.add(new ItemStack(Items.SUGAR, REQUIRED_SUGAR));
         inputCake.add(new ItemStack(Items.EGG, REQUIRED_EGGS));
 
@@ -76,11 +70,11 @@ public final class BakerRecipes
 
         final List<ItemStack> inputBread = new ArrayList<>();
         inputBread.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT));
-
+        final StandardFactoryController sfc = StandardFactoryController.getInstance();
         recipes = new ImmutableList.Builder<RecipeStorage>()
-                    .add(new RecipeStorage(inputCookie, GRID_SIZE, new ItemStack(Items.COOKIE, COOKIES)))
-                    .add(new RecipeStorage(inputCake, GRID_SIZE, new ItemStack(Items.CAKE, 1), new ItemStack(Items.BUCKET, BUCKET_COUNT)))
-                    .add(new RecipeStorage(inputBread, GRID_SIZE, new ItemStack(Items.BREAD, 1))).build();
+                    .add(sfc.getNewInstance(TypeToken.of(RecipeStorage.class), inputCookie, GRID_SIZE, new ItemStack(Items.COOKIE, COOKIES)))
+                    .add(sfc.getNewInstance(TypeToken.of(RecipeStorage.class), inputCake, GRID_SIZE, new ItemStack(Items.CAKE)))
+                    .add(sfc.getNewInstance(TypeToken.of(RecipeStorage.class), inputBread, GRID_SIZE, new ItemStack(Items.BREAD))).build();
     }
     /**
      * Private constructor to hide implicit one.

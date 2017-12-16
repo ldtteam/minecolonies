@@ -11,7 +11,7 @@ import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.requestsystem.management.IRecipeManager;
+import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRecipeManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.AchievementUtils;
@@ -118,7 +118,7 @@ public final class ColonyManager
     /**
      * Recipemanager of this server.
      */
-    private static IRecipeManager recipeManager = new StandardRecipeManager();
+    private static final IRecipeManager recipeManager = new StandardRecipeManager();
 
     /**
      * Pseudo unique id for the server
