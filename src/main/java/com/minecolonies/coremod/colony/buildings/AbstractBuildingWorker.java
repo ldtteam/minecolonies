@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -28,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
 
@@ -156,11 +159,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      * @param tempStack the stack which should be crafted.
      * @return the recipe or null.
      */
-    public RecipeStorage getFirstFullFillableRecipe(final ItemStack tempStack)
+    public IRecipeStorage getFirstFullFillableRecipe(final ItemStack tempStack)
     {
         for(final IToken token : recipes)
         {
-            final RecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
+            final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
             if(storage != null && storage.getPrimaryOutput().isItemEqual(tempStack))
             {
                 final List<IItemHandler> handlers = getHandlers();
@@ -178,7 +181,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      * @param storage with the storage.
      * @return true if successful.
      */
-    public boolean fullFillRecipe(final RecipeStorage storage)
+    public boolean fullFillRecipe(final IRecipeStorage storage)
     {
         final List<IItemHandler> handlers = getHandlers();
         return storage.fullfillRecipe(handlers);
@@ -331,13 +334,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
 
         recipes.clear();
         final NBTTagList recipesTags = compound.getTagList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < recipesTags.tagCount(); ++i)
-        {
-            final NBTTagCompound recipeTag = recipesTags.getCompoundTagAt(i);
-            final IToken token = StandardFactoryController.getInstance().deserialize(recipeTag.getCompoundTag(
-                    TAG_TOKEN));
-            recipes.add(token);
-        }
+        recipes.addAll(NBTUtils.streamCompound(recipesTags)
+                .map(recipeCompound -> (IToken) StandardFactoryController.getInstance().deserialize(recipeCompound.getCompoundTag(TAG_TOKEN)))
+                .collect(Collectors.toList()));
     }
 
     @Override
@@ -360,13 +359,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             compound.setTag(TAG_WORKER, workersTagList);
         }
 
-        @NotNull final NBTTagList recipesTagList = new NBTTagList();
-        for (@NotNull final IToken token : recipes)
-        {
-            @NotNull final NBTTagCompound recipeTagCompound = new NBTTagCompound();
-            recipeTagCompound.setTag(TAG_TOKEN , StandardFactoryController.getInstance().serialize(token));
-            recipesTagList.appendTag(recipeTagCompound);
-        }
+        @NotNull final NBTTagList recipesTagList = recipes.stream()
+                .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
+                .collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_RECIPES, recipesTagList);
     }
 
@@ -556,7 +551,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         /**
          * List of recipes.
          */
-        private final List<RecipeStorage> recipes = new ArrayList<>();
+        private final List<IRecipeStorage> recipes = new ArrayList<>();
 
         /**
          * Creates the view representation of the building.
@@ -615,7 +610,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
          * Get the list of recipes.
          * @return copy of the list.
          */
-        public List<RecipeStorage> getRecipes()
+        public List<IRecipeStorage> getRecipes()
         {
             return new ArrayList<>(recipes);
         }
@@ -641,7 +636,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         {
             if(i < recipes.size() && j < recipes.size() && i >= 0 && j >= 0)
             {
-                final RecipeStorage storage = recipes.get(i);
+                final IRecipeStorage storage = recipes.get(i);
                 recipes.set(i, recipes.get(j));
                 recipes.set(j, storage);
             }

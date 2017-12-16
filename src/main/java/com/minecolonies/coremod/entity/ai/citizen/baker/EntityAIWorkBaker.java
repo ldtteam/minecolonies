@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.baker;
 
+import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.BuildingBaker;
@@ -150,7 +151,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             getOwnBuilding().removeFromTasks(ProductState.BAKED, currentBakingProduct);
             InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), currentBakingProduct.getEndProduct());
 
-            final RecipeStorage storage = BakerRecipes.getRecipes().get(currentBakingProduct.getRecipeId());
+            final IRecipeStorage storage = BakerRecipes.getRecipes().get(currentBakingProduct.getRecipeId());
             for (final ItemStack stack : storage.getInput())
             {
                 final ItemStack returnStack = stack.getItem().getContainerItem(stack);
@@ -234,7 +235,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             return createNewProduct();
         }
 
-        final RecipeStorage storage = BakerRecipes.getRecipes().get(currentBakingProduct.getRecipeId());
+        final IRecipeStorage storage = BakerRecipes.getRecipes().get(currentBakingProduct.getRecipeId());
 
         if (currentBakingProduct.getState() == ProductState.UNCRAFTED)
         {
@@ -275,9 +276,9 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         progress = 0;
         final List<IItemHandler> handlers = getOwnBuilding().getHandlers();
 
-        RecipeStorage storage = null;
+        IRecipeStorage storage = null;
         int recipeId = 0;
-        for (final RecipeStorage tempStorage : BakerRecipes.getRecipes())
+        for (final IRecipeStorage tempStorage : BakerRecipes.getRecipes())
         {
             if (tempStorage.canFullFillRecipe(handlers.toArray(new IItemHandler[handlers.size()])))
             {
@@ -289,7 +290,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
         if (storage == null)
         {
-            final List<RecipeStorage> recipes = BakerRecipes.getRecipes();
+            final List<IRecipeStorage> recipes = BakerRecipes.getRecipes();
             final List<ItemStack> lastRecipe = recipes.get(recipes.size() - 1).getInput();
             final ItemStack[] arrayToRequestAndRetrieve = lastRecipe.toArray(new ItemStack[lastRecipe.size()]);
             checkIfRequestForItemExistOrCreate(arrayToRequestAndRetrieve);
@@ -309,7 +310,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      * @param storage the given storage.
      * @return the next state to transit to.
      */
-    private AIState craftNewProduct(final RecipeStorage storage)
+    private AIState craftNewProduct(final IRecipeStorage storage)
     {
         final List<ItemStack> list = new ArrayList<>();
 

@@ -28,7 +28,7 @@ public class CraftingRequestResolverFactory implements IRequestResolverFactory<P
     @Override
     public TypeToken<? extends ILocation> getFactoryInputType()
     {
-        return TypeToken.of(ILocation.class);
+        return TypeConstants.ILOCATION;
     }
 
     @NotNull
@@ -37,7 +37,6 @@ public class CraftingRequestResolverFactory implements IRequestResolverFactory<P
                                                     @NotNull final IFactoryController factoryController,
                                                     @NotNull final ILocation iLocation,
                                                     @NotNull final Object... context)
-      throws IllegalArgumentException
     {
         return new PrivateWorkerCraftingRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));
     }

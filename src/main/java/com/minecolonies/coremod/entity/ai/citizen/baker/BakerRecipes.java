@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.entity.ai.citizen.baker;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
-import com.minecolonies.api.crafting.RecipeStorage;
+import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -48,7 +48,7 @@ public final class BakerRecipes
     /**
      * List of recipes the Baker can know.
      */
-    private static final ImmutableList<RecipeStorage> recipes;
+    private static final ImmutableList<IRecipeStorage> recipes;
 
     /**
      * Amount of cookies, for more cookies, increase this value!
@@ -71,10 +71,10 @@ public final class BakerRecipes
         final List<ItemStack> inputBread = new ArrayList<>();
         inputBread.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT));
         final StandardFactoryController sfc = StandardFactoryController.getInstance();
-        recipes = new ImmutableList.Builder<RecipeStorage>()
-                    .add(sfc.getNewInstance(TypeToken.of(RecipeStorage.class), inputCookie, GRID_SIZE, new ItemStack(Items.COOKIE, COOKIES)))
-                    .add(sfc.getNewInstance(TypeToken.of(RecipeStorage.class), inputCake, GRID_SIZE, new ItemStack(Items.CAKE)))
-                    .add(sfc.getNewInstance(TypeToken.of(RecipeStorage.class), inputBread, GRID_SIZE, new ItemStack(Items.BREAD))).build();
+        recipes = new ImmutableList.Builder<IRecipeStorage>()
+                    .add(sfc.getNewInstance(TypeConstants.RECIPE, inputCookie, GRID_SIZE, new ItemStack(Items.COOKIE, COOKIES)))
+                    .add(sfc.getNewInstance(TypeConstants.RECIPE, inputCake, GRID_SIZE, new ItemStack(Items.CAKE)))
+                    .add(sfc.getNewInstance(TypeConstants.RECIPE, inputBread, GRID_SIZE, new ItemStack(Items.BREAD))).build();
     }
     /**
      * Private constructor to hide implicit one.
@@ -91,7 +91,7 @@ public final class BakerRecipes
      *
      * @return a copy of the recipes.
      */
-    public static List<RecipeStorage> getRecipes()
+    public static List<IRecipeStorage> getRecipes()
     {
         return recipes;
     }

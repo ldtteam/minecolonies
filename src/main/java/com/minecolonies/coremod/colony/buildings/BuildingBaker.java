@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.views.Window;
@@ -98,7 +99,7 @@ public class BuildingBaker extends AbstractBuildingWorker
     public BuildingBaker(final Colony c, final BlockPos l)
     {
         super(c, l);
-        for (final RecipeStorage storage : BakerRecipes.getRecipes())
+        for (final IRecipeStorage storage : BakerRecipes.getRecipes())
         {
             for (final ItemStack stack : storage.getInput())
             {

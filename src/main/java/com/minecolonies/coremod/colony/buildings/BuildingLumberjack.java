@@ -12,7 +12,7 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.network.messages.LumberjackSaplingSelectorMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.init.Blocks;

@@ -1,10 +1,11 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -38,7 +39,7 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
     /**
      * The RecipeStorage to add/remove.
      */
-    private RecipeStorage storage;
+    private IRecipeStorage storage;
 
     /**
      * The id of the building.
@@ -62,7 +63,7 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
             final List<ItemStack> secondaryOutput, final AbstractBuildingView building, final boolean remove)
     {
         super();
-        storage = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(RecipeStorage.class), input, gridSize, primaryOutput, null);
+        storage = StandardFactoryController.getInstance().getNewInstance(TypeConstants.RECIPE, input, gridSize, primaryOutput, null);
         this.remove = remove;
         this.building = building.getLocation();
         this.colonyId = building.getColony().getID();
@@ -82,7 +83,7 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
      * @param building the building.
      * @param remove true if remove.
      */
-    public AddRemoveRecipeMessage(final RecipeStorage data, final AbstractBuildingView building, final boolean remove)
+    public AddRemoveRecipeMessage(final IRecipeStorage data, final AbstractBuildingView building, final boolean remove)
     {
         super();
         this.storage = data;

@@ -24,7 +24,7 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestRe
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
-import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.BuildingUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
@@ -1564,7 +1564,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
                 continue;
             }
 
-            final IRequest<? extends IDeliverable> target = getOpenRequestsOfTypeFiltered(data, TypeToken.of(IDeliverable.class),
+            final IRequest<? extends IDeliverable> target = getOpenRequestsOfTypeFiltered(data, TypeConstants.DELIVERY,
               request -> request.getRequest().matches(stack)).stream().findFirst().orElse(null);
 
             if (target == null)
@@ -1599,7 +1599,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             return false;
         }
 
-        final IRequest<?> target = getOpenRequestsOfTypeFiltered(citizenData, TypeToken.of(IDeliverable.class), request -> request.getRequest().matches(stack)).stream()
+        final IRequest<?> target = getOpenRequestsOfTypeFiltered(citizenData, TypeConstants.DELIVERY, request -> request.getRequest().matches(stack)).stream()
                                   .findFirst()
                                   .orElse(null);
 

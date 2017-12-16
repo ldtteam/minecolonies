@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,28 +33,28 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
     @NotNull
     @Override
-    public TypeToken<RecipeStorage> getFactoryOutputType()
+    public TypeToken<IRecipeStorage> getFactoryOutputType()
     {
-        return TypeToken.of(RecipeStorage.class);
+        return TypeConstants.RECIPE;
     }
 
     @NotNull
     @Override
     public TypeToken<IToken> getFactoryInputType()
     {
-        return TypeToken.of(IToken.class);
+        return TypeConstants.ITOKEN;
     }
 
     @NotNull
     @Override
-    public RecipeStorage getNewInstance(final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final Block intermediate, final IToken token)
+    public RecipeStorage getNewInstance(final IToken token, final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final Block intermediate)
     {
         return new RecipeStorage(input, gridSize, primaryOutput, intermediate, token);
     }
 
     @NotNull
     @Override
-    public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final RecipeStorage recipeStorage)
+    public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final IRecipeStorage recipeStorage)
     {
         final NBTTagCompound compound = new NBTTagCompound();
         @NotNull final NBTTagList inputTagList = new NBTTagList();

@@ -16,11 +16,11 @@ import static com.minecolonies.api.util.constant.Constants.MIN_PARAMS_IRECIPESTO
 /**
  * Interface for the IRecipeStorageFactory which is responsible for creating and maintaining RecipeStorage objects.
  */
-public interface IRecipeStorageFactory extends IFactory<IToken, RecipeStorage>
+public interface IRecipeStorageFactory extends IFactory<IToken, IRecipeStorage>
 {
     @NotNull
     @Override
-    default RecipeStorage getNewInstance(@NotNull final IFactoryController factoryController, final IToken token, @NotNull final Object... context)
+    default RecipeStorage getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final IToken token, @NotNull final Object... context)
     {
         if (context.length < MIN_PARAMS_IRECIPESTORAGE || context.length > MAX_PARAMS_IRECIPESTORAGE)
         {
@@ -52,24 +52,24 @@ public interface IRecipeStorageFactory extends IFactory<IToken, RecipeStorage>
         final int gridSize = (int) context[1];
         final ItemStack primaryOutput = (ItemStack) context[2];
         final Block intermediate = context.length < 4 ? null : (Block) context[3];
-        return getNewInstance(input, gridSize, primaryOutput, intermediate, token);
+        return getNewInstance(token, input, gridSize, primaryOutput, intermediate);
     }
 
     /**
      * Method to get a new Instance of an recipe.
+     * @param token the token of it.
      * @param input the input.
      * @param gridSize the grid size.
      * @param primaryOutput the primary output.
      * @param intermediate the intermediate.
-     * @param token the token of it.
      * @return a new Instance of IRecipeStorage.
      */
     @NotNull
     RecipeStorage getNewInstance(
+            @NotNull final IToken token,
             @NotNull final List<ItemStack> input,
             final int gridSize,
             @NotNull final ItemStack primaryOutput,
-            @Nullable final Block intermediate,
-            @NotNull final IToken token);
+            @Nullable final Block intermediate);
 }
 

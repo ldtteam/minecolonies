@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.utils;
 
-import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;

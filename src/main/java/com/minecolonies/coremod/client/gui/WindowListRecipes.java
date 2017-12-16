@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Button;
@@ -67,7 +68,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
     /**
      * Contains all the recipes.
      */
-    private final List<RecipeStorage> recipes = new ArrayList<>();
+    private final List<IRecipeStorage> recipes = new ArrayList<>();
 
     /**
      * The view of the current building.
@@ -133,7 +134,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                @NotNull final RecipeStorage recipe = recipes.get(index);
+                @NotNull final IRecipeStorage recipe = recipes.get(index);
                 rowPane.findPaneOfTypeByID(OUTPUT_ICON, ItemIcon.class).setItem(recipe.getPrimaryOutput());
 
                 for(int i = 0; i < recipe.getInput().size(); i++)
@@ -163,7 +164,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
         final int row = recipeList.getListElementIndexByPane(button) - 1;
         if (button.getID().equals(BUTTON_REMOVE))
         {
-            final RecipeStorage data = recipes.get(row+1);
+            final IRecipeStorage data = recipes.get(row+1);
             building.removeRecipe(row+1);
             MineColonies.getNetwork().sendToServer(new AddRemoveRecipeMessage(data, building, true));
         }

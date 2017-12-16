@@ -96,17 +96,32 @@ public class RecipeStorage implements IRecipeStorage
     @Override
     public boolean canFullFillRecipe(@NotNull final IItemHandler... inventories)
     {
-        for (final ItemStack stack : input)
+        final List<ItemStorage> items = new ArrayList<>();
+
+        for(final ItemStack stack: input)
         {
-            int amountNeeded = ItemStackUtils.getSize(stack);
+            ItemStorage storage = new ItemStorage(stack);
+            if(items.contains(storage))
+            {
+                int index = items.indexOf(storage);
+                final ItemStorage tempStorage = items.remove(index);
+                tempStorage.setAmount(tempStorage.getAmount() + storage.getAmount());
+                storage = tempStorage;
+            }
+            items.add(storage);
+        }
+
+        for (final ItemStorage stack : items)
+        {
+            int amountNeeded = stack.getAmount();
             boolean hasStack = false;
             for (final IItemHandler handler : inventories)
             {
-                hasStack = InventoryUtils.hasItemInItemHandler(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack));
+                hasStack = InventoryUtils.hasItemInItemHandler(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack.getItemStack()));
 
                 if (hasStack)
                 {
-                    final int count = InventoryUtils.getItemCountInItemHandler(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack));
+                    final int count = InventoryUtils.getItemCountInItemHandler(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack.getItemStack()));
                     if (count >= amountNeeded)
                     {
                         break;

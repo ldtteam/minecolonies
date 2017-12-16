@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -46,7 +47,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
     @Override
     public TypeToken<? extends IDeliverable> getRequestType()
     {
-        return TypeToken.of(IDeliverable.class);
+        return TypeConstants.DELIVERY;
     }
 
     @Override

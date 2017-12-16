@@ -63,6 +63,12 @@ public final class ColonyManager
      * The tag of the colonies.
      */
     private static final String TAG_COLONIES = "colonies";
+
+    /**
+     * Compound tag key for the recipe manager.
+     */
+    private static final String RECIPE_MANAGER_TAG = "recipeManager";
+
     /**
      * The tag of the pseudo unique identifier
      */
@@ -72,6 +78,7 @@ public final class ColonyManager
      * The damage source used to kill citizens.
      */
     private static final DamageSource               CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
+
     /**
      * The list of all colonies.
      */
@@ -628,7 +635,9 @@ public final class ColonyManager
             compound.setUniqueId(TAG_UUID, serverUUID);
         }
 
-        recipeManager.writeToNBT(compound);
+        final NBTTagCompound recipeCompound = new NBTTagCompound();
+        recipeManager.writeToNBT(recipeCompound);
+        compound.setTag(RECIPE_MANAGER_TAG, recipeCompound);
     }
 
     /**
@@ -814,7 +823,8 @@ public final class ColonyManager
             serverUUID = compound.getUniqueId(TAG_UUID);
         }
 
-        recipeManager.readFromNBT(compound);
+        final NBTTagCompound recipeCompound = compound.getCompoundTag(RECIPE_MANAGER_TAG);
+        recipeManager.readFromNBT(recipeCompound);
 
         Log.getLogger().info(String.format("Loaded %d colonies", colonies.size()));
     }

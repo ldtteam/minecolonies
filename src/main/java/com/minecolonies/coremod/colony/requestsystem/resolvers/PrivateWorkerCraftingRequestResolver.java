@@ -7,8 +7,10 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
@@ -37,7 +39,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolve
     @Override
     public TypeToken<? extends IDeliverable> getRequestType()
     {
-        return TypeToken.of(IDeliverable.class);
+        return TypeConstants.DELIVERY;
     }
 
     @Override
@@ -57,10 +59,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolve
                     return false;
                 }
 
-                if (((AbstractBuildingWorker) building).canCraft(stack))
-                {
-                    return true;
-                }
+                return ((AbstractBuildingWorker) building).canCraft(stack);
             }
         }
 
@@ -82,7 +81,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolve
         if(canResolve(manager, request) && building instanceof AbstractBuildingWorker)
         {
             final ItemStack stack = request.getRequest().getResult();
-            final RecipeStorage storage = ((AbstractBuildingWorker) building).getFirstFullFillableRecipe(stack);
+            final IRecipeStorage storage = ((AbstractBuildingWorker) building).getFirstFullFillableRecipe(stack);
             final List<IToken<?>> tokens = new ArrayList<>();
             if(storage == null)
             {
@@ -110,7 +109,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolve
         final AbstractBuilding building = colony.getBuilding(requesterLocation.getInDimensionLocation());
         final ItemStack stack = request.getRequest().getResult();
 
-        final RecipeStorage storage = ((AbstractBuildingWorker) building).getFirstFullFillableRecipe(stack);
+        final IRecipeStorage storage = ((AbstractBuildingWorker) building).getFirstFullFillableRecipe(stack);
 
         if(storage == null)
         {
