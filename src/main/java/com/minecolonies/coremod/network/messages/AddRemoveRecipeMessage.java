@@ -62,7 +62,12 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
             final List<ItemStack> secondaryOutput, final AbstractBuildingView building, final boolean remove)
     {
         super();
-        storage = StandardFactoryController.getInstance().getNewInstance(TypeConstants.RECIPE, input, gridSize, primaryOutput, null);
+        storage = StandardFactoryController.getInstance().getNewInstance(
+                TypeConstants.RECIPE,
+                StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                input,
+                gridSize,
+                primaryOutput);
         this.remove = remove;
         this.building = building.getLocation();
         this.colonyId = building.getColony().getID();
@@ -129,7 +134,6 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
     @Override
     public void messageOnServerThread(final AddRemoveRecipeMessage message, final EntityPlayerMP player)
     {
-
         final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony == null || !colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
         {

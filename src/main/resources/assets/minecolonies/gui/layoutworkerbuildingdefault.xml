@@ -25,8 +25,4 @@
            textalign="MIDDLE" color="black"/>
     <label id="type" size="100% 11" pos="0 182"
            textalign="MIDDLE" color="black"/>
-    <button id="recipelist" align="TOP_MIDDLE" size="116 20" pos="0 150"
-            label="$(com.minecolonies.coremod.gui.workerHuts.listRecipes)"/>
-    <button id="crafting" align="TOP_MIDDLE" size="116 20" pos="0 172"
-            label="$(com.minecolonies.coremod.gui.workerHuts.crafting)"/>
 </layout>

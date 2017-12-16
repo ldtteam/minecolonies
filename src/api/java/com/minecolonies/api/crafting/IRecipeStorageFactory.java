@@ -37,16 +37,15 @@ public interface IRecipeStorageFactory extends IFactory<IToken, IRecipeStorage>
             throw new IllegalArgumentException("Second parameter is supposed to be an Integer!");
         }
 
-        if(!(context[2] instanceof List))
+        if(!(context[2] instanceof ItemStack))
         {
             throw new IllegalArgumentException("Third parameter is supposed to be an ItemStack!");
         }
 
-        if(context.length < MAX_PARAMS_IRECIPESTORAGE || !(context[MAX_PARAMS_IRECIPESTORAGE - 1] instanceof List))
+        if(context.length > MIN_PARAMS_IRECIPESTORAGE && !(context[MAX_PARAMS_IRECIPESTORAGE - 1] instanceof Block))
         {
             throw new IllegalArgumentException("Forth parameter is supposed to be a Block or Null!");
         }
-
 
         final List<ItemStack> input = (List<ItemStack>) context[0];
         final int gridSize = (int) context[1];
