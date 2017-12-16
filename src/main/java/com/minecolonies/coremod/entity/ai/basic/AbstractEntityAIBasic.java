@@ -759,7 +759,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Will set {@code needsTool} accordingly.
      *
      * @param toolType type of tool we check for.
-     * @return true if we have the tool
+     * @return false if we have the tool
      */
     protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType)
     {

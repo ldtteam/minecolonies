@@ -66,16 +66,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
             return false;
         }
 
-        AbstractBuilding building;
-
-        if(((BuildingBasedRequester) requestToCheck.getRequester()).getBuilding() instanceof AbstractBuildingView && manager.getColony() instanceof Colony)
-        {
-            building = ((Colony) manager.getColony()).getBuilding(((AbstractBuildingView) ((BuildingBasedRequester) requestToCheck.getRequester()).getBuilding()).getID());
-        }
-        else
-        {
-            building = (AbstractBuilding) ((BuildingBasedRequester) requestToCheck.getRequester()).getBuilding();
-        }
+        AbstractBuilding building = getBuildingFromRequest(manager, requestToCheck);
 
         List<TileEntity> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
@@ -105,16 +96,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
     public void resolve(
                          @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws RuntimeException
     {
-        AbstractBuilding building;
-
-        if(((BuildingBasedRequester) request.getRequester()).getBuilding() instanceof AbstractBuildingView && manager.getColony() instanceof Colony)
-        {
-            building = ((Colony) manager.getColony()).getBuilding(((AbstractBuildingView) ((BuildingBasedRequester) request.getRequester()).getBuilding()).getID());
-        }
-        else
-        {
-            building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding();
-        }
+        AbstractBuilding building = getBuildingFromRequest(manager, request);
 
         List<TileEntity> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
@@ -128,6 +110,24 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
                               .orElse(ItemStackUtils.EMPTY));
 
         manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
+    }
+
+    @NotNull
+    private AbstractBuilding getBuildingFromRequest(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws RuntimeException
+    {
+        BuildingBasedRequester requester = (BuildingBasedRequester) request.getRequester();
+        return requester.getBuilding().map(r -> {
+            if (r instanceof AbstractBuildingView && manager.getColony() instanceof Colony)
+            {
+                final Colony colony = (Colony) manager.getColony();
+                return colony.getBuilding(((AbstractBuildingView) r).getID());
+            }
+            else
+            {
+                return (AbstractBuilding) r;
+            }
+        }).orElseThrow(() -> new IllegalStateException("Unknown building."));
     }
 
     @Nullable
