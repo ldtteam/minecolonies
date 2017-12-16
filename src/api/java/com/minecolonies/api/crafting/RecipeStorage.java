@@ -103,7 +103,7 @@ public class RecipeStorage implements IRecipeStorage
             ItemStorage storage = new ItemStorage(stack);
             if(items.contains(storage))
             {
-                int index = items.indexOf(storage);
+                final int index = items.indexOf(storage);
                 final ItemStorage tempStorage = items.remove(index);
                 tempStorage.setAmount(tempStorage.getAmount() + storage.getAmount());
                 storage = tempStorage;

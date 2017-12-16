@@ -46,7 +46,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolve
     {
         if (!manager.getColony().getWorld().isRemote)
         {
-            Colony colony = (Colony) manager.getColony();
+            final Colony colony = (Colony) manager.getColony();
             final ILocation requesterLocation = requestToCheck.getRequester().getRequesterLocation();
             final AbstractBuilding building = colony.getBuilding(requesterLocation.getInDimensionLocation());
             if(building instanceof AbstractBuildingWorker)
@@ -81,12 +81,11 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolve
         {
             final ItemStack stack = request.getRequest().getResult();
             final IRecipeStorage storage = ((AbstractBuildingWorker) building).getFirstFullFillableRecipe(stack);
-            final List<IToken<?>> tokens = new ArrayList<>();
             if(storage == null)
             {
                 return null;
             }
-
+            final List<IToken<?>> tokens = new ArrayList<>();
             //todo After simulation has been added, we need to simulate the subrequest and decided wheter to try to resolve it or not.
             for(final ItemStack neededStack: storage.getInput())
             {
@@ -136,12 +135,17 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolve
     @Override
     public void onRequestComplete(@NotNull final IToken<?> token)
     {
+        /**
+         * Nothing to be done.
+         */
     }
 
     @Override
     public void onRequestCancelled(@NotNull final IToken<?> token)
     {
-
+        /**
+         * Nothing to be done.
+         */
     }
 
     @NotNull
