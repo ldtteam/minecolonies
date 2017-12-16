@@ -44,7 +44,7 @@ public class OpenCraftingGUIMessage extends AbstractMessage<OpenCraftingGUIMessa
     /**
      * Creates an open inventory message for a building.
      *
-     * @param building {@link AbstractBuilding.View}
+     * @param building {@link AbstractBuildingView}
      */
     public OpenCraftingGUIMessage(@NotNull final AbstractBuildingView building, final int gridSize)
     {
