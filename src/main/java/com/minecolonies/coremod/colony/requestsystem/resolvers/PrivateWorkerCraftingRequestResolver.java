@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
-import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -19,18 +19,17 @@ import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.RSConstants.CONST_CRAFTING_RESOLVER_PRIORITY;
 
 /**
- * ----------------------- Not Documented Object ---------------------
+ * A crafting resolver which takes care of 2x2 crafts which are crafted by the requesting worker.
  */
 public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolver<IDeliverable>
 {
-    public PrivateWorkerCraftingRequestResolver(
-                                     @NotNull final ILocation location,
-                                     @NotNull final IToken<?> token)
+    public PrivateWorkerCraftingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
     {
         super(location, token);
     }
@@ -70,12 +69,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolve
 
     @Nullable
     @Override
-    @SuppressWarnings("squid:LeftCurlyBraceStartLineCheck")
-    /**
-     * Moving the curly braces really makes the code hard to read.
-     */
-    public List<IToken<?>> attemptResolve(
-                                        @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         if (manager.getColony().getWorld().isRemote)
         {
@@ -89,13 +83,20 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolve
         {
             final ItemStack stack = request.getRequest().getResult();
             final RecipeStorage storage = ((AbstractBuildingWorker) building).getFirstFullFillableRecipe(stack);
-
+            final List<IToken<?>> tokens = new ArrayList<>();
             if(storage == null)
             {
-                //todo create a request to request the first possible resolving, ask Orion how to possibly request different resolving methods (to not annoy the player about this)
                 return null;
             }
-            return Lists.newArrayList();
+
+            //todo After simulation has been added, we need to simulate the subrequest and decided wheter to try to resolve it or not.
+            for(final ItemStack neededStack: storage.getInput())
+            {
+                final Stack stackRequest = new Stack(neededStack);
+                tokens.add(manager.createRequest(this, stackRequest));
+            }
+
+            return tokens;
         }
 
         return null;
@@ -121,8 +122,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolve
 
     @Nullable
     @Override
-    public IRequest<?> getFollowupRequestForCompletion(
-                                                     @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
+    public IRequest<?> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
     {
         //No followup needed.
         return null;
@@ -132,7 +132,6 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolve
     @Override
     public IRequest<?> onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
-        //todo clean up the requests we made.
         return null;
     }
 
