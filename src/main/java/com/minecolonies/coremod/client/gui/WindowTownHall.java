@@ -236,7 +236,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private static final String FARMERS_LABEL = "farmers";
 
     /**
-     * Id of the total farmers label in the GUI.
      * Id of the total bakers label in the GUI.
      */
     private static final String BAKERS_LABEL = "bakers";
@@ -247,6 +246,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private static final String COOKS_LABEL = "cooks";
    
+=======
      * Id of the total cooks label in the GUI.
      */
     private static final String COOKS_LABEL = "cooks";
