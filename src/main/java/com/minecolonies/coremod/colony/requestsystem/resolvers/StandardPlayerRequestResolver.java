@@ -7,23 +7,30 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.minecolonies.api.util.RSConstants.STANDARD_PLAYER_REQUEST_PRIORITY;
 
@@ -80,6 +87,30 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
         final IColony colony = manager.getColony();
         if (colony instanceof Colony)
         {
+            if (Configurations.requestSystem.creativeResolve &&
+                  request.getRequest() instanceof IDeliverable &&
+                  request.getRequester() instanceof BuildingBasedRequester &&
+                  ((BuildingBasedRequester) request.getRequester()).getBuilding().isPresent() &&
+                  ((BuildingBasedRequester) request.getRequester()).getBuilding().get() instanceof AbstractBuilding)
+            {
+                AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding().get();
+                Optional<CitizenData> citizenDataOptional = building.getCitizenForRequest(request.getToken());
+
+                List<ItemStack> resolvablestacks = request.getDisplayStacks();
+                if (!resolvablestacks.isEmpty() && citizenDataOptional.isPresent())
+                {
+                    ItemStack resolveStack = resolvablestacks.get(0);
+                    resolveStack.setCount(Math.min(((IDeliverable) request.getRequest()).getCount(), Constants.STACKSIZE));
+                    ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(citizenDataOptional.get().getCitizenEntity().getInventoryCitizen()), resolveStack);
+
+                    if (ItemStackUtils.isEmpty(remainingItemStack))
+                    {
+                        manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
+                        return;
+                    }
+                }
+            }
+
             final List<EntityPlayer> players = new ArrayList<>(((Colony) colony).getMessageEntityPlayers());
             final EntityPlayer owner = ServerUtils.getPlayerFromUUID(colony.getWorld(), ((Colony) colony).getPermissions().getOwner());
             final TextComponentString colonyDescription = new TextComponentString(colony.getName() + ":");
