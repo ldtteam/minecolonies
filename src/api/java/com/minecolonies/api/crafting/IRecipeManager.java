@@ -5,8 +5,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-
 /**
  * The Interface describing the recipeManager which takes care of the recipes discovered by the colonies in this world.
  */
