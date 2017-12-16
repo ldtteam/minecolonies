@@ -216,11 +216,14 @@ public class ClientProxy extends CommonProxy
 
 
         ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());
+        ModelLoader.setCustomStateMapper(ModBlocks.blockShingle, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockShingle").build());
 
         for (final PaperwallType type : PaperwallType.values())
         {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockPaperWall), type.getMetadata(),
               new ModelResourceLocation(ModBlocks.blockPaperWall.getRegistryName() + "_" + type.getName(), INVENTORY));
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingle), type.getMetadata(),
+                    new ModelResourceLocation(ModBlocks.blockShingle.getRegistryName() + "_" + type.getName(), INVENTORY));
         }
     }
 
