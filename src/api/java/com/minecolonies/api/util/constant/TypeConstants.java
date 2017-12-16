@@ -11,7 +11,6 @@ import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequ
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.crafting.RecipeStorage;
 
 import java.util.UUID;
 

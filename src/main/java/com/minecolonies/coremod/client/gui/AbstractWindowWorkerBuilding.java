@@ -6,7 +6,6 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.network.messages.HireFireMessage;
 import com.minecolonies.coremod.network.messages.OpenCraftingGUIMessage;
 import com.minecolonies.coremod.network.messages.RecallCitizenMessage;
 import net.minecraft.client.Minecraft;

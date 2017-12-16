@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.ai.citizen.miner;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobMiner;

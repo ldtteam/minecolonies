@@ -1,9 +1,7 @@
 package com.minecolonies.coremod.inventory;
 
-import com.minecolonies.coremod.colony.*;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.client.gui.WindowGuiCrafting;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.Field;

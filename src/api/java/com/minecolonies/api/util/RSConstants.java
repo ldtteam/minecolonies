@@ -1,8 +1,5 @@
 package com.minecolonies.api.util;
 
-import net.minecraft.block.*;
-import net.minecraft.item.*;
-
 /**
  * Utility class for RS related constants.
  */

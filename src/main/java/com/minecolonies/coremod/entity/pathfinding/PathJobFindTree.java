@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
-import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;

@@ -3,7 +3,6 @@ package com.minecolonies.coremod.blocks;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.client.gui.WindowGuiCrafting;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;

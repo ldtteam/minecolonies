@@ -1,9 +1,11 @@
 package com.minecolonies.api.crafting;
+
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 /**
