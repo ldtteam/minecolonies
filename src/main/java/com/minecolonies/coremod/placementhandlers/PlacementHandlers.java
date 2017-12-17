@@ -89,12 +89,10 @@ public final class PlacementHandlers
     private static boolean checkForListInInvAndRequest(@NotNull final AbstractEntityAIStructure<?> placer, final List<ItemStack> itemList)
     {
         final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(new InvWrapper(placer.getWorker().getInventoryCitizen()),
-          itemStack -> itemList.stream()
-                         .anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack)
-                                                    && itemStack.getCount() >= targetStack.getCount()));
-        itemList.removeIf(itemStack -> foundStacks.stream()
-                                         .anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack)
-                                                                    && targetStack.getCount() >= itemStack.getCount()));
+          itemStack -> itemList.stream().anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack)
+                  && itemStack.getCount() >= targetStack.getCount()));
+        itemList.removeIf(itemStack -> foundStacks.stream().anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack)
+                  && targetStack.getCount() >= itemStack.getCount()));
 
         for (final ItemStack placedStack : itemList)
         {

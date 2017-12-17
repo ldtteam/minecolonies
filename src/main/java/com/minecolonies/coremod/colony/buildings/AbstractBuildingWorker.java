@@ -163,6 +163,25 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     }
 
     /**
+     * Check if is the worker has the knowledge to craft something.
+     * @param stack the stack to craft.
+     * @return the recipe storage if so.
+     */
+    @Nullable
+    public IRecipeStorage getFirstRecipe(final ItemStack stack)
+    {
+        for(final IToken token : recipes)
+        {
+            final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
+            if (storage != null && storage.getPrimaryOutput().isItemEqual(stack))
+            {
+                return storage;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Get a fullfillable recipe to execute.
      * @param tempStack the stack which should be crafted.
      * @return the recipe or null.

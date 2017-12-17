@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -55,7 +57,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolve
                 {
                     return false;
                 }
-                return ((AbstractBuildingWorker) building).canCraft(stack);
+                return ((AbstractBuildingWorker) building).getFirstRecipe(stack) != null;
             }
         }
 
@@ -78,22 +80,24 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolve
         {
             Log.getLogger().info("Attempt to resolve");
             final ItemStack stack = request.getRequest().getStack();
-            final IRecipeStorage storage = ((AbstractBuildingWorker) building).getFirstFullFillableRecipe(stack);
+            IRecipeStorage storage = ((AbstractBuildingWorker) building).getFirstFullFillableRecipe(stack);
             if(storage == null)
             {
-                return null;
+                storage = ((AbstractBuildingWorker) building).getFirstRecipe(stack);
+                
+                Log.getLogger().info("Request to resolve");
+                final List<IToken<?>> tokens = new ArrayList<>();
+                //todo After simulation has been added, we need to simulate the subrequest and decided wheter to try to resolve it or not.
+                for(final ItemStack neededStack: storage.getInput())
+                {
+                    final Stack stackRequest = new Stack(neededStack);
+                    tokens.add(manager.createRequest(this, stackRequest));
+                }
+
+                return ImmutableList.copyOf(tokens);
             }
 
-            Log.getLogger().info("Request to resolve");
-            final List<IToken<?>> tokens = new ArrayList<>();
-            //todo After simulation has been added, we need to simulate the subrequest and decided wheter to try to resolve it or not.
-            for(final ItemStack neededStack: storage.getInput())
-            {
-                final Stack stackRequest = new Stack(neededStack);
-                tokens.add(manager.createRequest(this, stackRequest));
-            }
-
-            return tokens;
+            return Lists.newArrayList();
         }
 
         return null;

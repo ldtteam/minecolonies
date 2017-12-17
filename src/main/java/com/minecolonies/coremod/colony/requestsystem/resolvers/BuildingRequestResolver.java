@@ -95,8 +95,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
     }
 
     @Override
-    public void resolve(
-                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws RuntimeException
+    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws RuntimeException
     {
         AbstractBuilding building = getBuildingFromRequest(manager, request);
 
