@@ -6,6 +6,7 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -110,7 +111,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolve
         final ILocation requesterLocation = request.getRequester().getRequesterLocation();
         final AbstractBuilding building = colony.getBuilding(requesterLocation.getInDimensionLocation());
         final ItemStack stack = request.getRequest().getStack();
-
+        Log.getLogger().warn("RESOLVE!");
         final IRecipeStorage storage = ((AbstractBuildingWorker) building).getFirstFullFillableRecipe(stack);
 
         if(storage == null)
@@ -118,7 +119,10 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolve
             return;
         }
 
-        ((AbstractBuildingWorker) building).fullFillRecipe(storage);
+        if(((AbstractBuildingWorker) building).fullFillRecipe(storage))
+        {
+            manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
+        }
     }
 
     @Nullable
