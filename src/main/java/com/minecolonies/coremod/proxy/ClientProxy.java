@@ -180,6 +180,8 @@ public class ClientProxy extends CommonProxy
           new ModelResourceLocation(ModBlocks.blockRack.getRegistryName(), INVENTORY));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockWayPoint), 0,
           new ModelResourceLocation(ModBlocks.blockWayPoint.getRegistryName(), INVENTORY));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingle), 0,
+                new ModelResourceLocation(ModBlocks.blockShingle.getRegistryName(), INVENTORY));
 
         ModelLoader.setCustomModelResourceLocation(ModItems.clipboard, 0,
           new ModelResourceLocation(ModItems.clipboard.getRegistryName(), INVENTORY));
