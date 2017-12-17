@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestR
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.colony.requestsystem.token.StandardToken;
-import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.RecipeStorage;
 
 import java.util.UUID;
 
@@ -30,8 +30,9 @@ public final class TypeConstants
     public static final TypeToken<Object>           OBJECT           = TypeToken.of(Object.class);
     public static final TypeToken<IRequestable>     REQUESTABLE      = TypeToken.of(IRequestable.class);
     public static final TypeToken<IRetryable>       RETRYABLE        = TypeToken.of(IRetryable.class);
-    public static final TypeToken<IRecipeStorage>   RECIPE           = TypeToken.of(IRecipeStorage.class);
+    public static final TypeToken<RecipeStorage>    RECIPE           = TypeToken.of(RecipeStorage.class);
     public static final TypeToken<IDeliverable>     DELIVERY         = TypeToken.of(IDeliverable.class);
+
     /////Request system specific
     public static final TypeToken<IPlayerRequestResolver>   PLAYER_REQUEST_RESOLVER   = TypeToken.of(IPlayerRequestResolver.class);
     public static final TypeToken<IRetryingRequestResolver> RETRYING_REQUEST_RESOLVER = TypeToken.of(IRetryingRequestResolver.class);

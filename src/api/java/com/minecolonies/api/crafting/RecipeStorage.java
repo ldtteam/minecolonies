@@ -47,13 +47,13 @@ public class RecipeStorage implements IRecipeStorage
     /**
      * Create an instance of the recipe storage.
      *
+     * @param token the token of the storage.
      * @param input           the list of input items (required for the recipe).
      * @param gridSize        the required grid size to make it.
      * @param primaryOutput   the primary output of the recipe.
      * @param intermediate    the intermediate to use (e.g furnace).
-     * @param token the token of the storage.
      */
-    public RecipeStorage(final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final Block intermediate, final IToken token)
+    public RecipeStorage(final IToken token, final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final Block intermediate)
     {
         this.input = Collections.unmodifiableList(input);
         this.primaryOutput = primaryOutput;

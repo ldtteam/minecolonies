@@ -16,7 +16,7 @@ import static com.minecolonies.api.util.constant.Constants.MIN_PARAMS_IRECIPESTO
 /**
  * Interface for the IRecipeStorageFactory which is responsible for creating and maintaining RecipeStorage objects.
  */
-public interface IRecipeStorageFactory extends IFactory<IToken, IRecipeStorage>
+public interface IRecipeStorageFactory extends IFactory<IToken, RecipeStorage>
 {
     @NotNull
     @Override
