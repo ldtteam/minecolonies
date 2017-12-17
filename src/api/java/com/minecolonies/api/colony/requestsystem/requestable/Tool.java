@@ -161,7 +161,7 @@ public class Tool implements IDeliverable
         }
         else if(stack.getItem() instanceof ItemSword || Compatibility.isTinkersWeapon(stack))
         {
-            set.add("weapon");
+            set.add("sword");
         }
         else if(stack.getItem() instanceof ItemHoe)
         {

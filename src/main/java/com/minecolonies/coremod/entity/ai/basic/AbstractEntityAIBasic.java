@@ -759,7 +759,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Will set {@code needsTool} accordingly.
      *
      * @param toolType type of tool we check for.
-     * @return false if we have the tool
+     * @return true if we have the tool
      */
     protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType)
     {
@@ -786,10 +786,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 final Tool request = new Tool(toolType, minimalLevel, getOwnBuilding().getMaxToolLevel() < minimalLevel ? minimalLevel : getOwnBuilding().getMaxToolLevel());
                 worker.getCitizenData().createRequest(request);
             }
-            return true;
+            return false;
         }
 
-        return false;
+        return true;
     }
 
     /**

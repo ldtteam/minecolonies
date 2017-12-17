@@ -267,8 +267,9 @@ public final class RequestHandler
                 parentRequest.addChild(followupRequest.getToken());
             }
 
-            manager.updateRequestState(request.getToken(), RequestState.RECEIVED);
             parentRequest.removeChild(request.getToken());
+
+            manager.updateRequestState(request.getToken(), RequestState.RECEIVED);
 
             if (!parentRequest.hasChildren() && parentRequest.getState() == RequestState.IN_PROGRESS)
             {

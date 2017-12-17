@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -16,7 +15,6 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +28,7 @@ import java.util.Set;
 /**
  * Resolver that checks if a deliverable request is already in the building it is being requested from.
  */
-public class StandardPlayerRequestResolver implements IPlayerRequestResolver
+public class PlayerRequestResolver implements IPlayerRequestResolver
 {
 
     @NotNull
@@ -42,7 +40,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     @NotNull
     private final Set<IToken> assignedRequests = new HashSet<>();
 
-    public StandardPlayerRequestResolver(@NotNull final ILocation location, @NotNull final IToken token)
+    public PlayerRequestResolver(@NotNull final ILocation location, @NotNull final IToken token)
     {
         super();
         this.location = location;
@@ -121,7 +119,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     @Override
     public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest request) throws IllegalArgumentException
     {
-        return getFollowupRequestForCompletion(manager, request);
+        return null;
     }
 
     @Override
