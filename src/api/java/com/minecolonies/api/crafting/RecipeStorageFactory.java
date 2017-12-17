@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TOKEN;
+
 /**
  * Factory implementation taking care of creating new instances, serializing and deserializing RecipeStorages.
  */
@@ -72,7 +74,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             NBTUtil.writeBlockState(compound, recipeStorage.getIntermediate().getDefaultState());
         }
         compound.setInteger(TAG_GRID, recipeStorage.getGridSize());
-        StandardFactoryController.getInstance().serialize(recipeStorage.getToken());
+        compound.setTag(TAG_TOKEN, StandardFactoryController.getInstance().serialize(recipeStorage.getToken()));
         return compound;
     }
 
@@ -91,7 +93,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         final ItemStack primaryOutput = new ItemStack(nbt);
         final Block intermediate = NBTUtil.readBlockState(nbt).getBlock();
         final int gridSize = nbt.getInteger(TAG_GRID);
-        final IToken token = StandardFactoryController.getInstance().deserialize(nbt);
+        final IToken token = StandardFactoryController.getInstance().deserialize(nbt.getCompoundTag(TAG_TOKEN));
 
         return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate);
     }
