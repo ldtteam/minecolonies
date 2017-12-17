@@ -343,7 +343,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         recipes.clear();
         final NBTTagList recipesTags = compound.getTagList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
         recipes.addAll(NBTUtils.streamCompound(recipesTags)
-                .map(recipeCompound -> (IToken) StandardFactoryController.getInstance().deserialize(recipeCompound.getCompoundTag(TAG_TOKEN)))
+                .map(recipeCompound -> (IToken) StandardFactoryController.getInstance().deserialize(recipeCompound))
                 .collect(Collectors.toList()));
     }
 
