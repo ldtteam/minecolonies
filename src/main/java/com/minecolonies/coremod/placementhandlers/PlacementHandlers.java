@@ -89,11 +89,9 @@ public final class PlacementHandlers
     {
         final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(new InvWrapper(placer.getWorker().getInventoryCitizen()),
           itemStack -> itemList.stream()
-                         .anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack)
-                                                    && itemStack.stackSize >= targetStack.stackSize));
+                         .anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack)));
         itemList.removeIf(itemStack -> foundStacks.stream()
-                                         .anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack)
-                                                                    && targetStack.stackSize >= itemStack.stackSize));
+                                         .anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack)));
 
         for (final ItemStack placedStack : itemList)
         {

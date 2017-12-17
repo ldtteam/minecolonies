@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 /**
  * Abstract class wrapping around multiple IItemHandler.
  */
-public abstract class AbstractCombinedItemHandler
+public class CombinedItemHandler
   implements IItemHandlerModifiable, INBTSerializable<NBTTagCompound>, IWorldNameableModifiable
 {
 
@@ -38,27 +38,27 @@ public abstract class AbstractCombinedItemHandler
     private       String                   customName;
 
     /**
-     * Method to create a new {@link AbstractCombinedItemHandler}.
+     * Method to create a new {@link CombinedItemHandler}.
      *
-     * @param defaultName The default name of this {@link AbstractCombinedItemHandler}.
+     * @param defaultName The default name of this {@link CombinedItemHandler}.
      * @param handlers    The combining {@link IItemHandlerModifiable}.
      */
-    protected AbstractCombinedItemHandler(@NotNull final String defaultName, @NotNull final IItemHandlerModifiable... handlers)
+    public CombinedItemHandler(@NotNull final String defaultName, @NotNull final IItemHandlerModifiable... handlers)
     {
         this.handlers = handlers;
         this.defaultName = defaultName;
     }
 
     /**
-     * Method to create a new combined {@link AbstractCombinedItemHandler} with
+     * Method to create a new combined {@link CombinedItemHandler} with
      * a given custom name.
      *
-     * @param defaultName The name of this {@link AbstractCombinedItemHandler}.
+     * @param defaultName The name of this {@link CombinedItemHandler}.
      * @param customName  The preset custom name of this {@link
-     *                    AbstractCombinedItemHandler}.
+     *                    CombinedItemHandler}.
      * @param handlers    The combinging {@link IItemHandlerModifiable}.
      */
-    protected AbstractCombinedItemHandler(@NotNull final String defaultName, @NotNull final String customName, @NotNull final IItemHandlerModifiable... handlers)
+    public CombinedItemHandler(@NotNull final String defaultName, @NotNull final String customName, @NotNull final IItemHandlerModifiable... handlers)
     {
         this.handlers = handlers;
         this.customName = customName;
@@ -260,6 +260,21 @@ public abstract class AbstractCombinedItemHandler
         }
 
         return null;
+    }
+
+    @Override
+    public int getSlotLimit(final int slot)
+    {
+        int slotIndex = slot;
+        for (final IItemHandlerModifiable modifiable : handlers)
+        {
+            if (slotIndex >= modifiable.getSlots())
+                slotIndex-=modifiable.getSlots();
+            else
+                return modifiable.getSlotLimit(slotIndex);
+        }
+
+        return 0;
     }
 
     protected IItemHandlerModifiable[] getHandlers()
