@@ -34,6 +34,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -498,15 +499,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getToken());
 
                 final ItemStack deliveredItemStack = firstDeliverableRequest.getDelivery();
-                if(InventoryUtils.findFirstSlotInItemHandlerWith(
-                        new InvWrapper(worker.getInventoryCitizen()), deliveredItemStack::isItemEqualIgnoreDurability) != -1)
+                if(InventoryUtils.getItemCountInItemHandler(
+                        new InvWrapper(worker.getInventoryCitizen()), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount())
                 {
                     return NEEDS_ITEM;
                 }
 
                 //Takes one Stack from the hut if existent
-                if (isInHut(deliveredItemStack)  && !walkToBuilding())
+                if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount() &&
+                  InventoryUtils.trans)
                 {
+
                     return NEEDS_ITEM;
                 }
                 else
