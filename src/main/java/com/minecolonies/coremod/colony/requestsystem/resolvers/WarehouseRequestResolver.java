@@ -85,12 +85,16 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
                 continue;
             }
 
-            request.setDelivery(matchingStack.copy());
+            matchingStack = matchingStack.copy();
+            matchingStack.setCount(Math.min(request.getRequest().getCount(), matchingStack.getCount()));
 
-            BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> ItemStack.areItemsEqual(itemStack, matchingStack));
+            final ItemStack deliveryStack = matchingStack.copy();
+            request.setDelivery(deliveryStack.copy());
+
+            BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> ItemStack.areItemsEqual(itemStack, deliveryStack));
             ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().provider.getDimension());
 
-            Delivery delivery = new Delivery(itemStackLocation, request.getRequester().getRequesterLocation(), matchingStack.copy());
+            Delivery delivery = new Delivery(itemStackLocation, request.getRequester().getRequesterLocation(), deliveryStack.copy());
 
             IToken requestToken = manager.createRequest(new WarehouseRequestResolver(request.getRequester().getRequesterLocation(), request.getToken()), delivery);
 

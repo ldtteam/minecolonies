@@ -26,6 +26,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
+import com.minecolonies.coremod.inventory.api.CombinedItemHandler;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.BuildingUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
@@ -42,6 +43,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -49,13 +51,18 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -71,7 +78,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
  * to their views and blocks.
  */
 @SuppressWarnings("squid:S2390")
-public abstract class AbstractBuilding implements IRequestResolverProvider, IRequester
+public abstract class AbstractBuilding implements IRequestResolverProvider, IRequester, ICapabilityProvider
 {
 
     protected static final int CONST_DEFAULT_MAX_BUILDING_LEVEL = 5;
@@ -1695,14 +1702,66 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     @Override
     public ITextComponent getDisplayName(@NotNull final IToken token)
     {
+        return new TextComponentString(getCitizenForRequest(token).map(CitizenData::getName).orElse("<UNKNOWN>"));
+    }
+
+    public Optional<CitizenData> getCitizenForRequest(@NotNull final IToken token)
+    {
         if (!requestsByCitizen.containsKey(token))
         {
-            return new TextComponentString(this.getSchematicName() + " <UNKNOWN>");
+            return Optional.empty();
         }
 
         Integer citizenData = requestsByCitizen.get(token);
-        return new TextComponentString(this.getSchematicName() + " " + getColony().getCitizen(citizenData).getName());
+        return Optional.of(getColony().getCitizen(citizenData));
     }
 
+
     //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//
+
+    //------------------------- !Start! Capabilities handling for minecolonies buildings -------------------------//
+
+    @Override
+    public boolean hasCapability(
+      @Nonnull final Capability<?> capability, @Nullable final EnumFacing facing)
+    {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public <T> T getCapability(
+      @Nonnull final Capability<T> capability, @Nullable final EnumFacing facing)
+    {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null)
+        {
+            final Set<ICapabilityProvider> providers = new HashSet<>();
+
+            //Add myself
+            providers.add(getTileEntity());
+
+            //Add additional containers
+            providers.addAll(getAdditionalCountainers().stream().map(getTileEntity().getWorld()::getTileEntity).collect(Collectors.toSet()));
+
+            //Map all providers to IItemHandlers.
+            final Set<IItemHandlerModifiable> modifiables = providers
+                                                              .stream()
+                                                              .flatMap(provider -> InventoryUtils.getItemHandlersFromProvider(provider).stream())
+                                                              .filter(handler -> handler instanceof IItemHandlerModifiable)
+                                                              .map(handler -> ((IItemHandlerModifiable) handler))
+                                                              .collect(Collectors.toSet());
+
+            return (T) new CombinedItemHandler(getSchematicName(), modifiables.toArray(new IItemHandlerModifiable[0]));
+        }
+
+        return null;
+    }
+
+    //------------------------- !End! Capabilities handling for minecolonies buildings -------------------------//
+
 }

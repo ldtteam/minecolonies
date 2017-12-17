@@ -11,7 +11,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -599,7 +598,7 @@ public class InventoryUtils
      */
     public static int getItemCountInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        return getItemHandlersFromProvider(provider).stream()
+        return getItemHandlersFromProvider(provider).stream().filter(Objects::nonNull)
                  .mapToInt(handler -> filterItemHandler(handler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum())
                  .sum();
     }
@@ -1378,24 +1377,99 @@ public class InventoryUtils
         return false;
     }
 
+    public static boolean transferXOfFirstSlotInProviderWithIntoNextFreeSlotInProvider(
+      @NotNull final ICapabilityProvider sourceProvider,
+      @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
+      @NotNull final int amount, @NotNull final ICapabilityProvider targetProvider)
+    {
+        return transferXOfFirstSlotInProviderWithIntoNextFreeSlotInProviderWithResult(sourceProvider, itemStackSelectionPredicate, amount, targetProvider) == 0;
+    }
+
+    public static int transferXOfFirstSlotInProviderWithIntoNextFreeSlotInProviderWithResult(
+      @NotNull final ICapabilityProvider sourceProvider,
+      @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
+      @NotNull final int amount, @NotNull final ICapabilityProvider targetProvider)
+    {
+        int currentAmount = amount;
+
+        for(IItemHandler handler : getItemHandlersFromProvider(targetProvider))
+        {
+            currentAmount = transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(sourceProvider, itemStackSelectionPredicate, amount, handler);
+
+            if (currentAmount <= 0)
+            {
+                return 0;
+            }
+        }
+
+        return currentAmount;
+    }
+
     public static boolean transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+      @NotNull final ICapabilityProvider sourceProvider,
+      @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
+      @NotNull final int amount, @NotNull final IItemHandler targetHandler)
+    {
+        return transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(sourceProvider, itemStackSelectionPredicate, amount, targetHandler) == 0;
+    }
+
+    public static int transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(
+      @NotNull final ICapabilityProvider sourceProvider,
+      @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
+      @NotNull final int amount, @NotNull final IItemHandler targetHandler)
+    {
+        int currentAmount = amount;
+        for (IItemHandler handler : getItemHandlersFromProvider(sourceProvider))
+        {
+            currentAmount = transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandlerWithResult(handler, itemStackSelectionPredicate, currentAmount, targetHandler);
+
+            if (currentAmount <= 0)
+            {
+                return 0;
+            }
+        }
+
+        return currentAmount;
+    }
+
+    public static boolean transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
                                                                                            @NotNull final IItemHandler sourceHandler,
                                                                                            @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
                                                                                            @NotNull final int amount, @NotNull final IItemHandler targetHandler)
     {
-        final int desiredItemSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler,
-          itemStackSelectionPredicate::test);
+        return transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandlerWithResult(sourceHandler, itemStackSelectionPredicate, amount, targetHandler) == 0;
+    }
 
-        if (desiredItemSlot == -1)
+    public static int transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandlerWithResult(
+      @NotNull final IItemHandler sourceHandler,
+      @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
+      @NotNull final int amount, @NotNull final IItemHandler targetHandler)
+    {
+        int currentAmount = amount;
+        while (currentAmount >= 0)
         {
-            return false;
+            final int desiredItemSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler,
+              itemStackSelectionPredicate::test);
+
+            if (desiredItemSlot == -1)
+            {
+                break;
+            }
+
+
+            final ItemStack returnStack = sourceHandler.extractItem(desiredItemSlot, currentAmount, false);
+
+            if (!ItemStackUtils.isEmpty(returnStack))
+            {
+                currentAmount -= returnStack.getCount();
+                if (!InventoryUtils.addItemStackToItemHandler(targetHandler, returnStack))
+                {
+                    break;
+                }
+            }
         }
-        final ItemStack returnStack = sourceHandler.extractItem(desiredItemSlot, amount, false);
-        if (ItemStackUtils.isEmpty(returnStack))
-        {
-            return false;
-        }
-        return InventoryUtils.addItemStackToItemHandler(targetHandler, returnStack);
+
+        return currentAmount;
     }
 
     /**
@@ -1407,11 +1481,11 @@ public class InventoryUtils
      * @param slot the slot to put it in.
      * @return true if succesful.
      */
-    public static boolean transferXOfFirstSlotInProviderWithIntoInItemHandler(
-            final InvWrapper sourceHandler,
+    public static boolean transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
+            final IItemHandler sourceHandler,
             final Predicate<ItemStack> itemStackSelectionPredicate,
             final int amount,
-            final InvWrapper targetHandler, final int slot)
+            final IItemHandler targetHandler, final int slot)
     {
         final int desiredItemSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler,
                 itemStackSelectionPredicate::test);
@@ -1425,7 +1499,7 @@ public class InventoryUtils
         {
             return false;
         }
-        targetHandler.setStackInSlot(slot, returnStack);
+        targetHandler.insertItem(slot, returnStack, false);
         return true;
     }
 
