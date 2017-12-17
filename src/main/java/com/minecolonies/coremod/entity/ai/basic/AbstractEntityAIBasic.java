@@ -477,7 +477,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             return IDLE;
         }
-        if (getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
+        if (!walkToBuilding() && getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
             delay += DELAY_RECHECK;
 
@@ -505,8 +505,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 }
 
                 //Takes one Stack from the hut if existent
-                if (! walkToBuilding() && InventoryUtils.getItemCountInProvider(getOwnBuilding(), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount() &&
-                  InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(getOwnBuilding(), deliveredItemStack::isItemEqualIgnoreDurability, deliveredItemStack.getCount(), new InvWrapper(worker.getInventoryCitizen())))
+                if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount() &&
+                  InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+                    getOwnBuilding(),
+                    deliveredItemStack::isItemEqualIgnoreDurability,
+                    deliveredItemStack.getCount(),
+                    new InvWrapper(worker.getInventoryCitizen())))
                 {
 
                     return NEEDS_ITEM;
