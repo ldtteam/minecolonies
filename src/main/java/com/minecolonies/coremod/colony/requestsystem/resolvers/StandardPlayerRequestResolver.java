@@ -16,7 +16,6 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -99,7 +98,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                 if (!resolvablestacks.isEmpty() && citizenDataOptional.isPresent())
                 {
                     ItemStack resolveStack = resolvablestacks.get(0);
-                    resolveStack.setCount(Math.min(((IDeliverable) request.getRequest()).getCount(), Constants.STACKSIZE));
+                    resolveStack.setCount(Math.min(((IDeliverable) request.getRequest()).getCount(), resolveStack.getMaxStackSize()));
                     ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(citizenDataOptional.get().getCitizenEntity().getInventoryCitizen()), resolveStack);
 
                     if (ItemStackUtils.isEmpty(remainingItemStack))
