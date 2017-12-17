@@ -500,17 +500,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
                 final ItemStack deliveredItemStack = firstDeliverableRequest.getDelivery();
                 if(InventoryUtils.getItemCountInItemHandler(
-                        new InvWrapper(worker.getInventoryCitizen()), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount())
+                        new InvWrapper(worker.getInventoryCitizen()), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.stackSize)
                 {
                     return NEEDS_ITEM;
                 }
 
                 //Takes one Stack from the hut if existent
-                if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount() &&
+                if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.stackSize &&
                   InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                     getOwnBuilding(),
                     deliveredItemStack::isItemEqualIgnoreDurability,
-                    deliveredItemStack.getCount(),
+                    deliveredItemStack.stackSize,
                     new InvWrapper(worker.getInventoryCitizen())))
                 {
 

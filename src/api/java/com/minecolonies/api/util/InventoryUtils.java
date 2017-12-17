@@ -1461,7 +1461,7 @@ public class InventoryUtils
 
             if (!ItemStackUtils.isEmpty(returnStack))
             {
-                currentAmount -= returnStack.getCount();
+                currentAmount -= returnStack.stackSize;
                 if (!InventoryUtils.addItemStackToItemHandler(targetHandler, returnStack))
                 {
                     break;

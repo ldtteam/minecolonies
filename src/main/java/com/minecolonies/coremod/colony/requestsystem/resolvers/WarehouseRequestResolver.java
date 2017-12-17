@@ -87,7 +87,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
             }
 
             matchingStack = matchingStack.copy();
-            matchingStack.setCount(Math.min(request.getRequest().getCount(), matchingStack.getCount()));
+            matchingStack.stackSize = Math.min(request.getRequest().getCount(), matchingStack.stackSize);
 
             final ItemStack deliveryStack = matchingStack.copy();
             request.setDelivery(deliveryStack.copy());

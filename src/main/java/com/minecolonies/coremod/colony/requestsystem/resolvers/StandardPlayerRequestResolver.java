@@ -23,6 +23,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -97,7 +98,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                 if (!resolvablestacks.isEmpty() && citizenDataOptional.isPresent())
                 {
                     ItemStack resolveStack = resolvablestacks.get(0);
-                    resolveStack.setCount(Math.min(((IDeliverable) request.getRequest()).getCount(), resolveStack.getMaxStackSize()));
+                    resolveStack.stackSize = Math.min(((IDeliverable) request.getRequest()).getCount(), resolveStack.getMaxStackSize());
                     ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(
                       new InvWrapper(citizenDataOptional.get().getCitizenEntity().getInventoryCitizen()),
                       resolveStack);
