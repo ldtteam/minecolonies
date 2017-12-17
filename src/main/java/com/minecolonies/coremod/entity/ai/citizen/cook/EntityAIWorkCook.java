@@ -264,7 +264,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             return getState();
         }
 
-        InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+        InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
                 new InvWrapper(worker.getInventoryCitizen()),
                 ItemStackUtils.ISFOOD,
                 AMOUNT_OF_FOOD_TO_SERVE,
@@ -318,7 +318,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         final TileEntity entity = world.getTileEntity(walkTo);
         if (entity instanceof TileEntityFurnace)
         {
-            InventoryUtils.transferXOfFirstSlotInProviderWithIntoInItemHandler(
+            InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
                     new InvWrapper(worker.getInventoryCitizen()), ItemStackUtils.ISCOOKABLE, Constants.STACKSIZE,
                     new InvWrapper((TileEntityFurnace) entity), COOK_SLOT);
 
@@ -330,7 +330,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
                     return COOK_GET_FIREWOOD;
                 }
 
-                InventoryUtils.transferXOfFirstSlotInProviderWithIntoInItemHandler(
+                InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
                         new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel, Constants.STACKSIZE,
                         new InvWrapper((TileEntityFurnace) entity), FUEL_SLOT);
             }
@@ -356,7 +356,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         final TileEntity entity = world.getTileEntity(pos);
         if (entity instanceof TileEntityChest)
         {
-            return InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+            return InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
                     new InvWrapper((TileEntityChest) entity),
                     predicate,
                     Constants.STACKSIZE,
@@ -364,7 +364,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         }
         else if (entity instanceof TileEntityRack)
         {
-            return InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+            return InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
                     ((TileEntityRack) entity).getInventory(),
                     predicate,
                     Constants.STACKSIZE,

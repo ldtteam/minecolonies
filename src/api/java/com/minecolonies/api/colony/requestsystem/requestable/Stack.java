@@ -45,7 +45,7 @@ public class Stack implements IDeliverable
         setMatchMeta(true).setMatchNBT(true);
 
         this.stack = stack.copy();
-        this.stack.setCount(this.stack.getMaxStackSize());
+        this.stack.setCount(Math.min(this.stack.getCount(), this.stack.getMaxStackSize()));
     }
 
     public Stack setMatchNBT(final boolean match)
