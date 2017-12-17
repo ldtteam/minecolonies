@@ -9,11 +9,9 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
 
 /**
  * A class that functions as the connection between a building and the request system.
@@ -73,27 +71,41 @@ public class BuildingBasedRequester implements IRequester
     @Override
     public void onRequestComplete(@NotNull final IToken token)
     {
-        getBuilding().ifPresent(requester -> requester.onRequestComplete(token));
+        updateBuilding();
+
+        if (building == null)
+        {
+            return;
+        }
+
+        building.onRequestComplete(token);
     }
 
     @NotNull
     @Override
     public void onRequestCancelled(@NotNull final IToken token)
     {
-        getBuilding().ifPresent(requester -> requester.onRequestCancelled(token));
+        updateBuilding();
+
+        if (building == null)
+        {
+            return;
+        }
+
+        building.onRequestCancelled(token);
     }
 
     @NotNull
     @Override
     public ITextComponent getDisplayName(@NotNull final IToken token)
     {
-        return getBuilding().map(requester -> requester.getDisplayName(token)).orElseGet(() -> new TextComponentString("<UNKNOWN>"));
+        return getBuilding().getDisplayName(token);
     }
 
-    public Optional<IRequester> getBuilding()
+    public IRequester getBuilding()
     {
         updateBuilding();
-        return Optional.ofNullable(building);
+        return building;
     }
 
     private void updateBuilding()

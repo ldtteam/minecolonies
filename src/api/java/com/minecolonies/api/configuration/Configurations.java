@@ -794,11 +794,5 @@ public class Configurations
 
         @Config.Comment("The amount of ticks between retries of the request system for retryable requests. Lower increases server load.")
         public int delayBetweenRetries = 1200;
-
-        @Config.Comment("The maximal amount of buildings the Delivery Man should try to gather before attempting a drop off at the warehouse.")
-        public int maximalBuildingsToGather = 6;
-
-        @Config.Comment("The minimal amount of buildings the Delivery Man should try to gather before attempting a drop off at the warehouse.")
-        public int minimalBuildingsToGather = 3;
     }
 }

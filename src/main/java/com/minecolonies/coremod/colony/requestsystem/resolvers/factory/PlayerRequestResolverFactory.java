@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.StandardPlayerRequestResolver;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.PlayerRequestResolver;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 /**
  * ------------ Class not Documented ------------
  */
-public class StandardPlayerRequestResolverFactory implements IFactory<IRequestManager, StandardPlayerRequestResolver>
+public class PlayerRequestResolverFactory implements IFactory<IRequestManager, PlayerRequestResolver>
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_TOKEN             = "Token";
@@ -31,9 +31,9 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
 
     @NotNull
     @Override
-    public TypeToken<? extends StandardPlayerRequestResolver> getFactoryOutputType()
+    public TypeToken<? extends PlayerRequestResolver> getFactoryOutputType()
     {
-        return TypeToken.of(StandardPlayerRequestResolver.class);
+        return TypeToken.of(PlayerRequestResolver.class);
     }
 
     @NotNull
@@ -45,7 +45,7 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
 
     @NotNull
     @Override
-    public StandardPlayerRequestResolver getNewInstance(
+    public PlayerRequestResolver getNewInstance(
                                                  @NotNull final IFactoryController factoryController,
                                                  @NotNull final IRequestManager iRequestManager,
                                                  @NotNull final Object... context)
@@ -61,12 +61,12 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
         }
 
         final IToken<?> token = factoryController.getNewInstance(TypeConstants.ITOKEN, iRequestManager.getColony().getID() * CONST_PLAYER_RESOLVER_ID_SCALE);
-        return new StandardPlayerRequestResolver(location, token);
+        return new PlayerRequestResolver(location, token);
     }
 
     @NotNull
     @Override
-    public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StandardPlayerRequestResolver playerRequestResolver)
+    public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final PlayerRequestResolver playerRequestResolver)
     {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setTag(NBT_TOKEN, controller.serialize(playerRequestResolver.getRequesterId()));
@@ -77,7 +77,7 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
 
     @NotNull
     @Override
-    public StandardPlayerRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+    public PlayerRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
     {
         final IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
         final ILocation location = controller.deserialize(nbt.getCompoundTag(NBT_LOCATION));
@@ -86,7 +86,7 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
           NBTUtils.streamCompound(nbt.getTagList(NBT_ASSIGNED_REQUESTS, Constants.NBT.TAG_COMPOUND)).map(c -> (IToken) controller.deserialize(c)).collect(
             Collectors.toSet());
 
-        final StandardPlayerRequestResolver resolver = new StandardPlayerRequestResolver(location, token);
+        final PlayerRequestResolver resolver = new PlayerRequestResolver(location, token);
         resolver.setAllAssignedRequests(assignedRequests);
 
         return resolver;
