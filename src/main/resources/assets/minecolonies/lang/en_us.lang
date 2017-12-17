@@ -526,8 +526,3 @@ item.supplyChestDeployer.missing=Are you trying to trick me, pick up that Supply
 com.minecolonies.coremod.citizen.rename.same=Renaming failed: 2 Citizen are not allowed to have the same name!
 com.minecolonies.coremod.citizen.rename.notAllowed=Renaming failed: You're not allowed to rename your Citizen.
 
-com.minecolonies.coremod.gui.recipe.remove=Remove
-com.minecolonies.coremod.gui.workerHuts.crafting=Teach recipe
-com.minecolonies.coremod.gui.recipe.done=Succesfully saved recipe!
-com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
-com.minecolonies.coremod.resolvers.crafter=Crafting Resolver
