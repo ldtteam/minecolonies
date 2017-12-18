@@ -95,6 +95,11 @@ public final class PlacementHandlers
 
         for (final ItemStack placedStack : itemList)
         {
+            if(ItemStackUtils.isEmpty(placedStack))
+            {
+                return true;
+            }
+
             if (placer.getOwnBuilding()
                   .getOpenRequestsOfTypeFiltered(
                     placer.getWorker().getCitizenData(),
@@ -649,7 +654,14 @@ public final class PlacementHandlers
             {
                 final List<ItemStack> itemList = new ArrayList<>();
                 itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
-                itemList.addAll(placer.getItemsFromTileEntity());
+
+                for(final ItemStack stack : placer.getItemsFromTileEntity())
+                {
+                    if(!ItemStackUtils.isEmpty(stack))
+                    {
+                        itemList.add(stack);
+                    }
+                }
 
                 if (checkForListInInvAndRequest(placer, itemList))
                 {

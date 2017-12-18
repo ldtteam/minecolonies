@@ -837,7 +837,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             {
                 for (final ItemStack stack : request)
                 {
-                    if (getOwnBuilding().getOpenRequestsOfTypeFiltered(getWorker().getCitizenData(),
+                    if (!ItemStackUtils.isEmpty(stack) && getOwnBuilding().getOpenRequestsOfTypeFiltered(getWorker().getCitizenData(),
                       TypeToken.of(Stack.class),
                       (IRequest<? extends Stack> r) -> r.getRequest().matches(stack)).isEmpty())
                     {
