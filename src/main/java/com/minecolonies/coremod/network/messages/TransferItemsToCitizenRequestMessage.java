@@ -109,13 +109,13 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
             return;
         }
 
-        if (message.quantity <= 0)
+        final boolean isCreative = player.capabilities.isCreativeMode;
+        if (message.quantity <= 0 && !isCreative)
         {
             Log.getLogger().warn("TransferItemsRequestMessage quantity below 0");
             return;
         }
 
-        final boolean isCreative = player.capabilities.isCreativeMode;
         final Item item = message.itemStack.getItem();
         final int amountToTake;
         if (isCreative)

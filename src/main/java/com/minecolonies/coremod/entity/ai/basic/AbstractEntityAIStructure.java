@@ -834,17 +834,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
             if (!Configurations.gameplay.builderInfiniteResources)
             {
-                for (final ItemStack stack : request)
+                if(PlacementHandlers.checkForListInInvAndRequest(this, request))
                 {
-                    if (getOwnBuilding().getOpenRequestsOfTypeFiltered(getWorker().getCitizenData(),
-                      TypeToken.of(Stack.class),
-                      (IRequest<? extends Stack> r) -> r.getRequest().matches(stack)).isEmpty())
-                    {
-                        Stack stackRequest = new Stack(stack);
-                        worker.getCitizenData().createRequest(stackRequest);
-
-                        return false;
-                    }
+                    return false;
                 }
 
                 //Surpress
