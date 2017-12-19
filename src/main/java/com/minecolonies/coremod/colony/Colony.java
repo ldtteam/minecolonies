@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.MineColoniesAchievement;
