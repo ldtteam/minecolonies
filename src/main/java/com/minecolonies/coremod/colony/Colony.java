@@ -66,7 +66,7 @@ public class Colony implements IColony
     /**
      * The default style for the building.
      */
-    private String style = Constants.DEFAULT_STYLE;
+    private String style = DEFAULT_STYLE;
 
     /**
      * Id of the colony.
