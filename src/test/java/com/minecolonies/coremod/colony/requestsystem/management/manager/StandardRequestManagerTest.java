@@ -151,6 +151,13 @@ public class StandardRequestManagerTest
         requestManager.onProviderRemovedFromColony(provider);
     }
 
+    @Test
+    public void reassignRequest()
+    {
+        requestManager.onProviderAddedToColony(provider);
+
+    }
+
     private static class TestResolvingProvider implements IRequestResolverProvider
     {
 
