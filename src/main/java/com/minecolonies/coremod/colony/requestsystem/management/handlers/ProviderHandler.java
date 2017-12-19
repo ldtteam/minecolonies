@@ -2,9 +2,6 @@ package com.minecolonies.coremod.colony.requestsystem.management.handlers;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.Suppression;
@@ -101,14 +98,8 @@ public final class ProviderHandler
         final ImmutableCollection<IToken> assignedResolvers = getRegisteredResolvers(manager, token);
         for (final IToken resolverToken : assignedResolvers)
         {
-            //If no requests are assigned to this resolver skip.
-            if (!manager.getResolverRequestMap().containsKey(resolverToken))
-            {
-                continue;
-            }
-
             //Skip if the resolver has no requests assigned.
-            if (manager.getResolverRequestMap().get(resolverToken).size() == 0)
+            if (!manager.getResolverRequestMap().containsKey(resolverToken) || manager.getResolverRequestMap().get(resolverToken).size() == 0)
             {
                 LogHandler.log("Removing resolver without assigned requests: " + resolverToken);
                 manager.getResolverRequestMap().remove(resolverToken);
@@ -125,61 +116,7 @@ public final class ProviderHandler
             //Get all assigned requests and reassign them.
             for (final IToken requestToken : assignedRequests)
             {
-                LogHandler.log("Removing assigned request: " + requestToken + " from resolver: " + resolverToken);
-
-                //No need to notify the resolver of the cancellation, It is getting removed anyway.
-                //In that case: All resources lost, restart on different resolver.
-                //Also cancel all registered child task:
-                manager.getResolverRequestMap().get(resolverToken).remove(requestToken);
-                manager.getRequestResolverMap().remove(requestToken);
-
-                LogHandler.log("Cancelling all child requests of:" + requestToken);
-
-                //Check if the request has children.
-                final IRequest assignedRequest = RequestHandler.getRequest(manager, requestToken);
-                if (assignedRequest.hasChildren())
-                {
-                    //Iterate over all children and call there onRequestCancelledOrOverruled method to get a new cleanup parent.
-                    for (final Object objectToken :
-                      assignedRequest.getChildren())
-                    {
-                        if (objectToken instanceof IToken)
-                        {
-                            final IToken childToken = (IToken) objectToken;
-                            final IRequest childRequest = RequestHandler.getRequest(manager, childToken);
-
-                            //Check if the child has been assigned. If not, no work done, no cleanup needed.
-                            if (RequestHandler.isAssigned(manager, childToken))
-                            {
-                                //Get the child request
-                                final IRequestResolver childResolver = ResolverHandler.getResolverForRequest(manager, childToken);
-                                final IRequest cleanUpRequest = childResolver.onRequestCancelledOrOverruled(manager, childRequest);
-
-                                //Switch out the parent, and add the old child to the followup request as new child
-                                if (cleanUpRequest != null)
-                                {
-                                    cleanUpRequest.addChild(childToken);
-                                    childRequest.setParent(cleanUpRequest.getToken());
-
-                                    //Assign the new followup request if it is not assigned yet.
-                                    if (!RequestHandler.isAssigned(manager, cleanUpRequest.getToken()))
-                                    {
-                                        RequestHandler.assignRequest(manager, cleanUpRequest);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                LogHandler.log("Starting reassignment of: " + requestToken + " - Assigned to: " + resolverToken);
-
-                RequestHandler.assignRequest(manager, assignedRequest, assignedResolvers);
-
-                if (assignedRequest.getState().ordinal() < RequestState.RECEIVED.ordinal())
-                {
-                    LogHandler.log("Finished reassignment of: " + requestToken + " - Assigned to: " + manager.getRequestResolverMap().get(requestToken));
-                }
+                manager.reassignRequest(requestToken, assignedResolvers);
             }
 
             ResolverHandler.removeResolver(manager, resolverToken);
