@@ -171,7 +171,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     public int getPatrolDistance()
     {
         return this.getBuildingLevel() * PATROL_DISTANCE;
-    }    /**
+    }
+
+    /**
      * Gets the max level of the baker's hut.
      *
      * @return The max level of the baker's hut.
