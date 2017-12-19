@@ -2,8 +2,19 @@ package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemColored;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.registry.IForgeRegistry;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
@@ -13,20 +24,20 @@ import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame>
 {
 
-    /**
-     * The hardness this block has.
-     */
-    private static final float BLOCK_HARDNESS = 3F;
+    public static final PropertyEnum<TimberFrameType> TYPE       = PropertyEnum.create("type", TimberFrameType.class);
 
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME = "blockTimberFrame";
-
+    public static final String                      BLOCK_NAME     = "blockPaperwall";
+    /**
+     * The hardness this block has.
+     */
+    private static final float                      BLOCK_HARDNESS = 3F;
     /**
      * The resistance this block has.
      */
-    private static final float RESISTANCE = 1F;
+    private static final float                      RESISTANCE     = 1F;
 
     /**
      * Constructor for the TimberFrame
@@ -34,8 +45,10 @@ public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame
     public BlockTimberFrame()
     {
         super(Material.WOOD);
+        this.setDefaultState(this.blockState.getBaseState().withProperty(TYPE, TimberFrameType.PLAIN));
         initBlock();
     }
+
 
     /**
      * initialize the block
@@ -51,10 +64,71 @@ public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame
     }
 
     /**
-     * Used to determine ambient occlusion and culling when rebuilding chunks for render.
+     * Registery block at gameregistry.
      *
-     * @return true
+     * @param registry the registry to use.
      */
+    @Override
+    public void registerItemBlock(final IForgeRegistry<Item> registry)
+    {
+        registry.register((new ItemColored(this, true)).setRegistryName(this.getRegistryName()));
+    }
+    /**
+     * Get the MapColor for this Block and the given BlockState
+     */
+    @NotNull
+    @Deprecated
+    @Override
+    public MapColor getMapColor(final IBlockState state)
+    {
+        return state.getValue(TYPE).getMapColor();
+    }
+
+    /**
+     * Convert the given metadata into a BlockState for this Block
+     */
+    @NotNull
+    @Deprecated
+    @Override
+    public IBlockState getStateFromMeta(final int meta)
+    {
+        return this.getDefaultState().withProperty(TYPE, TimberFrameType.byMetadata(meta));
+    }
+
+    /**
+     * Gets the metadata of the item this Block can drop. This method is called when the block gets destroyed. It
+     * returns the metadata of the dropped item based on the old metadata of the block.
+     */
+    @Override
+    public int damageDropped(final IBlockState state)
+    {
+        return state.getValue(TYPE).getMetadata();
+    }
+
+    @Override
+    public void getSubBlocks(final Item itemIn, final CreativeTabs tab, final List<ItemStack> list)
+    {
+        for (final TimberFrameType type : TimberFrameType.values())
+        {
+            list.add(new ItemStack(itemIn, 1, type.getMetadata()));
+        }
+    }
+    /**
+     * Convert the BlockState into the correct metadata value
+     */
+    @Override
+    public int getMetaFromState(final IBlockState state)
+    {
+        return state.getValue(TYPE).getMetadata();
+    }
+
+    @NotNull
+    @Override
+    protected BlockStateContainer createBlockState()
+    {
+        return new BlockStateContainer(this, TYPE);
+    }
+
     @SuppressWarnings(DEPRECATION)
     @Override
     public boolean isOpaqueCube(final IBlockState state)
