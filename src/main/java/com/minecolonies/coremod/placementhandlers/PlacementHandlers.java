@@ -85,7 +85,7 @@ public final class PlacementHandlers
      * @param itemList the list to check.
      * @return true if need to request.
      */
-    private static boolean checkForListInInvAndRequest(@NotNull final AbstractEntityAIStructure<?> placer, final List<ItemStack> itemList)
+    public static boolean checkForListInInvAndRequest(@NotNull final AbstractEntityAIStructure<?> placer, final List<ItemStack> itemList)
     {
         final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(new InvWrapper(placer.getWorker().getInventoryCitizen()),
           itemStack -> itemList.stream()
