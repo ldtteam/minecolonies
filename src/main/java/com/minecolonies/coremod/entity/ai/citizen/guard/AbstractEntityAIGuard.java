@@ -76,7 +76,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     /**
      * Max tries to find a position to path to.
      */
-    private static final int MAX_TRIES = 4;
+    private static final int MAX_TRIES = 20;
 
     /**
      * Path that close to the patrol target.
