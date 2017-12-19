@@ -1799,42 +1799,45 @@ public class Colony implements IColony
     public AbstractBuilding addNewBuilding(@NotNull final TileEntityColonyBuilding tileEntity)
     {
         tileEntity.setColony(this);
-        @Nullable final AbstractBuilding building = AbstractBuilding.create(this, tileEntity);
-        if (building != null)
+        if (!buildings.containsKey(tileEntity.getPosition()))
         {
-            addBuilding(building);
-            tileEntity.setBuilding(building);
+            @Nullable final AbstractBuilding building = AbstractBuilding.create(this, tileEntity);
+            if (building != null)
+            {
+                addBuilding(building);
+                tileEntity.setBuilding(building);
 
-            Log.getLogger().info(String.format("Colony %d - new AbstractBuilding for %s at %s",
-              getID(),
-              tileEntity.getBlockType().getClass(),
-              tileEntity.getPosition()));
-            if (tileEntity.isMirrored())
-            {
-                building.setMirror();
-            }
-            if (!tileEntity.getStyle().isEmpty())
-            {
-                building.setStyle(tileEntity.getStyle());
+                Log.getLogger().info(String.format("Colony %d - new AbstractBuilding for %s at %s",
+                        getID(),
+                        tileEntity.getBlockType().getClass(),
+                        tileEntity.getPosition()));
+                if (tileEntity.isMirrored())
+                {
+                    building.setMirror();
+                }
+                if (!tileEntity.getStyle().isEmpty())
+                {
+                    building.setStyle(tileEntity.getStyle());
+                }
+                else
+                {
+                    building.setStyle(getStyle());
+                }
+                ConstructionTapeHelper.placeConstructionTape(building.getLocation(), building.getCorners(), world);
             }
             else
             {
-                building.setStyle(getStyle());
+                Log.getLogger().error(String.format("Colony %d unable to create AbstractBuilding for %s at %s",
+                        getID(),
+                        tileEntity.getBlockType().getClass(),
+                        tileEntity.getPosition()));
             }
-            ConstructionTapeHelper.placeConstructionTape(building.getLocation(), building.getCorners(), world);
-        }
-        else
-        {
-            Log.getLogger().error(String.format("Colony %d unable to create AbstractBuilding for %s at %s",
-              getID(),
-              tileEntity.getBlockType().getClass(),
-              tileEntity.getPosition()));
-        }
 
-        calculateMaxCitizens();
-        ColonyManager.markDirty();
-
-        return building;
+            calculateMaxCitizens();
+            ColonyManager.markDirty();
+            return building;
+        }
+        return null;
     }
 
     /**
