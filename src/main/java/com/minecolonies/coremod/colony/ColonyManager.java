@@ -128,9 +128,10 @@ public final class ColonyManager
      * @return The created colony.
      */
     @NotNull
-    public static Colony createColony(@NotNull final World w, final BlockPos pos, @NotNull final EntityPlayer player)
+    public static Colony createColony(@NotNull final World w, final BlockPos pos, @NotNull final EntityPlayer player, @NotNull final String style)
     {
         final Colony colony = colonies.create(w, pos);
+        colony.setStyle(style);
 
         addColonyByWorld(colony);
 
