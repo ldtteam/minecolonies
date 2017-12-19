@@ -99,7 +99,7 @@ public final class ProviderHandler
         for (final IToken resolverToken : assignedResolvers)
         {
             //Skip if the resolver has no requests assigned.
-            if (!manager.getResolverRequestMap().containsKey(resolverToken) || manager.getResolverRequestMap().get(resolverToken).size() == 0)
+            if (!manager.getResolverRequestMap().containsKey(resolverToken) || manager.getResolverRequestMap().get(resolverToken).isEmpty())
             {
                 LogHandler.log("Removing resolver without assigned requests: " + resolverToken);
                 manager.getResolverRequestMap().remove(resolverToken);
