@@ -125,6 +125,7 @@ public final class ColonyManager
      * @param w      World of the colony.
      * @param pos    Coordinate of the center of the colony.
      * @param player the player that creates the colony - owner.
+     * @param style the default style of the colony.
      * @return The created colony.
      */
     @NotNull
