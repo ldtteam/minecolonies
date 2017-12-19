@@ -29,7 +29,7 @@ public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame
     /**
      * This blocks name.
      */
-    public static final String                      BLOCK_NAME     = "blockPaperwall";
+    public static final String                      BLOCK_NAME     = "blockTimberFrame";
     /**
      * The hardness this block has.
      */

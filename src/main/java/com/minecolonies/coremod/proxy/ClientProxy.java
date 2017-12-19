@@ -2,9 +2,7 @@ package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.blocks.BlockPaperwall;
-import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.blocks.PaperwallType;
+import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.client.gui.WindowCitizen;
 import com.minecolonies.coremod.client.gui.WindowClipBoard;
@@ -169,8 +167,6 @@ public class ClientProxy extends CommonProxy
 
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockSolidSubstitution), 0,
           new ModelResourceLocation(ModBlocks.blockSolidSubstitution.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrame), 0,
-          new ModelResourceLocation(ModBlocks.blockTimberFrame.getRegistryName(), INVENTORY));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockConstructionTape), 0,
           new ModelResourceLocation(ModBlocks.blockConstructionTape.getRegistryName(), INVENTORY));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockConstructionTapeCorner), 0,
@@ -220,6 +216,14 @@ public class ClientProxy extends CommonProxy
         {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockPaperWall), type.getMetadata(),
               new ModelResourceLocation(ModBlocks.blockPaperWall.getRegistryName() + "_" + type.getName(), INVENTORY));
+        }
+
+        ModelLoader.setCustomStateMapper(ModBlocks.blockTimberFrame, new StateMap.Builder().withName(BlockTimberFrame.TYPE).withSuffix("_blockTimberFrame").build());
+
+        for (final TimberFrameType type : TimberFrameType.values())
+        {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrame), type.getMetadata(),
+                    new ModelResourceLocation(ModBlocks.blockTimberFrame.getRegistryName() + "_" + type.getName(), INVENTORY));
         }
     }
 
