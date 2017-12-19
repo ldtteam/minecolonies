@@ -85,7 +85,7 @@ public final class PlacementHandlers
      * @param itemList the list to check.
      * @return true if need to request.
      */
-    private static boolean checkForListInInvAndRequest(@NotNull final AbstractEntityAIStructure<?> placer, final List<ItemStack> itemList)
+    public static boolean checkForListInInvAndRequest(@NotNull final AbstractEntityAIStructure<?> placer, final List<ItemStack> itemList)
     {
         final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(new InvWrapper(placer.getWorker().getInventoryCitizen()),
           itemStack -> itemList.stream()
@@ -95,6 +95,11 @@ public final class PlacementHandlers
 
         for (final ItemStack placedStack : itemList)
         {
+            if(ItemStackUtils.isEmpty(placedStack))
+            {
+                return true;
+            }
+
             if (placer.getOwnBuilding()
                   .getOpenRequestsOfTypeFiltered(
                     placer.getWorker().getCitizenData(),
@@ -649,7 +654,14 @@ public final class PlacementHandlers
             {
                 final List<ItemStack> itemList = new ArrayList<>();
                 itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
-                itemList.addAll(placer.getItemsFromTileEntity());
+
+                for(final ItemStack stack : placer.getItemsFromTileEntity())
+                {
+                    if(!ItemStackUtils.isEmpty(stack))
+                    {
+                        itemList.add(stack);
+                    }
+                }
 
                 if (checkForListInInvAndRequest(placer, itemList))
                 {
