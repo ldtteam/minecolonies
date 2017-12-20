@@ -2,17 +2,18 @@ package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import net.minecraft.block.Block;
+import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -49,13 +50,23 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
         if (placer.getActiveHand().equals(EnumHand.MAIN_HAND))
         {
             final Colony colony = ColonyManager.getClosestColony(worldIn, pos);
+            String style = Constants.DEFAULT_STYLE;
+            final TileEntity tileEntity = worldIn.getTileEntity(pos);
+            if(tileEntity instanceof TileEntityColonyBuilding
+                    && !((TileEntityColonyBuilding) tileEntity).getStyle().isEmpty())
+            {
+                style = ((TileEntityColonyBuilding) tileEntity).getStyle();
+            }
 
             if ((colony == null
-                   || BlockPosUtil.getDistance2D(colony.getCenter(), pos) >= Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)
+                    || BlockPosUtil.getDistance2D(colony.getCenter(), pos) >= Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)
                   && placer instanceof EntityPlayer)
             {
-
-                ColonyManager.createColony(worldIn, pos, (EntityPlayer) placer);
+                ColonyManager.createColony(worldIn, pos, (EntityPlayer) placer, style);
+            }
+            else if (colony != null)
+            {
+                colony.setStyle(style);
             }
         }
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
