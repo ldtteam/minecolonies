@@ -125,12 +125,14 @@ public final class ColonyManager
      * @param w      World of the colony.
      * @param pos    Coordinate of the center of the colony.
      * @param player the player that creates the colony - owner.
+     * @param style the default style of the colony.
      * @return The created colony.
      */
     @NotNull
-    public static Colony createColony(@NotNull final World w, final BlockPos pos, @NotNull final EntityPlayer player)
+    public static Colony createColony(@NotNull final World w, final BlockPos pos, @NotNull final EntityPlayer player, @NotNull final String style)
     {
         final Colony colony = colonies.create(w, pos);
+        colony.setStyle(style);
 
         addColonyByWorld(colony);
 
