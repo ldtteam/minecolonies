@@ -26,8 +26,8 @@ public final class NbtTagConstants
     public static final String TAG_BUILDING_PRIO    = "buildingPrio";
     public static final String TAG_PRIO             = "prio";
     public static final String TAG_PRIO_ID          = "prioId";
-
-    //statistics tags
+    public static final String TAG_COLONIES         = "colonies";
+    public static final String TAG_UUID             = "uuid";
     public static final String TAG_STATISTICS            = "statistics";
     public static final String TAG_MINER_STATISTICS      = "minerStatistics";
     public static final String TAG_MINER_ORES            = "ores";
@@ -46,6 +46,12 @@ public final class NbtTagConstants
     public static final String TAG_LUMBERJACK_TREES      = "trees";
     public static final String TAG_LUMBERJACK_SAPLINGS   = "saplings";
     public static final String TAG_FIELDS                = "fields";
+    public static final String TAG_COMPATABILITY_MANAGER = "compatabilityManager";
+    public static final String TAG_SAPLINGS              = "tagSaplings";
+    public static final String TAG_SAP_LEAVE             = "tagSapLeaves";
+    public static final String TAG_ORES                  = "tagOres";
+    public static final String TAG_BLOCK                 = "block";
+
 
     /**
      * Tag used to store the containers to NBT.

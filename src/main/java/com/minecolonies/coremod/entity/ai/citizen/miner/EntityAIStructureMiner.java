@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.miner;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
-import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
@@ -108,8 +108,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     private static boolean isOre(final Block block)
     {
-        //TODO make this more sophisticated
-        return block instanceof BlockOre || block instanceof BlockRedstoneOre;
+        if(block instanceof BlockOre || block instanceof BlockRedstoneOre || ColonyManager.getCompatabilityManager().isOre(block.getDefaultState()))
+        {
+            return true;
+        }
+        return false;
     }
 
     //Miner wants to work but is not at building
@@ -793,7 +796,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     @Override
     public boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final IBlockState worldMetadata)
     {
-        return worldBlock instanceof BlockOre && worldMetadata.getMaterial().isSolid();
+        return isOre(worldMetadata.getBlock());
     }
 
     @Override

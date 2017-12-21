@@ -97,8 +97,9 @@ configFile.withReader {
 }
 
 dependencies {
-    deobfCompile "slimeknights.mantle:Mantle:1.12-${config.mantle_version}"
+    deobfCompile "slimeknights.mantle:Mantle:1.1s2-${config.mantle_version}"
     deobfCompile "slimeknights:TConstruct:1.12-${config.tinker_version}"
+    deobfCompile "com.github.glitchfiend.biomesoplenty:BiomesOPlenty:1.12.2-7.0.1.2309:universal"
 
     structuresCompile sourceSets.api.output
     //blockOutCompile sourceSets.api.output

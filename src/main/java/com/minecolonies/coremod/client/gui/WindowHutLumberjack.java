@@ -10,7 +10,7 @@ import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.BuildingLumberjack;
-import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.network.messages.LumberjackSaplingSelectorMessage;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
