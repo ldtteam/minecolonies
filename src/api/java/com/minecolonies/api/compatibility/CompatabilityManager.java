@@ -6,7 +6,10 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
+import net.minecraft.block.BlockOre;
+import net.minecraft.block.BlockRedstoneOre;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemBlock;
@@ -97,6 +100,10 @@ public class CompatabilityManager implements ICompatabilityManager
     @Override
     public boolean isOre(final IBlockState block)
     {
+        if(block instanceof BlockOre || block instanceof BlockRedstoneOre)
+        {
+            return true;
+        }
         final ItemStack tempStack = new ItemStack(block.getBlock(), 1, block.getBlock().getMetaFromState(block));
         final IBlockState temp = BlockLeaves.getBlockFromItem(tempStack.getItem()).getStateFromMeta(tempStack.getMetadata());
         return ores.contains(temp);

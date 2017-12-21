@@ -11,8 +11,6 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLadder;
-import net.minecraft.block.BlockOre;
-import net.minecraft.block.BlockRedstoneOre;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -104,15 +102,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
           2 * worker.getCitizenData().getStrength()
             + worker.getCitizenData().getEndurance());
         worker.setCanPickUpLoot(true);
-    }
-
-    private static boolean isOre(final Block block)
-    {
-        if(block instanceof BlockOre || block instanceof BlockRedstoneOre || ColonyManager.getCompatabilityManager().isOre(block.getDefaultState()))
-        {
-            return true;
-        }
-        return false;
     }
 
     //Miner wants to work but is not at building
@@ -559,7 +548,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     private boolean secureBlock(@NotNull final BlockPos curBlock, @NotNull final BlockPos safeStand)
     {
-        if ((!getBlockState(curBlock).getMaterial().blocksMovement() && getBlock(curBlock) != Blocks.TORCH) || isOre(getBlock(curBlock)))
+        if ((!getBlockState(curBlock).getMaterial().blocksMovement() && getBlock(curBlock) != Blocks.TORCH)
+                || ColonyManager.getCompatabilityManager().isOre(world.getBlockState(curBlock)))
         {
             if (!mineBlock(curBlock, safeStand))
             {
@@ -796,7 +786,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     @Override
     public boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final IBlockState worldMetadata)
     {
-        return isOre(worldMetadata.getBlock());
+        return ColonyManager.getCompatabilityManager().isOre(worldMetadata);
     }
 
     @Override
