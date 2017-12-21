@@ -13,7 +13,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -182,8 +181,7 @@ public class Tree
 
             if(block instanceof BlockLeaves)
             {
-                final NonNullList<ItemStack> list = NonNullList.create();
-                block.getDrops(list, world, pos, world.getBlockState(pos), A_LOT_OF_LUCK);
+                final List<ItemStack> list = block.getDrops(world, pos, world.getBlockState(pos), A_LOT_OF_LUCK);
                 for(final ItemStack stack: list)
                 {
                     final int[] oreIds = OreDictionary.getOreIDs(stack);

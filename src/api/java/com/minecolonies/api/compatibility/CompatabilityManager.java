@@ -6,7 +6,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockOre;
 import net.minecraft.block.BlockRedstoneOre;
@@ -18,8 +17,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -131,7 +128,7 @@ public class CompatabilityManager implements ICompatabilityManager
                                 .map(CompatabilityManager::readLeaveSaplingEntryFromNBT)
                                 .collect(Collectors.toMap(Tuple::getFirst, Tuple::getSecond)));
         saplings.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_SAPLINGS, Constants.NBT.TAG_COMPOUND))
-                .map(tempCompound -> new ItemStorage(new ItemStack(tempCompound)))
+                .map(tempCompound -> new ItemStorage(ItemStack.loadItemStackFromNBT(tempCompound)))
                 .collect(Collectors.toList()));
 
         ores.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_ORES, Constants.NBT.TAG_COMPOUND))
@@ -158,14 +155,14 @@ public class CompatabilityManager implements ICompatabilityManager
         {
             for (final CreativeTabs tabs : CreativeTabs.CREATIVE_TAB_ARRAY)
             {
-                final NonNullList<ItemStack> list = NonNullList.create();
-                ore.getItem().getSubItems(tabs, list);
+                final List<ItemStack> list = new ArrayList<>();
+                ore.getItem().getSubItems(ore.getItem(), tabs, list);
                 for (final ItemStack stack : list)
                 {
                     if (!ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemBlock)
                     {
                         final IBlockState state = ((ItemBlock) stack.getItem()).getBlock()
-                                .getStateForPlacement(world, BlockPos.ORIGIN, EnumFacing.NORTH, 0, 0, 0, stack.getMetadata(), null, EnumHand.MAIN_HAND);
+                                .getStateForPlacement(world, BlockPos.ORIGIN, EnumFacing.NORTH, 0, 0, 0, stack.getMetadata(), null, stack);
                         if (!ores.contains(state))
                         {
                             ores.add(state);
@@ -185,8 +182,8 @@ public class CompatabilityManager implements ICompatabilityManager
             {
                 for(CreativeTabs tabs: CreativeTabs.CREATIVE_TAB_ARRAY)
                 {
-                    final NonNullList<ItemStack> list = NonNullList.create();
-                    saps.getItem().getSubItems(tabs, list);
+                    final List<ItemStack> list = new ArrayList<>();
+                    saps.getItem().getSubItems(saps.getItem(), tabs, list);
                     for (final ItemStack stack : list)
                     {
                         //Just put it in if not in there already, don't mind the leave yet.
@@ -211,6 +208,6 @@ public class CompatabilityManager implements ICompatabilityManager
 
     private static Tuple<IBlockState, ItemStorage> readLeaveSaplingEntryFromNBT(final NBTTagCompound compound)
     {
-        return new Tuple<>(NBTUtil.readBlockState(compound), new ItemStorage(new ItemStack(compound)));
+        return new Tuple<>(NBTUtil.readBlockState(compound), new ItemStorage(ItemStack.loadItemStackFromNBT(compound)));
     }
 }
