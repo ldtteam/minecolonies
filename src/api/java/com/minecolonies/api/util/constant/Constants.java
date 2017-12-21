@@ -38,7 +38,9 @@ public final class Constants
     public static final double HALF_A_CIRCLE                    = 180;
     public static final int    UPDATE_FLAG                      = 0x03;
     public static final int    TICKS_HOUR                       = TICKS_SECOND * SECONDS_A_MINUTE * SECONDS_A_MINUTE;
-    public static final String DEFAULT_STYLE                   = "wooden";
+    public static final String DEFAULT_STYLE                    = "wooden";
+    public static final String SAPLINGS                         = "treeSapling";
+    public static final String ORES                             = "ores";
 
     /**
      * Private constructor to hide implicit public one.
