@@ -159,7 +159,7 @@ public class CompatabilityManager implements ICompatabilityManager
             for (final CreativeTabs tabs : CreativeTabs.CREATIVE_TAB_ARRAY)
             {
                 final NonNullList<ItemStack> list = NonNullList.create();
-                ore.getItem().getSubItems(tabs, list);
+                ore.getItem().getSubItems(ore.getItem(), tabs, list);
                 for (final ItemStack stack : list)
                 {
                     if (!ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemBlock)
@@ -186,7 +186,7 @@ public class CompatabilityManager implements ICompatabilityManager
                 for(CreativeTabs tabs: CreativeTabs.CREATIVE_TAB_ARRAY)
                 {
                     final NonNullList<ItemStack> list = NonNullList.create();
-                    saps.getItem().getSubItems(tabs, list);
+                    saps.getItem().getSubItems(saps.getItem(), tabs, list);
                     for (final ItemStack stack : list)
                     {
                         //Just put it in if not in there already, don't mind the leave yet.
