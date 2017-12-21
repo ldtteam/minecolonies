@@ -428,7 +428,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean hoeIfAble(final BlockPos position)
     {
-        if (shouldHoe(position) && checkForToolOrWeapon(ToolType.HOE))
+        if (shouldHoe(position) && !checkForToolOrWeapon(ToolType.HOE))
         {
             if (mineBlock(position.up()))
             {
