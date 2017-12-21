@@ -42,7 +42,6 @@ public final class Constants
     public static final String SAPLINGS                         = "treeSapling";
     public static final String ORES                             = "ores";
 
-
     /**
      * Private constructor to hide implicit public one.
      */
