@@ -65,6 +65,11 @@ public class Colony implements IColony
     private static final int DEFAULT_OVERALL_HAPPYNESS = 5;
 
     /**
+     * The default style for the building.
+     */
+    private String style = DEFAULT_STYLE;
+
+    /**
      * Id of the colony.
      */
     private final int id;
@@ -416,6 +421,11 @@ public class Colony implements IColony
         {
             this.requestManager.deserializeNBT(compound.getCompoundTag(TAG_REQUESTMANAGER));
         }
+
+        if(compound.hasKey(TAG_STYLE))
+        {
+            this.style = compound.getString(TAG_STYLE);
+        }
     }
 
     /**
@@ -588,6 +598,7 @@ public class Colony implements IColony
         compound.setInteger(TAG_ABANDONED, lastContactInHours);
         compound.setBoolean(TAG_MANUAL_HOUSING, manualHousing);
         compound.setTag(TAG_REQUESTMANAGER, getRequestManager().serializeNBT());
+        compound.setString(TAG_STYLE, style);
     }
 
     /**
@@ -1785,38 +1796,45 @@ public class Colony implements IColony
     public AbstractBuilding addNewBuilding(@NotNull final TileEntityColonyBuilding tileEntity)
     {
         tileEntity.setColony(this);
-        @Nullable final AbstractBuilding building = AbstractBuilding.create(this, tileEntity);
-        if (building != null)
+        if (!buildings.containsKey(tileEntity.getPosition()))
         {
-            addBuilding(building);
-            tileEntity.setBuilding(building);
-
-            Log.getLogger().info(String.format("Colony %d - new AbstractBuilding for %s at %s",
-              getID(),
-              tileEntity.getBlockType().getClass(),
-              tileEntity.getPosition()));
-            if (tileEntity.isMirrored())
+            @Nullable final AbstractBuilding building = AbstractBuilding.create(this, tileEntity);
+            if (building != null)
             {
-                building.setMirror();
+                addBuilding(building);
+                tileEntity.setBuilding(building);
+
+                Log.getLogger().info(String.format("Colony %d - new AbstractBuilding for %s at %s",
+                        getID(),
+                        tileEntity.getBlockType().getClass(),
+                        tileEntity.getPosition()));
+                if (tileEntity.isMirrored())
+                {
+                    building.setMirror();
+                }
+                if (!tileEntity.getStyle().isEmpty())
+                {
+                    building.setStyle(tileEntity.getStyle());
+                }
+                else
+                {
+                    building.setStyle(getStyle());
+                }
+                ConstructionTapeHelper.placeConstructionTape(building.getLocation(), building.getCorners(), world);
             }
-            if (!tileEntity.getStyle().isEmpty())
+            else
             {
-                building.setStyle(tileEntity.getStyle());
+                Log.getLogger().error(String.format("Colony %d unable to create AbstractBuilding for %s at %s",
+                        getID(),
+                        tileEntity.getBlockType().getClass(),
+                        tileEntity.getPosition()));
             }
-            ConstructionTapeHelper.placeConstructionTape(building.getLocation(), building.getCorners(), world);
-        }
-        else
-        {
-            Log.getLogger().error(String.format("Colony %d unable to create AbstractBuilding for %s at %s",
-              getID(),
-              tileEntity.getBlockType().getClass(),
-              tileEntity.getPosition()));
-        }
 
-        calculateMaxCitizens();
-        ColonyManager.markDirty();
-
-        return building;
+            calculateMaxCitizens();
+            ColonyManager.markDirty();
+            return building;
+        }
+        return null;
     }
 
     /**
@@ -2185,5 +2203,23 @@ public class Colony implements IColony
     private static boolean isInDirection(final EnumFacing directionX, final EnumFacing directionZ, final BlockPos vector)
     {
         return EnumFacing.getFacingFromVector(vector.getX(), 0, 0) == directionX && EnumFacing.getFacingFromVector(0, 0, vector.getZ()) == directionZ;
+    }
+
+    /**
+     * Getter for the default style of the colony.
+     * @return the style string.
+     */
+    public String getStyle()
+    {
+        return style;
+    }
+
+    /**
+     * Setter for the default style of the colony.
+     * @param style the default string.
+     */
+    public void setStyle(final String style)
+    {
+        this.style = style;
     }
 }

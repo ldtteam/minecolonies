@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.ai.item.handling;
+package com.minecolonies.api.crafting;
 
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.Item;
