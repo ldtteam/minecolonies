@@ -5,10 +5,10 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
-import net.minecraft.block.BlockOre;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
@@ -180,7 +180,8 @@ public class Structure
                                                                @NotNull final Block worldBlock, @NotNull final IBlockState worldMetadata)
         {
             return structureBlock == ModBlocks.blockSubstitution || (structureBlock == ModBlocks.blockSolidSubstitution
-                                                                       && worldMetadata.getMaterial().isSolid() && !(worldBlock instanceof BlockOre) && worldBlock != Blocks.AIR);
+                    && worldMetadata.getMaterial().isSolid() && !(ColonyManager.getCompatabilityManager().isOre(worldMetadata))
+                    && worldBlock != Blocks.AIR);
         }
     }
 
