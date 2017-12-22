@@ -10,7 +10,10 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
-import net.minecraft.item.ItemStack;
+import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -108,12 +111,17 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     /**
      * List of fields the building seeds.
      */
-    private List<FieldView> fields = new ArrayList<>();
+    private List<BlockPos> fields = new ArrayList<>();
 
     /**
      * ScrollList with the fields.
      */
     private ScrollingList fieldList;
+
+    /**
+     * The world.
+     */
+    private final WorldClient world = Minecraft.getMinecraft().world;
 
     /**
      * Constructor for the window of the farmer.
@@ -137,22 +145,24 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     private void assignClicked(@NotNull final Button button)
     {
         final int row = fieldList.getListElementIndexByPane(button);
-        final FieldView field = fields.get(row);
-
-
-        if (button.getLabel().equals(RED_X))
+        final BlockPos field = fields.get(row);
+        final TileEntity entity = world.getTileEntity(field);
+        if(entity instanceof ScarecrowTileEntity)
         {
-            button.setLabel(APPROVE);
-            building.changeFields(field.getId(), false, row);
-        }
-        else
-        {
-            button.setLabel(RED_X);
-            building.changeFields(field.getId(), true, row);
-        }
+            if (button.getLabel().equals(RED_X))
+            {
+                button.setLabel(APPROVE);
+                building.changeFields(field, false, (ScarecrowTileEntity) entity);
+            }
+            else
+            {
+                button.setLabel(RED_X);
+                building.changeFields(field, true, (ScarecrowTileEntity) entity);
+            }
 
-        pullLevelsFromHut();
-        window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
+            pullLevelsFromHut();
+            window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
+        }
     }
 
     /**
@@ -213,37 +223,43 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final FieldView field = fields.get(index);
-                @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field.getId(), building.getLocation())));
-                final String direction = calcDirection(building.getLocation(), field.getId());
-                @NotNull final String owner =
-                  field.getOwner().isEmpty() ? ("<" + LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED) + ">") : field.getOwner();
-
-                rowPane.findPaneOfTypeByID(TAG_WORKER, Label.class).setLabelText(owner);
-                rowPane.findPaneOfTypeByID(TAG_DISTANCE, Label.class).setLabelText(distance + "m");
-
-                rowPane.findPaneOfTypeByID(TAG_DIRECTION, Label.class).setLabelText(direction);
-
-                final Button assignButton = rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class);
-
-                assignButton.setEnabled(building.assignFieldManually());
-
-                if (field.isTaken())
+                final BlockPos field = fields.get(index);
+                @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field, building.getLocation())));
+                final String direction = calcDirection(building.getLocation(), field);
+                final TileEntity entity = world.getTileEntity(field);
+                if(entity instanceof ScarecrowTileEntity)
                 {
-                    assignButton.setLabel(RED_X);
-                }
-                else
-                {
-                    assignButton.setLabel(APPROVE);
-                    if (building.getBuildingLevel() <= building.getAmountOfFields())
+                    @NotNull final String owner =
+                            ((ScarecrowTileEntity) entity).getOwner().isEmpty()
+                                    ? ("<" + LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED) + ">")
+                                    : ((ScarecrowTileEntity) entity).getOwner();
+
+                    rowPane.findPaneOfTypeByID(TAG_WORKER, Label.class).setLabelText(owner);
+                    rowPane.findPaneOfTypeByID(TAG_DISTANCE, Label.class).setLabelText(distance + "m");
+
+                    rowPane.findPaneOfTypeByID(TAG_DIRECTION, Label.class).setLabelText(direction);
+
+                    final Button assignButton = rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class);
+
+                    assignButton.setEnabled(building.assignFieldManually());
+
+                    if (((ScarecrowTileEntity) entity).isTaken())
                     {
-                        assignButton.disable();
+                        assignButton.setLabel(RED_X);
                     }
-                }
+                    else
+                    {
+                        assignButton.setLabel(APPROVE);
+                        if (building.getBuildingLevel() <= building.getAmountOfFields())
+                        {
+                            assignButton.disable();
+                        }
+                    }
 
-                if (field.getItem() != null)
-                {
-                    rowPane.findPaneOfTypeByID(TAG_ICON, ItemIcon.class).setItem(new ItemStack(field.getItem(), 1));
+                    if (((ScarecrowTileEntity) entity).getSeed() != null)
+                    {
+                        rowPane.findPaneOfTypeByID(TAG_ICON, ItemIcon.class).setItem(((ScarecrowTileEntity) entity).getSeed());
+                    }
                 }
             }
         });
