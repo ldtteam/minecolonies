@@ -1,22 +1,34 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.api.util.EntityUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.inventory.InventoryField;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OWNER;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WIDTH_MINUS;
+import static net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND;
 
 /**
  * The scarecrow tile entity to store extra data.
@@ -24,19 +36,60 @@ import java.util.Random;
 public class ScarecrowTileEntity extends TileEntityChest
 {
     /**
-     * NBTTag to store the type.
+     * The max width/length of a field.
      */
-    private static final String TAG_TYPE = "type";
+    private static final int MAX_RANGE = 5;
 
     /**
-     * Tag to store the inventory to nbt.
+     * The fields location.
      */
-    private static final String TAG_INVENTORY = "inventory";
+    private BlockPos location;
 
     /**
-     * NBTag to store the name.
+     * Has the field be taken by any worker?
      */
-    private static final String TAG_NAME = "name";
+    private boolean taken = false;
+
+    /**
+     * Checks if the field needsWork (Hoeig, Seedings, Farming etc).
+     */
+    private boolean needsWork = true;
+
+    /**
+     * Has the field been planted?
+     */
+    private ScarecrowTileEntity.FieldStage fieldStage = ScarecrowTileEntity.FieldStage.EMPTY;
+
+    /**
+     * The length to plus x of the field.
+     */
+    private int lengthPlusX;
+
+    /**
+     * The width to plus z of the seed.
+     */
+    private int widthPlusZ;
+
+    /**
+     * The length to minus xof the field.
+     */
+    private int lengthMinusX;
+
+    /**
+     * The width to minus z of the seed.
+     */
+    private int widthMinusZ;
+
+    /**
+     * Citizen Id of the citizen owning the field.
+     */
+    private int ownerId;
+
+    /**
+     * Name of the citizen claiming the field.
+     */
+    @NotNull
+    private String owner = "";
 
     /**
      * Random generator.
@@ -44,19 +97,25 @@ public class ScarecrowTileEntity extends TileEntityChest
     private final Random random = new Random();
 
     /**
-     * The inventory connected with the scarecrow.
-     */
-    private InventoryField inventoryField;
-
-    /**
      * The type of the scarecrow.
      */
     private ScareCrowType type;
 
     /**
+     * The colony of the field.
+     */
+    @Nullable
+    private Colony colony;
+
+    /**
      * Name of the scarecrow, string set in the GUI.
      */
-    private String name = LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user.noone"));
+    private String name;
+
+    /**
+     * Inventory of the field.
+     */
+    private final IItemHandlerModifiable inventory = new ItemStackHandler(1);
 
     /**
      * Creates an instance of the tileEntity.
@@ -64,7 +123,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     public ScarecrowTileEntity()
     {
         super();
-        this.inventoryField = new InventoryField();
+        name = LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user.noone"));
     }
 
     /**
@@ -85,6 +144,251 @@ public class ScarecrowTileEntity extends TileEntityChest
     public void setName(final String name)
     {
         this.name = name;
+    }
+
+    /**
+     * Getter for MAX_RANGE.
+     *
+     * @return the max range.
+     */
+    private static int getMaxRange()
+    {
+        return MAX_RANGE;
+    }
+
+    /**
+     * Calculates recursively the length of the field until a certain point.
+     * <p>
+     * This mutates the field!
+     *
+     * @param position the start position.
+     * @param world    the world the field is in.
+     */
+    public final void calculateSize(@NotNull final World world, @NotNull final BlockPos position)
+    {
+        //Calculate in all 4 directions
+        this.lengthPlusX = searchNextBlock(0, position.east(), EnumFacing.EAST, world);
+        this.lengthMinusX = searchNextBlock(0, position.west(), EnumFacing.WEST, world);
+        this.widthPlusZ = searchNextBlock(0, position.south(), EnumFacing.SOUTH, world);
+        this.widthMinusZ = searchNextBlock(0, position.north(), EnumFacing.NORTH, world);
+    }
+
+    /**
+     * Calculates the field size into a specific direction.
+     *
+     * @param blocksChecked how many blocks have been checked.
+     * @param position      the start position.
+     * @param direction     the direction to search.
+     * @param world         the world object.
+     * @return the distance.
+     */
+    private int searchNextBlock(final int blocksChecked, @NotNull final BlockPos position, final EnumFacing direction, @NotNull final World world)
+    {
+        if (blocksChecked >= getMaxRange() || isNoPartOfField(world, position))
+        {
+            return blocksChecked;
+        }
+        return searchNextBlock(blocksChecked + 1, position.offset(direction), direction, world);
+    }
+
+    /**
+     * Checks if a certain position is part of the field. Complies with the definition of field block.
+     *
+     * @param world    the world object.
+     * @param position the position.
+     * @return true if it is.
+     */
+    public boolean isNoPartOfField(@NotNull final World world, @NotNull final BlockPos position)
+    {
+        return world.isAirBlock(position) || world.getBlockState(position.up()).getMaterial().isSolid();
+    }
+
+    /**
+     * Returns the {@link BlockPos} of the current object, also used as ID.
+     *
+     * @return {@link BlockPos} of the current object.
+     */
+    public BlockPos getID()
+    {
+        // Location doubles as ID
+        return this.location;
+    }
+
+    /**
+     * Has the field been taken?
+     *
+     * @return true if the field is not free to use, false after releasing it.
+     */
+    public boolean isTaken()
+    {
+        return this.taken;
+    }
+
+    /**
+     * Sets the field taken.
+     *
+     * @param taken is field free or not
+     */
+    public void setTaken(final boolean taken)
+    {
+        this.taken = taken;
+    }
+
+    public void nextState()
+    {
+        if (getFieldStage().ordinal() + 1 >= FieldStage.values().length)
+        {
+            needsWork = false;
+            setFieldStage(FieldStage.values()[0]);
+            return;
+        }
+        setFieldStage(FieldStage.values()[getFieldStage().ordinal() + 1]);
+    }
+
+    /**
+     * Checks if the field has been planted.
+     *
+     * @return true if there are crops planted.
+     */
+    public FieldStage getFieldStage()
+    {
+        return this.fieldStage;
+    }
+
+    /**
+     * Sets if there are any crops planted.
+     *
+     * @param fieldStage true after planting, false after harvesting.
+     */
+    public void setFieldStage(final FieldStage fieldStage)
+    {
+        this.fieldStage = fieldStage;
+    }
+
+    /**
+     * Checks if the field needs work (planting, hoeing).
+     *
+     * @return true if so.
+     */
+    public boolean needsWork()
+    {
+        return this.needsWork;
+    }
+
+    /**
+     * Sets that the field needs work.
+     *
+     * @param needsWork true if work needed, false after completing the job.
+     */
+    public void setNeedsWork(final boolean needsWork)
+    {
+        this.needsWork = needsWork;
+    }
+
+    /**
+     * Getter of the seed of the field.
+     *
+     * @return the ItemSeed
+     */
+    @Nullable
+    public ItemStack getSeed()
+    {
+        if (inventory.getStackInSlot(0) != ItemStackUtils.EMPTY && inventory.getStackInSlot(0).getItem() instanceof IPlantable)
+        {
+            return inventory.getStackInSlot(0);
+        }
+        return null;
+    }
+
+    /**
+     * Getter of the length in plus x direction.
+     *
+     * @return field length.
+     */
+    public int getLengthPlusX()
+    {
+        return lengthPlusX;
+    }
+
+    /**
+     * Getter of the with in plus z direction.
+     *
+     * @return field width.
+     */
+    public int getWidthPlusZ()
+    {
+        return widthPlusZ;
+    }
+
+    /**
+     * Getter of the length in minus x direction.
+     *
+     * @return field length.
+     */
+    public int getLengthMinusX()
+    {
+        return lengthMinusX;
+    }
+
+    /**
+     * Getter of the with in minus z direction.
+     *
+     * @return field width.
+     */
+    public int getWidthMinusZ()
+    {
+        return widthMinusZ;
+    }
+
+    /**
+     * Location getter.
+     *
+     * @return the location of the scarecrow of the field.
+     */
+    public BlockPos getLocation()
+    {
+        return this.location;
+    }
+
+    /**
+     * Getter of the owner of the field.
+     *
+     * @return the string description of the citizen.
+     */
+    @NotNull
+    public String getOwner()
+    {
+        return owner;
+    }
+
+    /**
+     * Sets the owner of the field.
+     *
+     * @param owner the name of the citizen.
+     */
+    public void setOwner(@NotNull final int owner)
+    {
+        this.ownerId = owner;
+    }
+
+    /**
+     * Describes the stage the field is in.
+     * Like if it has been hoed, planted or is empty.
+     */
+    public enum FieldStage
+    {
+        EMPTY,
+        HOED,
+        PLANTED
+    }
+
+    /**
+     * Get the inventory of the scarecrow.
+     * @return the IItemHandler.
+     */
+    public IItemHandlerModifiable getInventory()
+    {
+        return inventory;
     }
 
     ///////////---- Following methods are used to update the tileEntity between client and server ----///////////
@@ -112,14 +416,14 @@ public class ScarecrowTileEntity extends TileEntityChest
         super.onLoad();
         final World world = getWorld();
 
-        @Nullable final Colony colony = ColonyManager.getColony(world, pos);
-        if (colony != null && colony.getField(pos) == null)
+        colony = ColonyManager.getColony(world, pos);
+        if (colony != null && !colony.getFields().contains(pos))
         {
             @Nullable final Entity entity = EntityUtils.getEntityFromUUID(world, colony.getPermissions().getOwner());
 
             if (entity instanceof EntityPlayer)
             {
-                colony.addNewField(this, ((EntityPlayer) entity).inventory, pos, world);
+                colony.addNewField(this, pos, world);
             }
         }
     }
@@ -127,24 +431,65 @@ public class ScarecrowTileEntity extends TileEntityChest
     @Override
     public void readFromNBT(final NBTTagCompound compound)
     {
-        super.readFromNBT(compound);
-        type = ScareCrowType.values()[compound.getInteger(TAG_TYPE)];
-        if (compound.hasKey(Constants.MOD_ID + TAG_INVENTORY))
+        final NBTTagList inventoryTagList = compound.getTagList(TAG_INVENTORY, TAG_COMPOUND);
+        for (int i = 0; i < inventoryTagList.tagCount(); ++i)
         {
-            getInventoryField().deserializeNBT((NBTTagCompound) compound.getTag(Constants.MOD_ID + TAG_INVENTORY));
+            final NBTTagCompound inventoryCompound = inventoryTagList.getCompoundTagAt(i);
+            final ItemStack stack = new ItemStack(inventoryCompound);
+            if (ItemStackUtils.getSize(stack) <= 0)
+            {
+                inventory.setStackInSlot(i, ItemStackUtils.EMPTY);
+            }
+            else
+            {
+                inventory.setStackInSlot(i, stack);
+            }
         }
-        name = compound.getString(TAG_NAME);
+
+        taken = compound.getBoolean(TAG_TAKEN);
+        fieldStage = FieldStage.values()[compound.getInteger(TAG_STAGE)];
+        lengthPlusX = compound.getInteger(TAG_LENGTH_PLUS);
+        widthPlusZ = compound.getInteger(TAG_WIDTH_PLUS);
+        lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
+        widthMinusZ = compound.getInteger(TAG_WIDTH_MINUS);
+        ownerId = compound.getInteger(TAG_OWNER);
+
+        super.readFromNBT(compound);
     }
 
     @Override
     public NBTTagCompound writeToNBT(final NBTTagCompound compound)
     {
-        super.writeToNBT(compound);
-        compound.setInteger(TAG_TYPE, this.getType().ordinal());
-        compound.setTag(Constants.MOD_ID + TAG_INVENTORY, getInventoryField().serializeNBT());
-        compound.setString(TAG_NAME, name);
-        return compound;
+        @NotNull final NBTTagList inventoryTagList = new NBTTagList();
+        for (int slot = 0; slot < inventory.getSlots(); slot++)
+        {
+            @NotNull final NBTTagCompound inventoryCompound = new NBTTagCompound();
+            final ItemStack stack = inventory.getStackInSlot(slot);
+            if (stack == ItemStackUtils.EMPTY)
+            {
+                new ItemStack(Blocks.AIR, 0).writeToNBT(inventoryCompound);
+            }
+            else
+            {
+                stack.writeToNBT(inventoryCompound);
+            }
+            inventoryTagList.appendTag(inventoryCompound);
+        }
+        compound.setTag(TAG_INVENTORY, inventoryTagList);
+
+        compound.setBoolean(TAG_TAKEN, taken);
+        compound.setInteger(TAG_STAGE, fieldStage.ordinal());
+        compound.setInteger(TAG_LENGTH_PLUS, lengthPlusX);
+        compound.setInteger(TAG_WIDTH_PLUS, widthPlusZ);
+        compound.setInteger(TAG_LENGTH_MINUS, lengthMinusX);
+        compound.setInteger(TAG_WIDTH_MINUS, widthMinusZ);
+        compound.setInteger(TAG_OWNER, ownerId);
+
+        return super.writeToNBT(compound);
     }
+
+
+    //----------------------- Type Specific parameters -----------------------//
 
     /**
      * Returns the type of the scarecrow (Important for the rendering).
@@ -158,26 +503,6 @@ public class ScarecrowTileEntity extends TileEntityChest
             this.type = ScareCrowType.values()[this.random.nextInt(2)];
         }
         return this.type;
-    }
-
-    /**
-     * Get the inventory connected with the scarecrow.
-     *
-     * @return the inventory field of this scarecrow
-     */
-    public InventoryField getInventoryField()
-    {
-        return inventoryField;
-    }
-
-    /**
-     * Set the inventory connected with the scarecrow.
-     *
-     * @param inventoryField the field to set it to
-     */
-    public final void setInventoryField(final InventoryField inventoryField)
-    {
-        this.inventoryField = inventoryField;
     }
 
     /**

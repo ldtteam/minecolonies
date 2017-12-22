@@ -46,11 +46,13 @@ public final class NbtTagConstants
     public static final String TAG_LUMBERJACK_TREES      = "trees";
     public static final String TAG_LUMBERJACK_SAPLINGS   = "saplings";
     public static final String TAG_FIELDS                = "fields";
+    public static final String TAG_NEW_FIELDS            = "newFields";
     public static final String TAG_COMPATABILITY_MANAGER = "compatabilityManager";
     public static final String TAG_SAPLINGS              = "tagSaplings";
     public static final String TAG_SAP_LEAVE             = "tagSapLeaves";
     public static final String TAG_ORES                  = "tagOres";
     public static final String TAG_BLOCK                 = "block";
+    public static final String TAG_POS                   = "pos";
 
 
     /**
@@ -117,6 +119,46 @@ public final class NbtTagConstants
     public static final String TAG_CORNER3 = "corner3";
     public static final String TAG_CORNER4 = "corner4";
     public static final String TAG_HEIGHT  = "height";
+
+    /**
+     * Tag to store if the field has been taken.
+     */
+    public static final String TAG_TAKEN = "taken";
+
+    /**
+     * Tag to store the fields positive length.
+     */
+    public static final String TAG_LENGTH_PLUS = "length+";
+
+    /**
+     * Tag to store the fields positive width.
+     */
+    public static final String TAG_WIDTH_PLUS = "width+";
+
+    /**
+     * Tag to store the fields negative length.
+     */
+    public static final String TAG_LENGTH_MINUS = "length-";
+
+    /**
+     * Tag to store the fields negative width.
+     */
+    public static final String TAG_WIDTH_MINUS = "width-";
+
+    /**
+     * Tag to store the fields stage.
+     */
+    public static final String TAG_STAGE = "stage";
+
+    /**
+     * Tag to store the owner.
+     */
+    public static final String TAG_OWNER = "owner";
+
+    /**
+     * Tag to store the inventory to nbt.
+     */
+    public static final String TAG_INVENTORY = "inventory";
 
     /**
      * Private constructor to hide the implicit one.

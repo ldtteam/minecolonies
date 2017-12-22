@@ -27,10 +27,7 @@ public class EntityAIGateInteract extends EntityAIBase
      * Number of blocks to check for the fence gate - length.
      */
     private static final int    LENGTH_TO_CHECK = 2;
-    /**
-     * The length of half a block.
-     */
-    private static final double HALF_BLOCK      = 0.5D;
+
     /**
      * The min distance the gate has to be from the citizen.
      */

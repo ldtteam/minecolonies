@@ -5,9 +5,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.minecolonies.coremod.inventory.InventoryField;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
@@ -221,13 +219,10 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
 
             if (colony != null)
             {
-                @NotNull final InventoryField inventoryField = new InventoryField();
                 final ScarecrowTileEntity scareCrow = (ScarecrowTileEntity) worldIn.getTileEntity(pos);
-                final EntityPlayer player = (EntityPlayer) placer;
                 if (scareCrow != null)
                 {
-                    scareCrow.setInventoryField(inventoryField);
-                    colony.addNewField(scareCrow, player.inventory, pos, worldIn);
+                    colony.addNewField(scareCrow, pos, worldIn);
                 }
             }
         }

@@ -29,11 +29,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -75,10 +75,12 @@ public class Colony implements IColony
      * Dimension of the colony.
      */
     private final int dimensionId;
+
     /**
      * List of fields of the colony.
      */
-    private final Map<BlockPos, Field> fields = new HashMap<>();
+    private final List<BlockPos> fields = new ArrayList<>();
+
     /**
      * List of waypoints of the colony.
      */
@@ -227,6 +229,7 @@ public class Colony implements IColony
      * @param w  The world the colony exists in.
      * @param c  The center of the colony (location of Town Hall).
      */
+    @SuppressWarnings("squid:S2637")
     Colony(final int id, @NotNull final World w, final BlockPos c)
     {
         this(id, w);
@@ -321,13 +324,14 @@ public class Colony implements IColony
             topCitizenId = Math.max(topCitizenId, data.getId());
         }
 
-        // Fields before Buildings, because the Farmer needs them.
-        final NBTTagList fieldTagList = compound.getTagList(TAG_FIELDS, NBT.TAG_COMPOUND);
-        for (int i = 0; i < fieldTagList.tagCount(); ++i)
+        if(compound.hasKey(TAG_NEW_FIELDS))
         {
-            final NBTTagCompound fieldCompound = fieldTagList.getCompoundTagAt(i);
-            final Field f = Field.createFromNBT(this, fieldCompound);
-            addField(f);
+            // Fields before Buildings, because the Farmer needs them.
+            final NBTTagList fieldTagList = compound.getTagList(TAG_NEW_FIELDS, NBT.TAG_COMPOUND);
+            for (int i = 0; i < fieldTagList.tagCount(); ++i)
+            {
+                addField(BlockPosUtil.readFromNBT(fieldTagList.getCompoundTagAt(i), TAG_POS));
+            }
         }
 
         //  Buildings
@@ -429,13 +433,13 @@ public class Colony implements IColony
     }
 
     /**
-     * Add a Building to the Colony.
+     * Add a Field to the Colony.
      *
-     * @param field Field to add to the colony.
+     * @param pos Field position to add to the colony.
      */
-    private void addField(@NotNull final Field field)
+    private void addField(@NotNull final BlockPos pos)
     {
-        fields.put(field.getID(), field);
+        fields.add(pos);
     }
 
     /**
@@ -505,13 +509,13 @@ public class Colony implements IColony
 
         // Fields
         @NotNull final NBTTagList fieldTagList = new NBTTagList();
-        for (@NotNull final Field f : fields.values())
+        for (@NotNull final BlockPos pos : fields)
         {
             @NotNull final NBTTagCompound fieldCompound = new NBTTagCompound();
-            f.writeToNBT(fieldCompound);
+            BlockPosUtil.writeToNBT(fieldCompound, TAG_POS, pos);
             fieldTagList.appendTag(fieldCompound);
         }
-        compound.setTag(TAG_FIELDS, fieldTagList);
+        compound.setTag(TAG_NEW_FIELDS, fieldTagList);
 
         //  Citizens
         @NotNull final NBTTagList citizenTagList = new NBTTagList();
@@ -1222,20 +1226,16 @@ public class Colony implements IColony
             }
         }
 
-        @NotNull final ArrayList<Field> tempFields = new ArrayList<>(fields.values());
+        @NotNull final ArrayList<BlockPos> tempFields = new ArrayList<>(fields);
 
-        for (@NotNull final Field field : tempFields)
+        for (@NotNull final BlockPos pos : tempFields)
         {
-            if (event.world.isBlockLoaded(field.getLocation()))
+            if (event.world.isBlockLoaded(pos))
             {
-                final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) event.world.getTileEntity(field.getID());
+                final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) event.world.getTileEntity(pos);
                 if (scarecrow == null)
                 {
-                    fields.remove(field.getID());
-                }
-                else
-                {
-                    field.setInventoryField(scarecrow.getInventoryField());
+                    fields.remove(pos);
                 }
             }
         }
@@ -1543,7 +1543,7 @@ public class Colony implements IColony
             }
             entity.setColony(this, citizenData);
 
-            entity.setPosition(spawnPoint.getX() + 0.5D, spawnPoint.getY() + 0.1D, spawnPoint.getZ() + 0.5D);
+            entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
             world.spawnEntity(entity);
 
             checkAchievements();
@@ -1697,44 +1697,34 @@ public class Colony implements IColony
     }
 
     /**
-     * Getter of a unmodifiable version of the farmerFields map.
+     * Getter for a unmodifiable version of the farmerFields list.
      *
-     * @return map of fields and their id.
+     * @return list of fields and their id.
      */
     @NotNull
-    public Map<BlockPos, Field> getFields()
+    public List<BlockPos> getFields()
     {
-        return Collections.unmodifiableMap(fields);
-    }
-
-    /**
-     * Get field in Colony by ID.
-     *
-     * @param fieldId ID (coordinates) of the field to get.
-     * @return field belonging to the given ID.
-     */
-    public Field getField(final BlockPos fieldId)
-    {
-        return fields.get(fieldId);
+        return Collections.unmodifiableList(fields);
     }
 
     /**
      * Returns a field which has not been taken yet.
      *
-     * @param owner name of the owner of the field.
+     * @param owner id of the owner of the field.
      * @return a field if there is one available, else null.
      */
     @Nullable
-    public Field getFreeField(final String owner)
+    public ScarecrowTileEntity getFreeField(final int owner)
     {
-        for (@NotNull final Field field : fields.values())
+        for (@NotNull final BlockPos pos : fields)
         {
-            if (!field.isTaken())
+            final TileEntity field = world.getTileEntity(pos);
+            if (field instanceof ScarecrowTileEntity && !((ScarecrowTileEntity) field).isTaken())
             {
-                field.setTaken(true);
-                field.setOwner(owner);
+                ((ScarecrowTileEntity) field).setTaken(true);
+                ((ScarecrowTileEntity) field).setOwner(owner);
                 markFieldsDirty();
-                return field;
+                return (ScarecrowTileEntity) field;
             }
         }
         return null;
@@ -1779,13 +1769,10 @@ public class Colony implements IColony
      * @param pos             Position where the field has been placed.
      * @param world           the world of the field.
      */
-    public void addNewField(final ScarecrowTileEntity tileEntity, final InventoryPlayer inventoryPlayer, final BlockPos pos, final World world)
+    public void addNewField(final ScarecrowTileEntity tileEntity, final BlockPos pos, final World world)
     {
-        @NotNull final Field field = new Field(tileEntity, inventoryPlayer, world, pos);
-        //field.setCustomName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user.noone")));
-        addField(field);
-        field.calculateSize(world, pos);
-        markFieldsDirty();
+        addField(pos);
+        tileEntity.calculateSize(world, pos);
     }
 
     /**
