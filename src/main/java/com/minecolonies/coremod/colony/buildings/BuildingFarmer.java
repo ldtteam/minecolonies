@@ -74,14 +74,16 @@ public class BuildingFarmer extends AbstractBuildingWorker
      * The last field tag.
      */
     private static final String LAST_FIELD_TAG = "lastField";
+
     /**
      * Sets the amount of saplings the lumberjack should keep.
      */
     private static final int SEEDS_TO_KEEP = 64;
+
     /**
      * The list of the fields the farmer manages.
      */
-    private final        ArrayList<BlockPos>          farmerFields      = new ArrayList<>();
+    private final List<BlockPos> farmerFields = new ArrayList<>();
 
     /**
      * The field the farmer is currently working on.

@@ -26,8 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OWNER;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WIDTH_MINUS;
 import static net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND;
 
 /**
@@ -51,9 +49,9 @@ public class ScarecrowTileEntity extends TileEntityChest
     private boolean taken = false;
 
     /**
-     * Checks if the field needsWork (Hoeig, Seedings, Farming etc).
+     * Checks if the field doesNeedWork (Hoeig, Seedings, Farming etc).
      */
-    private boolean needsWork = true;
+    private boolean doesNeedWork = true;
 
     /**
      * Has the field been planted?
@@ -238,7 +236,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     {
         if (getFieldStage().ordinal() + 1 >= FieldStage.values().length)
         {
-            needsWork = false;
+            doesNeedWork = false;
             setFieldStage(FieldStage.values()[0]);
             return;
         }
@@ -272,7 +270,7 @@ public class ScarecrowTileEntity extends TileEntityChest
      */
     public boolean needsWork()
     {
-        return this.needsWork;
+        return this.doesNeedWork;
     }
 
     /**
@@ -282,7 +280,7 @@ public class ScarecrowTileEntity extends TileEntityChest
      */
     public void setNeedsWork(final boolean needsWork)
     {
-        this.needsWork = needsWork;
+        this.doesNeedWork = needsWork;
     }
 
     /**
