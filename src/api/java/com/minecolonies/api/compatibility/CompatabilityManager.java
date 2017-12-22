@@ -10,7 +10,6 @@ import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockOre;
 import net.minecraft.block.BlockRedstoneOre;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,7 +17,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -59,9 +57,9 @@ public class CompatabilityManager implements ICompatabilityManager
     public void discover(final World world)
     {
         discoverSaplings();
-        for(final String string: OreDictionary.getOreNames())
+        for (final String string : OreDictionary.getOreNames())
         {
-            if(string.contains("ore"))
+            if (string.contains("ore"))
             {
                 discoverOres(world, string);
             }
@@ -71,7 +69,7 @@ public class CompatabilityManager implements ICompatabilityManager
     @Override
     public IBlockState getLeaveForSapling(final ItemStack stack)
     {
-        if(leavesToSaplingMap.inverse().containsKey(new ItemStorage(stack)))
+        if (leavesToSaplingMap.inverse().containsKey(new ItemStorage(stack)))
         {
             return leavesToSaplingMap.inverse().get(new ItemStorage(stack));
         }
@@ -83,7 +81,7 @@ public class CompatabilityManager implements ICompatabilityManager
     {
         final ItemStack stack = new ItemStack(block.getBlock(), 1, block.getBlock().getMetaFromState(block));
         final IBlockState tempLeave = BlockLeaves.getBlockFromItem(stack.getItem()).getStateFromMeta(stack.getMetadata());
-        if(leavesToSaplingMap.containsKey(tempLeave))
+        if (leavesToSaplingMap.containsKey(tempLeave))
         {
             return leavesToSaplingMap.get(tempLeave).getItemStack();
         }
@@ -99,7 +97,7 @@ public class CompatabilityManager implements ICompatabilityManager
     @Override
     public boolean isOre(final IBlockState block)
     {
-        if(block instanceof BlockOre || block instanceof BlockRedstoneOre)
+        if (block instanceof BlockOre || block instanceof BlockRedstoneOre)
         {
             return true;
         }
@@ -112,11 +110,11 @@ public class CompatabilityManager implements ICompatabilityManager
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         @NotNull final NBTTagList saplingsLeavesTagList =
-                leavesToSaplingMap.entrySet().stream().map(entry ->  writeLeaveSaplingEntryToNBT(entry.getKey(), entry.getValue())).collect(NBTUtils.toNBTTagList());
+                leavesToSaplingMap.entrySet().stream().map(entry -> writeLeaveSaplingEntryToNBT(entry.getKey(), entry.getValue())).collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_SAP_LEAVE, saplingsLeavesTagList);
 
         @NotNull final NBTTagList saplingTagList =
-                saplings.stream().map(sap ->  sap.getItemStack().writeToNBT(new NBTTagCompound())).collect(NBTUtils.toNBTTagList());
+                saplings.stream().map(sap -> sap.getItemStack().writeToNBT(new NBTTagCompound())).collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_SAPLINGS, saplingTagList);
 
         @NotNull final NBTTagList oresTagList = ores.stream().map(ore -> NBTUtil.writeBlockState(new NBTTagCompound(), ore)).collect(NBTUtils.toNBTTagList());
@@ -127,8 +125,8 @@ public class CompatabilityManager implements ICompatabilityManager
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         leavesToSaplingMap.putAll(NBTUtils.streamCompound(compound.getTagList(TAG_SAP_LEAVE, Constants.NBT.TAG_COMPOUND))
-                                .map(CompatabilityManager::readLeaveSaplingEntryFromNBT)
-                                .collect(Collectors.toMap(Tuple::getFirst, Tuple::getSecond)));
+                .map(CompatabilityManager::readLeaveSaplingEntryFromNBT)
+                .collect(Collectors.toMap(Tuple::getFirst, Tuple::getSecond)));
         saplings.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_SAPLINGS, Constants.NBT.TAG_COMPOUND))
                 .map(tempCompound -> new ItemStorage(new ItemStack(tempCompound)))
                 .collect(Collectors.toList()));
@@ -143,7 +141,7 @@ public class CompatabilityManager implements ICompatabilityManager
     {
         final ItemStack tempStack = new ItemStack(leave.getBlock(), 1, leave.getBlock().getMetaFromState(leave));
         final IBlockState tempLeave = BlockLeaves.getBlockFromItem(tempStack.getItem()).getStateFromMeta(tempStack.getMetadata());
-        if(!leavesToSaplingMap.containsKey(tempLeave) && !leavesToSaplingMap.containsValue(new ItemStorage(stack)))
+        if (!leavesToSaplingMap.containsKey(tempLeave) && !leavesToSaplingMap.containsValue(new ItemStorage(stack)))
         {
             leavesToSaplingMap.put(tempLeave, new ItemStorage(stack));
         }
@@ -153,23 +151,15 @@ public class CompatabilityManager implements ICompatabilityManager
 
     private void discoverOres(final World world, final String string)
     {
-        for (final ItemStack ore : OreDictionary.getOres(string))
+        for (final ItemStack stack : OreDictionary.getOres(string))
         {
-            for (final CreativeTabs tabs : CreativeTabs.CREATIVE_TAB_ARRAY)
+            if (!ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemBlock)
             {
-                final NonNullList<ItemStack> list = NonNullList.create();
-                ore.getItem().getSubItems(ore.getItem(), tabs, list);
-                for (final ItemStack stack : list)
+                final IBlockState state = ((ItemBlock) stack.getItem()).getBlock()
+                        .getStateForPlacement(world, BlockPos.ORIGIN, EnumFacing.NORTH, 0, 0, 0, stack.getMetadata(), null, EnumHand.MAIN_HAND);
+                if (!ores.contains(state))
                 {
-                    if (!ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemBlock)
-                    {
-                        final IBlockState state = ((ItemBlock) stack.getItem()).getBlock()
-                                .getStateForPlacement(world, BlockPos.ORIGIN, EnumFacing.NORTH, 0, 0, 0, stack.getMetadata(), null, EnumHand.MAIN_HAND);
-                        if (!ores.contains(state))
-                        {
-                            ores.add(state);
-                        }
-                    }
+                    ores.add(state);
                 }
             }
         }
@@ -180,21 +170,10 @@ public class CompatabilityManager implements ICompatabilityManager
     {
         for (final ItemStack saps : OreDictionary.getOres(SAPLINGS))
         {
-            if (saps.getHasSubtypes())
+            //Just put it in if not in there already, don't mind the leave yet.
+            if (!ItemStackUtils.isEmpty(saps) && !leavesToSaplingMap.containsValue(new ItemStorage(saps)))
             {
-                for(CreativeTabs tabs: CreativeTabs.CREATIVE_TAB_ARRAY)
-                {
-                    final NonNullList<ItemStack> list = NonNullList.create();
-                    saps.getItem().getSubItems(saps.getItem(), tabs, list);
-                    for (final ItemStack stack : list)
-                    {
-                        //Just put it in if not in there already, don't mind the leave yet.
-                        if(!ItemStackUtils.isEmpty(stack) && !leavesToSaplingMap.containsValue(new ItemStorage(stack)))
-                        {
-                            saplings.add(new ItemStorage(stack));
-                        }
-                    }
-                }
+                saplings.add(new ItemStorage(saps));
             }
         }
         Log.getLogger().info("Finished discovering saplings");
