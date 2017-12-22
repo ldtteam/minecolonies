@@ -10,7 +10,6 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
-import com.minecolonies.coremod.entity.ai.citizen.farmer.FieldView;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;

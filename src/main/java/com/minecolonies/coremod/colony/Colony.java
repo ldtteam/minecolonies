@@ -15,7 +15,6 @@ import com.minecolonies.coremod.colony.requestsystem.management.manager.Standard
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
-import com.minecolonies.coremod.entity.ai.citizen.farmer.Field;
 import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;

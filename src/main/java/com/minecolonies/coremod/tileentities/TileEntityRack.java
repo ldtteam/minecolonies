@@ -557,9 +557,9 @@ public class TileEntityRack extends TileEntity
     }
 
     @Override
-    public boolean shouldRefresh(final World world, final BlockPos pos, final IBlockState oldState, final IBlockState newSate)
+    public boolean shouldRefresh(final World world, final BlockPos pos, final IBlockState oldState, final IBlockState newState)
     {
-        return oldState.getBlock() != newSate.getBlock();
+        return oldState.getBlock() != newState.getBlock();
     }
 
     @Override

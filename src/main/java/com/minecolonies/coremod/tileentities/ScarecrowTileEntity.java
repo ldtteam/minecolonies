@@ -89,7 +89,7 @@ public class ScarecrowTileEntity extends TileEntityChest
      * Name of the citizen claiming the field.
      */
     @NotNull
-    private String owner = "";
+    private String owner = "com.minecolonies.coremod.gui.scarecrow.user.noone";
 
     /**
      * Random generator.
@@ -123,7 +123,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     public ScarecrowTileEntity()
     {
         super();
-        name = LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user.noone"));
+        name = LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format(owner));
     }
 
     /**
@@ -362,13 +362,33 @@ public class ScarecrowTileEntity extends TileEntityChest
     }
 
     /**
+     * Getter for the ownerId of the field.
+     * @return the int id.
+     */
+    public int getOwnerId()
+    {
+        return ownerId;
+    }
+
+    /**
      * Sets the owner of the field.
      *
      * @param owner the name of the citizen.
      */
-    public void setOwner(@NotNull final int owner)
+    public void setOwner(@NotNull final int ownerId)
     {
-        this.ownerId = owner;
+        this.ownerId = ownerId;
+        if(colony != null)
+        {
+            if(colony.getCitizen(ownerId) == null)
+            {
+                owner = "";
+            }
+            else
+            {
+                owner = colony.getCitizen(ownerId).getName();
+            }
+        }
     }
 
     /**
@@ -393,19 +413,26 @@ public class ScarecrowTileEntity extends TileEntityChest
 
     ///////////---- Following methods are used to update the tileEntity between client and server ----///////////
 
-    @NotNull
     @Override
     public SPacketUpdateTileEntity getUpdatePacket()
     {
-        @NotNull final NBTTagCompound tag = new NBTTagCompound();
-        writeToNBT(tag);
-        return new SPacketUpdateTileEntity(this.getPos(), 0, tag);
+        final NBTTagCompound compound = new NBTTagCompound();
+        this.writeToNBT(compound);
+        return new SPacketUpdateTileEntity(this.pos, 0, compound);
+    }
+
+    @NotNull
+    @Override
+    public NBTTagCompound getUpdateTag()
+    {
+        return writeToNBT(new NBTTagCompound());
     }
 
     @Override
-    public void onDataPacket(final NetworkManager net, @NotNull final SPacketUpdateTileEntity pkt)
+    public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
     {
-        readFromNBT(pkt.getNbtCompound());
+        final NBTTagCompound compound = packet.getNbtCompound();
+        this.readFromNBT(compound);
     }
 
     /////////////--------------------------- End Synchronization-area ---------------------------- /////////////
