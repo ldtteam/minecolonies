@@ -79,10 +79,13 @@ public class CompatabilityManager implements ICompatabilityManager
     public ItemStack getSaplingForLeave(final IBlockState block)
     {
         final ItemStack stack = new ItemStack(block.getBlock(), 1, block.getBlock().getMetaFromState(block));
-        final IBlockState tempLeave = BlockLeaves.getBlockFromItem(stack.getItem()).getStateFromMeta(stack.getMetadata());
-        if (leavesToSaplingMap.containsKey(tempLeave))
+        if(!ItemStackUtils.isEmpty(stack))
         {
-            return leavesToSaplingMap.get(tempLeave).getItemStack();
+            final IBlockState tempLeave = BlockLeaves.getBlockFromItem(stack.getItem()).getStateFromMeta(stack.getMetadata());
+            if (leavesToSaplingMap.containsKey(tempLeave))
+            {
+                return leavesToSaplingMap.get(tempLeave).getItemStack();
+            }
         }
         return null;
     }
@@ -101,8 +104,13 @@ public class CompatabilityManager implements ICompatabilityManager
             return true;
         }
         final ItemStack tempStack = new ItemStack(block.getBlock(), 1, block.getBlock().getMetaFromState(block));
-        final IBlockState temp = BlockLeaves.getBlockFromItem(tempStack.getItem()).getStateFromMeta(tempStack.getMetadata());
-        return ores.contains(temp);
+
+        if(!ItemStackUtils.isEmpty(tempStack))
+        {
+            final IBlockState temp = BlockLeaves.getBlockFromItem(tempStack.getItem()).getStateFromMeta(tempStack.getMetadata());
+            return ores.contains(temp);
+        }
+        return false;
     }
 
     @Override
