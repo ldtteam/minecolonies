@@ -88,7 +88,7 @@ public class GuiRack extends GuiContainer
 
     public GuiRack(final InventoryPlayer parInventoryPlayer, final TileEntityRack tileEntity, final TileEntityRack neighborRack, final World world, final BlockPos location)
     {
-        super(new ContainerRack(tileEntity, neighborRack, parInventoryPlayer, location));
+        super(new ContainerRack(tileEntity, neighborRack, parInventoryPlayer));
 
         if (neighborRack != null)
         {
