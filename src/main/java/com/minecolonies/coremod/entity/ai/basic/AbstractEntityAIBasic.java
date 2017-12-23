@@ -17,7 +17,7 @@ import com.minecolonies.coremod.colony.buildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
@@ -495,18 +495,24 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                     job.getAsyncRequests().remove(firstDeliverableRequest.getToken());
                 }
 
+                getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getToken());
+
                 final ItemStack deliveredItemStack = firstDeliverableRequest.getDelivery();
-                if(InventoryUtils.findFirstSlotInItemHandlerWith(
-                        new InvWrapper(worker.getInventoryCitizen()), deliveredItemStack::isItemEqualIgnoreDurability) != -1)
+                if(InventoryUtils.getItemCountInItemHandler(
+                        new InvWrapper(worker.getInventoryCitizen()), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount())
                 {
-                    getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getToken());
                     return NEEDS_ITEM;
                 }
 
                 //Takes one Stack from the hut if existent
-                if (isInHut(deliveredItemStack)  && !walkToBuilding())
+                if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount() &&
+                  InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+                    getOwnBuilding(),
+                    deliveredItemStack::isItemEqualIgnoreDurability,
+                    deliveredItemStack.getCount(),
+                    new InvWrapper(worker.getInventoryCitizen())))
                 {
-                    getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getToken());
+
                     return NEEDS_ITEM;
                 }
                 else

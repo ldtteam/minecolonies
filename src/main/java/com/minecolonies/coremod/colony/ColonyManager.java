@@ -3,6 +3,8 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.compatibility.CompatabilityManager;
+import com.minecolonies.api.compatibility.ICompatabilityManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
@@ -37,6 +39,10 @@ import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONIES;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COMPATABILITY_MANAGER;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_UUID;
+
 /**
  * Singleton class that links colonies to minecraft.
  */
@@ -56,15 +62,6 @@ public final class ColonyManager
      * The file name pattern of the minecolonies backup.
      */
     private static final String FILENAME_MINECOLONIES_BACKUP = "colonies-%s.dat";
-
-    /**
-     * The tag of the colonies.
-     */
-    private static final String TAG_COLONIES = "colonies";
-    /**
-     * The tag of the pseudo unique identifier
-     */
-    private static final String TAG_UUID     = "uuid";
 
     /**
      * The damage source used to kill citizens.
@@ -89,16 +86,18 @@ public final class ColonyManager
     /**
      * A buffer value to be sure to be outside of the colony.
      */
-    private static final int BUFFER = 10;
+    private static final int BUFFER                    = 10;
 
     /**
      * The last colony id.
      */
     private static int topColonyId = 0;
+
     /**
      * Amount of worlds loaded.
      */
     private static int     numWorldsLoaded;
+
     /**
      * Whether the colonyManager should persist data.
      */
@@ -114,6 +113,11 @@ public final class ColonyManager
      */
     private static volatile UUID    serverUUID          = null;
 
+    /**
+     * Creates a new compatabilityManager.
+     */
+    private static final ICompatabilityManager compatabilityManager = new CompatabilityManager();
+
     private ColonyManager()
     {
         //Hides default constructor.
@@ -125,12 +129,14 @@ public final class ColonyManager
      * @param w      World of the colony.
      * @param pos    Coordinate of the center of the colony.
      * @param player the player that creates the colony - owner.
+     * @param style the default style of the colony.
      * @return The created colony.
      */
     @NotNull
-    public static Colony createColony(@NotNull final World w, final BlockPos pos, @NotNull final EntityPlayer player)
+    public static Colony createColony(@NotNull final World w, final BlockPos pos, @NotNull final EntityPlayer player, @NotNull final String style)
     {
         final Colony colony = colonies.create(w, pos);
+        colony.setStyle(style);
 
         addColonyByWorld(colony);
 
@@ -616,6 +622,10 @@ public final class ColonyManager
         {
             compound.setUniqueId(TAG_UUID, serverUUID);
         }
+
+        final NBTTagCompound compCompound = new NBTTagCompound();
+        compatabilityManager.writeToNBT(compCompound);
+        compound.setTag(TAG_COMPATABILITY_MANAGER, compCompound);
     }
 
     /**
@@ -800,6 +810,12 @@ public final class ColonyManager
         {
             serverUUID = compound.getUniqueId(TAG_UUID);
         }
+
+        if(compound.hasKey(TAG_COMPATABILITY_MANAGER))
+        {
+            compatabilityManager.readFromNBT(compound.getCompoundTag(TAG_COMPATABILITY_MANAGER));
+        }
+        compatabilityManager.discover(world);
 
         Log.getLogger().info(String.format("Loaded %d colonies", colonies.size()));
     }
@@ -1099,5 +1115,14 @@ public final class ColonyManager
             }
         }
         return false;
+    }
+
+    /**
+     * Get an instance of the compatabilityManager.
+     * @return the manager.
+     */
+    public static ICompatabilityManager getCompatabilityManager()
+    {
+        return compatabilityManager;
     }
 }
