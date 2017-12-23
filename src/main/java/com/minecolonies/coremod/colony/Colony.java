@@ -438,7 +438,10 @@ public class Colony implements IColony
      */
     private void addField(@NotNull final BlockPos pos)
     {
-        fields.add(pos);
+        if(!fields.contains(pos))
+        {
+            fields.add(pos);
+        }
     }
 
     /**
@@ -866,10 +869,7 @@ public class Colony implements IColony
             sendBuildingPackets(oldSubscribers, hasNewSubscribers);
 
             //Fields
-            if (!isBuildingsDirty)
-            {
-                sendFieldPackets(hasNewSubscribers);
-            }
+            sendFieldPackets(hasNewSubscribers);
 
             //schematics
             if (Structures.isDirty())
@@ -995,7 +995,7 @@ public class Colony implements IColony
      */
     private void sendFieldPackets(final boolean hasNewSubscribers)
     {
-        if ((isFieldsDirty && !isBuildingsDirty) || hasNewSubscribers)
+        if (isFieldsDirty || hasNewSubscribers)
         {
             for (final AbstractBuilding building : buildings.values())
             {
@@ -1772,6 +1772,7 @@ public class Colony implements IColony
     {
         addField(pos);
         tileEntity.calculateSize(world, pos);
+        markFieldsDirty();
     }
 
     /**

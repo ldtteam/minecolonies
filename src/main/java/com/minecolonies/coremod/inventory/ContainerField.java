@@ -22,6 +22,11 @@ import static com.minecolonies.api.util.constant.InventoryConstants.*;
 public class ContainerField extends Container
 {
     /**
+     * Inventory lines until the player inv starts.
+     */
+    private static final int LINES_PER_OFFSET = 3;
+
+    /**
      * The inventory.
      */
     private final IItemHandler inventory;
@@ -47,8 +52,7 @@ public class ContainerField extends Container
         super();
         this.colony = ColonyManager.getColony(world, location);
         this.inventory = scarecrowTileEntity.getInventory();
-        final int inventorySize = 1;
-        final int extraOffset = inventorySize <= INVENTORY_BAR_SIZE ? 0 : 2;
+        final int extraOffset = 0;
 
         addSlotToContainer(new SlotItemHandler(inventory, 0, X_OFFSET, Y_OFFSET));
 
@@ -63,7 +67,7 @@ public class ContainerField extends Container
                         playerInventory,
                         j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
                         PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
-                        PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(inventorySize, INVENTORY_BAR_SIZE)
+                        PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * LINES_PER_OFFSET
                                 + i * PLAYER_INVENTORY_OFFSET_EACH
                 ));
             }
@@ -74,8 +78,7 @@ public class ContainerField extends Container
             addSlotToContainer(new Slot(
                     playerInventory, i,
                     PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
-                    PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(inventorySize,
-                            INVENTORY_BAR_SIZE)
+                    PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * LINES_PER_OFFSET
             ));
         }
     }

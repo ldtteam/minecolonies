@@ -21,6 +21,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -225,6 +226,41 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
                     colony.addNewField(scareCrow, pos, worldIn);
                 }
             }
+        }
+    }
+
+    @Override
+    public void onBlockDestroyedByExplosion(final World worldIn, final BlockPos pos, final Explosion explosionIn)
+    {
+        notifyColonyAboutDestruction(worldIn, pos);
+        super.onBlockDestroyedByExplosion(worldIn, pos, explosionIn);
+    }
+
+    @Override
+    public void onBlockHarvested(final World worldIn, final BlockPos pos, final IBlockState state, final EntityPlayer player)
+    {
+        notifyColonyAboutDestruction(worldIn, pos);
+        super.onBlockHarvested(worldIn, pos, state, player);
+    }
+
+    @Override
+    public void onBlockDestroyedByPlayer(final World worldIn, final BlockPos pos, final IBlockState state)
+    {
+        notifyColonyAboutDestruction(worldIn, pos);
+        super.onBlockDestroyedByPlayer(worldIn, pos, state);
+    }
+
+    /**
+     * Notify the colony about the destruction of the field.
+     * @param worldIn the world.
+     * @param pos the position.
+     */
+    private static void notifyColonyAboutDestruction(final World worldIn, final BlockPos pos)
+    {
+        @Nullable final Colony colony = ColonyManager.getColony(worldIn, pos);
+        if (colony != null)
+        {
+            colony.removeField(pos);
         }
     }
 

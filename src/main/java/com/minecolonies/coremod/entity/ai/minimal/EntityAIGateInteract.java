@@ -14,6 +14,8 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.util.constant.Constants.HALF_BLOCK;
+
 /**
  * Used for gate interaction for the citizens.
  */

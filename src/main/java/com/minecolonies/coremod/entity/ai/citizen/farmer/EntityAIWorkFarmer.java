@@ -203,7 +203,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
             if (newField != null && getOwnBuilding() != null)
             {
-                getOwnBuilding().addFarmerFields(newField.getID());
+                newField.setOwner(worker.getCitizenData().getId());
+                newField.setTaken(true);
+                getOwnBuilding().addFarmerFields(newField.getPos());
             }
         }
     }
@@ -223,7 +225,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             handleOffset(field);
         }
 
-        BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
+        BlockPos position = field.getPos().down().south(workingOffset.getZ()).east(workingOffset.getX());
 
         while (!predicate.test(position))
         {
@@ -231,7 +233,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 return false;
             }
-            position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
+            position = field.getPos().down().south(workingOffset.getZ()).east(workingOffset.getX());
         }
         return true;
     }

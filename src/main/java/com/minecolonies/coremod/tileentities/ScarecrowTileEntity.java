@@ -5,6 +5,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -16,6 +17,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorldNameable;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -31,7 +33,7 @@ import static net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND;
 /**
  * The scarecrow tile entity to store extra data.
  */
-public class ScarecrowTileEntity extends TileEntityChest
+public class ScarecrowTileEntity extends TileEntityChest implements IWorldNameable
 {
     /**
      * The max width/length of a field.
@@ -87,7 +89,7 @@ public class ScarecrowTileEntity extends TileEntityChest
      * Name of the citizen claiming the field.
      */
     @NotNull
-    private String owner = "com.minecolonies.coremod.gui.scarecrow.user.noone";
+    private String owner = "";
 
     /**
      * Random generator.
@@ -142,6 +144,8 @@ public class ScarecrowTileEntity extends TileEntityChest
     public void setName(final String name)
     {
         this.name = name;
+        setCustomName(name);
+        markDirty();
     }
 
     /**
@@ -169,6 +173,7 @@ public class ScarecrowTileEntity extends TileEntityChest
         this.lengthMinusX = searchNextBlock(0, position.west(), EnumFacing.WEST, world);
         this.widthPlusZ = searchNextBlock(0, position.south(), EnumFacing.SOUTH, world);
         this.widthMinusZ = searchNextBlock(0, position.north(), EnumFacing.NORTH, world);
+        markDirty();
     }
 
     /**
@@ -230,6 +235,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     public void setTaken(final boolean taken)
     {
         this.taken = taken;
+        markDirty();
     }
 
     public void nextState()
@@ -241,6 +247,7 @@ public class ScarecrowTileEntity extends TileEntityChest
             return;
         }
         setFieldStage(FieldStage.values()[getFieldStage().ordinal() + 1]);
+        markDirty();
     }
 
     /**
@@ -261,6 +268,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     public void setFieldStage(final FieldStage fieldStage)
     {
         this.fieldStage = fieldStage;
+        markDirty();
     }
 
     /**
@@ -281,6 +289,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     public void setNeedsWork(final boolean needsWork)
     {
         this.doesNeedWork = needsWork;
+        markDirty();
     }
 
     /**
@@ -387,6 +396,30 @@ public class ScarecrowTileEntity extends TileEntityChest
                 owner = colony.getCitizen(ownerId).getName();
             }
         }
+        setName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format(owner)));
+        markDirty();
+    }
+
+    /**
+     * Sets the owner of the field.
+     *
+     * @param owner the name of the citizen.
+     */
+    public void setOwner(@NotNull final int ownerId, final ColonyView tempColony)
+    {
+        this.ownerId = ownerId;
+        if(tempColony != null)
+        {
+            if(tempColony.getCitizen(ownerId) == null)
+            {
+                owner = "";
+            }
+            else
+            {
+                owner = tempColony.getCitizen(ownerId).getName();
+            }
+        }
+        markDirty();
     }
 
     /**
@@ -478,6 +511,8 @@ public class ScarecrowTileEntity extends TileEntityChest
         lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
         widthMinusZ = compound.getInteger(TAG_WIDTH_MINUS);
         ownerId = compound.getInteger(TAG_OWNER);
+        name = compound.getString(TAG_NAME);
+        setOwner(ownerId);
 
         super.readFromNBT(compound);
     }
@@ -509,6 +544,7 @@ public class ScarecrowTileEntity extends TileEntityChest
         compound.setInteger(TAG_LENGTH_MINUS, lengthMinusX);
         compound.setInteger(TAG_WIDTH_MINUS, widthMinusZ);
         compound.setInteger(TAG_OWNER, ownerId);
+        compound.setString(TAG_NAME, name);
 
         return super.writeToNBT(compound);
     }

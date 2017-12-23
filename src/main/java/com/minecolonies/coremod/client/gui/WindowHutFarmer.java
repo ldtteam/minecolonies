@@ -27,7 +27,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
  */
 public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer.View>
 {
-
     /**
      * Button leading the player to the next page.
      */

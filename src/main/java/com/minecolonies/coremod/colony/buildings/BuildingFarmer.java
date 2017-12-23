@@ -488,7 +488,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public void freeField(final BlockPos position)
     {
         final TileEntity scarecrow = getColony().getWorld().getTileEntity(position);
-        if (scarecrow instanceof  ScarecrowTileEntity)
+        if (scarecrow instanceof ScarecrowTileEntity)
         {
             farmerFields.remove(position);
             ((ScarecrowTileEntity) scarecrow).setTaken(false);
@@ -658,12 +658,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
             if (addNewField && !getWorkerId().isEmpty())
             {
-                scarecrowTileEntity.setOwner(getWorkerId().get(0));
+                scarecrowTileEntity.setOwner(getWorkerId().get(0), getColony());
                 amountOfFields++;
             }
             else
             {
-                scarecrowTileEntity.setOwner(0);
+                scarecrowTileEntity.setOwner(0, getColony());
                 amountOfFields--;
             }
         }
