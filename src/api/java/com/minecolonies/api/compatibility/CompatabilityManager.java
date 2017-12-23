@@ -6,6 +6,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockOre;
 import net.minecraft.block.BlockRedstoneOre;
@@ -107,8 +108,12 @@ public class CompatabilityManager implements ICompatabilityManager
 
         if(!ItemStackUtils.isEmpty(tempStack))
         {
-            final IBlockState temp = BlockLeaves.getBlockFromItem(tempStack.getItem()).getStateFromMeta(tempStack.getMetadata());
-            return ores.contains(temp);
+            final Block tempBlock = BlockLeaves.getBlockFromItem(tempStack.getItem());
+            if(tempBlock != null)
+            {
+                final IBlockState temp = tempBlock.getStateFromMeta(tempStack.getMetadata());
+                return ores.contains(temp);
+            }
         }
         return false;
     }
