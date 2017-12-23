@@ -41,6 +41,8 @@ public final class Constants
     public static final String DEFAULT_STYLE                    = "wooden";
     public static final String SAPLINGS                         = "treeSapling";
     public static final String ORES                             = "ores";
+    public static final double HALF_BLOCK                       = 0.5D;
+    public static final double SLIGHTLY_UP                      = 0.1D;
 
     /**
      * Private constructor to hide implicit public one.
