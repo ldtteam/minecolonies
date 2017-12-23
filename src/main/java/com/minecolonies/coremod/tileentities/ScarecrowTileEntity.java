@@ -494,7 +494,7 @@ public class ScarecrowTileEntity extends TileEntityChest
         for (int i = 0; i < inventoryTagList.tagCount(); ++i)
         {
             final NBTTagCompound inventoryCompound = inventoryTagList.getCompoundTagAt(i);
-            final ItemStack stack = new ItemStack(inventoryCompound);
+            final ItemStack stack = ItemStack.loadItemStackFromNBT(inventoryCompound);
             if (ItemStackUtils.getSize(stack) <= 0)
             {
                 inventory.setStackInSlot(i, ItemStackUtils.EMPTY);

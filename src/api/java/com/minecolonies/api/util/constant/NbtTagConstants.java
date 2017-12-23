@@ -54,9 +54,6 @@ public final class NbtTagConstants
     public static final String TAG_BLOCK                 = "block";
     public static final String TAG_POS                   = "pos";
 
-
-    public static final String TAG_INVENTORY = "inventory";
-
     /**
      * Tag used to store the containers to NBT.
      */
