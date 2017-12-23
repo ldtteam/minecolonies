@@ -1764,7 +1764,6 @@ public class Colony implements IColony
      * Creates a field from a tile entity and adds it to the colony.
      *
      * @param tileEntity      the scarecrow which contains the inventory.
-     * @param inventoryPlayer the inventory of the player.
      * @param pos             Position where the field has been placed.
      * @param world           the world of the field.
      */
