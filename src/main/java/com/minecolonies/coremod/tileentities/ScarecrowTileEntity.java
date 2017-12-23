@@ -380,7 +380,7 @@ public class ScarecrowTileEntity extends TileEntityChest implements IWorldNameab
     /**
      * Sets the owner of the field.
      *
-     * @param owner the name of the citizen.
+     * @param ownerId the id of the citizen.
      */
     public void setOwner(@NotNull final int ownerId)
     {
@@ -403,7 +403,8 @@ public class ScarecrowTileEntity extends TileEntityChest implements IWorldNameab
     /**
      * Sets the owner of the field.
      *
-     * @param owner the name of the citizen.
+     * @param ownerId the name of the citizen.
+     * @param tempColony the colony view.
      */
     public void setOwner(@NotNull final int ownerId, final ColonyView tempColony)
     {
