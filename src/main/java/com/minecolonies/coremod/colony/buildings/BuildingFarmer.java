@@ -649,7 +649,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
          *
          * @param id          the position of the field.
          * @param addNewField should new field be added.
-         * @param row         the row of the field.
+         * @param scarecrowTileEntity         the tileEntity.
          */
         public void changeFields(final BlockPos id, final boolean addNewField, final ScarecrowTileEntity scarecrowTileEntity)
         {

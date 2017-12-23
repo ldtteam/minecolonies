@@ -45,7 +45,6 @@ public class ContainerRack extends net.minecraft.inventory.Container
      * @param tileEntityRack  the tileEntity of the field containing the inventory.
      * @param neighborRack    the neighboring rack.
      * @param playerInventory the player inventory.
-     * @param location        the position of the field.
      */
     public ContainerRack(
                           @NotNull final TileEntityRack tileEntityRack, @Nullable final TileEntityRack neighborRack,
