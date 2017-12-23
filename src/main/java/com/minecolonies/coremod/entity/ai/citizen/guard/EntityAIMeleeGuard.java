@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
+import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
@@ -200,7 +201,14 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         {
             if (ItemStackUtils.doesItemServeAsWeapon(heldItem))
             {
-                damgeToBeDealt += ((ItemSword) heldItem.getItem()).getDamageVsEntity();
+                if(heldItem.getItem() instanceof ItemSword)
+                {
+                    damgeToBeDealt += ((ItemSword) heldItem.getItem()).getDamageVsEntity();
+                }
+                else
+                {
+                    damgeToBeDealt += TinkersWeaponHelper.getDamage(heldItem);
+                }
             }
             damgeToBeDealt += EnchantmentHelper.getModifierForCreature(heldItem, targetEntity.getCreatureAttribute());
         }

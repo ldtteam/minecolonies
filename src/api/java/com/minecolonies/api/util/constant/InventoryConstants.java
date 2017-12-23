@@ -41,6 +41,21 @@ public final class InventoryConstants
     public static final int INVENTORY_BAR_SIZE = 8;
 
     /**
+     * The size of a normal inventory.
+     */
+    public static final int MAX_INVENTORY_INDEX = 28;
+
+    /**
+     * X-Offset of the inventory slot in the GUI of the scarecrow.
+     */
+    public static final int X_OFFSET = 80;
+
+    /**
+     * Y-Offset of the inventory slot in the GUI of the scarecrow.
+     */
+    public static final int Y_OFFSET = 34;
+
+    /**
      * Private constructor to hide implicit public one.
      */
     private InventoryConstants()
