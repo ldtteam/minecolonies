@@ -202,7 +202,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             {
                 if(heldItem.getItem() instanceof ItemSword)
                 {
-                    damgeToBeDealt += ((ItemSword) heldItem.getItem()).getAttackDamage();
+                    damgeToBeDealt += ((ItemSword) heldItem.getItem()).getDamageVsEntity();
                 }
                 else
                 {
