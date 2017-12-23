@@ -33,7 +33,7 @@ import static net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND;
 /**
  * The scarecrow tile entity to store extra data.
  */
-public class ScarecrowTileEntity extends TileEntityChest implements IWorldNameable
+public class ScarecrowTileEntity extends TileEntityChest
 {
     /**
      * The max width/length of a field.
