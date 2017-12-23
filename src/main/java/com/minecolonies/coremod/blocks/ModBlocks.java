@@ -44,8 +44,12 @@ public final class ModBlocks
     public static BlockInfoPoster             blockInfoPoster;
     public static BlockPaperwall              blockPaperWall;
     public static BlockHutCook                blockHutCook;
-    public static BlockShingle                blockShingle;
-
+    public static BlockShingle                blockShingleOak;
+    public static BlockShingle                blockShingleBirch;
+    public static BlockShingle                blockShingleJungle;
+    public static BlockShingle                blockShingleSpruce;
+    public static BlockShingle                blockShingleDarkOak;
+    public static BlockShingle                blockShingleAcacia;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -88,7 +92,20 @@ public final class ModBlocks
         blockInfoPoster = new BlockInfoPoster().registerBlock(registry);
         blockPaperWall = new BlockPaperwall().registerBlock(registry);
         blockHutCook   = new BlockHutCook().registerBlock(registry);
-        blockShingle = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK)).registerBlock(registry);
+
+        blockShingleOak = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK),
+                BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.OAK.getName()).registerBlock(registry);
+        blockShingleJungle = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.JUNGLE),
+                BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.JUNGLE.getName()).registerBlock(registry);
+        blockShingleBirch = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.BIRCH),
+                BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.BIRCH.getName()).registerBlock(registry);
+        blockShingleSpruce = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.SPRUCE),
+                BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.SPRUCE.getName()).registerBlock(registry);
+        blockShingleDarkOak = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.DARK_OAK),
+                BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.DARK_OAK.getName()).registerBlock(registry);
+        blockShingleAcacia = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.ACACIA),
+                BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.ACACIA.getName()).registerBlock(registry);
+
     }
 
     public static void registerItemBlock(final IForgeRegistry<Item> registry)
@@ -119,6 +136,11 @@ public final class ModBlocks
         blockInfoPoster.registerItemBlock(registry);
         blockPaperWall.registerItemBlock(registry);
         blockHutCook.registerItemBlock(registry);
-        blockShingle.registerItemBlock(registry);
+        blockShingleOak.registerItemBlock(registry);
+        blockShingleBirch.registerItemBlock(registry);
+        blockShingleJungle.registerItemBlock(registry);
+        blockShingleSpruce.registerItemBlock(registry);
+        blockShingleDarkOak.registerItemBlock(registry);
+        blockShingleAcacia.registerItemBlock(registry);
     }
 }
