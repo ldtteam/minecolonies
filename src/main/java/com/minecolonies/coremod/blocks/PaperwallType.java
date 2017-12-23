@@ -12,8 +12,7 @@ public enum PaperwallType implements IStringSerializable
     OAK(0, "oak", MapColor.WOOD),
     SPRUCE(1, "spruce", MapColor.OBSIDIAN),
     BIRCH(2, "birch", MapColor.SAND),
-    JUNGLE(3, "jungle", MapColor.DIRT),
-    CACTUS(4, "cactus", MapColor.GOLD);
+    JUNGLE(3, "jungle", MapColor.DIRT);
 
     private static final PaperwallType[] META_LOOKUP = new PaperwallType[values().length];
     static
