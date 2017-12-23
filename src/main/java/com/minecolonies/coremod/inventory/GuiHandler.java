@@ -2,7 +2,6 @@ package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.entity.ai.citizen.farmer.Field;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
@@ -27,11 +26,11 @@ public class GuiHandler implements IGuiHandler
             final TileEntity tileEntity = world.getTileEntity(pos);
             if (tileEntity instanceof ScarecrowTileEntity)
             {
-                return new Field((ScarecrowTileEntity) tileEntity, player.inventory, world, pos);
+                return new ContainerField((ScarecrowTileEntity) tileEntity, player.inventory, world, pos);
             }
             else if (tileEntity instanceof TileEntityRack)
             {
-                return new ContainerRack((TileEntityRack) tileEntity, ((TileEntityRack) tileEntity).getOtherChest(), player.inventory, pos);
+                return new ContainerRack((TileEntityRack) tileEntity, ((TileEntityRack) tileEntity).getOtherChest(), player.inventory);
             }
         }
         else if (id == ID.BUILDING_INVENTORY.ordinal())

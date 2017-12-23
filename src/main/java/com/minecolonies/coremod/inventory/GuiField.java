@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.entity.ai.citizen.farmer.Field;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -53,7 +52,7 @@ public class GuiField extends GuiContainer
      */
     protected GuiField(final InventoryPlayer parInventoryPlayer, final ScarecrowTileEntity tileEntity, final World world, final BlockPos location)
     {
-        super(new Field(tileEntity, parInventoryPlayer, world, location));
+        super(new ContainerField(tileEntity, parInventoryPlayer, world, location));
         this.tileEntity = tileEntity;
     }
 
