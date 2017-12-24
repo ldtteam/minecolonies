@@ -199,7 +199,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         final Colony colony = worker.getColony();
         if (colony != null)
         {
-            @Nullable final ScarecrowTileEntity newField = colony.getFreeField(worker.getCitizenData().getId());
+            @Nullable final ScarecrowTileEntity newField = colony.getBuildingManager().getFreeField(worker.getCitizenData().getId(), world);
 
             if (newField != null && getOwnBuilding() != null)
             {

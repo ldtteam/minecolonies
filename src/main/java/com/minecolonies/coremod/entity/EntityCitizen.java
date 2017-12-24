@@ -1725,9 +1725,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             return homeBuilding.getLocation();
         }
-        else if (getColony() != null && getColony().getTownHall() != null)
+        else if (getColony() != null && getColony().getBuildingManager().getTownHall() != null)
         {
-            return getColony().getTownHall().getLocation();
+            return getColony().getBuildingManager().getTownHall().getLocation();
         }
 
         return null;

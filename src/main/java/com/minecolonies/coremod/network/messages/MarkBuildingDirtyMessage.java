@@ -74,7 +74,7 @@ public class MarkBuildingDirtyMessage extends AbstractMessage<MarkBuildingDirtyM
             return;
         }
 
-        final AbstractBuilding building = colony.getBuilding(message.buildingId);
+        final AbstractBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
         if (building == null)
         {
             Log.getLogger().warn("TransferItemsRequestMessage building is null");

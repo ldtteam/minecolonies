@@ -239,7 +239,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         {
             final NBTTagCompound fieldCompound = fieldTagList.getCompoundTagAt(i);
             final BlockPos fieldLocation = BlockPosUtil.readFromNBT(fieldCompound, TAG_FIELDS_BLOCKPOS);
-            if (getColony().getFields().contains(fieldLocation))
+            if (getColony().getBuildingManager().getFields().contains(fieldLocation))
             {
                 farmerFields.add(fieldLocation);
             }
@@ -249,7 +249,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         if (compound.hasKey(LAST_FIELD_TAG))
         {
             final BlockPos pos = BlockPosUtil.readFromNBT(compound, LAST_FIELD_TAG);
-            if(getColony().getFields().contains(pos))
+            if(getColony().getBuildingManager().getFields().contains(pos))
             {
                 lastField = pos;
             }
@@ -319,7 +319,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
         int size = 0;
 
-        for (@NotNull final BlockPos field : getColony().getFields())
+        for (@NotNull final BlockPos field : getColony().getBuildingManager().getFields())
         {
             final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
             if (scareCrow instanceof ScarecrowTileEntity)
@@ -339,7 +339,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
 
         buf.writeInt(size);
-        for (@NotNull final BlockPos field : getColony().getFields())
+        for (@NotNull final BlockPos field : getColony().getBuildingManager().getFields())
         {
             final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
             if (scareCrow instanceof ScarecrowTileEntity)

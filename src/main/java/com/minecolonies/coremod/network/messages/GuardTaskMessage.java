@@ -97,7 +97,7 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
                 return;
             }
 
-            @Nullable final AbstractBuildingGuards building = colony.getBuilding(message.buildingId, AbstractBuildingGuards.class);
+            @Nullable final AbstractBuildingGuards building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingGuards.class);
             if (building != null)
             {
                 if (message.job != -1)

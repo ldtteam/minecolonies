@@ -76,7 +76,7 @@ public class ContainerMinecoloniesCitizenInventory extends Container
                                     if (buildingId != null && FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !ItemStackUtils.isEmpty(stack))
                                     {
                                         final Colony colony = ColonyManager.getColony(colonyId);
-                                        final AbstractBuilding building = colony.getBuilding(buildingId);
+                                        final AbstractBuilding building = colony.getBuildingManager().getBuilding(buildingId);
                                         final CitizenData citizenData = colony.getCitizen(citizenId);
 
                                         building.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);

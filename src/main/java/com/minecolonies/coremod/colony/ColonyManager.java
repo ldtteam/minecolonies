@@ -197,7 +197,7 @@ public final class ColonyManager
             if (canDestroy)
             {
                 Log.getLogger().info("Removing buildings for " + id);
-                for (final AbstractBuilding building : new ArrayList<>(colony.getBuildings().values()))
+                for (final AbstractBuilding building : new ArrayList<>(colony.getBuildingManager().getBuildings().values()))
                 {
                     final BlockPos location = building.getLocation();
                     Log.getLogger().info("Delete Building at " + location);
@@ -259,7 +259,7 @@ public final class ColonyManager
         @Nullable final Colony colony = getColony(w, pos);
         if (colony != null)
         {
-            final AbstractBuilding building = colony.getBuilding(pos);
+            final AbstractBuilding building = colony.getBuildingManager().getBuilding(pos);
             if (building != null)
             {
                 return building;
@@ -269,7 +269,7 @@ public final class ColonyManager
         //  Fallback - there might be a AbstractBuilding for this block, but it's outside of it's owning colony's radius.
         for (@NotNull final Colony otherColony : getColonies(w))
         {
-            final AbstractBuilding building = otherColony.getBuilding(pos);
+            final AbstractBuilding building = otherColony.getBuildingManager().getBuilding(pos);
             if (building != null)
             {
                 return building;

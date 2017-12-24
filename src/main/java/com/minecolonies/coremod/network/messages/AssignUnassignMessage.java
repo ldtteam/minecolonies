@@ -103,7 +103,7 @@ public class AssignUnassignMessage extends AbstractMessage<AssignUnassignMessage
                 return;
             }
 
-            final AbstractBuilding building = colony.getBuilding(message.buildingId);
+            final AbstractBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
 
             if (!(building instanceof BuildingHome))
             {

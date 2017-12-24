@@ -266,7 +266,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             double distance = Double.MAX_VALUE;
             BlockPos goodCook = null;
-            for (final AbstractBuilding building : worker.getColony().getBuildings().values())
+            for (final AbstractBuilding building : worker.getColony().getBuildingManager().getBuildings().values())
             {
                 if (building instanceof BuildingCook && building.getBuildingLevel() > 0)
                 {

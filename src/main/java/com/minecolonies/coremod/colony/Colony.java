@@ -10,16 +10,15 @@ import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.MineColoniesAchievement;
 import com.minecolonies.coremod.colony.buildings.*;
+import com.minecolonies.coremod.colony.managers.BuildingManager;
+import com.minecolonies.coremod.colony.managers.IBuildingManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.AchievementUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.ServerUtils;
@@ -32,7 +31,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -76,11 +74,6 @@ public class Colony implements IColony
     private final int dimensionId;
 
     /**
-     * List of fields of the colony.
-     */
-    private final List<BlockPos> fields = new ArrayList<>();
-
-    /**
      * List of waypoints of the colony.
      */
     private final Map<BlockPos, IBlockState> wayPoints = new HashMap<>();
@@ -93,11 +86,11 @@ public class Colony implements IColony
      * Work Manager of the colony (Request System).
      */
     private final WorkManager workManager = new WorkManager(this);
+
     /**
-     * List of building in the colony.
+     * Building manager of the colony.
      */
-    @NotNull
-    private final Map<BlockPos, AbstractBuilding> buildings = new HashMap<>();
+    private final IBuildingManager buildingManager = new BuildingManager();
     /**
      * List of citizens.
      */
@@ -139,10 +132,7 @@ public class Colony implements IColony
      * Variable to determine if its currently day or night.
      */
     private boolean isDay = true;
-    /**
-     * The warehouse building position. Initially null.
-     */
-    private BuildingWareHouse wareHouse = null;
+
     /**
      * Statistical values.
      */
@@ -171,8 +161,7 @@ public class Colony implements IColony
      */
     private boolean isDirty          = false;
     private boolean isCitizensDirty  = false;
-    private boolean isBuildingsDirty = false;
-    private boolean isFieldsDirty    = false;
+
     /**
      * The hiring mode in the colony.
      */
@@ -194,11 +183,7 @@ public class Colony implements IColony
      */
     @NotNull
     private Permissions permissions;
-    /**
-     * The townhall of the colony.
-     */
-    @Nullable
-    private BuildingTownHall townHall;
+
     /**
      * The highest citizen id.
      */
@@ -323,26 +308,14 @@ public class Colony implements IColony
             topCitizenId = Math.max(topCitizenId, data.getId());
         }
 
-        if(compound.hasKey(TAG_NEW_FIELDS))
+        if(compound.hasKey(TAG_BUILDING_MANAGER))
         {
-            // Fields before Buildings, because the Farmer needs them.
-            final NBTTagList fieldTagList = compound.getTagList(TAG_NEW_FIELDS, NBT.TAG_COMPOUND);
-            for (int i = 0; i < fieldTagList.tagCount(); ++i)
-            {
-                addField(BlockPosUtil.readFromNBT(fieldTagList.getCompoundTagAt(i), TAG_POS));
-            }
+            buildingManager.readFromNBT(compound.getCompoundTag(TAG_BUILDING_MANAGER), this);
         }
-
-        //  Buildings
-        final NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS, NBT.TAG_COMPOUND);
-        for (int i = 0; i < buildingTagList.tagCount(); ++i)
+        else
         {
-            final NBTTagCompound buildingCompound = buildingTagList.getCompoundTagAt(i);
-            @Nullable final AbstractBuilding b = AbstractBuilding.createFromNBT(this, buildingCompound);
-            if (b != null)
-            {
-                addBuilding(b);
-            }
+            //Compatability with old version!
+            buildingManager.readFromNBT(compound, this);
         }
 
         // Restore colony achievements
@@ -432,43 +405,6 @@ public class Colony implements IColony
     }
 
     /**
-     * Add a Field to the Colony.
-     *
-     * @param pos Field position to add to the colony.
-     */
-    private void addField(@NotNull final BlockPos pos)
-    {
-        if(!fields.contains(pos))
-        {
-            fields.add(pos);
-        }
-    }
-
-    /**
-     * Add a AbstractBuilding to the Colony.
-     *
-     * @param building AbstractBuilding to add to the colony.
-     */
-    private void addBuilding(@NotNull final AbstractBuilding building)
-    {
-        buildings.put(building.getID(), building);
-        building.markDirty();
-
-        //  Limit 1 town hall
-        if (building instanceof BuildingTownHall && townHall == null)
-        {
-            townHall = (BuildingTownHall) building;
-        }
-
-        if (building instanceof BuildingWareHouse && wareHouse == null)
-        {
-            wareHouse = (BuildingWareHouse) building;
-        }
-
-        getRequestManager().onProviderAddedToColony(building);
-    }
-
-    /**
      * Get the event handler assigned to the colony.
      *
      * @return the ColonyPermissionEventHandler.
@@ -499,25 +435,9 @@ public class Colony implements IColony
         // Permissions
         permissions.savePermissions(compound);
 
-        //  Buildings
-        @NotNull final NBTTagList buildingTagList = new NBTTagList();
-        for (@NotNull final AbstractBuilding b : buildings.values())
-        {
-            @NotNull final NBTTagCompound buildingCompound = new NBTTagCompound();
-            b.writeToNBT(buildingCompound);
-            buildingTagList.appendTag(buildingCompound);
-        }
-        compound.setTag(TAG_BUILDINGS, buildingTagList);
-
-        // Fields
-        @NotNull final NBTTagList fieldTagList = new NBTTagList();
-        for (@NotNull final BlockPos pos : fields)
-        {
-            @NotNull final NBTTagCompound fieldCompound = new NBTTagCompound();
-            BlockPosUtil.writeToNBT(fieldCompound, TAG_POS, pos);
-            fieldTagList.appendTag(fieldCompound);
-        }
-        compound.setTag(TAG_NEW_FIELDS, fieldTagList);
+        final NBTTagCompound compCompound = new NBTTagCompound();
+        buildingManager.writeToNBT(compCompound);
+        compound.setTag(TAG_COMPATABILITY_MANAGER, compCompound);
 
         //  Citizens
         @NotNull final NBTTagList citizenTagList = new NBTTagList();
@@ -729,14 +649,6 @@ public class Colony implements IColony
     }
 
     /**
-     * Marks building data dirty.
-     */
-    public void markBuildingsDirty()
-    {
-        isBuildingsDirty = true;
-    }
-
-    /**
      * When the Colony's world is loaded, associate with it.
      *
      * @param w World object.
@@ -775,10 +687,7 @@ public class Colony implements IColony
      */
     public void onServerTick(@NotNull final TickEvent.ServerTickEvent event)
     {
-        for (@NotNull final AbstractBuilding b : buildings.values())
-        {
-            b.onServerTick(event);
-        }
+        buildingManager.tick(event);
 
         getRequestManager().update();
 
@@ -865,11 +774,7 @@ public class Colony implements IColony
             //Citizens
             sendCitizenPackets(oldSubscribers, hasNewSubscribers);
 
-            //Buildings
-            sendBuildingPackets(oldSubscribers, hasNewSubscribers);
-
-            //Fields
-            sendFieldPackets(hasNewSubscribers);
+            buildingManager.sendPackets(oldSubscribers, hasNewSubscribers, subscribers);
 
             //schematics
             if (Structures.isDirty())
@@ -879,13 +784,11 @@ public class Colony implements IColony
             }
         }
 
-        isFieldsDirty = false;
         isDirty = false;
         isCitizensDirty = false;
-        isBuildingsDirty = false;
         permissions.clearDirty();
 
-        buildings.values().forEach(AbstractBuilding::clearDirty);
+        buildingManager.clearDirty();
         citizens.values().forEach(CitizenData::clearDirty);
     }
 
@@ -961,47 +864,6 @@ public class Colony implements IColony
                     subscribers.stream()
                       .filter(player -> citizen.isDirty() || !oldSubscribers.contains(player))
                       .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewCitizenViewMessage(this, citizen), player));
-                }
-            }
-        }
-    }
-
-    /**
-     * Sends packages to update the buildings.
-     *
-     * @param oldSubscribers    the existing subscribers.
-     * @param hasNewSubscribers the new subscribers.
-     */
-    private void sendBuildingPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers)
-    {
-        if (isBuildingsDirty || hasNewSubscribers)
-        {
-            for (@NotNull final AbstractBuilding building : buildings.values())
-            {
-                if (building.isDirty() || hasNewSubscribers)
-                {
-                    subscribers.stream()
-                      .filter(player -> building.isDirty() || !oldSubscribers.contains(player))
-                      .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
-                }
-            }
-        }
-    }
-
-    /**
-     * Sends packages to update the fields.
-     *
-     * @param hasNewSubscribers the new subscribers.
-     */
-    private void sendFieldPackets(final boolean hasNewSubscribers)
-    {
-        if (isFieldsDirty || hasNewSubscribers)
-        {
-            for (final AbstractBuilding building : buildings.values())
-            {
-                if (building instanceof BuildingFarmer)
-                {
-                    subscribers.forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
                 }
             }
         }
@@ -1126,7 +988,7 @@ public class Colony implements IColony
             //  Cleanup disappeared citizens
             //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
             //  Every CITIZEN_CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
-            if (shallUpdate(event.world, CITIZEN_CLEANUP_TICK_INCREMENT) && areAllColonyChunksLoaded(event) && townHall != null)
+            if (shallUpdate(event.world, CITIZEN_CLEANUP_TICK_INCREMENT) && areAllColonyChunksLoaded(event) && buildingManager.getTownHall() != null)
             {
                 //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
                 //  If we don't have any references to them, destroy the citizen
@@ -1134,13 +996,13 @@ public class Colony implements IColony
             }
 
             //  Cleanup Buildings whose Blocks have gone AWOL
-            cleanUpBuildings(event);
+            buildingManager.cleanUpBuildings(event);
 
             //  Spawn Citizens
-            if (townHall != null && citizens.size() < maxCitizens)
+            if (buildingManager.getTownHall() != null && citizens.size() < maxCitizens)
             {
                 int respawnInterval = Configurations.gameplay.citizenRespawnInterval * TICKS_SECOND;
-                respawnInterval -= (SECONDS_A_MINUTE * townHall.getBuildingLevel());
+                respawnInterval -= (SECONDS_A_MINUTE * buildingManager.getTownHall().getBuildingLevel());
 
                 if ((event.world.getTotalWorldTime() + 1) % (respawnInterval + 1) == 0)
                 {
@@ -1160,11 +1022,7 @@ public class Colony implements IColony
             }
         }
 
-        //  Tick Buildings
-        for (@NotNull final AbstractBuilding building : buildings.values())
-        {
-            building.onWorldTick(event);
-        }
+        buildingManager.onWorldTick(event);
 
         if (isDay && !world.isDaytime())
         {
@@ -1206,40 +1064,6 @@ public class Colony implements IColony
             }
         }
         return true;
-    }
-
-    private void cleanUpBuildings(@NotNull final TickEvent.WorldTickEvent event)
-    {
-        @Nullable final List<AbstractBuilding> removedBuildings = new ArrayList<>();
-
-        //Need this list, we may enter he while we add a building in the real world.
-        final List<AbstractBuilding> tempBuildings = new ArrayList<>(buildings.values());
-
-        for (@NotNull final AbstractBuilding building : tempBuildings)
-        {
-            final BlockPos loc = building.getLocation();
-            if (event.world.isBlockLoaded(loc) && !building.isMatchingBlock(event.world.getBlockState(loc).getBlock()))
-            {
-                //  Sanity cleanup
-                removedBuildings.add(building);
-            }
-        }
-
-        @NotNull final ArrayList<BlockPos> tempFields = new ArrayList<>(fields);
-
-        for (@NotNull final BlockPos pos : tempFields)
-        {
-            if (event.world.isBlockLoaded(pos))
-            {
-                final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) event.world.getTileEntity(pos);
-                if (scarecrow == null)
-                {
-                    fields.remove(pos);
-                }
-            }
-        }
-
-        removedBuildings.forEach(AbstractBuilding::destroy);
     }
 
     /**
@@ -1384,7 +1208,7 @@ public class Colony implements IColony
     @Override
     public boolean hasTownHall()
     {
-        return townHall != null;
+        return buildingManager.hasTownHall();
     }
 
     /**
@@ -1401,7 +1225,7 @@ public class Colony implements IColony
     @Override
     public boolean hasWarehouse()
     {
-        return wareHouse != null;
+        return buildingManager.hasWarehouse();
     }
 
     @Override
@@ -1470,22 +1294,7 @@ public class Colony implements IColony
     @Override
     public IRequester getRequesterBuildingForPosition(@NotNull final BlockPos pos)
     {
-        return getBuilding(pos);
-    }
-
-    /**
-     * Get building in Colony by ID.
-     *
-     * @param buildingId ID (coordinates) of the building to get.
-     * @return AbstractBuilding belonging to the given ID.
-     */
-    public AbstractBuilding getBuilding(final BlockPos buildingId)
-    {
-        if (buildingId != null)
-        {
-            return buildings.get(buildingId);
-        }
-        return null;
+        return buildingManager.getBuilding(pos);
     }
 
     public void setCanHaveBarbEvents(final Boolean canHave)
@@ -1500,7 +1309,7 @@ public class Colony implements IColony
      */
     public void spawnCitizen(final CitizenData data)
     {
-        final BlockPos townHallLocation = townHall.getLocation();
+        final BlockPos townHallLocation = buildingManager.getTownHall().getLocation();
         if (!world.isBlockLoaded(townHallLocation))
         {
             //  Chunk with TownHall Block is not loaded
@@ -1685,154 +1494,13 @@ public class Colony implements IColony
     }
 
     /**
-     * Gets the town hall of the colony.
-     *
-     * @return Town hall of the colony.
-     */
-    @Nullable
-    public BuildingTownHall getTownHall()
-    {
-        return townHall;
-    }
-
-    /**
-     * Getter for a unmodifiable version of the farmerFields list.
-     *
-     * @return list of fields and their id.
-     */
-    @NotNull
-    public List<BlockPos> getFields()
-    {
-        return Collections.unmodifiableList(fields);
-    }
-
-    /**
-     * Returns a field which has not been taken yet.
-     *
-     * @param owner id of the owner of the field.
-     * @return a field if there is one available, else null.
-     */
-    @Nullable
-    public ScarecrowTileEntity getFreeField(final int owner)
-    {
-        for (@NotNull final BlockPos pos : fields)
-        {
-            final TileEntity field = world.getTileEntity(pos);
-            if (field instanceof ScarecrowTileEntity && !((ScarecrowTileEntity) field).isTaken())
-            {
-                ((ScarecrowTileEntity) field).setTaken(true);
-                ((ScarecrowTileEntity) field).setOwner(owner);
-                markFieldsDirty();
-                return (ScarecrowTileEntity) field;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Updates all subscribers of fields etc.
-     */
-    private void markFieldsDirty()
-    {
-        isFieldsDirty = true;
-    }
-
-    /**
-     * Get building in Colony by ID. The building will be casted to the provided
-     * type.
-     *
-     * @param buildingId ID (coordinates) of the building to get.
-     * @param type       Type of building.
-     * @param <B>        Building class.
-     * @return the building with the specified id.
-     */
-    @Nullable
-    public <B extends AbstractBuilding> B getBuilding(final BlockPos buildingId, @NotNull final Class<B> type)
-    {
-        try
-        {
-            return type.cast(buildings.get(buildingId));
-        }
-        catch (final ClassCastException e)
-        {
-            Log.getLogger().warn("getBuilding called with wrong type: ", e);
-            return null;
-        }
-    }
-
-    /**
-     * Creates a field from a tile entity and adds it to the colony.
-     *
-     * @param tileEntity      the scarecrow which contains the inventory.
-     * @param pos             Position where the field has been placed.
-     * @param world           the world of the field.
-     */
-    public void addNewField(final ScarecrowTileEntity tileEntity, final BlockPos pos, final World world)
-    {
-        addField(pos);
-        tileEntity.calculateSize(world, pos);
-        markFieldsDirty();
-    }
-
-    /**
-     * Creates a building from a tile entity and adds it to the colony.
-     *
-     * @param tileEntity Tile entity to build a building from.
-     * @return AbstractBuilding that was created and added.
-     */
-    @Nullable
-    public AbstractBuilding addNewBuilding(@NotNull final TileEntityColonyBuilding tileEntity)
-    {
-        tileEntity.setColony(this);
-        if (!buildings.containsKey(tileEntity.getPosition()))
-        {
-            @Nullable final AbstractBuilding building = AbstractBuilding.create(this, tileEntity);
-            if (building != null)
-            {
-                addBuilding(building);
-                tileEntity.setBuilding(building);
-
-                Log.getLogger().info(String.format("Colony %d - new AbstractBuilding for %s at %s",
-                        getID(),
-                        tileEntity.getBlockType().getClass(),
-                        tileEntity.getPosition()));
-                if (tileEntity.isMirrored())
-                {
-                    building.setMirror();
-                }
-                if (!tileEntity.getStyle().isEmpty())
-                {
-                    building.setStyle(tileEntity.getStyle());
-                }
-                else
-                {
-                    building.setStyle(getStyle());
-                }
-                ConstructionTapeHelper.placeConstructionTape(building.getLocation(), building.getCorners(), world);
-            }
-            else
-            {
-                Log.getLogger().error(String.format("Colony %d unable to create AbstractBuilding for %s at %s",
-                        getID(),
-                        tileEntity.getBlockType().getClass(),
-                        tileEntity.getPosition()));
-            }
-
-            calculateMaxCitizens();
-            ColonyManager.markDirty();
-            return building;
-        }
-        return null;
-    }
-
-    /**
      * Recalculates how many citizen can be in the colony.
      */
     public void calculateMaxCitizens()
     {
         int newMaxCitizens = 0;
 
-        for (final AbstractBuilding b : buildings.values())
+        for (final AbstractBuilding b : buildingManager.getBuildings().values())
         {
             if (b.getBuildingLevel() > 0)
             {
@@ -1853,48 +1521,6 @@ public class Colony implements IColony
             maxCitizens = newMaxCitizens;
             markDirty();
         }
-    }
-
-    /**
-     * Remove a AbstractBuilding from the Colony (when it is destroyed).
-     *
-     * @param building AbstractBuilding to remove.
-     */
-    public void removeBuilding(@NotNull final AbstractBuilding building)
-    {
-        if (buildings.remove(building.getID()) != null)
-        {
-            for (final EntityPlayerMP player : subscribers)
-            {
-                MineColonies.getNetwork().sendTo(new ColonyViewRemoveBuildingMessage(this, building.getID()), player);
-            }
-
-            Log.getLogger().info(String.format("Colony %d - removed AbstractBuilding %s of type %s",
-              getID(),
-              building.getID(),
-              building.getSchematicName()));
-        }
-
-        if (building instanceof BuildingTownHall)
-        {
-            townHall = null;
-        }
-        else if (building instanceof BuildingWareHouse)
-        {
-            wareHouse = null;
-        }
-
-        getRequestManager().onProviderRemovedFromColony(building);
-
-        //Allow Citizens to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
-        for (@NotNull final CitizenData citizen : citizens.values())
-        {
-            citizen.onRemoveBuilding(building);
-        }
-
-        calculateMaxCitizens();
-
-        ColonyManager.markDirty();
     }
 
     /**
@@ -1959,7 +1585,7 @@ public class Colony implements IColony
             citizen.getHomeBuilding().cancelAllRequestsOfCitizen(citizen);
         }
 
-        for (@NotNull final AbstractBuilding building : buildings.values())
+        for (@NotNull final AbstractBuilding building : buildingManager.getBuildings().values())
         {
             building.removeCitizen(citizen);
         }
@@ -2024,17 +1650,6 @@ public class Colony implements IColony
     }
 
     /**
-     * Removes a field from the farmerFields list.
-     *
-     * @param pos the position-id.
-     */
-    public void removeField(final BlockPos pos)
-    {
-        this.markFieldsDirty();
-        fields.remove(pos);
-    }
-
-    /**
      * Adds a waypoint to the colony.
      *
      * @param point the waypoint to add.
@@ -2058,7 +1673,7 @@ public class Colony implements IColony
     {
         final List<BlockPos> tempWayPoints = new ArrayList<>();
         tempWayPoints.addAll(wayPoints.keySet());
-        tempWayPoints.addAll(getBuildings().keySet());
+        tempWayPoints.addAll(buildingManager.getBuildings().keySet());
 
         final double maxX = Math.max(position.getX(), target.getX());
         final double maxZ = Math.max(position.getZ(), target.getZ());
@@ -2081,17 +1696,6 @@ public class Colony implements IColony
         return tempWayPoints;
     }
 
-    /**
-     * Returns a map with all buildings within the colony.
-     * Key is ID (Coordinates), value is building object.
-     *
-     * @return Map with ID (coordinates) as key, and buildings as value.
-     */
-    @NotNull
-    public Map<BlockPos, AbstractBuilding> getBuildings()
-    {
-        return Collections.unmodifiableMap(buildings);
-    }
 
     /**
      * Getter for overall happiness.
@@ -2137,7 +1741,7 @@ public class Colony implements IColony
     public BlockPos getRandomOutsiderInDirection(final EnumFacing directionX, final EnumFacing directionZ)
     {
         final List<BlockPos> positions = wayPoints.keySet().stream().filter(pos -> isInDirection(directionX, directionZ, pos.subtract(center))).collect(Collectors.toList());
-        positions.addAll(buildings.keySet().stream().filter(pos -> isInDirection(directionX, directionZ, pos.subtract(center))).collect(Collectors.toList()));
+        positions.addAll(buildingManager.getBuildings().keySet().stream().filter(pos -> isInDirection(directionX, directionZ, pos.subtract(center))).collect(Collectors.toList()));
 
         BlockPos thePos = center;
         double distance = 0;
@@ -2149,7 +1753,7 @@ public class Colony implements IColony
             {
                 distance = currentDistance;
                 thePos = pos;
-                theBuilding = getBuilding(thePos);
+                theBuilding = buildingManager.getBuilding(thePos);
             }
         }
 
@@ -2215,5 +1819,20 @@ public class Colony implements IColony
     public void setStyle(final String style)
     {
         this.style = style;
+    }
+
+    /**
+     * Get the buildingmanager of the colony.
+     * @return the buildingManager.
+     */
+    public IBuildingManager getBuildingManager()
+    {
+        return buildingManager;
+    }
+
+    @NotNull
+    public Set<EntityPlayerMP> getSubscribers()
+    {
+        return new HashSet<>(subscribers);
     }
 }
