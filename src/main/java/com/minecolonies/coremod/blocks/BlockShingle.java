@@ -19,6 +19,11 @@ public class BlockShingle extends AbstractBlockMinecoloniesStairs<BlockShingle>
     private static final float RESISTANCE = 1F;
 
     /**
+     * Light opacity of the block.
+     */
+    private static final int LIGHT_OPACITY = 255;
+
+    /**
      * Prefix of the block.
      */
     public static final String BLOCK_PREFIX = "blockshingle";
@@ -37,5 +42,6 @@ public class BlockShingle extends AbstractBlockMinecoloniesStairs<BlockShingle>
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
         this.useNeighborBrightness = true;
+        this.setLightOpacity(LIGHT_OPACITY);
     }
 }
