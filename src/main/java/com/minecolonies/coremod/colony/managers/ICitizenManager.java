@@ -14,8 +14,17 @@ import java.util.Set;
 
 public interface ICitizenManager
 {
+    /**
+     * Read the citizens from nbt.
+     * @param compound the compound to read it from.
+     * @param colony the colony to assign them to.
+     */
     void readFromNBT(@NotNull final NBTTagCompound compound, @NotNull final Colony colony);
 
+    /**
+     * Write the citizens to nbt.
+     * @param citizenCompound the compound to write it to.
+     */
     void writeToNBT(@NotNull final NBTTagCompound citizenCompound);
 
     /**
@@ -62,7 +71,7 @@ public interface ICitizenManager
      * @param buildingManager the building manager.
      * @param colony the colony.
      */
-    void spawnCitizenIfNull(@NotNull final CitizenData data, @NotNull final World world, @NotNull final IBuildingManager buildingManager, @NotNull final Colony colony);
+    void spawnCitizenIfNull(@Nullable final CitizenData data, @Nullable final World world, @NotNull final IBuildingManager buildingManager, @NotNull final Colony colony);
 
     /**
      * Spawn a citizen with specific citizen data.
@@ -101,6 +110,9 @@ public interface ICitizenManager
      */
     void markCitizensDirty();
 
+    /**
+     * Clear dirty from all buildings.
+     */
     void clearDirty();
 
     /**

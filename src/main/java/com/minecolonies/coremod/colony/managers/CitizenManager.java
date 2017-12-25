@@ -20,6 +20,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -30,12 +31,16 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MAX_CITIZEN
 
 public class CitizenManager implements ICitizenManager
 {
+    /**
+     * Variables to determine if citizens have to be updated on the client side.
+     */
     private boolean isCitizensDirty  = false;
 
     /**
      * The highest citizen id.
      */
     private int topCitizenId = 0;
+
     /**
      * Max citizens without housing.
      */
@@ -111,7 +116,7 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void spawnCitizen(@NotNull final CitizenData data, @NotNull final World world, @NotNull final IBuildingManager buildingManager, @NotNull final Colony colony)
+    public void spawnCitizen(@Nullable final CitizenData data, @Nullable final World world, @NotNull final IBuildingManager buildingManager, @NotNull final Colony colony)
     {
         final BlockPos townHallLocation = buildingManager.getTownHall().getLocation();
         if (!world.isBlockLoaded(townHallLocation))
