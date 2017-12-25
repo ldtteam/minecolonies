@@ -89,7 +89,7 @@ public final class MobEventsUtils
      */
     private static void numberOfSpawns(final Colony colony)
     {
-        if (colony.getCitizens().size() < MIN_CITIZENS_FOR_RAID)
+        if (colony.getCitizenManager().getCitizens().size() < MIN_CITIZENS_FOR_RAID)
         {
             return;
         }
@@ -153,7 +153,7 @@ public final class MobEventsUtils
         int levels = 0;
 
         @NotNull final List<CitizenData> citizensList = new ArrayList<>();
-        citizensList.addAll(colony.getCitizens().values());
+        citizensList.addAll(colony.getCitizenManager().getCitizens());
 
         for (@NotNull final CitizenData citizen : citizensList)
         {
@@ -188,7 +188,7 @@ public final class MobEventsUtils
 
     public static boolean isItTimeToRaid(final World world, final Colony colony)
     {
-        if (colony.getCitizens().size() < NUMBER_OF_CITIZENS_NEEDED)
+        if (colony.getCitizenManager().getCitizens().size() < NUMBER_OF_CITIZENS_NEEDED)
         {
             return false;
         }

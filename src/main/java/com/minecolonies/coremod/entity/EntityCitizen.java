@@ -743,7 +743,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                   "tile.blockHutTownHall.messageColonistDead",
                   citizenData.getName(), (int) posX, (int) posY, (int) posZ, damageSource.damageType);
             }
-            colony.removeCitizen(getCitizenData());
+            colony.getCitizenManager().removeCitizen(getCitizenData(), colony);
         }
         super.onDeath(damageSource);
     }
@@ -1133,7 +1133,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
                 if (colony != null)
                 {
-                    for (final CitizenData citizen : colony.getCitizens().values())
+                    for (final CitizenData citizen : colony.getCitizenManager().getCitizens())
                     {
                         if (citizen.getName().equals(name))
                         {
@@ -1452,7 +1452,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return;
         }
 
-        final CitizenData data = c.getCitizen(citizenId);
+        final CitizenData data = c.getCitizenManager().getCitizen(citizenId);
         if (data == null)
         {
             //  Citizen does not exist in the Colony

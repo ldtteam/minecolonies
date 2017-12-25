@@ -95,7 +95,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
             return;
         }
 
-        final CitizenData citizenData = colony.getCitizen(message.citizenId);
+        final CitizenData citizenData = colony.getCitizenManager().getCitizen(message.citizenId);
         if (citizenData == null)
         {
             Log.getLogger().warn("TransferItemsRequestMessage citizenData is null");

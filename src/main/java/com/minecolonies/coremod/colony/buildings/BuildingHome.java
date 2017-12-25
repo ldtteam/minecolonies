@@ -80,7 +80,7 @@ public class BuildingHome extends AbstractBuildingHut
         final int[] residentIds = compound.getIntArray(TAG_RESIDENTS);
         for (final int citizenId : residentIds)
         {
-            final CitizenData citizen = getColony().getCitizen(citizenId);
+            final CitizenData citizen = getColony().getCitizenManager().getCitizen(citizenId);
             if (citizen != null)
             {
                 // Bypass addResident (which marks dirty)
@@ -211,7 +211,7 @@ public class BuildingHome extends AbstractBuildingHut
      */
     private void addHomelessCitizens()
     {
-        for (@NotNull final CitizenData citizen : getColony().getCitizens().values())
+        for (@NotNull final CitizenData citizen : getColony().getCitizenManager().getCitizens())
         {
             // Move the citizen to a better hut
             if (citizen.getHomeBuilding() instanceof BuildingHome && citizen.getHomeBuilding().getBuildingLevel() < this.getBuildingLevel())
@@ -290,7 +290,7 @@ public class BuildingHome extends AbstractBuildingHut
     public void setBuildingLevel(final int level)
     {
         super.setBuildingLevel(level);
-        getColony().calculateMaxCitizens();
+        getColony().getCitizenManager().calculateMaxCitizens(getColony());
     }
 
     @NotNull

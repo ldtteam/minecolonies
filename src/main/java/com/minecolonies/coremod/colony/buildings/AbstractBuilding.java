@@ -1560,7 +1560,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
         for (int citizenId : citizensByRequests.keySet())
         {
-            final CitizenData data = getColony().getCitizen(citizenId);
+            final CitizenData data = getColony().getCitizenManager().getCitizen(citizenId);
 
             if (data == null)
             {
@@ -1694,8 +1694,8 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         }
 
         //Check if the citizen did not die.
-        if (getColony().getCitizen(citizenThatRequested) != null)
-            getColony().getCitizen(citizenThatRequested).onRequestCancelled(token);
+        if (getColony().getCitizenManager().getCitizen(citizenThatRequested) != null)
+            getColony().getCitizenManager().getCitizen(citizenThatRequested).onRequestCancelled(token);
 
         markDirty();
     }
@@ -1715,7 +1715,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         }
 
         Integer citizenData = requestsByCitizen.get(token);
-        return Optional.of(getColony().getCitizen(citizenData));
+        return Optional.of(getColony().getCitizenManager().getCitizen(citizenData));
     }
 
 

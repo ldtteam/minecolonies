@@ -72,14 +72,14 @@ public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage
             {
                 final BlockPos location = building.getLocation();
                 final World world = colony.getWorld();
-                for (final CitizenData citizenData : colony.getCitizens().values())
+                for (final CitizenData citizenData : colony.getCitizenManager().getCitizens())
                 {
                     EntityCitizen citizen = citizenData.getCitizenEntity();
                     if (citizen == null)
                     {
 
                         Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
-                        colony.spawnCitizen(citizenData);
+                        colony.getCitizenManager().spawnCitizen(citizenData, colony.getWorld(), colony.getBuildingManager(), colony);
                         citizen = citizenData.getCitizenEntity();
                     }
 

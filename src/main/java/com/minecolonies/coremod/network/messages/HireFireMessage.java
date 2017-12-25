@@ -102,7 +102,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
                 return;
             }
 
-            final CitizenData citizen = colony.getCitizen(message.citizenID);
+            final CitizenData citizen = colony.getCitizenManager().getCitizen(message.citizenID);
             if (message.hire)
             {
 

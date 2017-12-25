@@ -183,7 +183,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
                 final NBTTagList workersTagList = compound.getTagList(TAG_WORKER, Constants.NBT.TAG_COMPOUND);
                 for (int i = 0; i < workersTagList.tagCount(); ++i)
                 {
-                    final CitizenData data = getColony().getCitizen(workersTagList.getCompoundTagAt(i).getInteger(TAG_ID));
+                    final CitizenData data = getColony().getCitizenManager().getCitizen(workersTagList.getCompoundTagAt(i).getInteger(TAG_ID));
                     if (data != null)
                     {
                         data.setWorkBuilding(this);
@@ -194,7 +194,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             catch (final Exception e)
             {
                 MineColonies.getLogger().warn("Warning: Updating data structures:", e);
-                final CitizenData worker = getColony().getCitizen(compound.getInteger(TAG_WORKER));
+                final CitizenData worker = getColony().getCitizenManager().getCitizen(compound.getInteger(TAG_WORKER));
                 workers.add(worker);
                 if (worker != null)
                 {
@@ -298,7 +298,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
               && (getBuildingLevel() > 0 || this instanceof BuildingBuilder)
               && !this.getColony().isManualHiring())
         {
-            final CitizenData joblessCitizen = getColony().getJoblessCitizen();
+            final CitizenData joblessCitizen = getColony().getCitizenManager().getJoblessCitizen();
             if (joblessCitizen != null)
             {
                 setWorker(joblessCitizen);

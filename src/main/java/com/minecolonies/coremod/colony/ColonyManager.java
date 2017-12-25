@@ -183,7 +183,7 @@ public final class ColonyManager
 
             final Set<World> colonyWorlds = new HashSet<>();
             Log.getLogger().info("Removing citizens for " + id);
-            for (final CitizenData citizenData : new ArrayList<>(colony.getCitizens().values()))
+            for (final CitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
             {
                 Log.getLogger().info("Kill Citizen " + citizenData.getName());
                 final EntityCitizen entityCitizen = citizenData.getCitizenEntity();

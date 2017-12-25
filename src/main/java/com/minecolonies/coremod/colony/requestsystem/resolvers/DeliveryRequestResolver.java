@@ -44,8 +44,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         }
 
         Colony colony = (Colony) manager.getColony();
-        CitizenData freeDeliveryMan = colony.getCitizens()
-                                        .values()
+        CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
                                         .stream()
                                         .filter(c -> c.getCitizenEntity() != null && requestToCheck.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
                                         .filter(c -> c.getJob() instanceof JobDeliveryman)
@@ -71,8 +70,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         }
 
         Colony colony = (Colony) manager.getColony();
-        CitizenData freeDeliveryMan = colony.getCitizens()
-                                        .values()
+        CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
                                         .stream()
                                         .filter(c -> c.getCitizenEntity() != null && request.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
                                         .filter(c -> c.getJob() instanceof JobDeliveryman)
@@ -121,8 +119,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         if (!manager.getColony().getWorld().isRemote)
         {
             Colony colony = (Colony) manager.getColony();
-            CitizenData freeDeliveryMan = colony.getCitizens()
-                                            .values()
+            CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
                                             .stream()
                                             .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).getTaskQueue().contains(request.getToken()))
                                             .findFirst()

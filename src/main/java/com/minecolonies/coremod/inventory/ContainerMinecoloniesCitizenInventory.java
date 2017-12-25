@@ -77,7 +77,7 @@ public class ContainerMinecoloniesCitizenInventory extends Container
                                     {
                                         final Colony colony = ColonyManager.getColony(colonyId);
                                         final AbstractBuilding building = colony.getBuildingManager().getBuilding(buildingId);
-                                        final CitizenData citizenData = colony.getCitizen(citizenId);
+                                        final CitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
 
                                         building.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);
                                     }

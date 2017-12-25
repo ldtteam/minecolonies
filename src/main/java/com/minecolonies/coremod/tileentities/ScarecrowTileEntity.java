@@ -387,13 +387,13 @@ public class ScarecrowTileEntity extends TileEntityChest
         this.ownerId = ownerId;
         if(colony != null)
         {
-            if(colony.getCitizen(ownerId) == null)
+            if(colony.getCitizenManager().getCitizen(ownerId) == null)
             {
                 owner = "";
             }
             else
             {
-                owner = colony.getCitizen(ownerId).getName();
+                owner = colony.getCitizenManager().getCitizen(ownerId).getName();
             }
         }
         setName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format(owner)));

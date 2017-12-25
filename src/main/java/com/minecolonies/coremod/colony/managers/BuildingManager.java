@@ -136,6 +136,7 @@ public class BuildingManager implements IBuildingManager
     @Override
     public void clearDirty()
     {
+        isBuildingsDirty = false;
         buildings.values().forEach(AbstractBuilding::clearDirty);
     }
 
@@ -322,7 +323,7 @@ public class BuildingManager implements IBuildingManager
                         tileEntity.getPosition()));
             }
 
-            colony.calculateMaxCitizens();
+            colony.getCitizenManager().calculateMaxCitizens(colony);
             ColonyManager.markDirty();
             return building;
         }
@@ -357,12 +358,12 @@ public class BuildingManager implements IBuildingManager
         colony.getRequestManager().onProviderRemovedFromColony(building);
 
         //Allow Citizens to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
-        for (@NotNull final CitizenData citizen : colony.getCitizens().values())
+        for (@NotNull final CitizenData citizen : colony.getCitizenManager().getCitizens())
         {
             citizen.onRemoveBuilding(building);
         }
 
-        colony.calculateMaxCitizens();
+        colony.getCitizenManager().calculateMaxCitizens(colony);
 
         ColonyManager.markDirty();
     }

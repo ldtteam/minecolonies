@@ -235,7 +235,7 @@ public class CitizenData
     public void markDirty()
     {
         dirty = true;
-        colony.markCitizensDirty();
+        colony.getCitizenManager().markCitizensDirty();
     }
 
     /**
@@ -436,9 +436,9 @@ public class CitizenData
             citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.names.maleFirstNames), getRandomLetter(rand),
               getRandomElement(rand, Configurations.names.lastNames));
         }
-        for (int i = 1; i <= this.getColony().getMaxCitizens(); i++)
+        for (int i = 1; i <= this.getColony().getCitizenManager().getMaxCitizens(); i++)
         {
-            if (this.getColony().getCitizen(i) != null && this.getColony().getCitizen(i).getName().equals(citizenName))
+            if (this.getColony().getCitizenManager().getCitizen(i) != null && this.getColony().getCitizenManager().getCitizen(i).getName().equals(citizenName))
             {
                 citizenName = generateName(rand);
             }
