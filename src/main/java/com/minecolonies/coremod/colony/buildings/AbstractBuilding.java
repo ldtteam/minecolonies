@@ -1709,19 +1709,12 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
     public Optional<CitizenData> getCitizenForRequest(@NotNull final IToken token)
     {
-        if (!requestsByCitizen.containsKey(token))
+        if (!requestsByCitizen.containsKey(token) || getColony() == null)
         {
             return Optional.empty();
         }
 
         int citizenID = requestsByCitizen.get(token);
-
-        if(getColony().getCitizen(citizenID) == null)
-        {
-            //Something happened to our citizen!
-            return Optional.empty();
-        }
-
         return Optional.of(getColony().getCitizen(citizenID));
     }
 
