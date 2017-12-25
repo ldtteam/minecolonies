@@ -37,7 +37,7 @@ public final class AchievementUtils
 
         if (colony.getWorld() != null)
         {
-            for (final Advancement achievement : colony.getAchievements())
+            for (final Advancement achievement : colony.getStatsManager().getAchievements())
             {
                 //todo
                 /*if (player == null || ModAchievements.ad == achievement)

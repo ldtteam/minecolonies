@@ -8,12 +8,8 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.achievements.MineColoniesAchievement;
 import com.minecolonies.coremod.colony.buildings.*;
-import com.minecolonies.coremod.colony.managers.BuildingManager;
-import com.minecolonies.coremod.colony.managers.CitizenManager;
-import com.minecolonies.coremod.colony.managers.IBuildingManager;
-import com.minecolonies.coremod.colony.managers.ICitizenManager;
+import com.minecolonies.coremod.colony.managers.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
@@ -21,10 +17,8 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
-import com.minecolonies.coremod.util.AchievementUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.ServerUtils;
-import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -78,12 +72,6 @@ public class Colony implements IColony
     private final Map<BlockPos, IBlockState> wayPoints = new HashMap<>();
 
     /**
-     * List of achievements within the colony.
-     */
-    @NotNull
-    private final List<Advancement> colonyAchievements;
-
-    /**
      * Work Manager of the colony (Request System).
      */
     private final WorkManager workManager = new WorkManager(this);
@@ -97,6 +85,11 @@ public class Colony implements IColony
      * Building manager of the colony.
      */
     private final ICitizenManager citizenManager = new CitizenManager();
+
+    /**
+     * Building manager of the colony.
+     */
+    private final IStatisticAchievementManager statsManager = new StatisticAchievementManager();
 
     /**
      * The Positions which players can freely interact.
@@ -142,20 +135,6 @@ public class Colony implements IColony
      * Variable to determine if its currently day or night.
      */
     private boolean isDay = true;
-
-    /**
-     * Statistical values.
-     */
-    private int minedOres         = 0;
-    private int minedDiamonds     = 0;
-    private int harvestedWheat    = 0;
-    private int harvestedPotatoes = 0;
-    private int harvestedCarrots  = 0;
-    private int killedMobs        = 0;
-    private int builtHuts         = 0;
-    private int caughtFish        = 0;
-    private int felledTrees       = 0;
-    private int plantedSaplings   = 0;
 
     /**
      * The world the colony currently runs on.
@@ -244,7 +223,6 @@ public class Colony implements IColony
         this.dimensionId = world.provider.getDimension();
         this.world = world;
         this.permissions = new Permissions(this);
-        this.colonyAchievements = new ArrayList<>();
 
         // Register a new event handler
         eventHandler = new ColonyPermissionEventHandler(this);
@@ -326,19 +304,14 @@ public class Colony implements IColony
             buildingManager.readFromNBT(compound, this);
         }
 
-        // Restore colony achievements
-        final NBTTagList achievementTagList = compound.getTagList(TAG_ACHIEVEMENT_LIST, NBT.TAG_COMPOUND);
-        for (int i = 0; i < achievementTagList.tagCount(); ++i)
+        if(compound.hasKey(TAG_STATS_MANAGER))
         {
-            final NBTTagCompound achievementCompound = achievementTagList.getCompoundTagAt(i);
-            final String achievementKey = achievementCompound.getString(TAG_ACHIEVEMENT);
-
-            //todo serialization
-            /*final StatBase statBase = StatList.getOneShotStat(achievementKey);
-             if (statBase instanceof Advancement)
-            {
-                colonyAchievements.add((Advancement) statBase);
-            }*/
+            statsManager.readFromNBT(compound.getCompoundTag(TAG_STATS_MANAGER), this);
+        }
+        else
+        {
+            //Compatability with old version!
+            statsManager.readFromNBT(compound, this);
         }
 
         //  Workload
@@ -353,25 +326,6 @@ public class Colony implements IColony
             final IBlockState state = NBTUtil.readBlockState(blockAtPos);
             wayPoints.put(pos, state);
         }
-
-        //Statistics
-        final NBTTagCompound statisticsCompound = compound.getCompoundTag(TAG_STATISTICS);
-        final NBTTagCompound minerStatisticsCompound = statisticsCompound.getCompoundTag(TAG_MINER_STATISTICS);
-        final NBTTagCompound farmerStatisticsCompound = statisticsCompound.getCompoundTag(TAG_FARMER_STATISTICS);
-        final NBTTagCompound guardStatisticsCompound = statisticsCompound.getCompoundTag(TAG_FARMER_STATISTICS);
-        final NBTTagCompound builderStatisticsCompound = statisticsCompound.getCompoundTag(TAG_BUILDER_STATISTICS);
-        final NBTTagCompound fishermanStatisticsCompound = statisticsCompound.getCompoundTag(TAG_FISHERMAN_STATISTICS);
-        final NBTTagCompound lumberjackStatisticsCompound = statisticsCompound.getCompoundTag(TAG_LUMBERJACK_STATISTICS);
-        minedOres = minerStatisticsCompound.getInteger(TAG_MINER_ORES);
-        minedDiamonds = minerStatisticsCompound.getInteger(TAG_MINER_DIAMONDS);
-        harvestedCarrots = farmerStatisticsCompound.getInteger(TAG_FARMER_CARROTS);
-        harvestedPotatoes = farmerStatisticsCompound.getInteger(TAG_FARMER_POTATOES);
-        harvestedWheat = farmerStatisticsCompound.getInteger(TAG_FARMER_WHEAT);
-        killedMobs = guardStatisticsCompound.getInteger(TAG_GUARD_MOBS);
-        builtHuts = builderStatisticsCompound.getInteger(TAG_BUILDER_HUTS);
-        caughtFish = fishermanStatisticsCompound.getInteger(TAG_FISHERMAN_FISH);
-        felledTrees = lumberjackStatisticsCompound.getInteger(TAG_LUMBERJACK_TREES);
-        plantedSaplings = lumberjackStatisticsCompound.getInteger(TAG_LUMBERJACK_SAPLINGS);
 
         // Free blocks
         final NBTTagList freeBlockTagList = compound.getTagList(TAG_FREE_BLOCKS, NBT.TAG_STRING);
@@ -449,16 +403,9 @@ public class Colony implements IColony
         citizenManager.writeToNBT(citizenCompound);
         compound.setTag(TAG_COMPATABILITY_MANAGER, citizenCompound);
 
-        //  Achievements
-        @NotNull final NBTTagList achievementsTagList = new NBTTagList();
-        for (@NotNull final Advancement achievement : this.colonyAchievements)
-        {
-            @NotNull final NBTTagCompound achievementCompound = new NBTTagCompound();
-            //todo deserialization
-            /*achievementCompound.setString(TAG_ACHIEVEMENT, achievement.);
-            achievementsTagList.appendTag(achievementCompound);*/
-        }
-        compound.setTag(TAG_ACHIEVEMENT_LIST, achievementsTagList);
+        final NBTTagCompound statsCompound = new NBTTagCompound();
+        statsManager.writeToNBT(statsCompound);
+        compound.setTag(TAG_COMPATABILITY_MANAGER, statsCompound);
 
         //  Workload
         @NotNull final NBTTagCompound workManagerCompound = new NBTTagCompound();
@@ -476,32 +423,6 @@ public class Colony implements IColony
             wayPointTagList.appendTag(wayPointCompound);
         }
         compound.setTag(TAG_WAYPOINT, wayPointTagList);
-
-        // Statistics
-        @NotNull final NBTTagCompound statisticsCompound = new NBTTagCompound();
-        @NotNull final NBTTagCompound minerStatisticsCompound = new NBTTagCompound();
-        @NotNull final NBTTagCompound farmerStatisticsCompound = new NBTTagCompound();
-        @NotNull final NBTTagCompound guardStatisticsCompound = new NBTTagCompound();
-        @NotNull final NBTTagCompound builderStatisticsCompound = new NBTTagCompound();
-        @NotNull final NBTTagCompound fishermanStatisticsCompound = new NBTTagCompound();
-        @NotNull final NBTTagCompound lumberjackStatisticsCompound = new NBTTagCompound();
-        compound.setTag(TAG_STATISTICS, statisticsCompound);
-        statisticsCompound.setTag(TAG_MINER_STATISTICS, minerStatisticsCompound);
-        minerStatisticsCompound.setInteger(TAG_MINER_ORES, minedOres);
-        minerStatisticsCompound.setInteger(TAG_MINER_DIAMONDS, minedDiamonds);
-        statisticsCompound.setTag(TAG_FARMER_STATISTICS, farmerStatisticsCompound);
-        farmerStatisticsCompound.setInteger(TAG_FARMER_CARROTS, harvestedCarrots);
-        farmerStatisticsCompound.setInteger(TAG_FARMER_POTATOES, harvestedPotatoes);
-        farmerStatisticsCompound.setInteger(TAG_FARMER_WHEAT, harvestedWheat);
-        statisticsCompound.setTag(TAG_GUARD_STATISTICS, guardStatisticsCompound);
-        guardStatisticsCompound.setInteger(TAG_GUARD_MOBS, killedMobs);
-        statisticsCompound.setTag(TAG_BUILDER_STATISTICS, builderStatisticsCompound);
-        builderStatisticsCompound.setInteger(TAG_BUILDER_HUTS, builtHuts);
-        statisticsCompound.setTag(TAG_FISHERMAN_STATISTICS, fishermanStatisticsCompound);
-        fishermanStatisticsCompound.setInteger(TAG_FISHERMAN_FISH, caughtFish);
-        statisticsCompound.setTag(TAG_LUMBERJACK_STATISTICS, lumberjackStatisticsCompound);
-        lumberjackStatisticsCompound.setInteger(TAG_LUMBERJACK_TREES, felledTrees);
-        lumberjackStatisticsCompound.setInteger(TAG_LUMBERJACK_SAPLINGS, plantedSaplings);
 
         // Free blocks
         @NotNull final NBTTagList freeBlocksTagList = new NBTTagList();
@@ -536,116 +457,6 @@ public class Colony implements IColony
     public int getDimension()
     {
         return dimensionId;
-    }
-
-    /**
-     * Increment the statistic amount and trigger achievement.
-     *
-     * @param statistic the statistic.
-     */
-    public void incrementStatistic(@NotNull final String statistic)
-    {
-        final int statisticAmount = this.getStatisticAmount(statistic);
-        incrementStatisticAmount(statistic);
-        if (statisticAmount >= NUM_ACHIEVEMENT_FIRST)
-        {
-            TriggerColonyAchievements.triggerFirstAchievement(statistic, this);
-        }
-        if (statisticAmount >= NUM_ACHIEVEMENT_SECOND)
-        {
-            TriggerColonyAchievements.triggerSecondAchievement(statistic, this);
-        }
-        if (statisticAmount >= NUM_ACHIEVEMENT_THIRD)
-        {
-            TriggerColonyAchievements.triggerThirdAchievement(statistic, this);
-        }
-        if (statisticAmount >= NUM_ACHIEVEMENT_FOURTH)
-        {
-            TriggerColonyAchievements.triggerFourthAchievement(statistic, this);
-        }
-        if (statisticAmount >= NUM_ACHIEVEMENT_FIFTH)
-        {
-            TriggerColonyAchievements.triggerFifthAchievement(statistic, this);
-        }
-    }
-
-    /**
-     * Get the amount of statistic.
-     *
-     * @param statistic the statistic.
-     * @return amount of statistic.
-     */
-    private int getStatisticAmount(@NotNull final String statistic)
-    {
-        switch (statistic)
-        {
-            case TAG_GUARD_MOBS:
-                return killedMobs;
-            case TAG_MINER_ORES:
-                return minedOres;
-            case TAG_MINER_DIAMONDS:
-                return minedDiamonds;
-            case TAG_BUILDER_HUTS:
-                return builtHuts;
-            case TAG_FISHERMAN_FISH:
-                return caughtFish;
-            case TAG_FARMER_WHEAT:
-                return harvestedWheat;
-            case TAG_FARMER_POTATOES:
-                return harvestedPotatoes;
-            case TAG_FARMER_CARROTS:
-                return harvestedCarrots;
-            case TAG_LUMBERJACK_SAPLINGS:
-                return plantedSaplings;
-            case TAG_LUMBERJACK_TREES:
-                return felledTrees;
-            default:
-                return 0;
-        }
-    }
-
-    /**
-     * increment statistic amount.
-     *
-     * @param statistic the statistic.
-     */
-    private void incrementStatisticAmount(@NotNull final String statistic)
-    {
-        switch (statistic)
-        {
-            case TAG_GUARD_MOBS:
-                killedMobs++;
-                break;
-            case TAG_MINER_ORES:
-                minedOres++;
-                break;
-            case TAG_MINER_DIAMONDS:
-                minedDiamonds++;
-                break;
-            case TAG_BUILDER_HUTS:
-                builtHuts++;
-                break;
-            case TAG_FISHERMAN_FISH:
-                caughtFish++;
-                break;
-            case TAG_FARMER_WHEAT:
-                harvestedWheat++;
-                break;
-            case TAG_FARMER_POTATOES:
-                harvestedPotatoes++;
-                break;
-            case TAG_FARMER_CARROTS:
-                harvestedCarrots++;
-                break;
-            case TAG_LUMBERJACK_SAPLINGS:
-                plantedSaplings++;
-                break;
-            case TAG_LUMBERJACK_TREES:
-                felledTrees++;
-                break;
-            default:
-                break;
-        }
     }
 
     /**
@@ -1299,55 +1110,6 @@ public class Colony implements IColony
     }
 
     /**
-     * Checks if the achievements are valid.
-     */
-    public void checkAchievements()
-    {
-        // the colonies size
-        final int size = this.citizenManager.getCitizens().size();
-
-        //todo check those later again
-        /*if (size >= ModAchievements.ACHIEVEMENT_SIZE_SETTLEMENT)
-        {
-            this.triggerAchievement(ModAchievements.achievementSizeSettlement);
-        }
-
-        if (size >= ModAchievements.ACHIEVEMENT_SIZE_TOWN)
-        {
-            this.triggerAchievement(ModAchievements.achievementSizeTown);
-        }
-
-        if (size >= ModAchievements.ACHIEVEMENT_SIZE_CITY)
-        {
-            this.triggerAchievement(ModAchievements.achievementSizeCity);
-        }
-
-        if (size >= ModAchievements.ACHIEVEMENT_SIZE_METROPOLIS)
-        {
-            this.triggerAchievement(ModAchievements.achievementSizeMetropolis);
-        }*/
-    }
-
-    /**
-     * Triggers an achievement on this colony.
-     * <p>
-     * Will automatically sync to all players.
-     *
-     * @param achievement The achievement to trigger
-     */
-    public void triggerAchievement(@NotNull final MineColoniesAchievement achievement)
-    {
-        if (this.colonyAchievements.contains(achievement))
-        {
-            return;
-        }
-
-        //this.colonyAchievements.add(achievement);
-
-        AchievementUtils.syncAchievements(this);
-    }
-
-    /**
      * Getter which checks if jobs should be manually allocated.
      *
      * @return true of false.
@@ -1403,8 +1165,6 @@ public class Colony implements IColony
         }
     }
 
-
-
     /**
      * Performed when a building of this colony finished his upgrade state.
      *
@@ -1414,12 +1174,6 @@ public class Colony implements IColony
     public void onBuildingUpgradeComplete(@NotNull final AbstractBuilding building, final int level)
     {
         building.onUpgradeComplete(level);
-    }
-
-    @NotNull
-    public List<Advancement> getAchievements()
-    {
-        return Collections.unmodifiableList(this.colonyAchievements);
     }
 
     /**
@@ -1610,6 +1364,15 @@ public class Colony implements IColony
     public ICitizenManager getCitizenManager()
     {
         return citizenManager;
+    }
+
+    /**
+     * Get the statsManager of the colony.
+     * @return the statsManager.
+     */
+    public IStatisticAchievementManager getStatsManager()
+    {
+        return statsManager;
     }
 
     @NotNull

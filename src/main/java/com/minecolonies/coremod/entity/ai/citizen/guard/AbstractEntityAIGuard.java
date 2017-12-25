@@ -626,7 +626,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     protected void onKilledEntity(final EntityLivingBase killedEntity)
     {
         final Colony colony = this.getOwnBuilding().getColony();
-        colony.incrementStatistic("mobs");
+        colony.getStatsManager().incrementStatistic("mobs", worker.getColony());
         this.incrementActionsDone();
         worker.getNavigator().clearPath();
     }

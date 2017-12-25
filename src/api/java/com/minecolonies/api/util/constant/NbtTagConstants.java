@@ -55,6 +55,7 @@ public final class NbtTagConstants
     public static final String TAG_POS                   = "pos";
     public static final String TAG_BUILDING_MANAGER      = "buildingManager";
     public static final String TAG_CITIZEN_MANAGER       = "citizenManager";
+    public static final String TAG_STATS_MANAGER         = "statsManager";
 
     /**
      * Tag used to store the containers to NBT.

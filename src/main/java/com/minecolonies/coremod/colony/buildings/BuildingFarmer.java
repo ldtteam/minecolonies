@@ -387,11 +387,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
         if (newLevel == 1)
         {
-            getColony().triggerAchievement(ModAchievements.achievementBuildingFarmer);
+            getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingFarmer, this.getColony());
         }
         if (newLevel >= getMaxBuildingLevel())
         {
-            getColony().triggerAchievement(ModAchievements.achievementUpgradeFarmerMax);
+            getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeFarmerMax, this.getColony());
         }
     }
 
