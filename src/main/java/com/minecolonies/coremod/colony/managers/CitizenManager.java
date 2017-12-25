@@ -32,6 +32,12 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MAX_CITIZEN
 public class CitizenManager implements ICitizenManager
 {
     /**
+     * List of citizens.
+     */
+    @NotNull
+    private final Map<Integer, CitizenData> citizens = new HashMap<>();
+
+    /**
      * Variables to determine if citizens have to be updated on the client side.
      */
     private boolean isCitizensDirty  = false;
@@ -45,12 +51,6 @@ public class CitizenManager implements ICitizenManager
      * Max citizens without housing.
      */
     private int maxCitizens = Configurations.gameplay.maxCitizens;
-
-    /**
-     * List of citizens.
-     */
-    @NotNull
-    private final Map<Integer, CitizenData> citizens = new HashMap<>();
 
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound, @NotNull final Colony colony)

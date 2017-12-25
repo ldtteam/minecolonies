@@ -41,6 +41,11 @@ public class BuildingManager implements IBuildingManager
     private final Map<BlockPos, AbstractBuilding> buildings = new HashMap<>();
 
     /**
+     * List of fields of the colony.
+     */
+    private final List<BlockPos> fields = new ArrayList<>();
+
+    /**
      * The warehouse building position. Initially null.
      */
     private BuildingWareHouse wareHouse = null;
@@ -50,11 +55,6 @@ public class BuildingManager implements IBuildingManager
      */
     @Nullable
     private BuildingTownHall townHall;
-
-    /**
-     * List of fields of the colony.
-     */
-    private final List<BlockPos> fields = new ArrayList<>();
 
     /**
      * Variable to check if the buildings needs to be synched.
