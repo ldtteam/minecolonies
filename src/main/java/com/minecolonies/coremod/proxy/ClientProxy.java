@@ -249,7 +249,7 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void openClipBoardWindow(@Nullable final int colonyId)
+    public void openClipBoardWindow(final int colonyId)
     {
         @Nullable final WindowClipBoard window = new WindowClipBoard(colonyId);
         window.open();
