@@ -1695,8 +1695,9 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
         //Check if the citizen did not die.
         if (getColony().getCitizenManager().getCitizen(citizenThatRequested) != null)
+        {
             getColony().getCitizenManager().getCitizen(citizenThatRequested).onRequestCancelled(token);
-
+        }
         markDirty();
     }
 

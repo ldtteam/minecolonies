@@ -15,7 +15,9 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.Suppression.COMMENTED_OUT_CODE_LINE;
 
+@SuppressWarnings(COMMENTED_OUT_CODE_LINE)
 public class StatisticAchievementManager implements IStatisticAchievementManager
 {
     /**
@@ -42,19 +44,18 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
     public void readFromNBT(@NotNull final NBTTagCompound compound, @NotNull final Colony colony)
     {
         // Restore colony achievements
-        final NBTTagList achievementTagList = compound.getTagList(TAG_ACHIEVEMENT_LIST, Constants.NBT.TAG_COMPOUND);
+        /*final NBTTagList achievementTagList = compound.getTagList(TAG_ACHIEVEMENT_LIST, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < achievementTagList.tagCount(); ++i)
         {
             final NBTTagCompound achievementCompound = achievementTagList.getCompoundTagAt(i);
             final String achievementKey = achievementCompound.getString(TAG_ACHIEVEMENT);
 
-            //todo serialization
-            /*final StatBase statBase = StatList.getOneShotStat(achievementKey);
+            final StatBase statBase = StatList.getOneShotStat(achievementKey);
              if (statBase instanceof Advancement)
             {
                 colonyAchievements.add((Advancement) statBase);
-            }*/
-        }
+            }
+        }*/
 
         //Statistics
         final NBTTagCompound statisticsCompound = compound.getCompoundTag(TAG_STATISTICS);
@@ -79,16 +80,15 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
     @Override
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        //  Achievements
+        /*//  Achievements
         @NotNull final NBTTagList achievementsTagList = new NBTTagList();
         for (@NotNull final Advancement achievement : this.colonyAchievements)
         {
             @NotNull final NBTTagCompound achievementCompound = new NBTTagCompound();
-            //todo deserialization
-            /*achievementCompound.setString(TAG_ACHIEVEMENT, achievement.);
-            achievementsTagList.appendTag(achievementCompound);*/
+            achievementCompound.setString(TAG_ACHIEVEMENT, achievement.);
+            achievementsTagList.appendTag(achievementCompound);
         }
-        compound.setTag(TAG_ACHIEVEMENT_LIST, achievementsTagList);
+        compound.setTag(TAG_ACHIEVEMENT_LIST, achievementsTagList);*/
 
         // Statistics
         @NotNull final NBTTagCompound statisticsCompound = new NBTTagCompound();
@@ -261,12 +261,12 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
     @Override
     public void triggerAchievement(@NotNull final MineColoniesAchievement achievement, @NotNull final Colony colony)
     {
-        if (this.colonyAchievements.contains(achievement))
+        /*if (this.colonyAchievements.contains(achievement))
         {
             return;
         }
 
-        //this.colonyAchievements.add(achievement);
+        this.colonyAchievements.add(achievement);*/
 
         AchievementUtils.syncAchievements(colony);
     }

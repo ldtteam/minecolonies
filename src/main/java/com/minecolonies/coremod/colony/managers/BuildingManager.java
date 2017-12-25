@@ -66,13 +66,6 @@ public class BuildingManager implements IBuildingManager
      */
     private boolean isFieldsDirty    = false;
 
-    public BuildingManager()
-    {
-        /**
-         *
-         */
-    }
-
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound, final Colony colony)
     {

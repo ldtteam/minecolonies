@@ -105,7 +105,7 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void spawnCitizenIfNull(@NotNull final CitizenData data, @NotNull final World world, @NotNull final IBuildingManager buildingManager,
+    public void spawnCitizenIfNull(@Nullable final CitizenData data, @NotNull final World world, @NotNull final IBuildingManager buildingManager,
             @NotNull final Colony colony)
     {
         if (data.getCitizenEntity() == null)

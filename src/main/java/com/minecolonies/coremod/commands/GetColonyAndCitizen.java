@@ -124,7 +124,8 @@ public final class GetColonyAndCitizen
             for (int i = 1
                    ; i <= ColonyManager.getColony(colonyId).getCitizenManager().getCitizens().size(); i++)
             {
-                if (ColonyManager.getColony(colonyId).getCitizenManager().getCitizen(i).getName() != null && ColonyManager.getColony(colonyId).getCitizenManager().getCitizen(i).getName().equals(citizenName))
+                if (ColonyManager.getColony(colonyId).getCitizenManager().getCitizen(i).getName() != null
+                        && ColonyManager.getColony(colonyId).getCitizenManager().getCitizen(i).getName().equals(citizenName))
                 {
                     citizenId = i;
                 }
