@@ -130,9 +130,9 @@ public final class MobEventsUtils
     private static BlockPos calculateSpawnLocation(final World world, @NotNull final Colony colony)
     {
         final Random random = new Random();
-        final BlockPos pos = colony.getRandomOutsiderInDirection(
+        final BlockPos pos = colony.getBarbManager().getRandomOutsiderInDirection(
           random.nextInt(2) < 1 ? EnumFacing.EAST : EnumFacing.WEST,
-          random.nextInt(2) < 1 ? EnumFacing.NORTH : EnumFacing.SOUTH);
+          random.nextInt(2) < 1 ? EnumFacing.NORTH : EnumFacing.SOUTH, colony);
 
         if (pos.equals(colony.getCenter()))
         {
@@ -195,7 +195,7 @@ public final class MobEventsUtils
 
         if (world.isDaytime() && !colony.isHasRaidBeenCalculated())
         {
-            colony.setHasRaidBeenCalculated(true);
+            colony.getBarbManager().setHasRaidBeenCalculated(true);
             if (!colony.hasWillRaidTonight())
             {
                 final boolean raid = raidThisNight(world);
@@ -205,14 +205,14 @@ public final class MobEventsUtils
                       colony.getMessageEntityPlayers(),
                       "Will raid tonight: " + raid);
                 }
-                colony.setWillRaidTonight(raid);
+                colony.getBarbManager().setWillRaidTonight(raid);
             }
             return false;
         }
         else if (colony.hasWillRaidTonight() && !world.isDaytime() && colony.isHasRaidBeenCalculated())
         {
-            colony.setHasRaidBeenCalculated(false);
-            colony.setWillRaidTonight(false);
+            colony.getBarbManager().setHasRaidBeenCalculated(false);
+            colony.getBarbManager().setWillRaidTonight(false);
             if (Configurations.gameplay.enableInDevelopmentFeatures)
             {
                 LanguageHandler.sendPlayersMessage(
@@ -223,7 +223,7 @@ public final class MobEventsUtils
         }
         else if (!world.isDaytime() && colony.isHasRaidBeenCalculated())
         {
-            colony.setHasRaidBeenCalculated(false);
+            colony.getBarbManager().setHasRaidBeenCalculated(false);
         }
 
         return false;

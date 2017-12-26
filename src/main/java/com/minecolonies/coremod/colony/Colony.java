@@ -1194,6 +1194,15 @@ public class Colony implements IColony
         return statsManager;
     }
 
+    /**
+     * Get the barbManager of the colony.
+     * @return the barbManager.
+     */
+    public IBarbarianManager getBarbManager()
+    {
+        return barbarianManager;
+    }
+
     @NotNull
     public Set<EntityPlayerMP> getSubscribers()
     {

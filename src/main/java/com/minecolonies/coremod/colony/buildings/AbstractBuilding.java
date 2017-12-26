@@ -1716,7 +1716,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         }
 
         int citizenID = requestsByCitizen.get(token);
-        return Optional.of(getColony().getCitizen(citizenID));
+        return Optional.of(getColony().getCitizenManager().getCitizen(citizenID));
     }
 
 
