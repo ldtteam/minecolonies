@@ -235,7 +235,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
             return AIState.GUARD_PATROL;
         }
 
-        worker.setAIMoveSpeed((float) (BASE_FOLLOW_SPEED + BASE_FOLLOW_SPEED_MULTIPLIER * worker.getExperienceLevel()));
+        worker.setAIMoveSpeed((float) (BASE_FOLLOW_SPEED + BASE_FOLLOW_SPEED_MULTIPLIER * worker.getCitizenData().getLevel()));
         worker.isWorkerAtSiteWithMove(targetEntity.getPosition(), MOVE_CLOSE);
 
         return AIState.GUARD_SEARCH_TARGET;
@@ -251,7 +251,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
         double damage = baseDamage;
         //Lower the variable higher the chance that the arrows hits the target.
-        final double chance = HIT_CHANCE_DIVIDER / (worker.getExperienceLevel() + 1);
+        final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getLevel() + 1);
 
         arrowEntity.shoot(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) ARROW_SPEED, (float) chance);
 
@@ -288,7 +288,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
 
     private int getReloadTime()
     {
-        return BASE_RELOAD_TIME / (worker.getExperienceLevel() + 1);
+        return BASE_RELOAD_TIME / (worker.getCitizenData().getLevel() + 1);
     }
 
     /**

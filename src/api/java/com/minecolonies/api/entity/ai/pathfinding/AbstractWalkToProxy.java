@@ -81,6 +81,11 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
             this.target = target;
         }
 
+        if(target.equals(currentProxy))
+        {
+            currentProxy = null;
+        }
+
         final double distanceToPath = careAboutY()
                                         ? BlockPosUtil.getDistanceSquared2D(entity.getPosition(), target) : BlockPosUtil.getDistanceSquared(entity.getPosition(), target);
 
