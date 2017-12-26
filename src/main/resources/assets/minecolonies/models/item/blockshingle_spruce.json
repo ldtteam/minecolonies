@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:block/oak_clay_shingle",
+  "parent": "minecolonies:block/shingle/spruce_clay_shingle",
   "display": {
     "gui": {
       "rotation": [30, 215, 0],
@@ -27,7 +27,7 @@
       "scale": [0.3, 0.3, 0.3]
     },
     "ground": {
-      "rotation": [0, 0, 0],
+      "rotation": [0, 180, 0],
       "translation": [0, 0, 0],
       "scale": [0.3, 0.3, 0.3]
     },
