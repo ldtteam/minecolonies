@@ -163,7 +163,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         final List<EntityCitizen> entities = new ArrayList<>();
         for (final CitizenData data : workers)
         {
-            if (data != null)
+            if (data != null && data.getCitizenEntity() != null)
             {
                 entities.add(data.getCitizenEntity());
             }
