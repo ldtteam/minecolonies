@@ -1715,7 +1715,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         }
 
         final Integer citizenData = requestsByCitizen.get(token);
-        return new TextComponentString(this.getSchematicName() + " " + getColony().getCitizen(citizenData).getName());
+        return new TextComponentString(this.getSchematicName() + " " + getColony().getCitizenManager().getCitizen(citizenData).getName());
     }
 
     public Optional<CitizenData> getCitizenForRequest(@NotNull final IToken token)
