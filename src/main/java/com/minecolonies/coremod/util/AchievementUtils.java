@@ -41,7 +41,7 @@ public final class AchievementUtils
 
             for (@Nullable final EntityPlayer player : lPlayer)
             {
-                for (final Achievement achievement : colony.getAchievements())
+                for (final Achievement achievement : colony.getStatsManager().getAchievements())
                 {
                     if (player == null || ModAchievements.achievementGetSupply == achievement)
                     {
