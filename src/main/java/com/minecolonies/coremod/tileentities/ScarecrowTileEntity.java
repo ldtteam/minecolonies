@@ -387,13 +387,13 @@ public class ScarecrowTileEntity extends TileEntityChest
         this.ownerId = ownerId;
         if(colony != null)
         {
-            if(colony.getCitizen(ownerId) == null)
+            if(colony.getCitizenManager().getCitizen(ownerId) == null)
             {
                 owner = "";
             }
             else
             {
-                owner = colony.getCitizen(ownerId).getName();
+                owner = colony.getCitizenManager().getCitizen(ownerId).getName();
             }
         }
         setName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format(owner)));
@@ -476,13 +476,13 @@ public class ScarecrowTileEntity extends TileEntityChest
         final World world = getWorld();
 
         colony = ColonyManager.getColony(world, pos);
-        if (colony != null && !colony.getFields().contains(pos))
+        if (colony != null && !colony.getBuildingManager().getFields().contains(pos))
         {
             @Nullable final Entity entity = EntityUtils.getEntityFromUUID(world, colony.getPermissions().getOwner());
 
             if (entity instanceof EntityPlayer)
             {
-                colony.addNewField(this, pos, world);
+                colony.getBuildingManager().addNewField(this, pos, world);
             }
         }
     }

@@ -74,7 +74,7 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                 return;
             }
 
-            @Nullable final AbstractBuildingWorker building = colony.getBuilding(message.buildingId, AbstractBuildingWorker.class);
+            @Nullable final AbstractBuildingWorker building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingWorker.class);
             if (building != null)
             {
                 for (int i = 0; i < building.getWorkerEntities().size(); i++)
@@ -86,7 +86,7 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                         if (citizenData != null)
                         {
                             Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
-                            colony.spawnCitizen(citizenData);
+                            colony.getCitizenManager().spawnCitizen(citizenData, colony.getWorld(), colony.getBuildingManager(), colony);
                             citizen = citizenData.getCitizenEntity();
                         }
                         else

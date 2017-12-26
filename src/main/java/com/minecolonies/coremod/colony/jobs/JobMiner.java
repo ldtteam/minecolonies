@@ -56,11 +56,11 @@ public class JobMiner extends AbstractJobStructure
         super.triggerDeathAchievement(source, citizen);
         if (source == DamageSource.LAVA || source == DamageSource.IN_FIRE || source == DamageSource.ON_FIRE)
         {
-            citizen.getColony().triggerAchievement(ModAchievements.achievementMinerDeathLava);
+            citizen.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementMinerDeathLava, this.getColony());
         }
         if (source.equals(DamageSource.FALL))
         {
-            citizen.getColony().triggerAchievement(ModAchievements.achievementMinerDeathFall);
+            citizen.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementMinerDeathFall, this.getColony());
         }
     }
 }

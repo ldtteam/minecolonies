@@ -58,6 +58,9 @@ public final class ColonyConstants
     public static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(Configurations.gameplay.workingRangeTownHall + 16D);
     public static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(Configurations.gameplay.workingRangeTownHall * 2D);
 
+    public static final int CONST_CHUNKSIZE = 16;
+    public static final int DEFAULT_OVERALL_HAPPYNESS = 5;
+
     /**
      * Private constructor to hide the implicit one.
      */
