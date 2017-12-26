@@ -18,6 +18,7 @@
     }
   },
   "result": {
-    "item": "minecolonies:blockshingle_dark_oak"
+    "item": "minecolonies:blockshingle_dark_oak",
+    "count": 8
   }
 }

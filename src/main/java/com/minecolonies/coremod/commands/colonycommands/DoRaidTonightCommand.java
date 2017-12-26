@@ -62,7 +62,7 @@ public class DoRaidTonightCommand extends AbstractSingleCommand
                 return;
             }
 
-            colony.setWillRaidTonight(true);
+            colony.getBarbManager().setWillRaidTonight(true);
 
             sender.sendMessage(SUCCESSFUL);
         }

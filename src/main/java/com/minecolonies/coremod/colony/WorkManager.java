@@ -191,7 +191,7 @@ public class WorkManager
                 //  If this Work Order is claimed, and the Citizen who claimed it no longer exists
                 //  then clear the Claimed status
                 //  This is just a failsafe cleanup; this should not happen under normal circumstances
-                if (o.isClaimed() && colony.getCitizen(o.getClaimedBy()) == null)
+                if (o.isClaimed() && colony.getCitizenManager().getCitizen(o.getClaimedBy()) == null)
                 {
                     o.clearClaimedBy();
                 }
