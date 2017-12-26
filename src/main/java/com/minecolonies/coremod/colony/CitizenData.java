@@ -674,7 +674,7 @@ public class CitizenData
      *
      * @param compound NBT-Tag compound.
      */
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound)
     {
         compound.setInteger(TAG_ID, id);
         compound.setString(TAG_NAME, name);
@@ -706,6 +706,7 @@ public class CitizenData
 
         compound.setTag(TAG_INVENTORY, inventory.writeToNBT(new NBTTagList()));
         compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot());
+        return compound;
     }
 
     /**

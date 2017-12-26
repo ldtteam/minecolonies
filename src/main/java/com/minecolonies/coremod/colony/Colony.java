@@ -13,7 +13,6 @@ import com.minecolonies.coremod.colony.managers.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
@@ -27,8 +26,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.Tuple;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
@@ -82,14 +79,19 @@ public class Colony implements IColony
     private final IBuildingManager buildingManager = new BuildingManager();
 
     /**
-     * Building manager of the colony.
+     * Citizen manager of the colony.
      */
     private final ICitizenManager citizenManager = new CitizenManager();
 
     /**
-     * Building manager of the colony.
+     * Statistic and achievement manager manager of the colony.
      */
     private final IStatisticAchievementManager statsManager = new StatisticAchievementManager();
+
+    /**
+     * Barbarian manager of the colony.
+     */
+    private final IBarbarianManager barbarianManager = new BarbarianManager();
 
     /**
      * The Positions which players can freely interact.
@@ -107,24 +109,9 @@ public class Colony implements IColony
     private final ColonyPermissionEventHandler eventHandler;
 
     /**
-     * Whether there will be a raid in this colony tonight.
-     */
-    private boolean willRaidTonight = false;
-
-    /**
      * The hours the colony is without contact with its players.
      */
     private int lastContactInHours = 0;
-
-    /**
-     * Whether or not the raid has been calculated for today.
-     */
-    private boolean hasRaidBeenCalculated = false;
-
-    /**
-     * Whether or not this colony may have Barbarian events. (set via command)
-     */
-    private boolean canHaveBarbEvents = true;
 
     /**
      * Whether or not this colony may be auto-deleted.
@@ -765,42 +752,16 @@ public class Colony implements IColony
 
         if (event.phase == TickEvent.Phase.START)
         {
-            //  Detect CitizenData whose EntityCitizen no longer exist in world, and clear the mapping
-            //  Consider handing this in an ChunkUnload Event instead?
-            citizenManager.getCitizens()
-              .stream()
-              .filter(ColonyUtils::isCitizenMissingFromWorld)
-              .forEach(CitizenData::clearCitizenEntity);
-
-            //  Cleanup disappeared citizens
-            //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
-            //  Every CITIZEN_CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
-            if (shallUpdate(event.world, CITIZEN_CLEANUP_TICK_INCREMENT) && areAllColonyChunksLoaded(event) && buildingManager.getTownHall() != null)
-            {
-                //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
-                //  If we don't have any references to them, destroy the citizen
-                citizenManager.getCitizens().forEach(citizenData -> citizenManager.spawnCitizenIfNull(citizenData, world, buildingManager, this));
-            }
-
             //  Cleanup Buildings whose Blocks have gone AWOL
             buildingManager.cleanUpBuildings(event);
 
-            //  Spawn Citizens
-            if (buildingManager.getTownHall() != null && citizenManager.getCitizens().size() < citizenManager.getMaxCitizens())
-            {
-                int respawnInterval = Configurations.gameplay.citizenRespawnInterval * TICKS_SECOND;
-                respawnInterval -= (SECONDS_A_MINUTE * buildingManager.getTownHall().getBuildingLevel());
-
-                if ((event.world.getTotalWorldTime() + 1) % (respawnInterval + 1) == 0)
-                {
-                    citizenManager.spawnCitizen(this);
-                }
-            }
+            // Clean up or spawn citizens.
+            citizenManager.onWorldTick(event, this);
 
             if (shallUpdate(world, TICKS_SECOND)
                   && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
                   && Configurations.gameplay.doBarbariansSpawn
-                  && canHaveBarbEvents
+                  && barbarianManager.canHaveBarbEvents()
                   && !world.getMinecraftServer().getPlayerList().getPlayers()
                         .stream().filter(permissions::isSubscriber).collect(Collectors.toList()).isEmpty()
                   && MobEventsUtils.isItTimeToRaid(event.world, this))
@@ -814,7 +775,7 @@ public class Colony implements IColony
         if (isDay && !world.isDaytime())
         {
             isDay = false;
-            updateOverallHappiness();
+            citizenManager.checkCitizensForHappiness(this);
         }
         else if (!isDay && world.isDaytime())
         {
@@ -832,12 +793,12 @@ public class Colony implements IColony
      * @param world the world.
      * @return a boolean by random.
      */
-    private static boolean shallUpdate(final World world, final int averageTicks)
+    public static boolean shallUpdate(final World world, final int averageTicks)
     {
         return world.getWorldTime() % (world.rand.nextInt(averageTicks * 2) + 1) == 0;
     }
 
-    private boolean areAllColonyChunksLoaded(@NotNull final TickEvent.WorldTickEvent event)
+    public boolean areAllColonyChunksLoaded(@NotNull final TickEvent.WorldTickEvent event)
     {
         final int distanceFromCenter = Configurations.gameplay.workingRangeTownHall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
         for (int x = -distanceFromCenter; x <= distanceFromCenter; x += CONST_CHUNKSIZE)
@@ -851,62 +812,6 @@ public class Colony implements IColony
             }
         }
         return true;
-    }
-
-    private void updateOverallHappiness()
-    {
-        int guards = 1;
-        int housing = 0;
-        int workers = 1;
-        double saturation = 0;
-        for (final CitizenData citizen : citizenManager.getCitizens())
-        {
-            final AbstractBuildingWorker buildingWorker = citizen.getWorkBuilding();
-            if (buildingWorker != null)
-            {
-                if (buildingWorker instanceof AbstractBuildingGuards)
-                {
-                    guards += buildingWorker.getBuildingLevel();
-                }
-                else
-                {
-                    workers += buildingWorker.getBuildingLevel();
-                }
-            }
-
-            final AbstractBuilding home = citizen.getHomeBuilding();
-            if (home != null)
-            {
-                housing += home.getBuildingLevel();
-            }
-
-            saturation += citizen.getSaturation();
-        }
-
-        final int averageHousing = housing / Math.max(1, citizenManager.getCitizens().size());
-
-        if (averageHousing > 1)
-        {
-            increaseOverallHappiness(averageHousing * HAPPINESS_FACTOR);
-        }
-
-        final int averageSaturation = (int) (saturation / citizenManager.getCitizens().size());
-        if (averageSaturation < WELL_SATURATED_LIMIT)
-        {
-            decreaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * -HAPPINESS_FACTOR);
-        }
-        else if (averageSaturation > WELL_SATURATED_LIMIT)
-        {
-            increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
-        }
-
-        final int relation = workers / guards;
-
-        if (relation > 1)
-        {
-            decreaseOverallHappiness(relation * HAPPINESS_FACTOR);
-        }
-        markDirty();
     }
 
     /**
@@ -1034,7 +939,19 @@ public class Colony implements IColony
     @Override
     public boolean hasWillRaidTonight()
     {
-        return willRaidTonight;
+        return barbarianManager.willRaidTonight();
+    }
+
+    @Override
+    public boolean isCanHaveBarbEvents()
+    {
+        return barbarianManager.canHaveBarbEvents();
+    }
+
+    @Override
+    public boolean isHasRaidBeenCalculated()
+    {
+        return barbarianManager.hasRaidBeenCalculated();
     }
 
     /**
@@ -1052,33 +969,11 @@ public class Colony implements IColony
         return canColonyBeAutoDeleted;
     }
 
-    @Override
-    public boolean isCanHaveBarbEvents()
-    {
-        return canHaveBarbEvents;
-    }
-
-    @Override
-    public boolean isHasRaidBeenCalculated()
-    {
-        return hasRaidBeenCalculated;
-    }
-
-    public void setHasRaidBeenCalculated(final Boolean hasSet)
-    {
-        hasRaidBeenCalculated = hasSet;
-    }
-
     @Nullable
     @Override
     public IRequester getRequesterBuildingForPosition(@NotNull final BlockPos pos)
     {
         return buildingManager.getBuilding(pos);
-    }
-
-    public void setCanHaveBarbEvents(final Boolean canHave)
-    {
-        this.canHaveBarbEvents = canHave;
     }
 
     /**
@@ -1244,11 +1139,6 @@ public class Colony implements IColony
         return new HashMap<>(wayPoints);
     }
 
-    public void setWillRaidTonight(final Boolean willRaid)
-    {
-        this.willRaidTonight = willRaid;
-    }
-
     /**
      * This sets whether or not a colony can be automatically deleted Via command, or an on-tick check.
      *
@@ -1257,77 +1147,6 @@ public class Colony implements IColony
     public void setCanBeAutoDeleted(final Boolean canBeDeleted)
     {
         this.canColonyBeAutoDeleted = canBeDeleted;
-    }
-
-    /**
-     * Gets a random spot inside the colony, in the named direction, where the chunk is loaded.
-     * @param directionX the first direction parameter.
-     * @param directionZ the second direction paramter.
-     * @return the position.
-     */
-    public BlockPos getRandomOutsiderInDirection(final EnumFacing directionX, final EnumFacing directionZ)
-    {
-        final List<BlockPos> positions = wayPoints.keySet().stream().filter(pos -> isInDirection(directionX, directionZ, pos.subtract(center))).collect(Collectors.toList());
-        positions.addAll(buildingManager.getBuildings().keySet().stream().filter(pos -> isInDirection(directionX, directionZ, pos.subtract(center))).collect(Collectors.toList()));
-
-        BlockPos thePos = center;
-        double distance = 0;
-        AbstractBuilding theBuilding = null;
-        for (final BlockPos pos : positions)
-        {
-            final double currentDistance = center.distanceSq(pos);
-            if (currentDistance > distance && world.isAreaLoaded(pos, DEFAULT_SPAWN_RADIUS))
-            {
-                distance = currentDistance;
-                thePos = pos;
-                theBuilding = buildingManager.getBuilding(thePos);
-            }
-        }
-
-        int minDistance = 0;
-        if (theBuilding != null)
-        {
-            final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = theBuilding.getCorners();
-            minDistance
-              = Math.max(corners.getFirst().getFirst() - corners.getFirst().getSecond(), corners.getSecond().getFirst() - corners.getSecond().getSecond());
-        }
-
-        if (thePos.equals(center))
-        {
-            return center;
-        }
-
-        int radius = DEFAULT_SPAWN_RADIUS;
-        while (world.isAreaLoaded(thePos, radius))
-        {
-            radius += DEFAULT_SPAWN_RADIUS;
-        }
-
-        final int dist = Math.max(minDistance, Math.min(radius, MAX_SPAWN_RADIUS));
-        thePos = thePos.offset(directionX, dist);
-        thePos = thePos.offset(directionZ, dist);
-
-        final int randomDegree = world.rand.nextInt((int) WHOLE_CIRCLE);
-        final double rads = (double) randomDegree / HALF_A_CIRCLE * Math.PI;
-
-        final double x = Math.round(thePos.getX() + 3 * Math.sin(rads));
-        final double z = Math.round(thePos.getZ() + 3 * Math.cos(rads));
-
-        Log.getLogger().info("Spawning at: " + x + " " + z);
-        return new BlockPos(x, thePos.getY(), z);
-    }
-
-    /**
-     * Check if a certain vector matches two directions.
-     *
-     * @param directionX the direction x.
-     * @param directionZ the direction z.
-     * @param vector     the vector.
-     * @return true if so.
-     */
-    private static boolean isInDirection(final EnumFacing directionX, final EnumFacing directionZ, final BlockPos vector)
-    {
-        return EnumFacing.getFacingFromVector(vector.getX(), 0, 0) == directionX && EnumFacing.getFacingFromVector(0, 0, vector.getZ()) == directionZ;
     }
 
     /**

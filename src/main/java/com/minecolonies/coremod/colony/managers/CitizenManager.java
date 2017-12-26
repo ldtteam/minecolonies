@@ -4,30 +4,31 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.BuildingBarracksTower;
-import com.minecolonies.coremod.colony.buildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveCitizenMessage;
+import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.Constants.HALF_BLOCK;
-import static com.minecolonies.api.util.constant.Constants.SLIGHTLY_UP;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZENS;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MAX_CITIZENS;
+import static com.minecolonies.api.util.constant.ColonyConstants.*;
+import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 public class CitizenManager implements ICitizenManager
 {
@@ -58,14 +59,16 @@ public class CitizenManager implements ICitizenManager
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
 
         //  Citizens before Buildings, because Buildings track the Citizens
-        final NBTTagList citizenTagList = compound.getTagList(TAG_CITIZENS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < citizenTagList.tagCount(); ++i)
-        {
-            final NBTTagCompound citizenCompound = citizenTagList.getCompoundTagAt(i);
-            final CitizenData data = CitizenData.createFromNBT(citizenCompound, colony);
-            citizens.put(data.getId(), data);
-            topCitizenId = Math.max(topCitizenId, data.getId());
-        }
+        citizens.putAll(NBTUtils.streamCompound(compound.getTagList(TAG_CITIZENS, Constants.NBT.TAG_COMPOUND))
+                .map(citizenCompound -> deserializeCitizen(citizenCompound, colony))
+                .collect(Collectors.toMap(CitizenData::getId, citizen -> citizen)));
+    }
+
+    private CitizenData deserializeCitizen(@NotNull final NBTTagCompound compound, @NotNull final Colony colony)
+    {
+        final CitizenData data = CitizenData.createFromNBT(compound, colony);
+        topCitizenId = Math.max(topCitizenId, data.getId());
+        return data;
     }
 
     @Override
@@ -73,14 +76,7 @@ public class CitizenManager implements ICitizenManager
     {
         compound.setInteger(TAG_MAX_CITIZENS, maxCitizens);
 
-        //  Citizens
-        @NotNull final NBTTagList citizenTagList = new NBTTagList();
-        for (@NotNull final CitizenData citizen : citizens.values())
-        {
-            @NotNull final NBTTagCompound citizenCompound = new NBTTagCompound();
-            citizen.writeToNBT(citizenCompound);
-            citizenTagList.appendTag(citizenCompound);
-        }
+        @NotNull final NBTTagList citizenTagList = citizens.values().stream().map(citizen -> citizen.writeToNBT(new NBTTagCompound())).collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_CITIZENS, citizenTagList);
     }
 
@@ -290,5 +286,95 @@ public class CitizenManager implements ICitizenManager
     public void setMaxCitizens(final int newMaxCitizens)
     {
         this.maxCitizens = newMaxCitizens;
+    }
+
+    @Override
+    public void checkCitizensForHappiness(final Colony colony)
+    {
+        int guards = 1;
+        int housing = 0;
+        int workers = 1;
+        double saturation = 0;
+        for (final CitizenData citizen : getCitizens())
+        {
+            final AbstractBuildingWorker buildingWorker = citizen.getWorkBuilding();
+            if (buildingWorker != null)
+            {
+                if (buildingWorker instanceof AbstractBuildingGuards)
+                {
+                    guards += buildingWorker.getBuildingLevel();
+                }
+                else
+                {
+                    workers += buildingWorker.getBuildingLevel();
+                }
+            }
+
+            final AbstractBuilding home = citizen.getHomeBuilding();
+            if (home != null)
+            {
+                housing += home.getBuildingLevel();
+            }
+
+            saturation += citizen.getSaturation();
+        }
+
+        final int averageHousing = housing / Math.max(1, getCitizens().size());
+
+        if (averageHousing > 1)
+        {
+            colony.increaseOverallHappiness(averageHousing * HAPPINESS_FACTOR);
+        }
+
+        final int averageSaturation = (int) (saturation / getCitizens().size());
+        if (averageSaturation < WELL_SATURATED_LIMIT)
+        {
+            colony.decreaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * -HAPPINESS_FACTOR);
+        }
+        else if (averageSaturation > WELL_SATURATED_LIMIT)
+        {
+            colony.increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
+        }
+
+        final int relation = workers / guards;
+
+        if (relation > 1)
+        {
+            colony.decreaseOverallHappiness(relation * HAPPINESS_FACTOR);
+        }
+        colony.markDirty();
+    }
+
+    @Override
+    public void onWorldTick(final TickEvent.WorldTickEvent event, @NotNull final Colony colony)
+    {
+        //  Detect CitizenData whose EntityCitizen no longer exist in world, and clear the mapping
+        //  Consider handing this in an ChunkUnload Event instead?
+        getCitizens()
+                .stream()
+                .filter(ColonyUtils::isCitizenMissingFromWorld)
+                .forEach(CitizenData::clearCitizenEntity);
+
+        //  Cleanup disappeared citizens
+        //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
+        //  Every CITIZEN_CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
+        if (colony.shallUpdate(event.world, CITIZEN_CLEANUP_TICK_INCREMENT) && colony.areAllColonyChunksLoaded(event) && colony.hasTownHall())
+        {
+            //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
+            //  If we don't have any references to them, destroy the citizen
+            getCitizens().forEach(citizenData -> spawnCitizenIfNull(citizenData, colony.getWorld(), colony.getBuildingManager(), colony));
+        }
+
+        //  Spawn Citizens
+        if (colony.hasTownHall() && getCitizens().size() < getMaxCitizens())
+        {
+            int respawnInterval = Configurations.gameplay.citizenRespawnInterval * TICKS_SECOND;
+            respawnInterval -= (SECONDS_A_MINUTE * colony.getBuildingManager().getTownHall().getBuildingLevel());
+
+            if ((event.world.getTotalWorldTime() + 1) % (respawnInterval + 1) == 0)
+            {
+                spawnCitizen(colony);
+            }
+        }
     }
 }

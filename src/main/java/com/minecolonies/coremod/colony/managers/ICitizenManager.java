@@ -5,6 +5,7 @@ import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -132,4 +133,16 @@ public interface ICitizenManager
      * @param newMaxCitizens the amount to set.
      */
     void setMaxCitizens(final int newMaxCitizens);
+
+    /**
+     * Check for the citizen happiness and update the colony happiness with it.
+     */
+    void checkCitizensForHappiness(final Colony colony);
+
+    /**
+     * Actions to execute on a specific world tick event.
+     * @param event the event.
+     * @param colony the colony to execute it for.
+     */
+    void onWorldTick(TickEvent.WorldTickEvent event, @NotNull final Colony colony);
 }
