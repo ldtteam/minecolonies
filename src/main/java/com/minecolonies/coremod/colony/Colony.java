@@ -384,15 +384,15 @@ public class Colony implements IColony
 
         final NBTTagCompound buildingCompound = new NBTTagCompound();
         buildingManager.writeToNBT(buildingCompound);
-        compound.setTag(TAG_COMPATABILITY_MANAGER, buildingCompound);
+        compound.setTag(TAG_BUILDING_MANAGER, buildingCompound);
 
         final NBTTagCompound citizenCompound = new NBTTagCompound();
         citizenManager.writeToNBT(citizenCompound);
-        compound.setTag(TAG_COMPATABILITY_MANAGER, citizenCompound);
+        compound.setTag(TAG_CITIZEN_MANAGER, citizenCompound);
 
         final NBTTagCompound statsCompound = new NBTTagCompound();
         statsManager.writeToNBT(statsCompound);
-        compound.setTag(TAG_COMPATABILITY_MANAGER, statsCompound);
+        compound.setTag(TAG_STATS_MANAGER, statsCompound);
 
         //  Workload
         @NotNull final NBTTagCompound workManagerCompound = new NBTTagCompound();
