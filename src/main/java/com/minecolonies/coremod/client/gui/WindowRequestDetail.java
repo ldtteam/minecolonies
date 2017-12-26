@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.controls.*;

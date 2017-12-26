@@ -127,7 +127,8 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
             amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage()));
         }
 
-        final ItemStack itemStackToTake = new ItemStack(item, amountToTake, message.itemStack.getItemDamage());
+        final ItemStack itemStackToTake = message.itemStack.copy();
+        ItemStackUtils.setSize(itemStackToTake, message.quantity);
 
         ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(citizen.getInventoryCitizen()), itemStackToTake);
         if (!isCreative)

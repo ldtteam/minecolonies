@@ -1720,13 +1720,13 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
     public Optional<CitizenData> getCitizenForRequest(@NotNull final IToken token)
     {
-        if (!requestsByCitizen.containsKey(token))
+        if (!requestsByCitizen.containsKey(token) || getColony() == null)
         {
             return Optional.empty();
         }
 
-        Integer citizenData = requestsByCitizen.get(token);
-        return Optional.of(getColony().getCitizen(citizenData));
+        int citizenID = requestsByCitizen.get(token);
+        return Optional.of(getColony().getCitizen(citizenID));
     }
 
 
@@ -1738,12 +1738,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     public boolean hasCapability(
       @Nonnull final Capability<?> capability, @Nullable final EnumFacing facing)
     {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null)
-        {
-            return true;
-        }
-
-        return false;
+        return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null;
     }
 
     @Nullable
@@ -1760,6 +1755,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
             //Add additional containers
             providers.addAll(getAdditionalCountainers().stream().map(getTileEntity().getWorld()::getTileEntity).collect(Collectors.toSet()));
+            providers.removeIf(Objects::isNull);
 
             //Map all providers to IItemHandlers.
             final Set<IItemHandlerModifiable> modifiables = providers
