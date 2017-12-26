@@ -206,6 +206,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 newField.setOwner(worker.getCitizenData().getId());
                 newField.setTaken(true);
                 getOwnBuilding().addFarmerFields(newField.getPos());
+                newField.markDirty();
             }
         }
     }
