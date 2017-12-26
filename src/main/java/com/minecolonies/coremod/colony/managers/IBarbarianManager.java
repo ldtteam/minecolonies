@@ -36,13 +36,13 @@ public interface IBarbarianManager
 
     /**
      * Set if the raid has been calculated.
-     * @param canHave true or false.
+     * @param hasSet true or false.
      */
     void setHasRaidBeenCalculated(final boolean hasSet);
 
     /**
      * Set if barbarians will raid tonight.
-     * @param canHave true or false.
+     * @param willRaid true or false.
      */
     void setWillRaidTonight(final boolean willRaid);
 
