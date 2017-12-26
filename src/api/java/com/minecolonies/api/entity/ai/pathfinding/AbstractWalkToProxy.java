@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Abstract class for the walkToProxy.
@@ -139,30 +138,6 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
 
         return !onMove;
     }
-
-    /**
-     * Get a list of waypoints depending on the entity.
-     *
-     * @return the set of waypoints.
-     */
-    public abstract Set<BlockPos> getWayPoints();
-
-    /**
-     * Check if for distance calculation the y level should be taken into account.
-     *
-     * @return true if so.
-     */
-    public abstract boolean careAboutY();
-
-    /**
-     * Try to get a specialized proxy to a certain target.
-     *
-     * @param target         the target.
-     * @param distanceToPath the distance to it.
-     * @return a special proxy point of existent, else null.
-     */
-    @Nullable
-    public abstract BlockPos getSpecializedProxy(final BlockPos target, final double distanceToPath);
 
     /**
      * Getter for the proxyList.

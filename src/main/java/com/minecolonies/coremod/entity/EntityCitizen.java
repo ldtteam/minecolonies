@@ -1523,8 +1523,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
         if (homeBuilding instanceof BuildingHome)
         {
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = homeBuilding.getCorners();
-            return new AxisAlignedBB(corners.getFirst().getFirst(), posY - 1, corners.getFirst().getSecond(),
-                    corners.getSecond().getFirst(),
+            return new AxisAlignedBB(corners.getFirst().getFirst(), posY - 1, corners.getSecond().getFirst(),
+                    corners.getFirst().getSecond(),
                     posY + 1,
                     corners.getSecond().getSecond()).intersectsWithXZ(new Vec3d(this.getPosition()));
         }
