@@ -82,7 +82,7 @@ public class UpgradeWarehouseMessage extends AbstractMessage<UpgradeWarehouseMes
             return;
         }
 
-        final AbstractBuilding building = colony.getBuilding(message.buildingId);
+        final AbstractBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
         if (!(building instanceof BuildingWareHouse))
         {
             Log.getLogger().warn("UpgradeWarehouseMessage building is not a Warehouse");

@@ -739,7 +739,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     public final void destroy()
     {
         onDestroyed();
-        colony.removeBuilding(this);
+        colony.getBuildingManager().removeBuilding(this, colony.getSubscribers(), colony);
     }
 
     /**
@@ -930,7 +930,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         dirty = true;
         if (colony != null)
         {
-            colony.markBuildingsDirty();
+            colony.getBuildingManager().markBuildingsDirty();
         }
     }
 
@@ -1566,7 +1566,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
         for (final int citizenId : citizensByRequests.keySet())
         {
-            final CitizenData data = getColony().getCitizen(citizenId);
+            final CitizenData data = getColony().getCitizenManager().getCitizen(citizenId);
 
             if (data == null)
             {
@@ -1697,11 +1697,11 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             openRequests.remove(TypeToken.of(requestThatCompleted.getRequest().getClass()));
         }
 
-        if(getColony().getCitizen(citizenThatRequested) != null)
+        //Check if the citizen did not die.
+        if (getColony().getCitizenManager().getCitizen(citizenThatRequested) != null)
         {
-            getColony().getCitizen(citizenThatRequested).onRequestCancelled(token);
+            getColony().getCitizenManager().getCitizen(citizenThatRequested).onRequestCancelled(token);
         }
-
         markDirty();
     }
 
@@ -1726,7 +1726,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         }
 
         int citizenID = requestsByCitizen.get(token);
-        return Optional.of(getColony().getCitizen(citizenID));
+        return Optional.of(getColony().getCitizenManager().getCitizen(citizenID));
     }
 
 

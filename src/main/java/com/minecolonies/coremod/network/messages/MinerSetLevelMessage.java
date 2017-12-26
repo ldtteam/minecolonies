@@ -72,7 +72,7 @@ public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, 
                 return;
             }
 
-            @Nullable final BuildingMiner building = colony.getBuilding(message.buildingId, BuildingMiner.class);
+            @Nullable final BuildingMiner building = colony.getBuildingManager().getBuilding(message.buildingId, BuildingMiner.class);
             if (building != null && message.level >= 0 && message.level < building.getNumberOfLevels())
             {
                 building.setCurrentLevel(message.level);

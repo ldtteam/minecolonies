@@ -99,9 +99,9 @@ public class BuildingBarracks extends AbstractBuilding
                 if (!(world.getBlockState(tuple.getFirst()).getBlock() instanceof BlockHutBarracksTower))
                 {
                     world.setBlockState(tuple.getFirst(), ModBlocks.blockHutBarracksTower.getDefaultState().withProperty(BlockHutBarracksTower.FACING, tuple.getSecond()));
-                    getColony().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(tuple.getFirst()));
+                    getColony().getBuildingManager().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(tuple.getFirst()), getColony(), world);
 
-                    final AbstractBuilding building = getColony().getBuilding(tuple.getFirst());
+                    final AbstractBuilding building = getColony().getBuildingManager().getBuilding(tuple.getFirst());
                     if (building instanceof BuildingBarracksTower)
                     {
                         building.setStyle(this.getStyle());
