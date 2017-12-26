@@ -98,7 +98,7 @@ public final class TeleportToColony
     private static void teleportPlayer(final EntityPlayer playerToTeleport, final int colID, final ICommandSender sender)
     {
         final Colony colony = ColonyManager.getColony(colID);
-        final BuildingTownHall townHall = colony.getTownHall();
+        final BuildingTownHall townHall = colony.getBuildingManager().getTownHall();
 
         if (townHall == null)
         {

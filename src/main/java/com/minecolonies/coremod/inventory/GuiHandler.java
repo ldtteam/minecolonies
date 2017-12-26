@@ -47,7 +47,7 @@ public class GuiHandler implements IGuiHandler
         else if (id == ID.CITIZEN_INVENTORY.ordinal())
         {
             final Colony colony = ColonyManager.getColony(x);
-            final CitizenData citizen = colony.getCitizen(y);
+            final CitizenData citizen = colony.getCitizenManager().getCitizen(y);
             final AbstractBuilding building = citizen.getWorkBuilding() == null ? null : citizen.getWorkBuilding();
 
             return new ContainerMinecoloniesCitizenInventory(player.inventory,

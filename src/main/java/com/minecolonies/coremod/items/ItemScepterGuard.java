@@ -97,7 +97,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         }
 
         final BlockPos guardTower = BlockPosUtil.readFromNBT(compound, "pos");
-        final AbstractBuilding hut = colony.getBuilding(guardTower);
+        final AbstractBuilding hut = colony.getBuildingManager().getBuilding(guardTower);
         if (!(hut instanceof AbstractBuildingGuards))
         {
             return EnumActionResult.FAIL;

@@ -161,7 +161,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
             return null;
         }
 
-        final Collection<AbstractBuilding> buildingList = colony.getBuildings().values();
+        final Collection<AbstractBuilding> buildingList = colony.getBuildingManager().getBuildings().values();
         final Object[] buildingArray = buildingList.toArray();
         if (buildingArray.length != 0)
         {
@@ -184,7 +184,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     @Nullable
     protected BlockPos getPosition()
     {
-        colony.getBuildings();
+        colony.getBuildingManager().getBuildings();
         return colony.getCenter();
     }
 }

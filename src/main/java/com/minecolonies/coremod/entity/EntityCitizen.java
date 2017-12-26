@@ -67,36 +67,16 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
-import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
-import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_NOT_ALLOWED;
-import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_SAME;
+import static com.minecolonies.api.util.constant.CitizenConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.Suppression.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * The Class used to represent the citizen entities.
  */
 public class EntityCitizen extends EntityAgeable implements INpc
 {
-    /**
-     * Base movement speed of every citizen.
-     */
-    public static final  double                 BASE_MOVEMENT_SPEED  = 0.3D;
-    /**
-     * The middle saturation point. smaller than this = bad and bigger than this = good.
-     */
-    public static final int AVERAGE_SATURATION = 5;
-    /**
-     * Lower than this is low saturation.
-     */
-    public static final int LOW_SATURATION = 3;
-    /**
-     * Higher than this is high saturation.
-     */
-    public static final int HIGH_SATURATION = 7;
-    /**
-     * Full saturation amount.
-     */
-    public static final double FULL_SATURATION = 10;
     private static final DataParameter<Integer> DATA_TEXTURE         = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> DATA_LEVEL           = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> DATA_IS_FEMALE       = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
@@ -104,140 +84,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private static final DataParameter<Integer> DATA_CITIZEN_ID      = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
     private static final DataParameter<String>  DATA_MODEL           = EntityDataManager.<String>createKey(EntityCitizen.class, DataSerializers.STRING);
     private static final DataParameter<String>  DATA_RENDER_METADATA = EntityDataManager.<String>createKey(EntityCitizen.class, DataSerializers.STRING);
-    /**
-     * The movement speed for the citizen to run away.
-     */
-    private static final int    MOVE_AWAY_SPEED     = 2;
-    /**
-     * The range for the citizen to move away.
-     */
-    private static final int    MOVE_AWAY_RANGE     = 6;
-    /**
-     * Number of ticks to heal the citizens.
-     */
-    private static final int    HEAL_CITIZENS_AFTER = 100;
-    /**
-     * Tag's to save data to NBT.
-     */
-    private static final String TAG_COLONY_ID       = "colony";
-    private static final String TAG_CITIZEN         = "citizen";
-    private static final String TAG_HELD_ITEM_SLOT  = "HeldItemSlot";
-    private static final String TAG_STATUS          = "status";
-    private static final String TAG_LAST_JOB        = "lastJob";
-    private static final String TAG_DAY             = "day";
-    /**
-     * Distance to avoid Barbarian.
-     */
-    private static final double AVOID_BARBARIAN_RANGE = 20D;
-    /**
-     * The delta yaw value for looking at things.
-     */
-    private static final float  FACING_DELTA_YAW           = 10F;
-    /**
-     * The range in which we can hear a block break sound.
-     */
-    private static final double BLOCK_BREAK_SOUND_RANGE    = 16.0D;
-    /**
-     * The range in which someone will see the particles from a block breaking.
-     */
-    private static final double BLOCK_BREAK_PARTICLE_RANGE = 16.0D;
-    /**
-     * Divide experience by a factor to ensure more levels fit in an int.
-     */
-    private static final double EXP_DIVIDER                = 100.0;
-    /**
-     * Chance the citizen will rant about bad weather. 20 ticks per 60 seconds =
-     * 5 minutes.
-     */
-    private static final int    RANT_ABOUT_WEATHER_CHANCE  = 20 * 60 * 5;
-    /**
-     * Quantity to be moved to rotate without actually moving.
-     */
-    private static final double MOVE_MINIMAL               = 0.001D;
-    /**
-     * Base max health of the citizen.
-     */
-    private static final double BASE_MAX_HEALTH            = 20D;
-    /**
-     * Base pathfinding range of the citizen.
-     */
-    private static final int    BASE_PATHFINDING_RANGE     = 100;
-    /**
-     * Height of the citizen.
-     */
-    private static final double CITIZEN_HEIGHT             = 1.8D;
-    /**
-     * Width of the citizen.
-     */
-    private static final double CITIZEN_WIDTH              = 0.6D;
-    /**
-     * Defines how far the citizen will be rendered.
-     */
-    private static final double RENDER_DISTANCE_WEIGHT     = 2.0D;
-    /**
-     * Building level at which the workers work even if it is raining.
-     */
-    private static final int    BONUS_BUILDING_LEVEL       = 5;
-    /**
-     * The speed the citizen has to rotate.
-     */
-    private static final double ROTATION_MOVEMENT          = 30;
-    /**
-     * 20 ticks or also: once a second.
-     */
-    private static final int    TICKS_20                   = 20;
-    /**
-     * This times the citizen id is the personal offset of the citizen.
-     */
-    private static final int    OFFSET_TICK_MULTIPLIER     = 7;
-    /**
-     * Range required for the citizen to be home.
-     */
-    private static final double RANGE_TO_BE_HOME           = 16;
-    /**
-     * If the entitiy is stuck for 2 minutes do something.
-     */
-    private static final int    MAX_STUCK_TIME             = 60;
-    /**
-     * The max amount of lines the latest log allows.
-     */
-    private static final int MAX_LINES_OF_LATEST_LOG = 4;
-    /**
-     * Distance from mobs the entity should hold.
-     */
-    private static final double DISTANCE_OF_ENTITY_AVOID = 8.0D;
-    /**
-     * Initital speed while running away from entities.
-     */
-    private static final double INITIAL_RUN_SPEED_AVOID = 1.6D;
-    /**
-     * Later run speed while running away from entities.
-     */
-    private static final double LATER_RUN_SPEED_AVOID = 0.6D;
-    /**
-     * Happiness penalty for citizen death.
-     */
-    private static final double CITIZEN_DEATH_PENALTY = 0.2;
-    /**
-     * Happiness penalty for citizen kill.
-     */
-    private static final double CITIZEN_KILL_PENALTY = 9;
-    /**
-     * Big multiplier in extreme saturation situations.
-     */
-    private static final double BIG_SATURATION_FACTOR = 0.05;
-    /**
-     * Small multiplier in average saturation situation.s
-     */
-    private static final double LOW_SATURATION_FACTOR = 0.01;
-    /**
-     * Decrease by this * buildingLevel each new night.
-     */
-    private static final double SATURATION_DECREASE_FACTOR = 0.2;
-    /**
-     * Minimum stuck time for the worker to react.
-     */
-    private static final int MIN_STUCK_TIME = 5;
 
     private static Field navigatorField;
     @NotNull
@@ -744,7 +590,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                   "tile.blockHutTownHall.messageColonistDead",
                   citizenData.getName(), (int) posX, (int) posY, (int) posZ, damageSource.damageType);
             }
-            colony.removeCitizen(getCitizenData());
+            colony.getCitizenManager().removeCitizen(getCitizenData(), colony);
         }
         super.onDeath(damageSource);
     }
@@ -1134,7 +980,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
                 if (colony != null)
                 {
-                    for (final CitizenData citizen : colony.getCitizens().values())
+                    for (final CitizenData citizen : colony.getCitizenManager().getCitizens())
                     {
                         if (citizen.getName().equals(name))
                         {
@@ -1453,7 +1299,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return;
         }
 
-        final CitizenData data = c.getCitizen(citizenId);
+        final CitizenData data = c.getCitizenManager().getCitizen(citizenId);
         if (data == null)
         {
             //  Citizen does not exist in the Colony
@@ -1726,9 +1572,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             return homeBuilding.getLocation();
         }
-        else if (getColony() != null && getColony().getTownHall() != null)
+        else if (getColony() != null && getColony().getBuildingManager().getTownHall() != null)
         {
-            return getColony().getTownHall().getLocation();
+            return getColony().getBuildingManager().getTownHall().getLocation();
         }
 
         return null;

@@ -126,7 +126,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
         sender.sendMessage(new TextComponentString(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()));
         final String mayor = colony.getPermissions().getOwnerName();
         sender.sendMessage(new TextComponentString(MAYOR_TEXT + mayor));
-        sender.sendMessage(new TextComponentString(CITIZENS + colony.getCitizens().size() + "/" + colony.getMaxCitizens()));
+        sender.sendMessage(new TextComponentString(CITIZENS + colony.getCitizenManager().getCitizens().size() + "/" + colony.getCitizenManager().getMaxCitizens()));
         sender.sendMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
         sender.sendMessage(new TextComponentString(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())));
         sender.sendMessage(new TextComponentString(IS_DELETABLE + !colony.canBeAutoDeleted()));
