@@ -53,7 +53,15 @@ public final class NbtTagConstants
     public static final String TAG_ORES                  = "tagOres";
     public static final String TAG_BLOCK                 = "block";
     public static final String TAG_POS                   = "pos";
-
+    public static final String TAG_BUILDING_MANAGER      = "buildingManager";
+    public static final String TAG_CITIZEN_MANAGER       = "citizenManager";
+    public static final String TAG_STATS_MANAGER         = "statsManager";
+    public static final String TAG_COLONY_ID             = "colony";
+    public static final String TAG_CITIZEN               = "citizen";
+    public static final String TAG_HELD_ITEM_SLOT        = "HeldItemSlot";
+    public static final String TAG_STATUS                = "status";
+    public static final String TAG_LAST_JOB              = "lastJob";
+    public static final String TAG_DAY                   = "day";
 
     /**
      * Tag used to store the containers to NBT.

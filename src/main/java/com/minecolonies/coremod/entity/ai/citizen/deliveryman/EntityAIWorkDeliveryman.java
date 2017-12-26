@@ -164,7 +164,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final Colony colony = getOwnBuilding().getColony();
         if (colony != null)
         {
-            final AbstractBuilding building = colony.getBuilding(gatherTarget);
+            final AbstractBuilding building = colony.getBuildingManager().getBuilding(gatherTarget);
             if (building == null)
             {
                 gatherTarget = null;
@@ -223,7 +223,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return pos;
         }
 
-        final Collection<AbstractBuilding> buildingList = worker.getColony().getBuildings().values();
+        final Collection<AbstractBuilding> buildingList = worker.getColony().getBuildingManager().getBuildings().values();
         final Object[] buildingArray = buildingList.toArray();
 
         final int random = worker.getRandom().nextInt(buildingArray.length);
@@ -295,7 +295,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private BlockPos getWeightedRandom()
     {
         double completeWeight = 0.0;
-        for (AbstractBuilding building : worker.getColony().getBuildings().values())
+        for (AbstractBuilding building : worker.getColony().getBuildingManager().getBuildings().values())
         {
             if (!building.isBeingGathered())
             {
@@ -304,7 +304,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
         double r = Math.random() * completeWeight;
         double countWeight = 0.0;
-        for (AbstractBuilding building : worker.getColony().getBuildings().values())
+        for (AbstractBuilding building : worker.getColony().getBuildingManager().getBuildings().values())
         {
             if (!building.isBeingGathered())
             {
@@ -374,7 +374,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     public BuildingWareHouse getWareHouse()
     {
-        final Map<BlockPos, AbstractBuilding> buildings = job.getColony().getBuildings();
+        final Map<BlockPos, AbstractBuilding> buildings = job.getColony().getBuildingManager().getBuildings();
         for (final AbstractBuilding building : buildings.values())
         {
             if (building == null)
@@ -623,7 +623,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
-        final Map<BlockPos, AbstractBuilding> buildings = job.getColony().getBuildings();
+        final Map<BlockPos, AbstractBuilding> buildings = job.getColony().getBuildingManager().getBuildings();
         for (final AbstractBuilding building : buildings.values())
         {
             if (building == null)

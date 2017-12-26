@@ -44,10 +44,10 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         }
 
         Colony colony = (Colony) manager.getColony();
-        CitizenData freeDeliveryMan = colony.getCitizens()
-                                        .values()
+        CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
                                         .stream()
-                                        .filter(c -> c.getCitizenEntity() != null && requestToCheck.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
+                                        .filter(c -> c.getCitizenEntity() != null
+                                                && requestToCheck.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
                                         .filter(c -> c.getJob() instanceof JobDeliveryman)
                                         .findFirst()
                                         .orElse(null);
@@ -71,8 +71,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         }
 
         Colony colony = (Colony) manager.getColony();
-        CitizenData freeDeliveryMan = colony.getCitizens()
-                                        .values()
+        CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
                                         .stream()
                                         .filter(c -> c.getCitizenEntity() != null && request.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
                                         .filter(c -> c.getJob() instanceof JobDeliveryman)
@@ -115,14 +114,13 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @Nullable
     @Override
-    public IRequest onRequestCancelledOrOverruled(
-                                                   @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws IllegalArgumentException
+    public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+            throws IllegalArgumentException
     {
         if (!manager.getColony().getWorld().isRemote)
         {
             Colony colony = (Colony) manager.getColony();
-            CitizenData freeDeliveryMan = colony.getCitizens()
-                                            .values()
+            CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
                                             .stream()
                                             .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).getTaskQueue().contains(request.getToken()))
                                             .findFirst()

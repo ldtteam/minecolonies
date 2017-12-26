@@ -43,6 +43,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATION;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -196,7 +197,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean shouldGetFood()
     {
-        return (worker.getCitizenData().getSaturation() <= EntityCitizen.HIGH_SATURATION
+        return (worker.getCitizenData().getSaturation() <= HIGH_SATURATION
                   && !job.hasCheckedForFoodToday())
                  || worker.getCitizenData().getSaturation() <= 0;
     }
@@ -266,7 +267,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             double distance = Double.MAX_VALUE;
             BlockPos goodCook = null;
-            for (final AbstractBuilding building : worker.getColony().getBuildings().values())
+            for (final AbstractBuilding building : worker.getColony().getBuildingManager().getBuildings().values())
             {
                 if (building instanceof BuildingCook && building.getBuildingLevel() > 0)
                 {

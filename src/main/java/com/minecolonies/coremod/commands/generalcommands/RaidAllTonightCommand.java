@@ -53,7 +53,7 @@ public class RaidAllTonightCommand extends AbstractSingleCommand
 
         for (final Colony colony : ColonyManager.getColonies())
         {
-            colony.setWillRaidTonight(true);
+            colony.getBarbManager().setWillRaidTonight(true);
         }
 
         sender.sendMessage(SUCCESSFUL);

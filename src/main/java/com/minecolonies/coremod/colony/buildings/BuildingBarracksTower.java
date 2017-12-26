@@ -62,7 +62,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     public void requestUpgrade(final EntityPlayer player)
     {
         final int buildingLevel = getBuildingLevel();
-        final AbstractBuilding building = getColony().getBuilding(barracks);
+        final AbstractBuilding building = getColony().getBuildingManager().getBuilding(barracks);
         if (building != null && buildingLevel < getMaxBuildingLevel() && buildingLevel < building.getBuildingLevel())
         {
             requestWorkOrder(buildingLevel + 1);
@@ -77,7 +77,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
-        getColony().calculateMaxCitizens();
+        getColony().getCitizenManager().calculateMaxCitizens(getColony());
     }
 
     @Override

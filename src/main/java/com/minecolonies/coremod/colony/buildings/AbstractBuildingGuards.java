@@ -212,11 +212,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
 
         if (newLevel == 1)
         {
-            this.getColony().triggerAchievement(ModAchievements.achievementBuildingGuard);
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingGuard, this.getColony());
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeGuardMax);
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeGuardMax, this.getColony());
         }
     }
 

@@ -55,7 +55,7 @@ public class KillCitizenCommand extends AbstractCitizensCommands
     @Override
     void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
     {
-        final CitizenData citizenData = colony.getCitizen(citizenId);
+        final CitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
         final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
         sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
         final BlockPos position = entityCitizen.getPosition();

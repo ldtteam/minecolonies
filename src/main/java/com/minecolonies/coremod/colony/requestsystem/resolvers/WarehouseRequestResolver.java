@@ -129,9 +129,9 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         return null;
     }
 
-    private Set<TileEntityWareHouse> getWareHousesInColony(Colony colony)
+    private static Set<TileEntityWareHouse> getWareHousesInColony(Colony colony)
     {
-        return colony.getBuildings().values().stream()
+        return colony.getBuildingManager().getBuildings().values().stream()
                  .filter(building -> building instanceof BuildingWareHouse)
                  .map(building -> (TileEntityWareHouse) building.getTileEntity())
                  .collect(Collectors.toSet());
