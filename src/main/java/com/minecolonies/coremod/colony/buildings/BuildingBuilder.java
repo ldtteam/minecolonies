@@ -105,11 +105,11 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
         if (newLevel == 1)
         {
-            this.getColony().triggerAchievement(ModAchievements.achievementBuildingBuilder);
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingBuilder, getColony());
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeBuilderMax);
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeBuilderMax, getColony());
         }
     }
 

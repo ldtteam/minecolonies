@@ -77,7 +77,7 @@ public class AssignFieldMessage extends AbstractMessage<AssignFieldMessage, IMes
                 return;
             }
 
-            @Nullable final BuildingFarmer building = colony.getBuilding(message.buildingId, BuildingFarmer.class);
+            @Nullable final BuildingFarmer building = colony.getBuildingManager().getBuilding(message.buildingId, BuildingFarmer.class);
             if (building != null)
             {
                 if (message.assign)

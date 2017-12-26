@@ -81,7 +81,7 @@ public class BuildingHome extends AbstractBuildingHut
         final int[] residentIds = compound.getIntArray(TAG_RESIDENTS);
         for (final int citizenId : residentIds)
         {
-            final CitizenData citizen = getColony().getCitizen(citizenId);
+            final CitizenData citizen = getColony().getCitizenManager().getCitizen(citizenId);
             if (citizen != null)
             {
                 // Bypass addResident (which marks dirty)
@@ -212,7 +212,7 @@ public class BuildingHome extends AbstractBuildingHut
      */
     private void addHomelessCitizens()
     {
-        for (@NotNull final CitizenData citizen : getColony().getCitizens().values())
+        for (@NotNull final CitizenData citizen : getColony().getCitizenManager().getCitizens())
         {
             // Move the citizen to a better hut
             if (citizen.getHomeBuilding() instanceof BuildingHome && citizen.getHomeBuilding().getBuildingLevel() < this.getBuildingLevel())
@@ -267,11 +267,11 @@ public class BuildingHome extends AbstractBuildingHut
 
         if (newLevel == 1)
         {
-            this.getColony().triggerAchievement(ModAchievements.achievementBuildingColonist);
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingColonist, this.getColony());
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeColonistMax);
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeColonistMax, this.getColony());
         }
     }
 
@@ -291,7 +291,7 @@ public class BuildingHome extends AbstractBuildingHut
     public void setBuildingLevel(final int level)
     {
         super.setBuildingLevel(level);
-        getColony().calculateMaxCitizens();
+        getColony().getCitizenManager().calculateMaxCitizens(getColony());
     }
     
     @NotNull

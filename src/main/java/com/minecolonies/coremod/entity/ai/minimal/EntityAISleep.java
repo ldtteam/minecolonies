@@ -66,14 +66,14 @@ public class EntityAISleep extends EntityAIBase
         if (citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP)
         {
             final Colony colony = citizen.getColony();
-            if (colony == null || colony.getBuilding(citizen.getHomePosition()) == null)
+            if (colony == null || colony.getBuildingManager().getBuilding(citizen.getHomePosition()) == null)
             {
                 return true;
             }
 
             if (usedBed == null)
             {
-                final AbstractBuilding hut = colony.getBuilding(citizen.getHomePosition());
+                final AbstractBuilding hut = colony.getBuildingManager().getBuilding(citizen.getHomePosition());
                 if (hut instanceof BuildingHome)
                 {
                     for (final BlockPos pos : ((BuildingHome) hut).getBedList())

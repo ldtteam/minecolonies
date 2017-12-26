@@ -150,7 +150,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     @Override
     public boolean isValid(@NotNull final Colony colony)
     {
-        return colony.getBuilding(buildingLocation) != null;
+        return colony.getBuildingManager().getBuilding(buildingLocation) != null;
     }
 
     @Override
@@ -178,7 +178,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     {
         if (colony != null && colony.getWorld() != null)
         {
-            final AbstractBuilding building = colony.getBuilding(this.getBuildingLocation());
+            final AbstractBuilding building = colony.getBuildingManager().getBuilding(this.getBuildingLocation());
             if (building != null)
             {
                 ConstructionTapeHelper.placeConstructionTape(building.getLocation(), building.getCorners(), colony.getWorld());
@@ -189,7 +189,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     @Override
     public void onRemoved(final Colony colony)
     {
-        final AbstractBuilding building = colony.getBuilding(getBuildingLocation());
+        final AbstractBuilding building = colony.getBuildingManager().getBuilding(getBuildingLocation());
         if (building != null)
         {
             building.markDirty();
@@ -199,14 +199,14 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
 
     private static boolean isLocationTownhall(@NotNull final Colony colony, final BlockPos buildingLocation)
     {
-        return colony.hasTownHall() && colony.getTownHall() != null && colony.getTownHall().getID().equals(buildingLocation);
+        return colony.hasTownHall() && colony.getBuildingManager().getTownHall() != null && colony.getBuildingManager().getTownHall().getID().equals(buildingLocation);
     }
 
     @Override
     public void onCompleted(final Colony colony)
     {
         final BlockPos buildingLocation = getBuildingLocation();
-        final AbstractBuilding building = colony.getBuilding(buildingLocation);
+        final AbstractBuilding building = colony.getBuildingManager().getBuilding(buildingLocation);
         colony.onBuildingUpgradeComplete(building, getUpgradeLevel());
     }
 

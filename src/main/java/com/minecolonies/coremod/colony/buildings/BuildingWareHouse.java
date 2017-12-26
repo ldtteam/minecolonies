@@ -167,7 +167,7 @@ public class BuildingWareHouse extends AbstractBuilding
         for (int i = 0; i < deliverymanTagList.tagCount(); i++)
         {
             final BlockPos pos = NBTUtil.getPosFromTag(deliverymanTagList.getCompoundTagAt(i));
-            if (getColony() != null && getColony().getBuilding(pos) instanceof AbstractBuildingWorker && !registeredDeliverymen.contains(new Vec3d(pos)))
+            if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuildingWorker && !registeredDeliverymen.contains(new Vec3d(pos)))
             {
                 registeredDeliverymen.add(new Vec3d(pos));
             }
