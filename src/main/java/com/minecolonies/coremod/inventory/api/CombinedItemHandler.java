@@ -184,7 +184,7 @@ public class CombinedItemHandler
 
         for (final IItemHandlerModifiable modifiable : handlers)
         {
-            if (slot < modifiable.getSlots() && activeSlot > 0)
+            if (activeSlot < modifiable.getSlots())
             {
                 return modifiable.getStackInSlot(activeSlot);
             }
