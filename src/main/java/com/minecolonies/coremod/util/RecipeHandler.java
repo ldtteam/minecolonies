@@ -117,22 +117,22 @@ public final class RecipeHandler
                 new ItemStack(ModBlocks.blockPaperWall, EIGHT_BLOCKS, 3), "WWW", "PPP", "WWW", 'P', PAPER, 'W', new ItemStack(Blocks.PLANKS, 1, 3)));
 
         GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(ModBlocks.blockShingleOak, EIGHT_BLOCKS, 0), "B  ", "BB ", "SPS", 'B', Items.BRICK, 'P',
+                new ItemStack(ModBlocks.blockShingleOak, EIGHT_BLOCKS, 0), "B  ", "SB ", "PSB", 'B', Items.BRICK, 'P',
                 new ItemStack(Blocks.PLANKS, 1, 0), 'S', WOODEN_STICK));
         GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(ModBlocks.blockShingleSpruce, EIGHT_BLOCKS, 0), "B  ", "BB ", "SPS", 'B', Items.BRICK, 'P',
+                new ItemStack(ModBlocks.blockShingleSpruce, EIGHT_BLOCKS, 0), "B  ", "SB ", "PSB", 'B', Items.BRICK, 'P',
                 new ItemStack(Blocks.PLANKS, 1, 1), 'S', WOODEN_STICK));
         GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(ModBlocks.blockShingleBirch, EIGHT_BLOCKS, 0), "B  ", "BB ", "SPS", 'B', Items.BRICK, 'P',
+                new ItemStack(ModBlocks.blockShingleBirch, EIGHT_BLOCKS, 0), "B  ", "SB ", "PSB", 'B', Items.BRICK, 'P',
                 new ItemStack(Blocks.PLANKS, 1, 2), 'S', WOODEN_STICK));
         GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(ModBlocks.blockShingleJungle, EIGHT_BLOCKS, 0), "B  ", "BB ", "SPS", 'B', Items.BRICK, 'P',
+                new ItemStack(ModBlocks.blockShingleJungle, EIGHT_BLOCKS, 0), "B  ", "SB ", "PSB", 'B', Items.BRICK, 'P',
                 new ItemStack(Blocks.PLANKS, 1, 3), 'S', WOODEN_STICK));
         GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(ModBlocks.blockShingleAcacia, EIGHT_BLOCKS, 0), "B  ", "BB ", "SPS", 'B', Items.BRICK, 'P',
+                new ItemStack(ModBlocks.blockShingleAcacia, EIGHT_BLOCKS, 0), "B  ", "SB ", "PSB", 'B', Items.BRICK, 'P',
                 new ItemStack(Blocks.PLANKS, 1, 4), 'S', WOODEN_STICK));
         GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(ModBlocks.blockShingleDarkOak, EIGHT_BLOCKS, 0), "B  ", "BB ", "SPS", 'B', Items.BRICK, 'P',
+                new ItemStack(ModBlocks.blockShingleDarkOak, EIGHT_BLOCKS, 0), "B  ", "SB ", "PSB", 'B', Items.BRICK, 'P',
                 new ItemStack(Blocks.PLANKS, 1, 5), 'S', WOODEN_STICK));
 
         

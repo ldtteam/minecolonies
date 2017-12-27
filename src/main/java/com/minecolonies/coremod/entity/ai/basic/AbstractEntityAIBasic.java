@@ -266,20 +266,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (restaurant == null)
         {
-            double distance = Double.MAX_VALUE;
-            BlockPos goodCook = null;
-            for (final AbstractBuilding building : worker.getColony().getBuildingManager().getBuildings().values())
-            {
-                if (building instanceof BuildingCook && building.getBuildingLevel() > 0)
-                {
-                    final double localDistance = building.getLocation().distanceSq(getOwnBuilding().getLocation());
-                    if (localDistance < distance)
-                    {
-                        distance = localDistance;
-                        goodCook = building.getLocation();
-                    }
-                }
-            }
+            final BlockPos goodCook = worker.getColony().getBuildingManager().getBestRestaurant(worker);
 
             if (goodCook == null)
             {
