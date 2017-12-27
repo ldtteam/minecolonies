@@ -184,7 +184,7 @@ public class CombinedItemHandler
 
         for (final IItemHandlerModifiable modifiable : handlers)
         {
-            if (slot < modifiable.getSlots())
+            if (slot < modifiable.getSlots() && slot > 0)
             {
                 return modifiable.getStackInSlot(activeSlot);
             }
@@ -193,7 +193,9 @@ public class CombinedItemHandler
         }
 
         return null;
-    }    /**
+    }
+
+    /**
      * Get the name of this object. For players this returns their username.
      */
     @Override
