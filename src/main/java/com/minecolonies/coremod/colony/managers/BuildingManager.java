@@ -6,10 +6,8 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
-import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
-import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
+import com.minecolonies.coremod.colony.buildings.*;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.network.messages.ColonyViewBuildingViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveBuildingMessage;
@@ -366,6 +364,26 @@ public class BuildingManager implements IBuildingManager
     {
         this.markFieldsDirty();
         fields.remove(pos);
+    }
+
+    @Override
+    public BlockPos getBestRestaurant(final EntityCitizen citizen)
+    {
+        double distance = Double.MAX_VALUE;
+        BlockPos goodCook = null;
+        for (final AbstractBuilding building : citizen.getColony().getBuildingManager().getBuildings().values())
+        {
+            if (building instanceof BuildingCook && building.getBuildingLevel() > 0)
+            {
+                final double localDistance = building.getLocation().distanceSq(citizen.getPosition());
+                if (localDistance < distance)
+                {
+                    distance = localDistance;
+                    goodCook = building.getLocation();
+                }
+            }
+        }
+        return goodCook;
     }
 
     /**
