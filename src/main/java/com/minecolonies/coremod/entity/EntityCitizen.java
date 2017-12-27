@@ -605,7 +605,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (!CompatibilityUtils.getWorld(this).isRemote && this.recentlyHit > 0 && this.canDropLoot() && CompatibilityUtils.getWorld(this).getGameRules().getBoolean("doMobLoot"))
         {
-            experience = (int) (this.getExperiencePoints());
+            experience = (int) (this.citizenData.getExperience());
 
             while (experience > 0)
             {
@@ -650,17 +650,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public CitizenData getCitizenData()
     {
         return citizenData;
-    }
-
-    /**
-     * Get the experience points the entity currently has.
-     * <p>
-     *
-     * @return the amount of xp this entity has
-     */
-    private double getExperiencePoints()
-    {
-        return citizenData.getExperience();
     }
 
     @SuppressWarnings(UNCHECKED)
@@ -1162,7 +1151,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
         final double citizenHutMaxLevel = home == null ? 1 : home.getMaxBuildingLevel();
         if (citizenHutLevel < citizenHutMaxLevel
-              && Math.pow(2.0, citizenHutLevel + 1.0) <= this.getExperienceLevel())
+              && Math.pow(2.0, citizenHutLevel + 1.0) <= this.citizenData.getLevel())
         {
             return;
         }
@@ -1172,7 +1161,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             final double maxValue = Integer.MAX_VALUE - citizenData.getExperience();
             double localXp = xp * skillModifier / EXP_DIVIDER;
             final double workBuildingLevel = getWorkBuilding() == null ? 0 : getWorkBuilding().getBuildingLevel();
-            final double bonusXp = (workBuildingLevel * (1 + citizenHutLevel) / Math.log(this.getExperienceLevel() + 2.0D)) / 2;
+            final double bonusXp = (workBuildingLevel * (1 + citizenHutLevel) / Math.log(this.citizenData.getLevel() + 2.0D)) / 2;
             localXp = localXp * bonusXp;
             final double saturation = citizenData.getSaturation();
 
@@ -1230,20 +1219,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private AbstractBuilding getHomeBuilding()
     {
         return (citizenData == null) ? null : citizenData.getHomeBuilding();
-    }
-
-    /**
-     * ExperienceLevel getter.
-     *
-     * @return citizen ExperienceLevel value.
-     */
-    public int getExperienceLevel()
-    {
-        if (citizenData != null)
-        {
-            return citizenData.getLevel();
-        }
-        return 0;
     }
 
     /**
@@ -1549,10 +1524,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
         if (homeBuilding instanceof BuildingHome)
         {
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = homeBuilding.getCorners();
-            return new AxisAlignedBB(corners.getFirst().getFirst(), posY - 1, corners.getFirst().getSecond(),
-                                      corners.getSecond().getFirst(),
-                                      posY + 1,
-                                      corners.getSecond().getSecond()).isVecInside(new Vec3d(this.getPosition()));
+            return new AxisAlignedBB(corners.getFirst().getFirst(), posY - 1, corners.getSecond().getFirst(),
+                    corners.getFirst().getSecond(),
+                    posY + 1,
+                    corners.getSecond().getSecond()).intersectsWithXZ(new Vec3d(this.getPosition()));
         }
 
         return homePosition != null && homePosition.distanceSq((int) Math.floor(posX), (int) posY, (int) Math.floor(posZ)) <= RANGE_TO_BE_HOME;
@@ -1982,56 +1957,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         LanguageHandler.sendPlayersMessage(players,
           this.getColonyJob() == null ? "" : this.getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
-    }
-
-    /**
-     * Intelligence getter.
-     *
-     * @return citizen intelligence value.
-     */
-    public int getIntelligence()
-    {
-        return citizenData.getIntelligence();
-    }
-
-    /**
-     * Charisma getter.
-     *
-     * @return citizen Charisma value.
-     */
-    public int getCharisma()
-    {
-        return citizenData.getCharisma();
-    }
-
-    /**
-     * Strength getter.
-     *
-     * @return citizen Strength value.
-     */
-    public int getStrength()
-    {
-        return citizenData.getStrength();
-    }
-
-    /**
-     * Endurance getter.
-     *
-     * @return citizen Endurance value.
-     */
-    public int getEndurance()
-    {
-        return citizenData.getEndurance();
-    }
-
-    /**
-     * Dexterity getter.
-     *
-     * @return citizen Dexterity value.
-     */
-    public int getDexterity()
-    {
-        return citizenData.getDexterity();
     }
 
     /**

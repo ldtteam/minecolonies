@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.managers;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -165,4 +166,11 @@ public interface IBuildingManager
      * @param pos the position-id.
      */
     void removeField(final BlockPos pos);
+
+    /**
+     * Calculate a good cook for a certain citizen.
+     * @param citizen the citizen.
+     * @return the Position of it.
+     */
+    BlockPos getBestRestaurant(final EntityCitizen citizen);
 }
