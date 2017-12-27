@@ -245,9 +245,6 @@ public class BuildingManager implements IBuildingManager
             final TileEntity field = world.getTileEntity(pos);
             if (field instanceof ScarecrowTileEntity && !((ScarecrowTileEntity) field).isTaken())
             {
-                ((ScarecrowTileEntity) field).setTaken(true);
-                ((ScarecrowTileEntity) field).setOwner(owner);
-                markFieldsDirty();
                 return (ScarecrowTileEntity) field;
             }
         }
