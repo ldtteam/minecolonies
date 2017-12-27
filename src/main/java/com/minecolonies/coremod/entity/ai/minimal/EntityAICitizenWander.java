@@ -40,15 +40,23 @@ public class EntityAICitizenWander extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        if (isToOld() || checkForRandom() || citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP)
+        if (isTooOld() || checkForRandom() || citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP)
         {
             return false;
         }
 
-        Vec3d vec3d = RandomPositionGenerator.getLandPos(citizen, 10, 7);
-        if (vec3d == null)
+        Vec3d vec3d;
+        if(citizen.getCitizenData().getSaturation() <= 0)
         {
-            return false;
+            vec3d = new Vec3d(citizen.getColony().getBuildingManager().getBestRestaurant(citizen));
+        }
+        else
+        {
+            vec3d = RandomPositionGenerator.getLandPos(citizen, 10, 7);
+            if (vec3d == null)
+            {
+                return false;
+            }
         }
 
         vec3d = new Vec3d(vec3d.x, BlockPosUtil.getValidHeight(vec3d, CompatibilityUtils.getWorld(citizen)), vec3d.z);
@@ -66,7 +74,7 @@ public class EntityAICitizenWander extends EntityAIBase
      *
      * @return True when age => 100, otherwise false.
      */
-    private boolean isToOld()
+    private boolean isTooOld()
     {
         return citizen.getGrowingAge() >= 100;
     }

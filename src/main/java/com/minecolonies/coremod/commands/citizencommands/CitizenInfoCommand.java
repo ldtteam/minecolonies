@@ -93,16 +93,17 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
         sender.sendMessage(new TextComponentString(String.format(CITIZEN_HEALTH,
           entityCitizen.getHealth(),
           entityCitizen.getMaxHealth())));
+
         sender.sendMessage(new TextComponentString(String.format(CITIZEN_LEVEL_AND_AGE,
                 entityCitizen.getLevel(),
                 entityCitizen.getGrowingAge(),
-                entityCitizen.getExperienceLevel())));
+                citizenData.getLevel())));
         sender.sendMessage(new TextComponentString(String.format(CITIZEN_SKILLS,
-          entityCitizen.getCharisma(),
-          entityCitizen.getDexterity(),
-          entityCitizen.getEndurance(),
-          entityCitizen.getIntelligence(),
-          entityCitizen.getStrength())));
+                citizenData.getCharisma(),
+                citizenData.getDexterity(),
+                citizenData.getEndurance(),
+                citizenData.getIntelligence(),
+                citizenData.getStrength())));
         if (entityCitizen.getColonyJob() == null)
         {
             sender.sendMessage(new TextComponentString(String.format(CITIZEN_JOB_NULL)));
