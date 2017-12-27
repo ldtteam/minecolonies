@@ -17,7 +17,6 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldNameable;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -450,6 +449,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     {
         final NBTTagCompound compound = new NBTTagCompound();
         this.writeToNBT(compound);
+        compound.setInteger(TAG_COLONY_ID, colony.getID());
         return new SPacketUpdateTileEntity(this.pos, 0, compound);
     }
 
@@ -465,6 +465,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     {
         final NBTTagCompound compound = packet.getNbtCompound();
         this.readFromNBT(compound);
+        setOwner(ownerId, ColonyManager.getColonyView(compound.getInteger(TAG_COLONY_ID)));
     }
 
     /////////////--------------------------- End Synchronization-area ---------------------------- /////////////

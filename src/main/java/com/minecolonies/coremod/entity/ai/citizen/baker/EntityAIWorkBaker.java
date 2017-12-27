@@ -126,7 +126,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
     private AIState finishing()
     {
-        if (currentBakingProduct == null)
+        if (currentBakingProduct == null || currentBakingProduct.getState() != ProductState.BAKED)
         {
             progress = 0;
             final List<BakingProduct> bakingProducts = getOwnBuilding().getTasks().get(ProductState.BAKED);

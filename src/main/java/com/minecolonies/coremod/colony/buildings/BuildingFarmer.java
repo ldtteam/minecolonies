@@ -157,6 +157,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         {
             ((ScarecrowTileEntity) scareCrow).calculateSize(getColony().getWorld(), field.down());
             farmerFields.add(field);
+            this.markDirty();
         }
     }
 
@@ -239,20 +240,14 @@ public class BuildingFarmer extends AbstractBuildingWorker
         {
             final NBTTagCompound fieldCompound = fieldTagList.getCompoundTagAt(i);
             final BlockPos fieldLocation = BlockPosUtil.readFromNBT(fieldCompound, TAG_FIELDS_BLOCKPOS);
-            if (getColony().getBuildingManager().getFields().contains(fieldLocation))
-            {
-                farmerFields.add(fieldLocation);
-            }
+            farmerFields.add(fieldLocation);
         }
         assignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
 
         if (compound.hasKey(LAST_FIELD_TAG))
         {
             final BlockPos pos = BlockPosUtil.readFromNBT(compound, LAST_FIELD_TAG);
-            if(getColony().getBuildingManager().getFields().contains(pos))
-            {
-                lastField = pos;
-            }
+            lastField = pos;
         }
     }
 
