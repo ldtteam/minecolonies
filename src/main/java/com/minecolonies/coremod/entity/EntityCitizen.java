@@ -2004,6 +2004,15 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
+     * Get the path proxy of the citizen.
+     * @return the proxy.
+     */
+    public IWalkToProxy getProxy()
+    {
+        return proxy;
+    }
+
+    /**
      * Enum describing the citizens activity.
      */
     public enum DesiredActivity
