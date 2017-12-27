@@ -91,7 +91,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolve
                 //todo After simulation has been added, we need to simulate the subrequest and decided wheter to try to resolve it or not.
                 for(final ItemStack neededStack: storage.getInput())
                 {
-                    final Stack stackRequest = new Stack(neededStack);
+                    final Stack stackRequest = new Stack(neededStack.copy());
                     tokens.add(manager.createRequest(this, stackRequest));
                 }
 
