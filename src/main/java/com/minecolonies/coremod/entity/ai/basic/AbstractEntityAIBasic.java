@@ -492,8 +492,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 }
 
                 //Takes one Stack from the hut if existent
-                if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount() &&
-                  InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+                if (!walkToBuilding()
+                        && InventoryUtils.getItemCountInProvider(getOwnBuilding(), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount()
+                        && InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                     getOwnBuilding(),
                     deliveredItemStack::isItemEqualIgnoreDurability,
                     deliveredItemStack.getCount(),
