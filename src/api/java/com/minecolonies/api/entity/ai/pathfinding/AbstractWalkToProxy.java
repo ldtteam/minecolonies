@@ -29,14 +29,17 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
      * The entity entity associated with the proxy.
      */
     private final EntityLiving entity;
+
     /**
      * List of proxies the entity has to follow.
      */
     private final List<BlockPos> proxyList = new ArrayList<>();
+
     /**
      * The current proxy the citizen paths to.
      */
     private BlockPos currentProxy;
+
     /**
      * Current target the entity has.
      */
@@ -80,13 +83,8 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
             this.target = target;
         }
 
-        if(target.equals(currentProxy))
-        {
-            currentProxy = null;
-        }
-
         final double distanceToPath = careAboutY()
-                                        ? BlockPosUtil.getDistanceSquared2D(entity.getPosition(), target) : BlockPosUtil.getDistanceSquared(entity.getPosition(), target);
+                ? BlockPosUtil.getDistanceSquared2D(entity.getPosition(), target) : BlockPosUtil.getDistanceSquared(entity.getPosition(), target);
 
         if (distanceToPath <= MIN_RANGE_FOR_DIRECT_PATH)
         {
@@ -118,10 +116,6 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
             if (proxyList.isEmpty())
             {
                 currentProxy = target;
-            }
-
-            if (proxyList.isEmpty())
-            {
                 return takeTheDirectPath(target, range, onMove);
             }
 
@@ -258,6 +252,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
     {
         double weight = Double.MAX_VALUE;
         BlockPos proxyPoint = null;
+        double distance = Double.MAX_VALUE;
 
         for (final BlockPos wayPoint : getWayPoints())
         {
@@ -271,19 +266,20 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
             {
                 proxyPoint = wayPoint;
                 weight = currentWeight;
+                distance = simpleDistance;
             }
         }
 
         if (proxyList.contains(proxyPoint))
         {
-            proxyPoint = null;
+            return target;
         }
 
         if (proxyPoint != null)
         {
             proxyList.add(proxyPoint);
 
-            getProxy(target, proxyPoint, distanceToPath);
+            getProxy(target, proxyPoint, distanceToPath - distance);
 
             return proxyList.get(0);
         }
