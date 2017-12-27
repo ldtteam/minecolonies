@@ -1150,14 +1150,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
         final double citizenHutMaxLevel = home == null ? 1 : home.getMaxBuildingLevel();
-        if (citizenHutLevel < citizenHutMaxLevel
-              && Math.pow(2.0, citizenHutLevel + 1.0) <= this.citizenData.getLevel())
-        {
-            return;
-        }
-
         if (citizenData != null)
         {
+            if (citizenHutLevel < citizenHutMaxLevel
+                && Math.pow(2.0, citizenHutLevel + 1.0) <= this.citizenData.getLevel())
+            {
+                return;
+            }
+
             final double maxValue = Integer.MAX_VALUE - citizenData.getExperience();
             double localXp = xp * skillModifier / EXP_DIVIDER;
             final double workBuildingLevel = getWorkBuilding() == null ? 0 : getWorkBuilding().getBuildingLevel();
@@ -2002,6 +2002,15 @@ public class EntityCitizen extends EntityAgeable implements INpc
             SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorld(this), getPosition(),
               getColonyJob().getMoveAwaySound(), 1);
         }
+    }
+
+    /**
+     * Get the path proxy of the citizen.
+     * @return the proxy.
+     */
+    public IWalkToProxy getProxy()
+    {
+        return proxy;
     }
 
     /**
