@@ -464,14 +464,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             return IDLE;
         }
-        if (getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
+        if (!walkToBuilding() && getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
             delay += DELAY_RECHECK;
 
             @SuppressWarnings(RAWTYPES) final ImmutableList<IRequest> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
 
             completedRequests.stream().filter(r -> !(r.canBeDelivered())).forEach(r -> getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), r.getToken()));
-            @SuppressWarnings(RAWTYPES) final IRequest<?> firstDeliverableRequest = completedRequests.stream().filter(IRequest::canBeDelivered).findFirst().orElse(null);
+            @SuppressWarnings(RAWTYPES) IRequest firstDeliverableRequest = completedRequests.stream().filter(IRequest::canBeDelivered).findFirst().orElse(null);
 
             if (firstDeliverableRequest != null)
             {
@@ -492,13 +492,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 }
 
                 //Takes one Stack from the hut if existent
-                if (!walkToBuilding()
-                        && InventoryUtils.getItemCountInProvider(getOwnBuilding(), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount()
-                        && InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
-                    getOwnBuilding(),
-                    deliveredItemStack::isItemEqualIgnoreDurability,
-                    deliveredItemStack.getCount(),
-                    new InvWrapper(worker.getInventoryCitizen())))
+                if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount() &&
+                        InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+                                getOwnBuilding(),
+                                deliveredItemStack::isItemEqualIgnoreDurability,
+                                deliveredItemStack.getCount(),
+                                new InvWrapper(worker.getInventoryCitizen())))
                 {
 
                     return NEEDS_ITEM;

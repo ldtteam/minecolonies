@@ -72,9 +72,9 @@ public final class BakerRecipes
         inputBread.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT));
         final StandardFactoryController sfc = StandardFactoryController.getInstance();
         recipes = new ImmutableList.Builder<IRecipeStorage>()
-                    .add(sfc.getNewInstance(TypeConstants.RECIPE, inputCookie, GRID_SIZE, new ItemStack(Items.COOKIE, COOKIES)))
-                    .add(sfc.getNewInstance(TypeConstants.RECIPE, inputCake, GRID_SIZE, new ItemStack(Items.CAKE)))
-                    .add(sfc.getNewInstance(TypeConstants.RECIPE, inputBread, GRID_SIZE, new ItemStack(Items.BREAD))).build();
+                    .add(sfc.getNewInstance(TypeConstants.RECIPE, sfc.getNewInstance(TypeConstants.ITOKEN), inputCookie, GRID_SIZE, new ItemStack(Items.COOKIE, COOKIES)))
+                    .add(sfc.getNewInstance(TypeConstants.RECIPE, sfc.getNewInstance(TypeConstants.ITOKEN), inputCake, GRID_SIZE, new ItemStack(Items.CAKE)))
+                    .add(sfc.getNewInstance(TypeConstants.RECIPE, sfc.getNewInstance(TypeConstants.ITOKEN), inputBread, GRID_SIZE, new ItemStack(Items.BREAD))).build();
     }
     /**
      * Private constructor to hide implicit one.
