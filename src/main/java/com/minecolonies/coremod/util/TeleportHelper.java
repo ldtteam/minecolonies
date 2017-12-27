@@ -41,7 +41,10 @@ public final class TeleportHelper
           spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
           citizen.rotationYaw,
           citizen.rotationPitch);
-        citizen.getProxy().reset();
+        if(citizen.getProxy() != null)
+        {
+            citizen.getProxy().reset();
+        }
         citizen.getNavigator().clearPath();
 
         return true;
