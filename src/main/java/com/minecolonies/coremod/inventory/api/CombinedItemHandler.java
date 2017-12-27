@@ -249,16 +249,19 @@ public class CombinedItemHandler
     @Override
     public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
     {
-        int activeSlot = slot;
-
+        int checkedSlots = 0;
         for (final IItemHandlerModifiable modifiable : handlers)
         {
-            if (activeSlot < modifiable.getSlots())
+            if (modifiable.getSlots() + checkedSlots <= slot)
             {
-                return modifiable.extractItem(slot, amount, simulate);
+                checkedSlots += modifiable.getSlots();
+                continue;
             }
-
-            activeSlot -= modifiable.getSlots();
+            int activeSlot = slot - checkedSlots;
+            if(activeSlot < modifiable.getSlots())
+            {
+                return modifiable.extractItem(activeSlot, amount, simulate);
+            }
         }
 
         return null;
