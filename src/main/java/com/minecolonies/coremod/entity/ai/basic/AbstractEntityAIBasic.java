@@ -11,6 +11,7 @@ import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingCook;
@@ -1220,7 +1221,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return true;
         }
 
-        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERY,
+        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeToken.of(IDeliverable.class),
           (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
             Stack stackRequest = new Stack(stack);
