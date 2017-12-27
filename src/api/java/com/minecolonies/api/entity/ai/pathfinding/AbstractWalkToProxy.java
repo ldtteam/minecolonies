@@ -193,16 +193,23 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
      */
     private boolean takeTheDirectPath(@NotNull final BlockPos target, final int range, final boolean onMove)
     {
+        final boolean arrived;
         if (onMove)
         {
             final int targetY = careAboutY() ? entity.getPosition().getY() : target.getY();
-            return isLivingAtSiteWithMove(entity, target.getX(), target.getY(), target.getZ(), range)
+            arrived = isLivingAtSiteWithMove(entity, target.getX(), target.getY(), target.getZ(), range)
                      || EntityUtils.isLivingAtSite(entity, target.getX(), targetY, target.getZ(), range + 1);
         }
         else
         {
-            return !EntityUtils.isLivingAtSite(entity, target.getX(), target.getY(), target.getZ(), range);
+            arrived = !EntityUtils.isLivingAtSite(entity, target.getX(), target.getY(), target.getZ(), range);
         }
+
+        if(arrived)
+        {
+            this.target = null;
+        }
+        return arrived;
     }
 
     /**
@@ -286,5 +293,11 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
 
         //No proxy point exists.
         return target;
+    }
+
+    @Override
+    public void reset()
+    {
+        this.target = null;
     }
 }

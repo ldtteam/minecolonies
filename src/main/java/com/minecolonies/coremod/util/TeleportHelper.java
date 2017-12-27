@@ -42,6 +42,7 @@ public final class TeleportHelper
           citizen.rotationYaw,
           citizen.rotationPitch);
         citizen.getNavigator().clearPathEntity();
+        citizen.getProxy().reset();
 
         return true;
     }
