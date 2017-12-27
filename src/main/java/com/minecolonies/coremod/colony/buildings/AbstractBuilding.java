@@ -43,6 +43,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -1744,7 +1745,10 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             providers.add(getTileEntity());
 
             //Add additional containers
-            providers.addAll(getAdditionalCountainers().stream().map(getTileEntity().getWorld()::getTileEntity).collect(Collectors.toSet()));
+            providers.addAll(getAdditionalCountainers().stream()
+                    .map(getTileEntity().getWorld()::getTileEntity)
+                    .filter(entity -> !(entity instanceof TileEntityFurnace))
+                    .collect(Collectors.toSet()));
             providers.removeIf(Objects::isNull);
 
             //Map all providers to IItemHandlers.
