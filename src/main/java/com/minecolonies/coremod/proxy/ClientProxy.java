@@ -3,6 +3,7 @@ package com.minecolonies.coremod.proxy;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.BlockPaperwall;
+import com.minecolonies.coremod.blocks.BlockShingle;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.blocks.PaperwallType;
 import com.minecolonies.coremod.client.gui.WindowBuildTool;
@@ -26,10 +27,12 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import com.minecolonies.structures.event.RenderEventHandler;
 import com.minecolonies.structures.helpers.Settings;
+import net.minecraft.block.BlockPlanks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -179,8 +182,6 @@ public class ClientProxy extends CommonProxy
           new ModelResourceLocation(ModBlocks.blockRack.getRegistryName(), INVENTORY));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockWayPoint), 0,
           new ModelResourceLocation(ModBlocks.blockWayPoint.getRegistryName(), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingle), 0,
-                new ModelResourceLocation(ModBlocks.blockShingle.getRegistryName(), INVENTORY));
 
         ModelLoader.setCustomModelResourceLocation(ModItems.clipboard, 0,
           new ModelResourceLocation(ModItems.clipboard.getRegistryName(), INVENTORY));
@@ -213,8 +214,31 @@ public class ClientProxy extends CommonProxy
         ModelLoader.setCustomModelResourceLocation(ModItems.itemAchievementProxyMetropolis, 0,
           new ModelResourceLocation(ModItems.itemAchievementProxyMetropolis.getRegistryName(), INVENTORY));
 
-
         ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());
+
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleOak), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
+                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.OAK.getName()), INVENTORY));
+
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleBirch), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
+                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.BIRCH.getName()), INVENTORY));
+
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleSpruce), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
+                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.SPRUCE.getName()), INVENTORY));
+
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleJungle), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
+                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.JUNGLE.getName()), INVENTORY));
+
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleDarkOak), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
+                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.DARK_OAK.getName()), INVENTORY));
+
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleAcacia), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
+                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.ACACIA.getName()), INVENTORY));
 
         for (final PaperwallType type : PaperwallType.values())
         {
@@ -224,7 +248,7 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void openClipBoardWindow(@Nullable final int colonyId)
+    public void openClipBoardWindow(final int colonyId)
     {
         @Nullable final WindowClipBoard window = new WindowClipBoard(colonyId);
         window.open();

@@ -102,7 +102,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
 
         final int citizenId = getValidCitizenId(colony, firstArgumentColonyId, args);
 
-        if (citizenId == -1 || colony.getCitizen(citizenId) == null)
+        if (citizenId == -1 || colony.getCitizenManager().getCitizen(citizenId) == null)
         {
             sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
             return;
@@ -157,9 +157,9 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
             if (args.length >= offset + 2)
             {
                 final String citizenName = args[offset] + " " + args[offset + 1] + " " + args[offset + 2];
-                for (int i = 1; i <= colony.getCitizens().size(); i++)
+                for (int i = 1; i <= colony.getCitizenManager().getCitizens().size(); i++)
                 {
-                    if (colony.getCitizen(i).getName().equals(citizenName))
+                    if (colony.getCitizenManager().getCitizen(i).getName().equals(citizenName))
                     {
                         return i;
                     }

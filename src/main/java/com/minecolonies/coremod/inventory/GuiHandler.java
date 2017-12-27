@@ -4,7 +4,6 @@ import com.minecolonies.coremod.client.gui.WindowGuiCrafting;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.entity.ai.citizen.farmer.Field;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
@@ -30,11 +29,11 @@ public class GuiHandler implements IGuiHandler
             final TileEntity tileEntity = world.getTileEntity(pos);
             if (tileEntity instanceof ScarecrowTileEntity)
             {
-                return new Field((ScarecrowTileEntity) tileEntity, player.inventory, world, pos);
+                return new ContainerField((ScarecrowTileEntity) tileEntity, player.inventory, world, pos);
             }
             else if (tileEntity instanceof TileEntityRack)
             {
-                return new ContainerRack((TileEntityRack) tileEntity, ((TileEntityRack) tileEntity).getOtherChest(), player.inventory, pos);
+                return new ContainerRack((TileEntityRack) tileEntity, ((TileEntityRack) tileEntity).getOtherChest(), player.inventory);
             }
             else
             {
@@ -60,7 +59,7 @@ public class GuiHandler implements IGuiHandler
         else if (id == ID.CITIZEN_INVENTORY.ordinal())
         {
             final Colony colony = ColonyManager.getColony(x);
-            final CitizenData citizen = colony.getCitizen(y);
+            final CitizenData citizen = colony.getCitizenManager().getCitizen(y);
             final AbstractBuilding building = citizen.getWorkBuilding() == null ? null : citizen.getWorkBuilding();
 
             return new ContainerMinecoloniesCitizenInventory(player.inventory,

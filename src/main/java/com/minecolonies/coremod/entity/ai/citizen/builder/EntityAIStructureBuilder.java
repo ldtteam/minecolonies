@@ -112,7 +112,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         final WorkOrderBuildDecoration wo = job.getWorkOrder();
 
-        if (job.getColony().getBuilding(wo.getBuildingLocation()) == null && wo instanceof WorkOrderBuild)
+        if (job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation()) == null && wo instanceof WorkOrderBuild)
         {
             job.complete();
             return true;
@@ -144,7 +144,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
             if (wo instanceof WorkOrderBuild)
             {
-                final AbstractBuilding building = job.getColony().getBuilding(wo.getBuildingLocation());
+                final AbstractBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
                 if (building == null)
                 {
                     Log.getLogger().error(
@@ -182,7 +182,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         final BlockPos pos = workOrder.getBuildingLocation();
-        if (workOrder instanceof WorkOrderBuild && worker.getColony().getBuilding(pos) == null)
+        if (workOrder instanceof WorkOrderBuild && worker.getColony().getBuildingManager().getBuilding(pos) == null)
         {
             Log.getLogger().warn("AbstractBuilding does not exist - removing build request");
             worker.getColony().getWorkManager().removeWorkOrder(workOrder);
@@ -402,7 +402,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             final WorkOrderBuild woh = (wo instanceof WorkOrderBuild) ? (WorkOrderBuild) wo : null;
             if (woh != null)
             {
-                final AbstractBuilding building = job.getColony().getBuilding(wo.getBuildingLocation());
+                final AbstractBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
                 if (building == null)
                 {
                     Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
@@ -466,7 +466,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     public void connectBlockToBuildingIfNecessary(@NotNull final Block block, @NotNull final BlockPos pos)
     {
         final BlockPos buildingLocation = job.getWorkOrder().getBuildingLocation();
-        final AbstractBuilding building = this.getOwnBuilding().getColony().getBuilding(buildingLocation);
+        final AbstractBuilding building = this.getOwnBuilding().getColony().getBuildingManager().getBuilding(buildingLocation);
 
         if (building != null)
         {

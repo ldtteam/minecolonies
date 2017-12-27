@@ -40,6 +40,11 @@ public final class Constants
     public static final int    TICKS_HOUR                       = TICKS_SECOND * SECONDS_A_MINUTE * SECONDS_A_MINUTE;
     public static final int MAX_PARAMS_IRECIPESTORAGE = 4;
     public static final int MIN_PARAMS_IRECIPESTORAGE = 3;
+    public static final String DEFAULT_STYLE                    = "wooden";
+    public static final String SAPLINGS                         = "treeSapling";
+    public static final String ORES                             = "ores";
+    public static final double HALF_BLOCK                       = 0.5D;
+    public static final double SLIGHTLY_UP                      = 0.1D;
 
     /**
      * Private constructor to hide implicit public one.

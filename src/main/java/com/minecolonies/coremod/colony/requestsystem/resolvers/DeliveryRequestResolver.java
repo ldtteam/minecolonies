@@ -44,10 +44,10 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         }
 
         final Colony colony = (Colony) manager.getColony();
-        final CitizenData freeDeliveryMan = colony.getCitizens()
-                                        .values()
+        final CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
                                         .stream()
-                                        .filter(c -> c.getCitizenEntity() != null && requestToCheck.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
+                                        .filter(c -> c.getCitizenEntity() != null
+                                                && requestToCheck.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
                                         .filter(c -> c.getJob() instanceof JobDeliveryman)
                                         .findFirst()
                                         .orElse(null);
@@ -71,8 +71,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         }
 
         final Colony colony = (Colony) manager.getColony();
-        final CitizenData freeDeliveryMan = colony.getCitizens()
-                                        .values()
+        final CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
                                         .stream()
                                         .filter(c -> c.getCitizenEntity() != null && request.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
                                         .filter(c -> c.getJob() instanceof JobDeliveryman)
@@ -120,8 +119,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         if (!manager.getColony().getWorld().isRemote)
         {
             final Colony colony = (Colony) manager.getColony();
-            final CitizenData freeDeliveryMan = colony.getCitizens()
-                                            .values()
+            final CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
                                             .stream()
                                             .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).getTaskQueue().contains(request.getToken()))
                                             .findFirst()

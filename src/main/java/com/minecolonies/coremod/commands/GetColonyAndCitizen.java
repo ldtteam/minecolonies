@@ -122,9 +122,10 @@ public final class GetColonyAndCitizen
         {
             citizenName = args[ARGUMENT_ZERO] + " " + args[ARGUMENT_ONE] + " " + args[ARGUMENT_TWO];
             for (int i = 1
-                   ; i <= ColonyManager.getColony(colonyId).getCitizens().size(); i++)
+                   ; i <= ColonyManager.getColony(colonyId).getCitizenManager().getCitizens().size(); i++)
             {
-                if (ColonyManager.getColony(colonyId).getCitizen(i).getName() != null && ColonyManager.getColony(colonyId).getCitizen(i).getName().equals(citizenName))
+                if (ColonyManager.getColony(colonyId).getCitizenManager().getCitizen(i).getName() != null
+                        && ColonyManager.getColony(colonyId).getCitizenManager().getCitizen(i).getName().equals(citizenName))
                 {
                     citizenId = i;
                 }
@@ -133,9 +134,9 @@ public final class GetColonyAndCitizen
         else if (args.length == ID_AND_NAME_ARGUMENT_LENGTH && colonyId >= 0)
         {
             citizenName = args[ARGUMENT_ONE] + " " + args[ARGUMENT_TWO] + " " + args[ARGUMENT_THREE];
-            for (int i = 1; i <= ColonyManager.getColony(colonyId).getCitizens().size(); i++)
+            for (int i = 1; i <= ColonyManager.getColony(colonyId).getCitizenManager().getCitizens().size(); i++)
             {
-                if (ColonyManager.getColony(colonyId).getCitizen(i).getName().equals(citizenName))
+                if (ColonyManager.getColony(colonyId).getCitizenManager().getCitizen(i).getName().equals(citizenName))
                 {
                     citizenId = i;
                 }
@@ -149,7 +150,7 @@ public final class GetColonyAndCitizen
         {
             throw new IllegalArgumentException(UNKNOWN_ERROR);
         }
-        if (citizenId >= 0 && colonyId >= 0 && ColonyManager.getColony(colonyId).getCitizen(citizenId) == null)
+        if (citizenId >= 0 && colonyId >= 0 && ColonyManager.getColony(colonyId).getCitizenManager().getCitizen(citizenId) == null)
         {
             throw new IllegalArgumentException(String.format(NOT_FOUND, "Citizen"));
         }

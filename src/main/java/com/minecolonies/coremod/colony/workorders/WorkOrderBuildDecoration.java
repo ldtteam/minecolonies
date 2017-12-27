@@ -172,7 +172,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         double distanceToBuilder = 0;
         CitizenData claimedBy = null;
 
-        for (@NotNull final CitizenData citizen : colony.getCitizens().values())
+        for (@NotNull final CitizenData citizen : colony.getCitizenManager().getCitizens())
         {
             final JobBuilder job = citizen.getJob(JobBuilder.class);
 

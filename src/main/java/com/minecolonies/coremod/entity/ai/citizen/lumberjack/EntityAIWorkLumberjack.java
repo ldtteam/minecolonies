@@ -348,7 +348,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                 return getState();
             }
             plantSapling();
-            this.getOwnBuilding().getColony().incrementStatistic("trees");
+            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("trees", worker.getColony());
             workFrom = null;
             return LUMBERJACK_GATHERING;
         }
@@ -518,7 +518,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
               soundType.getVolume(),
               soundType.getPitch());
             worker.swingArm(worker.getActiveHand());
-            this.getOwnBuilding().getColony().incrementStatistic("saplings");
+            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("saplings", worker.getColony());
         }
 
         if(timeWaited >= MAX_WAITING_TIME/2 && !checkedInHut && !walkToBuilding())
@@ -622,7 +622,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         }
     }
 
-    //todo: we need to use a different way to get Metadata
     @SuppressWarnings("deprecation")
     /**
      * Checks if this is the correct Sapling.
@@ -631,13 +630,22 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private boolean isCorrectSapling(final ItemStack stack)
     {
+        if(!isStackSapling(stack))
+        {
+            return false;
+        }
+
         if (job.tree.isSlimeTree())
         {
             return isStackSapling(stack) && Compatibility.isSlimeSapling(((ItemBlock) stack.getItem()).getBlock()) && job.tree.getVariant() == stack.getMetadata();
         }
+        else if(ItemStackUtils.isEmpty(job.tree.getSapling()))
+        {
+            return isStackSapling(stack);
+        }
         else
         {
-            return isStackSapling(stack) && job.tree.getVariant() == stack.getMetadata();
+            return job.tree.getSapling().isItemEqual(stack);
         }
     }
 

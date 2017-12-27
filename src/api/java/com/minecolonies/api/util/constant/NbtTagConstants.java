@@ -26,8 +26,8 @@ public final class NbtTagConstants
     public static final String TAG_BUILDING_PRIO    = "buildingPrio";
     public static final String TAG_PRIO             = "prio";
     public static final String TAG_PRIO_ID          = "prioId";
-
-    //statistics tags
+    public static final String TAG_COLONIES         = "colonies";
+    public static final String TAG_UUID             = "uuid";
     public static final String TAG_STATISTICS            = "statistics";
     public static final String TAG_MINER_STATISTICS      = "minerStatistics";
     public static final String TAG_MINER_ORES            = "ores";
@@ -46,6 +46,22 @@ public final class NbtTagConstants
     public static final String TAG_LUMBERJACK_TREES      = "trees";
     public static final String TAG_LUMBERJACK_SAPLINGS   = "saplings";
     public static final String TAG_FIELDS                = "fields";
+    public static final String TAG_NEW_FIELDS            = "newFields";
+    public static final String TAG_COMPATABILITY_MANAGER = "compatabilityManager";
+    public static final String TAG_SAPLINGS              = "tagSaplings";
+    public static final String TAG_SAP_LEAVE             = "tagSapLeaves";
+    public static final String TAG_ORES                  = "tagOres";
+    public static final String TAG_BLOCK                 = "block";
+    public static final String TAG_POS                   = "pos";
+    public static final String TAG_BUILDING_MANAGER      = "buildingManager";
+    public static final String TAG_CITIZEN_MANAGER       = "citizenManager";
+    public static final String TAG_STATS_MANAGER         = "statsManager";
+    public static final String TAG_COLONY_ID             = "colony";
+    public static final String TAG_CITIZEN               = "citizen";
+    public static final String TAG_HELD_ITEM_SLOT        = "HeldItemSlot";
+    public static final String TAG_STATUS                = "status";
+    public static final String TAG_LAST_JOB              = "lastJob";
+    public static final String TAG_DAY                   = "day";
 
     /**
      * Tag used to store the containers to NBT.
@@ -111,6 +127,46 @@ public final class NbtTagConstants
     public static final String TAG_CORNER3 = "corner3";
     public static final String TAG_CORNER4 = "corner4";
     public static final String TAG_HEIGHT  = "height";
+
+    /**
+     * Tag to store if the field has been taken.
+     */
+    public static final String TAG_TAKEN = "taken";
+
+    /**
+     * Tag to store the fields positive length.
+     */
+    public static final String TAG_LENGTH_PLUS = "length+";
+
+    /**
+     * Tag to store the fields positive width.
+     */
+    public static final String TAG_WIDTH_PLUS = "width+";
+
+    /**
+     * Tag to store the fields negative length.
+     */
+    public static final String TAG_LENGTH_MINUS = "length-";
+
+    /**
+     * Tag to store the fields negative width.
+     */
+    public static final String TAG_WIDTH_MINUS = "width-";
+
+    /**
+     * Tag to store the fields stage.
+     */
+    public static final String TAG_STAGE = "stage";
+
+    /**
+     * Tag to store the owner.
+     */
+    public static final String TAG_OWNER = "owner";
+
+    /**
+     * Tag to store the inventory to nbt.
+     */
+    public static final String TAG_INVENTORY = "inventory";
 
     /**
      * Private constructor to hide the implicit one.

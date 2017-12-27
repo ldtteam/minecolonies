@@ -1,8 +1,5 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
-import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.ModBlocks;
@@ -834,17 +831,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
             if (!Configurations.gameplay.builderInfiniteResources)
             {
-                for (final ItemStack stack : request)
+                if(PlacementHandlers.checkForListInInvAndRequest(this, request))
                 {
-                    if (getOwnBuilding().getOpenRequestsOfTypeFiltered(getWorker().getCitizenData(),
-                      TypeToken.of(Stack.class),
-                      (IRequest<? extends Stack> r) -> r.getRequest().matches(stack)).isEmpty())
-                    {
-                        Stack stackRequest = new Stack(stack);
-                        worker.getCitizenData().createRequest(stackRequest);
-
-                        return false;
-                    }
+                    return false;
                 }
 
                 //Surpress

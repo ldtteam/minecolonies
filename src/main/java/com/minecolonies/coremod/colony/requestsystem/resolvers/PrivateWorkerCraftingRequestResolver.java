@@ -50,7 +50,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolve
         {
             final Colony colony = (Colony) manager.getColony();
             final ILocation requesterLocation = requestToCheck.getRequester().getRequesterLocation();
-            final AbstractBuilding building = colony.getBuilding(requesterLocation.getInDimensionLocation());
+            final AbstractBuilding building = colony.getBuildingManager().getBuilding(requesterLocation.getInDimensionLocation());
             if(building instanceof AbstractBuildingWorker)
             {
                 final ItemStack stack = requestToCheck.getRequest().getStack();
@@ -76,7 +76,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolve
 
         final Colony colony = (Colony) manager.getColony();
         final ILocation requesterLocation = request.getRequester().getRequesterLocation();
-        final AbstractBuilding building = colony.getBuilding(requesterLocation.getInDimensionLocation());
+        final AbstractBuilding building = colony.getBuildingManager().getBuilding(requesterLocation.getInDimensionLocation());
         if(canResolve(manager, request) && building instanceof AbstractBuildingWorker)
         {
             Log.getLogger().info("Attempt to resolve");
@@ -109,7 +109,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolve
     {
         final Colony colony = (Colony) manager.getColony();
         final ILocation requesterLocation = request.getRequester().getRequesterLocation();
-        final AbstractBuilding building = colony.getBuilding(requesterLocation.getInDimensionLocation());
+        final AbstractBuilding building = colony.getBuildingManager().getBuilding(requesterLocation.getInDimensionLocation());
         final ItemStack stack = request.getRequest().getStack();
         Log.getLogger().warn("RESOLVE!");
         final IRecipeStorage storage = ((AbstractBuildingWorker) building).getFirstFullFillableRecipe(stack);

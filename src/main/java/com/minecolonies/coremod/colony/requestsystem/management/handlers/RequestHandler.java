@@ -219,8 +219,32 @@ public final class RequestHandler
      */
     public static IToken<?> reassignRequest(final IStandardRequestManager manager, final IRequest<?> request, final Collection<IToken<?>> resolverTokenBlackList)
     {
+        //Get the current resolver
+        IRequestResolver currentResolver = null;
+        if (RequestHandler.isAssigned(manager, request.getToken()))
+        {
+            currentResolver = ResolverHandler.getResolverForRequest(manager, request);
+        }
+
         //Cancel the request to restart the search
         processInternalCancellation(manager, request.getToken());
+
+        if (currentResolver != null)
+        {
+            if (manager.getResolverRequestMap().containsKey(currentResolver.getRequesterId()))
+            {
+                manager.getResolverRequestMap().get(currentResolver.getRequesterId()).remove(request.getToken());
+                if (manager.getResolverRequestMap().get(currentResolver.getRequesterId()).isEmpty())
+                {
+                    manager.getResolverRequestMap().remove(currentResolver.getRequesterId());
+                }
+            }
+
+            if (manager.getRequestResolverMap().containsKey(request.getToken()))
+            {
+                manager.getRequestResolverMap().remove(request.getToken());
+            }
+        }
 
         manager.updateRequestState(request.getToken(), RequestState.REPORTED);
         return assignRequest(manager, request, resolverTokenBlackList);
