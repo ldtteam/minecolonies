@@ -1208,11 +1208,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return true;
         }
 
-        if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), stack::isItemEqualIgnoreDurability) >= stack.getCount() &&
+        if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), stack::isItemEqualIgnoreDurability) >= stack.stackSize &&
             InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                     getOwnBuilding(),
                     stack::isItemEqualIgnoreDurability,
-                    stack.getCount(),
+                    stack.stackSize,
                     new InvWrapper(worker.getInventoryCitizen())))
         {
             return true;
