@@ -52,7 +52,7 @@ public class EntityAICitizenWander extends EntityAIBase
         }
         else
         {
-            vec3d = RandomPositionGenerator.getLandPos(citizen, 10, 7);
+            vec3d = RandomPositionGenerator.findRandomTarget(citizen, 10, 7);
             if (vec3d == null)
             {
                 return false;
