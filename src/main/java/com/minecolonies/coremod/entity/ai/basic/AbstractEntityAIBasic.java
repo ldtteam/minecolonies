@@ -11,12 +11,9 @@ import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -1207,6 +1204,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
           s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack) && s.stackSize >= stack.stackSize))
+        {
+            return true;
+        }
+
+        if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), stack::isItemEqualIgnoreDurability) >= stack.stackSize &&
+            InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+                    getOwnBuilding(),
+                    stack::isItemEqualIgnoreDurability,
+                    stack.stackSize,
+                    new InvWrapper(worker.getInventoryCitizen())))
         {
             return true;
         }

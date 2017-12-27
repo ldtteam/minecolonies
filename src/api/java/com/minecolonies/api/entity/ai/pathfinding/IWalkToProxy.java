@@ -88,4 +88,9 @@ public interface IWalkToProxy
      * @return the entity.
      */
     EntityLiving getEntity();
+
+    /**
+     * Reset the target of the proxy.
+     */
+    void reset();
 }
