@@ -184,7 +184,7 @@ public class CombinedItemHandler
 
         for (final IItemHandlerModifiable modifiable : handlers)
         {
-            if (slot < modifiable.getSlots())
+            if (activeSlot < modifiable.getSlots())
             {
                 return modifiable.getStackInSlot(activeSlot);
             }
@@ -193,7 +193,9 @@ public class CombinedItemHandler
         }
 
         return null;
-    }    /**
+    }
+
+    /**
      * Get the name of this object. For players this returns their username.
      */
     @Override
@@ -255,7 +257,7 @@ public class CombinedItemHandler
                 checkedSlots += modifiable.getSlots();
                 continue;
             }
-            int activeSlot = slot - checkedSlots;
+            final int activeSlot = slot - checkedSlots;
             if(activeSlot < modifiable.getSlots())
             {
                 return modifiable.extractItem(activeSlot, amount, simulate);
