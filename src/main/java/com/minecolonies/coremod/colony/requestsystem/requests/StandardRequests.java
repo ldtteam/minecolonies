@@ -9,7 +9,9 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.blockout.Log;
+import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
@@ -211,6 +213,39 @@ public final class StandardRequests
             }
 
             return foodExamples;
+        }
+    }
+
+    public static class SmeltAbleOreRequest extends AbstractRequest<SmeltableOre>
+    {
+
+        private static final ImmutableList<ItemStack> oreExamples = ImmutableList.of(new ItemStack(Blocks.GOLD_ORE), new ItemStack(Blocks.IRON_ORE));
+
+        SmeltAbleOreRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final SmeltableOre requested)
+        {
+            super(requester, token, requested);
+        }
+
+        SmeltAbleOreRequest(
+                @NotNull final IRequester requester,
+                @NotNull final IToken token,
+                @NotNull final RequestState state,
+                @NotNull final SmeltableOre requested)
+        {
+            super(requester, token, state, requested);
+        }
+
+        @NotNull
+        @Override
+        public ITextComponent getShortDisplayString()
+        {
+            return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE);
+        }
+
+        @Override
+        public List<ItemStack> getDisplayStacks()
+        {
+            return oreExamples;
         }
     }
 

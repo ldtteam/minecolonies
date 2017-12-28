@@ -14,5 +14,7 @@ public class RequestSystemInitializer
         RequestMappingHandler.registerRequestableTypeMapping(Delivery.class, StandardRequests.DeliveryRequest.class);
         RequestMappingHandler.registerRequestableTypeMapping(Food.class, StandardRequests.FoodRequest.class);
         RequestMappingHandler.registerRequestableTypeMapping(Tool.class, StandardRequests.ToolRequest.class);
+        RequestMappingHandler.registerRequestableTypeMapping(Tool.class, StandardRequests.SmeltAbleOreRequest.class);
+
     }
 }
