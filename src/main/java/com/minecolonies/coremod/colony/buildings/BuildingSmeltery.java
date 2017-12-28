@@ -19,8 +19,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
+import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.Suppression.*;
 
 /**
  * Class of the smeltery building.
@@ -135,6 +137,25 @@ public class BuildingSmeltery extends AbstractBuildingWorker
             furnaces.add(pos);
         }
         markDirty();
+    }
+
+    @SuppressWarnings(MAGIC_NUMBERS_SHOULD_NOT_BE_USED)
+    public int ingotMultiplier(final int citizenLevel, final Random random)
+    {
+        switch(getBuildingLevel())
+        {
+            case 1:
+                return random.nextInt(ONE_HUNDRED_PERCENT - citizenLevel) == 0 ? DOUBLE : 1;
+            case 2:
+                return random.nextInt(ONE_HUNDRED_PERCENT - citizenLevel * DOUBLE) == DOUBLE ? 2 : 1;
+            case 3:
+                return 2;
+            case 4:
+            case 5:
+                return random.nextInt(ONE_HUNDRED_PERCENT - citizenLevel) == 0 ? TRIPLE : DOUBLE;
+            default:
+                return 1;
+        }
     }
 
     /**
