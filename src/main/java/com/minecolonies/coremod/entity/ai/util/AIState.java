@@ -332,4 +332,9 @@ public enum AIState
      * Retrieve the ore from the furnace.
      */
     SMELTER_RETRIEVE_ORE,
+
+    /**
+     * Smelt stuff he finds in his hut to ingots.
+     */
+    SMELTER_SMELT_STUFF
 }
