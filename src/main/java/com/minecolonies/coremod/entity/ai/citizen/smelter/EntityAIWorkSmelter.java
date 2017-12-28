@@ -34,6 +34,7 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
  */
 public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
 {
+    //todo add status for sign over their head
     /**
      * How often should strength factor into the smelter's skill modifier.
      */
@@ -93,9 +94,14 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
      * The materials for certain armor body parts.
      */
     private static final int CHEST_MAT_AMOUNT = 8;
-    private static final int LEGS_MAT_AMOUNT = 7;
-    private static final int HEAD_MAT_AMOUNT = 5;
-    private static final int FEET_MAT_AMOUNT = 4;
+    private static final int LEGS_MAT_AMOUNT  = 7;
+    private static final int HEAD_MAT_AMOUNT  = 5;
+    private static final int FEET_MAT_AMOUNT  = 4;
+
+    /**
+     * Base xp gain for the smelter.
+     */
+    private static final double BASE_XP_GAIN     = 5;
 
     /**
      * The current position the worker should walk to.
@@ -147,6 +153,10 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
             progress = 0;
             if(InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableToolOrWeapon) <= 0)
             {
+                if(getOwnBuilding().getCountOfPredicateInHut(EntityAIWorkSmelter::isSmeltableToolOrWeapon, 1, world) < 1)
+                {
+                    return START_WORKING;
+                }
                 InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(
                         getOwnBuilding(),
                         InventoryUtils.findFirstSlotInProviderWith(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableToolOrWeapon),
@@ -192,6 +202,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
                 new InvWrapper(worker.getInventoryCitizen()).setStackInSlot(slot, stack);
             }
 
+            worker.addExperience(BASE_XP_GAIN);
             worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
             return START_WORKING;
         }
@@ -356,6 +367,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
                 new InvWrapper(furnace).setStackInSlot(RESULT_SLOT, resultStack);
                 return;
             }
+            worker.addExperience(BASE_XP_GAIN);
         }
     }
 
