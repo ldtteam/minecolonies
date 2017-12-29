@@ -534,3 +534,6 @@ tile.minecolonies.blockshingle_dark_oak.name=Dark Oak Shingle
 tile.minecolonies.blockshingle_acacia.name=Acacia Shingle
 
 com.minecolonies.coremod.request.smeltableore=Smeltable Ore
+tile.minecolonies.blockhutsmeltery.name=Smeltery
+com.minecolonies.coremod.gui.workerHuts.Smeltery=Smeltery
+com.minecolonies.coremod.job.Smelter=Smelter
