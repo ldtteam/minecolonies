@@ -532,3 +532,5 @@ tile.minecolonies.blockshingle_spruce.name=Spruce Shingle
 tile.minecolonies.blockshingle_jungle.name=Jungle Shingle
 tile.minecolonies.blockshingle_dark_oak.name=Dark Oak Shingle
 tile.minecolonies.blockshingle_acacia.name=Acacia Shingle
+
+com.minecolonies.coremod.request.smeltableore=Smeltable Ore

@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
@@ -19,6 +20,7 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
+import com.minecolonies.coremod.tileentities.TileEntityRack;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -1225,6 +1227,35 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             worker.getCitizenData().createRequestAsync(stackRequest);
         }
 
+        return false;
+    }
+
+    /**
+     * Try to transfer a item matching a predicate from a position to the cook.
+     *
+     * @param pos       the position to transfer it from.
+     * @param predicate the predicate to evaluate.
+     * @return true if succesful.
+     */
+    public boolean tryTransferFromPosToWorker(final BlockPos pos, @NotNull final Predicate<ItemStack> predicate)
+    {
+        final TileEntity entity = world.getTileEntity(pos);
+        if (entity instanceof TileEntityChest)
+        {
+            return InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
+                    new InvWrapper((TileEntityChest) entity),
+                    predicate,
+                    Constants.STACKSIZE,
+                    new InvWrapper(worker.getInventoryCitizen()));
+        }
+        else if (entity instanceof TileEntityRack)
+        {
+            return InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
+                    ((TileEntityRack) entity).getInventory(),
+                    predicate,
+                    Constants.STACKSIZE,
+                    new InvWrapper(worker.getInventoryCitizen()));
+        }
         return false;
     }
 }

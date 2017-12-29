@@ -308,5 +308,28 @@ public enum AIState
     /**
      * Serve food to the citizen inside the building.
      */
-    COOK_SERVE
+    COOK_SERVE,
+
+    /*
+    ###Smelter###
+     */
+    /**
+     * Get some burnable material for the furnace.
+     */
+    SMELTER_GET_FIREWOOD,
+
+    /**
+     * smelter smelts ore until its a bar.
+     */
+    SMELTER_SMELT_ORE,
+
+    /**
+     * Gathering ore from his building.
+     */
+    SMELTER_GATHERING,
+
+    /**
+     * Retrieve the ore from the furnace.
+     */
+    SMELTER_RETRIEVE_ORE,
 }

@@ -134,6 +134,8 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         addMapping("Cook", BuildingCook.class, BuildingCook.View.class, BlockHutCook.class);
         addMapping("Barracks", BuildingBarracks.class, BuildingBarracks.View.class, BlockHutBarracks.class);
         addMapping("BarracksTower", BuildingBarracksTower.class, BuildingBarracksTower.View.class, BlockHutBarracksTower.class);
+        addMapping("Smeltery", BuildingSmeltery.class, BuildingSmeltery.View.class, BlockHutSmeltery.class);
+
     }
     /**
      * List of items the worker should keep.

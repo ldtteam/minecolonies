@@ -1,0 +1,23 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "minecolonies:blockhutsmeltery"
+    },
+    "facing=east": {
+      "model": "minecolonies:blockhutsmeltery",
+      "y": 0
+    },
+    "facing=south": {
+      "model": "minecolonies:blockhutsmeltery",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "minecolonies:blockhutsmeltery",
+      "y": 180
+    },
+    "facing=north": {
+      "model": "minecolonies:blockhutsmeltery",
+      "y": 270
+    }
+  }
+}
