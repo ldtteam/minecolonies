@@ -192,7 +192,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
             final ItemStack material = materialTuple.getFirst();
             if(!ItemStackUtils.isEmpty(material))
             {
-                material.setCount(materialTuple.getSecond());
+                material.stackSize = materialTuple.getSecond();
                 material.setItemDamage(0);
                 new InvWrapper(worker.getInventoryCitizen()).setStackInSlot(slot, material);
                 incrementActionsDone();
@@ -231,7 +231,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
         }
         else if(stack.getItem() instanceof ItemArmor)
         {
-            material = ((ItemArmor) stack.getItem()).getArmorMaterial().getRepairItemStack();
+            material = new ItemStack(((ItemArmor) stack.getItem()).getArmorMaterial().getRepairItem());
             final EntityEquipmentSlot eq = ((ItemArmor) stack.getItem()).getEquipmentSlot();
             if(eq == EntityEquipmentSlot.CHEST)
             {
@@ -345,25 +345,25 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
     {
         final ItemStack ingots = new InvWrapper(furnace).extractItem(RESULT_SLOT, STACKSIZE, false);
         final int multiplier = ((BuildingSmeltery) getOwnBuilding()).ingotMultiplier(worker.getCitizenData().getLevel(), worker.getRandom());
-        int amount = ingots.getCount() * multiplier;
+        int amount = ingots.stackSize * multiplier;
 
         while(amount > 0)
         {
             final ItemStack copyStack = ingots.copy();
             if(amount  < ingots.getMaxStackSize())
             {
-                copyStack.setCount(amount);
+                copyStack.stackSize = amount;
             }
             else
             {
-                copyStack.setCount(ingots.getMaxStackSize());
+                copyStack.stackSize = ingots.getMaxStackSize();
             }
-            amount -= copyStack.getCount();
+            amount -= copyStack.stackSize;
 
             final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(worker.getInventoryCitizen()), ingots);
             if(!ItemStackUtils.isEmpty(resultStack))
             {
-                resultStack.setCount(resultStack.getCount() + amount / multiplier);
+                resultStack.stackSize += amount / multiplier;
                 new InvWrapper(furnace).setStackInSlot(RESULT_SLOT, resultStack);
                 return;
             }

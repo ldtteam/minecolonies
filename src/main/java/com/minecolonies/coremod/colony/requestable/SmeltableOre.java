@@ -63,7 +63,7 @@ public class SmeltableOre implements IDeliverable
         return ItemStackUtils.IS_SMELTABLE.and(
             itemStack -> itemStack.getItem() instanceof ItemBlock
                     && ColonyManager.getCompatabilityManager().isOre(((ItemBlock) itemStack.getItem()).getBlock().getDefaultState())).test(stack)
-                    && stack.getCount() >= getCount();
+                    && stack.stackSize >= getCount();
     }
 
     @Override
