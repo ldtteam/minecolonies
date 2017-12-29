@@ -20,8 +20,14 @@ import java.util.Locale;
  */
 public class BlockShingleSlab extends AbstractBlockMinecoloniesDirectional<BlockShingleSlab>
 {
+    /**
+     * The bounding box of the slab.
+     */
     protected static final AxisAlignedBB AABB_BOTTOM_HALF = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.5D, 1.0D);
 
+    /**
+     * The variants of the shingle slab.
+     */
     public static final PropertyEnum<ShingleSlabType> VARIANT = PropertyEnum.create("variant", ShingleSlabType.class);
 
     /**
@@ -38,6 +44,14 @@ public class BlockShingleSlab extends AbstractBlockMinecoloniesDirectional<Block
      * The resistance this block has.
      */
     private static final float RESISTANCE = 1F;
+
+    /**
+     * Amount of connections with other shingle slabs.
+     */
+    private static final int NO_CONNECTIONS = 0;
+    private static final int ONE_CONNECTION = 1;
+    private static final int TWO_CONNECTIONS = 2;
+    private static final int THREE_CONNECTIONS = 3;
 
     /**
      * Constructor for the TimberFrame
@@ -73,20 +87,29 @@ public class BlockShingleSlab extends AbstractBlockMinecoloniesDirectional<Block
     }
 
     /**
-     * Convert the given metadata into a BlockState for this Block
+     * @deprecated remove when minecraft invents something better.
      */
+    @Deprecated
     @Override
     public IBlockState getStateFromMeta(final int meta)
     {
         return this.getDefaultState().withProperty(FACING, EnumFacing.HORIZONTALS[meta]);
     }
 
+    /**
+     * @deprecated remove when minecraft invents something better.
+     */
+    @Deprecated
     @Override
     public AxisAlignedBB getBoundingBox(@NotNull final IBlockState state, @NotNull final IBlockAccess source, @NotNull final BlockPos pos)
     {
         return AABB_BOTTOM_HALF;
     }
 
+    /**
+     * @deprecated remove when minecraft invents something better.
+     */
+    @Deprecated
     @Override
     public IBlockState getActualState(@NotNull final IBlockState state, @NotNull final IBlockAccess worldIn, @NotNull final BlockPos pos)
     {
@@ -102,44 +125,35 @@ public class BlockShingleSlab extends AbstractBlockMinecoloniesDirectional<Block
      */
     private static IBlockState getSlabShape(@NotNull final IBlockState state, @NotNull final IBlockAccess world, @NotNull final BlockPos position)
     {
-        final boolean connectTo1 = !(world.getBlockState(position.east()).getBlock() instanceof BlockShingleSlab);
-        final boolean connectTo2 = !(world.getBlockState(position.west()).getBlock() instanceof BlockShingleSlab);
-        final boolean connectTo3 = !(world.getBlockState(position.north()).getBlock() instanceof BlockShingleSlab);
-        final boolean connectTo4 = !(world.getBlockState(position.south()).getBlock() instanceof BlockShingleSlab);
+        final boolean[] connectors = new boolean[]{!(world.getBlockState(position.east()).getBlock() instanceof BlockShingleSlab),
+            !(world.getBlockState(position.west()).getBlock() instanceof BlockShingleSlab),
+            !(world.getBlockState(position.north()).getBlock() instanceof BlockShingleSlab),
+            !(world.getBlockState(position.south()).getBlock() instanceof BlockShingleSlab)};
 
         int amount = 0;
-        if(connectTo1)
+        for(final boolean check: connectors)
         {
-            amount++;
-        }
-        if(connectTo2)
-        {
-            amount++;
-        }
-        if(connectTo3)
-        {
-            amount++;
-        }
-        if(connectTo4)
-        {
-            amount++;
+            if(check)
+            {
+                amount++;
+            }
         }
 
-        if(amount == 0)
+        if(amount == NO_CONNECTIONS)
         {
             return state.withProperty(VARIANT, ShingleSlabType.TOP);
         }
-        if(amount == 1)
+        if(amount == ONE_CONNECTION)
         {
-            if (connectTo1)
+            if (connectors[0])
             {
                 return state.withProperty(VARIANT, ShingleSlabType.ONE_WAY).withProperty(FACING, EnumFacing.SOUTH);
             }
-            else if (connectTo2)
+            else if (connectors[1])
             {
                 return state.withProperty(VARIANT, ShingleSlabType.ONE_WAY).withProperty(FACING, EnumFacing.NORTH);
             }
-            else if (connectTo3)
+            else if (connectors[2])
             {
                 return state.withProperty(VARIANT, ShingleSlabType.ONE_WAY).withProperty(FACING, EnumFacing.EAST);
             }
@@ -148,36 +162,36 @@ public class BlockShingleSlab extends AbstractBlockMinecoloniesDirectional<Block
                 return state.withProperty(VARIANT, ShingleSlabType.ONE_WAY).withProperty(FACING, EnumFacing.WEST);
             }
         }
-        else if(amount == 2)
+        else if(amount == TWO_CONNECTIONS)
         {
-            if (connectTo1 && connectTo2 && !connectTo3 && !connectTo4)
+            if (connectors[0] && connectors[1] && !connectors[2] && !connectors[3])
             {
                 return state.withProperty(VARIANT, ShingleSlabType.TWO_WAY).withProperty(FACING, EnumFacing.EAST);
             }
-            else if (!connectTo1 && !connectTo2 && connectTo3 && connectTo4)
+            else if (!connectors[0] && !connectors[1] && connectors[2] && connectors[3])
             {
                 return state.withProperty(VARIANT, ShingleSlabType.TWO_WAY).withProperty(FACING, EnumFacing.NORTH);
             }
-            else if(!connectTo1 && connectTo2 && connectTo3 && !connectTo4)
+            else if(!connectors[0] && connectors[1] && connectors[2] && !connectors[3])
             {
                 return state.withProperty(VARIANT, ShingleSlabType.CURVED).withProperty(FACING, EnumFacing.WEST);
             }
-            else if(connectTo1 && !connectTo2 && !connectTo3 && connectTo4)
+            else if(connectors[0] && !connectors[1] && !connectors[2] && connectors[3])
             {
                 return state.withProperty(VARIANT, ShingleSlabType.CURVED).withProperty(FACING, EnumFacing.EAST);
             }
-            else if(!connectTo1 && connectTo2 && !connectTo3 && connectTo4)
+            else if(!connectors[0] && connectors[1] && !connectors[2] && connectors[3])
             {
                 return state.withProperty(VARIANT, ShingleSlabType.CURVED).withProperty(FACING, EnumFacing.SOUTH);
             }
-            if(connectTo1 && !connectTo2 && connectTo3 && !connectTo4)
+            if(connectors[0] && !connectors[1] && connectors[2] && !connectors[3])
             {
                 return state.withProperty(VARIANT, ShingleSlabType.CURVED).withProperty(FACING, EnumFacing.NORTH);
             }
         }
-        else if(amount == 3)
+        else if(amount == THREE_CONNECTIONS)
         {
-            if (!connectTo1)
+            if (!connectors[0])
             {
                 if(!world.isAirBlock(position.west().down()))
                 {
@@ -185,7 +199,7 @@ public class BlockShingleSlab extends AbstractBlockMinecoloniesDirectional<Block
                 }
                 return state.withProperty(VARIANT, ShingleSlabType.TWO_WAY).withProperty(FACING, EnumFacing.NORTH);
             }
-            else if (!connectTo2)
+            else if (!connectors[1])
             {
                 if(!world.isAirBlock(position.east().down()))
                 {
@@ -193,7 +207,7 @@ public class BlockShingleSlab extends AbstractBlockMinecoloniesDirectional<Block
                 }
                 return state.withProperty(VARIANT, ShingleSlabType.TWO_WAY).withProperty(FACING, EnumFacing.SOUTH);
             }
-            else if (!connectTo3)
+            else if (!connectors[2])
             {
                 if(!world.isAirBlock(position.south().down()))
                 {
@@ -219,12 +233,20 @@ public class BlockShingleSlab extends AbstractBlockMinecoloniesDirectional<Block
         return new BlockStateContainer(this, new IProperty[] {FACING, VARIANT});
     }
 
+    /**
+     * @deprecated remove when minecraft invents something better.
+     */
+    @Deprecated
     @Override
     public boolean isOpaqueCube(@NotNull final IBlockState state)
     {
         return false;
     }
 
+    /**
+     * @deprecated remove when minecraft invents something better.
+     */
+    @Deprecated
     @Override
     public boolean isFullCube(@NotNull final IBlockState state)
     {
