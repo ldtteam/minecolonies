@@ -1,6 +1,5 @@
 {
 	"credit": "Made by d3miurge.vallek@gmail.com",
-	"ambientocclusion": false,
 	"textures": {
       "0": "minecolonies:blocks/shingle_slab/clay_shingle_1",
       "1": "minecolonies:blocks/shingle_slab/clay_shingle_2",
