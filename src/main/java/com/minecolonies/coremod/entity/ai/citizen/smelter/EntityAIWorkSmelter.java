@@ -521,9 +521,9 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
             final TileEntity entity = world.getTileEntity(pos);
             if (entity instanceof TileEntityFurnace && !((TileEntityFurnace) entity).isBurning())
             {
-                walkTo = pos;
                 if (!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(RESULT_SLOT)))
                 {
+                    walkTo = pos;
                     worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.retrieving"));
                     return SMELTER_RETRIEVE_ORE;
                 }
@@ -557,7 +557,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
      */
     private static boolean isSmeltableOre(final ItemStack stack)
     {
-        return ItemStackUtils.IS_SMELTABLE.and(
+        return !ItemStackUtils.isEmpty(stack) && ItemStackUtils.IS_SMELTABLE.and(
                 itemStack -> itemStack.getItem() instanceof ItemBlock
                         && ColonyManager.getCompatabilityManager().isOre(((ItemBlock) itemStack.getItem()).getBlock().getDefaultState())).test(stack);
     }

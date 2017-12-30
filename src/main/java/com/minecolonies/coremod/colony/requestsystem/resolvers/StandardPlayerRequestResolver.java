@@ -115,9 +115,11 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
             final EntityPlayer owner = ServerUtils.getPlayerFromUUID(colony.getWorld(), ((Colony) colony).getPermissions().getOwner());
             final TextComponentString colonyDescription = new TextComponentString(colony.getName() + ":");
 
-            if (owner != null)
+            if(manager.getColony().getWorld().isDaytime())
             {
-                players.remove(owner);
+                if (owner != null)
+                {
+                    players.remove(owner);
 
                 LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
                   request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
