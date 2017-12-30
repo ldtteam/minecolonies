@@ -40,6 +40,12 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
     private final Colony colony;
 
     /**
+     * List of achievements within the colony.
+     */
+    @NotNull
+    private final List<Advancement> colonyAchievements = new ArrayList<>();
+
+    /**
      * Creates the Stat- and AchievementManager for a colony.
      * @param colony the colony.
      */
@@ -47,12 +53,6 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
     {
         this.colony = colony;
     }
-
-    /**
-     * List of achievements within the colony.
-     */
-    @NotNull
-    private final List<Advancement> colonyAchievements = new ArrayList<>();
 
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)

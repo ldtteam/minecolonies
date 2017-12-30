@@ -74,7 +74,7 @@ public interface ICitizenManager
      * @param data Data to use to spawn citizen.
      * @param world the world to spawn it in.
      */
-    void spawnCitizen(@NotNull final CitizenData data, @NotNull final World world);
+    void spawnCitizen(final CitizenData data, @NotNull final World world);
 
     /**
      * Removes a citizen from the colony.
@@ -133,5 +133,5 @@ public interface ICitizenManager
      * Actions to execute on a specific world tick event.
      * @param event the event.
      */
-    void onWorldTick(TickEvent.WorldTickEvent event);
+    void onWorldTick(final TickEvent.WorldTickEvent event);
 }
