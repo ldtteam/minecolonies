@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "   ",
+    "BBB",
+    "SSS"
+  ],
+  "key": {
+    "P": {
+      "item": "minecraft:planks",
+      "data": 0
+    },
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "B": {
+      "item": "minecraft:brick"
+    }
+  },
+  "result": {
+    "item": "minecolonies:blockshingleslab",
+    "count": 8
+  }
+}

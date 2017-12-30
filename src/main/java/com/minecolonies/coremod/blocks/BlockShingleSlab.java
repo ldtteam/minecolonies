@@ -38,7 +38,7 @@ public class BlockShingleSlab extends AbstractBlockMinecoloniesDirectional<Block
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME = "blockShingleSlab";
+    private static final String BLOCK_NAME = "blockshingleslab";
 
     /**
      * The resistance this block has.
@@ -48,10 +48,10 @@ public class BlockShingleSlab extends AbstractBlockMinecoloniesDirectional<Block
     /**
      * Amount of connections with other shingle slabs.
      */
-    private static final int NO_CONNECTIONS = 0;
-    private static final int ONE_CONNECTION = 1;
-    private static final int TWO_CONNECTIONS = 2;
-    private static final int THREE_CONNECTIONS = 3;
+    private static final int NO_CONNECTIONS    = 0;
+    private static final int THREE_CONNECTIONS = 1;
+    private static final int TWO_CONNECTIONS   = 2;
+    private static final int ONE_CONNECTION    = 3;
 
     /**
      * Constructor for the TimberFrame
@@ -120,7 +120,7 @@ public class BlockShingleSlab extends AbstractBlockMinecoloniesDirectional<Block
      * Get the step shape of the slab
      * @param state the state.
      * @param world the world.
-     * @param position the position.
+     * @param position the position.Re
      * @return the blockState to use.
      */
     private static IBlockState getSlabShape(@NotNull final IBlockState state, @NotNull final IBlockAccess world, @NotNull final BlockPos position)
@@ -143,7 +143,7 @@ public class BlockShingleSlab extends AbstractBlockMinecoloniesDirectional<Block
         {
             return state.withProperty(VARIANT, ShingleSlabType.TOP);
         }
-        if(amount == ONE_CONNECTION)
+        if(amount == THREE_CONNECTIONS)
         {
             if (connectors[0])
             {
@@ -189,7 +189,7 @@ public class BlockShingleSlab extends AbstractBlockMinecoloniesDirectional<Block
                 return state.withProperty(VARIANT, ShingleSlabType.CURVED).withProperty(FACING, EnumFacing.NORTH);
             }
         }
-        else if(amount == THREE_CONNECTIONS)
+        else if(amount == ONE_CONNECTION)
         {
             if (!connectors[0])
             {
