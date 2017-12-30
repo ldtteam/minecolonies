@@ -231,7 +231,7 @@ public class Colony implements IColony
     {
         final int id = compound.getInteger(TAG_ID);
         @NotNull final Colony c = new Colony(id, world);
-        c.setName(compound.getString(TAG_NAME));
+        c.name = compound.getString(TAG_NAME);
         c.center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
         c.setRequestManager();
         c.readFromNBT(compound);
