@@ -223,7 +223,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
                 final ScarecrowTileEntity scareCrow = (ScarecrowTileEntity) worldIn.getTileEntity(pos);
                 if (scareCrow != null)
                 {
-                    colony.getBuildingManager().addNewField(scareCrow, pos, worldIn);
+                    colony.getBuildingManager().addNewField(scareCrow, pos, worldIn, colony);
                 }
             }
         }
@@ -260,7 +260,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
         @Nullable final Colony colony = ColonyManager.getColony(worldIn, pos);
         if (colony != null)
         {
-            colony.getBuildingManager().removeField(pos);
+            colony.getBuildingManager().removeField(pos, colony);
         }
     }
 

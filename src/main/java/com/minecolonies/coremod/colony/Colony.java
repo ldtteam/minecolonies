@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.configuration.Configurations;
@@ -12,11 +11,9 @@ import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.managers.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
-import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -58,6 +55,7 @@ public class Colony implements IColony
      * Id of the colony.
      */
     private final int id;
+
     /**
      * Dimension of the colony.
      */
@@ -94,6 +92,11 @@ public class Colony implements IColony
     private final IBarbarianManager barbarianManager = new BarbarianManager();
 
     /**
+     * The colony package manager.
+     */
+    private final IColonyPackageManager packageManager = new ColonyPackageManager();
+
+    /**
      * The Positions which players can freely interact.
      */
     private final Set<BlockPos> freePositions = new HashSet<>();
@@ -107,11 +110,6 @@ public class Colony implements IColony
      * Colony permission event handler.
      */
     private final ColonyPermissionEventHandler eventHandler;
-
-    /**
-     * The hours the colony is without contact with its players.
-     */
-    private int lastContactInHours = 0;
 
     /**
      * Whether or not this colony may be auto-deleted.
@@ -128,17 +126,6 @@ public class Colony implements IColony
      */
     @Nullable
     private World world = null;
-
-    /**
-     * List of players subscribing to the colony.
-     */
-    @NotNull
-    private Set<EntityPlayerMP> subscribers = new HashSet<>();
-
-    /**
-     * Variables taking care of updating the views.
-     */
-    private boolean isDirty          = false;
 
     /**
      * The hiring mode in the colony.
@@ -172,14 +159,14 @@ public class Colony implements IColony
     private double overallHappiness = DEFAULT_OVERALL_HAPPYNESS;
 
     /**
-     * Amount of ticks passed.
-     */
-    private int ticksPassed = 0;
-
-    /**
      * The request manager assigned to the colony.
      */
     private IRequestManager requestManager;
+
+    /**
+     * The NBTTag compound of the colony itself.
+     */
+    private NBTTagCompound colonyTag;
 
     /**
      * Constructor for a newly created Colony.
@@ -338,7 +325,7 @@ public class Colony implements IColony
         {
             this.overallHappiness = AVERAGE_HAPPINESS;
         }
-        lastContactInHours = compound.getInteger(TAG_ABANDONED);
+        packageManager.setLastContactInHours(compound.getInteger(TAG_ABANDONED));
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
 
         if (compound.hasKey(TAG_REQUESTMANAGER))
@@ -350,6 +337,26 @@ public class Colony implements IColony
         {
             this.style = compound.getString(TAG_STYLE);
         }
+
+        if(compound.hasKey(TAG_RAIDABLE))
+        {
+            this.barbarianManager.setCanHaveBarbEvents(compound.getBoolean(TAG_RAIDABLE), this);
+        }
+        else
+        {
+            this.barbarianManager.setCanHaveBarbEvents(true, this);
+        }
+
+        if(compound.hasKey(TAG_AUTO_DELETE))
+        {
+            this.canColonyBeAutoDeleted = compound.getBoolean(TAG_AUTO_DELETE);
+        }
+        else
+        {
+            this.canColonyBeAutoDeleted = true;
+        }
+
+        this.colonyTag = compound;
     }
 
     /**
@@ -430,10 +437,14 @@ public class Colony implements IColony
         compound.setTag(TAG_FREE_POSITIONS, freePositionsTagList);
 
         compound.setDouble(TAG_HAPPINESS, overallHappiness);
-        compound.setInteger(TAG_ABANDONED, lastContactInHours);
+        compound.setInteger(TAG_ABANDONED, packageManager.getLastContactInHours());
         compound.setBoolean(TAG_MANUAL_HOUSING, manualHousing);
         compound.setTag(TAG_REQUESTMANAGER, getRequestManager().serializeNBT());
         compound.setString(TAG_STYLE, style);
+        compound.setBoolean(TAG_RAIDABLE, barbarianManager.canHaveBarbEvents());
+        compound.setBoolean(TAG_AUTO_DELETE, canColonyBeAutoDeleted);
+
+        this.colonyTag = compound;
     }
 
     /**
@@ -491,169 +502,7 @@ public class Colony implements IColony
 
         if (event.phase == TickEvent.Phase.END)
         {
-            updateSubscribers();
-        }
-    }
-
-    /**
-     * Update Subscribers with Colony, Citizen, and AbstractBuilding Views.
-     */
-    private void updateSubscribers()
-    {
-        // If the world or server is null, don't try to update the subscribers this tick.
-        if (world == null || world.getMinecraftServer() == null)
-        {
-            return;
-        }
-
-        //  Recompute subscribers every frame (for now)
-        //  Subscribers = Owners + Players within (double working town hall range)
-        @NotNull final Set<EntityPlayerMP> oldSubscribers = subscribers;
-        subscribers = new HashSet<>();
-
-        // Add owners
-        world.getMinecraftServer().getPlayerList().getPlayers()
-          .stream()
-          .filter(permissions::isSubscriber)
-          .forEach(subscribers::add);
-
-        if (subscribers.isEmpty())
-        {
-            if (ticksPassed >= TICKS_HOUR)
-            {
-                ticksPassed = 0;
-                lastContactInHours++;
-            }
-            ticksPassed++;
-        }
-        else
-        {
-            lastContactInHours = 0;
-            ticksPassed = 0;
-            lastContactInHours = 0;
-        }
-
-        //  Add nearby players
-        for (final EntityPlayer o : world.playerEntities)
-        {
-            if (o instanceof EntityPlayerMP)
-            {
-                @NotNull final EntityPlayerMP player = (EntityPlayerMP) o;
-
-                final double distance = player.getDistanceSq(center);
-                if (distance < MAX_SQ_DIST_SUBSCRIBER_UPDATE
-                      || (oldSubscribers.contains(player) && distance < MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE))
-                {
-                    // Players become subscribers if they come within 16 blocks of the edge of the colony
-                    // Players remain subscribers while they remain within double the colony's radius
-                    subscribers.add(player);
-                }
-            }
-        }
-
-        if (!subscribers.isEmpty())
-        {
-            //  Determine if any new subscribers were added this pass
-            final boolean hasNewSubscribers = ColonyUtils.hasNewSubscribers(oldSubscribers, subscribers);
-
-            //  Send each type of update packet as appropriate:
-            //      - To Subscribers if the data changes
-            //      - To New Subscribers even if it hasn't changed
-
-            //ColonyView
-            sendColonyViewPackets(oldSubscribers, hasNewSubscribers);
-
-            //Permissions
-            sendPermissionsPackets(oldSubscribers, hasNewSubscribers);
-
-            //WorkOrders
-            sendWorkOrderPackets(oldSubscribers, hasNewSubscribers);
-
-            citizenManager.sendPackets(oldSubscribers, hasNewSubscribers, subscribers, this);
-
-            buildingManager.sendPackets(oldSubscribers, hasNewSubscribers, subscribers);
-
-            //schematics
-            if (Structures.isDirty())
-            {
-                sendSchematicsPackets(hasNewSubscribers);
-                Structures.clearDirty();
-            }
-        }
-
-        isDirty = false;
-        permissions.clearDirty();
-
-        buildingManager.clearDirty();
-        citizenManager.clearDirty();
-    }
-
-    private void sendColonyViewPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers)
-    {
-        if (isDirty || hasNewSubscribers)
-        {
-            for (final EntityPlayerMP player : subscribers)
-            {
-                final boolean isNewSubscriber = !oldSubscribers.contains(player);
-                if (isDirty || isNewSubscriber)
-                {
-                    MineColonies.getNetwork().sendTo(new ColonyViewMessage(this, isNewSubscriber), player);
-                }
-            }
-        }
-    }
-
-    /**
-     * Sends packages to update the permissions.
-     *
-     * @param oldSubscribers    the existing subscribers.
-     * @param hasNewSubscribers the new subscribers.
-     */
-    private void sendPermissionsPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers)
-    {
-        if (permissions.isDirty() || hasNewSubscribers)
-        {
-            subscribers
-              .stream()
-              .filter(player -> permissions.isDirty() || !oldSubscribers.contains(player)).forEach(player ->
-            {
-                final Rank rank = getPermissions().getRank(player);
-                MineColonies.getNetwork().sendTo(new PermissionsMessage.View(this, rank), player);
-            });
-        }
-    }
-
-    /**
-     * Sends packages to update the workOrders.
-     *
-     * @param oldSubscribers    the existing subscribers.
-     * @param hasNewSubscribers the new subscribers.
-     */
-    private void sendWorkOrderPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers)
-    {
-        if (getWorkManager().isDirty() || hasNewSubscribers)
-        {
-            for (final AbstractWorkOrder workOrder : getWorkManager().getWorkOrders().values())
-            {
-                subscribers.stream().filter(player -> workManager.isDirty() || !oldSubscribers.contains(player))
-                  .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewWorkOrderMessage(this, workOrder), player));
-            }
-
-            getWorkManager().setDirty(false);
-        }
-    }
-
-    /**
-     * Sends packages to update the schematics.
-     *
-     * @param hasNewSubscribers the new subscribers.
-     */
-    private void sendSchematicsPackets(final boolean hasNewSubscribers)
-    {
-        if (Structures.isDirty() || hasNewSubscribers)
-        {
-            subscribers.stream()
-              .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), player));
+            packageManager.updateSubscribers(this);
         }
     }
 
@@ -753,7 +602,7 @@ public class Colony implements IColony
         if (event.phase == TickEvent.Phase.START)
         {
             //  Cleanup Buildings whose Blocks have gone AWOL
-            buildingManager.cleanUpBuildings(event);
+            buildingManager.cleanUpBuildings(event, this);
 
             // Clean up or spawn citizens.
             citizenManager.onWorldTick(event, this);
@@ -915,7 +764,7 @@ public class Colony implements IColony
     @Override
     public int getLastContactInHours()
     {
-        return lastContactInHours;
+        return packageManager.getLastContactInHours();
     }
 
     /**
@@ -959,8 +808,9 @@ public class Colony implements IColony
      */
     public void markDirty()
     {
+        this.writeToNBT(new NBTTagCompound());
         ColonyManager.markDirty();
-        isDirty = true;
+        packageManager.setDirty();
     }
 
     @Override
@@ -1054,10 +904,11 @@ public class Colony implements IColony
     public void removeWorkOrder(final int orderId)
     {
         //  Inform Subscribers of removed workOrder
-        for (final EntityPlayerMP player : subscribers)
+        for (final EntityPlayerMP player : packageManager.getSubscribers())
         {
             MineColonies.getNetwork().sendTo(new ColonyViewRemoveWorkOrderMessage(this, orderId), player);
         }
+        this.markDirty();
     }
 
     /**
@@ -1069,6 +920,7 @@ public class Colony implements IColony
     public void onBuildingUpgradeComplete(@NotNull final AbstractBuilding building, final int level)
     {
         building.onUpgradeComplete(level);
+        this.markDirty();
     }
 
     /**
@@ -1080,7 +932,7 @@ public class Colony implements IColony
     public void addWayPoint(final BlockPos point, final IBlockState block)
     {
         wayPoints.put(point, block);
-        markDirty();
+        this.markDirty();
     }
 
     /**
@@ -1147,6 +999,7 @@ public class Colony implements IColony
     public void setCanBeAutoDeleted(final Boolean canBeDeleted)
     {
         this.canColonyBeAutoDeleted = canBeDeleted;
+        this.markDirty();
     }
 
     /**
@@ -1203,9 +1056,21 @@ public class Colony implements IColony
         return barbarianManager;
     }
 
-    @NotNull
-    public Set<EntityPlayerMP> getSubscribers()
+    /**
+     * Get the packagemanager of the colony.
+     * @return the manager.
+     */
+    public IColonyPackageManager getPackageManager()
     {
-        return new HashSet<>(subscribers);
+        return packageManager;
+    }
+
+    /**
+     * Get the NBT tag of the colony.
+     * @return the tag of it.
+     */
+    public NBTTagCompound getColonyTag()
+    {
+        return this.colonyTag;
     }
 }

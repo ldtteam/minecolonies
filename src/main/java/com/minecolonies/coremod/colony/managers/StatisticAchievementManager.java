@@ -268,6 +268,7 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
 
         this.colonyAchievements.add(achievement);*/
 
-        AchievementUtils.syncAchievements(colony);
+        //AchievementUtils.syncAchievements(colony);
+        //colony.markDirty();
     }
 }

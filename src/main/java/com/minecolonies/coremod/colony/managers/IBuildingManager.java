@@ -65,7 +65,7 @@ public interface IBuildingManager
      * Clean up the buildings.
      * @param event at the worldTick event.
      */
-    void cleanUpBuildings(TickEvent.WorldTickEvent event);
+    void cleanUpBuildings(final TickEvent.WorldTickEvent event, final Colony colony);
 
     /**
      * Get a certain building.
@@ -127,8 +127,9 @@ public interface IBuildingManager
      * @param tileEntity      the scarecrow which contains the inventory.
      * @param pos             Position where the field has been placed.
      * @param world           the world of the field.
+     * @param colony          the colony.
      */
-    void addNewField(final ScarecrowTileEntity tileEntity, final BlockPos pos, final World world);
+    void addNewField(final ScarecrowTileEntity tileEntity, final BlockPos pos, final World world, final Colony colony);
 
     /**
      * Returns a field which has not been taken yet.
@@ -164,8 +165,9 @@ public interface IBuildingManager
      * Removes a field from the farmerFields list.
      *
      * @param pos the position-id.
+     * @param colony the colony.
      */
-    void removeField(final BlockPos pos);
+    void removeField(final BlockPos pos, final Colony colony);
 
     /**
      * Calculate a good cook for a certain citizen.

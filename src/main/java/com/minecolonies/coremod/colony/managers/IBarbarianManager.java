@@ -31,8 +31,9 @@ public interface IBarbarianManager
     /**
      * Set that the manager can receive barbarian events.
      * @param canHave true or false.
+     * @param colony the colony.
      */
-    void setCanHaveBarbEvents(final boolean canHave);
+    void setCanHaveBarbEvents(final boolean canHave, final Colony colony);
 
     /**
      * Set if the raid has been calculated.

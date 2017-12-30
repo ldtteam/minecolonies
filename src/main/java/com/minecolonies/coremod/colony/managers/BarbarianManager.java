@@ -53,9 +53,10 @@ public class BarbarianManager implements IBarbarianManager
     }
 
     @Override
-    public void setCanHaveBarbEvents(final boolean canHave)
+    public void setCanHaveBarbEvents(final boolean canHave, final Colony colony)
     {
         this.haveBarbEvents = canHave;
+        colony.markDirty();
     }
 
     @Override

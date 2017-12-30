@@ -5,7 +5,6 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
@@ -85,7 +84,7 @@ public class BuildingManager implements IBuildingManager
             final NBTTagList fieldTagList = compound.getTagList(TAG_NEW_FIELDS, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < fieldTagList.tagCount(); ++i)
             {
-                addField(BlockPosUtil.readFromNBT(fieldTagList.getCompoundTagAt(i), TAG_POS));
+                addField(BlockPosUtil.readFromNBT(fieldTagList.getCompoundTagAt(i), TAG_POS), colony);
             }
         }
 
@@ -157,7 +156,7 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void cleanUpBuildings(@NotNull final TickEvent.WorldTickEvent event)
+    public void cleanUpBuildings(@NotNull final TickEvent.WorldTickEvent event, final Colony colony)
     {
         @Nullable final List<AbstractBuilding> removedBuildings = new ArrayList<>();
 
@@ -183,7 +182,7 @@ public class BuildingManager implements IBuildingManager
                 final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) event.world.getTileEntity(pos);
                 if (scarecrow == null)
                 {
-                    fields.remove(pos);
+                    removeField(pos, colony);
                 }
             }
         }
@@ -266,9 +265,9 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void addNewField(final ScarecrowTileEntity tileEntity, final BlockPos pos, final World world)
+    public void addNewField(final ScarecrowTileEntity tileEntity, final BlockPos pos, final World world, final Colony colony)
     {
-        addField(pos);
+        addField(pos, colony);
         tileEntity.calculateSize(world, pos);
         markFieldsDirty();
     }
@@ -312,7 +311,7 @@ public class BuildingManager implements IBuildingManager
             }
 
             colony.getCitizenManager().calculateMaxCitizens(colony);
-            ColonyManager.markDirty();
+            colony.markDirty();
             return building;
         }
         return null;
@@ -352,15 +351,15 @@ public class BuildingManager implements IBuildingManager
         }
 
         colony.getCitizenManager().calculateMaxCitizens(colony);
-
-        ColonyManager.markDirty();
+        colony.markDirty();
     }
 
     @Override
-    public void removeField(final BlockPos pos)
+    public void removeField(final BlockPos pos, final Colony colony)
     {
         this.markFieldsDirty();
         fields.remove(pos);
+        colony.markDirty();
     }
 
     @Override
@@ -413,6 +412,7 @@ public class BuildingManager implements IBuildingManager
         }
 
         colony.getRequestManager().onProviderAddedToColony(building);
+        colony.markDirty();
     }
 
     /**
@@ -461,11 +461,12 @@ public class BuildingManager implements IBuildingManager
      *
      * @param pos Field position to add to the colony.
      */
-    private void addField(@NotNull final BlockPos pos)
+    private void addField(@NotNull final BlockPos pos, final Colony colony)
     {
         if(!fields.contains(pos))
         {
             fields.add(pos);
         }
+        colony.markDirty();
     }
 }
