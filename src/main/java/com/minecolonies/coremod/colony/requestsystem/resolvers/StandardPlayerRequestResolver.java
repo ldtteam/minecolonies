@@ -86,10 +86,10 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
         if (colony instanceof Colony)
         {
             if (Configurations.requestSystem.creativeResolve &&
-                  request.getRequest() instanceof IDeliverable &&
-                  request.getRequester() instanceof BuildingBasedRequester &&
-                  ((BuildingBasedRequester) request.getRequester()).getBuilding().isPresent() &&
-                  ((BuildingBasedRequester) request.getRequester()).getBuilding().get() instanceof AbstractBuilding)
+                    request.getRequest() instanceof IDeliverable &&
+                    request.getRequester() instanceof BuildingBasedRequester &&
+                    ((BuildingBasedRequester) request.getRequester()).getBuilding().isPresent() &&
+                    ((BuildingBasedRequester) request.getRequester()).getBuilding().get() instanceof AbstractBuilding)
             {
                 AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding().get();
                 Optional<CitizenData> citizenDataOptional = building.getCitizenForRequest(request.getToken());
@@ -100,8 +100,8 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                     ItemStack resolveStack = resolvablestacks.get(0);
                     resolveStack.setCount(Math.min(((IDeliverable) request.getRequest()).getCount(), resolveStack.getMaxStackSize()));
                     ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(
-                      new InvWrapper(citizenDataOptional.get().getCitizenEntity().getInventoryCitizen()),
-                      resolveStack);
+                            new InvWrapper(citizenDataOptional.get().getCitizenEntity().getInventoryCitizen()),
+                            resolveStack);
 
                     if (ItemStackUtils.isEmpty(remainingItemStack))
                     {
@@ -132,7 +132,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                         request.getShortDisplayString().getFormattedText(),
                         request.getRequester().getRequesterLocation().toString());
             }
-
+        }
         assignedRequests.add(request.getToken());
     }
 
