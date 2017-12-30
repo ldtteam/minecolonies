@@ -203,7 +203,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel))
             {
                 walkTo = null;
-                return AIState.COOK_GET_FIREWOOD;
+                return COOK_GET_FIREWOOD;
             }
 
             InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(
@@ -325,7 +325,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
                 if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel))
                 {
                     walkTo = null;
-                    return AIState.COOK_GET_FIREWOOD;
+                    return COOK_GET_FIREWOOD;
                 }
 
                 InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(

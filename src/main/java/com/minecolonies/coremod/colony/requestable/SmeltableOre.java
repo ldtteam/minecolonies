@@ -38,7 +38,7 @@ public class SmeltableOre implements IDeliverable
 
     public static NBTTagCompound serialize(final IFactoryController controller, final SmeltableOre food)
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        final NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger(NBT_COUNT, food.count);
 
         if (!ItemStackUtils.isEmpty(food.result))
@@ -51,8 +51,8 @@ public class SmeltableOre implements IDeliverable
 
     public static SmeltableOre deserialize(final IFactoryController controller, final NBTTagCompound compound)
     {
-        int count = compound.getInteger(NBT_COUNT);
-        ItemStack result = compound.hasKey(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_RESULT)) : ItemStackUtils.EMPTY;
+        final int count = compound.getInteger(NBT_COUNT);
+        final ItemStack result = compound.hasKey(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_RESULT)) : ItemStackUtils.EMPTY;
 
         return new SmeltableOre(count, result);
     }
