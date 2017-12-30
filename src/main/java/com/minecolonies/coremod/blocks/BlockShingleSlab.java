@@ -185,36 +185,24 @@ public class BlockShingleSlab extends AbstractBlockMinecoloniesDirectional<Block
         }
         else if(amount == ONE_CONNECTION)
         {
-            if (!connectors[0])
+            if (!connectors[0] && !world.isAirBlock(position.west().down()))
             {
-                if(!world.isAirBlock(position.west().down()))
-                {
-                    return state.withProperty(VARIANT, ShingleSlabType.THREE_WAY).withProperty(FACING, EnumFacing.NORTH);
-                }
-                return state.withProperty(VARIANT, ShingleSlabType.TWO_WAY).withProperty(FACING, EnumFacing.NORTH);
+                return state.withProperty(VARIANT, ShingleSlabType.THREE_WAY).withProperty(FACING, EnumFacing.NORTH);
             }
-            else if (!connectors[1])
+            else if (!connectors[1] && !world.isAirBlock(position.east().down()))
             {
-                if(!world.isAirBlock(position.east().down()))
-                {
-                    return state.withProperty(VARIANT, ShingleSlabType.THREE_WAY).withProperty(FACING, EnumFacing.SOUTH);
-                }
-                return state.withProperty(VARIANT, ShingleSlabType.TWO_WAY).withProperty(FACING, EnumFacing.SOUTH);
+                return state.withProperty(VARIANT, ShingleSlabType.THREE_WAY).withProperty(FACING, EnumFacing.SOUTH);
             }
-            else if (!connectors[2])
+            else if (!connectors[2] && !world.isAirBlock(position.south().down()))
             {
-                if(!world.isAirBlock(position.south().down()))
-                {
-                    return state.withProperty(VARIANT, ShingleSlabType.THREE_WAY).withProperty(FACING, EnumFacing.WEST);
-                }
-                return state.withProperty(VARIANT, ShingleSlabType.TWO_WAY).withProperty(FACING, EnumFacing.WEST);
+                return state.withProperty(VARIANT, ShingleSlabType.THREE_WAY).withProperty(FACING, EnumFacing.WEST);
             }
-
-            if(!world.isAirBlock(position.north().down()))
+            else if (!world.isAirBlock(position.north().down()))
             {
                 return state.withProperty(VARIANT, ShingleSlabType.THREE_WAY).withProperty(FACING, EnumFacing.EAST);
             }
-            return state.withProperty(VARIANT, ShingleSlabType.TWO_WAY).withProperty(FACING, EnumFacing.EAST);
+            return state.withProperty(VARIANT, ShingleSlabType.TWO_WAY)
+                    .withProperty(FACING, !connectors[0] || !connectors[1] ? EnumFacing.NORTH : EnumFacing.EAST);
         }
         return state.withProperty(VARIANT, ShingleSlabType.FOUR_WAY);
     }
