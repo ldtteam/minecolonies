@@ -197,7 +197,7 @@ public class BlockShingleSlab extends AbstractBlockMinecoloniesDirectional<Block
             {
                 return state.withProperty(VARIANT, ShingleSlabType.THREE_WAY).withProperty(FACING, EnumFacing.WEST);
             }
-            else if (!world.isAirBlock(position.north().down()))
+            else if (!connectors[3] && !world.isAirBlock(position.north().down()))
             {
                 return state.withProperty(VARIANT, ShingleSlabType.THREE_WAY).withProperty(FACING, EnumFacing.EAST);
             }
