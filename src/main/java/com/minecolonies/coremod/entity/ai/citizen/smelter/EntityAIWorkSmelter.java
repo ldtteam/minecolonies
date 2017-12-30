@@ -327,7 +327,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
             if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel))
             {
                 walkTo = null;
-                return AIState.COOK_GET_FIREWOOD;
+                return SMELTER_GET_FIREWOOD;
             }
 
             InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(
@@ -506,16 +506,20 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
             }
         }
 
-        return checkForAdditionalJobs();
+        return checkForAdditionalJobs(amountOfOre);
     }
 
     /**
      * If no clear tasks are given, check if something else is to do.
-     *
+     * @param amountOfOre the amount of ore.
      * @return the next AIState to traverse to.
      */
-    private AIState checkForAdditionalJobs()
+    private AIState checkForAdditionalJobs(final int amountOfOre)
     {
+        final int amountOfTools = getOwnBuilding().getCountOfPredicateInHut(EntityAIWorkSmelter::isSmeltableToolOrWeapon, 1, world)
+                + InventoryUtils.getItemCountInItemHandler(
+                new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableToolOrWeapon);
+
         for (final BlockPos pos : ((BuildingSmeltery) getOwnBuilding()).getFurnaces())
         {
             final TileEntity entity = world.getTileEntity(pos);
@@ -527,23 +531,26 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
                     worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.retrieving"));
                     return SMELTER_RETRIEVE_ORE;
                 }
-                else if (!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(ORE_SLOT)))
+                else if (!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(ORE_SLOT))
+                        || !ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(FUEL_SLOT)))
                 {
                     worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.cooking"));
                     return SMELTER_SMELT_ORE;
                 }
-                else
+            }
+            else
+            {
+                if(amountOfTools > 0)
                 {
-                    if(getOwnBuilding().getCountOfPredicateInHut(EntityAIWorkSmelter::isSmeltableToolOrWeapon, 1, world)
-                            + InventoryUtils.getItemCountInItemHandler(
-                                    new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableToolOrWeapon) > 0)
-                    {
-                        return SMELTER_SMELT_STUFF;
-                    }
+                    return SMELTER_SMELT_STUFF;
                 }
             }
         }
 
+        if(amountOfTools > 0)
+        {
+            return SMELTER_SMELT_STUFF;
+        }
         worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.idling"));
         setDelay(STANDARD_DELAY);
         return SMELTER_SMELT_ORE;
