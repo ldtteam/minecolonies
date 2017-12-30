@@ -295,7 +295,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             for (final BlockPos pos : ((BuildingCook) getOwnBuilding()).getFurnaces())
             {
                 final TileEntity entity = world.getTileEntity(pos);
-                if (ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(COOK_SLOT)))
+                if (entity instanceof TileEntityFurnace && ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(COOK_SLOT)))
                 {
                     walkTo = pos;
                 }
