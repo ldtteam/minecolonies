@@ -31,9 +31,8 @@ public interface IBarbarianManager
     /**
      * Set that the manager can receive barbarian events.
      * @param canHave true or false.
-     * @param colony the colony.
      */
-    void setCanHaveBarbEvents(final boolean canHave, final Colony colony);
+    void setCanHaveBarbEvents(final boolean canHave);
 
     /**
      * Set if the raid has been calculated.
@@ -51,8 +50,7 @@ public interface IBarbarianManager
      * Gets a random spot inside the colony, in the named direction, where the chunk is loaded.
      * @param directionX the first direction parameter.
      * @param directionZ the second direction paramter.
-     * @param colony the colony for it.
      * @return the position.
      */
-    BlockPos getRandomOutsiderInDirection(final EnumFacing directionX, final EnumFacing directionZ, @NotNull final Colony colony);
+    BlockPos getRandomOutsiderInDirection(final EnumFacing directionX, final EnumFacing directionZ);
 }

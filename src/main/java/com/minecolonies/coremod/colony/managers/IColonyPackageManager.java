@@ -35,26 +35,23 @@ public interface IColonyPackageManager
 
     /**
      * Update Subscribers with Colony, Citizen, and AbstractBuilding Views.
-     * @param colony the colony of the manager.
      */
-    void updateSubscribers(final Colony colony);
+    void updateSubscribers();
 
     /**
      * Update the colony view.
      * @param oldSubscribers the old subs.
      * @param hasNewSubscribers if there are new subs.
-     * @param colony the colony of the manager.
      */
-    void sendColonyViewPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers, final Colony colony);
+    void sendColonyViewPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers);
 
     /**
      * Sends packages to update the permissions.
      *
      * @param oldSubscribers    the existing subscribers.
      * @param hasNewSubscribers the new subscribers.
-     * @param colony the colony of the manager.
      */
-    void sendPermissionsPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers, final Colony colony);
+    void sendPermissionsPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers);
 
 
     /**
@@ -62,9 +59,8 @@ public interface IColonyPackageManager
      *
      * @param oldSubscribers    the existing subscribers.
      * @param hasNewSubscribers the new subscribers.
-     * @param colony the colony of the manager.
      */
-    void sendWorkOrderPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers, final Colony colony);
+    void sendWorkOrderPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers);
 
 
     /**

@@ -74,27 +74,27 @@ public class Colony implements IColony
     /**
      * Building manager of the colony.
      */
-    private final IBuildingManager buildingManager = new BuildingManager();
+    private final IBuildingManager buildingManager = new BuildingManager(this);
 
     /**
      * Citizen manager of the colony.
      */
-    private final ICitizenManager citizenManager = new CitizenManager();
+    private final ICitizenManager citizenManager = new CitizenManager(this);
 
     /**
      * Statistic and achievement manager manager of the colony.
      */
-    private final IStatisticAchievementManager statsManager = new StatisticAchievementManager();
+    private final IStatisticAchievementManager statsManager = new StatisticAchievementManager(this);
 
     /**
      * Barbarian manager of the colony.
      */
-    private final IBarbarianManager barbarianManager = new BarbarianManager();
+    private final IBarbarianManager barbarianManager = new BarbarianManager(this);
 
     /**
      * The colony package manager.
      */
-    private final IColonyPackageManager packageManager = new ColonyPackageManager();
+    private final IColonyPackageManager packageManager = new ColonyPackageManager(this);
 
     /**
      * The Positions which players can freely interact.
@@ -260,32 +260,32 @@ public class Colony implements IColony
 
         if(compound.hasKey(TAG_CITIZEN_MANAGER))
         {
-            citizenManager.readFromNBT(compound.getCompoundTag(TAG_CITIZEN_MANAGER), this);
+            citizenManager.readFromNBT(compound.getCompoundTag(TAG_CITIZEN_MANAGER));
         }
         else
         {
             //Compatability with old version!
-            citizenManager.readFromNBT(compound, this);
+            citizenManager.readFromNBT(compound);
         }
 
         if(compound.hasKey(TAG_BUILDING_MANAGER))
         {
-            buildingManager.readFromNBT(compound.getCompoundTag(TAG_BUILDING_MANAGER), this);
+            buildingManager.readFromNBT(compound.getCompoundTag(TAG_BUILDING_MANAGER));
         }
         else
         {
             //Compatability with old version!
-            buildingManager.readFromNBT(compound, this);
+            buildingManager.readFromNBT(compound);
         }
 
         if(compound.hasKey(TAG_STATS_MANAGER))
         {
-            statsManager.readFromNBT(compound.getCompoundTag(TAG_STATS_MANAGER), this);
+            statsManager.readFromNBT(compound.getCompoundTag(TAG_STATS_MANAGER));
         }
         else
         {
             //Compatability with old version!
-            statsManager.readFromNBT(compound, this);
+            statsManager.readFromNBT(compound);
         }
 
         //  Workload
@@ -340,11 +340,11 @@ public class Colony implements IColony
 
         if(compound.hasKey(TAG_RAIDABLE))
         {
-            this.barbarianManager.setCanHaveBarbEvents(compound.getBoolean(TAG_RAIDABLE), this);
+            this.barbarianManager.setCanHaveBarbEvents(compound.getBoolean(TAG_RAIDABLE));
         }
         else
         {
-            this.barbarianManager.setCanHaveBarbEvents(true, this);
+            this.barbarianManager.setCanHaveBarbEvents(true);
         }
 
         if(compound.hasKey(TAG_AUTO_DELETE))
@@ -502,7 +502,7 @@ public class Colony implements IColony
 
         if (event.phase == TickEvent.Phase.END)
         {
-            packageManager.updateSubscribers(this);
+            packageManager.updateSubscribers();
         }
     }
 
@@ -602,10 +602,10 @@ public class Colony implements IColony
         if (event.phase == TickEvent.Phase.START)
         {
             //  Cleanup Buildings whose Blocks have gone AWOL
-            buildingManager.cleanUpBuildings(event, this);
+            buildingManager.cleanUpBuildings(event);
 
             // Clean up or spawn citizens.
-            citizenManager.onWorldTick(event, this);
+            citizenManager.onWorldTick(event);
 
             if (shallUpdate(world, TICKS_SECOND)
                   && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
@@ -624,7 +624,7 @@ public class Colony implements IColony
         if (isDay && !world.isDaytime())
         {
             isDay = false;
-            citizenManager.checkCitizensForHappiness(this);
+            citizenManager.checkCitizensForHappiness();
         }
         else if (!isDay && world.isDaytime())
         {

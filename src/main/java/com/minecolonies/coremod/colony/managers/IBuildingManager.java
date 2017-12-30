@@ -26,9 +26,8 @@ public interface IBuildingManager
     /**
      * Read the buildings from NBT.
      * @param compound the compound.
-     * @param colony the colony.
      */
-    void readFromNBT(@NotNull final NBTTagCompound compound, final Colony colony);
+    void readFromNBT(@NotNull final NBTTagCompound compound);
 
     /**
      * Write the buildings to NBT.
@@ -65,7 +64,7 @@ public interface IBuildingManager
      * Clean up the buildings.
      * @param event at the worldTick event.
      */
-    void cleanUpBuildings(final TickEvent.WorldTickEvent event, final Colony colony);
+    void cleanUpBuildings(final TickEvent.WorldTickEvent event);
 
     /**
      * Get a certain building.
@@ -127,9 +126,8 @@ public interface IBuildingManager
      * @param tileEntity      the scarecrow which contains the inventory.
      * @param pos             Position where the field has been placed.
      * @param world           the world of the field.
-     * @param colony          the colony.
      */
-    void addNewField(final ScarecrowTileEntity tileEntity, final BlockPos pos, final World world, final Colony colony);
+    void addNewField(final ScarecrowTileEntity tileEntity, final BlockPos pos, final World world);
 
     /**
      * Returns a field which has not been taken yet.
@@ -145,7 +143,7 @@ public interface IBuildingManager
      *
      * @param building AbstractBuilding to remove.
      */
-    void removeBuilding(@NotNull final AbstractBuilding building, final Set<EntityPlayerMP> subscribers, final Colony colony);
+    void removeBuilding(@NotNull final AbstractBuilding building, final Set<EntityPlayerMP> subscribers);
 
     /**
      * Marks building data dirty.
@@ -159,7 +157,7 @@ public interface IBuildingManager
      * @return AbstractBuilding that was created and added.
      */
     @Nullable
-    AbstractBuilding addNewBuilding(@NotNull final TileEntityColonyBuilding tileEntity, final Colony colony, final World world);
+    AbstractBuilding addNewBuilding(@NotNull final TileEntityColonyBuilding tileEntity, final World world);
 
     /**
      * Removes a field from the farmerFields list.
@@ -167,7 +165,7 @@ public interface IBuildingManager
      * @param pos the position-id.
      * @param colony the colony.
      */
-    void removeField(final BlockPos pos, final Colony colony);
+    void removeField(final BlockPos pos);
 
     /**
      * Calculate a good cook for a certain citizen.

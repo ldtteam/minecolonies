@@ -63,8 +63,22 @@ public class BuildingManager implements IBuildingManager
      */
     private boolean isFieldsDirty    = false;
 
+    /**
+     * The colony of the manager.
+     */
+    private final Colony colony;
+
+    /**
+     * Creates the BuildingManager for a colony.
+     * @param colony the colony.
+     */
+    public BuildingManager(final Colony colony)
+    {
+        this.colony = colony;
+    }
+
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound, final Colony colony)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         //  Buildings
         final NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND);
@@ -74,7 +88,7 @@ public class BuildingManager implements IBuildingManager
             @Nullable final AbstractBuilding b = AbstractBuilding.createFromNBT(colony, buildingCompound);
             if (b != null)
             {
-                addBuilding(b, colony);
+                addBuilding(b);
             }
         }
 
@@ -84,7 +98,7 @@ public class BuildingManager implements IBuildingManager
             final NBTTagList fieldTagList = compound.getTagList(TAG_NEW_FIELDS, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < fieldTagList.tagCount(); ++i)
             {
-                addField(BlockPosUtil.readFromNBT(fieldTagList.getCompoundTagAt(i), TAG_POS), colony);
+                addField(BlockPosUtil.readFromNBT(fieldTagList.getCompoundTagAt(i), TAG_POS));
             }
         }
 
@@ -156,7 +170,7 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void cleanUpBuildings(@NotNull final TickEvent.WorldTickEvent event, final Colony colony)
+    public void cleanUpBuildings(@NotNull final TickEvent.WorldTickEvent event)
     {
         @Nullable final List<AbstractBuilding> removedBuildings = new ArrayList<>();
 
@@ -182,7 +196,7 @@ public class BuildingManager implements IBuildingManager
                 final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) event.world.getTileEntity(pos);
                 if (scarecrow == null)
                 {
-                    removeField(pos, colony);
+                    removeField(pos);
                 }
             }
         }
@@ -265,15 +279,15 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void addNewField(final ScarecrowTileEntity tileEntity, final BlockPos pos, final World world, final Colony colony)
+    public void addNewField(final ScarecrowTileEntity tileEntity, final BlockPos pos, final World world)
     {
-        addField(pos, colony);
+        addField(pos);
         tileEntity.calculateSize(world, pos);
         markFieldsDirty();
     }
 
     @Override
-    public AbstractBuilding addNewBuilding(@NotNull final TileEntityColonyBuilding tileEntity, final Colony colony, final World world)
+    public AbstractBuilding addNewBuilding(@NotNull final TileEntityColonyBuilding tileEntity, final World world)
     {
         tileEntity.setColony(colony);
         if (!buildings.containsKey(tileEntity.getPosition()))
@@ -281,7 +295,7 @@ public class BuildingManager implements IBuildingManager
             @Nullable final AbstractBuilding building = AbstractBuilding.create(colony, tileEntity);
             if (building != null)
             {
-                addBuilding(building, colony);
+                addBuilding(building);
                 tileEntity.setBuilding(building);
 
                 Log.getLogger().info(String.format("Colony %d - new AbstractBuilding for %s at %s",
@@ -310,7 +324,7 @@ public class BuildingManager implements IBuildingManager
                         tileEntity.getPosition()));
             }
 
-            colony.getCitizenManager().calculateMaxCitizens(colony);
+            colony.getCitizenManager().calculateMaxCitizens();
             colony.markDirty();
             return building;
         }
@@ -318,7 +332,7 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void removeBuilding(@NotNull final AbstractBuilding building, final Set<EntityPlayerMP> subscribers, final Colony colony)
+    public void removeBuilding(@NotNull final AbstractBuilding building, final Set<EntityPlayerMP> subscribers)
     {
         if (buildings.remove(building.getID()) != null)
         {
@@ -350,12 +364,12 @@ public class BuildingManager implements IBuildingManager
             citizen.onRemoveBuilding(building);
         }
 
-        colony.getCitizenManager().calculateMaxCitizens(colony);
+        colony.getCitizenManager().calculateMaxCitizens();
         colony.markDirty();
     }
 
     @Override
-    public void removeField(final BlockPos pos, final Colony colony)
+    public void removeField(final BlockPos pos)
     {
         this.markFieldsDirty();
         fields.remove(pos);
@@ -395,7 +409,7 @@ public class BuildingManager implements IBuildingManager
      *
      * @param building AbstractBuilding to add to the colony.
      */
-    private void addBuilding(@NotNull final AbstractBuilding building, final Colony colony)
+    private void addBuilding(@NotNull final AbstractBuilding building)
     {
         buildings.put(building.getID(), building);
         building.markDirty();
@@ -461,7 +475,7 @@ public class BuildingManager implements IBuildingManager
      *
      * @param pos Field position to add to the colony.
      */
-    private void addField(@NotNull final BlockPos pos, final Colony colony)
+    private void addField(@NotNull final BlockPos pos)
     {
         if(!fields.contains(pos))
         {

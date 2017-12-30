@@ -47,6 +47,20 @@ public class ColonyPackageManager implements IColonyPackageManager
      */
     private int lastContactInHours = 0;
 
+    /**
+     * The colony of the manager.
+     */
+    private final Colony colony;
+
+    /**
+     * Creates the ColonyPackageManager for a colony.
+     * @param colony the colony.
+     */
+    public ColonyPackageManager(final Colony colony)
+    {
+        this.colony = colony;
+    }
+
     @Override
     public int getLastContactInHours()
     {
@@ -66,7 +80,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public void updateSubscribers(final Colony colony)
+    public void updateSubscribers()
     {
         final World world = colony.getWorld();
         // If the world or server is null, don't try to update the subscribers this tick.
@@ -131,15 +145,15 @@ public class ColonyPackageManager implements IColonyPackageManager
             //      - To New Subscribers even if it hasn't changed
 
             //ColonyView
-            sendColonyViewPackets(oldSubscribers, hasNewSubscribers, colony);
+            sendColonyViewPackets(oldSubscribers, hasNewSubscribers);
 
             //Permissions
-            sendPermissionsPackets(oldSubscribers, hasNewSubscribers, colony);
+            sendPermissionsPackets(oldSubscribers, hasNewSubscribers);
 
             //WorkOrders
-            sendWorkOrderPackets(oldSubscribers, hasNewSubscribers, colony);
+            sendWorkOrderPackets(oldSubscribers, hasNewSubscribers);
 
-            colony.getCitizenManager().sendPackets(oldSubscribers, hasNewSubscribers, subscribers, colony);
+            colony.getCitizenManager().sendPackets(oldSubscribers, hasNewSubscribers, subscribers);
 
             colony.getBuildingManager().sendPackets(oldSubscribers, hasNewSubscribers, subscribers);
 
@@ -159,7 +173,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public void sendColonyViewPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers, final Colony colony)
+    public void sendColonyViewPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers)
     {
         if (isDirty || hasNewSubscribers)
         {
@@ -175,7 +189,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public void sendPermissionsPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers, final Colony colony)
+    public void sendPermissionsPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers)
     {
         final Permissions permissions = colony.getPermissions();
         if (permissions.isDirty() || hasNewSubscribers)
@@ -191,7 +205,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public void sendWorkOrderPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers, final Colony colony)
+    public void sendWorkOrderPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers)
     {
         final WorkManager workManager = colony.getWorkManager();
         if (workManager.isDirty() || hasNewSubscribers)
