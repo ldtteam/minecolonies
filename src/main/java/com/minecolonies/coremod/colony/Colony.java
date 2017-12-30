@@ -317,14 +317,7 @@ public class Colony implements IColony
             freePositions.add(block);
         }
 
-        if (compound.hasKey(TAG_HAPPINESS))
-        {
-            this.overallHappiness = compound.getDouble(TAG_HAPPINESS);
-        }
-        else
-        {
-            this.overallHappiness = AVERAGE_HAPPINESS;
-        }
+        this.overallHappiness = compound.getDouble(TAG_HAPPINESS);
         packageManager.setLastContactInHours(compound.getInteger(TAG_ABANDONED));
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
 
