@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -163,7 +162,6 @@ public interface IBuildingManager
      * Removes a field from the farmerFields list.
      *
      * @param pos the position-id.
-     * @param colony the colony.
      */
     void removeField(final BlockPos pos);
 

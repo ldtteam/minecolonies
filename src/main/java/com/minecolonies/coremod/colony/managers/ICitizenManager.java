@@ -65,7 +65,6 @@ public interface ICitizenManager
      *
      * @param data Data to use to spawn citizen.
      * @param world the world to spawn it in.
-     * @param colony the colony.
      */
     void spawnCitizenIfNull(@Nullable final CitizenData data, @Nullable final World world);
 
@@ -74,7 +73,6 @@ public interface ICitizenManager
      *
      * @param data Data to use to spawn citizen.
      * @param world the world to spawn it in.
-     * @param colony the colony.
      */
     void spawnCitizen(@NotNull final CitizenData data, @NotNull final World world);
 
@@ -82,7 +80,6 @@ public interface ICitizenManager
      * Removes a citizen from the colony.
      *
      * @param citizen Citizen data to remove.
-     * @param colony the colony.
      */
     void removeCitizen(@NotNull final CitizenData citizen);
 

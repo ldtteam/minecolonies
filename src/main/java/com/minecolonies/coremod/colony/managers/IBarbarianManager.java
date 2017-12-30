@@ -1,9 +1,7 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface implementing all methods required for all barbarianmanagers.

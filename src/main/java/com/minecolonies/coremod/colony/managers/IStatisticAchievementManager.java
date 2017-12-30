@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.minecolonies.coremod.achievements.MineColoniesAchievement;
-import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +12,6 @@ public interface IStatisticAchievementManager
     /**
      * Reads all stats from nbt.
      * @param compound the compound.
-     * @param colony the colony.
      */
     void readFromNBT(@NotNull final NBTTagCompound compound);
 
@@ -31,14 +29,12 @@ public interface IStatisticAchievementManager
     /**
      * Trigger a certain achievement.
      * @param achievement the achievement.
-     * @param colony the colony.
      */
     void triggerAchievement(@NotNull final MineColoniesAchievement achievement);
 
     /**
      * Increment a statistic.
      * @param stat the statistic.
-     * @param colony the colony.
      */
     void incrementStatistic(@NotNull final String stat);
 
