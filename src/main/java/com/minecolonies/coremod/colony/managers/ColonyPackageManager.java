@@ -106,14 +106,14 @@ public class ColonyPackageManager implements IColonyPackageManager
             {
                 ticksPassed = 0;
                 lastContactInHours++;
+                colony.markDirty();
             }
             ticksPassed++;
         }
-        else
+        else if (lastContactInHours != 0)
         {
             lastContactInHours = 0;
             ticksPassed = 0;
-            lastContactInHours = 0;
             colony.markDirty();
         }
 
