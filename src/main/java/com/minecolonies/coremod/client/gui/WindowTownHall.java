@@ -35,11 +35,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View>
 {
     /**
-     * Black color.
-     */
-    private static final int BLACK = Color.getByName("black", 0);
-
-    /**
      * Id of the info button in the GUI.
      */
     private static final String BUTTON_INFO = "info";
@@ -204,54 +199,19 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private static final String TOTAL_CITIZENS_LABEL = "totalCitizens";
 
     /**
-     * Id of the unemployed citizens label in the GUI.
+     * Black color.
      */
-    private static final String UNEMP_CITIZENS_LABEL = "unemployedCitizens";
+    private static final int BLACK = Color.getByName("black", 0);
 
     /**
-     * Id of the total builders label in the GUI.
+     * Statistics label width.
      */
-    private static final String BUILDERS_LABEL = "builders";
+    private static final int STATISTICS_LABEL_WIDTH = 100;
 
     /**
-     * Id of the total deliverymen label in the GUI.
+     * Statistics label height.
      */
-    private static final String DELIVERY_MAN_LABEL = "deliverymen";
-
-    /**
-     * Id of the total miners label in the GUI.
-     */
-    private static final String MINERS_LABEL = "miners";
-
-    /**
-     * Id of the total fishermen label in the GUI.
-     */
-    private static final String FISHERMEN_LABEL = "fishermen";
-
-    /**
-     * Id of the total guards label in the GUI.
-     */
-    private static final String GUARDS_LABEL = "Guards";
-
-    /**
-     * Id of the total lumberjacks label in the GUI.
-     */
-    private static final String LUMBERJACKS_LABEL = "lumberjacks";
-
-    /**
-     * Id of the total farmers label in the GUI.
-     */
-    private static final String FARMERS_LABEL = "farmers";
-
-    /**
-     * Id of the total bakers label in the GUI.
-     */
-    private static final String BAKERS_LABEL = "bakers";
-
-    /**
-     * Id of the total cooks label in the GUI.
-     */
-    private static final String COOKS_LABEL = "cooks";
+    private static final int STATISTICS_LABEL_HEIGHT = 11;
 
     /**
      * Id of the total assignee label in the GUI.
@@ -853,108 +813,17 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Creates several statistics and sets them in the townHall GUI.
      */
-    private void createAndSetStatistics_Orig()
-    {
-        final int citizensSize = townHall.getColony().getCitizens().size();
-
-        int workers = 0;
-        int builders = 0;
-        int deliverymen = 0;
-        int miners = 0;
-        int fishermen = 0;
-        int guards = 0;
-        int lumberjacks = 0;
-        int farmers = 0;
-        int bakers = 0;
-        int cooks = 0;
-
-        for (@NotNull final CitizenDataView citizen : citizens)
-        {
-            switch (citizen.getJob())
-            {
-                case COM_MINECOLONIES_COREMOD_JOB_BUILDER:
-                    builders++;
-                    break;
-                case COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN:
-                    deliverymen++;
-                    break;
-                case COM_MINECOLONIES_COREMOD_JOB_MINER:
-                    miners++;
-                    break;
-                case COM_MINECOLONIES_COREMOD_JOB_FISHERMAN:
-                    fishermen++;
-                    break;
-                case COM_MINECOLONIES_COREMOD_JOB_LUMBERJACK:
-                    lumberjacks++;
-                    break;
-                case COM_MINECOLONIES_COREMOD_JOB_FARMER:
-                    farmers++;
-                    break;
-                case COM_MINECOLONIES_COREMOD_JOB_GUARD:
-                    guards++;
-                    break;
-                case COM_MINECOLONIES_COREMOD_JOB_BAKER:
-                    bakers++;
-                    break;
-                case COM_MINECOLONIES_COREMOD_JOB_COOK:
-                    cooks++;
-                    break;
-                case "":
-                    break;
-                default:
-                    workers++;
-            }
-        }
-
-        workers += deliverymen + builders + miners + fishermen + lumberjacks + farmers + guards + bakers + cooks;
-
-        final String numberOfCitizens =
-                LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
-        final String numberOfUnemployed = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.unemployed", citizensSize - workers);
-        final String numberOfBuilders = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.builders", builders);
-        final String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.deliverymen", deliverymen);
-        final String numberOfMiners = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.miners", miners);
-        final String numberOfFishermen = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.fishermen", fishermen);
-        final String numberOfGuards = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.Guards", guards);
-        final String numberOfLumberjacks = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.lumberjacks", lumberjacks);
-        final String numberOfFarmers = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.farmers", farmers);
-        final String numberOfbakers = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.bakers", bakers);
-        final String numberOfcooks = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.cooks", cooks);
-
-        final DecimalFormat df = new DecimalFormat("#.#");
-        df.setRoundingMode(RoundingMode.CEILING);
-        final String roundedHappiness = df.format(building.getColony().getOverallHappiness());
-
-        findPaneOfTypeByID(HAPPINESS_LABEL, Label.class).setLabelText(roundedHappiness);
-        findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
-        findPaneOfTypeByID(UNEMP_CITIZENS_LABEL, Label.class).setLabelText(numberOfUnemployed);
-        findPaneOfTypeByID(BUILDERS_LABEL, Label.class).setLabelText(numberOfBuilders);
-        findPaneOfTypeByID(DELIVERY_MAN_LABEL, Label.class).setLabelText(numberOfDeliverymen);
-        findPaneOfTypeByID(MINERS_LABEL, Label.class).setLabelText(numberOfMiners);
-        findPaneOfTypeByID(FISHERMEN_LABEL, Label.class).setLabelText(numberOfFishermen);
-        findPaneOfTypeByID(GUARDS_LABEL, Label.class).setLabelText(numberOfGuards);
-        findPaneOfTypeByID(LUMBERJACKS_LABEL, Label.class).setLabelText(numberOfLumberjacks);
-        findPaneOfTypeByID(FARMERS_LABEL, Label.class).setLabelText(numberOfFarmers);
-        findPaneOfTypeByID(BAKERS_LABEL, Label.class).setLabelText(numberOfbakers);
-        findPaneOfTypeByID(COOKS_LABEL, Label.class).setLabelText(numberOfcooks);
-    }
-
-    /**
-     * Creates several statistics and sets them in the townHall GUI.
-     */
     private void createAndSetStatistics()
     {
         final int citizensSize = townHall.getColony().getCitizens().size();
 
-        Map<String, Integer> jobCountMap = new HashMap<String, Integer>();
+        final Map<String, Integer> jobCountMap = new HashMap<>();
         for (@NotNull final CitizenDataView citizen : citizens)
         {
-            int length = citizen.getJob().split("\\.").length;
+            final int length = citizen.getJob().split("\\.").length;
             String job = citizen.getJob().split("\\.")[length  - 1].toLowerCase();
-            System.out.println(job);
-            jobCountMap.put(job, jobCountMap.get(job) == null ? 1 : jobCountMap.get(job) + 1);
+            jobCountMap.put(job, ( jobCountMap.get(job) == null ? 1 : jobCountMap.get(job) + 1 ) );
         }
-        System.out.println(jobCountMap);
 
         final String numberOfCitizens =
                 LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
@@ -966,26 +835,26 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         findPaneOfTypeByID(HAPPINESS_LABEL, Label.class).setLabelText(roundedHappiness);
         findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
 
-        Group group = findPaneOfTypeByID("citizen-stats", Group.class);
-        Integer unemployed = jobCountMap.get("") == null ? 0 : jobCountMap.get("");
+        final Group group = findPaneOfTypeByID("citizen-stats", Group.class);
+        final Integer unemployed = jobCountMap.get("") == null ? 0 : jobCountMap.get("");
         jobCountMap.remove("");
 
         final Label unemployedLabel = new Label();
-        unemployedLabel.setSize(100, 11);
+        unemployedLabel.setSize(STATISTICS_LABEL_WIDTH, STATISTICS_LABEL_HEIGHT);
         unemployedLabel.setTextAlignment(Alignment.MIDDLE_LEFT);
         unemployedLabel.setColor(BLACK, BLACK);
-        final String numberOfUnemployed = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.unemployed", unemployed) ;
+        final String numberOfUnemployed = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.unemployed", unemployed);
         unemployedLabel.setLabelText(numberOfUnemployed);
         group.addChild(unemployedLabel);
 
-        for (Map.Entry<String, Integer> entry : jobCountMap.entrySet())
+        for (final Map.Entry<String, Integer> entry : jobCountMap.entrySet())
         {
             final Label workerLabel = new Label();
-            workerLabel.setSize(100, 11);
+            workerLabel.setSize(STATISTICS_LABEL_WIDTH, STATISTICS_LABEL_HEIGHT);
             workerLabel.setTextAlignment(Alignment.MIDDLE_LEFT);
             workerLabel.setColor(BLACK, BLACK);
             final String job = entry.getKey();
-            String labelJobKey = job.endsWith("man") ? job.replace("man", "men") : job + "s";
+            final String labelJobKey = ( job.endsWith("man") ? job.replace("man", "men") : job + "s" );
             final String numberOfWorkers = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population." + labelJobKey, entry.getValue());
             workerLabel.setLabelText(numberOfWorkers);
             group.addChild(workerLabel);
