@@ -537,3 +537,5 @@ com.minecolonies.coremod.request.smeltableore=Smeltable Ore
 tile.minecolonies.blockhutsmeltery.name=Smeltery
 com.minecolonies.coremod.gui.workerHuts.Smeltery=Smeltery
 com.minecolonies.coremod.job.Smelter=Smelter
+
+tile.minecolonies.blockShingleSlab.name=Shingle slab

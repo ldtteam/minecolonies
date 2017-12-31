@@ -216,6 +216,8 @@ public class ClientProxy extends CommonProxy
           new ModelResourceLocation(ModItems.itemAchievementProxyCity.getRegistryName(), INVENTORY));
         ModelLoader.setCustomModelResourceLocation(ModItems.itemAchievementProxyMetropolis, 0,
           new ModelResourceLocation(ModItems.itemAchievementProxyMetropolis.getRegistryName(), INVENTORY));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleSlab), 0,
+                new ModelResourceLocation(ModBlocks.blockShingleSlab.getRegistryName(), INVENTORY));
 
         ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());
 
