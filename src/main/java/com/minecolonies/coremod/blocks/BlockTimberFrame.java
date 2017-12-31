@@ -21,7 +21,7 @@ import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 /**
  * Decorative block
  */
-public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame>
+public class BlockTimberFrame extends AbstractBlockMinecoloniesDirectional<BlockTimberFrame>
 {
 
     public static final PropertyEnum<TimberFrameType> TYPE       = PropertyEnum.create("type", TimberFrameType.class);
@@ -42,7 +42,7 @@ public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame
     /**
      * Constructor for the TimberFrame
      */
-    public BlockTimberFrame()
+    BlockTimberFrame()
     {
         super(Material.WOOD);
         this.setDefaultState(this.blockState.getBaseState().withProperty(TYPE, TimberFrameType.PLAIN));
@@ -79,7 +79,7 @@ public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame
     @NotNull
     @Deprecated
     @Override
-    public MapColor getMapColor(final IBlockState state)
+    public MapColor getMapColor(@NotNull final IBlockState state)
     {
         return state.getValue(TYPE).getMapColor();
     }
@@ -100,13 +100,13 @@ public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame
      * returns the metadata of the dropped item based on the old metadata of the block.
      */
     @Override
-    public int damageDropped(final IBlockState state)
+    public int damageDropped(@NotNull final IBlockState state)
     {
         return state.getValue(TYPE).getMetadata();
     }
 
     @Override
-    public void getSubBlocks(final Item itemIn, final CreativeTabs tab, final List<ItemStack> list)
+    public void getSubBlocks(@NotNull final Item itemIn, @NotNull final CreativeTabs tab, @NotNull final List<ItemStack> list)
     {
         for (final TimberFrameType type : TimberFrameType.values())
         {
@@ -117,7 +117,7 @@ public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame
      * Convert the BlockState into the correct metadata value
      */
     @Override
-    public int getMetaFromState(final IBlockState state)
+    public int getMetaFromState(@NotNull final IBlockState state)
     {
         return state.getValue(TYPE).getMetadata();
     }
@@ -131,7 +131,7 @@ public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame
 
     @SuppressWarnings(DEPRECATION)
     @Override
-    public boolean isOpaqueCube(final IBlockState state)
+    public boolean isOpaqueCube(@NotNull final IBlockState state)
     {
         return true;
     }
