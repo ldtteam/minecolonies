@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -53,9 +54,10 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         {
             Colony colony = (Colony) manager.getColony();
             Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
-
-            return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchinItemStackInWarehouse(itemStack ->
-                    !ItemStackUtils.isEmpty(itemStack) && requestToCheck.getRequest().matches(itemStack)));
+            wareHouses.removeIf(Objects::isNull);
+            
+            return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchinItemStackInWarehouse(itemStack -> !ItemStackUtils.isEmpty(itemStack)
+                    && requestToCheck.getRequest().matches(itemStack)));
         }
 
         return false;
@@ -129,7 +131,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     private static Set<TileEntityWareHouse> getWareHousesInColony(Colony colony)
     {
-        return colony.getBuildings().values().stream()
+        return colony.getBuildingManager().getBuildings().values().stream()
                  .filter(building -> building instanceof BuildingWareHouse)
                  .map(building -> (TileEntityWareHouse) building.getTileEntity())
                  .collect(Collectors.toSet());

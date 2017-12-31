@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.sounds;
 
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -9,6 +8,9 @@ import net.minecraft.world.World;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Suppression.MAGIC_NUMBERS_SHOULD_NOT_BE_USED;
+
+import static com.minecolonies.api.util.constant.CitizenConstants.AVERAGE_SATURATION;
+import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
 
 /**
  * Class containing the fisherman sounds.
@@ -135,11 +137,11 @@ public final class DeliverymanSounds extends AbstractWorkerSounds
         }
 
         final SoundEvent saturationFeedback;
-        if (saturation < EntityCitizen.LOW_SATURATION)
+        if (saturation < LOW_SATURATION)
         {
             saturationFeedback = Female.saturationVeryLow;
         }
-        else if (saturation < EntityCitizen.AVERAGE_SATURATION)
+        else if (saturation < AVERAGE_SATURATION)
         {
             saturationFeedback = Female.saturationLow;
         }

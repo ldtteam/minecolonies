@@ -71,7 +71,7 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand
 
         final boolean setBarbsTo = Boolean.parseBoolean(args[1]);
 
-        colony.setCanHaveBarbEvents(setBarbsTo);
+        colony.getBarbManager().setCanHaveBarbEvents(setBarbsTo);
 
         sender.sendMessage(new TextComponentString("Colony \" Can have Barbarian Events \" now set to: " + colony.isCanHaveBarbEvents()));
     }

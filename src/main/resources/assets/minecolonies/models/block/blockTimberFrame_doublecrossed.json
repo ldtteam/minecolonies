@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "particle": "minecolonies:blocks/blockdoublecrossedside",
+    "down": "minecolonies:blocks/blockdoublecrossedside",
+    "up": "minecolonies:blocks/blockdoublecrossedside",
+    "north": "minecolonies:blocks/blockdoublecrossedside",
+    "east": "minecolonies:blocks/blockdoublecrossedside",
+    "south": "minecolonies:blocks/blockdoublecrossedside",
+    "west": "minecolonies:blocks/blockdoublecrossedside"
+  }
+}

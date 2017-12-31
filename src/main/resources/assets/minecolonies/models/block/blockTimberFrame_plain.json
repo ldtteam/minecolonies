@@ -2,8 +2,8 @@
   "parent": "block/cube_all",
   "textures": {
     "particle": "minecolonies:blocks/blockplainframeside",
-    "down": "minecolonies:blocks/blockplainframetop",
-    "up": "minecolonies:blocks/blockplainframetop",
+    "down": "minecolonies:blocks/blocktimberframetop",
+    "up": "minecolonies:blocks/blocktimberframetop",
     "north": "minecolonies:blocks/blockplainframeside",
     "east": "minecolonies:blocks/blockplainframeside",
     "south": "minecolonies:blocks/blockplainframeside",

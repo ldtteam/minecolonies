@@ -229,23 +229,23 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
               || world.getBlockState(blockToMine).getBlock() == (Blocks.REDSTONE_ORE)
               || world.getBlockState(blockToMine).getBlock() == (Blocks.EMERALD_ORE))
         {
-            this.getOwnBuilding().getColony().incrementStatistic("ores");
+            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("ores", worker.getColony());
         }
         if (world.getBlockState(blockToMine).getBlock().equals(Blocks.DIAMOND_ORE))
         {
-            this.getOwnBuilding().getColony().incrementStatistic("diamonds");
+            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("diamonds", worker.getColony());
         }
         if (world.getBlockState(blockToMine).getBlock().equals(Blocks.CARROTS))
         {
-            this.getOwnBuilding().getColony().incrementStatistic("carrots");
+            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("carrots", worker.getColony());
         }
         if (world.getBlockState(blockToMine).getBlock().equals(Blocks.POTATOES))
         {
-            this.getOwnBuilding().getColony().incrementStatistic("potatoes");
+            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("potatoes", worker.getColony());
         }
         if (world.getBlockState(blockToMine).getBlock().equals(Blocks.WHEAT))
         {
-            this.getOwnBuilding().getColony().incrementStatistic("wheat");
+            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("wheat", worker.getColony());
         }
     }
 

@@ -4,6 +4,8 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.block.state.IBlockState;
 
+import java.util.Locale;
+
 public class BlockShingle extends AbstractBlockMinecoloniesStairs<BlockShingle>
 {
     /**
@@ -12,28 +14,34 @@ public class BlockShingle extends AbstractBlockMinecoloniesStairs<BlockShingle>
     private static final float BLOCK_HARDNESS = 0.0F;
 
     /**
-     * This blocks name.
-     */
-    private static final String BLOCK_NAME = "blockshingle";
-
-    /**
      * The resistance this block has.
      */
     private static final float RESISTANCE = 1F;
 
-    protected BlockShingle(final IBlockState modelState)
+    /**
+     * Light opacity of the block.
+     */
+    private static final int LIGHT_OPACITY = 255;
+
+    /**
+     * Prefix of the block.
+     */
+    public static final String BLOCK_PREFIX = "blockshingle";
+
+    protected BlockShingle(final IBlockState modelState, final String name)
     {
         super(modelState);
-        init();
+        init(name);
     }
 
-    private void init()
+    private void init(final String name)
     {
-        setRegistryName(BLOCK_NAME);
-        setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
+        setRegistryName(name);
+        setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.US), name));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
         this.useNeighborBrightness = true;
+        this.setLightOpacity(LIGHT_OPACITY);
     }
 }

@@ -1446,8 +1446,15 @@ public class InventoryUtils
       @NotNull final int amount, @NotNull final IItemHandler targetHandler)
     {
         int currentAmount = amount;
-        while (currentAmount >= 0)
+        int tries = 0;
+        while (currentAmount > 0)
         {
+            tries++;
+            if(tries > sourceHandler.getSlots())
+            {
+                break;
+            }
+
             final int desiredItemSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler,
               itemStackSelectionPredicate::test);
 

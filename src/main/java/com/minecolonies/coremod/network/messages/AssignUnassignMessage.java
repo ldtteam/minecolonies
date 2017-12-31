@@ -103,14 +103,14 @@ public class AssignUnassignMessage extends AbstractMessage<AssignUnassignMessage
                 return;
             }
 
-            final AbstractBuilding building = colony.getBuilding(message.buildingId);
+            final AbstractBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
 
             if (!(building instanceof BuildingHome))
             {
                 return;
             }
 
-            final CitizenData citizen = colony.getCitizen(message.citizenID);
+            final CitizenData citizen = colony.getCitizenManager().getCitizen(message.citizenID);
             if (message.assign && !((BuildingHome) building).isFull() && citizen.getHomeBuilding() == null)
             {
                 ((BuildingHome) building).addResident(citizen);

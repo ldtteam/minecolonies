@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.controls.*;
@@ -10,6 +12,9 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
+import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.AbstractWrappedRequestManager;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.text.WordUtils;
@@ -183,11 +188,24 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
         targetLabel.setLabelText(request.getRequester().getDeliveryLocation().toString());
 
+
+        final ColonyView colony = ColonyManager.getColonyView(colonyId);
+        if(colony == null)
+        {
+            Log.getLogger().warn("---Colony Null in WindowRequestDetail---");
+            return;
+        }
+
         try
         {
-            findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " +
-                    ColonyManager.getColony(colonyId).getRequestManager().getResolverForRequest(
-                            request.getToken()).getDisplayName(request.getToken()).getFormattedText());
+            final IRequestResolver resolver = colony.getRequestManager().getResolverForRequest(request.getToken());
+            if(resolver == null)
+            {
+                Log.getLogger().warn("---IRequestResolver Null in WindowRequestDetail---");
+                return;
+            }
+
+            findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " + resolver.getDisplayName(request.getToken()).getFormattedText());
         }
         catch(@SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS) final IllegalArgumentException e)
         {

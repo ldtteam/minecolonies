@@ -11,13 +11,10 @@ import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
@@ -43,6 +40,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATION;
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
@@ -197,7 +195,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean shouldGetFood()
     {
-        return (worker.getCitizenData().getSaturation() <= EntityCitizen.HIGH_SATURATION
+        return (worker.getCitizenData().getSaturation() <= HIGH_SATURATION
                   && !job.hasCheckedForFoodToday())
                  || worker.getCitizenData().getSaturation() <= 0;
     }
@@ -265,20 +263,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (restaurant == null)
         {
-            double distance = Double.MAX_VALUE;
-            BlockPos goodCook = null;
-            for (final AbstractBuilding building : worker.getColony().getBuildings().values())
-            {
-                if (building instanceof BuildingCook && building.getBuildingLevel() > 0)
-                {
-                    final double localDistance = building.getLocation().distanceSq(getOwnBuilding().getLocation());
-                    if (localDistance < distance)
-                    {
-                        distance = localDistance;
-                        goodCook = building.getLocation();
-                    }
-                }
-            }
+            final BlockPos goodCook = worker.getColony().getBuildingManager().getBestRestaurant(worker);
 
             if (goodCook == null)
             {
@@ -1219,6 +1204,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
           s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack) && s.stackSize >= stack.stackSize))
+        {
+            return true;
+        }
+
+        if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), stack::isItemEqualIgnoreDurability) >= stack.stackSize &&
+            InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+                    getOwnBuilding(),
+                    stack::isItemEqualIgnoreDurability,
+                    stack.stackSize,
+                    new InvWrapper(worker.getInventoryCitizen())))
         {
             return true;
         }

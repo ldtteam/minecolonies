@@ -5,7 +5,6 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.minecolonies.coremod.inventory.InventoryField;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
@@ -22,6 +21,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -221,15 +221,47 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
 
             if (colony != null)
             {
-                @NotNull final InventoryField inventoryField = new InventoryField();
                 final ScarecrowTileEntity scareCrow = (ScarecrowTileEntity) worldIn.getTileEntity(pos);
-                final EntityPlayer player = (EntityPlayer) placer;
                 if (scareCrow != null)
                 {
-                    scareCrow.setInventoryField(inventoryField);
-                    colony.addNewField(scareCrow, player.inventory, pos, worldIn);
+                    colony.getBuildingManager().addNewField(scareCrow, pos, worldIn);
                 }
             }
+        }
+    }
+
+    @Override
+    public void onBlockDestroyedByExplosion(final World worldIn, final BlockPos pos, final Explosion explosionIn)
+    {
+        notifyColonyAboutDestruction(worldIn, pos);
+        super.onBlockDestroyedByExplosion(worldIn, pos, explosionIn);
+    }
+
+    @Override
+    public void onBlockHarvested(final World worldIn, final BlockPos pos, final IBlockState state, final EntityPlayer player)
+    {
+        notifyColonyAboutDestruction(worldIn, pos);
+        super.onBlockHarvested(worldIn, pos, state, player);
+    }
+
+    @Override
+    public void onBlockDestroyedByPlayer(final World worldIn, final BlockPos pos, final IBlockState state)
+    {
+        notifyColonyAboutDestruction(worldIn, pos);
+        super.onBlockDestroyedByPlayer(worldIn, pos, state);
+    }
+
+    /**
+     * Notify the colony about the destruction of the field.
+     * @param worldIn the world.
+     * @param pos the position.
+     */
+    private static void notifyColonyAboutDestruction(final World worldIn, final BlockPos pos)
+    {
+        @Nullable final Colony colony = ColonyManager.getColony(worldIn, pos);
+        if (colony != null)
+        {
+            colony.getBuildingManager().removeField(pos);
         }
     }
 

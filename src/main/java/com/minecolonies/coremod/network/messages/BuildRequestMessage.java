@@ -88,7 +88,7 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
             return;
         }
 
-        final AbstractBuilding building = colony.getBuilding(message.buildingId);
+        final AbstractBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
         if (building == null)
         {
             return;
