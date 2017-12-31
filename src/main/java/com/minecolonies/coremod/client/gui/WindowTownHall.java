@@ -821,7 +821,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         for (@NotNull final CitizenDataView citizen : citizens)
         {
             final int length = citizen.getJob().split("\\.").length;
-            String job = citizen.getJob().split("\\.")[length  - 1].toLowerCase();
+            final String job = citizen.getJob().split("\\.")[length  - 1].toLowerCase();
             jobCountMap.put(job, ( jobCountMap.get(job) == null ? 1 : jobCountMap.get(job) + 1 ) );
         }
 
