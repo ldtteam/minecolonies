@@ -187,7 +187,7 @@ public class CompatabilityManager implements ICompatabilityManager
         for (final ItemStack saps : OreDictionary.getOres(SAPLINGS))
         {
             //Just put it in if not in there already, don't mind the leave yet.
-            if (!ItemStackUtils.isEmpty(saps) && !leavesToSaplingMap.containsValue(new ItemStorage(saps)))
+            if (!ItemStackUtils.isEmpty(saps) && !leavesToSaplingMap.containsValue(new ItemStorage(saps)) && !saplings.contains(saps))
             {
                 saplings.add(new ItemStorage(saps));
             }
