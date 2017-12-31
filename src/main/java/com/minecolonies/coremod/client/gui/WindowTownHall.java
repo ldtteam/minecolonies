@@ -7,8 +7,11 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.blockout.Alignment;
+import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.*;
+import com.minecolonies.blockout.views.Group;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
@@ -31,6 +34,11 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
  */
 public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View>
 {
+    /**
+     * Black color.
+     */
+    private static final int BLACK = Color.getByName("black", 0);
+
     /**
      * Id of the info button in the GUI.
      */
@@ -845,7 +853,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Creates several statistics and sets them in the townHall GUI.
      */
-    private void createAndSetStatistics()
+    private void createAndSetStatistics_Orig()
     {
         final int citizensSize = townHall.getColony().getCitizens().size();
 
@@ -901,7 +909,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         workers += deliverymen + builders + miners + fishermen + lumberjacks + farmers + guards + bakers + cooks;
 
         final String numberOfCitizens =
-          LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
+                LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
         final String numberOfUnemployed = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.unemployed", citizensSize - workers);
         final String numberOfBuilders = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.builders", builders);
         final String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.deliverymen", deliverymen);
@@ -929,6 +937,60 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         findPaneOfTypeByID(FARMERS_LABEL, Label.class).setLabelText(numberOfFarmers);
         findPaneOfTypeByID(BAKERS_LABEL, Label.class).setLabelText(numberOfbakers);
         findPaneOfTypeByID(COOKS_LABEL, Label.class).setLabelText(numberOfcooks);
+    }
+
+    /**
+     * Creates several statistics and sets them in the townHall GUI.
+     */
+    private void createAndSetStatistics()
+    {
+        final int citizensSize = townHall.getColony().getCitizens().size();
+
+        Map<String, Integer> jobCountMap = new HashMap<String, Integer>();
+        for (@NotNull final CitizenDataView citizen : citizens)
+        {
+            int length = citizen.getJob().split("\\.").length;
+            String job = citizen.getJob().split("\\.")[length  - 1].toLowerCase();
+            System.out.println(job);
+            jobCountMap.put(job, jobCountMap.get(job) == null ? 1 : jobCountMap.get(job) + 1);
+        }
+        System.out.println(jobCountMap);
+
+        final String numberOfCitizens =
+                LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
+
+        final DecimalFormat df = new DecimalFormat("#.#");
+        df.setRoundingMode(RoundingMode.CEILING);
+        final String roundedHappiness = df.format(building.getColony().getOverallHappiness());
+
+        findPaneOfTypeByID(HAPPINESS_LABEL, Label.class).setLabelText(roundedHappiness);
+        findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
+
+        Group group = findPaneOfTypeByID("citizen-stats", Group.class);
+        Integer unemployed = jobCountMap.get("") == null ? 0 : jobCountMap.get("");
+        jobCountMap.remove("");
+
+        final Label unemployedLabel = new Label();
+        unemployedLabel.setSize(100, 11);
+        unemployedLabel.setTextAlignment(Alignment.MIDDLE_LEFT);
+        unemployedLabel.setColor(BLACK, BLACK);
+        final String numberOfUnemployed = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.unemployed", unemployed) ;
+        unemployedLabel.setLabelText(numberOfUnemployed);
+        group.addChild(unemployedLabel);
+
+        for (Map.Entry<String, Integer> entry : jobCountMap.entrySet())
+        {
+            final Label workerLabel = new Label();
+            workerLabel.setSize(100, 11);
+            workerLabel.setTextAlignment(Alignment.MIDDLE_LEFT);
+            workerLabel.setColor(BLACK, BLACK);
+            final String job = entry.getKey();
+            String labelJobKey = job.endsWith("man") ? job.replace("man", "men") : job + "s";
+            final String numberOfWorkers = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population." + labelJobKey, entry.getValue());
+            workerLabel.setLabelText(numberOfWorkers);
+            group.addChild(workerLabel);
+        }
+
     }
 
     /**
