@@ -148,7 +148,7 @@ public final class ColonyManager
         colony.getStatsManager().triggerAchievement(ModAchievements.achievementGetSupply);
         colony.getStatsManager().triggerAchievement(ModAchievements.achievementTownhall);
 
-        markDirty();
+        colony.markDirty();
 
         Log.getLogger().info(String.format("New Colony Id: %d by %s", colony.getID(), player.getName()));
 

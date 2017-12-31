@@ -108,4 +108,16 @@ public class ColonyTest
         test.setName("blahColony");
         assertNotEquals(compound, test.getColonyTag());
     }
+
+
+    @Test
+    public void testManager()
+    {
+        when(colony.getPermissions()).thenReturn(new Permissions(colony));
+        Player player1 = new Player(id, "ray", Rank.OWNER);
+        when(colony.getPermissions().getPlayers().get(id)).thenReturn(player1);
+        when(colony.getPermissions().setPlayerRank(any(UUID.class), any(Rank.class), any(World.class))).thenReturn(true);
+        Colony colony = ColonyManager.createColony(world, center, player, "wooden");
+        assertNotEquals(null, colony.getColonyTag());
+    }
 }
