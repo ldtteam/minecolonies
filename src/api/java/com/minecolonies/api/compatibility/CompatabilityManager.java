@@ -11,13 +11,11 @@ import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockOre;
 import net.minecraft.block.BlockRedstoneOre;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -183,24 +181,12 @@ public class CompatabilityManager implements ICompatabilityManager
 
     private void discoverSaplings()
     {
-        for (final ItemStack saps : OreDictionary.getOres(SAPLINGS))
+        for (final ItemStack stack : OreDictionary.getOres(SAPLINGS))
         {
             //Just put it in if not in there already, don't mind the leave yet.
-            if (!ItemStackUtils.isEmpty(saps) && !leavesToSaplingMap.containsValue(new ItemStorage(saps)))
+            if (!ItemStackUtils.isEmpty(stack) && !leavesToSaplingMap.containsValue(new ItemStorage(stack)) && !saplings.contains(new ItemStorage(stack)))
             {
-                for(CreativeTabs tabs: CreativeTabs.CREATIVE_TAB_ARRAY)
-                {
-                    final NonNullList<ItemStack> list = NonNullList.create();
-                    saps.getItem().getSubItems(saps.getItem(), tabs, list);
-                    for (final ItemStack stack : list)
-                    {
-                        //Just put it in if not in there already, don't mind the leave yet.
-                        if(!ItemStackUtils.isEmpty(stack) && !leavesToSaplingMap.containsValue(new ItemStorage(stack)) && !saplings.contains(new ItemStorage(stack)))
-                        {
-                            saplings.add(new ItemStorage(stack));
-                        }
-                    }
-                }
+                saplings.add(new ItemStorage(stack));
             }
         }
         Log.getLogger().info("Finished discovering saplings");
