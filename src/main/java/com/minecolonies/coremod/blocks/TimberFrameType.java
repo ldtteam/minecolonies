@@ -9,7 +9,11 @@ import org.jetbrains.annotations.NotNull;
 public enum TimberFrameType implements IStringSerializable
 {
     PLAIN(0, "plain", MapColor.WOOD),
-    CROSSED(1, "crossed", MapColor.WOOD);
+    DOUBLECROSSED(1, "doublecrossed", MapColor.WOOD),
+    FRAMED(2, "framed", MapColor.WOOD),
+    SIDEFRAMED(3, "sideframed", MapColor.WOOD),
+    GATEFRAMED(4, "gateframed", MapColor.WOOD),
+    ONECROSSED(5, "onecrossed", MapColor.WOOD);
     private static final TimberFrameType[] META_LOOKUP = new TimberFrameType[values().length];
     static
     {
