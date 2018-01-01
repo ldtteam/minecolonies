@@ -67,7 +67,7 @@ public class ColonyTest
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException
     {
-        ColonyList<Colony> list = new ColonyList<>();
+        final ColonyList<Colony> list = new ColonyList<>();
         when(worldProvider.getDimension()).thenReturn(1);
         when(player.getGameProfile()).thenReturn(new GameProfile(id, "ray"));
         ReflectionUtil.setFinalField(world, "provider", worldProvider);
@@ -96,8 +96,8 @@ public class ColonyTest
     public void testToggleInLoad()
     {
         colony.writeToNBT(new NBTTagCompound());
-        NBTTagCompound compound = colony.getColonyTag();
-        Colony test = Colony.loadColony(compound, world);
+        final NBTTagCompound compound = colony.getColonyTag();
+        final Colony test = Colony.loadColony(compound, world);
         assertNotEquals(null, test.getColonyTag());
     }
 
@@ -105,8 +105,8 @@ public class ColonyTest
     public void testLoadDifferentThanActual()
     {
         colony.writeToNBT(new NBTTagCompound());
-        NBTTagCompound compound = colony.getColonyTag();
-        Colony test = Colony.loadColony(compound, world);
+        final NBTTagCompound compound = colony.getColonyTag();
+        final Colony test = Colony.loadColony(compound, world);
         assertNotEquals(null, test.getColonyTag());
         test.setName("blahColony");
         test.writeToNBT(new NBTTagCompound());
