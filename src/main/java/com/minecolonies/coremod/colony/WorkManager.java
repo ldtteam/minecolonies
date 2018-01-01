@@ -62,6 +62,7 @@ public class WorkManager
         workOrders.remove(orderId);
         colony.removeWorkOrder(orderId);
         workOrder.onRemoved(colony);
+        colony.markDirty();
     }
 
     /**

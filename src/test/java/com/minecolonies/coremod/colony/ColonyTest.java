@@ -60,25 +60,14 @@ public class ColonyTest
     @Mock
     private EventBus eventBus;
 
-    @Mock
-    private MinecraftServer minecraftServer;
-
-    @Mock
-    private PlayerProfileCache playerProfileCache;
-
-    @Mock
-    private Colony colony1;
-
-    private ColonyList<Colony> list;
-
     private Colony colony;
 
     private final UUID id = UUID.randomUUID();
 
     @Before
-    public void setup() throws NoSuchFieldException, IllegalAccessException
+    public void setUp() throws NoSuchFieldException, IllegalAccessException
     {
-        list = new ColonyList<>();
+        ColonyList<Colony> list = new ColonyList<>();
         when(worldProvider.getDimension()).thenReturn(1);
         when(player.getGameProfile()).thenReturn(new GameProfile(id, "ray"));
         ReflectionUtil.setFinalField(world, "provider", worldProvider);

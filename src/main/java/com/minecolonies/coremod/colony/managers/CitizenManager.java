@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
@@ -75,7 +76,7 @@ public class CitizenManager implements ICitizenManager
         //  Citizens before Buildings, because Buildings track the Citizens
         citizens.putAll(NBTUtils.streamCompound(compound.getTagList(TAG_CITIZENS, Constants.NBT.TAG_COMPOUND))
                 .map(this::deserializeCitizen)
-                .collect(Collectors.toMap(CitizenData::getId, citizen -> citizen)));
+                .collect(Collectors.toMap(CitizenData::getId, Function.identity())));
     }
 
     private CitizenData deserializeCitizen(@NotNull final NBTTagCompound compound)
@@ -373,8 +374,8 @@ public class CitizenManager implements ICitizenManager
 
         //  Cleanup disappeared citizens
         //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
-        //  Every CITIZEN_CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
-        if (Colony.shallUpdate(event.world, CITIZEN_CLEANUP_TICK_INCREMENT) && colony.areAllColonyChunksLoaded(event) && colony.hasTownHall())
+        //  Every CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
+        if (Colony.shallUpdate(event.world, CLEANUP_TICK_INCREMENT) && colony.areAllColonyChunksLoaded(event) && colony.hasTownHall())
         {
             //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
             //  If we don't have any references to them, destroy the citizen

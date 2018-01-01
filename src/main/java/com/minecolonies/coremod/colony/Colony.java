@@ -169,6 +169,11 @@ public class Colony implements IColony
     private NBTTagCompound colonyTag;
 
     /**
+     * Field to check if the colony is dirty.
+     */
+    private boolean isDirty = false;
+
+    /**
      * Constructor for a newly created Colony.
      *
      * @param id The id of the colony to create.
@@ -626,11 +631,18 @@ public class Colony implements IColony
 
         updateWayPoints();
         workManager.onWorldTick(event);
+
+        if(this.isDirty && shallUpdate(world, CLEANUP_TICK_INCREMENT))
+        {
+            this.writeToNBT(new NBTTagCompound());
+            this.isDirty = false;
+            ColonyManager.markDirty();
+        }
     }
 
     /**
      * Calculate randomly if the colony should update the citizens.
-     * By mean they update it at CITIZEN_CLEANUP_TICK_INCREMENT.
+     * By mean they update it at CLEANUP_TICK_INCREMENT.
      *
      * @param world the world.
      * @return a boolean by random.
@@ -801,9 +813,8 @@ public class Colony implements IColony
      */
     public void markDirty()
     {
-        this.writeToNBT(new NBTTagCompound());
-        ColonyManager.markDirty();
         packageManager.setDirty();
+        this.isDirty = true;
     }
 
     @Override
@@ -901,7 +912,6 @@ public class Colony implements IColony
         {
             MineColonies.getNetwork().sendTo(new ColonyViewRemoveWorkOrderMessage(this, orderId), player);
         }
-        this.markDirty();
     }
 
     /**
