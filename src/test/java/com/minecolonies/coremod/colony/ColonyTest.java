@@ -80,6 +80,7 @@ public class ColonyTest
     public void testToggleAnything()
     {
         colony.setName("blahsColony");
+        colony.writeToNBT(new NBTTagCompound());
         assertNotEquals(null, colony.getColonyTag());
     }
 
@@ -87,13 +88,14 @@ public class ColonyTest
     public void testToggleOverManager()
     {
         colony.getBarbManager().setCanHaveBarbEvents(true);
+        colony.writeToNBT(new NBTTagCompound());
         assertNotEquals(null, colony.getColonyTag());
     }
 
     @Test
     public void testToggleInLoad()
     {
-        colony.markDirty();
+        colony.writeToNBT(new NBTTagCompound());
         NBTTagCompound compound = colony.getColonyTag();
         Colony test = Colony.loadColony(compound, world);
         assertNotEquals(null, test.getColonyTag());
@@ -102,11 +104,12 @@ public class ColonyTest
     @Test
     public void testLoadDifferentThanActual()
     {
-        colony.markDirty();
+        colony.writeToNBT(new NBTTagCompound());
         NBTTagCompound compound = colony.getColonyTag();
         Colony test = Colony.loadColony(compound, world);
         assertNotEquals(null, test.getColonyTag());
         test.setName("blahColony");
+        test.writeToNBT(new NBTTagCompound());
         assertNotEquals(compound, test.getColonyTag());
     }
 }
