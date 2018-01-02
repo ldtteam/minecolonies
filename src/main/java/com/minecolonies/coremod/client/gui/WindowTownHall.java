@@ -821,12 +821,13 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         for (@NotNull final CitizenDataView citizen : citizens)
         {
             final int length = citizen.getJob().split("\\.").length;
-            final String job = citizen.getJob().split("\\.")[length  - 1].toLowerCase();
-            jobCountMap.put(job, ( jobCountMap.get(job) == null ? 1 : jobCountMap.get(job) + 1 ) );
+            final String job = citizen.getJob().split("\\.")[length  - 1].toLowerCase(Locale.ENGLISH);
+            jobCountMap.put(job, (jobCountMap.get(job) == null ? 1 : (jobCountMap.get(job) + 1)));
         }
 
         final String numberOfCitizens =
-                LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
+                LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens",
+                        citizensSize, townHall.getColony().getMaxCitizens());
 
         final DecimalFormat df = new DecimalFormat("#.#");
         df.setRoundingMode(RoundingMode.CEILING);
@@ -843,7 +844,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         unemployedLabel.setSize(STATISTICS_LABEL_WIDTH, STATISTICS_LABEL_HEIGHT);
         unemployedLabel.setTextAlignment(Alignment.MIDDLE_LEFT);
         unemployedLabel.setColor(BLACK, BLACK);
-        final String numberOfUnemployed = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.unemployed", unemployed);
+        final String numberOfUnemployed = LanguageHandler.format(
+                "com.minecolonies.coremod.gui.townHall.population.unemployed", unemployed);
         unemployedLabel.setLabelText(numberOfUnemployed);
         group.addChild(unemployedLabel);
 
@@ -854,8 +856,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             workerLabel.setTextAlignment(Alignment.MIDDLE_LEFT);
             workerLabel.setColor(BLACK, BLACK);
             final String job = entry.getKey();
-            final String labelJobKey = ( job.endsWith("man") ? job.replace("man", "men") : job + "s" );
-            final String numberOfWorkers = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population." + labelJobKey, entry.getValue());
+            final String labelJobKey = (job.endsWith("man") ? job.replace("man", "men") : (job + "s"));
+            final String numberOfWorkers = LanguageHandler.format(
+                    "com.minecolonies.coremod.gui.townHall.population." + labelJobKey, entry.getValue());
             workerLabel.setLabelText(numberOfWorkers);
             group.addChild(workerLabel);
         }
