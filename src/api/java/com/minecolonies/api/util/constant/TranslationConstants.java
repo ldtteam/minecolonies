@@ -151,6 +151,11 @@ public final class TranslationConstants
     public static final String CITIZEN_RENAME_SAME                                            = "com.minecolonies.coremod.citizen.rename.same";
     @NonNls
     public static final String CITIZEN_RENAME_NOT_ALLOWED                                     = "com.minecolonies.coremod.citizen.rename.notAllowed";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_DECIDING                = "com.minecolonies.coremod.status.herder.deciding";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOHUT              = "com.minecolonies.coremod.status.herder.goingToHut";
+
 
     private TranslationConstants()
     {

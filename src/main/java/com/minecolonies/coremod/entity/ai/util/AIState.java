@@ -308,5 +308,47 @@ public enum AIState
     /**
      * Serve food to the citizen inside the building.
      */
-    COOK_SERVE
+    COOK_SERVE,
+
+    /*
+### Herders ###
+     */
+
+    /**
+     * Decide what AIstate to go to next.
+     */
+    HERDER_DECIDE,
+
+    /**
+     * Breed two animals together.
+     */
+    HERDER_BREED,
+
+    /**
+     * Butcher an animal.
+     */
+    HERDER_BUTCHER,
+
+    /**
+     * Pickup items within area.
+     */
+    HERDER_PICKUP,
+
+    /*
+### Cowboy ###
+     */
+
+    /**
+     * Milk cows!
+     */
+    COWBOY_MILK,
+
+    /*
+### Shepherd ###
+     */
+
+    /**
+     * Shear a sheep!
+     */
+    SHEPHERD_SHEAR
 }

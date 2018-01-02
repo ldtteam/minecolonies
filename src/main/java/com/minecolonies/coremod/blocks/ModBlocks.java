@@ -34,6 +34,10 @@ public final class ModBlocks
     public static BlockHutField               blockHutField;
     public static BlockHutGuardTower          blockHutGuardTower;
     public static BlockHutWareHouse           blockHutWareHouse;
+    public static BlockHutShepherd            blockHutShepherd;
+    public static BlockHutCowboy              blockHutCowboy;
+    public static BlockHutSwineHerder         blockHutSwineHerder;
+    public static BlockHutChickenHerder       blockHutChickenHerder;
     public static BlockConstructionTape       blockConstructionTape;
     public static BlockConstructionTapeCorner blockConstructionTapeCorner;
     public static BlockMinecoloniesRack       blockRack;
@@ -83,6 +87,10 @@ public final class ModBlocks
         blockHutStonemason = new BlockHutStonemason().registerBlock(registry);
         blockHutTownHall = new BlockHutTownHall().registerBlock(registry);
         blockHutWareHouse = new BlockHutWareHouse().registerBlock(registry);
+        blockHutShepherd = new BlockHutShepherd().registerBlock(registry);
+        blockHutCowboy = new BlockHutCowboy().registerBlock(registry);
+        blockHutSwineHerder = new BlockHutSwineHerder().registerBlock(registry);
+        blockHutChickenHerder = new BlockHutChickenHerder().registerBlock(registry);
         blockSolidSubstitution = new BlockSolidSubstitution().registerBlock(registry);
         blockSubstitution = new BlockSubstitution().registerBlock(registry);
         blockRack = new BlockMinecoloniesRack().registerBlock(registry);
@@ -128,6 +136,10 @@ public final class ModBlocks
         blockHutStonemason.registerItemBlock(registry);
         blockHutTownHall.registerItemBlock(registry);
         blockHutWareHouse.registerItemBlock(registry);
+        blockHutShepherd.registerItemBlock(registry);
+        blockHutCowboy.registerItemBlock(registry);
+        blockHutSwineHerder.registerItemBlock(registry);
+        blockHutChickenHerder.registerItemBlock(registry);
         blockSolidSubstitution.registerItemBlock(registry);
         blockSubstitution.registerItemBlock(registry);
         blockRack.registerItemBlock(registry);
