@@ -1074,6 +1074,10 @@ public class Colony implements IColony
      */
     public NBTTagCompound getColonyTag()
     {
+        if(this.colonyTag == null)
+        {
+            this.writeToNBT(new NBTTagCompound());
+        }
         return this.colonyTag;
     }
 }
