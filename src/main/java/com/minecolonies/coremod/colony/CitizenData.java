@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -15,9 +16,11 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
+import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
@@ -620,7 +623,26 @@ public class CitizenData
      */
     public void clearCitizenEntity()
     {
-        entity = null;
+        colony.getCitizenManager().spawnCitizen(this, colony.getWorld());
+        entity = this.getCitizenEntity();
+
+        BlockPos location = null;
+        if(getWorkBuilding() == null)
+        {
+            if(colony.hasTownHall())
+            {
+                location = colony.getBuildingManager().getTownHall().getLocation();
+            }
+        }
+        else
+        {
+            location = getWorkBuilding().getLocation();
+        }
+
+        if(location != null)
+        {
+            !TeleportHelper.teleportCitizen(this, colony.getWorld(), location);
+        }
     }
 
     /**
