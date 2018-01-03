@@ -134,7 +134,7 @@ public class MineColonies
 
         ModAchievements.init();
 
-        RecipeHandler.init(Configurations.gameplay.enableInDevelopmentFeatures, Configurations.gameplay.supplyChests);
+        RecipeHandler.init(Configurations.Gameplay.enableInDevelopmentFeatures, Configurations.Gameplay.supplyChests);
     }
 
     private static synchronized void initializeNetwork()

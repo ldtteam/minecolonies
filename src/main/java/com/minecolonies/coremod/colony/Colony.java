@@ -216,7 +216,7 @@ public class Colony implements IColony
         eventHandler = new ColonyPermissionEventHandler(this);
         MinecraftForge.EVENT_BUS.register(eventHandler);
 
-        for (final String s : Configurations.gameplay.freeToInteractBlocks)
+        for (final String s : Configurations.Gameplay.freeToInteractBlocks)
         {
             final Block block = Block.getBlockFromName(s);
             if (block == null)
@@ -761,7 +761,7 @@ public class Colony implements IColony
 
             if (shallUpdate(world, TICKS_SECOND)
                   && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
-                  && Configurations.gameplay.doBarbariansSpawn
+                  && Configurations.Gameplay.doBarbariansSpawn
                   && barbarianManager.canHaveBarbEvents()
                   && !world.getMinecraftServer().getPlayerList().getPlayers()
                         .stream().filter(permissions::isSubscriber).collect(Collectors.toList()).isEmpty()
@@ -801,7 +801,7 @@ public class Colony implements IColony
 
     public boolean areAllColonyChunksLoaded(@NotNull final TickEvent.WorldTickEvent event)
     {
-        final int distanceFromCenter = Configurations.gameplay.workingRangeTownHall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
+        final int distanceFromCenter = Configurations.Gameplay.workingRangeTownHall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
         for (int x = -distanceFromCenter; x <= distanceFromCenter; x += CONST_CHUNKSIZE)
         {
             for (int z = -distanceFromCenter; z <= distanceFromCenter; z += CONST_CHUNKSIZE)
@@ -881,7 +881,7 @@ public class Colony implements IColony
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return w.equals(getWorld())
-                 && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.gameplay.workingRangeTownHall);
+                 && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.Gameplay.workingRangeTownHall);
     }
 
     @Override

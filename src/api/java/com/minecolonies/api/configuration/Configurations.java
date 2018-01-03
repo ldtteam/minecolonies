@@ -1,15 +1,21 @@
 package com.minecolonies.api.configuration;
 
+@SuppressWarnings({"squid:S1444", "squid:ClassVariableVisibilityCheck", "squid:S2386"})
 public class Configurations
 {
 
-    public static Gameplay      gameplay      = new Gameplay();
-    public static Pathfinding   pathfinding   = new Pathfinding();
-    public static Names         names         = new Names();
-    public static RequestSystem requestSystem = new RequestSystem();
+    private Configurations()
+    {
+        // Private to hide implicit
+    }
 
     public static class Gameplay
     {
+        private Gameplay()
+        {
+            // Private to hide implicit
+        }
+
         /// --- General --- \\\
 
         public static int     averageNumberOfNightsBetweenRaids = 3;
@@ -82,13 +88,23 @@ public class Configurations
 
     public static class Pathfinding
     {
-        public int     pathfindingDebugVerbosity = 0;
-        public int     pathfindingMaxThreadCount = 2;
-        public boolean pathfindingDebugDraw      = false;
+        private Pathfinding()
+        {
+            // Private to hide implicit
+        }
+
+        public static int     pathfindingDebugVerbosity = 0;
+        public static int     pathfindingMaxThreadCount = 2;
+        public static boolean pathfindingDebugDraw      = false;
     }
 
     public static class Names
     {
+        private Names()
+        {
+            // Private to hide implicit
+        }
+
         public static String[] maleFirstNames = new String[]
                                                   {
                                                     "Aaron",
@@ -101,6 +117,7 @@ public class Configurations
                                                     "Alexander",
                                                     "Andrew",
                                                     "Anthony",
+                                                    "Asher",
                                                     "Asher",
                                                     "Austin",
                                                     "Benjamin",
@@ -460,7 +477,7 @@ public class Configurations
                                                       "Winifred"
                                                     };
 
-        public String[] lastNames = new String[]
+        public static String[] lastNames = new String[]
                                       {
                                         "Brown",
                                         "Clark",
@@ -530,6 +547,7 @@ public class Configurations
                                         "Barefoot",
                                         "Barker",
                                         "Barnes",
+                                        "parry",
                                         "Barre",
                                         "Barrentine",
                                         "Barrett",
@@ -678,11 +696,16 @@ public class Configurations
 
     public static class RequestSystem
     {
-        public int     maximalRetries           = 3;
-        public int     minimalBuildingsToGather = 3;
-        public int     maximalBuildingsToGather = 6;
-        public int     delayBetweenRetries      = 1200;
-        public boolean enableDebugLogging       = false;
-        public boolean creativeResolve          = false;
+        private RequestSystem()
+        {
+            // Private to hide implicit
+        }
+
+        public static int     maximalRetries           = 3;
+        public static int     minimalBuildingsToGather = 3;
+        public static int     maximalBuildingsToGather = 6;
+        public static int     delayBetweenRetries      = 1200;
+        public static boolean enableDebugLogging       = false;
+        public static boolean creativeResolve          = false;
     }
 }

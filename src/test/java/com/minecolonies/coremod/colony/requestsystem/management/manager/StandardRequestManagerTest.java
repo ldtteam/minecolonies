@@ -52,7 +52,7 @@ public class StandardRequestManagerTest
     @Before
     public void setUp() throws Exception
     {
-        Configurations.requestSystem.enableDebugLogging = true;
+        Configurations.RequestSystem.enableDebugLogging = true;
         requestManager = new StandardRequestManager();
 
         StandardFactoryControllerInitializer.onPreInit();
