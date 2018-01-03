@@ -325,7 +325,6 @@ public class BuildingManager implements IBuildingManager
             }
 
             colony.getCitizenManager().calculateMaxCitizens();
-            colony.markDirty();
             return building;
         }
         return null;
@@ -365,7 +364,6 @@ public class BuildingManager implements IBuildingManager
         }
 
         colony.getCitizenManager().calculateMaxCitizens();
-        colony.markDirty();
     }
 
     @Override

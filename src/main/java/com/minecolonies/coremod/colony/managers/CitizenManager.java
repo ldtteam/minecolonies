@@ -249,8 +249,8 @@ public class CitizenManager implements ICitizenManager
         if (getMaxCitizens() != newMaxCitizens)
         {
             setMaxCitizens(newMaxCitizens);
-            colony.markDirty();
         }
+        colony.markDirty();
     }
 
     /**
