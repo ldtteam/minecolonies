@@ -1,5 +1,6 @@
 package com.minecolonies.coremod;
 
+import com.minecolonies.api.configuration.ConfigurationHandler;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
@@ -102,13 +103,15 @@ public class MineColonies
 
         proxy.registerEntityRendering();
 
-        @NotNull final Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
+        ConfigurationHandler.init(event.getSuggestedConfigurationFile());
+
+        /*@NotNull final Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
         configuration.load();
 
         if (configuration.hasChanged())
         {
             configuration.save();
-        }
+        }*/
     }
 
     /**

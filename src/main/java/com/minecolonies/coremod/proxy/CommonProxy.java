@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.proxy;
 
+import com.minecolonies.api.configuration.ConfigurationHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.ModBlocks;
@@ -130,6 +131,7 @@ public class CommonProxy implements IProxy
     {
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         MinecraftForge.EVENT_BUS.register(new FMLEventHandler());
+        MinecraftForge.EVENT_BUS.register(new ConfigurationHandler());
     }
 
     /*
