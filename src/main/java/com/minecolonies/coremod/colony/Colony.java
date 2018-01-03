@@ -634,7 +634,6 @@ public class Colony implements IColony
 
         if(this.isDirty && shallUpdate(world, CLEANUP_TICK_INCREMENT))
         {
-            this.writeToNBT(new NBTTagCompound());
             this.isDirty = false;
             ColonyManager.markDirty();
         }
@@ -814,6 +813,7 @@ public class Colony implements IColony
     public void markDirty()
     {
         packageManager.setDirty();
+        colonyTag = null;
         this.isDirty = true;
     }
 
@@ -905,7 +905,7 @@ public class Colony implements IColony
      *
      * @param orderId the workOrder to remove.
      */
-    public void removeWorkOrder(final int orderId)
+    public void removeWorkOrderInView(final int orderId)
     {
         //  Inform Subscribers of removed workOrder
         for (final EntityPlayerMP player : packageManager.getSubscribers())
