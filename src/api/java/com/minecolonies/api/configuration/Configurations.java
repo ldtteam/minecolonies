@@ -3,9 +3,6 @@ package com.minecolonies.api.configuration;
 public class Configurations
 {
 
-    public static final int CITIZEN_RESPAWN_INTERVAL_MIN = 10;
-    public static final int CITIZEN_RESPAWN_INTERVAL_MAX = 600;
-
     public static Gameplay      gameplay      = new Gameplay();
     public static Pathfinding   pathfinding   = new Pathfinding();
     public static Names         names         = new Names();

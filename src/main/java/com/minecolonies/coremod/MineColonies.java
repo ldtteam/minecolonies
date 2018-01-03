@@ -12,7 +12,6 @@ import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.util.RecipeHandler;
 import gigaherz.guidebook.client.BookRegistryEvent;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Optional;
@@ -31,7 +30,8 @@ import org.jetbrains.annotations.NotNull;
 
 @Mod.EventBusSubscriber
 @Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION,
-  /*dependencies = Constants.FORGE_VERSION,*/ acceptedMinecraftVersions = Constants.MC_VERSION)
+  guiFactory = Constants.CONFIG_GUI_LOCATION, /*dependencies = Constants.FORGE_VERSION,*/
+  acceptedMinecraftVersions = Constants.MC_VERSION)
 public class MineColonies
 {
     private static final Logger logger = LogManager.getLogger(Constants.MOD_ID);

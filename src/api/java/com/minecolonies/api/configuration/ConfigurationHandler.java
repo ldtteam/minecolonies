@@ -54,14 +54,15 @@ public final class ConfigurationHandler
             Configurations.gameplay.averageNumberOfNightsBetweenRaids =
               config.get(CATEGORY_GAMEPLAY, "averageNumberOfNightsBetweenRaids", Configurations.gameplay.averageNumberOfNightsBetweenRaids,
                 "The average amount of nights between raids").getInt();
-            Configurations.gameplay.barbarianHordeDifficulty = getClampedInt(config, CATEGORY_GAMEPLAY, "barbarianHordeDifficulty", Configurations.gameplay.barbarianHordeDifficulty,
-              Constants.MIN_BARBARIAN_DIFFICULTY, Constants.MAX_BARBARIAN_DIFFICULTY, "The difficulty setting for barbarians");
+            Configurations.gameplay.barbarianHordeDifficulty =
+              getClampedInt(config, CATEGORY_GAMEPLAY, "barbarianHordeDifficulty", Configurations.gameplay.barbarianHordeDifficulty,
+                Constants.MIN_BARBARIAN_DIFFICULTY, Constants.MAX_BARBARIAN_DIFFICULTY, "The difficulty setting for barbarians");
             Configurations.gameplay.builderBuildBlockDelay = config.get(CATEGORY_GAMEPLAY, "builderBuildBlockDelay", Configurations.gameplay.builderBuildBlockDelay,
               "Delay after each block placement (Increasing it, increases the delay)").getInt();
             Configurations.gameplay.townHallPadding = config.get(CATEGORY_GAMEPLAY, "townHallPadding", Configurations.gameplay.townHallPadding,
               "Padding between colonies").getInt();
             Configurations.gameplay.maxBarbarianHordeSize = getClampedInt(config, CATEGORY_GAMEPLAY, "maxBarbarianHordeSize", Configurations.gameplay.maxBarbarianHordeSize,
-              Constants.MIN_BARBARIAN_HORDE_SIZE, Constants.MAX_BARBARIAN_HORDE_SIZE,"The max size of a barbarian horde");
+              Constants.MIN_BARBARIAN_HORDE_SIZE, Constants.MAX_BARBARIAN_HORDE_SIZE, "The max size of a barbarian horde");
             Configurations.gameplay.citizenRespawnInterval = getClampedInt(config, CATEGORY_GAMEPLAY, "citizenRespawnInterval", Configurations.gameplay.citizenRespawnInterval,
               Constants.CITIZEN_RESPAWN_INTERVAL_MIN, Constants.CITIZEN_RESPAWN_INTERVAL_MAX, "Average citizen respawn interval (in seconds)");
             Configurations.gameplay.workingRangeTownHall = config.get(CATEGORY_GAMEPLAY, "workingRangeTownHall", Configurations.gameplay.workingRangeTownHall,
