@@ -18,6 +18,6 @@ public class BlockHutChickenHerder extends AbstractBlockHut<BlockHutChickenHerde
     @Override
     public String getName()
     {
-        return "blockHutChickenHerder";
+        return "blockhutchickenherder";
     }
 }

@@ -18,6 +18,6 @@ public class BlockHutShepherd extends AbstractBlockHut<BlockHutShepherd>
     @Override
     public String getName()
     {
-        return "blockHutShepherd";
+        return "blockhutshepherd";
     }
 }
