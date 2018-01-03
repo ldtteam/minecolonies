@@ -132,7 +132,7 @@ public final class MobEventsUtils
         final Random random = new Random();
         final BlockPos pos = colony.getBarbManager().getRandomOutsiderInDirection(
           random.nextInt(2) < 1 ? EnumFacing.EAST : EnumFacing.WEST,
-          random.nextInt(2) < 1 ? EnumFacing.NORTH : EnumFacing.SOUTH, colony);
+          random.nextInt(2) < 1 ? EnumFacing.NORTH : EnumFacing.SOUTH);
 
         if (pos.equals(colony.getCenter()))
         {

@@ -131,7 +131,7 @@ public class JobGuard extends AbstractJob
         super.triggerDeathAchievement(source, citizen);
         if (source.getEntity() instanceof EntityEnderman)
         {
-            citizen.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementGuardDeathEnderman, this.getColony());
+            citizen.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementGuardDeathEnderman);
         }
     }
 }

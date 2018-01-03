@@ -643,7 +643,8 @@ public class Permissions implements IPermissions
      */
     public boolean setPlayerRank(final UUID id, final Rank rank, final World world)
     {
-        final Player player = players.get(id);
+
+        final Player player = getPlayers().get(id);
 
         if (player != null)
         {
