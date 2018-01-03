@@ -641,7 +641,7 @@ public class CitizenData
 
         if(location != null)
         {
-            !TeleportHelper.teleportCitizen(this, colony.getWorld(), location);
+            TeleportHelper.teleportCitizen(entity, colony.getWorld(), location);
         }
     }
 
