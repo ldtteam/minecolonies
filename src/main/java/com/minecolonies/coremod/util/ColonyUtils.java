@@ -27,7 +27,7 @@ public class ColonyUtils
     {
         final EntityCitizen entityCitizen = citizen.getCitizenEntity();
 
-        return entityCitizen != null && CompatibilityUtils.getWorld(entityCitizen).getEntityByID(entityCitizen.getEntityId()) != entityCitizen;
+        return entityCitizen != null && CompatibilityUtils.getWorld(entityCitizen).getEntityByID(entityCitizen.getEntityId()) == null;
     }
 
     /**
