@@ -79,6 +79,7 @@ public class StandardRequestManagerTest
         StandardFactoryController.getInstance().registerNewFactory(new TestRequesterFactory());
 
         when(colony.getWorld()).thenReturn(world);
+        when(colony.getID()).thenReturn(1);
         when(worldProvider.getDimension()).thenReturn(1);
         ReflectionUtil.setFinalField(world, "provider", worldProvider);
         when(colony.getCenter()).thenReturn(center);
