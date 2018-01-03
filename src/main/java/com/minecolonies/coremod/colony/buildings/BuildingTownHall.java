@@ -54,11 +54,11 @@ public class BuildingTownHall extends AbstractBuildingHut
 
         if (newLevel == 1)
         {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingTownhall, this.getColony());
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingTownhall);
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeTownhallMax, this.getColony());
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeTownhallMax);
         }
     }
 
