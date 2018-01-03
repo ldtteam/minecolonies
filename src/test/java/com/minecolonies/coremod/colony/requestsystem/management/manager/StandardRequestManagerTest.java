@@ -24,25 +24,46 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFactories;
+import com.minecolonies.coremod.test.ReflectionUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class StandardRequestManagerTest
 {
+    @Mock
+    private Colony colony;
+
+    @Mock
+    private World world;
+
+    @Mock
+    private WorldProvider worldProvider;
+
+    @Mock
+    private BlockPos center;
 
     private StandardRequestManager   requestManager;
     private IRequestResolverProvider provider;
@@ -51,17 +72,20 @@ public class StandardRequestManagerTest
     public void setUp() throws Exception
     {
         Configurations.requestSystem.enableDebugLogging = true;
-        requestManager = new StandardRequestManager();
-
         StandardFactoryControllerInitializer.onPreInit();
-
         StandardFactoryController.getInstance().registerNewFactory(new StringRequestableFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StringRequestFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StringResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new TestRequesterFactory());
 
-        RequestMappingHandler.registerRequestableTypeMapping(StringRequestable.class, StringRequest.class);
+        when(colony.getWorld()).thenReturn(world);
+        when(worldProvider.getDimension()).thenReturn(1);
+        ReflectionUtil.setFinalField(world, "provider", worldProvider);
+        when(colony.getCenter()).thenReturn(center);
 
+        requestManager = new StandardRequestManager(colony);
+
+        RequestMappingHandler.registerRequestableTypeMapping(StringRequestable.class, StringRequest.class);
         provider = new TestResolvingProvider();
     }
 
@@ -100,7 +124,7 @@ public class StandardRequestManagerTest
 
         NBTTagCompound compound = requestManager.serializeNBT();
 
-        StandardRequestManager deserializedVariant = new StandardRequestManager();
+        StandardRequestManager deserializedVariant = new StandardRequestManager(colony);
         deserializedVariant.onProviderAddedToColony(provider);
         deserializedVariant.deserializeNBT(compound);
     }

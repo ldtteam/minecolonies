@@ -618,9 +618,9 @@ public class CitizenData
     }
 
     /**
-     * Sets {@link EntityCitizen} to null for the instance.
+     * Updates {@link EntityCitizen} for the instance.
      */
-    public void clearCitizenEntity()
+    public void updateCitizenEntityIfNeccessary()
     {
         colony.getCitizenManager().spawnCitizen(this, colony.getWorld());
         entity = this.getCitizenEntity();

@@ -369,7 +369,7 @@ public class CitizenManager implements ICitizenManager
         getCitizens()
                 .stream()
                 .filter(ColonyUtils::isCitizenMissingFromWorld)
-                .forEach(CitizenData::clearCitizenEntity);
+                .forEach(CitizenData::updateCitizenEntityIfNeccessary);
 
         //  Cleanup disappeared citizens
         //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
