@@ -28,6 +28,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFactories;
+import com.minecolonies.coremod.test.AbstractTest;
 import com.minecolonies.coremod.test.ReflectionUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -79,6 +80,7 @@ public class StandardRequestManagerTest
         StandardFactoryController.getInstance().registerNewFactory(new TestRequesterFactory());
 
         when(colony.getWorld()).thenReturn(world);
+        when(colony.getID()).thenReturn(1);
         when(worldProvider.getDimension()).thenReturn(1);
         ReflectionUtil.setFinalField(world, "provider", worldProvider);
         when(colony.getCenter()).thenReturn(center);
@@ -147,6 +149,8 @@ public class StandardRequestManagerTest
         IRequest<? extends StringRequestable> request = requestManager.getRequestForToken(token);
         assertNotNull(request);
         assertEquals(requestable, request.getRequest());
+
+        requestManager.updateRequestState(request.getToken(), RequestState.RECEIVED);
 
         requestManager.onProviderRemovedFromColony(provider);
     }
