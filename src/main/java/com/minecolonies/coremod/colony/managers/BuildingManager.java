@@ -424,7 +424,6 @@ public class BuildingManager implements IBuildingManager
         }
 
         colony.getRequestManager().onProviderAddedToColony(building);
-        colony.markDirty();
     }
 
     /**

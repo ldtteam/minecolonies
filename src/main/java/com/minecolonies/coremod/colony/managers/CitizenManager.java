@@ -359,7 +359,6 @@ public class CitizenManager implements ICitizenManager
         {
             colony.decreaseOverallHappiness(relation * HAPPINESS_FACTOR);
         }
-        colony.markDirty();
     }
 
     @Override
