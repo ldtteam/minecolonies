@@ -9,9 +9,9 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.blockout.Log;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
@@ -27,6 +27,8 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static com.minecolonies.api.compatibility.CompatabilityManager.ORE_STRING;
 
 /**
  * Final class holding all the requests for requestables inside minecolonie
@@ -254,7 +256,7 @@ public final class StandardRequests
     public static class SmeltAbleOreRequest extends AbstractRequest<SmeltableOre>
     {
 
-        private static final ImmutableList<ItemStack> oreExamples = ImmutableList.of(new ItemStack(Blocks.GOLD_ORE), new ItemStack(Blocks.IRON_ORE));
+        private static ImmutableList<ItemStack> oreExamples;
 
         SmeltAbleOreRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final SmeltableOre requested)
         {
@@ -268,6 +270,7 @@ public final class StandardRequests
                 @NotNull final SmeltableOre requested)
         {
             super(requester, token, state, requested);
+
         }
 
         @NotNull
@@ -280,6 +283,23 @@ public final class StandardRequests
         @Override
         public List<ItemStack> getDisplayStacks()
         {
+            if (oreExamples == null)
+            {
+                oreExamples =
+                        ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
+                            NonNullList<ItemStack> stacks = NonNullList.create();
+                            try
+                            {
+                                item.getSubItems(CreativeTabs.SEARCH, stacks);
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
+                            }
+
+                            return stacks.stream().filter(ColonyManager.getCompatabilityManager()::isOre);
+                        }).collect(Collectors.toList()));
+            }
             return oreExamples;
         }
     }
