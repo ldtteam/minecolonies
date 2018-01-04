@@ -24,6 +24,7 @@ import com.minecolonies.coremod.tileentities.TileEntityRack;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -33,6 +34,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1240,18 +1242,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     public boolean tryTransferFromPosToWorker(final BlockPos pos, @NotNull final Predicate<ItemStack> predicate)
     {
         final TileEntity entity = world.getTileEntity(pos);
-        if (entity instanceof TileEntityChest)
+        if (entity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN))
         {
             return InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
-                    new InvWrapper((TileEntityChest) entity),
-                    predicate,
-                    Constants.STACKSIZE,
-                    new InvWrapper(worker.getInventoryCitizen()));
-        }
-        else if (entity instanceof TileEntityRack)
-        {
-            return InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
-                    ((TileEntityRack) entity).getInventory(),
+                    new InvWrapper((IInventory) entity),
                     predicate,
                     Constants.STACKSIZE,
                     new InvWrapper(worker.getInventoryCitizen()));
