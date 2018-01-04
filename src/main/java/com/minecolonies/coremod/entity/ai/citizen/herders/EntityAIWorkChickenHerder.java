@@ -2,6 +2,8 @@ package com.minecolonies.coremod.entity.ai.citizen.herders;
 
 import com.minecolonies.coremod.colony.jobs.JobChickenHerder;
 import net.minecraft.entity.passive.EntityChicken;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,6 +25,12 @@ public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChicken
     public EntityAIWorkChickenHerder(@NotNull final JobChickenHerder job)
     {
         super(job);
+    }
+
+    @Override
+    Item getBreedingItem()
+    {
+        return Items.WHEAT_SEEDS;
     }
 
     @Override

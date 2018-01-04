@@ -1644,6 +1644,48 @@ public class InventoryUtils
     }
 
     /**
+     * Remove a list of stacks from a given Itemhandler
+     *
+     * @param handler the itemHandler.
+     * @param input   the stack to remove.
+     * @return true if succesful.
+     */
+    public static boolean removeStackFromItemHandler(final IItemHandler handler, final ItemStack input)
+    {
+        int maxTries = 0;
+        maxTries += ItemStackUtils.getSize(input);
+
+        boolean success = true;
+        int i = 0;
+        int tries = 0;
+        while (tries < maxTries)
+        {
+            final int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, input::isItemEqual);
+
+            if (slot == -1)
+            {
+                success = false;
+                i++;
+                continue;
+            }
+
+            final int removedSize = ItemStackUtils.getSize(handler.extractItem(slot, ItemStackUtils.getSize(input), false));
+
+            if (removedSize == ItemStackUtils.getSize(input))
+            {
+                i++;
+            }
+            else
+            {
+                ItemStackUtils.changeSize(input, -removedSize);
+            }
+            tries++;
+        }
+
+        return success && i >= 1;
+    }
+
+    /**
      * Check if a certain item is in the provider but without the provider being full.
      *
      * @param provider   the provider to check.

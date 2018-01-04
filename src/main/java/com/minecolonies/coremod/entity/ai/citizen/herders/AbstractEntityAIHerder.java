@@ -9,9 +9,6 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.passive.EntityChicken;
-import net.minecraft.entity.passive.EntityPig;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
@@ -57,10 +54,10 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Delays used to setDelay()
      */
-    public static final int BUTCHER_DELAY     = 20;
-    public static final int DECIDING_DELAY    = 40;
-    public static final int BREEDING_DELAY    = 40;
-    public static final int NO_ANIMALS_DELAY  = 100;
+    public static final int BUTCHER_DELAY    = 20;
+    public static final int DECIDING_DELAY   = 40;
+    public static final int BREEDING_DELAY   = 40;
+    public static final int NO_ANIMALS_DELAY = 100;
 
     /**
      * Number of actions needed to dump inventory.
@@ -119,7 +116,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             setDelay(NO_ANIMALS_DELAY);
             return HERDER_DECIDE;
         }
-        
+
         worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_DECIDING));
 
         final int numOfBreedableAnimals = ((int) animals.stream().filter(animal -> animal.getGrowingAge() == 0).count());
@@ -389,7 +386,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
                 //noinspection ConstantConditions
                 animal.setInLove(null);
                 worker.swingArm(EnumHand.MAIN_HAND);
-                new InvWrapper(getInventory()).extractItem(getItemSlot(getBreedingItem()), 1, false);
+                InventoryUtils.removeStackFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(getBreedingItem(), 1));
             }
         }
     }
@@ -502,19 +499,5 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      *
      * @return the {@link Item} needed for breeding the animal.
      */
-    public Item getBreedingItem()
-    {
-        if (getAnimalClass().equals(EntityChicken.class))
-        {
-            return Items.WHEAT_SEEDS;
-        }
-        if (getAnimalClass().equals(EntityPig.class))
-        {
-            return Items.CARROT;
-        }
-        else
-        {
-            return Items.WHEAT;
-        }
-    }
+    abstract Item getBreedingItem();
 }

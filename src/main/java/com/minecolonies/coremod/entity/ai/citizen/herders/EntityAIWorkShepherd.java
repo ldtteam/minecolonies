@@ -6,7 +6,9 @@ import com.minecolonies.coremod.colony.jobs.JobShepherd;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.entity.passive.EntitySheep;
+import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -35,7 +37,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
     /**
      * Constants used for sheep dying calculations.
      */
-    private static final int HUNDRED_PERCENT_CHANCE = 100;
+    private static final int HUNDRED_PERCENT_CHANCE      = 100;
     private static final int NUMBER_OF_DYE_POSSIBILITIES = 15;
 
     /**
@@ -51,6 +53,12 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
         super.registerTargets(
           new AITarget(SHEPHERD_SHEAR, this::shearSheep)
         );
+    }
+
+    @Override
+    Item getBreedingItem()
+    {
+        return Items.WHEAT;
     }
 
     @Override

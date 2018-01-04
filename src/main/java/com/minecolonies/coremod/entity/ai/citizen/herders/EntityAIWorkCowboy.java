@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.entity.ai.citizen.herders;
 
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.jobs.JobCowboy;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -38,6 +40,12 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
         super.registerTargets(
           new AITarget(COWBOY_MILK, this::milkCows)
         );
+    }
+
+    @Override
+    Item getBreedingItem()
+    {
+        return Items.WHEAT;
     }
 
     @Override
@@ -111,7 +119,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
             {
                 worker.removeHeldItem();
                 equipItem(new ItemStack(Items.MILK_BUCKET));
-                new InvWrapper(getInventory()).extractItem(getItemSlot(Items.BUCKET), 1, false);
+                InventoryUtils.removeStackFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(Items.BUCKET, 1));
             }
 
             incrementActionsDone();
