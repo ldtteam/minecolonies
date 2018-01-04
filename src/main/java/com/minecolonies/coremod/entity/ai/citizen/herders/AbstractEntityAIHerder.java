@@ -168,7 +168,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         for (final ToolType tool : toolsNeeded)
         {
-            if (!checkForToolOrWeapon(tool))
+            if (checkForToolOrWeapon(tool))
             {
                 return getState();
             }
