@@ -499,5 +499,5 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      *
      * @return the {@link Item} needed for breeding the animal.
      */
-    abstract Item getBreedingItem();
+    public abstract Item getBreedingItem();
 }
