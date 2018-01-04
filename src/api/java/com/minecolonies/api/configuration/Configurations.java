@@ -11,10 +11,6 @@ public class Configurations
 
     public static class Gameplay
     {
-        private Gameplay()
-        {
-            // Private to hide implicit
-        }
 
         /// --- General --- \\\
 
@@ -84,26 +80,29 @@ public class Configurations
                                                                   "block:dirt",
                                                                   "0 0 0"
                                                                 };
+
+        private Gameplay()
+        {
+            // Private to hide implicit
+        }
+
     }
 
     public static class Pathfinding
     {
+        public static int     pathfindingDebugVerbosity = 0;
+        public static int     pathfindingMaxThreadCount = 2;
+        public static boolean pathfindingDebugDraw      = false;
+
         private Pathfinding()
         {
             // Private to hide implicit
         }
 
-        public static int     pathfindingDebugVerbosity = 0;
-        public static int     pathfindingMaxThreadCount = 2;
-        public static boolean pathfindingDebugDraw      = false;
     }
 
     public static class Names
     {
-        private Names()
-        {
-            // Private to hide implicit
-        }
 
         public static String[] maleFirstNames = new String[]
                                                   {
@@ -692,14 +691,16 @@ public class Configurations
                                         "Hammond",
                                         "Hampden"
                                       };
+
+        private Names()
+        {
+            // Private to hide implicit
+        }
+
     }
 
     public static class RequestSystem
     {
-        private RequestSystem()
-        {
-            // Private to hide implicit
-        }
 
         public static int     maximalRetries           = 3;
         public static int     minimalBuildingsToGather = 3;
@@ -707,5 +708,11 @@ public class Configurations
         public static int     delayBetweenRetries      = 1200;
         public static boolean enableDebugLogging       = false;
         public static boolean creativeResolve          = false;
+
+        private RequestSystem()
+        {
+            // Private to hide implicit
+        }
+
     }
 }
