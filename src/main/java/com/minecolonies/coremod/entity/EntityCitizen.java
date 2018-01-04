@@ -590,7 +590,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                   "tile.blockHutTownHall.messageColonistDead",
                   citizenData.getName(), (int) posX, (int) posY, (int) posZ, damageSource.damageType);
             }
-            colony.getCitizenManager().removeCitizen(getCitizenData(), colony);
+            colony.getCitizenManager().removeCitizen(getCitizenData());
         }
         super.onDeath(damageSource);
     }
