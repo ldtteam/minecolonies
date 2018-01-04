@@ -533,16 +533,10 @@ tile.minecolonies.blockshingle_jungle.name=Jungle Shingle
 tile.minecolonies.blockshingle_dark_oak.name=Dark Oak Shingle
 tile.minecolonies.blockshingle_acacia.name=Acacia Shingle
 tile.minecolonies.blockShingleSlab.name=Shingle slab
-tile.minecolonies.blockshingle_oak.name=Oak Shingle
-tile.minecolonies.blockshingle_birch.name=Birch Shingle
-tile.minecolonies.blockshingle_spruce.name=Spruce Shingle
-tile.minecolonies.blockshingle_jungle.name=Jungle Shingle
-tile.minecolonies.blockshingle_dark_oak.name=Dark Oak Shingle
-tile.minecolonies.blockshingle_acacia.name=Acacia Shingle
-tile.minecolonies.blockshingleslab.name=Shingle slab
 
 com.minecolonies.coremod.request.smeltableore=Smeltable Ore
 tile.minecolonies.blockhutsmeltery.name=Smeltery
 com.minecolonies.coremod.gui.workerHuts.Smeltery=Smeltery
-com.minecolonies.coremod.job.Smelter=Smelter
-tile.minecolonies.blockHutSmeltery.name=Smeltery
+com.minecolonies.coremod.job.smelter=Smelter
+
+tile.minecolonies.blockShingleSlab.name=Shingle slab

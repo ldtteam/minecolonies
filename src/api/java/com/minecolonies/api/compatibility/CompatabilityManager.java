@@ -53,13 +53,18 @@ public class CompatabilityManager implements ICompatabilityManager
      */
     private final List<IBlockState> ores = new ArrayList<>();
 
+    /**
+     * The oredict entry of an ore.
+     */
+    public static final String ORE_STRING = "ore";
+
     @Override
     public void discover(final World world)
     {
         discoverSaplings();
         for (final String string : OreDictionary.getOreNames())
         {
-            if (string.contains("ore"))
+            if(string.contains(ORE_STRING))
             {
                 discoverOres(world, string);
             }
@@ -113,6 +118,20 @@ public class CompatabilityManager implements ICompatabilityManager
             {
                 final IBlockState temp = tempBlock.getStateFromMeta(tempStack.getMetadata());
                 return ores.contains(temp);
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isOre(@NotNull final ItemStack stack)
+    {
+        final int[] ids = OreDictionary.getOreIDs(stack);
+        for(final int id : ids)
+        {
+            if(OreDictionary.getOreName(id).contains(ORE_STRING))
+            {
+                return true;
             }
         }
         return false;
