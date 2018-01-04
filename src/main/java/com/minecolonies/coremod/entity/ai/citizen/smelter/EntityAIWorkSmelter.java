@@ -506,15 +506,14 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
             }
         }
 
-        return checkForAdditionalJobs(amountOfOre);
+        return checkForAdditionalJobs();
     }
 
     /**
      * If no clear tasks are given, check if something else is to do.
-     * @param amountOfOre the amount of ore.
      * @return the next AIState to traverse to.
      */
-    private AIState checkForAdditionalJobs(final int amountOfOre)
+    private AIState checkForAdditionalJobs()
     {
         final int amountOfTools = getOwnBuilding().getCountOfPredicateInHut(EntityAIWorkSmelter::isSmeltableToolOrWeapon, 1, world)
                 + InventoryUtils.getItemCountInItemHandler(

@@ -789,7 +789,8 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private static boolean inventoryHasHut(@NotNull final InventoryPlayer inventory, final String hut)
     {
-        return inventory.hasItemStack(new ItemStack(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut)));
+        return inventory.hasItemStack(new ItemStack(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut)))
+                || inventory.hasItemStack(new ItemStack(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX.toLowerCase() + hut.toLowerCase())));
     }
 
     /*
