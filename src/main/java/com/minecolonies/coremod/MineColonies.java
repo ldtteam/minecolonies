@@ -1,5 +1,6 @@
 package com.minecolonies.coremod;
 
+import com.minecolonies.api.configuration.ConfigurationHandler;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
@@ -11,7 +12,6 @@ import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.util.RecipeHandler;
 import gigaherz.guidebook.client.BookRegistryEvent;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Optional;
@@ -30,7 +30,8 @@ import org.jetbrains.annotations.NotNull;
 
 @Mod.EventBusSubscriber
 @Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION,
-  /*dependencies = Constants.FORGE_VERSION,*/ acceptedMinecraftVersions = Constants.MC_VERSION)
+  guiFactory = Constants.CONFIG_GUI_LOCATION, /*dependencies = Constants.FORGE_VERSION,*/
+  acceptedMinecraftVersions = Constants.MC_VERSION)
 public class MineColonies
 {
     private static final Logger logger = LogManager.getLogger(Constants.MOD_ID);
@@ -102,13 +103,15 @@ public class MineColonies
 
         proxy.registerEntityRendering();
 
-        @NotNull final Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
+        ConfigurationHandler.init(event.getSuggestedConfigurationFile());
+
+        /*@NotNull final Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
         configuration.load();
 
         if (configuration.hasChanged())
         {
             configuration.save();
-        }
+        }*/
     }
 
     /**
@@ -131,7 +134,7 @@ public class MineColonies
 
         ModAchievements.init();
 
-        RecipeHandler.init(Configurations.gameplay.enableInDevelopmentFeatures, Configurations.gameplay.supplyChests);
+        RecipeHandler.init(Configurations.Gameplay.enableInDevelopmentFeatures, Configurations.Gameplay.supplyChests);
     }
 
     private static synchronized void initializeNetwork()

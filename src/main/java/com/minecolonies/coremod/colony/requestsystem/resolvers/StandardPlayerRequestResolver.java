@@ -85,7 +85,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
         final IColony colony = manager.getColony();
         if (colony instanceof Colony)
         {
-            if (Configurations.requestSystem.creativeResolve &&
+            if (Configurations.RequestSystem.creativeResolve &&
                   request.getRequest() instanceof IDeliverable &&
                   request.getRequester() instanceof BuildingBasedRequester &&
                   ((BuildingBasedRequester) request.getRequester()).getBuilding().isPresent() &&

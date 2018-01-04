@@ -8,6 +8,7 @@ import com.minecolonies.api.compatibility.ICompatabilityManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
@@ -144,11 +145,8 @@ public final class ColonyManager
         colony.setName(colonyName);
         colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Rank.OWNER, w);
 
-        colony.getStatsManager().triggerAchievement(ModAchievements.achievementGetSupply, colony);
-        colony.getStatsManager().triggerAchievement(ModAchievements.achievementTownhall, colony);
-
-        markDirty();
-
+        colony.getStatsManager().triggerAchievement(ModAchievements.achievementGetSupply);
+        colony.getStatsManager().triggerAchievement(ModAchievements.achievementTownhall);
         Log.getLogger().info(String.format("New Colony Id: %d by %s", colony.getID(), player.getName()));
 
         return colony;
@@ -567,7 +565,7 @@ public final class ColonyManager
     public static int getMinimumDistanceBetweenTownHalls()
     {
         //  [TownHall](Radius)+(Padding)+(Radius)[TownHall]
-        return (2 * Configurations.gameplay.workingRangeTownHall) + Configurations.gameplay.townHallPadding;
+        return (2 * Configurations.Gameplay.workingRangeTownHall) + Configurations.Gameplay.townHallPadding;
     }
 
     /**
@@ -610,14 +608,8 @@ public final class ColonyManager
      */
     public static void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        @NotNull final NBTTagList colonyTagList = new NBTTagList();
-        for (@NotNull final Colony colony : colonies)
-        {
-            @NotNull final NBTTagCompound colonyTagCompound = new NBTTagCompound();
-            colony.writeToNBT(colonyTagCompound);
-            colonyTagList.appendTag(colonyTagCompound);
-        }
-        compound.setTag(TAG_COLONIES, colonyTagList);
+        //Get the colonies NBT tags and store them in a NBTTagList.
+        compound.setTag(TAG_COLONIES, colonies.stream().map(Colony::getColonyTag).collect(NBTUtils.toNBTTagList()));
         if (serverUUID != null)
         {
             compound.setUniqueId(TAG_UUID, serverUUID);
@@ -1108,7 +1100,7 @@ public final class ColonyManager
             if (c.getDimension() == world.provider.getDimension())
             {
                 final long dist = c.getDistanceSquared(pos);
-                if (dist < (Configurations.gameplay.workingRangeTownHall + Configurations.gameplay.townHallPadding + BUFFER))
+                if (dist < (Configurations.Gameplay.workingRangeTownHall + Configurations.Gameplay.townHallPadding + BUFFER))
                 {
                     return true;
                 }

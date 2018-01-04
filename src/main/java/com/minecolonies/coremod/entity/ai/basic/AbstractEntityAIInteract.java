@@ -229,23 +229,23 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
               || world.getBlockState(blockToMine).getBlock() == (Blocks.REDSTONE_ORE)
               || world.getBlockState(blockToMine).getBlock() == (Blocks.EMERALD_ORE))
         {
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("ores", worker.getColony());
+            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("ores");
         }
         if (world.getBlockState(blockToMine).getBlock().equals(Blocks.DIAMOND_ORE))
         {
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("diamonds", worker.getColony());
+            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("diamonds");
         }
         if (world.getBlockState(blockToMine).getBlock().equals(Blocks.CARROTS))
         {
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("carrots", worker.getColony());
+            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("carrots");
         }
         if (world.getBlockState(blockToMine).getBlock().equals(Blocks.POTATOES))
         {
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("potatoes", worker.getColony());
+            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("potatoes");
         }
         if (world.getBlockState(blockToMine).getBlock().equals(Blocks.WHEAT))
         {
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("wheat", worker.getColony());
+            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("wheat");
         }
     }
 
@@ -263,7 +263,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             return (int) world.getBlockState(pos).getBlockHardness(world, pos);
         }
 
-        return (int) ((Configurations.gameplay.blockMiningDelayModifier
+        return (int) ((Configurations.Gameplay.blockMiningDelayModifier
                          * Math.pow(LEVEL_MODIFIER, worker.getLevel()))
                         * (double) world.getBlockState(pos).getBlockHardness(world, pos)
                         / (double) (worker.getHeldItemMainhand().getItem()

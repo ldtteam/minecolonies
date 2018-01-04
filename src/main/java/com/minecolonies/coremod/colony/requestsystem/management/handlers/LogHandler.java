@@ -18,7 +18,7 @@ public final class LogHandler
      */
     public static void log(String logEntry)
     {
-        if (Configurations.requestSystem.enableDebugLogging)
+        if (Configurations.RequestSystem.enableDebugLogging)
         {
             logger.info(logEntry);
         }

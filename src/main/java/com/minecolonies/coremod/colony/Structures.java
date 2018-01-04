@@ -114,7 +114,7 @@ public final class Structures
     @SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS)
     private static void loadStyleMaps()
     {
-        if (!Configurations.gameplay.ignoreSchematicsFromJar)
+        if (!Configurations.Gameplay.ignoreSchematicsFromJar)
         {
             loadStyleMapsJar();
         }
@@ -647,13 +647,13 @@ public final class Structures
         {
             return true;
         }
-        if (!Configurations.gameplay.allowPlayerSchematics)
+        if (!Configurations.Gameplay.allowPlayerSchematics)
         {
             return false;
         }
 
         final Set<String> md5Set = getCachedMD5s();
-        if (md5Set.size() < Configurations.gameplay.maxCachedSchematics)
+        if (md5Set.size() < Configurations.Gameplay.maxCachedSchematics)
         {
             return true;
         }
@@ -678,7 +678,7 @@ public final class Structures
 
         //md5Set containd only the unused one
         final Iterator<String> iterator = md5Set.iterator();
-        while (iterator.hasNext() && md5Set.size() + countInUseStructures >= Configurations.gameplay.maxCachedSchematics)
+        while (iterator.hasNext() && md5Set.size() + countInUseStructures >= Configurations.Gameplay.maxCachedSchematics)
         {
             final StructureName sn = new StructureName(iterator.next());
             if (deleteCachedStructure(sn))
@@ -687,7 +687,7 @@ public final class Structures
             }
         }
 
-        return md5Set.size() + countInUseStructures < Configurations.gameplay.maxCachedSchematics;
+        return md5Set.size() + countInUseStructures < Configurations.Gameplay.maxCachedSchematics;
     }
 
     /**

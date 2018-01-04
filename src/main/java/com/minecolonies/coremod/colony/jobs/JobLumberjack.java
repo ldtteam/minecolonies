@@ -110,7 +110,7 @@ public class JobLumberjack extends AbstractJob
         super.triggerDeathAchievement(source, citizen);
         if (source == DamageSource.inWall)
         {
-            citizen.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementLumberjackDeathTree, this.getColony());
+            citizen.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementLumberjackDeathTree);
         }
     }
 }

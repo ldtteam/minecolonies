@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
@@ -51,20 +52,34 @@ public class CitizenManager implements ICitizenManager
     /**
      * Max citizens without housing.
      */
-    private int maxCitizens = Configurations.gameplay.maxCitizens;
+    private int maxCitizens = Configurations.Gameplay.maxCitizens;
+
+    /**
+     * The colony of the manager.
+     */
+    private final Colony colony;
+
+    /**
+     * Creates the Citizenmanager for a colony.
+     * @param colony the colony.
+     */
+    public CitizenManager(final Colony colony)
+    {
+        this.colony = colony;
+    }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound, @NotNull final Colony colony)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
 
         //  Citizens before Buildings, because Buildings track the Citizens
         citizens.putAll(NBTUtils.streamCompound(compound.getTagList(TAG_CITIZENS, Constants.NBT.TAG_COMPOUND))
-                .map(citizenCompound -> deserializeCitizen(citizenCompound, colony))
-                .collect(Collectors.toMap(CitizenData::getId, citizen -> citizen)));
+                .map(this::deserializeCitizen)
+                .collect(Collectors.toMap(CitizenData::getId, Function.identity())));
     }
 
-    private CitizenData deserializeCitizen(@NotNull final NBTTagCompound compound, @NotNull final Colony colony)
+    private CitizenData deserializeCitizen(@NotNull final NBTTagCompound compound)
     {
         final CitizenData data = CitizenData.createFromNBT(compound, colony);
         topCitizenId = Math.max(topCitizenId, data.getId());
@@ -81,10 +96,10 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void sendPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers,
+    public void sendPackets(
+            @NotNull final Set<EntityPlayerMP> oldSubscribers,
             final boolean hasNewSubscribers,
-            @NotNull final Set<EntityPlayerMP> subscribers,
-            @NotNull final Colony colony)
+            @NotNull final Set<EntityPlayerMP> subscribers)
     {
         if (isCitizensDirty || hasNewSubscribers)
         {
@@ -101,20 +116,19 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void spawnCitizenIfNull(@Nullable final CitizenData data, @NotNull final World world, @NotNull final IBuildingManager buildingManager,
-            @NotNull final Colony colony)
+    public void spawnCitizenIfNull(@Nullable final CitizenData data, @NotNull final World world)
     {
         if (data.getCitizenEntity() == null)
         {
             Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), data.getId()));
-            spawnCitizen(data, world, buildingManager, colony);
+            spawnCitizen(data, world);
         }
     }
 
     @Override
-    public void spawnCitizen(@Nullable final CitizenData data, @Nullable final World world, @NotNull final IBuildingManager buildingManager, @NotNull final Colony colony)
+    public void spawnCitizen(@Nullable final CitizenData data, @Nullable final World world)
     {
-        final BlockPos townHallLocation = buildingManager.getTownHall().getLocation();
+        final BlockPos townHallLocation = colony.getBuildingManager().getTownHall().getLocation();
         if (!world.isBlockLoaded(townHallLocation))
         {
             //  Chunk with TownHall Block is not loaded
@@ -161,11 +175,12 @@ public class CitizenManager implements ICitizenManager
 
             colony.getStatsManager().checkAchievements(colony);
             markCitizensDirty();
+            colony.markDirty();
         }
     }
 
     @Override
-    public void removeCitizen(@NotNull final CitizenData citizen, @NotNull final Colony colony)
+    public void removeCitizen(@NotNull final CitizenData citizen)
     {
         //Remove the Citizen
         citizens.remove(citizen.getId());
@@ -188,10 +203,12 @@ public class CitizenManager implements ICitizenManager
         colony.getWorkManager().clearWorkForCitizen(citizen);
 
         //  Inform Subscribers of removed citizen
-        for (final EntityPlayerMP player : colony.getSubscribers())
+        for (final EntityPlayerMP player : colony.getPackageManager().getSubscribers())
         {
             MineColonies.getNetwork().sendTo(new ColonyViewRemoveCitizenMessage(colony, citizen.getId()), player);
         }
+
+        colony.markDirty();
     }
 
     @Override
@@ -209,7 +226,7 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void calculateMaxCitizens(@NotNull final Colony colony)
+    public void calculateMaxCitizens()
     {
         int newMaxCitizens = 0;
 
@@ -228,20 +245,20 @@ public class CitizenManager implements ICitizenManager
             }
         }
         // Have at least the minimum amount of citizens
-        newMaxCitizens = Math.max(Configurations.gameplay.maxCitizens, newMaxCitizens);
+        newMaxCitizens = Math.max(Configurations.Gameplay.maxCitizens, newMaxCitizens);
         if (getMaxCitizens() != newMaxCitizens)
         {
             setMaxCitizens(newMaxCitizens);
-            colony.markDirty();
         }
+        colony.markDirty();
     }
 
     /**
      * Spawn a brand new Citizen.
      */
-    public void spawnCitizen(@NotNull final Colony colony)
+    public void spawnCitizen()
     {
-        spawnCitizen(null, colony.getWorld(), colony.getBuildingManager(), colony);
+        spawnCitizen(null, colony.getWorld());
     }
 
     @NotNull
@@ -289,7 +306,7 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void checkCitizensForHappiness(final Colony colony)
+    public void checkCitizensForHappiness()
     {
         int guards = 1;
         int housing = 0;
@@ -342,38 +359,37 @@ public class CitizenManager implements ICitizenManager
         {
             colony.decreaseOverallHappiness(relation * HAPPINESS_FACTOR);
         }
-        colony.markDirty();
     }
 
     @Override
-    public void onWorldTick(final TickEvent.WorldTickEvent event, @NotNull final Colony colony)
+    public void onWorldTick(final TickEvent.WorldTickEvent event)
     {
         //  Detect CitizenData whose EntityCitizen no longer exist in world, and clear the mapping
         //  Consider handing this in an ChunkUnload Event instead?
         getCitizens()
                 .stream()
                 .filter(ColonyUtils::isCitizenMissingFromWorld)
-                .forEach(CitizenData::clearCitizenEntity);
+                .forEach(CitizenData::updateCitizenEntityIfNeccessary);
 
         //  Cleanup disappeared citizens
         //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
-        //  Every CITIZEN_CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
-        if (colony.shallUpdate(event.world, CITIZEN_CLEANUP_TICK_INCREMENT) && colony.areAllColonyChunksLoaded(event) && colony.hasTownHall())
+        //  Every CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
+        if (Colony.shallUpdate(event.world, CLEANUP_TICK_INCREMENT) && colony.areAllColonyChunksLoaded(event) && colony.hasTownHall())
         {
             //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
             //  If we don't have any references to them, destroy the citizen
-            getCitizens().forEach(citizenData -> spawnCitizenIfNull(citizenData, colony.getWorld(), colony.getBuildingManager(), colony));
+            getCitizens().forEach(citizenData -> spawnCitizenIfNull(citizenData, colony.getWorld()));
         }
 
         //  Spawn Citizens
         if (colony.hasTownHall() && getCitizens().size() < getMaxCitizens())
         {
-            int respawnInterval = Configurations.gameplay.citizenRespawnInterval * TICKS_SECOND;
+            int respawnInterval = Configurations.Gameplay.citizenRespawnInterval * TICKS_SECOND;
             respawnInterval -= (SECONDS_A_MINUTE * colony.getBuildingManager().getTownHall().getBuildingLevel());
 
             if ((event.world.getTotalWorldTime() + 1) % (respawnInterval + 1) == 0)
             {
-                spawnCitizen(colony);
+                spawnCitizen();
             }
         }
     }

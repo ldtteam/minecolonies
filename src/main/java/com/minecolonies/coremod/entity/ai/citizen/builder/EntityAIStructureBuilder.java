@@ -510,7 +510,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     @Override
     public void requestMaterialsIfRequired()
     {
-        if (!Configurations.gameplay.builderInfiniteResources)
+        if (!Configurations.Gameplay.builderInfiniteResources)
         {
             requestMaterials();
         }

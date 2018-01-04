@@ -134,14 +134,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     {
         if (maximalGatherCount < 0)
         {
-            maximalGatherCount = Configurations.requestSystem.minimalBuildingsToGather + worker.getRandom().nextInt(Math.max(1, Configurations.requestSystem.maximalBuildingsToGather - Configurations.requestSystem.minimalBuildingsToGather));
+            maximalGatherCount = Configurations.RequestSystem.minimalBuildingsToGather + worker.getRandom().nextInt(Math.max(1, Configurations.RequestSystem.maximalBuildingsToGather - Configurations.RequestSystem.minimalBuildingsToGather));
         }
 
         if (gatherTarget == null)
         {
             if (gatherCount == maximalGatherCount)
             {
-                maximalGatherCount = Configurations.requestSystem.minimalBuildingsToGather + worker.getRandom().nextInt(Math.max(1, Configurations.requestSystem.maximalBuildingsToGather - Configurations.requestSystem.minimalBuildingsToGather));
+                maximalGatherCount = Configurations.RequestSystem.minimalBuildingsToGather + worker.getRandom().nextInt(Math.max(1, Configurations.RequestSystem.maximalBuildingsToGather - Configurations.RequestSystem.minimalBuildingsToGather));
                 gatherCount = 0;
                 return DUMPING;
             }
