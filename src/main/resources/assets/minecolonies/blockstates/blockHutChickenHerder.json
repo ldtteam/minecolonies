@@ -1,23 +1,14 @@
 {
+  "forge_marker": 1,
+  "defaults": {
+    "model": "minecolonies:blockhutchickenherder"
+  },
   "variants": {
-    "facing=up": {
-      "model": "minecolonies:blockhutchickenherder"
-    },
-    "facing=east": {
-      "model": "minecolonies:blockhutchickenherder",
-      "y": 0
-    },
-    "facing=south": {
-      "model": "minecolonies:blockhutchickenherder",
-      "y": 90
-    },
-    "facing=west": {
-      "model": "minecolonies:blockhutchickenherder",
-      "y": 180
-    },
-    "facing=north": {
-      "model": "minecolonies:blockhutchickenherder",
-      "y": 270
+    "facing": {
+      "north": {"y": 270},
+      "east": {"y": 0},
+      "south": {"y": 90},
+      "west": {"y": 180}
     }
   }
 }

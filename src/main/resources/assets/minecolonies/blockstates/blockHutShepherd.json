@@ -1,23 +1,14 @@
 {
+  "forge_marker": 1,
+  "defaults": {
+    "model": "minecolonies:blockhutshepherd"
+  },
   "variants": {
-    "facing=up": {
-      "model": "minecolonies:blockhutshepherd"
-    },
-    "facing=east": {
-      "model": "minecolonies:blockhutshepherd",
-      "y": 0
-    },
-    "facing=south": {
-      "model": "minecolonies:blockhutshepherd",
-      "y": 90
-    },
-    "facing=west": {
-      "model": "minecolonies:blockhutshepherd",
-      "y": 180
-    },
-    "facing=north": {
-      "model": "minecolonies:blockhutshepherd",
-      "y": 270
+    "facing": {
+      "north": {"y": 270},
+      "east": {"y": 0},
+      "south": {"y": 90},
+      "west": {"y": 180}
     }
   }
 }
