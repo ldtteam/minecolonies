@@ -266,11 +266,11 @@ public class BuildingHome extends AbstractBuildingHut
 
         if (newLevel == 1)
         {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingColonist, this.getColony());
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingColonist);
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeColonistMax, this.getColony());
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeColonistMax);
         }
     }
 
@@ -290,7 +290,7 @@ public class BuildingHome extends AbstractBuildingHut
     public void setBuildingLevel(final int level)
     {
         super.setBuildingLevel(level);
-        getColony().getCitizenManager().calculateMaxCitizens(getColony());
+        getColony().getCitizenManager().calculateMaxCitizens();
     }
 
     @NotNull

@@ -13,8 +13,6 @@ import net.minecraft.init.Items;
  */
 public final class ModAchievements
 {
-
-    /*
     /**
      * Population size to achieve {@link ModAchievements#achievementSizeSettlement}.
      */
@@ -109,30 +107,36 @@ public final class ModAchievements
     /**
      * Max out a miner.
      */
-    public static final MineColoniesAchievement achievementUpgradeMinerMax = new MineColoniesAchievement("upgrade.miner.max", 4, 8, ModBlocks.blockHutMiner, achievementBuildingMiner);
+    public static final MineColoniesAchievement achievementUpgradeMinerMax
+            = new MineColoniesAchievement("upgrade.miner.max", 4, 8, ModBlocks.blockHutMiner, achievementBuildingMiner);
 
     /**
      * Upgrade a fisher to lv 1.
      */
-    public static final MineColoniesAchievement achievementBuildingFisher   = new MineColoniesAchievement("upgrade.fisher.first", 2, 4, ModBlocks.blockHutFisherman, achievementTownhall);
+    public static final MineColoniesAchievement achievementBuildingFisher
+            = new MineColoniesAchievement("upgrade.fisher.first", 2, 4, ModBlocks.blockHutFisherman, achievementTownhall);
     /**
      * Max out a fisher.
      */
-    public static final MineColoniesAchievement achievementUpgradeFisherMax = new MineColoniesAchievement("upgrade.fisher.max", 4, 4, ModBlocks.blockHutFisherman, achievementBuildingFisher);
+    public static final MineColoniesAchievement achievementUpgradeFisherMax
+            = new MineColoniesAchievement("upgrade.fisher.max", 4, 4, ModBlocks.blockHutFisherman, achievementBuildingFisher);
 
     /**
      * Upgrade a farmer to lv 1.
      */
-    public static final MineColoniesAchievement achievementBuildingFarmer   = new MineColoniesAchievement("upgrade.farmer.first", 2, 14, ModBlocks.blockHutFarmer, achievementTownhall);
+    public static final MineColoniesAchievement achievementBuildingFarmer
+            = new MineColoniesAchievement("upgrade.farmer.first", 2, 14, ModBlocks.blockHutFarmer, achievementTownhall);
     /**
      * Max out a farmer.
      */
-    public static final MineColoniesAchievement achievementUpgradeFarmerMax = new MineColoniesAchievement("upgrade.farmer.max", 4, 14, ModBlocks.blockHutFarmer, achievementBuildingFarmer);
+    public static final MineColoniesAchievement achievementUpgradeFarmerMax
+            = new MineColoniesAchievement("upgrade.farmer.max", 4, 14, ModBlocks.blockHutFarmer, achievementBuildingFarmer);
 
     /**
      * Upgrade a guard to lv 1.
      */
-    public static final MineColoniesAchievement achievementBuildingGuard       = new MineColoniesAchievement("upgrade.guard.first", 2, 6, ModBlocks.blockHutGuardTower, achievementTownhall);
+    public static final MineColoniesAchievement achievementBuildingGuard
+            = new MineColoniesAchievement("upgrade.guard.first", 2, 6, ModBlocks.blockHutGuardTower, achievementTownhall);
     /**
      * Max out a guard.
      */
@@ -278,7 +282,8 @@ public final class ModAchievements
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_SETTLEMENT} citizens.
      */
-    public static final MineColoniesAchievement achievementSizeSettlement = new MineColoniesAchievement("size.settlement", 4, 1, ModItems.itemAchievementProxySettlement, achievementTownhall);
+    public static final MineColoniesAchievement achievementSizeSettlement
+            = new MineColoniesAchievement("size.settlement", 4, 1, ModItems.itemAchievementProxySettlement, achievementTownhall);
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_TOWN} citizens.
      */
@@ -292,7 +297,8 @@ public final class ModAchievements
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_METROPOLIS} citizens.
      */
-    public static final MineColoniesAchievement achievementSizeMetropolis = new MineColoniesAchievement("size.metropolis", 10, 1, ModItems.itemAchievementProxyMetropolis, achievementSizeCity);
+    public static final MineColoniesAchievement achievementSizeMetropolis
+            = new MineColoniesAchievement("size.metropolis", 10, 1, ModItems.itemAchievementProxyMetropolis, achievementSizeCity);
 
     // MineColoniesAchievement pages
     /**

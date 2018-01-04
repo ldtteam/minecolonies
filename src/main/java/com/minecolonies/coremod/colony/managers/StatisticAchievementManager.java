@@ -35,13 +35,27 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
     private int plantedSaplings   = 0;
 
     /**
+     * The colony of the manager.
+     */
+    private final Colony colony;
+
+    /**
      * List of achievements within the colony.
      */
     @NotNull
     private final List<Advancement> colonyAchievements = new ArrayList<>();
 
+    /**
+     * Creates the Stat- and AchievementManager for a colony.
+     * @param colony the colony.
+     */
+    public StatisticAchievementManager(final Colony colony)
+    {
+        this.colony = colony;
+    }
+
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound, @NotNull final Colony colony)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         // Restore colony achievements
         /*final NBTTagList achievementTagList = compound.getTagList(TAG_ACHIEVEMENT_LIST, Constants.NBT.TAG_COMPOUND);
@@ -118,7 +132,7 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
     }
 
     @Override
-    public void incrementStatistic(@NotNull final String stat, @NotNull final Colony colony)
+    public void incrementStatistic(@NotNull final String stat)
     {
         final int statisticAmount = this.getStatisticAmount(stat);
         incrementStatisticAmount(stat);
@@ -259,7 +273,7 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
     }
     
     @Override
-    public void triggerAchievement(@NotNull final MineColoniesAchievement achievement, @NotNull final Colony colony)
+    public void triggerAchievement(@NotNull final MineColoniesAchievement achievement)
     {
         /*if (this.colonyAchievements.contains(achievement))
         {
@@ -268,6 +282,7 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
 
         this.colonyAchievements.add(achievement);*/
 
-        AchievementUtils.syncAchievements(colony);
+        //AchievementUtils.syncAchievements(colony);
+        //colony.markDirty();
     }
 }
