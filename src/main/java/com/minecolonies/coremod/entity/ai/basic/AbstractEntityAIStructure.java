@@ -350,7 +350,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         final IBlockState decrease;
         for (final IPlacementHandler handlers : PlacementHandlers.handlers)
         {
-            final Object result = handlers.handle(world, coords, blockState, this, Configurations.gameplay.builderInfiniteResources, false);
+            final Object result = handlers.handle(world, coords, blockState, this, Configurations.Gameplay.builderInfiniteResources, false);
             if (result instanceof IPlacementHandler.ActionProcessingResult)
             {
                 if (result == ACCEPT)
@@ -447,9 +447,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
         }
 
-        if (Configurations.gameplay.builderBuildBlockDelay > 0 && blockToPlace != Blocks.AIR)
+        if (Configurations.Gameplay.builderBuildBlockDelay > 0 && blockToPlace != Blocks.AIR)
         {
-            setDelay(Configurations.gameplay.builderBuildBlockDelay * PROGRESS_MULTIPLIER / (worker.getLevel() + PROGRESS_MULTIPLIER));
+            setDelay(Configurations.Gameplay.builderBuildBlockDelay * PROGRESS_MULTIPLIER / (worker.getLevel() + PROGRESS_MULTIPLIER));
         }
 
         return true;
@@ -648,7 +648,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             worker.faceBlock(currentBlock.blockPosition);
 
             //We need to deal with materials
-            if (Configurations.gameplay.builderInfiniteResources || currentBlock.worldMetadata.getMaterial().isLiquid())
+            if (Configurations.Gameplay.builderInfiniteResources || currentBlock.worldMetadata.getMaterial().isLiquid())
             {
                 worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
                 world.setBlockToAir(currentBlock.blockPosition);
@@ -832,7 +832,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 request.add(entity.getPickedResult(new RayTraceResult(worker)));
             }
 
-            if (!Configurations.gameplay.builderInfiniteResources)
+            if (!Configurations.Gameplay.builderInfiniteResources)
             {
                 if(PlacementHandlers.checkForListInInvAndRequest(this, request))
                 {

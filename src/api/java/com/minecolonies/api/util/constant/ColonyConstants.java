@@ -55,8 +55,8 @@ public final class ColonyConstants
     public static final double MIN_OVERALL_HAPPINESS = 1;
 
     public static final int    CHECK_WAYPOINT_EVERY              = 100;
-    public static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(Configurations.gameplay.workingRangeTownHall + 16D);
-    public static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(Configurations.gameplay.workingRangeTownHall * 2D);
+    public static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(Configurations.Gameplay.workingRangeTownHall + 16D);
+    public static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(Configurations.Gameplay.workingRangeTownHall * 2D);
 
     public static final int CONST_CHUNKSIZE = 16;
     public static final int DEFAULT_OVERALL_HAPPYNESS = 5;

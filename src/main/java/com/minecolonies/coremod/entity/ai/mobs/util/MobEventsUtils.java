@@ -25,7 +25,7 @@ public final class MobEventsUtils
     private static final String ARCHER    = "minecolonies.ArcherBarbarian";
     private static final String CHIEF     = "minecolonies.ChiefBarbarian";
 
-    private static final int    MAX_SIZE                     = Configurations.gameplay.maxBarbarianHordeSize;
+    private static final int    MAX_SIZE                     = Configurations.Gameplay.maxBarbarianHordeSize;
     private static final double BARBARIANS_MULTIPLIER        = 0.5;
     private static final double ARCHER_BARBARIANS_MULTIPLIER = 0.25;
     private static final double CHIEF_BARBARIANS_MULTIPLIER  = 0.1;
@@ -66,7 +66,7 @@ public final class MobEventsUtils
             return;
         }
 
-        if (Configurations.gameplay.enableInDevelopmentFeatures)
+        if (Configurations.Gameplay.enableInDevelopmentFeatures)
         {
             LanguageHandler.sendPlayersMessage(
               colony.getMessageEntityPlayers(),
@@ -199,7 +199,7 @@ public final class MobEventsUtils
             if (!colony.hasWillRaidTonight())
             {
                 final boolean raid = raidThisNight(world);
-                if (Configurations.gameplay.enableInDevelopmentFeatures)
+                if (Configurations.Gameplay.enableInDevelopmentFeatures)
                 {
                     LanguageHandler.sendPlayersMessage(
                       colony.getMessageEntityPlayers(),
@@ -213,7 +213,7 @@ public final class MobEventsUtils
         {
             colony.getBarbManager().setHasRaidBeenCalculated(false);
             colony.getBarbManager().setWillRaidTonight(false);
-            if (Configurations.gameplay.enableInDevelopmentFeatures)
+            if (Configurations.Gameplay.enableInDevelopmentFeatures)
             {
                 LanguageHandler.sendPlayersMessage(
                   colony.getMessageEntityPlayers(),
@@ -237,6 +237,6 @@ public final class MobEventsUtils
      */
     private static boolean raidThisNight(final World world)
     {
-        return world.rand.nextDouble() < 1.0 / Configurations.gameplay.averageNumberOfNightsBetweenRaids;
+        return world.rand.nextDouble() < 1.0 / Configurations.Gameplay.averageNumberOfNightsBetweenRaids;
     }
 }

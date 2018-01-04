@@ -181,7 +181,7 @@ public final class RenderUtils
             return;
         }
         final BlockPos center = colonyView.getCenter();
-        final int radius = Configurations.gameplay.workingRangeTownHall;
+        final int radius = Configurations.Gameplay.workingRangeTownHall;
 
         for (double degrees = 0; degrees < WHOLE_CIRCLE; degrees += 1)
         {
