@@ -740,7 +740,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     public final void destroy()
     {
         onDestroyed();
-        colony.getBuildingManager().removeBuilding(this, colony.getSubscribers(), colony);
+        colony.getBuildingManager().removeBuilding(this, colony.getPackageManager().getSubscribers());
     }
 
     /**
