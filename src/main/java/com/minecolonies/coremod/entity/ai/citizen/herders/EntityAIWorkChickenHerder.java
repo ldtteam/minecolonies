@@ -28,7 +28,7 @@ public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChicken
     }
 
     @Override
-    Item getBreedingItem()
+    public Item getBreedingItem()
     {
         return Items.WHEAT_SEEDS;
     }

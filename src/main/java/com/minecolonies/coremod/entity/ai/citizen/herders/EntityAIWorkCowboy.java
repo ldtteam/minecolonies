@@ -43,7 +43,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
     }
 
     @Override
-    Item getBreedingItem()
+    public Item getBreedingItem()
     {
         return Items.WHEAT;
     }

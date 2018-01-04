@@ -28,7 +28,7 @@ public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerd
     }
 
     @Override
-    Item getBreedingItem()
+    public Item getBreedingItem()
     {
         return Items.CARROT;
     }
