@@ -50,6 +50,13 @@ public interface ICompatabilityManager
     boolean isOre(final IBlockState block);
 
     /**
+     * Test if an itemStack is an ore.
+     * @param stack the stack to test.
+     * @return true if so.
+     */
+    boolean isOre(ItemStack stack);
+
+    /**
      * Write colonies to NBT data for saving.
      *
      * @param compound NBT-Tag.
