@@ -105,6 +105,16 @@ public final class NbtTagConstants
     public static final String TAG_STYLE = "style";
 
     /**
+     * Tag to store if raidable to a colony.
+     */
+    public static final String TAG_RAIDABLE = "raidable";
+
+    /**
+     * Tag to store if auto deletable to a colony.
+     */
+    public static final String TAG_AUTO_DELETE ="autoDelete";
+
+    /**
      * The tag to store the requester Id of the Building.
      */
     public static final String TAG_REQUESTOR_ID = "Requestor";

@@ -640,6 +640,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
         if (getOpenRequestsOfCitizen().size() > row && row >= 0)
         {
+            button.disable();
             @NotNull final IRequest tRequest = getOpenRequestsOfCitizen().get(row);
 
             if (!(tRequest.getRequest() instanceof IDeliverable))
@@ -672,6 +673,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
             }
             MineColonies.getNetwork().sendToServer(new TransferItemsToCitizenRequestMessage(citizen, itemStack, isCreative ? amount : count, citizen.getColonyId()));
             MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.OVERRULED, itemStack));
+
         }
     }
 }
