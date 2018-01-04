@@ -4,6 +4,7 @@ import com.minecolonies.coremod.colony.jobs.JobSwineHerder;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -28,9 +29,9 @@ public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerd
     }
 
     @Override
-    public Item getBreedingItem()
+    public ItemStack getBreedingItem()
     {
-        return Items.CARROT;
+        return new ItemStack(Items.CARROT);
     }
 
     @Override

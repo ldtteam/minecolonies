@@ -96,7 +96,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     protected List<ItemStack> itemsNiceToHave()
     {
         final List<ItemStack> list = super.itemsNiceToHave();
-        list.add(new ItemStack(getBreedingItem(), 2));
+        list.add(getBreedingItems());
         return list;
     }
 
@@ -121,7 +121,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         final int numOfBreedableAnimals = ((int) animals.stream().filter(animal -> animal.getGrowingAge() == 0).count());
 
-        final boolean hasBreedingItem = worker.hasItemInInventory(getBreedingItem(), 0);
+        final boolean hasBreedingItem = worker.hasItemInInventory(getBreedingItem().getItem(), 0);
 
         if (!searchForItemsInArea().isEmpty())
         {
@@ -161,7 +161,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     private AIState prepareForHerding()
     {
         toolsNeeded.add(ToolType.AXE);
-        itemsNeeded.add(new ItemStack(getBreedingItem(), 2));
+        itemsNeeded.add(getBreedingItems());
 
         for (final ToolType tool : toolsNeeded)
         {
@@ -254,7 +254,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             return HERDER_DECIDE;
         }
 
-        if (!equipItem(new ItemStack(getBreedingItem(), 2)))
+        if (!equipItem(getBreedingItems()))
         {
             return START_WORKING;
         }
@@ -386,7 +386,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
                 //noinspection ConstantConditions
                 animal.setInLove(null);
                 worker.swingArm(EnumHand.MAIN_HAND);
-                InventoryUtils.removeStackFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(getBreedingItem(), 1));
+                InventoryUtils.removeStackFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), getBreedingItem());
             }
         }
     }
@@ -495,9 +495,21 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     }
 
     /**
+     * Gets an ItemStack of breedingItem for 2 animals.
+     *
+     * @return the BreedingItem stack.
+     */
+    public ItemStack getBreedingItems()
+    {
+        final ItemStack breedingItem = getBreedingItem();
+        breedingItem.stackSize = 2;
+        return breedingItem;
+    }
+
+    /**
      * Get breeding item for animal.
      *
      * @return the {@link Item} needed for breeding the animal.
      */
-    public abstract Item getBreedingItem();
+    public abstract ItemStack getBreedingItem();
 }

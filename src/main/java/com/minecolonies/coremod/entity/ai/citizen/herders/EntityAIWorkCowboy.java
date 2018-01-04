@@ -43,9 +43,9 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
     }
 
     @Override
-    public Item getBreedingItem()
+    public ItemStack getBreedingItem()
     {
-        return Items.WHEAT;
+        return new ItemStack(Items.WHEAT);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
     {
         worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING));
 
-        if (!worker.hasItemInInventory(getBreedingItem(), 0) && isInHut(new ItemStack(Items.BUCKET, 1)))
+        if (!worker.hasItemInInventory(getBreedingItem().getItem(), 0) && isInHut(new ItemStack(Items.BUCKET, 1)))
         {
             if (!walkToBuilding() && getOwnBuilding() != null)
             {

@@ -4,6 +4,7 @@ import com.minecolonies.coremod.colony.jobs.JobChickenHerder;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -28,9 +29,9 @@ public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChicken
     }
 
     @Override
-    public Item getBreedingItem()
+    public ItemStack getBreedingItem()
     {
-        return Items.WHEAT_SEEDS;
+        return new ItemStack(Items.WHEAT_SEEDS);
     }
 
     @Override

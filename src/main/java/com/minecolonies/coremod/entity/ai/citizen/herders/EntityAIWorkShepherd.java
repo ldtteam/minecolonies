@@ -56,9 +56,9 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
     }
 
     @Override
-    public Item getBreedingItem()
+    public ItemStack getBreedingItem()
     {
-        return Items.WHEAT;
+        return new ItemStack(Items.WHEAT);
     }
 
     @Override
