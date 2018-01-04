@@ -55,13 +55,13 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Override
     public int getMaximalTries()
     {
-        return Configurations.requestSystem.maximalRetries;
+        return Configurations.RequestSystem.maximalRetries;
     }
 
     @Override
     public int getMaximalDelayBetweenRetriesInTicks()
     {
-        return Configurations.requestSystem.delayBetweenRetries;
+        return Configurations.RequestSystem.delayBetweenRetries;
     }
 
     @Override
