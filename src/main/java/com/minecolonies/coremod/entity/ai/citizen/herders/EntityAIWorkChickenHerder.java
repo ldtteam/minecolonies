@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.citizen.herders;
 import com.minecolonies.coremod.colony.jobs.JobChickenHerder;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
