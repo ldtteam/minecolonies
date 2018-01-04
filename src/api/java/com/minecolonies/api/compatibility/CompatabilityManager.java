@@ -127,7 +127,7 @@ public class CompatabilityManager implements ICompatabilityManager
     public boolean isOre(@NotNull final ItemStack stack)
     {
         final int[] ids = OreDictionary.getOreIDs(stack);
-        for(int id : ids)
+        for(final int id : ids)
         {
             if(OreDictionary.getOreName(id).contains(ORE_STRING))
             {
