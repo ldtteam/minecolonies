@@ -50,6 +50,6 @@ public class JobCowboy extends AbstractJob
     @Override
     public RenderBipedCitizen.Model getModel()
     {
-        return RenderBipedCitizen.Model.COW_FARMER;
+        return RenderBipedCitizen.Model.FARMER;
     }
 }

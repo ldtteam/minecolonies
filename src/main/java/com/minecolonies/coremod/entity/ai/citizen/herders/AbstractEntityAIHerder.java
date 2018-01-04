@@ -262,7 +262,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             return START_WORKING;
         }
 
-        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.herder.breeding"));
+        worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BREEDING));
 
         breedTwoAnimals(animalOne, animalTwo);
 
@@ -297,7 +297,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      */
     public List<T> searchForAnimals()
     {
-        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.herder.searching"));
+        worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_SEARCHING));
 
         if (this.getTargetableArea() != null)
         {
@@ -361,7 +361,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         if (animal != null)
         {
-            worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.herder.goingToAnimal"));
+            worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOANIMAL));
             return walkToBlock(animal.getPosition());
         }
         else
@@ -485,7 +485,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     private void butcherAnimal(final EntityAnimal animal)
     {
 
-        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.herder.butchering"));
+        worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING));
 
         if (!walkingToAnimal(animal) && worker.getHeldItemMainhand() != null && animal != null)
         {

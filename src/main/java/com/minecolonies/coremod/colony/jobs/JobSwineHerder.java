@@ -50,6 +50,6 @@ public class JobSwineHerder extends AbstractJob
     @Override
     public RenderBipedCitizen.Model getModel()
     {
-        return RenderBipedCitizen.Model.PIG_FARMER;
+        return RenderBipedCitizen.Model.FARMER;
     }
 }

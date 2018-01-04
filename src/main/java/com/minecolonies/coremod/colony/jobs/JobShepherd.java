@@ -52,7 +52,7 @@ public class JobShepherd extends AbstractJob
     @Override
     public RenderBipedCitizen.Model getModel()
     {
-        return RenderBipedCitizen.Model.SHEEP_FARMER;
+        return RenderBipedCitizen.Model.FARMER;
     }
 
 }
