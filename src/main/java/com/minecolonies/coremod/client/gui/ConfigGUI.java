@@ -22,7 +22,7 @@ public class ConfigGUI extends GuiConfig
      * 
      * @param parentScreen the parent GuiScreen object.
      */
-    public ConfigGUI(GuiScreen parentScreen) 
+    public ConfigGUI(final GuiScreen parentScreen)
     {
         /* The parentScreen. */
         super(parentScreen,
@@ -52,7 +52,7 @@ public class ConfigGUI extends GuiConfig
     }
     
     /** Creates a button linking to another screen where all options of the category are available. */
-    private static IConfigElement categoryElement(String category, String name, String tooltipKey) 
+    private static IConfigElement categoryElement(final String category, final String name, final String tooltipKey)
     {
         return new DummyConfigElement.DummyCategoryElement(name, tooltipKey, 
                 new ConfigElement(ConfigurationHandler.getConfiguration().getCategory(category)).getChildElements());

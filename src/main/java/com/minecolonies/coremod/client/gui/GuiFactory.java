@@ -13,7 +13,7 @@ import java.util.Set;
 public class GuiFactory implements IModGuiFactory 
 {
     @Override
-    public void initialize(Minecraft minecraftInstance) 
+    public void initialize(final Minecraft minecraftInstance)
     { 
         // We don't need this method for our purpose.
     }
@@ -35,7 +35,7 @@ public class GuiFactory implements IModGuiFactory
      */
     @Override
     @Deprecated
-    public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element) 
+    public RuntimeOptionGuiHandler getHandlerFor(final RuntimeOptionCategoryElement element)
     {
         return null;
     }
