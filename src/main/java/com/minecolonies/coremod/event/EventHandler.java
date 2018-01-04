@@ -236,7 +236,7 @@ public class EventHandler
         if (onBlockHutPlaced(world, player, pos))
         {
             final IColony colony = ColonyManager.getClosestIColony(world, pos);
-            if (colony != null && (!Configurations.gameplay.limitToOneWareHousePerColony || !colony.hasWarehouse()))
+            if (colony != null && (!Configurations.Gameplay.limitToOneWareHousePerColony || !colony.hasWarehouse()))
             {
                 return true;
             }
@@ -326,7 +326,7 @@ public class EventHandler
             return false;
         }
 
-        if (Configurations.gameplay.protectVillages && world.getVillageCollection().getNearestVillage(pos, Configurations.gameplay.workingRangeTownHall) != null)
+        if (Configurations.Gameplay.protectVillages && world.getVillageCollection().getNearestVillage(pos, Configurations.Gameplay.workingRangeTownHall) != null)
         {
             Log.getLogger().warn("Village close by!");
             return false;

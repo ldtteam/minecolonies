@@ -58,7 +58,7 @@ public final class ConstructionTapeHelper
      */
     public static void placeConstructionTape(final BlockPos pos, final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners, @NotNull final World world)
     {
-        if (Configurations.gameplay.builderPlaceConstructionTape)
+        if (Configurations.Gameplay.builderPlaceConstructionTape)
         {
             final IBlockState constructionTape = ModBlocks.blockConstructionTape.getDefaultState();
             final IBlockState constructionTapeCorner = ModBlocks.blockConstructionTapeCorner.getDefaultState();

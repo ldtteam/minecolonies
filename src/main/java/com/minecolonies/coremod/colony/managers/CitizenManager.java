@@ -51,7 +51,7 @@ public class CitizenManager implements ICitizenManager
     /**
      * Max citizens without housing.
      */
-    private int maxCitizens = Configurations.gameplay.maxCitizens;
+    private int maxCitizens = Configurations.Gameplay.maxCitizens;
 
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound, @NotNull final Colony colony)
@@ -228,7 +228,7 @@ public class CitizenManager implements ICitizenManager
             }
         }
         // Have at least the minimum amount of citizens
-        newMaxCitizens = Math.max(Configurations.gameplay.maxCitizens, newMaxCitizens);
+        newMaxCitizens = Math.max(Configurations.Gameplay.maxCitizens, newMaxCitizens);
         if (getMaxCitizens() != newMaxCitizens)
         {
             setMaxCitizens(newMaxCitizens);
@@ -368,7 +368,7 @@ public class CitizenManager implements ICitizenManager
         //  Spawn Citizens
         if (colony.hasTownHall() && getCitizens().size() < getMaxCitizens())
         {
-            int respawnInterval = Configurations.gameplay.citizenRespawnInterval * TICKS_SECOND;
+            int respawnInterval = Configurations.Gameplay.citizenRespawnInterval * TICKS_SECOND;
             respawnInterval -= (SECONDS_A_MINUTE * colony.getBuildingManager().getTownHall().getBuildingLevel());
 
             if ((event.world.getTotalWorldTime() + 1) % (respawnInterval + 1) == 0)
