@@ -1,4 +1,8 @@
 tile.minecolonies.blockHutCitizen.name=Citizen's Hut
+tile.minecolonies.blockHutShepherd.name=Shepherd's Hut
+tile.minecolonies.blockHutSwineHerder.name=SwineHerders's Hut
+tile.minecolonies.blockHutCowboy.name=Cowboy's Hut
+tile.minecolonies.blockHutChickenHerder.name=ChickenHerders's Hut
 tile.minecolonies.blockHutBaker.name=Bakery
 tile.minecolonies.blockHutBlacksmith.name=Forge
 tile.minecolonies.blockHutBuilder.name=Builder's Hut
@@ -109,6 +113,18 @@ item.minecolonies.scepterGuard.name=Guard-scepter
 
 com.minecolonies.configgui.title=MineColonies Config
 
+com.minecolonies.coremod.status.herder.deciding=Deciding
+com.minecolonies.coremod.status.herder.goingToHut=Going to Hut
+com.minecolonies.coremod.status.herder.breeding=Breeding
+com.minecolonies.coremod.status.herder.searching=Searching
+com.minecolonies.coremod.status.herder.goingToAnimal=Going to Animal
+com.minecolonies.coremod.status.herder.butchering=Butchering
+com.minecolonies.coremod.status.cowboy.milking=Milking
+com.minecolonies.coremod.status.shepherd.shearing=Shearing
+com.minecolonies.coremod.gui.workerHuts.shepherdHut=Shepherd's Hut
+com.minecolonies.coremod.gui.workerHuts.swineHerderHut=SwineHerder's Hut
+com.minecolonies.coremod.gui.workerHuts.cowboyHut=Cowboy's Hut
+com.minecolonies.coremod.gui.workerHuts.chickenHerderHut=ChickenHerder's Hut
 com.minecolonies.coremod.gui.townHall.rename=Rename Colony
 com.minecolonies.coremod.gui.workerHuts.minerMineNode=Mine Level
 com.minecolonies.coremod.gui.workerHuts.buildType=Build Type:

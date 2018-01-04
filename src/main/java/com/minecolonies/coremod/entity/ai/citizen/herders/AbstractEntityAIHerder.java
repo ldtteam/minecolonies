@@ -297,7 +297,6 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      */
     public List<T> searchForAnimals()
     {
-        worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_SEARCHING));
 
         if (this.getTargetableArea() != null)
         {
@@ -458,7 +457,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      */
     public boolean equipItem(final ItemStack itemStack)
     {
-        if (!checkIfRequestForItemExistOrCreateAsynch(itemStack))
+        if (checkIfRequestForItemExistOrCreateAsynch(itemStack))
         {
             worker.setHeldItem(getItemSlot(itemStack.getItem()));
             return true;

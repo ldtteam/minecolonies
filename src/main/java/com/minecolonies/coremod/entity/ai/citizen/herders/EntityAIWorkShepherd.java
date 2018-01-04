@@ -68,12 +68,12 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
         final List<EntitySheep> animals = new ArrayList<>(searchForAnimals());
         final EntitySheep shearingSheep = animals.stream().filter(sheepie -> !sheepie.getSheared() && !sheepie.isChild()).findFirst().orElse(null);
 
-        if (result.equals(START_WORKING) && shearingSheep != null && !walkingToAnimal(shearingSheep))
+        if (result.equals(START_WORKING) && shearingSheep != null)
         {
             return SHEPHERD_SHEAR;
         }
 
-        return START_WORKING;
+        return result;
     }
 
     @Override
@@ -107,6 +107,10 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
 
         if (worker.getHeldItemMainhand() != null && sheep != null)
         {
+            if (walkingToAnimal(sheep))
+            {
+                return getState();
+            }
             worker.swingArm(EnumHand.MAIN_HAND);
             final List<ItemStack> items = sheep.onSheared(worker.getHeldItemMainhand(),
               worker.world,
