@@ -21,7 +21,7 @@ import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 /**
  * Decorative block
  */
-public class BlockTimberFrame extends AbstractBlockMinecoloniesDirectional<BlockTimberFrame>
+public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame>
 {
 
     public static final PropertyEnum<TimberFrameType> TYPE       = PropertyEnum.create("type", TimberFrameType.class);

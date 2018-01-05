@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "particle": "minecolonies:blocks/blockonecrossedsidelr",
+    "down": "minecolonies:blocks/blockonecrossedsidelr",
+    "up": "minecolonies:blocks/blockonecrossedsidelr",
+    "north": "minecolonies:blocks/blockonecrossedsidelr",
+    "east": "minecolonies:blocks/blockonecrossedsidelr",
+    "south": "minecolonies:blocks/blockonecrossedsidelr",
+    "west": "minecolonies:blocks/blockonecrossedsidelr"
+  }
+}

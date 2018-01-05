@@ -13,7 +13,11 @@ public enum TimberFrameType implements IStringSerializable
     FRAMED(2, "framed", MapColor.WOOD),
     SIDEFRAMED(3, "sideframed", MapColor.WOOD),
     GATEFRAMED(4, "gateframed", MapColor.WOOD),
-    ONECROSSED(5, "onecrossed", MapColor.WOOD);
+    ONECROSSEDLR(5, "onecrossedlr", MapColor.WOOD),
+    ONECROSSEDRL(6, "onecrossedrl", MapColor.WOOD),
+    DOWNGATED(7, "downgated", MapColor.WOOD),
+    HORIZONTALPLAIN(8, "horizontalplain", MapColor.WOOD),
+    HORIZONTALNOCAP(9, "horizontalnocap", MapColor.WOOD);
     private static final TimberFrameType[] META_LOOKUP = new TimberFrameType[values().length];
     static
     {
