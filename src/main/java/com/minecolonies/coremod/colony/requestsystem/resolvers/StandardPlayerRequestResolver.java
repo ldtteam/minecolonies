@@ -22,10 +22,12 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.util.ServerUtils;
+import com.minecolonies.coremod.util.text.NonSiblingFormattingTextComponent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -121,18 +123,26 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 
                 LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
                         request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
-                        request.getShortDisplayString().getFormattedText(),
+                        getRequestMessage(request).getFormattedText(),
                         request.getRequester().getRequesterLocation().toString()
                 );
             }
 
             LanguageHandler.sendPlayersMessage(players, "com.minecolonies.requestsystem.playerresolver",
                     colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
-                    request.getShortDisplayString().getFormattedText(),
+                    getRequestMessage(request).getFormattedText(),
                     request.getRequester().getRequesterLocation().toString());
         }
 
         assignedRequests.add(request.getToken());
+    }
+
+    private ITextComponent getRequestMessage(@NotNull final IRequest request)
+    {
+        final ITextComponent component = new NonSiblingFormattingTextComponent();
+        component.appendSibling(request.getShortDisplayString());
+        component.getStyle().setColor(TextFormatting.WHITE);
+        return component;
     }
 
     @Nullable

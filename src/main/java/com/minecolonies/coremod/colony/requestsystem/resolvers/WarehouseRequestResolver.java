@@ -15,6 +15,7 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;

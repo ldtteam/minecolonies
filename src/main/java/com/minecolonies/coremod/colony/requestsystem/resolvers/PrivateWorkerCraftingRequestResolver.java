@@ -16,6 +16,8 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -30,7 +32,7 @@ import static com.minecolonies.api.util.RSConstants.CONST_CRAFTING_RESOLVER_PRIO
 /**
  * A crafting resolver which takes care of 2x2 crafts which are crafted by the requesting worker.
  */
-public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolver<Stack>
+public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingRequestResolver
 {
     public PrivateWorkerCraftingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
     {
@@ -38,91 +40,9 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractRequestResolve
     }
 
     @Override
-    public TypeToken<? extends Stack> getRequestType()
+    public boolean canBuildingCraftStack(@NotNull final AbstractBuildingWorker building, final ItemStack stack)
     {
-        return TypeToken.of(Stack.class);
-    }
-
-    @Override
-    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends Stack> requestToCheck)
-    {
-        if (!manager.getColony().getWorld().isRemote)
-        {
-            final Colony colony = (Colony) manager.getColony();
-            final ILocation requesterLocation = requestToCheck.getRequester().getRequesterLocation();
-            final AbstractBuilding building = colony.getBuilding(requesterLocation.getInDimensionLocation());
-            if(building instanceof AbstractBuildingWorker)
-            {
-                final ItemStack stack = requestToCheck.getRequest().getStack();
-                if (ItemStackUtils.isEmpty(stack))
-                {
-                    return false;
-                }
-                return ((AbstractBuildingWorker) building).getFirstRecipe(stack) != null;
-            }
-        }
-
-        return false;
-    }
-
-    @Nullable
-    @Override
-    public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request)
-    {
-        if (manager.getColony().getWorld().isRemote)
-        {
-            return null;
-        }
-
-        final Colony colony = (Colony) manager.getColony();
-        final ILocation requesterLocation = request.getRequester().getRequesterLocation();
-        final AbstractBuilding building = colony.getBuilding(requesterLocation.getInDimensionLocation());
-        if(canResolve(manager, request) && building instanceof AbstractBuildingWorker)
-        {
-            Log.getLogger().info("Attempt to resolve");
-            final ItemStack stack = request.getRequest().getStack();
-            IRecipeStorage storage = ((AbstractBuildingWorker) building).getFirstFullFillableRecipe(stack);
-            if(storage == null)
-            {
-                storage = ((AbstractBuildingWorker) building).getFirstRecipe(stack);
-                
-                Log.getLogger().info("Request to resolve");
-                final List<IToken<?>> tokens = new ArrayList<>();
-                //todo After simulation has been added, we need to simulate the subrequest and decided wheter to try to resolve it or not.
-                for(final ItemStack neededStack: storage.getInput())
-                {
-                    final Stack stackRequest = new Stack(neededStack);
-                    tokens.add(manager.createRequest(this, stackRequest));
-                }
-
-                return ImmutableList.copyOf(tokens);
-            }
-
-            return Lists.newArrayList();
-        }
-
-        return null;
-    }
-
-    @Override
-    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request)
-    {
-        final Colony colony = (Colony) manager.getColony();
-        final ILocation requesterLocation = request.getRequester().getRequesterLocation();
-        final AbstractBuilding building = colony.getBuilding(requesterLocation.getInDimensionLocation());
-        final ItemStack stack = request.getRequest().getStack();
-        Log.getLogger().warn("RESOLVE!");
-        final IRecipeStorage storage = ((AbstractBuildingWorker) building).getFirstFullFillableRecipe(stack);
-
-        if(storage == null)
-        {
-            return;
-        }
-
-        if(((AbstractBuildingWorker) building).fullFillRecipe(storage))
-        {
-            manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
-        }
+        return building.getFirstRecipe(stack) != null;
     }
 
     @Nullable

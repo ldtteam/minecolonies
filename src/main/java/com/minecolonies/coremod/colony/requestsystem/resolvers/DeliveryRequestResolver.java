@@ -12,6 +12,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

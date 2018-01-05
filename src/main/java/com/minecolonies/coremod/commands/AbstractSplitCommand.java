@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * A command that has children. Split-command with various parts.
@@ -87,13 +88,14 @@ public abstract class AbstractSplitCommand implements ISubCommand
         if (args.length <= 1
               || !childs.containsKey(args[0]))
         {
-            return new ArrayList<>(childs.keySet());
+            return childs.keySet().stream().filter(k -> k.startsWith(args[0])).collect(Collectors.toList());
         }
         final ISubCommand child = childs.get(args[0]);
         final String[] newArgs = new String[args.length - 1];
         System.arraycopy(args, 1, newArgs, 0, newArgs.length);
         return child.getTabCompletionOptions(server, sender, newArgs, pos);
     }
+
 
     @Override
     public boolean isUsernameIndex(@NotNull final String[] args, final int index)

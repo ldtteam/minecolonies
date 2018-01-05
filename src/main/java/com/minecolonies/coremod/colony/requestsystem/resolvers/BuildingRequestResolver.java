@@ -15,6 +15,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
 import net.minecraft.tileentity.TileEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

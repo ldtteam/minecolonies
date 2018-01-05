@@ -103,7 +103,7 @@ public class Label extends AbstractTextElement
         GlStateManager.translate((double) (getX() + offsetX), (double) (getY() + offsetY), 0);
         GlStateManager.scale((float) scale, (float) scale, (float) scale);
         mc.renderEngine.bindTexture(TEXTURE);
-        mc.fontRenderer.drawString(labelText, 0, 0, color, shadow);
+        mc.fontRenderer.drawString(labelText, 0, 0, 0, shadow);
         GlStateManager.popMatrix();
     }
 

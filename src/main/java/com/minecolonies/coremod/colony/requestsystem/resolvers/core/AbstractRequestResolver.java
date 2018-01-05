@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.requestsystem.resolvers;
+package com.minecolonies.coremod.colony.requestsystem.resolvers.core;
 
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;

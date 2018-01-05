@@ -987,6 +987,10 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             {
                 colony.getWorkManager().removeWorkOrder(o.getID());
                 markDirty();
+
+                final int citizenThatIsBuilding = o.getClaimedBy();
+                final CitizenData data = colony.getCitizen(citizenThatIsBuilding);
+                data.getWorkBuilding().cancelAllRequestsOfCitizen(data);
                 return;
             }
         }
@@ -1519,13 +1523,13 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         {
             getColony().getRequestManager().updateRequestState(request.getToken(), RequestState.CANCELLED);
 
-            if (openRequests.get(request.getRequest().getClass()).isEmpty())
+            if (openRequests.containsKey(TypeToken.of(request.getRequest().getClass())))
             {
-                openRequests.remove(request.getRequest().getClass());
-            }
-            else
-            {
-                openRequests.get(request.getRequest().getClass()).remove(request.getToken());
+                openRequests.get(TypeToken.of(request.getRequest().getClass())).remove(request.getToken());
+                if (openRequests.get(TypeToken.of(request.getRequest().getClass())).isEmpty())
+                {
+                    openRequests.remove(TypeToken.of(request.getRequest().getClass()));
+                }
             }
 
             requestsByCitizen.remove(request.getToken());
@@ -1688,11 +1692,16 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         }
 
         final IRequest<?> requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
-        openRequests.get(TypeToken.of(requestThatCompleted.getRequest().getClass())).remove(token);
-
-        if (openRequests.get(TypeToken.of(requestThatCompleted.getRequest().getClass())).isEmpty())
+        if (requestThatCompleted != null)
         {
-            openRequests.remove(TypeToken.of(requestThatCompleted.getRequest().getClass()));
+            if (openRequests.containsKey(TypeToken.of(requestThatCompleted.getRequest().getClass()))){
+                openRequests.get(TypeToken.of(requestThatCompleted.getRequest().getClass())).remove(token);
+
+                if (openRequests.get(TypeToken.of(requestThatCompleted.getRequest().getClass())).isEmpty())
+                {
+                    openRequests.remove(TypeToken.of(requestThatCompleted.getRequest().getClass()));
+                }
+            }
         }
 
         //Check if the citizen did not die.
