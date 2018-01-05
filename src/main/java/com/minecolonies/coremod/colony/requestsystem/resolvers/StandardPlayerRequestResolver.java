@@ -115,21 +115,24 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
             final EntityPlayer owner = ServerUtils.getPlayerFromUUID(colony.getWorld(), ((Colony) colony).getPermissions().getOwner());
             final TextComponentString colonyDescription = new TextComponentString(colony.getName() + ":");
 
-            if (owner != null)
+            if(manager.getColony().getWorld().isDaytime())
             {
-                players.remove(owner);
+                if (owner != null)
+                {
+                    players.remove(owner);
 
-                LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
-                        request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
+                    LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
+                            request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
+                            request.getShortDisplayString().getFormattedText(),
+                            request.getRequester().getRequesterLocation().toString()
+                    );
+                }
+
+                LanguageHandler.sendPlayersMessage(players, "com.minecolonies.requestsystem.playerresolver",
+                        colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
                         request.getShortDisplayString().getFormattedText(),
-                        request.getRequester().getRequesterLocation().toString()
-                );
+                        request.getRequester().getRequesterLocation().toString());
             }
-
-            LanguageHandler.sendPlayersMessage(players, "com.minecolonies.requestsystem.playerresolver",
-                    colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
-                    request.getShortDisplayString().getFormattedText(),
-                    request.getRequester().getRequesterLocation().toString());
         }
 
         assignedRequests.add(request.getToken());

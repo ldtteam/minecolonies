@@ -311,6 +311,34 @@ public enum AIState
     COOK_SERVE,
 
     /*
+    ###Smelter###
+     */
+    /**
+     * Get some burnable material for the furnace.
+     */
+    SMELTER_GET_FIREWOOD,
+
+    /**
+     * smelter smelts ore until its a bar.
+     */
+    SMELTER_SMELT_ORE,
+
+    /**
+     * Gathering ore from his building.
+     */
+    SMELTER_GATHERING,
+
+    /**
+     * Retrieve the ore from the furnace.
+     */
+    SMELTER_RETRIEVE_ORE,
+
+    /**
+     * Smelt stuff he finds in his hut to ingots.
+     */
+    SMELTER_SMELT_STUFF,
+
+    /*
 ### Herders ###
      */
 

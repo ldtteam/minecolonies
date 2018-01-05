@@ -34,6 +34,7 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.DeliveryRequestFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.ToolRequestFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.FoodRequestFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.SmeltableOreRequestFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.BurnableRequestFactory());
         StandardFactoryController.getInstance().registerNewFactory(new BuildingBasedRequesterFactory());
         StandardFactoryController.getInstance().registerNewFactory(new DeliveryRequestResolverFactory());
