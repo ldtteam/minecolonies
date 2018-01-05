@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * BuildTool window.
@@ -790,7 +791,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private static boolean inventoryHasHut(@NotNull final InventoryPlayer inventory, final String hut)
     {
         return inventory.hasItemStack(new ItemStack(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut)))
-                || inventory.hasItemStack(new ItemStack(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX.toLowerCase() + hut.toLowerCase())));
+                || inventory.hasItemStack(new ItemStack(Block.getBlockFromName(Constants.MOD_ID + (HUT_PREFIX + hut).toLowerCase(Locale.ENGLISH))));
     }
 
     /*
