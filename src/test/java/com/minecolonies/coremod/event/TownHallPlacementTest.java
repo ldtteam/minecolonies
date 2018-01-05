@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
@@ -75,7 +76,7 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
         Assert.assertTrue(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic(never());
-        ColonyManager.createColony(world, PLACE_POS, player);
+        ColonyManager.createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
     }
 
     @Test
@@ -92,7 +93,7 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
         Assert.assertFalse(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic(never());
-        ColonyManager.createColony(world, PLACE_POS, player);
+        ColonyManager.createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
     }
 
     @Test
@@ -109,7 +110,7 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
         Assert.assertTrue(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic(never());
-        ColonyManager.createColony(world, PLACE_POS, player);
+        ColonyManager.createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
     }
 
     @Test
@@ -125,7 +126,7 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
         Assert.assertFalse(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic(never());
-        ColonyManager.createColony(world, PLACE_POS, player);
+        ColonyManager.createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
     }
 
     @Test
@@ -138,7 +139,7 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
         Assert.assertFalse(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic(never());
-        ColonyManager.createColony(world, PLACE_POS, player);
+        ColonyManager.createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
     }
 
     @Test
@@ -153,7 +154,7 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
         Assert.assertFalse(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic(never());
-        ColonyManager.createColony(world, PLACE_POS, player);
+        ColonyManager.createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
     }
 
     @Test
@@ -165,7 +166,7 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
         Assert.assertFalse(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic(never());
-        ColonyManager.createColony(world, PLACE_POS, player);
+        ColonyManager.createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
     }
 
     @Test
@@ -179,7 +180,7 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
         Assert.assertFalse(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic(never());
-        ColonyManager.createColony(world, PLACE_POS, player);
+        ColonyManager.createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
     }
 
     @Test
@@ -193,7 +194,7 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
         Assert.assertFalse(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic(never());
-        ColonyManager.createColony(world, PLACE_POS, player);
+        ColonyManager.createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
     }
 
     @Test

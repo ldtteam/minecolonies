@@ -171,7 +171,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     public int getPatrolDistance()
     {
         return this.getBuildingLevel() * PATROL_DISTANCE;
-    }    /**
+    }
+
+    /**
      * Gets the max level of the baker's hut.
      *
      * @return The max level of the baker's hut.
@@ -210,11 +212,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
 
         if (newLevel == 1)
         {
-            this.getColony().triggerAchievement(ModAchievements.achievementBuildingGuard);
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingGuard, this.getColony());
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeGuardMax);
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeGuardMax, this.getColony());
         }
     }
 

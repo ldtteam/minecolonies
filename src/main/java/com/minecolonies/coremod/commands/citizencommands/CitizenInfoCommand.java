@@ -56,7 +56,7 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
     @Override
     void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
     {
-        final CitizenData citizenData = colony.getCitizen(citizenId);
+        final CitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
         final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
         sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION,
           citizenData.getId(),
@@ -93,16 +93,17 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
         sender.sendMessage(new TextComponentString(String.format(CITIZEN_HEALTH,
           entityCitizen.getHealth(),
           entityCitizen.getMaxHealth())));
+
         sender.sendMessage(new TextComponentString(String.format(CITIZEN_LEVEL_AND_AGE,
-          entityCitizen.getLevel(),
-          entityCitizen.getAge(),
-          entityCitizen.getExperienceLevel())));
+                entityCitizen.getLevel(),
+                entityCitizen.getGrowingAge(),
+                citizenData.getLevel())));
         sender.sendMessage(new TextComponentString(String.format(CITIZEN_SKILLS,
-          entityCitizen.getCharisma(),
-          entityCitizen.getDexterity(),
-          entityCitizen.getEndurance(),
-          entityCitizen.getIntelligence(),
-          entityCitizen.getStrength())));
+                citizenData.getCharisma(),
+                citizenData.getDexterity(),
+                citizenData.getEndurance(),
+                citizenData.getIntelligence(),
+                citizenData.getStrength())));
         if (entityCitizen.getColonyJob() == null)
         {
             sender.sendMessage(new TextComponentString(String.format(CITIZEN_JOB_NULL)));

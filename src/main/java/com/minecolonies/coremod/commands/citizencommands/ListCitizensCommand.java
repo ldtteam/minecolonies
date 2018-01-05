@@ -85,7 +85,7 @@ public class ListCitizensCommand extends AbstractSingleCommand
 
         final Colony colony = ColonyManager.getColony(colonyId);
 
-        final List<CitizenData> citizens = new ArrayList<>(colony.getCitizens().values());
+        final List<CitizenData> citizens = colony.getCitizenManager().getCitizens();
         final int citizenCount = citizens.size();
 
         // check to see if we have to add one page to show the half page

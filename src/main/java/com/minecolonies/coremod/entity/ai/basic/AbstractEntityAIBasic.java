@@ -13,12 +13,9 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
@@ -44,6 +41,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATION;
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
@@ -198,7 +196,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean shouldGetFood()
     {
-        return (worker.getCitizenData().getSaturation() <= EntityCitizen.HIGH_SATURATION
+        return (worker.getCitizenData().getSaturation() <= HIGH_SATURATION
                   && !job.hasCheckedForFoodToday())
                  || worker.getCitizenData().getSaturation() <= 0;
     }
@@ -266,20 +264,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (restaurant == null)
         {
-            double distance = Double.MAX_VALUE;
-            BlockPos goodCook = null;
-            for (final AbstractBuilding building : worker.getColony().getBuildings().values())
-            {
-                if (building instanceof BuildingCook && building.getBuildingLevel() > 0)
-                {
-                    final double localDistance = building.getLocation().distanceSq(getOwnBuilding().getLocation());
-                    if (localDistance < distance)
-                    {
-                        distance = localDistance;
-                        goodCook = building.getLocation();
-                    }
-                }
-            }
+            final BlockPos goodCook = worker.getColony().getBuildingManager().getBestRestaurant(worker);
 
             if (goodCook == null)
             {
@@ -479,14 +464,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             return IDLE;
         }
-        if (getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
+        if (!walkToBuilding() && getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
             delay += DELAY_RECHECK;
 
             @SuppressWarnings(RAWTYPES) final ImmutableList<IRequest> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
 
             completedRequests.stream().filter(r -> !(r.canBeDelivered())).forEach(r -> getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), r.getToken()));
-            @SuppressWarnings(RAWTYPES) final IRequest<?> firstDeliverableRequest = completedRequests.stream().filter(IRequest::canBeDelivered).findFirst().orElse(null);
+            @SuppressWarnings(RAWTYPES) IRequest firstDeliverableRequest = completedRequests.stream().filter(IRequest::canBeDelivered).findFirst().orElse(null);
 
             if (firstDeliverableRequest != null)
             {
@@ -507,8 +492,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 }
 
                 //Takes one Stack from the hut if existent
-                if (! walkToBuilding() && InventoryUtils.getItemCountInProvider(getOwnBuilding(), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount() &&
-                  InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(getOwnBuilding(), deliveredItemStack::isItemEqualIgnoreDurability, deliveredItemStack.getCount(), new InvWrapper(worker.getInventoryCitizen())))
+                if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount() &&
+                        InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+                                getOwnBuilding(),
+                                deliveredItemStack::isItemEqualIgnoreDurability,
+                                deliveredItemStack.getCount(),
+                                new InvWrapper(worker.getInventoryCitizen())))
                 {
 
                     return NEEDS_ITEM;
@@ -1216,6 +1205,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
           s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack) && s.getCount() >= stack.getCount()))
+        {
+            return true;
+        }
+
+        if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), stack::isItemEqualIgnoreDurability) >= stack.getCount() &&
+            InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+                    getOwnBuilding(),
+                    stack::isItemEqualIgnoreDurability,
+                    stack.getCount(),
+                    new InvWrapper(worker.getInventoryCitizen())))
         {
             return true;
         }

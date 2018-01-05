@@ -63,10 +63,9 @@ public class RecipeStorage implements IRecipeStorage
     }
 
     @Override
-    @SuppressWarnings("squid:S2384")
     public List<ItemStack> getInput()
     {
-        return input;
+        return new ArrayList<>(input);
     }
 
     @Override

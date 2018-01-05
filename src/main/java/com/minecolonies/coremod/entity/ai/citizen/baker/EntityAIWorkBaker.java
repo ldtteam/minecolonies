@@ -9,6 +9,7 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.placementhandlers.PlacementHandlers;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -22,8 +23,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BAKER_NO_FURNACES;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -124,7 +127,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
     private AIState finishing()
     {
-        if (currentBakingProduct == null)
+        if (currentBakingProduct == null || currentBakingProduct.getState() != ProductState.BAKED)
         {
             progress = 0;
             final List<BakingProduct> bakingProducts = getOwnBuilding().getTasks().get(ProductState.BAKED);

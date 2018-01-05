@@ -123,7 +123,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
             if (r instanceof AbstractBuildingView && manager.getColony() instanceof Colony)
             {
                 final Colony colony = (Colony) manager.getColony();
-                return colony.getBuilding(((AbstractBuildingView) r).getID());
+                return colony.getBuildingManager().getBuilding(((AbstractBuildingView) r).getID());
             }
             else
             {

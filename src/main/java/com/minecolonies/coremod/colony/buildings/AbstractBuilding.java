@@ -32,7 +32,9 @@ import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.StructureWrapper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockChest;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockFurnace;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
@@ -42,6 +44,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -56,7 +59,6 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -740,7 +742,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     public final void destroy()
     {
         onDestroyed();
-        colony.removeBuilding(this);
+        colony.getBuildingManager().removeBuilding(this, colony.getSubscribers(), colony);
     }
 
     /**
@@ -931,7 +933,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         dirty = true;
         if (colony != null)
         {
-            colony.markBuildingsDirty();
+            colony.getBuildingManager().markBuildingsDirty();
         }
     }
 
@@ -1568,7 +1570,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
         for (final int citizenId : citizensByRequests.keySet())
         {
-            final CitizenData data = getColony().getCitizen(citizenId);
+            final CitizenData data = getColony().getCitizenManager().getCitizen(citizenId);
 
             if (data == null)
             {
@@ -1681,9 +1683,10 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         markDirty();
     }
 
-    public void onRequestCancelled(@NotNull final IToken<?> token)
+    @NotNull
+    public void onRequestCancelled(@NotNull final IToken token)
     {
-        final Integer citizenThatRequested = requestsByCitizen.remove(token);
+        final int citizenThatRequested = requestsByCitizen.remove(token);
         citizensByRequests.get(citizenThatRequested).remove(token);
 
         if (citizensByRequests.get(citizenThatRequested).isEmpty())
@@ -1705,9 +1708,10 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         }
 
         //Check if the citizen did not die.
-        if (getColony().getCitizen(citizenThatRequested) != null)
-            getColony().getCitizen(citizenThatRequested).onRequestCancelled(token);
-
+        if (getColony().getCitizenManager().getCitizen(citizenThatRequested) != null)
+        {
+            getColony().getCitizenManager().getCitizen(citizenThatRequested).onRequestCancelled(token);
+        }
         markDirty();
     }
 
@@ -1717,22 +1721,22 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     {
         if (!requestsByCitizen.containsKey(token))
         {
-            return new TextComponentString(this.getSchematicName() + " <UNKNOWN>");
+            return new TextComponentString("<UNKNOWN>");
         }
 
         final Integer citizenData = requestsByCitizen.get(token);
-        return new TextComponentString(this.getSchematicName() + " " + getColony().getCitizen(citizenData).getName());
+        return new TextComponentString(this.getSchematicName() + " " + getColony().getCitizenManager().getCitizen(citizenData).getName());
     }
 
     public Optional<CitizenData> getCitizenForRequest(@NotNull final IToken token)
     {
-        if (!requestsByCitizen.containsKey(token))
+        if (!requestsByCitizen.containsKey(token) || getColony() == null)
         {
             return Optional.empty();
         }
 
-        Integer citizenData = requestsByCitizen.get(token);
-        return Optional.of(getColony().getCitizen(citizenData));
+        int citizenID = requestsByCitizen.get(token);
+        return Optional.of(getColony().getCitizenManager().getCitizen(citizenID));
     }
 
 
@@ -1744,12 +1748,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     public boolean hasCapability(
       @Nonnull final Capability<?> capability, @Nullable final EnumFacing facing)
     {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null)
-        {
-            return true;
-        }
-
-        return false;
+        return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null;
     }
 
     @Nullable
@@ -1765,7 +1764,11 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             providers.add(getTileEntity());
 
             //Add additional containers
-            providers.addAll(getAdditionalCountainers().stream().map(getTileEntity().getWorld()::getTileEntity).collect(Collectors.toSet()));
+            providers.addAll(getAdditionalCountainers().stream()
+                    .map(getTileEntity().getWorld()::getTileEntity)
+                    .filter(entity -> !(entity instanceof TileEntityFurnace))
+                    .collect(Collectors.toSet()));
+            providers.removeIf(Objects::isNull);
 
             //Map all providers to IItemHandlers.
             final Set<IItemHandlerModifiable> modifiables = providers

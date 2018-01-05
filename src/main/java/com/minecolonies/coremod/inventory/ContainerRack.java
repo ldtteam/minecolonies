@@ -6,53 +6,19 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.util.constant.InventoryConstants.*;
+
 /**
- * THe container class for the rack.
+ * The container class for the rack.
  */
 public class ContainerRack extends net.minecraft.inventory.Container
 {
-    /**
-     * Amount of columns in the player inventory.
-     */
-    private static final int INVENTORY_COLUMNS = 9;
-
-    /**
-     * Initial x-offset of the inventory slot.
-     */
-    private static final int PLAYER_INVENTORY_INITIAL_X_OFFSET = 8;
-
-    /**
-     * Initial y-offset of the inventory slot.
-     */
-    private static final int PLAYER_INVENTORY_INITIAL_Y_OFFSET = 30;
-
-    /**
-     * Each offset of the inventory slots.
-     */
-    private static final int PLAYER_INVENTORY_OFFSET_EACH = 18;
-
-    /**
-     * Initial y-offset of the inventory slots in the hotbar.
-     */
-    private static final int PLAYER_INVENTORY_HOTBAR_OFFSET = 88;
-
-    /**
-     * Amount of rows in the player inventory.
-     */
-    private static final int INVENTORY_ROWS = 3;
-
-    /**
-     * The size of the the inventory hotbar.
-     */
-    private static final int INVENTORY_BAR_SIZE = 8;
-
     /**
      * The inventory.
      */
@@ -79,11 +45,10 @@ public class ContainerRack extends net.minecraft.inventory.Container
      * @param tileEntityRack  the tileEntity of the field containing the inventory.
      * @param neighborRack    the neighboring rack.
      * @param playerInventory the player inventory.
-     * @param location        the position of the field.
      */
     public ContainerRack(
                           @NotNull final TileEntityRack tileEntityRack, @Nullable final TileEntityRack neighborRack,
-                          final InventoryPlayer playerInventory, @NotNull final BlockPos location)
+                          final InventoryPlayer playerInventory)
     {
         super();
         if (neighborRack != null)

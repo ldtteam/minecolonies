@@ -95,7 +95,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
             return;
         }
 
-        final CitizenData citizenData = colony.getCitizen(message.citizenId);
+        final CitizenData citizenData = colony.getCitizenManager().getCitizen(message.citizenId);
         if (citizenData == null)
         {
             Log.getLogger().warn("TransferItemsRequestMessage citizenData is null");
@@ -109,13 +109,13 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
             return;
         }
 
-        if (message.quantity <= 0)
+        final boolean isCreative = player.capabilities.isCreativeMode;
+        if (message.quantity <= 0 && !isCreative)
         {
             Log.getLogger().warn("TransferItemsRequestMessage quantity below 0");
             return;
         }
 
-        final boolean isCreative = player.capabilities.isCreativeMode;
         final Item item = message.itemStack.getItem();
         final int amountToTake;
         if (isCreative)
@@ -127,7 +127,8 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
             amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage()));
         }
 
-        final ItemStack itemStackToTake = new ItemStack(item, amountToTake, message.itemStack.getItemDamage());
+        final ItemStack itemStackToTake = message.itemStack.copy();
+        ItemStackUtils.setSize(itemStackToTake, message.quantity);
 
         ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(citizen.getInventoryCitizen()), itemStackToTake);
         if (!isCreative)

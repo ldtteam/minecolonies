@@ -140,7 +140,7 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
             return;
         }
 
-        final AbstractBuilding buildingWorker = colony.getBuilding(message.building);
+        final AbstractBuilding buildingWorker = colony.getBuildingManager().getBuilding(message.building);
         if(buildingWorker instanceof AbstractBuildingWorker)
         {
             final IToken token = ColonyManager.getRecipeManager().checkOrAddRecipe(message.storage);

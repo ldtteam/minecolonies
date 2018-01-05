@@ -3,6 +3,8 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.compatibility.CompatabilityManager;
+import com.minecolonies.api.compatibility.ICompatabilityManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.util.LanguageHandler;
@@ -38,6 +40,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COMPATABILITY_MANAGER;
 
 /**
  * Singleton class that links colonies to minecraft.
@@ -106,6 +110,7 @@ public final class ColonyManager
      * The last colony id.
      */
     private static int topColonyId = 0;
+
     /**
      * Amount of worlds loaded.
      */
@@ -132,6 +137,11 @@ public final class ColonyManager
      */
     private static volatile UUID    serverUUID          = null;
 
+    /**
+     * Creates a new compatabilityManager.
+     */
+    private static final ICompatabilityManager compatabilityManager = new CompatabilityManager();
+
     private ColonyManager()
     {
         //Hides default constructor.
@@ -143,12 +153,14 @@ public final class ColonyManager
      * @param w      World of the colony.
      * @param pos    Coordinate of the center of the colony.
      * @param player the player that creates the colony - owner.
+     * @param style the default style of the colony.
      * @return The created colony.
      */
     @NotNull
-    public static Colony createColony(@NotNull final World w, final BlockPos pos, @NotNull final EntityPlayer player)
+    public static Colony createColony(@NotNull final World w, final BlockPos pos, @NotNull final EntityPlayer player, @NotNull final String style)
     {
         final Colony colony = colonies.create(w, pos);
+        colony.setStyle(style);
 
         addColonyByWorld(colony);
 
@@ -156,8 +168,8 @@ public final class ColonyManager
         colony.setName(colonyName);
         colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Rank.OWNER, w);
 
-        colony.triggerAchievement(ModAchievements.achievementGetSupply);
-        colony.triggerAchievement(ModAchievements.achievementTownhall);
+        colony.getStatsManager().triggerAchievement(ModAchievements.achievementGetSupply, colony);
+        colony.getStatsManager().triggerAchievement(ModAchievements.achievementTownhall, colony);
 
         markDirty();
 
@@ -195,7 +207,7 @@ public final class ColonyManager
 
             final Set<World> colonyWorlds = new HashSet<>();
             Log.getLogger().info("Removing citizens for " + id);
-            for (final CitizenData citizenData : new ArrayList<>(colony.getCitizens().values()))
+            for (final CitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
             {
                 Log.getLogger().info("Kill Citizen " + citizenData.getName());
                 final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
@@ -209,7 +221,7 @@ public final class ColonyManager
             if (canDestroy)
             {
                 Log.getLogger().info("Removing buildings for " + id);
-                for (final AbstractBuilding building : new ArrayList<>(colony.getBuildings().values()))
+                for (final AbstractBuilding building : new ArrayList<>(colony.getBuildingManager().getBuildings().values()))
                 {
                     final BlockPos location = building.getLocation();
                     Log.getLogger().info("Delete Building at " + location);
@@ -271,7 +283,7 @@ public final class ColonyManager
         @Nullable final Colony colony = getColony(w, pos);
         if (colony != null)
         {
-            final AbstractBuilding building = colony.getBuilding(pos);
+            final AbstractBuilding building = colony.getBuildingManager().getBuilding(pos);
             if (building != null)
             {
                 return building;
@@ -281,7 +293,7 @@ public final class ColonyManager
         //  Fallback - there might be a AbstractBuilding for this block, but it's outside of it's owning colony's radius.
         for (@NotNull final Colony otherColony : getColonies(w))
         {
-            final AbstractBuilding building = otherColony.getBuilding(pos);
+            final AbstractBuilding building = otherColony.getBuildingManager().getBuilding(pos);
             if (building != null)
             {
                 return building;
@@ -635,6 +647,10 @@ public final class ColonyManager
             compound.setUniqueId(TAG_UUID, serverUUID);
         }
 
+        final NBTTagCompound compCompound = new NBTTagCompound();
+        compatabilityManager.writeToNBT(compCompound);
+        compound.setTag(TAG_COMPATABILITY_MANAGER, compCompound);
+
         final NBTTagCompound recipeCompound = new NBTTagCompound();
         recipeManager.writeToNBT(recipeCompound);
         compound.setTag(RECIPE_MANAGER_TAG, recipeCompound);
@@ -822,6 +838,12 @@ public final class ColonyManager
         {
             serverUUID = compound.getUniqueId(TAG_UUID);
         }
+
+        if(compound.hasKey(TAG_COMPATABILITY_MANAGER))
+        {
+            compatabilityManager.readFromNBT(compound.getCompoundTag(TAG_COMPATABILITY_MANAGER));
+        }
+        compatabilityManager.discover(world);
 
         final NBTTagCompound recipeCompound = compound.getCompoundTag(RECIPE_MANAGER_TAG);
         recipeManager.readFromNBT(recipeCompound);
@@ -1124,6 +1146,15 @@ public final class ColonyManager
             }
         }
         return false;
+    }
+
+    /**
+     * Get an instance of the compatabilityManager.
+     * @return the manager.
+     */
+    public static ICompatabilityManager getCompatabilityManager()
+    {
+        return compatabilityManager;
     }
 
     /**

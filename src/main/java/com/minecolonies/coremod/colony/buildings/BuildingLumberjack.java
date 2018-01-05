@@ -4,31 +4,27 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutLumberjack;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.network.messages.LumberjackSaplingSelectorMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -79,6 +75,8 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         super(c, l);
 
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
+
+        checkTreesToFell();
     }
 
     @Override
@@ -180,11 +178,11 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
         if (newLevel == 1)
         {
-            this.getColony().triggerAchievement(ModAchievements.achievementBuildingLumberjack);
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingLumberjack, this.getColony());
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax);
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax, this.getColony());
         }
     }
 
@@ -207,8 +205,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         if (treesToFell.isEmpty())
         {
             super.readFromNBT(compound);
-            treesToFell.clear();
-
             final NBTTagList saplingTagList = compound.getTagList(TAG_SAPLINGS, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < saplingTagList.tagCount(); ++i)
             {
@@ -218,6 +214,8 @@ public class BuildingLumberjack extends AbstractBuildingWorker
                 treesToFell.put(new ItemStorage(stack), cut);
             }
         }
+
+        checkTreesToFell();
     }
 
     @Override
@@ -260,6 +258,23 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     }
 
     /**
+     * Check and update the treesToFell list.
+     */
+    private void checkTreesToFell()
+    {
+        if(treesToFell.size() != ColonyManager.getCompatabilityManager().getCopyOfSaplings().size())
+        {
+            for(final ItemStorage storage : ColonyManager.getCompatabilityManager().getCopyOfSaplings())
+            {
+                if(!treesToFell.containsKey(storage))
+                {
+                    treesToFell.put(storage, true);
+                }
+            }
+        }
+    }
+
+    /**
      * Provides a view of the lumberjack building class.
      */
     public static class View extends AbstractBuildingWorker.View
@@ -296,16 +311,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
                     treesToFell.put(new ItemStorage(stack), cut);
                 }
             }
-
-            if (treesToFell.isEmpty())
-            {
-                treesToFell.putAll(calcSaplings(OreDictionary.getOres("treeSapling")));
-
-                for (final Map.Entry<ItemStorage, Boolean> entry : treesToFell.entrySet())
-                {
-                    MineColonies.getNetwork().sendToServer(new LumberjackSaplingSelectorMessage(this, entry.getKey().getItemStack(), entry.getValue()));
-                }
-            }
         }
 
         @NotNull
@@ -320,31 +325,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         public Skill getSecondarySkill()
         {
             return Skill.CHARISMA;
-        }
-
-        /**
-         * Calculates all saplings ingame and return an itemStorage map of it.
-         *
-         * @param saplings the saplings.
-         * @return the itemStorage map.
-         */
-        public static Map<ItemStorage, Boolean> calcSaplings(final List<ItemStack> saplings)
-        {
-            final Map<ItemStorage, Boolean> finalSaplings = new LinkedHashMap<>();
-            for (final ItemStack saps : saplings)
-            {
-                if (saps.getHasSubtypes())
-                {
-                    final NonNullList<ItemStack> list = NonNullList.create();
-                    saps.getItem().getSubItems(saps.getItem(), null, list);
-
-                    for (final ItemStack stack : list)
-                    {
-                        finalSaplings.put(new ItemStorage(stack), true);
-                    }
-                }
-            }
-            return finalSaplings;
         }
 
         @NotNull
