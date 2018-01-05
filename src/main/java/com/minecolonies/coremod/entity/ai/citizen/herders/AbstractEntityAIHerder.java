@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.herders;
 
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
@@ -121,7 +122,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         final int numOfBreedableAnimals = ((int) animals.stream().filter(animal -> animal.getGrowingAge() == 0).count());
 
-        final boolean hasBreedingItem = worker.hasItemInInventory(getBreedingItem().getItem(), 0);
+        final boolean hasBreedingItem = InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), getBreedingItem().getItem(), getBreedingItem().getItemDamage());
 
         if (!searchForItemsInArea().isEmpty())
         {
@@ -501,8 +502,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      */
     public ItemStack getBreedingItems()
     {
-        final ItemStack breedingItem = getBreedingItem();
-        breedingItem.stackSize = 2;
+        final ItemStack breedingItem = getBreedingItem().copy();
+        ItemStackUtils.setSize(breedingItem, 2);
         return breedingItem;
     }
 
