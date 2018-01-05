@@ -1,9 +1,7 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface implementing all methods required for all barbarianmanagers.
@@ -50,8 +48,7 @@ public interface IBarbarianManager
      * Gets a random spot inside the colony, in the named direction, where the chunk is loaded.
      * @param directionX the first direction parameter.
      * @param directionZ the second direction paramter.
-     * @param colony the colony for it.
      * @return the position.
      */
-    BlockPos getRandomOutsiderInDirection(final EnumFacing directionX, final EnumFacing directionZ, @NotNull final Colony colony);
+    BlockPos getRandomOutsiderInDirection(final EnumFacing directionX, final EnumFacing directionZ);
 }
