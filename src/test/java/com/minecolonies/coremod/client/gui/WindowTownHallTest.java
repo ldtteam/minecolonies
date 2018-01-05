@@ -31,13 +31,13 @@ public class WindowTownHallTest {
     @Mock
     private ColonyView colony;
 
-    private Map<Integer, CitizenDataView> citizensMap = new HashMap<>();
-    private List<CitizenDataView> citizensArray = new ArrayList<>();
+    final private Map<Integer, CitizenDataView> citizensMap = new HashMap<>();
+    final private List<CitizenDataView> citizensArray = new ArrayList<>();
 
     @Before
-    public void setup()
+    public void setUp()
     {
-        String[] jobs =
+        final String[] jobs =
         {
                 "com.minecolonies.coremod.gui.townHall.population.deliverymen",
                 "com.minecolonies.coremod.gui.townHall.population.miners",
@@ -52,7 +52,7 @@ public class WindowTownHallTest {
 
         for (int i = 0; i < jobs.length; i++)
         {
-            CitizenDataView citizen = mock(CitizenDataView.class);
+            final CitizenDataView citizen = mock(CitizenDataView.class);
             when(citizen.getId()).thenReturn(i);
             when(citizen.getJob()).thenReturn(jobs[i]);
             citizensMap.put(citizen.getId(), citizen);
@@ -63,7 +63,7 @@ public class WindowTownHallTest {
 
     @Test
     public void testJobs() throws Exception {
-        WindowTownHall windowTownHall = mock(WindowTownHall.class);
+        final WindowTownHall windowTownHall = mock(WindowTownHall.class);
 
         when(colony.getCitizens()).thenReturn(Collections.unmodifiableMap(citizensMap));
         when(colony.getMaxCitizens()).thenReturn(4);
