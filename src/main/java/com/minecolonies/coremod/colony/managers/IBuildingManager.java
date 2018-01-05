@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -26,9 +25,8 @@ public interface IBuildingManager
     /**
      * Read the buildings from NBT.
      * @param compound the compound.
-     * @param colony the colony.
      */
-    void readFromNBT(@NotNull final NBTTagCompound compound, final Colony colony);
+    void readFromNBT(@NotNull final NBTTagCompound compound);
 
     /**
      * Write the buildings to NBT.
@@ -65,7 +63,7 @@ public interface IBuildingManager
      * Clean up the buildings.
      * @param event at the worldTick event.
      */
-    void cleanUpBuildings(TickEvent.WorldTickEvent event);
+    void cleanUpBuildings(final TickEvent.WorldTickEvent event);
 
     /**
      * Get a certain building.
@@ -144,7 +142,7 @@ public interface IBuildingManager
      *
      * @param building AbstractBuilding to remove.
      */
-    void removeBuilding(@NotNull final AbstractBuilding building, final Set<EntityPlayerMP> subscribers, final Colony colony);
+    void removeBuilding(@NotNull final AbstractBuilding building, final Set<EntityPlayerMP> subscribers);
 
     /**
      * Marks building data dirty.
@@ -158,7 +156,7 @@ public interface IBuildingManager
      * @return AbstractBuilding that was created and added.
      */
     @Nullable
-    AbstractBuilding addNewBuilding(@NotNull final TileEntityColonyBuilding tileEntity, final Colony colony, final World world);
+    AbstractBuilding addNewBuilding(@NotNull final TileEntityColonyBuilding tileEntity, final World world);
 
     /**
      * Removes a field from the farmerFields list.

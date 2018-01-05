@@ -50,6 +50,9 @@ public final class ModBlocks
     public static BlockShingle                blockShingleSpruce;
     public static BlockShingle                blockShingleDarkOak;
     public static BlockShingle                blockShingleAcacia;
+    public static BlockShingleSlab            blockShingleSlab;
+    public static BlockHutSmeltery            blockHutSmeltery;
+
 
     /**
      * Private constructor to hide the implicit public one.
@@ -92,6 +95,7 @@ public final class ModBlocks
         blockInfoPoster = new BlockInfoPoster().registerBlock(registry);
         blockPaperWall = new BlockPaperwall().registerBlock(registry);
         blockHutCook   = new BlockHutCook().registerBlock(registry);
+        blockHutSmeltery = new BlockHutSmeltery().registerBlock(registry);
 
         blockShingleOak = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK),
                 BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.OAK.getName()).registerBlock(registry);
@@ -105,6 +109,7 @@ public final class ModBlocks
                 BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.DARK_OAK.getName()).registerBlock(registry);
         blockShingleAcacia = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.ACACIA),
                 BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.ACACIA.getName()).registerBlock(registry);
+        blockShingleSlab = new BlockShingleSlab().registerBlock(registry);
 
     }
 
@@ -142,5 +147,7 @@ public final class ModBlocks
         blockShingleSpruce.registerItemBlock(registry);
         blockShingleDarkOak.registerItemBlock(registry);
         blockShingleAcacia.registerItemBlock(registry);
+        blockShingleSlab.registerItemBlock(registry);
+        blockHutSmeltery.registerItemBlock(registry);
     }
 }

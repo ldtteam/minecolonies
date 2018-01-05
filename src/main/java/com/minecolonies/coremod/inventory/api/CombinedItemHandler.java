@@ -257,7 +257,7 @@ public class CombinedItemHandler
                 checkedSlots += modifiable.getSlots();
                 continue;
             }
-            int activeSlot = slot - checkedSlots;
+            final int activeSlot = slot - checkedSlots;
             if(activeSlot < modifiable.getSlots())
             {
                 return modifiable.extractItem(activeSlot, amount, simulate);

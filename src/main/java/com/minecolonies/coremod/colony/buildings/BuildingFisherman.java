@@ -74,11 +74,11 @@ public class BuildingFisherman extends AbstractBuildingWorker
 
         if (newLevel == 1)
         {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingFisher, this.getColony());
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingFisher);
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeFisherMax, this.getColony());
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeFisherMax);
         }
     }
 

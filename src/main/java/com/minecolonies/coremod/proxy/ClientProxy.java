@@ -169,6 +169,8 @@ public class ClientProxy extends CommonProxy
                 new ModelResourceLocation(ModBlocks.blockHutBarracksTower.getRegistryName(), INVENTORY));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockHutCook), 0,
                 new ModelResourceLocation(ModBlocks.blockHutCook.getRegistryName(), INVENTORY));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockHutSmeltery), 0,
+                new ModelResourceLocation(ModBlocks.blockHutSmeltery.getRegistryName(), INVENTORY));
 
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockSolidSubstitution), 0,
           new ModelResourceLocation(ModBlocks.blockSolidSubstitution.getRegistryName(), INVENTORY));
@@ -213,6 +215,8 @@ public class ClientProxy extends CommonProxy
           new ModelResourceLocation(ModItems.itemAchievementProxyCity.getRegistryName(), INVENTORY));
         ModelLoader.setCustomModelResourceLocation(ModItems.itemAchievementProxyMetropolis, 0,
           new ModelResourceLocation(ModItems.itemAchievementProxyMetropolis.getRegistryName(), INVENTORY));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleSlab), 0,
+                new ModelResourceLocation(ModBlocks.blockShingleSlab.getRegistryName(), INVENTORY));
 
         ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());
 
