@@ -123,7 +123,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         final int numOfBreedableAnimals = ((int) animals.stream().filter(animal -> animal.getGrowingAge() == 0).count());
 
         final boolean hasBreedingItem =
-          InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), (ItemStack stack) -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, getBreedingItem()));
+          InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
+            (ItemStack stack) -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, getBreedingItem()));
 
         if (!searchForItemsInArea().isEmpty())
         {
