@@ -4,7 +4,7 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.util.IStringSerializable;
 import org.jetbrains.annotations.NotNull;
 
-//types that TimberFrame uses
+//Creates types for TimberFrame with different variants of wood and texture
 
 public enum TimberFrameType implements IStringSerializable
 {
