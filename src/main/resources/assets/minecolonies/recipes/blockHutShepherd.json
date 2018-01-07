@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XTX",
+    "XSX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "type": "forge:ore_dict",
+      "ore": "plankWood"
+    },
+    "S": {
+      "item": "minecraft:shears"
+    },
+    "T": {
+      "item": "minecolonies:sceptergold"
+    }
+  },
+  "result": {
+    "item": "minecolonies:blockhutshepherd"
+  }
+}

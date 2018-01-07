@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XSX",
+    "XPX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "type": "forge:ore_dict",
+      "ore": "plankWood"
+    },
+    "P": {
+      "item": "minecraft:porkchop"
+    },
+    "S": {
+      "item": "minecolonies:sceptergold"
+    }
+  },
+  "result": {
+    "item": "minecolonies:blockhutswineherder"
+  }
+}
