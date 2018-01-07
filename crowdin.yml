@@ -1,3 +1,8 @@
 files:
   - source: /src/main/resources/assets/minecolonies/lang/en_us.lang
     translation: /src/main/resources/assets/minecolonies/lang/%locale_with_underscore%.lang
+    languages_mapping:
+      locale_with_underscore:
+        af: af_za
+        ar: ar_sa
+        ast: ast_es
