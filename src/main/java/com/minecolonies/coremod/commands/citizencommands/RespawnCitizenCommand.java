@@ -53,7 +53,7 @@ public class RespawnCitizenCommand extends AbstractCitizensCommands
 
         if (entityCitizen == null)
         {
-            colony.getCitizenManager().spawnCitizen(citizenData, colony.getWorld(), colony.getBuildingManager(), colony);
+            colony.getCitizenManager().spawnCitizen(citizenData, colony.getWorld());
             return;
         }
 

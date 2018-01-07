@@ -178,11 +178,11 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
         if (newLevel == 1)
         {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingLumberjack, this.getColony());
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingLumberjack);
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax, this.getColony());
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax);
         }
     }
 
@@ -202,9 +202,9 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
+        super.readFromNBT(compound);
         if (treesToFell.isEmpty())
         {
-            super.readFromNBT(compound);
             final NBTTagList saplingTagList = compound.getTagList(TAG_SAPLINGS, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < saplingTagList.tagCount(); ++i)
             {
@@ -214,7 +214,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
                 treesToFell.put(new ItemStorage(stack), cut);
             }
         }
-
         checkTreesToFell();
     }
 

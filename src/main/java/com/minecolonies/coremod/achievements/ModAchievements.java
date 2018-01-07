@@ -15,7 +15,6 @@ import net.minecraftforge.common.AchievementPage;
  */
 public final class ModAchievements
 {
-
     /**
      * Population size to achieve {@link ModAchievements#achievementSizeSettlement}.
      */

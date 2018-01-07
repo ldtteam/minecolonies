@@ -30,39 +30,39 @@ public final class TriggerColonyAchievements
      * @param statistic the statistic.
      * @param colony    the colony.
      */
-    public static void triggerFirstAchievement(@NotNull final String statistic, @NotNull final Colony colony)
+    public static void triggerFirstAchievement(@NotNull final String statistic, final Colony colony)
     {
         switch (statistic)
         {
             case TAG_GUARD_MOBS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementKillOneMob, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementKillOneMob);
                 break;
             case TAG_MINER_ORES:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementMineOneOre, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementMineOneOre);
                 break;
             case TAG_MINER_DIAMONDS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementMineOneDiamond, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementMineOneDiamond);
                 break;
             case TAG_BUILDER_HUTS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementBuildOneHut, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementBuildOneHut);
                 break;
             case TAG_FISHERMAN_FISH:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementCatchOneFish, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementCatchOneFish);
                 break;
             case TAG_FARMER_WHEAT:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvestOneWheat, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvestOneWheat);
                 break;
             case TAG_FARMER_POTATOES:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvestOnePotato, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvestOnePotato);
                 break;
             case TAG_FARMER_CARROTS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvestOneCarrot, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvestOneCarrot);
                 break;
             case TAG_LUMBERJACK_SAPLINGS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementPlantOneSapling, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementPlantOneSapling);
                 break;
             case TAG_LUMBERJACK_TREES:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementFellOneTree, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementFellOneTree);
                 break;
             default:
                 break;
@@ -80,34 +80,34 @@ public final class TriggerColonyAchievements
         switch (statistic)
         {
             case TAG_GUARD_MOBS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementKill25Mobs, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementKill25Mobs);
                 break;
             case TAG_MINER_ORES:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementMine25Ores, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementMine25Ores);
                 break;
             case TAG_MINER_DIAMONDS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementMine25Diamonds, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementMine25Diamonds);
                 break;
             case TAG_BUILDER_HUTS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementBuild25Huts, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementBuild25Huts);
                 break;
             case TAG_FISHERMAN_FISH:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementCatch25Fish, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementCatch25Fish);
                 break;
             case TAG_FARMER_WHEAT:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest25Wheat, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest25Wheat);
                 break;
             case TAG_FARMER_POTATOES:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest25Potatoes, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest25Potatoes);
                 break;
             case TAG_FARMER_CARROTS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest25Carrots, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest25Carrots);
                 break;
             case TAG_LUMBERJACK_SAPLINGS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementPlant25Saplings, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementPlant25Saplings);
                 break;
             case TAG_LUMBERJACK_TREES:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementFell25Trees, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementFell25Trees);
                 break;
             default:
                 break;
@@ -125,34 +125,34 @@ public final class TriggerColonyAchievements
         switch (statistic)
         {
             case TAG_GUARD_MOBS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementKill100Mobs, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementKill100Mobs);
                 break;
             case TAG_MINER_ORES:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementMine100Ores, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementMine100Ores);
                 break;
             case TAG_MINER_DIAMONDS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementMine100Diamonds, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementMine100Diamonds);
                 break;
             case TAG_BUILDER_HUTS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementBuild100Huts, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementBuild100Huts);
                 break;
             case TAG_FISHERMAN_FISH:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementCatch100Fish, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementCatch100Fish);
                 break;
             case TAG_FARMER_WHEAT:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest100Wheat, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest100Wheat);
                 break;
             case TAG_FARMER_POTATOES:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest100Potatoes, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest100Potatoes);
                 break;
             case TAG_FARMER_CARROTS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest100Carrots, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest100Carrots);
                 break;
             case TAG_LUMBERJACK_SAPLINGS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementPlant100Saplings, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementPlant100Saplings);
                 break;
             case TAG_LUMBERJACK_TREES:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementFell100Trees, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementFell100Trees);
                 break;
             default:
                 break;
@@ -170,34 +170,34 @@ public final class TriggerColonyAchievements
         switch (statistic)
         {
             case TAG_GUARD_MOBS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementKill500Mobs, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementKill500Mobs);
                 break;
             case TAG_MINER_ORES:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementMine500Ores, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementMine500Ores);
                 break;
             case TAG_MINER_DIAMONDS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementMine500Diamonds, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementMine500Diamonds);
                 break;
             case TAG_BUILDER_HUTS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementBuild500Huts, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementBuild500Huts);
                 break;
             case TAG_FISHERMAN_FISH:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementCatch500Fish, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementCatch500Fish);
                 break;
             case TAG_FARMER_WHEAT:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest500Wheat, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest500Wheat);
                 break;
             case TAG_FARMER_POTATOES:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest500Potatoes, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest500Potatoes);
                 break;
             case TAG_FARMER_CARROTS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest500Carrots, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest500Carrots);
                 break;
             case TAG_LUMBERJACK_SAPLINGS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementPlant500Saplings, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementPlant500Saplings);
                 break;
             case TAG_LUMBERJACK_TREES:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementFell500Trees, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementFell500Trees);
                 break;
             default:
                 break;
@@ -215,34 +215,34 @@ public final class TriggerColonyAchievements
         switch (statistic)
         {
             case TAG_GUARD_MOBS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementKill1000Mobs, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementKill1000Mobs);
                 break;
             case TAG_MINER_ORES:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementMine1000Ores, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementMine1000Ores);
                 break;
             case TAG_MINER_DIAMONDS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementMine1000Diamonds, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementMine1000Diamonds);
                 break;
             case TAG_BUILDER_HUTS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementBuild1000Huts, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementBuild1000Huts);
                 break;
             case TAG_FISHERMAN_FISH:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementCatch1000Fish, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementCatch1000Fish);
                 break;
             case TAG_FARMER_WHEAT:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest1000Wheat, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest1000Wheat);
                 break;
             case TAG_FARMER_POTATOES:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest1000Potatoes, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest1000Potatoes);
                 break;
             case TAG_FARMER_CARROTS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest1000Carrots, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementHarvest1000Carrots);
                 break;
             case TAG_LUMBERJACK_SAPLINGS:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementPlant1000Saplings, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementPlant1000Saplings);
                 break;
             case TAG_LUMBERJACK_TREES:
-                colony.getStatsManager().triggerAchievement(ModAchievements.achievementFell1000Trees, colony);
+                colony.getStatsManager().triggerAchievement(ModAchievements.achievementFell1000Trees);
                 break;
             default:
                 break;

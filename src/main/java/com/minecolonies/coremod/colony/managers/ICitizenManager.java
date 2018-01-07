@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -18,9 +17,8 @@ public interface ICitizenManager
     /**
      * Read the citizens from nbt.
      * @param compound the compound to read it from.
-     * @param colony the colony to assign them to.
      */
-    void readFromNBT(@NotNull final NBTTagCompound compound, @NotNull final Colony colony);
+    void readFromNBT(@NotNull final NBTTagCompound compound);
 
     /**
      * Write the citizens to nbt.
@@ -30,21 +28,19 @@ public interface ICitizenManager
 
     /**
      * Sends packages to update the citizens.
-     *
-     * @param oldSubscribers    the existing subscribers.
+     *  @param oldSubscribers    the existing subscribers.
      * @param hasNewSubscribers the new subscribers.
      * @param subscribers all subscribers
-     * @param colony the colony of the citizens.
      */
-    void sendPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers,
+    void sendPackets(
+            @NotNull final Set<EntityPlayerMP> oldSubscribers,
             final boolean hasNewSubscribers,
-            @NotNull final Set<EntityPlayerMP> subscribers,
-            @NotNull final Colony colony);
+            @NotNull final Set<EntityPlayerMP> subscribers);
 
     /**
      * Spawn a brand new Citizen.
      */
-    void spawnCitizen(@NotNull final Colony colony);
+    void spawnCitizen();
 
     /**
      * Returns a map of citizens in the colony.
@@ -69,28 +65,23 @@ public interface ICitizenManager
      *
      * @param data Data to use to spawn citizen.
      * @param world the world to spawn it in.
-     * @param buildingManager the building manager.
-     * @param colony the colony.
      */
-    void spawnCitizenIfNull(@Nullable final CitizenData data, @Nullable final World world, @NotNull final IBuildingManager buildingManager, @NotNull final Colony colony);
+    void spawnCitizenIfNull(@Nullable final CitizenData data, @Nullable final World world);
 
     /**
      * Spawn a citizen with specific citizen data.
      *
      * @param data Data to use to spawn citizen.
      * @param world the world to spawn it in.
-     * @param buildingManager the building manager.
-     * @param colony the colony.
      */
-    void spawnCitizen(@NotNull final CitizenData data, @NotNull final World world, @NotNull final IBuildingManager buildingManager, @NotNull final Colony colony);
+    void spawnCitizen(final CitizenData data, @NotNull final World world);
 
     /**
      * Removes a citizen from the colony.
      *
      * @param citizen Citizen data to remove.
-     * @param colony the colony.
      */
-    void removeCitizen(@NotNull final CitizenData citizen, @NotNull final Colony colony);
+    void removeCitizen(@NotNull final CitizenData citizen);
 
     /**
      * Get the first unemployed citizen.
@@ -102,9 +93,8 @@ public interface ICitizenManager
 
     /**
      * Recalculates how many citizen can be in the colony.
-     * @param colony the colony.
      */
-    void calculateMaxCitizens(@NotNull final Colony colony);
+    void calculateMaxCitizens();
 
     /**
      * Marks citizen data dirty.
@@ -137,12 +127,11 @@ public interface ICitizenManager
     /**
      * Check for the citizen happiness and update the colony happiness with it.
      */
-    void checkCitizensForHappiness(final Colony colony);
+    void checkCitizensForHappiness();
 
     /**
      * Actions to execute on a specific world tick event.
      * @param event the event.
-     * @param colony the colony to execute it for.
      */
-    void onWorldTick(TickEvent.WorldTickEvent event, @NotNull final Colony colony);
+    void onWorldTick(final TickEvent.WorldTickEvent event);
 }

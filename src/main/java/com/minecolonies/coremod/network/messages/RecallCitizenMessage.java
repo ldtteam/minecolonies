@@ -86,7 +86,7 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                         if (citizenData != null)
                         {
                             Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
-                            colony.getCitizenManager().spawnCitizen(citizenData, colony.getWorld(), colony.getBuildingManager(), colony);
+                            colony.getCitizenManager().spawnCitizen(citizenData, colony.getWorld());
                             citizen = citizenData.getCitizenEntity();
                         }
                         else

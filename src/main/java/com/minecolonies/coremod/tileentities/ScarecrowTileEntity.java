@@ -449,7 +449,10 @@ public class ScarecrowTileEntity extends TileEntityChest
     {
         final NBTTagCompound compound = new NBTTagCompound();
         this.writeToNBT(compound);
-        compound.setInteger(TAG_COLONY_ID, colony.getID());
+        if(colony != null)
+        {
+            compound.setInteger(TAG_COLONY_ID, colony.getID());
+        }
         return new SPacketUpdateTileEntity(this.pos, 0, compound);
     }
 
@@ -465,7 +468,10 @@ public class ScarecrowTileEntity extends TileEntityChest
     {
         final NBTTagCompound compound = packet.getNbtCompound();
         this.readFromNBT(compound);
-        setOwner(ownerId, ColonyManager.getColonyView(compound.getInteger(TAG_COLONY_ID)));
+        if(compound.hasKey(TAG_COLONY_ID))
+        {
+            setOwner(ownerId, ColonyManager.getColonyView(compound.getInteger(TAG_COLONY_ID)));
+        }
     }
 
     /////////////--------------------------- End Synchronization-area ---------------------------- /////////////

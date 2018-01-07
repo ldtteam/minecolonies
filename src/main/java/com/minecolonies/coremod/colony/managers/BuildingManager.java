@@ -5,7 +5,6 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
@@ -62,8 +61,22 @@ public class BuildingManager implements IBuildingManager
      */
     private boolean isFieldsDirty    = false;
 
+    /**
+     * The colony of the manager.
+     */
+    private final Colony colony;
+
+    /**
+     * Creates the BuildingManager for a colony.
+     * @param colony the colony.
+     */
+    public BuildingManager(final Colony colony)
+    {
+        this.colony = colony;
+    }
+
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound, final Colony colony)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         //  Buildings
         final NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND);
@@ -73,7 +86,7 @@ public class BuildingManager implements IBuildingManager
             @Nullable final AbstractBuilding b = AbstractBuilding.createFromNBT(colony, buildingCompound);
             if (b != null)
             {
-                addBuilding(b, colony);
+                addBuilding(b);
             }
         }
 
@@ -181,7 +194,7 @@ public class BuildingManager implements IBuildingManager
                 final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) event.world.getTileEntity(pos);
                 if (scarecrow == null)
                 {
-                    fields.remove(pos);
+                    removeField(pos);
                 }
             }
         }
@@ -272,7 +285,7 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public AbstractBuilding addNewBuilding(@NotNull final TileEntityColonyBuilding tileEntity, final Colony colony, final World world)
+    public AbstractBuilding addNewBuilding(@NotNull final TileEntityColonyBuilding tileEntity, final World world)
     {
         tileEntity.setColony(colony);
         if (!buildings.containsKey(tileEntity.getPosition()))
@@ -280,7 +293,7 @@ public class BuildingManager implements IBuildingManager
             @Nullable final AbstractBuilding building = AbstractBuilding.create(colony, tileEntity);
             if (building != null)
             {
-                addBuilding(building, colony);
+                addBuilding(building);
                 tileEntity.setBuilding(building);
 
                 Log.getLogger().info(String.format("Colony %d - new AbstractBuilding for %s at %s",
@@ -309,15 +322,14 @@ public class BuildingManager implements IBuildingManager
                         tileEntity.getPosition()));
             }
 
-            colony.getCitizenManager().calculateMaxCitizens(colony);
-            ColonyManager.markDirty();
+            colony.getCitizenManager().calculateMaxCitizens();
             return building;
         }
         return null;
     }
 
     @Override
-    public void removeBuilding(@NotNull final AbstractBuilding building, final Set<EntityPlayerMP> subscribers, final Colony colony)
+    public void removeBuilding(@NotNull final AbstractBuilding building, final Set<EntityPlayerMP> subscribers)
     {
         if (buildings.remove(building.getID()) != null)
         {
@@ -349,9 +361,7 @@ public class BuildingManager implements IBuildingManager
             citizen.onRemoveBuilding(building);
         }
 
-        colony.getCitizenManager().calculateMaxCitizens(colony);
-
-        ColonyManager.markDirty();
+        colony.getCitizenManager().calculateMaxCitizens();
     }
 
     @Override
@@ -359,6 +369,7 @@ public class BuildingManager implements IBuildingManager
     {
         this.markFieldsDirty();
         fields.remove(pos);
+        colony.markDirty();
     }
 
     @Override
@@ -394,7 +405,7 @@ public class BuildingManager implements IBuildingManager
      *
      * @param building AbstractBuilding to add to the colony.
      */
-    private void addBuilding(@NotNull final AbstractBuilding building, final Colony colony)
+    private void addBuilding(@NotNull final AbstractBuilding building)
     {
         buildings.put(building.getID(), building);
         building.markDirty();
@@ -465,5 +476,6 @@ public class BuildingManager implements IBuildingManager
         {
             fields.add(pos);
         }
+        colony.markDirty();
     }
 }
