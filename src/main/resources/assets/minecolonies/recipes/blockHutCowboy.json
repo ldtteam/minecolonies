@@ -1,8 +1,8 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "XTX",
-    "XCX",
+    "XSX",
+    "XBX",
     "XXX"
   ],
   "key": {
@@ -10,14 +10,14 @@
       "type": "forge:ore_dict",
       "ore": "plankWood"
     },
-    "C": {
-      "item": "minecraft:chest"
+    "B": {
+      "item": "minecraft:beef"
     },
-    "T": {
+    "S": {
       "item": "minecolonies:sceptergold"
     }
   },
   "result": {
-    "item": "minecolonies:blockhutwarehouse"
+    "item": "minecolonies:blockhutcowboy"
   }
 }

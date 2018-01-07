@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "XTX",
-    "XCX",
+    "XSX",
     "XXX"
   ],
   "key": {
@@ -10,14 +10,14 @@
       "type": "forge:ore_dict",
       "ore": "plankWood"
     },
-    "C": {
-      "item": "minecraft:chest"
+    "S": {
+      "item": "minecraft:shears"
     },
     "T": {
       "item": "minecolonies:sceptergold"
     }
   },
   "result": {
-    "item": "minecolonies:blockhutwarehouse"
+    "item": "minecolonies:blockhutshepherd"
   }
 }
