@@ -467,6 +467,7 @@ com.minecolonies.coremod.gui.warehouse.upgrade=Zwiększ pojemność
 
 com.minecolonies.coremod.job.cook=Kucharz
 com.minecolonies.coremod.gui.workerHuts.cook=Gotuj
+com.minecolonies.coremod.gui.townHall.population.cooks=Cooks: %d
 tile.minecolonies.blockHutCook.name=Restauracja
 com.minecolonies.coremod.ai.noRestaurant=Zbuduje restauracje lub daj mi coś do jedzenia!
 com.minecolonies.coremod.ai.noWarehouse=Zbuduj magazyn albo przynieś mi jedzenie do serwowania moim klientom!
@@ -521,5 +522,21 @@ item.supplyChestDeployer.missing=Czy starasz się mnie oszukać, stawiając Stat
 com.minecolonies.coremod.citizen.rename.same=Zmiana nazwy nie powiodła się: Dwóch obywateli nie może się tak samo nazywać!
 com.minecolonies.coremod.citizen.rename.notAllowed=Zmiana nazwy nie powiodła się: Nie możesz zmieniać nazwy twojego Obywatela.
 
+tile.minecolonies.blockshingle_oak.name=Oak Shingle
+tile.minecolonies.blockshingle_birch.name=Birch Shingle
+tile.minecolonies.blockshingle_spruce.name=Spruce Shingle
+tile.minecolonies.blockshingle_jungle.name=Jungle Shingle
+tile.minecolonies.blockshingle_dark_oak.name=Dark Oak Shingle
+tile.minecolonies.blockshingle_acacia.name=Acacia Shingle
 
+com.minecolonies.coremod.gui.recipe.remove=Remove
+com.minecolonies.coremod.gui.workerHuts.crafting=Teach recipe
+com.minecolonies.coremod.gui.recipe.done=Succesfully saved recipe!
+com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
+com.minecolonies.coremod.resolvers.crafter=Crafting Resolver
+com.minecolonies.coremod.request.smeltableore=Smeltable Ore
+tile.minecolonies.blockHutSmeltery.name=Smeltery
+com.minecolonies.coremod.gui.workerHuts.Smeltery=Smeltery
+com.minecolonies.coremod.job.smelter=Smelter
 
+tile.minecolonies.blockShingleSlab.name=Shingle slab
