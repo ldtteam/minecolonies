@@ -12,7 +12,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -59,6 +63,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand
     {
         final int colonyId;
         boolean canDestroy = true;
+        boolean canDelete = false;
         if (args.length == 0)
         {
             IColony colony = null;
@@ -81,6 +86,22 @@ public class DeleteColonyCommand extends AbstractSingleCommand
             {
                 canDestroy = Boolean.parseBoolean(args[1]);
             }
+
+            if(args.length > 2)
+            {
+                canDelete = Boolean.parseBoolean(args[2]);
+            }
+        }
+
+        if(!canDelete)
+        {
+            final ITextComponent deleteButton = new TextComponentString("[DELETE]")
+                    .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+                            new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mc colony delete " + colonyId + " " + canDestroy + " true")
+                    ));
+            sender.sendMessage(new TextComponentString("Click [DELETE] to confirm the deletion of colony: " + colonyId));
+            sender.sendMessage(deleteButton);
+            return;
         }
 
 
