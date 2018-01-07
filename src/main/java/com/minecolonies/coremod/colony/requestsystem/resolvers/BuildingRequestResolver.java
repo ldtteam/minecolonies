@@ -42,14 +42,14 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
     }
 
     @Override
-    public TypeToken<? extends IDeliverable> getRequestType()
+    public TypeToken<IDeliverable> getRequestType()
     {
         return TypeToken.of(IDeliverable.class);
     }
 
     @Override
-    public boolean canResolve(
-                               @NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
+    public <T extends IDeliverable> boolean canResolve(
+                               @NotNull final IRequestManager manager, final IRequest<T> requestToCheck)
     {
         if (manager.getColony().getWorld().isRemote)
         {
@@ -80,8 +80,8 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
 
     @Nullable
     @Override
-    public List<IToken> attemptResolve(
-                                        @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public <T extends IDeliverable> List<IToken<?>> attemptResolve(
+                                        @NotNull final IRequestManager manager, @NotNull final IRequest<T> request)
     {
         if (canResolve(manager, request))
         {
@@ -93,8 +93,8 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
 
     @Nullable
     @Override
-    public void resolve(
-                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws RuntimeException
+    public <T extends IDeliverable> void resolve(
+                         @NotNull final IRequestManager manager, @NotNull final IRequest<T> request) throws RuntimeException
     {
         AbstractBuilding building = getBuildingFromRequest(manager, request);
 
@@ -113,8 +113,8 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
     }
 
     @NotNull
-    private AbstractBuilding getBuildingFromRequest(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws RuntimeException
+    private <T extends IDeliverable> AbstractBuilding getBuildingFromRequest(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<T> request) throws RuntimeException
     {
         BuildingBasedRequester requester = (BuildingBasedRequester) request.getRequester();
         return requester.getBuilding().map(r -> {
@@ -132,30 +132,30 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
 
     @Nullable
     @Override
-    public IRequest getFollowupRequestForCompletion(
-                                                     @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
+    public <T extends IDeliverable> IRequest<?> getFollowupRequestForCompletion(
+                                                     @NotNull final IRequestManager manager, @NotNull final IRequest<T> completedRequest)
     {
         return null;
     }
 
     @Nullable
     @Override
-    public IRequest onRequestCancelledOrOverruled(
-                                                   @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws IllegalArgumentException
+    public <T extends IDeliverable> IRequest<?> onRequestCancelledOrOverruled(
+                                                   @NotNull final IRequestManager manager, @NotNull final IRequest<T> request) throws IllegalArgumentException
     {
         return null;
     }
 
     @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IToken token)
+    public void onRequestComplete(@NotNull final IToken<?> token)
     {
 
     }
 
     @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IToken<?> token)
     {
 
     }

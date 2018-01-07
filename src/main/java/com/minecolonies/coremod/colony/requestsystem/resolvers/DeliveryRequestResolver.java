@@ -29,14 +29,14 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     }
 
     @Override
-    public TypeToken<? extends Delivery> getRequestType()
+    public TypeToken<Delivery> getRequestType()
     {
         return TypeToken.of(Delivery.class);
     }
 
     @Override
-    public boolean canResolve(
-                               @NotNull final IRequestManager manager, final IRequest<? extends Delivery> requestToCheck)
+    public <T extends Delivery> boolean canResolve(
+                               @NotNull final IRequestManager manager, final IRequest<T> requestToCheck)
     {
         if (manager.getColony().getWorld().isRemote)
         {
@@ -62,8 +62,8 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @Nullable
     @Override
-    public List<IToken> attemptResolve(
-                                        @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+    public <T extends Delivery> List<IToken<?>> attemptResolve(
+                                        @NotNull final IRequestManager manager, @NotNull final IRequest<T> request)
     {
         if (manager.getColony().getWorld().isRemote)
         {
@@ -98,23 +98,23 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @Nullable
     @Override
-    public void resolve(
-                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws RuntimeException
+    public <T extends Delivery> void resolve(
+                         @NotNull final IRequestManager manager, @NotNull final IRequest<T> request) throws RuntimeException
     {
         //Noop. The delivery man will resolve it.
     }
 
     @Nullable
     @Override
-    public IRequest getFollowupRequestForCompletion(
-                                                     @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> completedRequest)
+    public <T extends Delivery> IRequest<?> getFollowupRequestForCompletion(
+                                                     @NotNull final IRequestManager manager, @NotNull final IRequest<T> completedRequest)
     {
         return null;
     }
 
     @Nullable
     @Override
-    public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+    public <T extends Delivery> IRequest<?> onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<T> request)
             throws IllegalArgumentException
     {
         if (!manager.getColony().getWorld().isRemote)
@@ -142,14 +142,14 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IToken token)
+    public void onRequestComplete(@NotNull final IToken<?> token)
     {
         //We are not scheduling any child requests. So this should never be called.
     }
 
     @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IToken<?> token)
     {
         //Noop
     }

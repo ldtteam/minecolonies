@@ -15,9 +15,9 @@ public final class WrappedBlacklistAssignmentRequestManager extends AbstractWrap
 {
 
     @NotNull
-    private final Collection<IToken> blackListedResolvers;
+    private final Collection<IToken<?>> blackListedResolvers;
 
-    public WrappedBlacklistAssignmentRequestManager(@NotNull final IStandardRequestManager wrappedManager, @NotNull final Collection<IToken> blackListedResolvers)
+    public WrappedBlacklistAssignmentRequestManager(@NotNull final IStandardRequestManager wrappedManager, @NotNull final Collection<IToken<?>> blackListedResolvers)
     {
         super(wrappedManager);
         this.blackListedResolvers = blackListedResolvers;
@@ -31,7 +31,7 @@ public final class WrappedBlacklistAssignmentRequestManager extends AbstractWrap
      */
     @NotNull
     @Override
-    public void assignRequest(@NotNull final IToken token) throws IllegalArgumentException
+    public void assignRequest(@NotNull final IToken<?> token) throws IllegalArgumentException
     {
         RequestHandler.assignRequest(wrappedManager, RequestHandler.getRequest(wrappedManager, token), blackListedResolvers);
     }

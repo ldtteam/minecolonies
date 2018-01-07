@@ -3,13 +3,13 @@ package com.minecolonies.api.util.constant;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
-import com.minecolonies.api.colony.requestsystem.requestable.IRetryable;
+import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 
+import java.lang.reflect.Type;
 import java.util.UUID;
 
 /**
@@ -32,4 +32,11 @@ public class TypeConstants
 
     /////Implementations
     public static final TypeToken<StandardToken> STANDARDTOKEN = TypeToken.of(StandardToken.class);
+
+    /////Requestables
+    public static final TypeToken<Stack> STACK = TypeToken.of(Stack.class);
+    public static final TypeToken<Burnable> BURNABLE = TypeToken.of(Burnable.class);
+    public static final TypeToken<Delivery> DELIVERY = TypeToken.of(Delivery.class);
+    public static final TypeToken<Food> FOOD = TypeToken.of(Food.class);
+    public static final TypeToken<Tool> TOOL = TypeToken.of(Tool.class);
 }

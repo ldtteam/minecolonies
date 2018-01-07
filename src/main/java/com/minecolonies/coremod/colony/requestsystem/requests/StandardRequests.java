@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.requests;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -8,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
@@ -29,8 +31,6 @@ import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static com.minecolonies.api.compatibility.CompatabilityManager.ORE_STRING;
-
 /**
  * Final class holding all the requests for requestables inside minecolonie
  */
@@ -49,12 +49,12 @@ public final class StandardRequests
 
         public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Stack requested)
         {
-            super(requester, token, requested);
+            super(requester, token, TypeConstants.STACK, requested);
         }
 
         public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Stack requested)
         {
-            super(requester, token, state, requested);
+            super(requester, token, TypeConstants.STACK, state, requested);
         }
 
         @NotNull
@@ -70,12 +70,12 @@ public final class StandardRequests
 
         public DeliveryRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Delivery requested)
         {
-            super(requester, token, requested);
+            super(requester, token, TypeConstants.DELIVERY, requested);
         }
 
         public DeliveryRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Delivery requested)
         {
-            super(requester, token, state, requested);
+            super(requester, token, TypeConstants.DELIVERY, state, requested);
         }
 
         /**
@@ -120,12 +120,12 @@ public final class StandardRequests
     {
         public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Tool requested)
         {
-            super(requester, token, requested);
+            super(requester, token, TypeConstants.TOOL, requested);
         }
 
         public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Tool requested)
         {
-            super(requester, token, state, requested);
+            super(requester, token, TypeConstants.TOOL, state, requested);
         }
 
         @NotNull
@@ -172,7 +172,7 @@ public final class StandardRequests
 
         FoodRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Food requested)
         {
-            super(requester, token, requested);
+            super(requester, token, TypeConstants.FOOD, requested);
         }
 
         FoodRequest(
@@ -181,7 +181,7 @@ public final class StandardRequests
                      @NotNull final RequestState state,
                      @NotNull final Food requested)
         {
-            super(requester, token, state, requested);
+            super(requester, token, TypeConstants.FOOD, state, requested);
         }
 
         @NotNull
@@ -225,7 +225,7 @@ public final class StandardRequests
 
         SmeltAbleOreRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final SmeltableOre requested)
         {
-            super(requester, token, requested);
+            super(requester, token, TypeToken.of(SmeltableOre.class), requested);
         }
 
         SmeltAbleOreRequest(
@@ -234,7 +234,7 @@ public final class StandardRequests
                 @NotNull final RequestState state,
                 @NotNull final SmeltableOre requested)
         {
-            super(requester, token, state, requested);
+            super(requester, token, TypeToken.of(SmeltableOre.class), state, requested);
 
         }
 
@@ -276,7 +276,7 @@ public final class StandardRequests
 
         BurnableRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Burnable requested)
         {
-            super(requester, token, requested);
+            super(requester, token, TypeConstants.BURNABLE, requested);
         }
 
         BurnableRequest(
@@ -285,7 +285,7 @@ public final class StandardRequests
                          @NotNull final RequestState state,
                          @NotNull final Burnable requested)
         {
-            super(requester, token, state, requested);
+            super(requester, token, TypeConstants.BURNABLE, state, requested);
         }
 
         @NotNull

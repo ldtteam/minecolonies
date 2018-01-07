@@ -36,11 +36,13 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
 {
 
     @NotNull
-    private final IToken       token;
+    private final IToken<?>       token;
+    @NotNull
+    private final TypeToken<R> type;
     @NotNull
     private final R            requested;
     @NotNull
-    private final List<IToken> children;
+    private final List<IToken<?>> children;
     @NotNull
     private final IRequester   requester;
     @NotNull
@@ -48,7 +50,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     @Nullable
     private R      result;
     @Nullable
-    private IToken parent;
+    private IToken<?> parent;
     @SuppressWarnings("squid:S1170")
     /**
      * We don't want this field static.
@@ -57,19 +59,26 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     private ItemStack deliveryStack = ItemStackUtils.EMPTY;
     private ImmutableList<ItemStack> itemExamples;
 
-    protected AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final R requested)
+    protected AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final TypeToken<R> type, @NotNull final R requested)
     {
         this.requester = requester;
         this.token = token;
+        this.type = type;
         this.requested = requested;
 
         children = new ArrayList<>();
     }
 
-    protected AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final R requested)
+    protected AbstractRequest(
+      @NotNull final IRequester requester,
+      @NotNull final IToken<?> token,
+      @NotNull final TypeToken<R> type,
+      @NotNull final RequestState state,
+      @NotNull final R requested)
     {
         this.requester = requester;
         this.token = token;
+        this.type = type;
         this.state = state;
         this.requested = requested;
 
@@ -85,9 +94,9 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     @NotNull
     @Override
     @SuppressWarnings("unchecked")
-    public TypeToken<? extends R> getRequestType()
+    public TypeToken<R> getRequestType()
     {
-        return TypeToken.of((Class<? extends R>) getRequest().getClass());
+        return type;
     }
 
     /**
@@ -110,9 +119,9 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends IToken> T getToken()
+    public IToken<?>getToken()
     {
-        return (T) token;
+        return token;
     }
 
     /**
@@ -214,9 +223,9 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     @Nullable
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends IToken> T getParent()
+    public IToken<?>getParent()
     {
-        return (T) parent;
+        return parent;
     }
 
     /**
@@ -225,7 +234,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      * @param parent The new parent, or null to clear the existing one.
      */
     @Override
-    public <T extends IToken> void setParent(@Nullable final T parent)
+    public void setParent(@Nullable final IToken<?>parent)
     {
         this.parent = parent;
     }
@@ -247,7 +256,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      * @param child The new child request to add.
      */
     @Override
-    public <T extends IToken> void addChild(@NotNull final T child)
+    public void addChild(@NotNull final IToken<?>child)
     {
         this.children.add(child);
         LogHandler.log("Added child:" + child + " to: " + getToken());
@@ -259,9 +268,9 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      * @param children An array of children to add.
      */
     @Override
-    public <T extends IToken> void addChildren(@NotNull final T... children)
+    public void addChildren(@NotNull final IToken<?>... children)
     {
-        for (final IToken theToken : children)
+        for (final IToken<?> theToken : children)
         {
             addChild(theToken);
         }
@@ -273,9 +282,9 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      * @param children A collection of children to add.
      */
     @Override
-    public <T extends IToken> void addChildren(@NotNull final Collection<T> children)
+    public void addChildren(@NotNull final Collection<IToken<?>> children)
     {
-        for (final IToken theToken : children)
+        for (final IToken<?> theToken : children)
         {
             addChild(theToken);
         }
@@ -287,7 +296,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      * @param child The new child request to remove.
      */
     @Override
-    public <T extends IToken> void removeChild(@NotNull final T child)
+    public void removeChild(@NotNull final IToken<?>child)
     {
         this.children.remove(child);
         LogHandler.log("Removed child: " + child + " from: " + getToken());
@@ -299,9 +308,9 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      * @param children An array of children to remove.
      */
     @Override
-    public <T extends IToken> void removeChildren(@NotNull final T... children)
+    public void removeChildren(@NotNull final IToken<?>... children)
     {
-        for (final IToken theToken : children)
+        for (final IToken<?> theToken : children)
         {
             if (this.children.contains(theToken))
             {
@@ -316,9 +325,9 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      * @param children A collection of children to remove.
      */
     @Override
-    public <T extends IToken> void removeChildren(@NotNull final Collection<T> children)
+    public void removeChildren(@NotNull final Collection<IToken<?>> children)
     {
-        for (final IToken theToken : children)
+        for (final IToken<?> theToken : children)
         {
             if (this.children.contains(theToken))
             {
@@ -360,7 +369,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      * @param child   The child that was updated.
      */
     @Override
-    public void childStateUpdated(@NotNull final IRequestManager manager, @NotNull final IToken child)
+    public void childStateUpdated(@NotNull final IRequestManager manager, @NotNull final IToken<?> child)
     {
         if (!this.children.contains(child))
         {

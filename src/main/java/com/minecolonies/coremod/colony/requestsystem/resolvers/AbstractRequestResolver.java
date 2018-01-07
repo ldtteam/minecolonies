@@ -24,16 +24,16 @@ public abstract class AbstractRequestResolver<R extends IRequestable> implements
     private final ILocation location;
 
     @NotNull
-    private final IToken token;
+    private final IToken<?> token;
 
-    public AbstractRequestResolver(@NotNull final ILocation location, @NotNull final IToken token)
+    public AbstractRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
     {
         this.location = location;
         this.token = token;
     }
 
     @Override
-    public IToken getRequesterId()
+    public IToken<?> getRequesterId()
     {
         return token;
     }
@@ -47,7 +47,7 @@ public abstract class AbstractRequestResolver<R extends IRequestable> implements
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken token)
+    public ITextComponent getDisplayName(@NotNull final IToken<?> token)
     {
         return new TextComponentString("Request System");
     }

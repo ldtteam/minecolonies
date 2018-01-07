@@ -25,7 +25,7 @@ public final class ProviderHandler
      *
      * @throws IllegalArgumentException when the token is not belonging to a registered provider.
      */
-    public static ImmutableCollection<IToken> getRegisteredResolvers(final IStandardRequestManager manager, final IRequestResolverProvider provider)
+    public static ImmutableCollection<IToken<?>> getRegisteredResolvers(final IStandardRequestManager manager, final IRequestResolverProvider provider)
       throws IllegalArgumentException
     {
         //Check if the token is registered.
@@ -69,7 +69,7 @@ public final class ProviderHandler
 
         manager.getProviderBiMap().put(provider.getToken(), provider);
 
-        final ImmutableList.Builder<IToken> resolverListBuilder = new ImmutableList.Builder<>();
+        final ImmutableList.Builder<IToken<?>> resolverListBuilder = new ImmutableList.Builder<>();
         resolverListBuilder.addAll(ResolverHandler.registerResolvers(manager, provider.getResolvers()));
 
         manager.getProviderResolverMap().put(provider.getToken(), resolverListBuilder.build());
@@ -96,7 +96,7 @@ public final class ProviderHandler
         LogHandler.log("Removing provider: " + provider);
 
         //Get the resolvers that are being removed.
-        final ImmutableCollection<IToken> assignedResolvers = getRegisteredResolvers(manager, token);
+        final ImmutableCollection<IToken<?>> assignedResolvers = getRegisteredResolvers(manager, token);
         for (final IToken resolverToken : assignedResolvers)
         {
             //Skip if the resolver has no requests assigned.
@@ -111,11 +111,11 @@ public final class ProviderHandler
             }
 
             //Clone the original list to modify it during iteration, if need be.
-            final Collection<IToken> assignedRequests = new ArrayList<>(manager.getResolverRequestMap().get(resolverToken));
+            final Collection<IToken<?>> assignedRequests = new ArrayList<>(manager.getResolverRequestMap().get(resolverToken));
             LogHandler.log("Starting reassignment of already registered requests registered to resolver with token: " + resolverToken);
 
             //Get all assigned requests and reassign them.
-            for (final IToken requestToken : assignedRequests)
+            for (final IToken<?> requestToken : assignedRequests)
             {
                 manager.reassignRequest(requestToken, assignedResolvers);
             }
@@ -141,7 +141,7 @@ public final class ProviderHandler
      *
      * @throws IllegalArgumentException when the token is not belonging to a registered provider.
      */
-    public static ImmutableCollection<IToken> getRegisteredResolvers(final IStandardRequestManager manager, final IToken token) throws IllegalArgumentException
+    public static ImmutableCollection<IToken<?>> getRegisteredResolvers(final IStandardRequestManager manager, final IToken token) throws IllegalArgumentException
     {
         //Check if the token is registered.
         getProvider(manager, token);

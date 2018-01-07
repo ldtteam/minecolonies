@@ -28,7 +28,6 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFactories;
-import com.minecolonies.coremod.test.AbstractTest;
 import com.minecolonies.coremod.test.ReflectionUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -214,12 +213,12 @@ public class StandardRequestManagerTest
 
         StringRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final StringRequestable requested)
         {
-            super(requester, token, requested);
+            super(requester, token, TypeToken.of(StringRequestable.class), requested);
         }
 
         StringRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final StringRequestable requested)
         {
-            super(requester, token, state, requested);
+            super(requester, token, TypeToken.of(StringRequestable.class), state, requested);
         }
 
         @NotNull
@@ -363,20 +362,20 @@ public class StandardRequestManagerTest
     {
 
         @Override
-        public TypeToken<? extends StringRequestable> getRequestType()
+        public TypeToken<StringRequestable> getRequestType()
         {
             return TypeToken.of(StringRequestable.class);
         }
 
         @Override
-        public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends StringRequestable> requestToCheck)
+        public <T extends StringRequestable> boolean canResolve(@NotNull final IRequestManager manager, final IRequest<T> requestToCheck)
         {
             return true;
         }
 
         @Nullable
         @Override
-        public List<IToken> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request)
+        public <T extends StringRequestable> List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<T> request)
         {
             if (request.getRequest().content.length() == 1)
             {
@@ -390,7 +389,7 @@ public class StandardRequestManagerTest
 
         @Nullable
         @Override
-        public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request) throws RuntimeException
+        public <T extends StringRequestable> void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<T> request) throws RuntimeException
         {
             System.out.println(request.getRequest().content);
             manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
@@ -398,15 +397,15 @@ public class StandardRequestManagerTest
 
         @Nullable
         @Override
-        public IRequest getFollowupRequestForCompletion(
-                                                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> completedRequest)
+        public <T extends StringRequestable> IRequest<?> getFollowupRequestForCompletion(
+                                                         @NotNull final IRequestManager manager, @NotNull final IRequest<T> completedRequest)
         {
             return null;
         }
 
         @Nullable
         @Override
-        public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request)
+        public <T extends StringRequestable> IRequest<?> onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<T> request)
           throws IllegalArgumentException
         {
             return null;
@@ -419,7 +418,7 @@ public class StandardRequestManagerTest
         }
 
         @Override
-        public IToken getRequesterId()
+        public IToken<?> getRequesterId()
         {
             return TestRequester.INSTANCE.token;
         }
@@ -433,21 +432,21 @@ public class StandardRequestManagerTest
 
         @NotNull
         @Override
-        public void onRequestComplete(@NotNull final IToken token)
+        public void onRequestComplete(@NotNull final IToken<?> token)
         {
             //NOOP
         }
 
         @NotNull
         @Override
-        public void onRequestCancelled(@NotNull final IToken token)
+        public void onRequestCancelled(@NotNull final IToken<?> token)
         {
             //NOOP
         }
 
         @NotNull
         @Override
-        public ITextComponent getDisplayName(@NotNull final IToken token)
+        public ITextComponent getDisplayName(@NotNull final IToken<?> token)
         {
             //Not used in test.
             return null;
@@ -499,17 +498,17 @@ public class StandardRequestManagerTest
 
         static final TestRequester INSTANCE = new TestRequester();
 
-        private final IToken token;
+        private final IToken<?> token;
 
         private TestRequester()
         {
             this(StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN));
         }
 
-        private TestRequester(final IToken token) {this.token = token;}
+        private TestRequester(final IToken<?> token) {this.token = token;}
 
         @Override
-        public IToken getRequesterId()
+        public IToken<?> getRequesterId()
         {
             return token;
         }
@@ -523,21 +522,21 @@ public class StandardRequestManagerTest
 
         @NotNull
         @Override
-        public void onRequestComplete(@NotNull final IToken token)
+        public void onRequestComplete(@NotNull final IToken<?> token)
         {
             return;
         }
 
         @NotNull
         @Override
-        public void onRequestCancelled(@NotNull final IToken token)
+        public void onRequestCancelled(@NotNull final IToken<?> token)
         {
             return;
         }
 
         @NotNull
         @Override
-        public ITextComponent getDisplayName(@NotNull final IToken token)
+        public ITextComponent getDisplayName(@NotNull final IToken<?> token)
         {
             return new TextComponentString("Test Requester");
         }

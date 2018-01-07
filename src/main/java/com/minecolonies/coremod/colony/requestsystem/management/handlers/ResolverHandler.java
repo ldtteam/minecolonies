@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.requestsystem.management.handlers;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ReflectionUtils;
@@ -53,7 +54,7 @@ public final class ResolverHandler
      * @throws IllegalArgumentException is thrown when either the token attached to the resolver is already registered or the resolver is already registered with a different
      *                                  token
      */
-    public static IToken registerResolver(final IStandardRequestManager manager, final IRequestResolver resolver) throws IllegalArgumentException
+    public static IToken<?> registerResolver(final IStandardRequestManager manager, final IRequestResolver resolver) throws IllegalArgumentException
     {
         if (manager.getResolverBiMap().containsKey(resolver.getRequesterId()))
         {
@@ -96,7 +97,7 @@ public final class ResolverHandler
      *
      * @throws IllegalArgumentException is thrown when an IllegalArgumentException is thrown by the registerResolver method for any of the given Resolvers.
      */
-    public static Collection<IToken> registerResolvers(final IStandardRequestManager manager, final Collection<IRequestResolver> resolvers)
+    public static Collection<IToken<?>> registerResolvers(final IStandardRequestManager manager, final Collection<IRequestResolver> resolvers)
     {
         return resolvers.stream().map(resolver -> registerResolver(manager, resolver)).collect(Collectors.toList());
     }
@@ -313,7 +314,7 @@ public final class ResolverHandler
      *
      * @throws IllegalArgumentException when the token is unknown or the request is not assigned yet.
      */
-    public static IRequestResolver getResolverForRequest(final IStandardRequestManager manager, final IRequest request)
+    public  static <T extends IRequestable> IRequestResolver<T> getResolverForRequest(final IStandardRequestManager manager, final IRequest<T> request)
     {
         RequestHandler.getRequest(manager, request.getToken());
 

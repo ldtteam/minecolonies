@@ -42,12 +42,12 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     private final ILocation location;
 
     @NotNull
-    private final IToken token;
+    private final IToken<?> token;
 
     @NotNull
-    private final Set<IToken> assignedRequests = new HashSet<>();
+    private final Set<IToken<?>> assignedRequests = new HashSet<>();
 
-    public StandardPlayerRequestResolver(@NotNull final ILocation location, @NotNull final IToken token)
+    public StandardPlayerRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
     {
         super();
         this.location = location;
@@ -61,14 +61,14 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest requestToCheck)
+    public <T extends IRequestable> boolean canResolve(@NotNull final IRequestManager manager, final IRequest<T> requestToCheck)
     {
         return !manager.getColony().getWorld().isRemote;
     }
 
     @Nullable
     @Override
-    public List<IToken> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest request)
+    public <T extends IRequestable> List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<T> request)
     {
         if (canResolve(manager, request))
         {
@@ -80,7 +80,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 
     @Nullable
     @Override
-    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest request) throws RuntimeException
+    public <T extends IRequestable>  void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<T> request) throws RuntimeException
     {
         final IColony colony = manager.getColony();
         if (colony instanceof Colony)
@@ -138,7 +138,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 
     @Nullable
     @Override
-    public IRequest getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest completedRequest)
+    public <T extends IRequestable> IRequest<?> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<T> completedRequest)
     {
         //This is not what this method is for, but this is the closest we are getting right now, so why not.
         if (assignedRequests.contains(completedRequest.getToken()))
@@ -151,7 +151,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 
     @Nullable
     @Override
-    public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest request) throws IllegalArgumentException
+    public <T extends IRequestable> IRequest<?> onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<T> request) throws IllegalArgumentException
     {
         return getFollowupRequestForCompletion(manager, request);
     }
@@ -163,7 +163,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public IToken getRequesterId()
+    public IToken<?> getRequesterId()
     {
         return token;
     }
@@ -177,7 +177,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 
     @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IToken token)
+    public void onRequestComplete(@NotNull final IToken<?> token)
     {
         /**
          * Nothing to do here right now.
@@ -186,25 +186,25 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 
     @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IToken<?> token)
     {
 
     }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken token)
+    public ITextComponent getDisplayName(@NotNull final IToken<?> token)
     {
         return new TextComponentString("Player");
     }
 
     @Override
-    public ImmutableList<IToken> getAllAssignedRequests()
+    public ImmutableList<IToken<?>> getAllAssignedRequests()
     {
         return ImmutableList.copyOf(assignedRequests);
     }
 
-    public void setAllAssignedRequests(final Set<IToken> assignedRequests)
+    public void setAllAssignedRequests(final Set<IToken<?>> assignedRequests)
     {
         this.assignedRequests.clear();
         this.assignedRequests.addAll(assignedRequests);

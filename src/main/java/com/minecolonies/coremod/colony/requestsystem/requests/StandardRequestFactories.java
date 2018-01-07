@@ -427,7 +427,7 @@ public final class StandardRequestFactories
         final RequestState state = RequestState.deserializeNBT((NBTTagInt) compound.getTag(NBT_STATE));
         final T requested = typeDeserialization.apply(controller, compound.getCompoundTag(NBT_REQUESTED));
 
-        final List<IToken> childTokens = new ArrayList<>();
+        final List<IToken<?>> childTokens = new ArrayList<>();
         final NBTTagList childCompound = compound.getTagList(NBT_CHILDREN, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < childCompound.tagCount(); i++)
         {

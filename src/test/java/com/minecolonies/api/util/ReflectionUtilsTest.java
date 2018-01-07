@@ -19,10 +19,10 @@ public class ReflectionUtilsTest
     @Test
     public void getSuperClasses()
     {
-        final Set<TypeToken> types = ReflectionUtils.getSuperClasses(TypeConstants.STANDARDTOKEN);
+        final Set<TypeToken> types = ReflectionUtils.getSuperClassesGeneric(TypeConstants.STANDARDTOKEN);
         assertEquals(4, types.size());
 
-        final Set<TypeToken> interfaceTypes = ReflectionUtils.getSuperClasses(new TypeToken<IToken<UUID>>() {});
+        final Set<TypeToken> interfaceTypes = ReflectionUtils.getSuperClassesGeneric(new TypeToken<IToken<UUID>>() {});
         assertEquals(2, interfaceTypes.size());
     }
 }

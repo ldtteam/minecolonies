@@ -152,6 +152,11 @@ public class Tool implements IDeliverable
 
     private Set<String> getToolClasses(final ItemStack stack)
     {
+        if (ItemStackUtils.isEmpty(stack))
+        {
+            return new HashSet<>();
+        }
+
         final Set set = new HashSet();
         set.addAll(stack.getItem().getToolClasses(stack));
 

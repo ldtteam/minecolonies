@@ -224,7 +224,7 @@ public final class StandardFactoryController implements IFactoryController
         Log.getLogger()
           .debug("Retrieving super types of output: " + factory.getFactoryOutputType().toString());
 
-        final Set<TypeToken> outputSuperTypes = ReflectionUtils.getSuperClasses(factory.getFactoryOutputType());
+        final Set<TypeToken> outputSuperTypes = ReflectionUtils.getSuperClassesGeneric(factory.getFactoryOutputType());
 
         outputSuperTypes.remove(factory.getFactoryOutputType());
 

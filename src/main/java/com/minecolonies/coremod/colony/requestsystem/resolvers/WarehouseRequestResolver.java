@@ -42,13 +42,13 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     }
 
     @Override
-    public TypeToken<? extends IDeliverable> getRequestType()
+    public TypeToken<IDeliverable> getRequestType()
     {
         return TypeToken.of(IDeliverable.class);
     }
 
     @Override
-    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
+    public <T extends IDeliverable> boolean canResolve(@NotNull final IRequestManager manager, final IRequest<T> requestToCheck)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
@@ -68,8 +68,8 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     /**
      * Moving the curly braces really makes the code hard to read.
      */
-    public List<IToken> attemptResolve(
-                                        @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public <T extends IDeliverable> List<IToken<?>> attemptResolve(
+                                        @NotNull final IRequestManager manager, @NotNull final IRequest<T> request)
     {
         if (manager.getColony().getWorld().isRemote)
         {
@@ -108,15 +108,15 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     @Nullable
     @Override
-    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public <T extends IDeliverable> void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<T> request)
     {
         manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
     }
 
     @Nullable
     @Override
-    public IRequest getFollowupRequestForCompletion(
-                                                     @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
+    public <T extends IDeliverable> IRequest<?> getFollowupRequestForCompletion(
+                                                     @NotNull final IRequestManager manager, @NotNull final IRequest<T> completedRequest)
     {
         //No followup needed.
         return null;
@@ -124,7 +124,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     @Nullable
     @Override
-    public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public <T extends IDeliverable> IRequest<?> onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<T> request)
     {
         return null;
     }
@@ -139,20 +139,20 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IToken token)
+    public void onRequestComplete(@NotNull final IToken<?> token)
     {
     }
 
     @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IToken<?> token)
     {
 
     }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken token)
+    public ITextComponent getDisplayName(@NotNull final IToken<?> token)
     {
         return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME);
     }

@@ -28,7 +28,29 @@ public final class ReflectionUtils
      * @return A set with the super types of the given type.
      */
     @SuppressWarnings("unchecked")
-    public static <T> Set<TypeToken> getSuperClasses(final TypeToken<T> token)
+    public static <T> Set<TypeToken<? super T>> getSuperClasses(final TypeToken<T> token)
+    {
+        final Set<TypeToken<? super T>> directSet = new LinkedHashSet<>(token.getTypes());
+        final Set<TypeToken<? super T>> resultingSet = new LinkedHashSet<>();
+
+        directSet.forEach(t ->
+        {
+            resultingSet.add(t);
+            resultingSet.add(TypeToken.of(t.getRawType()));
+        });
+
+        return resultingSet;
+    }
+
+    /**
+     * Method to get all Super types of a given Class.
+     *
+     * @param token The type to get the Supertypes for.
+     * @param <T>   The type to get the super types for.
+     * @return A set with the super types of the given type.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Set<TypeToken> getSuperClassesGeneric(final TypeToken<T> token)
     {
         final Set<TypeToken> directSet = new LinkedHashSet<>(token.getTypes());
         final Set<TypeToken> resultingSet = new LinkedHashSet<>();
