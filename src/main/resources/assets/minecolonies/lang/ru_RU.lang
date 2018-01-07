@@ -26,7 +26,7 @@ item.minecolonies.supplyChestDeployer.name=Сундук снабжения
 item.minecolonies.supplyCampDeployer.name=Сундук лагеря с припасами
 item.minecolonies.ancienttome.name=Древняя гробница
 item.minecolonies.chiefsword.name=Главный меч
-event.minecolonies.raidMessage=Buckle up cowboy! There's some darn raiders commin' for you Tonight!
+event.minecolonies.raidMessage=Запрягайте лошадей! Чертовы рейдеры нападут этой ночью!
 
 item.minecolonies.scepterGold.name=Строительный инструмент
 item.minecolonies.scepterSteel.name=Инструмент сканирования
@@ -57,9 +57,9 @@ entity.fisherman.messageWaterTooFar=Хижина рыбака находится
 entity.minecolonies.Barbarian.name=Варвар
 entity.minecolonies.ArcherBarbarian.name=Стрелок-варвар
 entity.minecolonies.ChiefBarbarian.name=Главный варвар
-death.attack.Barbarian=%d was Sliced & Diced by a Barbarian!
-death.attack.ChiefBarbarian=%d was Macerated by a Great Chief!
-death.attack.ArcherBarbarian=%d was ravaged by an Archer Barbarian
+death.attack.Barbarian=%d был нарезан Варваром!
+death.attack.ChiefBarbarian=%d был уничтожен Великим Вождем!
+death.attack.ArcherBarbarian=Голова %d была опустошена Варваром Лучником
 achievement.supply=Новый старт
 achievement.supply.desc=Получить снабжение
 achievement.wandofbuilding=Жезл строительства
@@ -108,7 +108,7 @@ tile.minecolonies.blockHutGuardTower.name=Сторожевая башня
 tile.blockHutTownHall.messageGuardDead=Страж '%s' умер на %d %d %d %s!
 item.minecolonies.scepterGuard.name=Скипетр стража
 
-com.minecolonies.configgui.title=MineColonies Config
+com.minecolonies.configgui.title=Настройки Minecolonies
 
 com.minecolonies.coremod.gui.townHall.rename=Переименовать колонию
 com.minecolonies.coremod.gui.workerHuts.minerMineNode=Уровень шахты
@@ -153,7 +153,7 @@ com.minecolonies.coremod.gui.townHall.permissions=Разрешения
 com.minecolonies.coremod.gui.workerHuts.upgrade=Улучшить здание
 com.minecolonies.coremod.gui.buildtool.hut=Хижины
 com.minecolonies.coremod.gui.townHall.addPlayer=Добавить игрока:
-com.minecolonies.coremod.gui.townHall.addBlock=Add Block/Position:
+com.minecolonies.coremod.gui.townHall.addBlock=Добавить Блок/Позицию:
 
 com.minecolonies.coremod.gui.warehouse.visitCitizenChests=Посещать сундуки жителей:
 com.minecolonies.coremod.gui.townHall.population.unemployed=Незанятые: %d
@@ -253,11 +253,11 @@ com.minecolonies.coremod.gui.workerHuts.cancelRepair=Отменить восст
 com.minecolonies.coremod.gui.buildtool.hut.level=Уровень %s
 com.minecolonies.coremod.network.messages.schematicsavemassage.toobig=Размер схемы слишком большой и не может быть более %s байтов
 com.minecolonies.coremod.gui.buildtool.decorations=Декорации
-com.minecolonies.coremod.gui.buildtool.scans=My schematics
-com.minecolonies.coremod.gui.structure.edit.title=Edit Structure
-com.minecolonies.coremod.gui.structure.rename=Rename Structure
-com.minecolonies.coremod.gui.structure.delete=Delete Structure
-com.minecolonies.coremod.gui.structure.delete.title=Delete Structure
+com.minecolonies.coremod.gui.buildtool.scans=Мои проекты
+com.minecolonies.coremod.gui.structure.edit.title=Изменить здание
+com.minecolonies.coremod.gui.structure.rename=Переименовать здание
+com.minecolonies.coremod.gui.structure.delete=Удалить здание
+com.minecolonies.coremod.gui.structure.delete.title=Удалить здание
 com.minecolonies.coremod.gui.structure.delete.body=Вы действительно хотите удалить %s?
 //death=достижения
 achievement.miner.death.lava=Прокопано слишком глубоко.
@@ -467,10 +467,11 @@ com.minecolonies.coremod.gui.warehouse.upgrade=Увеличить хранили
 
 com.minecolonies.coremod.job.cook=Готовить
 com.minecolonies.coremod.gui.workerHuts.cook=Готовить
+com.minecolonies.coremod.gui.townHall.population.cooks=Cooks: %d
 tile.minecolonies.blockHutCook.name=Ресторан
-com.minecolonies.coremod.ai.noRestaurant=Please build a restaurant or get me something to eat!
-com.minecolonies.coremod.ai.noWarehouse=Build a warehouse or bring me food to serve to my clients!
-com.minecolonies.coremod.ai.noFood=I can't find any food in the warehouse.
+com.minecolonies.coremod.ai.noRestaurant=Пожалуйста, постройте ресторан или дайте еды!
+com.minecolonies.coremod.ai.noWarehouse=Постройте склад или принесите еды, чтобы я мог обслужить моих клиентов!
+com.minecolonies.coremod.ai.noFood=Я не могу найти еды на складе.
 com.minecolonies.coremod.gui.workerHuts.Cook=Ресторан
 com.minecolonies.coremod.status.cooking=Готовлю
 com.minecolonies.coremod.status.serving=Обслуживаю
@@ -480,16 +481,16 @@ com.minecolonies.coremod.status.mining=Добываю
 
 item.minecolonies.scepterPermission.name=Скипетр разрешения
 
-com.minecolonies.coremod.request.delivery=Delivery of:
+com.minecolonies.coremod.request.delivery=Доставка:
 com.minecolonies.coremod.request.food=Еда
 com.minecolonies.coremod.request.burnable=Топливо
-com.minecolonies.coremod.request.tool.pretype=Tool of class:
-com.minecolonies.coremod.request.tool.preminlevel=with minimal level:
-com.minecolonies.coremod.request.tool.premaxlevel=with maximal level:
+com.minecolonies.coremod.request.tool.pretype=Предмет класса:
+com.minecolonies.coremod.request.tool.preminlevel=с минимальным уровнем:
+com.minecolonies.coremod.request.tool.premaxlevel=с максимальным уровнем:
 
 com.minecolonies.coremod.general.and=и
 
-com.minecolonies.coremod.tooltype.none=Unknown
+com.minecolonies.coremod.tooltype.none=Неизвестно
 com.minecolonies.coremod.tooltype.pickaxe=Кирка
 com.minecolonies.coremod.tooltype.shovel=Лопата
 com.minecolonies.coremod.tooltype.axe=Топор
@@ -500,26 +501,42 @@ com.minecolonies.coremod.tooltype.fishingrod=Удочка
 com.minecolonies.coremod.tooltype.shears=Ножницы
 com.minecolonies.coremod.tooltype.shield=Щит
 
-com.minecolonies.coremod.gui.citizen.requests=Open requests:
-com.minecolonies.coremod.gui.citizen.requestTitle=Requests
+com.minecolonies.coremod.gui.citizen.requests=Другие запросы:
+com.minecolonies.coremod.gui.citizen.requestTitle=Запросы
 com.minecolonies.coremod.gui.citizen.requestsCancel=Отмена
-com.minecolonies.coremod.gui.citizen.requestsFulfill=Fulfill
+com.minecolonies.coremod.gui.citizen.requestsFulfill=Выполнить
 
 item.minecolonies.clipboard.name=Буфер обмена
 
-com.minecolonies.coremod.item.clipboard.needColony=Please shift-right click the colony to register your clipboard to it.
-com.minecolonies.coremod.item.clipboard.registered=Registered to colony %d.
+com.minecolonies.coremod.item.clipboard.needColony=Нажмите shift-ПКМ по колонии, чтобы зарегистрировать ее в своем блокноте.
+com.minecolonies.coremod.item.clipboard.registered=Зарегистрировано к колонии %d.
 achievement.upgrade.guard.first=Убийца
-achievement.upgrade.guard.last=Cleanup crew
-com.minecolonies.requestsystem.playerresolver=%s is in need of %s at %s.
+achievement.upgrade.guard.last=Очистить список
+com.minecolonies.requestsystem.playerresolver=%s нуждается в %s на %s.
 com.minecolonies.coremod.buildings.warehouse.name=Склад
 tile.minecolonies.blockPaperwall.name=Бумажная стена
 
 com.minecolonies.coremod.gui.workerHuts.buildPrio=Приоритет доставки:
 item.supplyChestDeployer.invalid=Вы должны быть около большого водоема.
 item.supplyChestDeployer.missing=Are you trying to trick me, pick up that Supplyship again?
-com.minecolonies.coremod.citizen.rename.same=Renaming failed: 2 Citizen are not allowed to have the same name!
-com.minecolonies.coremod.citizen.rename.notAllowed=Renaming failed: You're not allowed to rename your Citizen.
+com.minecolonies.coremod.citizen.rename.same=Переименование не удалось: 2 жителя не могут иметь одинаковое имя!
+com.minecolonies.coremod.citizen.rename.notAllowed=Переименование не удалось: Вы не имеете права переименовывать ваших жителей.
 
+tile.minecolonies.blockshingle_oak.name=Oak Shingle
+tile.minecolonies.blockshingle_birch.name=Birch Shingle
+tile.minecolonies.blockshingle_spruce.name=Spruce Shingle
+tile.minecolonies.blockshingle_jungle.name=Jungle Shingle
+tile.minecolonies.blockshingle_dark_oak.name=Dark Oak Shingle
+tile.minecolonies.blockshingle_acacia.name=Acacia Shingle
 
+com.minecolonies.coremod.gui.recipe.remove=Remove
+com.minecolonies.coremod.gui.workerHuts.crafting=Teach recipe
+com.minecolonies.coremod.gui.recipe.done=Succesfully saved recipe!
+com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
+com.minecolonies.coremod.resolvers.crafter=Crafting Resolver
+com.minecolonies.coremod.request.smeltableore=Smeltable Ore
+tile.minecolonies.blockHutSmeltery.name=Smeltery
+com.minecolonies.coremod.gui.workerHuts.Smeltery=Smeltery
+com.minecolonies.coremod.job.smelter=Smelter
 
+tile.minecolonies.blockShingleSlab.name=Shingle slab
