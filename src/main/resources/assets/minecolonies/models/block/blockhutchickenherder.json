@@ -3,7 +3,7 @@
   "textures": {
     "particle": "blocks/planks_oak",
     "down": "blocks/planks_oak",
-    "up": "minecolonies:blocks/blockHutChickenHerderTop",
+    "up": "minecolonies:blocks/blockhutchickenherdertop",
     "north": "minecolonies:blocks/sideChest",
     "east": "minecolonies:blocks/sideChest",
     "south": "minecolonies:blocks/sideChest",
