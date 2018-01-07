@@ -108,7 +108,7 @@ public final class StandardRequests
         public ITextComponent getShortDisplayString()
         {
             final ITextComponent result = new NonSiblingFormattingTextComponent();
-            result.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_DELIVERY).appendSibling(getDelivery().getTextComponent()));
+            result.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_DELIVERY).appendSibling( new TextComponentString(getRequest().getStack().getCount() + " ")).appendSibling(getRequest().getStack().getTextComponent()));
             return result;
         }
 
@@ -123,7 +123,7 @@ public final class StandardRequests
         @Override
         public ResourceLocation getDisplayIcon()
         {
-            return new ResourceLocation("minecolonies:textures/gui/citizen/colonist_button_small.png");
+            return new ResourceLocation("minecolonies:textures/gui/citizen/delivery.png");
         }
     }
 

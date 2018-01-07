@@ -991,8 +991,11 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
                 markDirty();
 
                 final int citizenThatIsBuilding = o.getClaimedBy();
-                final CitizenData data = colony.getCitizen(citizenThatIsBuilding);
-                data.getWorkBuilding().cancelAllRequestsOfCitizen(data);
+                final CitizenData data = colony.getCitizenManager().getCitizen(citizenThatIsBuilding);
+                if (data != null && data.getWorkBuilding() != null)
+                {
+                    data.getWorkBuilding().cancelAllRequestsOfCitizen(data);
+                }
                 return;
             }
         }
