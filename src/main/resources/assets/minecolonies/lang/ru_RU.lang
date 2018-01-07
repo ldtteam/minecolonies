@@ -518,25 +518,25 @@ tile.minecolonies.blockPaperwall.name=Бумажная стена
 
 com.minecolonies.coremod.gui.workerHuts.buildPrio=Приоритет доставки:
 item.supplyChestDeployer.invalid=Вы должны быть около большого водоема.
-item.supplyChestDeployer.missing=Are you trying to trick me, pick up that Supplyship again?
+item.supplyChestDeployer.missing=Вы пытаетесь меня обмануть? Поднимите сундук снабжения!
 com.minecolonies.coremod.citizen.rename.same=Переименование не удалось: 2 жителя не могут иметь одинаковое имя!
 com.minecolonies.coremod.citizen.rename.notAllowed=Переименование не удалось: Вы не имеете права переименовывать ваших жителей.
 
 tile.minecolonies.blockshingle_oak.name=Дубовая черепица
 tile.minecolonies.blockshingle_birch.name=Березовая черепица
-tile.minecolonies.blockshingle_spruce.name=Spruce Shingle
-tile.minecolonies.blockshingle_jungle.name=Jungle Shingle
-tile.minecolonies.blockshingle_dark_oak.name=Dark Oak Shingle
-tile.minecolonies.blockshingle_acacia.name=Acacia Shingle
+tile.minecolonies.blockshingle_spruce.name=Еловая черепица
+tile.minecolonies.blockshingle_jungle.name=Черепица тропического дерева
+tile.minecolonies.blockshingle_dark_oak.name=Черепица темного дуба
+tile.minecolonies.blockshingle_acacia.name=Черепица из акации
 
-com.minecolonies.coremod.gui.recipe.remove=Remove
-com.minecolonies.coremod.gui.workerHuts.crafting=Teach recipe
-com.minecolonies.coremod.gui.recipe.done=Succesfully saved recipe!
-com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
+com.minecolonies.coremod.gui.recipe.remove=Убрать
+com.minecolonies.coremod.gui.workerHuts.crafting=Научить рецепту
+com.minecolonies.coremod.gui.recipe.done=Рецепт удачно сохранен!
+com.minecolonies.coremod.gui.workerHuts.listRecipes=Список рецептов
 com.minecolonies.coremod.resolvers.crafter=Crafting Resolver
-com.minecolonies.coremod.request.smeltableore=Smeltable Ore
-tile.minecolonies.blockHutSmeltery.name=Smeltery
-com.minecolonies.coremod.gui.workerHuts.Smeltery=Smeltery
-com.minecolonies.coremod.job.smelter=Smelter
+com.minecolonies.coremod.request.smeltableore=Плавильные руды
+tile.minecolonies.blockHutSmeltery.name=Плавильня
+com.minecolonies.coremod.gui.workerHuts.Smeltery=Плавильня
+com.minecolonies.coremod.job.smelter=Кузнец
 
-tile.minecolonies.blockShingleSlab.name=Shingle slab
+tile.minecolonies.blockShingleSlab.name=Черепица
