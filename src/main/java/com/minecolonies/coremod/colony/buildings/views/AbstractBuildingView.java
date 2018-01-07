@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.views;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -285,7 +286,7 @@ public abstract class AbstractBuildingView implements IRequester
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken<?> token)
+    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         if (!requestsByCitizen.containsKey(token))
         {

@@ -126,13 +126,13 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                     players.remove(owner);
 
                     LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
-                            request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
+                            request.getRequester().getDisplayName(manager, request.getToken()).getFormattedText(),
                             request.getShortDisplayString().getFormattedText(),
                             request.getRequester().getRequesterLocation().toString()
                     );
                 }
                 LanguageHandler.sendPlayersMessage(players, "com.minecolonies.requestsystem.playerresolver",
-                        colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
+                        colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(manager, request.getToken()).getFormattedText(),
                         request.getShortDisplayString().getFormattedText(),
                         request.getRequester().getRequesterLocation().toString());
             }
@@ -205,7 +205,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken token)
+    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken token)
     {
         return new TextComponentString("Player");
     }

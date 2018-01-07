@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.requestsystem.requester;
 
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -60,5 +61,5 @@ public interface IRequester
      * @return The display name of the requester.
      */
     @NotNull
-    ITextComponent getDisplayName(@NotNull final IToken<?> token);
+    ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token);
 }

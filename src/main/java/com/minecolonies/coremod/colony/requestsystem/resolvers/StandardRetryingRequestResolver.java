@@ -223,7 +223,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken<?> token)
+    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         return new TextComponentString("Player");
     }

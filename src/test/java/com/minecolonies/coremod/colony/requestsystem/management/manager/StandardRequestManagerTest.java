@@ -451,7 +451,7 @@ public class StandardRequestManagerTest
 
         @NotNull
         @Override
-        public ITextComponent getDisplayName(@NotNull final IToken<?> token)
+        public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
         {
             //Not used in test.
             return null;
@@ -540,7 +540,7 @@ public class StandardRequestManagerTest
 
         @NotNull
         @Override
-        public ITextComponent getDisplayName(@NotNull final IToken<?> token)
+        public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
         {
             return new TextComponentString("Test Requester");
         }

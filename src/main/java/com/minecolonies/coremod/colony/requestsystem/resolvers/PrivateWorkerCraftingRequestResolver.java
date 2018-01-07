@@ -78,9 +78,16 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken<?> token)
+    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_CRAFTING_RESOLVER_NAME);
+        IRequest<?> request = manager.getRequestForToken(token);
+
+        if (request.hasParent())
+        {
+            request = manager.getRequestForToken(request.getParent());
+        }
+
+        return request.getRequester().getDisplayName(manager, request.getToken());
     }
 
     @Override

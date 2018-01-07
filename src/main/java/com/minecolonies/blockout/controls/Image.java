@@ -30,6 +30,7 @@ public class Image extends Pane
     protected int     mapWidth     = MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
     protected int     mapHeight    = MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
     protected boolean customSized  = true;
+    protected boolean autoscale = true;
 
     /**
      * Default Constructor.
@@ -67,6 +68,8 @@ public class Image extends Pane
             imageWidth = size.getX();
             imageHeight = size.getY();
         }
+
+        autoscale = params.getBooleanAttribute("autoscale", true);
     }
 
     private void loadMapDimensions()
@@ -199,6 +202,8 @@ public class Image extends Pane
 
         this.mc.getTextureManager().bindTexture(resourceLocation);
 
+        GlStateManager.pushMatrix();
+
         if (this.customSized)
         {
             // /Draw
@@ -215,5 +220,7 @@ public class Image extends Pane
               imageWidth != 0 ? imageWidth : getWidth(),
               imageHeight != 0 ? imageHeight : getHeight());
         }
+
+        GlStateManager.popMatrix();
     }
 }
