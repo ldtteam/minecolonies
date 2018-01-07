@@ -467,6 +467,7 @@ com.minecolonies.coremod.gui.warehouse.upgrade=Depolama Yükseltildi
 
 com.minecolonies.coremod.job.cook=Aşçı
 com.minecolonies.coremod.gui.workerHuts.cook=Aşçı
+com.minecolonies.coremod.gui.townHall.population.cooks=Cooks: %d
 tile.minecolonies.blockHutCook.name=Restoran
 com.minecolonies.coremod.ai.noRestaurant=Lütfen bir restoran inşa veya yiyecek bir şeyler getir!
 com.minecolonies.coremod.ai.noWarehouse=Bir depo inşa veya benim müşterilerine hizmet için yiyecek getir!
@@ -521,5 +522,21 @@ item.supplyChestDeployer.missing=Bana kötü bir şaka, o Supplyship kadar yenid
 com.minecolonies.coremod.citizen.rename.same=Yeniden adlandırma başarısız oldu: 2 vatandaş aynı ada sahip izin verilmez!
 com.minecolonies.coremod.citizen.rename.notAllowed=Yeniden adlandırma başarısız oldu: senin vatandaşını yeniden adlandırmak için iznimiz yok.
 
+tile.minecolonies.blockshingle_oak.name=Oak Shingle
+tile.minecolonies.blockshingle_birch.name=Birch Shingle
+tile.minecolonies.blockshingle_spruce.name=Spruce Shingle
+tile.minecolonies.blockshingle_jungle.name=Jungle Shingle
+tile.minecolonies.blockshingle_dark_oak.name=Dark Oak Shingle
+tile.minecolonies.blockshingle_acacia.name=Acacia Shingle
 
+com.minecolonies.coremod.gui.recipe.remove=Remove
+com.minecolonies.coremod.gui.workerHuts.crafting=Teach recipe
+com.minecolonies.coremod.gui.recipe.done=Succesfully saved recipe!
+com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
+com.minecolonies.coremod.resolvers.crafter=Crafting Resolver
+com.minecolonies.coremod.request.smeltableore=Smeltable Ore
+tile.minecolonies.blockHutSmeltery.name=Smeltery
+com.minecolonies.coremod.gui.workerHuts.Smeltery=Smeltery
+com.minecolonies.coremod.job.smelter=Smelter
 
+tile.minecolonies.blockShingleSlab.name=Shingle slab
