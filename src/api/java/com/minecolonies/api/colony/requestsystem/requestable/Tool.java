@@ -171,6 +171,10 @@ public class Tool implements IDeliverable
         {
             set.add("rod");
         }
+        else if(stack.getItem() instanceof  ItemShears)
+        {
+            set.add("shears");
+        }
         return set;
     }
 
