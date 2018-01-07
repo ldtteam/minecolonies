@@ -32,7 +32,7 @@ files:
         eu: eu_ES
         fa: fa_IR
         fi: fi_FI
-        fil: fil_PH
+        fil: tl_PH
         fo: fo_FO
         fr: fr_FR
         fr-CA: fr_CA
@@ -79,3 +79,18 @@ files:
         ro: ro_RO
         ru: ru_RU
         se: sme
+        sk: sk_SK
+        sl: sl_SI
+        so: so_SO
+        sq: sq_AL
+        sr: sr_SP
+        sv-SE: sv_SE
+        th: th_TH
+        tlh-AA: tlh_AA
+        tr: tr_TR
+        tzl: tzl_TZL
+        uk: uk_UA
+        val-ES: ca-val_ES
+        vi: vi_VN
+        zh-CN: zh_CN
+        zh-TW: zh_TW
