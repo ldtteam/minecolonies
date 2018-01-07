@@ -522,8 +522,8 @@ item.supplyChestDeployer.missing=Are you trying to trick me, pick up that Supply
 com.minecolonies.coremod.citizen.rename.same=Переименование не удалось: 2 жителя не могут иметь одинаковое имя!
 com.minecolonies.coremod.citizen.rename.notAllowed=Переименование не удалось: Вы не имеете права переименовывать ваших жителей.
 
-tile.minecolonies.blockshingle_oak.name=Oak Shingle
-tile.minecolonies.blockshingle_birch.name=Birch Shingle
+tile.minecolonies.blockshingle_oak.name=Дубовая черепица
+tile.minecolonies.blockshingle_birch.name=Березовая черепица
 tile.minecolonies.blockshingle_spruce.name=Spruce Shingle
 tile.minecolonies.blockshingle_jungle.name=Jungle Shingle
 tile.minecolonies.blockshingle_dark_oak.name=Dark Oak Shingle
