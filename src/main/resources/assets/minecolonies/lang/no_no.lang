@@ -531,12 +531,12 @@ tile.minecolonies.blockshingle_acacia.name=Akasieshingel
 
 com.minecolonies.coremod.gui.recipe.remove=Fjern
 com.minecolonies.coremod.gui.workerHuts.crafting=Lær bort oppskrift
-com.minecolonies.coremod.gui.recipe.done=Succesfully saved recipe!
-com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
+com.minecolonies.coremod.gui.recipe.done=Vellykket lagret oppskrift!
+com.minecolonies.coremod.gui.workerHuts.listRecipes=Oppskriftsliste
 com.minecolonies.coremod.resolvers.crafter=Crafting Resolver
-com.minecolonies.coremod.request.smeltableore=Smeltable Ore
-tile.minecolonies.blockHutSmeltery.name=Smeltery
-com.minecolonies.coremod.gui.workerHuts.Smeltery=Smeltery
+com.minecolonies.coremod.request.smeltableore=Smeltelig malm
+tile.minecolonies.blockHutSmeltery.name=Smeltehytte
+com.minecolonies.coremod.gui.workerHuts.Smeltery=Smeltehytte
 com.minecolonies.coremod.job.smelter=Smelter
 
 tile.minecolonies.blockShingleSlab.name=Shingle slab
