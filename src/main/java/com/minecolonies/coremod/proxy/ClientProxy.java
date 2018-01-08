@@ -247,27 +247,27 @@ public class ClientProxy extends CommonProxy
               new ModelResourceLocation(ModBlocks.blockPaperWall.getRegistryName() + "_" + type.getName(), INVENTORY));
         }
 
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrame), 0,
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameOak), 0,
                 new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
                         BlockTimberFrame.TYPE + "_" + BlockPlanks.EnumType.OAK.getName()), INVENTORY));
 
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrame), 0,
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameBirch), 0,
                 new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
                         BlockTimberFrame.TYPE + "_" + BlockPlanks.EnumType.BIRCH.getName()), INVENTORY));
 
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrame), 0,
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameSpruce), 0,
                 new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
                         BlockTimberFrame.TYPE + "_" + BlockPlanks.EnumType.SPRUCE.getName()), INVENTORY));
 
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrame), 0,
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameJungle), 0,
                 new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
                         BlockTimberFrame.TYPE + "_" + BlockPlanks.EnumType.JUNGLE.getName()), INVENTORY));
 
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrame), 0,
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameDarkOak), 0,
                 new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
                         BlockTimberFrame.TYPE + "_" + BlockPlanks.EnumType.DARK_OAK.getName()), INVENTORY));
 
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrame), 0,
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameAcacia), 0,
                 new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
                         BlockTimberFrame.TYPE + "_" + BlockPlanks.EnumType.ACACIA.getName()), INVENTORY));
     }

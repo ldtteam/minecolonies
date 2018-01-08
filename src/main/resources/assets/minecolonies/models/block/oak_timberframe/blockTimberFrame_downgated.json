@@ -1,12 +1,12 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "particle": "minecolonies:blocks/blockdowngateside",
-    "down": "minecolonies:blocks/blockframedside",
-    "up": "minecolonies:blocks/blocktimberframetopbottom",
-    "north": "minecolonies:blocks/blockdowngateside",
-    "east": "minecolonies:blocks/blockdowngateside",
-    "south": "minecolonies:blocks/blockdowngateside",
-    "west": "minecolonies:blocks/blockdowngateside"
+    "particle": "minecolonies:blocks/timberframe/oak/blockdowngateside",
+    "down": "minecolonies:blocks/timberframe/oak/blockframedside",
+    "up": "minecolonies:blocks/timberframe/oak/blocktimberframetopbottom",
+    "north": "minecolonies:blocks/timberframe/oak/blockdowngateside",
+    "east": "minecolonies:blocks/timberframe/oak/blockdowngateside",
+    "south": "minecolonies:blocks/timberframe/oak/blockdowngateside",
+    "west": "minecolonies:blocks/timberframe/oak/blockdowngateside"
   }
 }

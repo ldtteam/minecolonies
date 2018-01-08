@@ -98,7 +98,6 @@ public final class RecipeHandler
                                                     "XXX", "X#X", "XXX", 'X', "logWood", '#', ModItems.scanTool));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockWayPoint, ONE_FORTH_OF_A_STACK),
                                                     "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', ModItems.buildTool));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockTimberFrame, FOUR_BLOCKS), " W ", " W ", " WB", 'W', PLANK_WOOD, 'B', ModItems.buildTool));
         GameRegistry.addShapelessRecipe(new ItemStack(ModItems.clipboard, 1), new ItemStack(Items.STICK, 1), new ItemStack(Items.MAP, 1), new ItemStack(Items.DYE));
 
         //Block Rack
@@ -106,7 +105,6 @@ public final class RecipeHandler
                                                     "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Blocks.IRON_BARS));
 
         //Building blocks
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockTimberFrame, FOUR_BLOCKS), " W ", " W ", " WB", 'W', PLANK_WOOD, 'B', ModItems.buildTool));
         GameRegistry.addRecipe(new ShapedOreRecipe(
                 new ItemStack(ModBlocks.blockPaperWall, EIGHT_BLOCKS, 0), "WWW", "PPP", "WWW", 'P', PAPER, 'W', new ItemStack(Blocks.PLANKS, 1, 0)));
         GameRegistry.addRecipe(new ShapedOreRecipe(

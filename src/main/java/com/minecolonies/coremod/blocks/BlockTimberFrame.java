@@ -15,8 +15,10 @@ import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Locale;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
+import static com.sun.deploy.util.SessionState.init;
 
 /**
  * Decorative block
@@ -38,26 +40,24 @@ public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame
      * The resistance this block has.
      */
     private static final float                      RESISTANCE     = 1F;
-
     /**
      * Constructor for the TimberFrame
      */
-    BlockTimberFrame()
+    BlockTimberFrame(final String name)
     {
         super(Material.WOOD);
         this.setDefaultState(this.blockState.getBaseState().withProperty(TYPE, TimberFrameType.PLAIN));
-        initBlock();
+        init(name);
     }
-
 
     /**
      * initialize the block
      * sets the creative tab, as well as the resistance and the hardness.
      */
-    private void initBlock()
+    private void initBlock(final String name)
     {
-        setRegistryName(BLOCK_NAME);
-        setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
+        setRegistryName(name);
+        setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.US), name));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);

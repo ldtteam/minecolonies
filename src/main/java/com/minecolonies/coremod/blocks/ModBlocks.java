@@ -37,7 +37,12 @@ public final class ModBlocks
     public static BlockConstructionTape       blockConstructionTape;
     public static BlockConstructionTapeCorner blockConstructionTapeCorner;
     public static BlockMinecoloniesRack       blockRack;
-    public static BlockTimberFrame            blockTimberFrame;
+    public static BlockTimberFrame            blockTimberFrameOak;
+    public static BlockTimberFrame            blockTimberFrameAcacia;
+    public static BlockTimberFrame            blockTimberFrameJungle;
+    public static BlockTimberFrame            blockTimberFrameBirch;
+    public static BlockTimberFrame            blockTimberFrameDarkOak;
+    public static BlockTimberFrame            blockTimberFrameSpruce;
     public static BlockWaypoint               blockWayPoint;
     public static BlockHutBarracks            blockHutBarracks;
     public static BlockHutBarracksTower       blockHutBarracksTower;
@@ -65,8 +70,7 @@ public final class ModBlocks
     /**
      * Initates all the blocks. At the correct time.
      */
-    public static void init(final IForgeRegistry<Block> registry)
-    {
+    public static void init(final IForgeRegistry<Block> registry) {
         blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
         blockConstructionTapeCorner = new BlockConstructionTapeCorner().registerBlock(registry);
         blockHutBaker = new BlockHutBaker().registerBlock(registry);
@@ -86,13 +90,12 @@ public final class ModBlocks
         blockSolidSubstitution = new BlockSolidSubstitution().registerBlock(registry);
         blockSubstitution = new BlockSubstitution().registerBlock(registry);
         blockRack = new BlockMinecoloniesRack().registerBlock(registry);
-        blockTimberFrame = new BlockTimberFrame().registerBlock(registry);
         blockWayPoint = new BlockWaypoint().registerBlock(registry);
         blockHutBarracks = new BlockHutBarracks().registerBlock(registry);
         blockHutBarracksTower = new BlockHutBarracksTower().registerBlock(registry);
         blockInfoPoster = new BlockInfoPoster().registerBlock(registry);
         blockPaperWall = new BlockPaperwall().registerBlock(registry);
-        blockHutCook   = new BlockHutCook().registerBlock(registry);
+        blockHutCook = new BlockHutCook().registerBlock(registry);
 
         blockShingleOak = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK),
                 BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.OAK.getName()).registerBlock(registry);
@@ -107,6 +110,14 @@ public final class ModBlocks
         blockShingleAcacia = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.ACACIA),
                 BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.ACACIA.getName()).registerBlock(registry);
         blockShingleSlab = new BlockShingleSlab().registerBlock(registry);
+
+        blockTimberFrameOak = new BlockTimberFrame (BlockTimberFrame.TYPE + "_" + BlockPlanks.EnumType.OAK.getName()).registerBlock(registry);
+        blockTimberFrameJungle = new BlockTimberFrame (BlockTimberFrame.TYPE + "_" + BlockPlanks.EnumType.JUNGLE.getName()).registerBlock(registry);
+        blockTimberFrameBirch = new BlockTimberFrame(BlockTimberFrame.TYPE + "_" + BlockPlanks.EnumType.BIRCH.getName()).registerBlock(registry);
+        blockTimberFrameSpruce = new BlockTimberFrame (BlockTimberFrame.TYPE + "_" + BlockPlanks.EnumType.SPRUCE.getName()).registerBlock(registry);
+        blockTimberFrameDarkOak = new BlockTimberFrame(BlockTimberFrame.TYPE + "_" + BlockPlanks.EnumType.DARK_OAK.getName()).registerBlock(registry);
+        blockTimberFrameAcacia = new BlockTimberFrame(BlockTimberFrame.TYPE + "_" + BlockPlanks.EnumType.ACACIA.getName()).registerBlock(registry);
+
 
     }
 
@@ -131,7 +142,12 @@ public final class ModBlocks
         blockSolidSubstitution.registerItemBlock(registry);
         blockSubstitution.registerItemBlock(registry);
         blockRack.registerItemBlock(registry);
-        blockTimberFrame.registerItemBlock(registry);
+        blockTimberFrameAcacia.registerItemBlock(registry);
+        blockTimberFrameDarkOak.registerItemBlock(registry);
+        blockTimberFrameSpruce.registerItemBlock(registry);
+        blockTimberFrameJungle.registerItemBlock(registry);
+        blockTimberFrameBirch.registerItemBlock(registry);
+        blockTimberFrameOak.registerItemBlock(registry);
         blockWayPoint.registerItemBlock(registry);
         blockHutBarracksTower.registerItemBlock(registry);
         blockHutBarracks.registerItemBlock(registry);
