@@ -86,6 +86,10 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
         {
             request = manager.getRequestForToken(request.getParent());
         }
+        else
+        {
+            return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_CRAFTING_RESOLVER_NAME);
+        }
 
         return request.getRequester().getDisplayName(manager, request.getToken());
     }

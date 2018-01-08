@@ -457,8 +457,13 @@ public final class ColonyManager
      * @return View of the closest colony.
      */
     @Nullable
-    public static ColonyView getClosestColonyView(@NotNull final World w, @NotNull final BlockPos pos)
+    public static ColonyView getClosestColonyView(@Nullable final World w, @Nullable final BlockPos pos)
     {
+        if (w == null || pos == null)
+        {
+            return null;
+        }
+
         @Nullable ColonyView closestColony = null;
         long closestDist = Long.MAX_VALUE;
 
