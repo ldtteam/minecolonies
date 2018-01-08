@@ -28,6 +28,7 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.inventory.api.CombinedItemHandler;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.tileentities.TileEntityRack;
 import com.minecolonies.coremod.util.BuildingUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.StructureWrapper;
@@ -1774,7 +1775,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             //Add additional containers
             providers.addAll(getAdditionalCountainers().stream()
                     .map(getTileEntity().getWorld()::getTileEntity)
-                    .filter(entity -> !(entity instanceof TileEntityFurnace))
+                    .filter(entity -> (entity instanceof TileEntityChest) || (entity instanceof TileEntityRack))
                     .collect(Collectors.toSet()));
             providers.removeIf(Objects::isNull);
 
