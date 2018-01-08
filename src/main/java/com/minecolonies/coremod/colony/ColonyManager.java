@@ -178,7 +178,7 @@ public final class ColonyManager
         try
         {
             final Colony colony = getColony(id);
-
+            colony.notifyChunksInRange(colony.getWorld(), false);
             final Set<World> colonyWorlds = new HashSet<>();
             Log.getLogger().info("Removing citizens for " + id);
             for (final CitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))

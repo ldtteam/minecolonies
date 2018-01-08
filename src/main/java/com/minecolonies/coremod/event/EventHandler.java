@@ -1,14 +1,17 @@
 package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MathUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.BlockHutWareHouse;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.block.Block;
@@ -16,13 +19,19 @@ import net.minecraft.block.BlockSilverfish;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -32,6 +41,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.minecolonies.api.util.constant.ColonyConstants.MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE;
+import static com.minecolonies.api.util.constant.ColonyConstants.MAX_SQ_DIST_SUBSCRIBER_UPDATE;
+import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
+import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
  * Handles all forge events.
@@ -76,6 +90,84 @@ public class EventHandler
                 event.getLeft().add(colony.getName() + " : "
                                       + LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.blocksFromCenter",
                   (int) Math.sqrt(colony.getDistanceSquared(player.getPosition()))));
+            }
+        }
+    }
+
+    /**
+     * Event called to attach capabilities.
+     * @param event the event.
+     */
+    public void onAttachingCapabilities(@NotNull final AttachCapabilitiesEvent<Chunk> event)
+    {
+        event.addCapability(new ResourceLocation(Constants.MOD_ID, "closeColony"), new ColonyTagCapabilityProvider());
+    }
+
+    /**
+     * Event called when the player enters a new chunk.
+     * @param event the event.
+     */
+    @SubscribeEvent
+    public void onEnteringChunk(@NotNull final PlayerEvent.EnteringChunk event)
+    {
+        final Entity entity = event.getEntity();
+
+        //  Add nearby players
+        if (entity instanceof EntityPlayerMP && entity.dimension == 1)
+        {
+            final World world = entity.getEntityWorld();
+            final Chunk newChunk = world.getChunkFromChunkCoords(event.getNewChunkX(), event.getNewChunkZ());
+            final Chunk oldChunk = world.getChunkFromChunkCoords(event.getOldChunkX(), event.getOldChunkZ());
+
+            final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null);
+            final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null);
+
+            @NotNull final EntityPlayerMP player = (EntityPlayerMP) entity;
+
+            // Add new subscribers to colony.
+            for(final int colonyId: newCloseColonies.getAllCloseColonies())
+            {
+                if(!oldCloseColonies.getAllCloseColonies().contains(colonyId))
+                {
+                    final Colony colony = ColonyManager.getColony(colonyId);
+
+                    if(colony != null)
+                    {
+                        colony.getPackageManager().addSubscribers(player);
+                    }
+                }
+            }
+
+            //Remove old subscribers from colony.
+            for(final int colonyId: oldCloseColonies.getAllCloseColonies())
+            {
+                if(!newCloseColonies.getAllCloseColonies().contains(colonyId))
+                {
+                    final Colony colony = ColonyManager.getColony(colonyId);
+                    if(colony != null)
+                    {
+                        colony.getPackageManager().removeSubscriber(player);
+                    }
+                }
+            }
+
+            if(newCloseColonies.getOwningColony() != oldCloseColonies.getOwningColony())
+            {
+                if(newCloseColonies.getOwningColony() == 0)
+                {
+                    final Colony colony = ColonyManager.getColony(oldCloseColonies.getOwningColony());
+                    if (colony != null)
+                    {
+                        colony.removeVisitingPlayer(player);
+                    }
+                    return;
+                }
+
+                final Colony colony = ColonyManager.getColony(newCloseColonies.getOwningColony());
+                if (colony != null)
+                {
+                    colony.addVisitingPlayer(player);
+                }
             }
         }
     }

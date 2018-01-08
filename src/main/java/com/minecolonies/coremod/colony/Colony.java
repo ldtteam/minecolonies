@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.configuration.Configurations;
@@ -26,6 +27,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -38,6 +40,8 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
  * This class describes a colony and contains all the data and methods for
@@ -174,6 +178,11 @@ public class Colony implements IColony
     private boolean isDirty = false;
 
     /**
+     * List of players visiting the colony.
+     */
+    private final List<EntityPlayer> visitingPlayers = new ArrayList<>();
+
+    /**
      * Constructor for a newly created Colony.
      *
      * @param id The id of the colony to create.
@@ -188,6 +197,7 @@ public class Colony implements IColony
         world = w;
         this.permissions = new Permissions(this);
         requestManager = new StandardRequestManager(this);
+        notifyChunksInRange(w, true);
     }
 
     /**
@@ -240,7 +250,24 @@ public class Colony implements IColony
         c.center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
         c.setRequestManager();
         c.readFromNBT(compound);
+        c.notifyChunksInRange(world, true);
         return c;
+    }
+
+    /**
+     * Notify all chunks in the range of the colony about the colony.
+     * @param world the world of the colony.
+     * @param add remove or add
+     */
+    public void notifyChunksInRange(final World world, final boolean add)
+    {
+        //todo calc all chunks in range for owning, then calc all chunks in 2x range + padding for close
+        final Chunk chunk = world.getChunkFromBlockCoords(this.center);
+        final IColonyTagCapability closeColonies = chunk.getCapability(CLOSE_COLONY_CAP, null);
+        if(closeColonies.getOwningColony() != this.getID())
+        {
+            world.getChunkProvider().
+        }
     }
 
     /**
@@ -502,6 +529,16 @@ public class Colony implements IColony
         {
             packageManager.updateSubscribers();
         }
+
+        //Clean up visiting player.
+        for(final EntityPlayer player: visitingPlayers)
+        {
+            if(!packageManager.getSubscribers().contains(player))
+            {
+                visitingPlayers.remove(player);
+            }
+        }
+
     }
 
     /**
@@ -1066,6 +1103,43 @@ public class Colony implements IColony
     public IColonyPackageManager getPackageManager()
     {
         return packageManager;
+    }
+
+    /**
+     * Get all visiting players.
+     * @return the list.
+     */
+    public List<EntityPlayer> getVisitingPlayers()
+    {
+        return new ArrayList<>(visitingPlayers);
+    }
+
+    /**
+     * Add a visiting player.
+     * @param player the player.
+     */
+    public void addVisitingPlayer(final EntityPlayer player)
+    {
+        if(!visitingPlayers.contains(player))
+        {
+            visitingPlayers.add(player);
+            LanguageHandler.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
+            LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName());
+        }
+    }
+
+    /**
+     * Remove a visiting player.
+     * @param player the player.
+     */
+    public void removeVisitingPlayer(final EntityPlayer player)
+    {
+        if(visitingPlayers.contains(player))
+        {
+            visitingPlayers.remove(player);
+            LanguageHandler.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
+            LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName());
+        }
     }
 
     /**

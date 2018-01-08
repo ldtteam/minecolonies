@@ -74,4 +74,16 @@ public interface IColonyPackageManager
      * Mark the package manager dirty.
      */
     void setDirty();
+
+    /**
+     * Add a new subsriber to the colony.
+     * @param subscriber the subscriber to add.
+     */
+    void addSubscribers(@NotNull final EntityPlayerMP subscriber);
+
+    /**
+     * Remove an old subsriber from the colony.
+     * @param subscriber the subscriber to remove.
+     */
+    void removeSubscriber(@NotNull final EntityPlayerMP player);
 }

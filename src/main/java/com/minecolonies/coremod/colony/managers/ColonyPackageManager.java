@@ -12,12 +12,12 @@ import com.minecolonies.coremod.network.messages.ColonyViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewWorkOrderMessage;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.util.ColonyUtils;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE;
@@ -26,6 +26,12 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_HOUR;
 
 public class ColonyPackageManager implements IColonyPackageManager
 {
+    /**
+     * List of players subscribing to the colony already known for a long time.
+     */
+    @NotNull
+    private Set<EntityPlayerMP> oldSubscribers = new HashSet<>();
+
     /**
      * List of players subscribing to the colony.
      */
@@ -89,11 +95,6 @@ public class ColonyPackageManager implements IColonyPackageManager
             return;
         }
 
-        //  Recompute subscribers every frame (for now)
-        //  Subscribers = Owners + Players within (double working town hall range)
-        @NotNull final Set<EntityPlayerMP> oldSubscribers = subscribers;
-        subscribers = new HashSet<>();
-
         // Add owners
         world.getMinecraftServer().getPlayerList().getPlayers()
                 .stream()
@@ -117,28 +118,19 @@ public class ColonyPackageManager implements IColonyPackageManager
             colony.markDirty();
         }
 
-        //  Add nearby players
-        for (final EntityPlayer o : world.playerEntities)
-        {
-            if (o instanceof EntityPlayerMP)
-            {
-                @NotNull final EntityPlayerMP player = (EntityPlayerMP) o;
+        final boolean hasNewSubscribers = ColonyUtils.hasNewSubscribers(oldSubscribers, subscribers);
+        updateColonyViews(hasNewSubscribers);
+    }
 
-                final double distance = player.getDistanceSq(colony.getCenter());
-                if (distance < MAX_SQ_DIST_SUBSCRIBER_UPDATE
-                        || (oldSubscribers.contains(player) && distance < MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE))
-                {
-                    // Players become subscribers if they come within 16 blocks of the edge of the colony
-                    // Players remain subscribers while they remain within double the colony's radius
-                    subscribers.add(player);
-                }
-            }
-        }
-
+    /**
+     * Update the subscribers of the colony.
+     * @param hasNewSubscribers check if there are new ones.
+     */
+    public void updateColonyViews(final boolean hasNewSubscribers)
+    {
         if (!subscribers.isEmpty())
         {
             //  Determine if any new subscribers were added this pass
-            final boolean hasNewSubscribers = ColonyUtils.hasNewSubscribers(oldSubscribers, subscribers);
 
             //  Send each type of update packet as appropriate:
             //      - To Subscribers if the data changes
@@ -167,9 +159,10 @@ public class ColonyPackageManager implements IColonyPackageManager
 
         isDirty = false;
         colony.getPermissions().clearDirty();
-
         colony.getBuildingManager().clearDirty();
         colony.getCitizenManager().clearDirty();
+        oldSubscribers = new HashSet<>(subscribers);
+        subscribers = new HashSet<>();
     }
 
     @Override
@@ -234,5 +227,23 @@ public class ColonyPackageManager implements IColonyPackageManager
     public void setDirty()
     {
         this.isDirty = true;
+    }
+
+    @Override
+    public void addSubscribers(@NotNull final EntityPlayerMP subscriber)
+    {
+        if(!subscribers.contains(subscriber))
+        {
+            subscribers.add(subscriber);
+        }
+    }
+
+    @Override
+    public void removeSubscriber(@NotNull final EntityPlayerMP player)
+    {
+        if(!colony.getMessageEntityPlayers().contains(player))
+        {
+            subscribers.remove(player);
+        }
     }
 }

@@ -566,3 +566,7 @@ tile.minecolonies.blockhutsmeltery.name=Smeltery
 com.minecolonies.coremod.gui.workerHuts.Smeltery=Smeltery
 com.minecolonies.coremod.job.Smelter=Smelter
 tile.minecolonies.blockHutSmeltery.name=Smeltery
+com.minecolonies.coremod.enteringColony=Beware, you're entering %s's colony.
+com.minecolonies.coremod.leavingColony=Farewell, you're leaving %s's colony.
+com.minecolonies.coremod.enteringColonyNotify=Beware %s just entered your colony.
+com.minecolonies.coremod.leavingColonyNotify=Farewell %s, he just left your colony.
