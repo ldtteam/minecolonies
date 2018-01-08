@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.inventory;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -9,6 +10,8 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CraftingGUIBuilding extends Container
 {
@@ -102,13 +105,49 @@ public class CraftingGUIBuilding extends Container
         super();
         this.worldObj = worldIn;
 
-        this.addSlotToContainer(new SlotCrafting(playerInventory.player, this.craftMatrix, this.craftResult, 0, X_CRAFT_RESULT, Y_CRAFT_RESULT));
+        this.addSlotToContainer(new SlotCrafting(playerInventory.player, this.craftMatrix, this.craftResult, 0, X_CRAFT_RESULT, Y_CRAFT_RESULT) {
+            @Override
+            public boolean canTakeStack(final EntityPlayer playerIn)
+            {
+                return false;
+            }
+        });
 
         for (int i = 0; i < 2; ++i)
         {
             for (int j = 0; j < 2; ++j)
             {
-                this.addSlotToContainer(new Slot(this.craftMatrix, j + i * 2, X_OFFSET_CRAFTING + j * INVENTORY_OFFSET_EACH, Y_OFFSET_CRAFTING + i * INVENTORY_OFFSET_EACH));
+                this.addSlotToContainer(new Slot(this.craftMatrix, j + i * 2, X_OFFSET_CRAFTING + j * INVENTORY_OFFSET_EACH, Y_OFFSET_CRAFTING + i * INVENTORY_OFFSET_EACH){
+                    @Override
+                    public int getSlotStackLimit()
+                    {
+                        return 1;
+                    }
+
+                    @Override
+                    public ItemStack onTake(EntityPlayer p_190901_1_, ItemStack p_190901_2_)
+                    {
+                        return ItemStack.EMPTY;
+                    }
+
+                    @Override
+                    public ItemStack decrStackSize(final int par1)
+                    {
+                        return ItemStack.EMPTY;
+                    }
+
+                    @Override
+                    public boolean isItemValid(final ItemStack par1ItemStack)
+                    {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean canTakeStack(final EntityPlayer par1EntityPlayer)
+                    {
+                        return false;
+                    }
+                });
             }
         }
 
@@ -154,39 +193,58 @@ public class CraftingGUIBuilding extends Container
         this.craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.craftMatrix, this.worldObj));
     }
 
-    /**
-     * Called when the container is closed.
-     */
-    @Override
-    public void onContainerClosed(final EntityPlayer playerIn)
-    {
-        super.onContainerClosed(playerIn);
-
-        if (!this.worldObj.isRemote)
-        {
-            for (int i = 0; i < SLOTS_PER_LINE; ++i)
-            {
-                final ItemStack itemstack = this.craftMatrix.removeStackFromSlot(i);
-
-                if (itemstack != null)
-                {
-                    playerIn.dropItem(itemstack, false);
-                }
-            }
-        }
-    }
-
     @Override
     public boolean canInteractWith(final EntityPlayer playerIn)
     {
         return true;
     }
 
+    @Override
+    public ItemStack slotClick(int slotId, int clickedButton, ClickType mode, EntityPlayer playerIn)
+    {
+        if (slotId >= 1 && slotId < 5)
+        {
+            if (mode == ClickType.PICKUP || mode == ClickType.PICKUP_ALL ||
+                  mode == ClickType.SWAP) // 1 is shift-click
+            {
+                Slot slot = this.inventorySlots.get(slotId);
+
+                ItemStack dropping = playerIn.inventory.getItemStack();
+
+                return handleSlotClick(slot, dropping);
+            }
+
+            return ItemStack.EMPTY;
+        }
+
+        return super.slotClick(slotId, clickedButton, mode, playerIn);
+    }
+
+    public ItemStack handleSlotClick(Slot slot, ItemStack stack)
+    {
+        if (stack.getCount() > 0)
+        {
+            ItemStack copy = stack.copy();
+            copy.setCount(1);
+            slot.putStack(copy);
+        }
+        else if (slot.getStack().getCount() > 0)
+        {
+            slot.putStack(ItemStack.EMPTY);
+        }
+
+        return slot.getStack().copy();
+    }
 
     @Nullable
     @Override
     public ItemStack transferStackInSlot(final EntityPlayer playerIn, final int index)
     {
+        if (index <= 5)
+        {
+            return ItemStack.EMPTY;
+        }
+
         ItemStack itemstack = null;
         final Slot slot = this.inventorySlots.get(index);
 
@@ -225,7 +283,7 @@ public class CraftingGUIBuilding extends Container
 
             if (itemstack1.getCount() == 0)
             {
-                slot.putStack((ItemStack) ItemStackUtils.EMPTY);
+                slot.putStack(ItemStackUtils.EMPTY);
             }
             else
             {
@@ -241,6 +299,11 @@ public class CraftingGUIBuilding extends Container
         }
 
         return itemstack;
+    }
+
+    public List<Slot> getCraftingSlots()
+    {
+        return ImmutableList.of(getSlot(1), getSlot(2), getSlot(3), getSlot(4));
     }
 
     @Override

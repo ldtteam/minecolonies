@@ -1005,9 +1005,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 final WorkOrderView workOrder = workOrders.get(index);
                 String claimingCitizen = "";
 
+                final int numElements = getElementCount();
+
                 if (index == 0)
                 {
-                    if (getElementCount() == 1)
+                    if (numElements == 1)
                     {
                         rowPane.findPaneOfTypeByID(BUTTON_DOWN, Button.class).hide();
                     }
@@ -1017,7 +1019,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                     }
                     rowPane.findPaneOfTypeByID(BUTTON_UP, Button.class).hide();
                 }
-                else if (index == getElementCount() - 1)
+                else if (index == numElements - 1)
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_DOWN, Button.class).hide();
                 }

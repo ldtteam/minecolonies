@@ -408,6 +408,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
                 final RequestWrapper wrapper = requestWrappers.get(index);
                 final Box wrapperBox = rowPane.findPaneOfTypeByID(WINDOW_ID_REQUEST_BOX, Box.class);
                 wrapperBox.setPosition(wrapperBox.getX() + 10*wrapper.getDepth(), wrapperBox.getY());
+                wrapperBox.setSize((int) (wrapperBox.getParent().getWidth() * 0.9f - 10*wrapper.getDepth()), wrapperBox.getHeight());
 
                 final IRequest<?> request = wrapper.getRequest();
                 final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);

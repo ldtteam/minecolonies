@@ -24,9 +24,10 @@ public class ScrollingListContainer extends ScrollingContainer
      */
     public void refreshElementPanes(final ScrollingList.DataProvider dataProvider, final PaneParams listNodeParams)
     {
+        final int numElements = (dataProvider != null) ? dataProvider.getElementCount() : 0;
         if (dataProvider != null)
         {
-            for (int i = 0; i < dataProvider.getElementCount(); ++i)
+            for (int i = 0; i < numElements; ++i)
             {
                 final Pane child;
                 if (i < children.size())
@@ -52,7 +53,7 @@ public class ScrollingListContainer extends ScrollingContainer
             }
         }
 
-        final int numElements = (dataProvider != null) ? dataProvider.getElementCount() : 0;
+
         while (children.size() > numElements)
         {
             removeChild(children.get(numElements));

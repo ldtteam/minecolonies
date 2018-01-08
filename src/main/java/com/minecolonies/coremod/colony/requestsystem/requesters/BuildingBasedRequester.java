@@ -71,15 +71,15 @@ public class BuildingBasedRequester implements IRequester
     }
 
     @Override
-    public void onRequestComplete(@NotNull final IToken<?> token)
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        getBuilding().ifPresent(requester -> requester.onRequestComplete(token));
+        getBuilding().ifPresent(requester -> requester.onRequestComplete(manager, token));
     }
 
     @Override
-    public void onRequestCancelled(@NotNull final IToken<?> token)
+    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        getBuilding().ifPresent(requester -> requester.onRequestCancelled(token));
+        getBuilding().ifPresent(requester -> requester.onRequestCancelled(manager, token));
     }
 
     @NotNull

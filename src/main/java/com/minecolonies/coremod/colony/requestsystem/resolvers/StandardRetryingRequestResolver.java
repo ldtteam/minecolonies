@@ -210,13 +210,13 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     }
 
     @Override
-    public void onRequestComplete(@NotNull final IToken<?> token)
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         //Noop, we do not schedule child requests. So this is never called.
     }
 
     @Override
-    public void onRequestCancelled(@NotNull final IToken<?> token)
+    public void onRequestCancelled( @NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         //Noop, see onRequestComplete.
     }

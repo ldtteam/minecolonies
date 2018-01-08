@@ -1662,7 +1662,8 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         return getRequester().getRequesterLocation();
     }
 
-    public void onRequestComplete(@NotNull final IToken<?> token)
+    @Override
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         final Integer citizenThatRequested = requestsByCitizen.remove(token);
         citizensByRequests.get(citizenThatRequested).remove(token);
@@ -1689,8 +1690,9 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         markDirty();
     }
 
+    @Override
     @NotNull
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken token)
     {
         final int citizenThatRequested = requestsByCitizen.remove(token);
         citizensByRequests.get(citizenThatRequested).remove(token);

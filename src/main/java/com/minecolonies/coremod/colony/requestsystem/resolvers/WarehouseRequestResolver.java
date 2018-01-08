@@ -139,14 +139,21 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     }
 
     @Override
-    public void onRequestComplete(@NotNull final IToken<?> token)
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
     }
 
     @Override
-    public void onRequestCancelled(@NotNull final IToken<?> token)
+    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-
+        //Somebody cancelled the delivery.
+        //reassign the parent request.
+        final IRequest request = manager.getRequestForToken(token);
+        if (request.hasParent())
+        {
+            final IRequest parent = manager.getRequestForToken(token);
+            manager.reassignRequest(parent.getToken(), ImmutableList.of());
+        }
     }
 
     @NotNull

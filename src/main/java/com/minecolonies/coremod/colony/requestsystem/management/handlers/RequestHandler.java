@@ -226,6 +226,12 @@ public final class RequestHandler
             currentResolver = ResolverHandler.getResolverForRequest(manager, request);
         }
 
+        IToken<?> parent = null;
+        if (request.hasParent())
+        {
+            parent = request.getParent();
+        }
+
         //Cancel the request to restart the search
         processInternalCancellation(manager, request.getToken());
 
@@ -247,7 +253,16 @@ public final class RequestHandler
         }
 
         manager.updateRequestState(request.getToken(), RequestState.REPORTED);
-        return assignRequest(manager, request, resolverTokenBlackList);
+        IToken<?> resolver = assignRequest(manager, request, resolverTokenBlackList);
+
+        if (parent != null)
+        {
+            request.setParent(parent);
+            final IRequest parentRequest = RequestHandler.getRequest(manager, parent);
+            parentRequest.addChild(request.getToken());
+        }
+
+        return resolver;
     }
 
     /**
@@ -274,7 +289,7 @@ public final class RequestHandler
         @SuppressWarnings(RAWTYPES) final IRequest request = getRequest(manager, token);
         @SuppressWarnings(RAWTYPES) final IRequestResolver resolver = ResolverHandler.getResolverForRequest(manager, token);
 
-        request.getRequester().onRequestComplete(token);
+        request.getRequester().onRequestComplete(manager, token);
 
         //Retrieve a followup request.
         @SuppressWarnings(RAWTYPES) final IRequest followupRequest = resolver.getFollowupRequestForCompletion(manager, request);
@@ -362,7 +377,7 @@ public final class RequestHandler
 
         //Notify the requester.
         final IRequester requester = request.getRequester();
-        requester.onRequestCancelled(token);
+        requester.onRequestCancelled(manager, token);
 
         cleanRequestData(manager, token);
     }

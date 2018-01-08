@@ -438,13 +438,13 @@ public class StandardRequestManagerTest
         }
 
         @Override
-        public void onRequestComplete(@NotNull final IToken<?> token)
+        public void onRequestComplete(@NotNull final IRequestManager manager,@NotNull final IToken<?> token)
         {
             //NOOP
         }
 
         @Override
-        public void onRequestCancelled(@NotNull final IToken<?> token)
+        public void onRequestCancelled(@NotNull final IRequestManager manager,@NotNull final IToken<?> token)
         {
             //NOOP
         }
@@ -527,13 +527,13 @@ public class StandardRequestManagerTest
         }
 
         @Override
-        public void onRequestComplete(@NotNull final IToken<?> token)
+        public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
         {
             return;
         }
 
         @Override
-        public void onRequestCancelled(@NotNull final IToken<?> token)
+        public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
         {
             return;
         }

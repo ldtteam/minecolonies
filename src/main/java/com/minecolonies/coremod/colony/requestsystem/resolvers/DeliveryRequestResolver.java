@@ -141,13 +141,13 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     }
 
     @Override
-    public void onRequestComplete(@NotNull final IToken<?> token)
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         //We are not scheduling any child requests. So this should never be called.
     }
 
     @Override
-    public void onRequestCancelled(@NotNull final IToken<?> token)
+    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         //Noop
     }

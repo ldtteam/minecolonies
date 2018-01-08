@@ -149,13 +149,13 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
     }
 
     @Override
-    public void onRequestComplete(@NotNull final IToken<?> token)
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
 
     }
 
     @Override
-    public void onRequestCancelled(@NotNull final IToken<?> token)
+    public void onRequestCancelled(@NotNull final IRequestManager manager,@NotNull final IToken<?> token)
     {
 
     }

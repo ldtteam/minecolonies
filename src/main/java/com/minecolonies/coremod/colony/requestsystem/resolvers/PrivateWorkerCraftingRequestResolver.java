@@ -1,31 +1,20 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.minecolonies.api.util.RSConstants.CONST_CRAFTING_RESOLVER_PRIORITY;
 
@@ -61,7 +50,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
     }
 
     @Override
-    public void onRequestComplete(@NotNull final IToken<?> token)
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         /**
          * Nothing to be done.
@@ -69,11 +58,10 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
     }
 
     @Override
-    public void onRequestCancelled(@NotNull final IToken<?> token)
+    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        /**
-         * Nothing to be done.
-         */
+        //Even if the user cancels this. We just reassign it again :D
+        manager.reassignRequest(token, ImmutableList.of());
     }
 
     @NotNull
@@ -88,10 +76,18 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
         }
         else
         {
-            return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_CRAFTING_RESOLVER_NAME);
+            return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME);
         }
 
-        return request.getRequester().getDisplayName(manager, request.getToken());
+        if (request == null)
+        {
+            return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME);
+        }
+
+        return request.getRequester().getDisplayName(manager, request.getToken())
+                 .appendSibling(new TextComponentString(" ("))
+                 .appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME))
+                 .appendSibling(new TextComponentString(")"));
     }
 
     @Override
