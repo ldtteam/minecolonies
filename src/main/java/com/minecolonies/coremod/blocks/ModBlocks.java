@@ -118,7 +118,6 @@ public final class ModBlocks
         blockTimberFrameDarkOak = new BlockTimberFrame(BlockTimberFrame.TYPE + "_" + BlockPlanks.EnumType.DARK_OAK.getName()).registerBlock(registry);
         blockTimberFrameAcacia = new BlockTimberFrame(BlockTimberFrame.TYPE + "_" + BlockPlanks.EnumType.ACACIA.getName()).registerBlock(registry);
 
-
     }
 
     public static void registerItemBlock(final IForgeRegistry<Item> registry)

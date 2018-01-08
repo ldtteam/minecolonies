@@ -49,7 +49,6 @@ public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame
         this.setDefaultState(this.blockState.getBaseState().withProperty(TYPE, TimberFrameType.PLAIN));
         init(name);
     }
-
     /**
      * initialize the block
      * sets the creative tab, as well as the resistance and the hardness.
