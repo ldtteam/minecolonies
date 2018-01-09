@@ -26,30 +26,8 @@ public final class ProviderHandler
      * @throws IllegalArgumentException when the token is not belonging to a registered provider.
      */
     public static ImmutableCollection<IToken<?>> getRegisteredResolvers(final IStandardRequestManager manager, final IRequestResolverProvider provider)
-     
     {
-        //Check if the token is registered.
-        getProvider(manager, provider.getToken());
-
         return manager.getProviderResolverMap().get(provider.getToken());
-    }
-
-    /**
-     * Method used to get a provider from a token.
-     *
-     * @param token The token to get the provider form.
-     * @return The provider that corresponds to the given token
-     *
-     * @throws IllegalArgumentException when no provider is not registered with the given token.
-     */
-    public static IRequestResolverProvider getProvider(final IStandardRequestManager manager, final IToken<?> token)
-    {
-        if (!manager.getProviderBiMap().containsKey(token))
-        {
-            throw new IllegalArgumentException("The given token for a provider is not registered");
-        }
-
-        return manager.getProviderBiMap().get(token);
     }
 
     /**
@@ -61,14 +39,6 @@ public final class ProviderHandler
      */
     public static void registerProvider(final IStandardRequestManager manager, final IRequestResolverProvider provider)
     {
-        if (manager.getProviderBiMap().containsKey(provider.getToken()) ||
-              manager.getProviderBiMap().containsValue(provider))
-        {
-            throw new IllegalArgumentException("The given provider is already registered");
-        }
-
-        manager.getProviderBiMap().put(provider.getToken(), provider);
-
         final ImmutableList.Builder<IToken<?>> resolverListBuilder = new ImmutableList.Builder<>();
         resolverListBuilder.addAll(ResolverHandler.registerResolvers(manager, provider.getResolvers()));
 
@@ -91,9 +61,7 @@ public final class ProviderHandler
     @SuppressWarnings(Suppression.UNCHECKED)
     public static void removeProviderInternal(final IStandardRequestManager manager, final IToken<?> token)
     {
-        final IRequestResolverProvider provider = getProvider(manager, token);
-
-        LogHandler.log("Removing provider: " + provider);
+        LogHandler.log("Removing provider: " + token);
 
         //Get the resolvers that are being removed.
         final ImmutableCollection<IToken<?>> assignedResolvers = getRegisteredResolvers(manager, token);
@@ -126,10 +94,9 @@ public final class ProviderHandler
         }
 
         //Removing the data from the maps.
-        manager.getProviderBiMap().remove(provider.getToken());
-        manager.getProviderResolverMap().remove(provider.getToken());
+        manager.getProviderResolverMap().remove(token);
         manager.getColony().markDirty();
-        LogHandler.log("Removed provider: " + provider);
+        LogHandler.log("Removed provider: " + token);
     }
 
     /**
@@ -143,21 +110,11 @@ public final class ProviderHandler
      */
     public static ImmutableCollection<IToken<?>> getRegisteredResolvers(final IStandardRequestManager manager, final IToken<?> token)
     {
-        //Check if the token is registered.
-        getProvider(manager, token);
-
         return manager.getProviderResolverMap().get(token);
     }
 
     public static void removeProvider(final IStandardRequestManager manager, final IRequestResolverProvider provider)
     {
-        final IRequestResolverProvider registeredProvider = getProvider(manager, provider.getToken());
-
-        if (!registeredProvider.equals(provider))
-        {
-            throw new IllegalArgumentException("The given providers token is registered to a different provider!");
-        }
-
         removeProviderInternal(manager, provider.getToken());
     }
 }

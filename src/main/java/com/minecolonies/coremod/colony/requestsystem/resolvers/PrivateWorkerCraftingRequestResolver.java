@@ -5,9 +5,13 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
+import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
+import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
@@ -15,6 +19,8 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 import static com.minecolonies.api.util.RSConstants.CONST_CRAFTING_RESOLVER_PRIORITY;
 
@@ -26,6 +32,34 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
     public PrivateWorkerCraftingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
     {
         super(location, token);
+    }
+
+    @Nullable
+    @Override
+    public Optional<IRequester> getBuilding(
+      @NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    {
+        final IRequest request = manager.getRequestForToken(token);
+        if (request == null)
+        {
+            return Optional.empty();
+        }
+
+        if (request.hasParent())
+        {
+            final IRequest parent = manager.getRequestForToken(request.getParent());
+            if (parent.getRequester() instanceof IBuildingBasedRequester)
+            {
+                return ((IBuildingBasedRequester) parent.getRequester()).getBuilding(manager, parent.getToken());
+            }
+        }
+
+        if (request.getRequester() instanceof IBuildingBasedRequester)
+        {
+            return ((IBuildingBasedRequester) request.getRequester()).getBuilding(manager, token);
+        }
+
+        return Optional.empty();
     }
 
     @Override
@@ -60,8 +94,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
     @Override
     public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        //Even if the user cancels this. We just reassign it again :D
-        manager.reassignRequest(token, ImmutableList.of());
+        //Noop
     }
 
     @NotNull

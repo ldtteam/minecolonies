@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.requestsystem.management.manager;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -23,10 +24,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
-import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHandler;
-import com.minecolonies.coremod.colony.requestsystem.management.handlers.ProviderHandler;
-import com.minecolonies.coremod.colony.requestsystem.management.handlers.RequestHandler;
-import com.minecolonies.coremod.colony.requestsystem.management.handlers.ResolverHandler;
+import com.minecolonies.coremod.colony.requestsystem.management.handlers.*;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -56,22 +54,21 @@ import static com.minecolonies.api.util.constant.Suppression.*;
 public class StandardRequestManager implements IStandardRequestManager
 {
     ////---------------------------NBTTags-------------------------\\\\
+    private static final String NBT_RESOLVER_IDENTITY_MAP         = "Resolver_Identities";
+    private static final String NBT_RESOLVER_PROVIDER_MAP         = "Resolver_Provider";
     private static final String NBT_REQUEST_IDENTITY_MAP          = "Request_Identities";
     private static final String NBT_RESOLVER_REQUESTS_ASSIGNMENTS = "Resolver_Requests";
     private static final String NBT_PLAYER                        = "Player";
     private static final String NBT_RETRYING                      = "Retrying";
+    private static final String NBT_VERSION = "Version";
 
     private static final String NBT_TOKEN       = "Token";
     private static final String NBT_ASSIGNMENTS = "Assignments";
 
     private static final String NBT_REQUEST = "Request";
+    private static final String NBT_RESOLVER = "Resolver";
+    private static final String NBT_PROVIDER = "Provider";
     ////---------------------------NBTTags-------------------------\\\\
-
-    /**
-     * BiMap that holds unique token to provider lookup.
-     */
-    @NotNull
-    private final BiMap<IToken<?>, IRequestResolverProvider> providerBiMap = HashBiMap.create();
 
     /**
      * BiMap that holds unique token to resolver lookup.
@@ -125,6 +122,9 @@ public class StandardRequestManager implements IStandardRequestManager
      */
     @NotNull
     private IRetryingRequestResolver retryingResolver = null;
+
+    @NotNull
+    private int version = -1;
 
     public StandardRequestManager(final IColony colony)
     {
@@ -258,9 +258,9 @@ public class StandardRequestManager implements IStandardRequestManager
             return null;
         }
 
-        final NBTTagCompound requestData = getFactoryController().serialize(internalRequest);
+        //final NBTTagCompound requestData = getFactoryController().serialize(internalRequest);
 
-        return getFactoryController().deserialize(requestData);
+        return internalRequest;
     }
 
     @SuppressWarnings(RAWTYPES)
@@ -424,6 +424,32 @@ public class StandardRequestManager implements IStandardRequestManager
         });
         systemCompound.setTag(NBT_RESOLVER_REQUESTS_ASSIGNMENTS, resolverRequestAssignmentList);
 
+        systemCompound.setInteger(NBT_VERSION, version);
+
+        final NBTTagList resolverIdentityList = new NBTTagList();
+        resolverBiMap.keySet().forEach(token -> {
+            final NBTTagCompound resolverCompound = new NBTTagCompound();
+
+            resolverCompound.setTag(NBT_TOKEN, getFactoryController().serialize(token));
+            resolverCompound.setTag(NBT_RESOLVER, getFactoryController().serialize(resolverBiMap.get(token)));
+
+            resolverIdentityList.appendTag(resolverCompound);
+        });
+        systemCompound.setTag(NBT_RESOLVER_IDENTITY_MAP, resolverIdentityList);
+
+        final NBTTagList providerResolverAssignmentList = new NBTTagList();
+        providerResolverMap.keySet().forEach(token -> {
+            final NBTTagCompound assignmentCompound = new NBTTagCompound();
+
+            assignmentCompound.setTag(NBT_TOKEN, getFactoryController().serialize(token));
+            final NBTTagList assignedList = new NBTTagList();
+            providerResolverMap.get(token).forEach(assignedToken -> assignedList.appendTag(getFactoryController().serialize(assignedToken)));
+            assignmentCompound.setTag(NBT_ASSIGNMENTS, assignedList);
+
+            providerResolverAssignmentList.appendTag(assignmentCompound);
+        });
+        systemCompound.setTag(NBT_RESOLVER_PROVIDER_MAP, providerResolverAssignmentList);
+
         return systemCompound;
     }
 
@@ -511,19 +537,45 @@ public class StandardRequestManager implements IStandardRequestManager
 
             resolverRequestMap.put(token, assignedRequests);
         });
+
+        if (nbt.hasKey(NBT_VERSION))
+            version = nbt.getInteger(NBT_VERSION);
+
+        if (nbt.hasKey(NBT_RESOLVER_IDENTITY_MAP))
+        {
+            final NBTTagList resolverIdentityList = nbt.getTagList(NBT_RESOLVER_IDENTITY_MAP, Constants.NBT.TAG_COMPOUND);
+            resolverBiMap.clear();
+            NBTUtils.streamCompound(resolverIdentityList).forEach(identityCompound -> {
+                final IToken<?> token = getFactoryController().deserialize(identityCompound.getCompoundTag(NBT_TOKEN));
+                final IRequestResolver<?> request = getFactoryController().deserialize(identityCompound.getCompoundTag(NBT_RESOLVER));
+
+                resolverBiMap.put(token, request);
+            });
+        }
+
+        if (nbt.hasKey(NBT_RESOLVER_PROVIDER_MAP))
+        {
+            final NBTTagList providerResolverAssignmentList = nbt.getTagList(NBT_RESOLVER_PROVIDER_MAP, Constants.NBT.TAG_COMPOUND);
+            providerResolverMap.clear();
+            NBTUtils.streamCompound(providerResolverAssignmentList).forEach(assignmentCompound -> {
+                final IToken<?> token = getFactoryController().deserialize(assignmentCompound.getCompoundTag(NBT_TOKEN));
+                final NBTTagList assignmentsLists = assignmentCompound.getTagList(NBT_ASSIGNMENTS, Constants.NBT.TAG_COMPOUND);
+                final Set<IToken<?>> assignedResolvers = NBTUtils.streamCompound(assignmentsLists).map(tokenCompound -> {
+                    IToken<?> assignedToken = getFactoryController().deserialize(tokenCompound);
+                    return assignedToken;
+                }).collect(Collectors.toSet());
+
+                providerResolverMap.put(token, ImmutableList.copyOf(assignedResolvers));
+            });
+        }
+
+        UpdateHandler.handleUpdate(this );
     }
 
     @Override
     public void update()
     {
         this.retryingResolver.update();
-    }
-
-    @Override
-    @NotNull
-    public BiMap<IToken<?>, IRequestResolverProvider> getProviderBiMap()
-    {
-        return providerBiMap;
     }
 
     @Override
@@ -578,5 +630,17 @@ public class StandardRequestManager implements IStandardRequestManager
     public boolean isResolvingSimulation()
     {
         return false;
+    }
+
+    @Override
+    public int getCurrentVersion()
+    {
+        return version;
+    }
+
+    @Override
+    public void setCurrentVersion(final int currentVersion)
+    {
+        this.version = currentVersion;
     }
 }

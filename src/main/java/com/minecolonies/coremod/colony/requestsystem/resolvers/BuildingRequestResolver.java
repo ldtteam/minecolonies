@@ -119,7 +119,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws RuntimeException
     {
         BuildingBasedRequester requester = (BuildingBasedRequester) request.getRequester();
-        return requester.getBuilding().map(r -> {
+        return requester.getBuilding(manager, request.getToken()).map(r -> {
             if (r instanceof AbstractBuildingView && manager.getColony() instanceof Colony)
             {
                 final Colony colony = (Colony) manager.getColony();

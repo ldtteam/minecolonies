@@ -92,10 +92,10 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
             if (Configurations.requestSystem.creativeResolve &&
                     request.getRequest() instanceof IDeliverable &&
                     request.getRequester() instanceof BuildingBasedRequester &&
-                    ((BuildingBasedRequester) request.getRequester()).getBuilding().isPresent() &&
-                    ((BuildingBasedRequester) request.getRequester()).getBuilding().get() instanceof AbstractBuilding)
+                    ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getToken()).isPresent() &&
+                    ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getToken()).get() instanceof AbstractBuilding)
             {
-                AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding().get();
+                AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getToken()).get();
                 Optional<CitizenData> citizenDataOptional = building.getCitizenForRequest(request.getToken());
 
                 List<ItemStack> resolvablestacks = request.getDisplayStacks();

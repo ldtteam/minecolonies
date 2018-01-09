@@ -313,6 +313,7 @@ public class BuildingManager implements IBuildingManager
                     building.setStyle(colony.getStyle());
                 }
                 ConstructionTapeHelper.placeConstructionTape(building.getLocation(), building.getCorners(), world);
+                colony.getRequestManager().onProviderAddedToColony(building);
             }
             else
             {
@@ -420,9 +421,9 @@ public class BuildingManager implements IBuildingManager
         {
             wareHouse = (BuildingWareHouse) building;
         }
-
-        colony.getRequestManager().onProviderAddedToColony(building);
     }
+
+
 
     /**
      * Sends packages to update the buildings.

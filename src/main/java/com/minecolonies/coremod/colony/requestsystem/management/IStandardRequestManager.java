@@ -22,9 +22,6 @@ import java.util.Set;
 public interface IStandardRequestManager extends IRequestManager
 {
     @NotNull
-    BiMap<IToken<?>, IRequestResolverProvider> getProviderBiMap();
-
-    @NotNull
     BiMap<IToken<?>, IRequestResolver<? extends IRequestable>> getResolverBiMap();
 
     @NotNull
@@ -45,4 +42,8 @@ public interface IStandardRequestManager extends IRequestManager
     boolean isDataSimulation();
 
     boolean isResolvingSimulation();
+
+    int getCurrentVersion();
+
+    void setCurrentVersion(int currentVersion);
 }

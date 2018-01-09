@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.MineColonies;
@@ -19,7 +20,7 @@ import java.util.Optional;
 /**
  * A class that functions as the connection between a building and the request system.
  */
-public class BuildingBasedRequester implements IRequester
+public class BuildingBasedRequester implements IBuildingBasedRequester
 {
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
@@ -73,23 +74,24 @@ public class BuildingBasedRequester implements IRequester
     @Override
     public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        getBuilding().ifPresent(requester -> requester.onRequestComplete(manager, token));
+        getBuilding(manager, token).ifPresent(requester -> requester.onRequestComplete(manager, token));
     }
 
     @Override
     public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        getBuilding().ifPresent(requester -> requester.onRequestCancelled(manager, token));
+        getBuilding(manager, token).ifPresent(requester -> requester.onRequestCancelled(manager, token));
     }
 
     @NotNull
     @Override
     public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        return getBuilding().map(requester -> requester.getDisplayName(manager, token)).orElseGet(() -> new TextComponentString("<UNKNOWN>"));
+        return getBuilding(manager, token).map(requester -> requester.getDisplayName(manager, token)).orElseGet(() -> new TextComponentString("<UNKNOWN>"));
     }
 
-    public Optional<IRequester> getBuilding()
+    @Override
+    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         updateBuilding();
         return Optional.ofNullable(building);

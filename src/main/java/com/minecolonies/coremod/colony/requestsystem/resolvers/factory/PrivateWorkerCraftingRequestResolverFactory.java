@@ -10,7 +10,7 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraf
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
-public class CraftingRequestResolverFactory implements IRequestResolverFactory<PrivateWorkerCraftingRequestResolver>
+public class PrivateWorkerCraftingRequestResolverFactory implements IRequestResolverFactory<PrivateWorkerCraftingRequestResolver>
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_TOKEN    = "Token";
