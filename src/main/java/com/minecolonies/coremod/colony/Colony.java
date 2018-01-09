@@ -261,13 +261,47 @@ public class Colony implements IColony
      */
     public void notifyChunksInRange(final World world, final boolean add)
     {
-        //todo calc all chunks in range for owning, then calc all chunks in 2x range + padding for close
-        final Chunk chunk = world.getChunkFromBlockCoords(this.center);
-        final IColonyTagCapability closeColonies = chunk.getCapability(CLOSE_COLONY_CAP, null);
-        if(closeColonies.getOwningColony() != this.getID())
+        final Chunk centralChunk = world.getChunkFromBlockCoords(this.getCenter());
+        if(centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() == this.getID())
         {
-            world.getChunkProvider().
+            return;
         }
+
+        final int chunkX = centralChunk.x;
+        final int chunkZ = centralChunk.z;
+
+        final int range = Configurations.gameplay.workingRangeTownHallChunks;
+        final int buffer = Configurations.gameplay.townHallPaddingChunk;
+
+        final List<BlockPos> ownedChunks = new ArrayList<>();
+        final List<BlockPos> closeChunks = new ArrayList<>();
+
+        final int maxRange = range * 2 + buffer;
+
+        for(int i = chunkX - maxRange; i <= chunkX + maxRange; i++)
+        {
+            for(int j = chunkZ - maxRange; j <= chunkZ + maxRange; j++)
+            {
+                final Chunk chunk = world.getChunkFromChunkCoords(i, j);
+                final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+                if(add)
+                {
+                    if(i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range)
+                    {
+                        cap.setOwningColony(this.getID());
+                        ownedChunks.add(new BlockPos(i, 0, j));
+                    }
+                    closeChunks.add(new BlockPos(i, 0, j));
+                    cap.addColony(this.getID());
+                }
+                else
+                {
+                    closeChunks.add(new BlockPos(i, 0, j));
+                    cap.removecolony(this.getID());
+                }
+            }
+        }
+        MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(this.getID(), ownedChunks, closeChunks, add));
     }
 
     /**
@@ -690,7 +724,7 @@ public class Colony implements IColony
 
     public boolean areAllColonyChunksLoaded(@NotNull final TickEvent.WorldTickEvent event)
     {
-        final int distanceFromCenter = Configurations.gameplay.workingRangeTownHall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
+        final int distanceFromCenter = Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK + 48 /* 3 chunks */ + BLOCKS_PER_CHUNK - 1 /* round up a chunk */;
         for (int x = -distanceFromCenter; x <= distanceFromCenter; x += CONST_CHUNKSIZE)
         {
             for (int z = -distanceFromCenter; z <= distanceFromCenter; z += CONST_CHUNKSIZE)
@@ -768,9 +802,9 @@ public class Colony implements IColony
     @Override
     public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        //  Perform a 2D distance calculation, so pass center.posY as the Y
-        return w.equals(getWorld())
-                 && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.gameplay.workingRangeTownHall);
+        final Chunk chunk = w.getChunkFromBlockCoords(pos);
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+        return cap.getOwningColony() == this.getID();
     }
 
     @Override

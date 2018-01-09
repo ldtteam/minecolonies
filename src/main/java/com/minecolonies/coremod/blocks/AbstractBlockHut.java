@@ -43,7 +43,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public static final  PropertyDirection FACING     = BlockHorizontal.FACING;
     private static final float             HARDNESS   = 10F;
     private static final float             RESISTANCE = Float.POSITIVE_INFINITY;
-    protected int workingRange;
 
     /**
      * Constructor for a block using the minecolonies mod.

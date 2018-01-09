@@ -8,6 +8,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,14 +118,14 @@ public interface IColonyTagCapability
     public class Storage implements Capability.IStorage<IColonyTagCapability>
     {
         @Override
-        public NBTBase writeNBT(@NotNull final Capability<IColonyTagCapability> capability, @NotNull final IColonyTagCapability instance, @NotNull final EnumFacing side)
+        public NBTBase writeNBT(@NotNull final Capability<IColonyTagCapability> capability, @NotNull final IColonyTagCapability instance, @Nullable final EnumFacing side)
         {
             return instance.getAllCloseColonies().stream().map(id -> Storage.write(id)).collect(NBTUtils.toNBTTagList());
         }
 
         @Override
         public void readNBT(@NotNull final Capability<IColonyTagCapability> capability, @NotNull final IColonyTagCapability instance,
-                @NotNull final EnumFacing side, @NotNull final NBTBase nbt)
+                @Nullable final EnumFacing side, @NotNull final NBTBase nbt)
         {
             if(nbt instanceof NBTTagList)
             {

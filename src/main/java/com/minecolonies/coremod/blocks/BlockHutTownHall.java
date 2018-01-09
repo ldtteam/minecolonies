@@ -25,8 +25,6 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     protected BlockHutTownHall()
     {
         super();
-        //Sets the working range to whatever the config is set to
-        this.workingRange = Configurations.gameplay.workingRangeTownHall;
     }
 
     @NotNull
@@ -37,8 +35,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     }
 
     @Override
-    public void onBlockPlacedBy(
-                                 @NotNull final World worldIn, @NotNull final BlockPos pos, final IBlockState state, final EntityLivingBase placer, final ItemStack stack)
+    public void onBlockPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final IBlockState state, final EntityLivingBase placer, final ItemStack stack)
     {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 
@@ -58,13 +55,11 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
                 style = ((TileEntityColonyBuilding) tileEntity).getStyle();
             }
 
-            if ((colony == null
-                    || BlockPosUtil.getDistance2D(colony.getCenter(), pos) >= Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)
-                  && placer instanceof EntityPlayer)
+            if (colony == null || !ColonyManager.isTooCloseToColony(worldIn, pos))
             {
                 ColonyManager.createColony(worldIn, pos, (EntityPlayer) placer, style);
             }
-            else if (colony != null)
+            else
             {
                 colony.setStyle(style);
             }

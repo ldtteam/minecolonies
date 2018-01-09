@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.compatibility.CompatabilityManager;
@@ -26,6 +27,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServerMulti;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -40,9 +42,11 @@ import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONIES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COMPATABILITY_MANAGER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_UUID;
+import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
  * Singleton class that links colonies to minecraft.
@@ -286,21 +290,26 @@ public final class ColonyManager
      */
     public static Colony getColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        final List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimension());
-        if (coloniesInWorld == null)
+        final Chunk centralChunk = w.getChunkFromBlockCoords(pos);
+        final int id = centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony();
+        if(id == 0)
         {
             return null;
         }
+        return getColony(id);
+    }
 
-        for (@NotNull final Colony c : coloniesInWorld)
-        {
-            if (c.isCoordInColony(w, pos))
-            {
-                return c;
-            }
-        }
-
-        return null;
+    /**
+     * check if a position is too close to another colony.
+     *
+     * @param w   World.
+     * @param pos coordinates.
+     * @return true if so.
+     */
+    public static boolean isTooCloseToColony(@NotNull final World w, @NotNull final BlockPos pos)
+    {
+        final Chunk centralChunk = w.getChunkFromBlockCoords(pos);
+        return !centralChunk.getCapability(CLOSE_COLONY_CAP, null).getAllCloseColonies().isEmpty();
     }
 
     /**
@@ -397,15 +406,13 @@ public final class ColonyManager
      */
     private static ColonyView getColonyView(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        for (@NotNull final ColonyView c : colonyViews)
+        final Chunk centralChunk = w.getChunkFromBlockCoords(pos);
+        final int id = centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony();
+        if(id == 0)
         {
-            if (c.isCoordInColony(w, pos))
-            {
-                return c;
-            }
+            return null;
         }
-
-        return null;
+        return getColonyView(id);
     }
 
     /**
@@ -435,6 +442,33 @@ public final class ColonyManager
     @Nullable
     public static ColonyView getClosestColonyView(@NotNull final World w, @NotNull final BlockPos pos)
     {
+        final Chunk chunk = w.getChunkFromBlockCoords(pos);
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+        if(cap.getOwningColony() != 0)
+        {
+            return getColonyView(cap.getOwningColony());
+        }
+        else if(!cap.getAllCloseColonies().isEmpty())
+        {
+            @Nullable ColonyView closestColony = null;
+            long closestDist = Long.MAX_VALUE;
+
+            for (@NotNull final int cId : cap.getAllCloseColonies())
+            {
+                final ColonyView c = getColonyView(cId);
+                if (c != null && c.getDimension() == w.provider.getDimension())
+                {
+                    final long dist = c.getDistanceSquared(pos);
+                    if (dist < closestDist)
+                    {
+                        closestColony = c;
+                        closestDist = dist;
+                    }
+                }
+            }
+            return closestColony;
+        }
+
         @Nullable ColonyView closestColony = null;
         long closestDist = Long.MAX_VALUE;
 
@@ -463,6 +497,33 @@ public final class ColonyManager
      */
     public static Colony getClosestColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
+        final Chunk chunk = w.getChunkFromBlockCoords(pos);
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+        if(cap.getOwningColony() != 0)
+        {
+            return getColony(cap.getOwningColony());
+        }
+        else if(!cap.getAllCloseColonies().isEmpty())
+        {
+            @Nullable Colony closestColony = null;
+            long closestDist = Long.MAX_VALUE;
+
+            for (@NotNull final int cId : cap.getAllCloseColonies())
+            {
+                final Colony c = getColony(cId);
+                if (c != null && c.getDimension() == w.provider.getDimension())
+                {
+                    final long dist = c.getDistanceSquared(pos);
+                    if (dist < closestDist)
+                    {
+                        closestColony = c;
+                        closestDist = dist;
+                    }
+                }
+            }
+            return closestColony;
+        }
+
         @Nullable Colony closestColony = null;
         long closestDist = Long.MAX_VALUE;
 
@@ -565,7 +626,7 @@ public final class ColonyManager
     public static int getMinimumDistanceBetweenTownHalls()
     {
         //  [TownHall](Radius)+(Padding)+(Radius)[TownHall]
-        return (2 * Configurations.gameplay.workingRangeTownHall) + Configurations.gameplay.townHallPadding;
+        return (2 * Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK) + Configurations.gameplay.townHallPaddingChunk * BLOCKS_PER_CHUNK;
     }
 
     /**
@@ -1095,18 +1156,8 @@ public final class ColonyManager
      */
     public static boolean isCoordinateInAnyColony(@NotNull final World world, final BlockPos pos)
     {
-        for (@NotNull final ColonyView c : colonyViews)
-        {
-            if (c.getDimension() == world.provider.getDimension())
-            {
-                final long dist = c.getDistanceSquared(pos);
-                if (dist < (Configurations.gameplay.workingRangeTownHall + Configurations.gameplay.townHallPadding + BUFFER))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
+        final Chunk centralChunk = world.getChunkFromBlockCoords(pos);
+        return centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() == 0;
     }
 
     /**

@@ -26,6 +26,8 @@ import net.minecraft.util.math.BlockPos;
 import java.util.List;
 import java.util.Set;
 
+import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
+
 /**
  * Used for some rendering purpose like waypoint rendering.
  */
@@ -40,16 +42,6 @@ public final class RenderUtils
      * Offset where the waypoint rendering marks to.
      */
     private static final int FIX_POINT_OFFSET = 10;
-
-    /**
-     * Degrees of a whole circle.
-     */
-    private static final int WHOLE_CIRCLE = 360;
-
-    /**
-     * Half a circle radius.
-     */
-    private static final int HALF_A_CIRCLE = 180;
 
     /**
      * Private constructor to hide the explicit one.
@@ -180,15 +172,27 @@ public final class RenderUtils
         {
             return;
         }
+        final int distance = (BLOCKS_PER_CHUNK / 2) + (BLOCKS_PER_CHUNK * Configurations.gameplay.workingRangeTownHallChunks);
         final BlockPos center = colonyView.getCenter();
-        final int radius = Configurations.gameplay.workingRangeTownHall;
 
-        for (double degrees = 0; degrees < WHOLE_CIRCLE; degrees += 1)
+        for(int x = center.getX(); x <= center.getX() + distance; x++)
         {
-            final double rads = degrees / HALF_A_CIRCLE * Math.PI;
-            final double x = Math.round(center.getX() + radius * Math.sin(rads));
-            final double z = Math.round(center.getZ() + radius * Math.cos(rads));
-            colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(x, center.getY(), z), theWorld).up());
+            colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(x, center.getY(), center.getZ() + distance), theWorld).up());
+        }
+
+        for(int x = center.getX() - distance; x <= center.getX(); x++)
+        {
+            colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(x, center.getY(), center.getZ() + distance), theWorld).up());
+        }
+
+        for(int z = center.getZ(); z <= center.getZ() + distance; z++)
+        {
+            colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(center.getX() + distance, center.getY(), z), theWorld).up());
+        }
+
+        for(int z = center.getZ() - distance; z <= center.getZ(); z++)
+        {
+            colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(center.getX() + distance, center.getY(), z), theWorld).up());
         }
     }
 }

@@ -42,8 +42,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.util.constant.ColonyConstants.MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE;
-import static com.minecolonies.api.util.constant.ColonyConstants.MAX_SQ_DIST_SUBSCRIBER_UPDATE;
+import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
@@ -70,20 +69,18 @@ public class EventHandler
                 final WorldClient world = mc.world;
                 final EntityPlayerSP player = mc.player;
                 IColony colony = ColonyManager.getIColony(world, player.getPosition());
-                final double minDistance = ColonyManager.getMinimumDistanceBetweenTownHalls();
 
                 if (colony == null)
                 {
-                    colony = ColonyManager.getClosestIColony(world, player.getPosition());
-
-                    if (colony == null || Math.sqrt(colony.getDistanceSquared(player.getPosition())) > 2 * minDistance)
+                    if (!ColonyManager.isTooCloseToColony(world, player.getPosition()))
                     {
                         event.getLeft().add(LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.noCloseColony"));
                         return;
                     }
+                    colony = ColonyManager.getClosestIColony(world, player.getPosition());
 
                     event.getLeft().add(LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.nextColony",
-                      (int) Math.sqrt(colony.getDistanceSquared(player.getPosition())), minDistance));
+                      (int) Math.sqrt(colony.getDistanceSquared(player.getPosition())), ColonyManager.getMinimumDistanceBetweenTownHalls()));
                     return;
                 }
 
@@ -98,6 +95,7 @@ public class EventHandler
      * Event called to attach capabilities.
      * @param event the event.
      */
+    @SubscribeEvent
     public void onAttachingCapabilities(@NotNull final AttachCapabilitiesEvent<Chunk> event)
     {
         event.addCapability(new ResourceLocation(Constants.MOD_ID, "closeColony"), new ColonyTagCapabilityProvider());
@@ -409,7 +407,7 @@ public class EventHandler
             return true;
         }
 
-        if (closestColony.getDistanceSquared(pos) <= MathUtils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
+        if (ColonyManager.isTooCloseToColony(world, pos))
         {
             Log.getLogger().info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at "
                                    + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
@@ -418,7 +416,8 @@ public class EventHandler
             return false;
         }
 
-        if (Configurations.gameplay.protectVillages && world.getVillageCollection().getNearestVillage(pos, Configurations.gameplay.workingRangeTownHall) != null)
+        if (Configurations.gameplay.protectVillages
+                && world.getVillageCollection().getNearestVillage(pos, Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK) != null)
         {
             Log.getLogger().warn("Village close by!");
             return false;

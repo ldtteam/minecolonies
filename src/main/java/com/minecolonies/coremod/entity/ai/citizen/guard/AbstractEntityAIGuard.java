@@ -459,8 +459,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         if (building instanceof AbstractBuildingGuards)
         {
             if (currentPathTarget == null
-                  || BlockPosUtil.getDistance2D(building.getColony().getCenter(), currentPathTarget)
-                       > Configurations.gameplay.workingRangeTownHall + Configurations.gameplay.townHallPadding
+                  || !building.getColony().isCoordInColony(world, currentPathTarget)
                   || currentPathTarget.getY() < 2)
             {
                 return getNextPatrollingTarget((AbstractBuildingGuards) building);
@@ -513,8 +512,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
             worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.following"));
 
             BlockPos pos = building.getPlayerToFollow();
-            if (pos == null
-                  || BlockPosUtil.getDistance2D(pos, building.getColony().getCenter()) > Configurations.gameplay.workingRangeTownHall + Configurations.gameplay.townHallPadding)
+            if (pos == null || !building.getColony().isCoordInColony(world, pos))
             {
                 if (pos != null)
                 {
