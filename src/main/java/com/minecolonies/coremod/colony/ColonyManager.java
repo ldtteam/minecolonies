@@ -73,16 +73,19 @@ public final class ColonyManager
      * The damage source used to kill citizens.
      */
     private static final DamageSource               CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
+
     /**
      * The list of all colonies.
      */
     @NotNull
     private static final ColonyList<Colony>         colonies              = new ColonyList<>();
+
     /**
      * The list of all colonies by world.
      */
     @NotNull
     private static final Map<Integer, List<Colony>> coloniesByWorld       = new HashMap<>();
+
     /**
      * The list of colony views.
      */
@@ -138,7 +141,6 @@ public final class ColonyManager
     public static Colony createColony(@NotNull final World w, final BlockPos pos, @NotNull final EntityPlayer player, @NotNull final String style)
     {
         final Colony colony = colonies.create(w, pos);
-        ColonyManager.notifyChunksInRange(colony.getWorld(), false, colony.getID(), colony.getCenter());
 
         colony.setStyle(style);
 
@@ -152,6 +154,7 @@ public final class ColonyManager
         colony.getStatsManager().triggerAchievement(ModAchievements.achievementTownhall);
         Log.getLogger().info(String.format("New Colony Id: %d by %s", colony.getID(), player.getName()));
 
+        ColonyManager.notifyChunksInRange(colony.getWorld(), true, colony.getID(), colony.getCenter());
         return colony;
     }
 
@@ -167,6 +170,7 @@ public final class ColonyManager
         {
             return;
         }
+        ownedChunks.add(new ChunkLoadStorage(id, center, add));
 
         final int chunkX = centralChunk.x;
         final int chunkZ = centralChunk.z;
@@ -212,8 +216,6 @@ public final class ColonyManager
             {
                 cap.removecolony(id);
             }
-
-            MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(id, idNow, storage.isAdd()));
         }
         else if(!closeChunks.isEmpty())
         {
@@ -232,7 +234,6 @@ public final class ColonyManager
             {
                 cap.removecolony(id);
             }
-            MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(id, idNow, true));
         }
     }
 

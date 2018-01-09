@@ -8,12 +8,14 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSilverfish;
 import net.minecraft.client.Minecraft;
@@ -111,7 +113,7 @@ public class EventHandler
         final Entity entity = event.getEntity();
 
         //  Add nearby players
-        if (entity instanceof EntityPlayerMP && entity.dimension == 1)
+        if (entity instanceof EntityPlayerMP && entity.dimension == 0)
         {
             final World world = entity.getEntityWorld();
             final Chunk newChunk = world.getChunkFromChunkCoords(event.getNewChunkX(), event.getNewChunkZ());
@@ -120,6 +122,11 @@ public class EventHandler
             final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null);
             final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null);
 
+            if(newCloseColonies.getAllCloseColonies().isEmpty())
+            {
+                return;
+            }
+            MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(newCloseColonies, newChunk.x, newChunk.z));
             @NotNull final EntityPlayerMP player = (EntityPlayerMP) entity;
 
             // Add new subscribers to colony.
@@ -231,9 +238,8 @@ public class EventHandler
 
                 return;
             }
-            else if (event.getEntityPlayer() != null
-                       && "pmardle".equalsIgnoreCase(event.getEntityPlayer().getName())
-                       && event.getItemStack() != null && Block.getBlockFromItem(event.getItemStack().getItem()) instanceof BlockSilverfish)
+            else if ("pmardle".equalsIgnoreCase(event.getEntityPlayer().getName())
+                       && Block.getBlockFromItem(event.getItemStack().getItem()) instanceof BlockSilverfish)
             {
                 LanguageHandler.sendPlayerMessage(event.getEntityPlayer(), "Stop that you twat!!!");
                 event.setCanceled(true);
