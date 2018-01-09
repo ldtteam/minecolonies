@@ -197,7 +197,6 @@ public class Colony implements IColony
         world = w;
         this.permissions = new Permissions(this);
         requestManager = new StandardRequestManager(this);
-        notifyChunksInRange(w, true);
     }
 
     /**
@@ -250,59 +249,10 @@ public class Colony implements IColony
         c.center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
         c.setRequestManager();
         c.readFromNBT(compound);
-        c.notifyChunksInRange(world, true);
         return c;
     }
 
-    /**
-     * Notify all chunks in the range of the colony about the colony.
-     * @param world the world of the colony.
-     * @param add remove or add
-     */
-    public void notifyChunksInRange(final World world, final boolean add)
-    {
-        final Chunk centralChunk = world.getChunkFromBlockCoords(this.getCenter());
-        if(centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() == this.getID())
-        {
-            return;
-        }
 
-        final int chunkX = centralChunk.x;
-        final int chunkZ = centralChunk.z;
-
-        final int range = Configurations.gameplay.workingRangeTownHallChunks;
-        final int buffer = Configurations.gameplay.townHallPaddingChunk;
-
-        final List<BlockPos> ownedChunks = new ArrayList<>();
-        final List<BlockPos> closeChunks = new ArrayList<>();
-
-        final int maxRange = range * 2 + buffer;
-
-        for(int i = chunkX - maxRange; i <= chunkX + maxRange; i++)
-        {
-            for(int j = chunkZ - maxRange; j <= chunkZ + maxRange; j++)
-            {
-                final Chunk chunk = world.getChunkFromChunkCoords(i, j);
-                final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
-                if(add)
-                {
-                    if(i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range)
-                    {
-                        cap.setOwningColony(this.getID());
-                        ownedChunks.add(new BlockPos(i, 0, j));
-                    }
-                    closeChunks.add(new BlockPos(i, 0, j));
-                    cap.addColony(this.getID());
-                }
-                else
-                {
-                    closeChunks.add(new BlockPos(i, 0, j));
-                    cap.removecolony(this.getID());
-                }
-            }
-        }
-        MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(this.getID(), ownedChunks, closeChunks, add));
-    }
 
     /**
      * Sets the request manager on colony load.
@@ -670,6 +620,7 @@ public class Colony implements IColony
 
         if (event.phase == TickEvent.Phase.START)
         {
+
             //  Cleanup Buildings whose Blocks have gone AWOL
             buildingManager.cleanUpBuildings(event);
 

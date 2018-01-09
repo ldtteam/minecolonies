@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.compatibility.CompatabilityManager;
 import com.minecolonies.api.compatibility.ICompatabilityManager;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
@@ -16,6 +17,7 @@ import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
 import com.minecolonies.coremod.util.AchievementUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -41,11 +43,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONIES;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COMPATABILITY_MANAGER;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_UUID;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
@@ -89,16 +90,6 @@ public final class ColonyManager
     private static final ColonyList<ColonyView>     colonyViews           = new ColonyList<>();
 
     /**
-     * A buffer value to be sure to be outside of the colony.
-     */
-    private static final int BUFFER                    = 10;
-
-    /**
-     * The last colony id.
-     */
-    private static int topColonyId = 0;
-
-    /**
      * Amount of worlds loaded.
      */
     private static int     numWorldsLoaded;
@@ -123,6 +114,12 @@ public final class ColonyManager
      */
     private static final ICompatabilityManager compatabilityManager = new CompatabilityManager();
 
+    /**
+     * List of all belonging chunks of the colony which have not been loaded to be notified yet.
+     */
+    private static final List<ChunkLoadStorage> ownedChunks = new ArrayList<>();
+    private static final List<ChunkLoadStorage> closeChunks = new ArrayList<>();
+
     private ColonyManager()
     {
         //Hides default constructor.
@@ -141,6 +138,8 @@ public final class ColonyManager
     public static Colony createColony(@NotNull final World w, final BlockPos pos, @NotNull final EntityPlayer player, @NotNull final String style)
     {
         final Colony colony = colonies.create(w, pos);
+        ColonyManager.notifyChunksInRange(colony.getWorld(), false, colony.getID(), colony.getCenter());
+
         colony.setStyle(style);
 
         addColonyByWorld(colony);
@@ -154,6 +153,87 @@ public final class ColonyManager
         Log.getLogger().info(String.format("New Colony Id: %d by %s", colony.getID(), player.getName()));
 
         return colony;
+    }
+
+    /**
+     * Notify all chunks in the range of the colony about the colony.
+     * @param world the world of the colony.
+     * @param add remove or add
+     */
+    public static void notifyChunksInRange(final World world, final boolean add, final int id, final BlockPos center)
+    {
+        final Chunk centralChunk = world.getChunkFromBlockCoords(center);
+        if(centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() == id && add)
+        {
+            return;
+        }
+
+        final int chunkX = centralChunk.x;
+        final int chunkZ = centralChunk.z;
+
+        final int range = Configurations.gameplay.workingRangeTownHallChunks;
+        final int buffer = Configurations.gameplay.townHallPaddingChunk;
+
+        final int maxRange = range * 2 + buffer;
+
+        for(int i = chunkX - maxRange; i <= chunkX + maxRange; i++)
+        {
+            for(int j = chunkZ - maxRange; j <= chunkZ + maxRange; j++)
+            {
+                if(i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range)
+                {
+                    ownedChunks.add(new ChunkLoadStorage(id, new BlockPos(i, 0, j), add));
+                }
+                closeChunks.add(new ChunkLoadStorage(id, new BlockPos(i, 0, j), add));
+            }
+        }
+    }
+
+    /**
+     * Load the chunks and notify them about the update. (1 for one).
+     */
+    private static void loadChunkAndNotify(final World world)
+    {
+        if(!ownedChunks.isEmpty())
+        {
+            final ChunkLoadStorage storage = ownedChunks.get(0);
+            final BlockPos idNow = storage.getPos();
+            final int id = storage.getColonyId();
+            ownedChunks.remove(0);
+            final Chunk chunk = world.getChunkFromChunkCoords(idNow.getX(), idNow.getZ());
+            final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+
+            if(storage.isAdd())
+            {
+                cap.setOwningColony(id);
+                cap.addColony(id);
+            }
+            else
+            {
+                cap.removecolony(id);
+            }
+
+            MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(id, idNow, storage.isAdd()));
+        }
+        else if(!closeChunks.isEmpty())
+        {
+            final ChunkLoadStorage storage = closeChunks.get(0);
+            final BlockPos idNow = storage.getPos();
+            final int id = storage.getColonyId();
+            closeChunks.remove(0);
+            final Chunk chunk = world.getChunkFromChunkCoords(idNow.getX(), idNow.getZ());
+            final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+
+            if(storage.isAdd())
+            {
+                cap.addColony(id);
+            }
+            else
+            {
+                cap.removecolony(id);
+            }
+            MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(id, idNow, true));
+        }
     }
 
     private static void addColonyByWorld(final Colony colony)
@@ -182,7 +262,7 @@ public final class ColonyManager
         try
         {
             final Colony colony = getColony(id);
-            colony.notifyChunksInRange(colony.getWorld(), false);
+            ColonyManager.notifyChunksInRange(colony.getWorld(), false, id, colony.getCenter());
             final Set<World> colonyWorlds = new HashSet<>();
             Log.getLogger().info("Removing citizens for " + id);
             for (final CitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
@@ -679,6 +759,15 @@ public final class ColonyManager
         final NBTTagCompound compCompound = new NBTTagCompound();
         compatabilityManager.writeToNBT(compCompound);
         compound.setTag(TAG_COMPATABILITY_MANAGER, compCompound);
+
+        if (!ownedChunks.isEmpty())
+        {
+            compound.setTag(OWNED_CHUNKS_TO_LOAD_TAG, ownedChunks.stream().map(ChunkLoadStorage::toNBT).collect(NBTUtils.toNBTTagList()));
+        }
+        if (!closeChunks.isEmpty())
+        {
+            compound.setTag(CLOSE_CHUNKS_TO_LOAD_TAG, closeChunks.stream().map(ChunkLoadStorage::toNBT).collect(NBTUtils.toNBTTagList()));
+        }
     }
 
     /**
@@ -738,6 +827,7 @@ public final class ColonyManager
      */
     public static void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
+        loadChunkAndNotify(event.world);
         getColonies(event.world).forEach(c -> c.onWorldTick(event));
     }
 
@@ -854,6 +944,8 @@ public final class ColonyManager
         for (int i = 0; i < colonyTags.tagCount(); ++i)
         {
             @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i), world);
+            ColonyManager.notifyChunksInRange(colony.getWorld(), false, colony.getID(), colony.getCenter());
+
             colonies.add(colony);
 
             addColonyByWorld(colony);
@@ -869,6 +961,23 @@ public final class ColonyManager
             compatabilityManager.readFromNBT(compound.getCompoundTag(TAG_COMPATABILITY_MANAGER));
         }
         compatabilityManager.discover(world);
+
+        ownedChunks.clear();
+        closeChunks.clear();
+        if (compound.hasKey(OWNED_CHUNKS_TO_LOAD_TAG))
+        {
+
+            ownedChunks.addAll(NBTUtils.streamCompound(compound.getTagList(OWNED_CHUNKS_TO_LOAD_TAG, NBT.TAG_COMPOUND))
+                    .map(ChunkLoadStorage::new)
+                    .collect(Collectors.toList()));
+        }
+
+        if (compound.hasKey(CLOSE_CHUNKS_TO_LOAD_TAG))
+        {
+            closeChunks.addAll(NBTUtils.streamCompound(compound.getTagList(CLOSE_CHUNKS_TO_LOAD_TAG, NBT.TAG_COMPOUND))
+                    .map(ChunkLoadStorage::new)
+                    .collect(Collectors.toList()));
+        }
 
         Log.getLogger().info(String.format("Loaded %d colonies", colonies.size()));
     }

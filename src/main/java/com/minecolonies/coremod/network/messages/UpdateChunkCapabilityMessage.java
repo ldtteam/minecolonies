@@ -11,13 +11,10 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
- * Update the ChunkCapability with a list of colonies.
+ * Update the ChunkCapability with a colony.
  */
 public class UpdateChunkCapabilityMessage implements IMessage, IMessageHandler<UpdateChunkCapabilityMessage, IMessage>
 {
@@ -27,17 +24,12 @@ public class UpdateChunkCapabilityMessage implements IMessage, IMessageHandler<U
     private int colonyId;
 
     /**
-     * All owned chunks.
+     * Position of the chunk.
      */
-    private List<BlockPos> ownedChunks;
+    private BlockPos pos;
 
     /**
-     * All close chunks.
-     */
-    private List<BlockPos> closeChunks;
-
-    /**
-     * If the colony should be the owner.
+     * Add it to the list or remove it.
      */
     private boolean add;
 
@@ -50,36 +42,22 @@ public class UpdateChunkCapabilityMessage implements IMessage, IMessageHandler<U
     }
 
     /**
-     * Creates a message to notify the client side chunks about the colony change.
-     * @param colonyId the colony id.
-     * @param ownedChunks the owned chunks.
-     * @param closeChunks the closed chunks.
-     * @param add if to add or to remove.
+     * Creates a message to handle chunk compatabilities..
+     * @param colonyId the colony.
+     * @param pos the chunk pos.
      */
-    public UpdateChunkCapabilityMessage(final int colonyId, final List<BlockPos> ownedChunks, final List<BlockPos> closeChunks, final boolean add)
+    public UpdateChunkCapabilityMessage(@NotNull final int colonyId, final BlockPos pos, final boolean add)
     {
         this.colonyId = colonyId;
-        this.ownedChunks = new ArrayList<>(ownedChunks);
-        this.closeChunks = new ArrayList<>(closeChunks);
+        this.pos = pos;
         this.add = add;
     }
 
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        ownedChunks = new ArrayList<>();
-        closeChunks = new ArrayList<>();
         colonyId = buf.readInt();
-        final int sizeOwned = buf.readInt();
-        final int sizeClose = buf.readInt();
-        for(int i = 0; i < sizeOwned; i++)
-        {
-            ownedChunks.add(BlockPosUtil.readFromByteBuf(buf));
-        }
-        for(int i = 0; i < sizeClose; i++)
-        {
-            closeChunks.add(BlockPosUtil.readFromByteBuf(buf));
-        }
+        pos = BlockPosUtil.readFromByteBuf(buf);
         add = buf.readBoolean();
     }
 
@@ -87,16 +65,7 @@ public class UpdateChunkCapabilityMessage implements IMessage, IMessageHandler<U
     public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
-        buf.writeInt(ownedChunks.size());
-        buf.writeInt(closeChunks.size());
-        for(final BlockPos pos: ownedChunks)
-        {
-            BlockPosUtil.writeToByteBuf(buf, pos);
-        }
-        for(final BlockPos pos: closeChunks)
-        {
-            BlockPosUtil.writeToByteBuf(buf, pos);
-        }
+        BlockPosUtil.writeToByteBuf(buf, pos);
         buf.writeBoolean(add);
     }
 
@@ -104,38 +73,18 @@ public class UpdateChunkCapabilityMessage implements IMessage, IMessageHandler<U
     @Override
     public IMessage onMessage(@NotNull final UpdateChunkCapabilityMessage message, final MessageContext ctx)
     {
+        final Chunk chunk = ctx.getClientHandler().world.getChunkFromChunkCoords(message.pos.getX(), message.pos.getZ());
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
 
-        for(final BlockPos pos: ownedChunks)
+        if(message.add)
         {
-            final Chunk chunk = ctx.getClientHandler().world.getChunkFromChunkCoords(pos.getX(), pos.getZ());
-            final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
-
-            if(add)
-            {
-                cap.setOwningColony(message.colonyId);
-                cap.addColony(message.colonyId);
-            }
-            else
-            {
-                cap.removecolony(message.colonyId);
-            }
+            cap.setOwningColony(message.colonyId);
+            cap.addColony(message.colonyId);
         }
-
-        for(final BlockPos pos: closeChunks)
+        else
         {
-            final Chunk chunk = ctx.getClientHandler().world.getChunkFromChunkCoords(pos.getX(), pos.getZ());
-            final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
-
-            if(add)
-            {
-                cap.addColony(message.colonyId);
-            }
-            else
-            {
-                cap.removecolony(message.colonyId);
-            }
+            cap.removecolony(message.colonyId);
         }
-
         return null;
     }
 }
