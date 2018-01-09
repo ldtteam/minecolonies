@@ -2,6 +2,7 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -91,7 +92,7 @@ public class UpdateChunkCapabilityMessage implements IMessage, IMessageHandler<U
     @Override
     public IMessage onMessage(@NotNull final UpdateChunkCapabilityMessage message, final MessageContext ctx)
     {
-        final Chunk chunk = ctx.getClientHandler().world.getChunkFromChunkCoords(message.x, z);
+        final Chunk chunk = ctx.getClientHandler().world.getChunkFromChunkCoords(message.x, message.z);
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
         cap.setOwningColony(message.owningColonyId);
         for(final int id: message.closeColonies)

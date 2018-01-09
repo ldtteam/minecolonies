@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.configuration.Configurations;
@@ -514,8 +515,9 @@ public class Colony implements IColony
             packageManager.updateSubscribers();
         }
 
+        final List<EntityPlayer> visitors = new ArrayList<>(visitingPlayers);
         //Clean up visiting player.
-        for(final EntityPlayer player: visitingPlayers)
+        for(final EntityPlayer player: visitors)
         {
             if(!packageManager.getSubscribers().contains(player))
             {
@@ -1105,7 +1107,8 @@ public class Colony implements IColony
      */
     public void addVisitingPlayer(final EntityPlayer player)
     {
-        if(!visitingPlayers.contains(player))
+        final Rank rank = getPermissions().getRank(player);
+        if(rank != Rank.OWNER && rank != Rank.OFFICER && !visitingPlayers.contains(player))
         {
             visitingPlayers.add(player);
             LanguageHandler.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getPermissions().getOwnerName());

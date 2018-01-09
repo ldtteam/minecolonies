@@ -170,6 +170,8 @@ public final class ColonyManager
         {
             return;
         }
+        MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(centralChunk.getCapability(CLOSE_COLONY_CAP, null), centralChunk.x, centralChunk.z));
+
         ownedChunks.add(new ChunkLoadStorage(id, center, add));
 
         final int chunkX = centralChunk.x;
@@ -945,7 +947,7 @@ public final class ColonyManager
         for (int i = 0; i < colonyTags.tagCount(); ++i)
         {
             @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i), world);
-            ColonyManager.notifyChunksInRange(colony.getWorld(), false, colony.getID(), colony.getCenter());
+            ColonyManager.notifyChunksInRange(colony.getWorld(), true, colony.getID(), colony.getCenter());
 
             colonies.add(colony);
 

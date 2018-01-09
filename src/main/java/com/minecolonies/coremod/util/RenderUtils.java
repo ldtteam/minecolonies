@@ -175,23 +175,15 @@ public final class RenderUtils
         final int distance = (BLOCKS_PER_CHUNK / 2) + (BLOCKS_PER_CHUNK * Configurations.gameplay.workingRangeTownHallChunks);
         final BlockPos center = colonyView.getCenter();
 
-        for(int x = center.getX(); x <= center.getX() + distance; x++)
+        for(int x = center.getX() - distance; x <= center.getX() + distance; x++)
         {
             colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(x, center.getY(), center.getZ() + distance), theWorld).up());
+            colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(x, center.getY(), center.getZ() - distance), theWorld).up());
         }
 
-        for(int x = center.getX() - distance; x <= center.getX(); x++)
+        for(int z = center.getZ() - distance; z <= center.getZ() + distance; z++)
         {
-            colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(x, center.getY(), center.getZ() + distance), theWorld).up());
-        }
-
-        for(int z = center.getZ(); z <= center.getZ() + distance; z++)
-        {
-            colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(center.getX() + distance, center.getY(), z), theWorld).up());
-        }
-
-        for(int z = center.getZ() - distance; z <= center.getZ(); z++)
-        {
+            colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(center.getX() - distance, center.getY(), z), theWorld).up());
             colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(center.getX() + distance, center.getY(), z), theWorld).up());
         }
     }
