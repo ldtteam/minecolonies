@@ -266,6 +266,7 @@ public final class ColonyManager
             {
                 cap.removecolony(id);
             }
+            MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
         }
     }
 
@@ -801,8 +802,6 @@ public final class ColonyManager
         {
             compound.setTag(CLOSE_CHUNKS_TO_LOAD_TAG, closeChunks.stream().map(ChunkLoadStorage::toNBT).collect(NBTUtils.toNBTTagList()));
         }
-
-        compCompound.setBoolean(TAG_DISTANCE, true);
         compound.setBoolean(TAG_DISTANCE, true);
     }
 
@@ -987,9 +986,7 @@ public final class ColonyManager
         {
             @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i), world);
             ColonyManager.notifyChunksInRange(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
-
             colonies.add(colony);
-
             addColonyByWorld(colony);
         }
 
@@ -1008,7 +1005,6 @@ public final class ColonyManager
         closeChunks.clear();
         if (compound.hasKey(OWNED_CHUNKS_TO_LOAD_TAG))
         {
-
             ownedChunks.addAll(NBTUtils.streamCompound(compound.getTagList(OWNED_CHUNKS_TO_LOAD_TAG, NBT.TAG_COMPOUND))
                     .map(ChunkLoadStorage::new)
                     .collect(Collectors.toList()));

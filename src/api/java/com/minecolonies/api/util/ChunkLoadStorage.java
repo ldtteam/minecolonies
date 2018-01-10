@@ -137,7 +137,6 @@ public class ChunkLoadStorage
     @Override
     public int hashCode()
     {
-
         return Objects.hash(colonyId, pos, add, dimension);
     }
 }

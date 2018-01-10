@@ -126,7 +126,7 @@ public class EventHandler
 
             MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(newCloseColonies, newChunk.x, newChunk.z));
             @NotNull final EntityPlayerMP player = (EntityPlayerMP) entity;
-
+            Log.getLogger().info("Chunk: " + newCloseColonies.getAllCloseColonies().size());
             final Chunk oldChunk = world.getChunkFromChunkCoords(event.getOldChunkX(), event.getOldChunkZ());
             final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null);
 
