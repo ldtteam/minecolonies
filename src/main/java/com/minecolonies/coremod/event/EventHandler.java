@@ -125,7 +125,6 @@ public class EventHandler
 
             final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null);
 
-            Log.getLogger().info("X: " + event.getNewChunkX() + " Z: " + event.getNewChunkZ() + " Owned: " + newCloseColonies.getOwningColony());
             MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(newCloseColonies, newChunk.x, newChunk.z));
             @NotNull final EntityPlayerMP player = (EntityPlayerMP) entity;
             final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null);
