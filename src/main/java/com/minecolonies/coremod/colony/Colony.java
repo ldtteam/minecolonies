@@ -26,18 +26,25 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
+import static com.minecolonies.coremod.colony.ColonyManager.FILENAME_COLONY;
+import static com.minecolonies.coremod.colony.ColonyManager.FILENAME_MINECOLONIES_PATH;
 
 /**
  * This class describes a colony and contains all the data and methods for
@@ -635,7 +642,8 @@ public class Colony implements IColony
         if(this.isDirty && shallUpdate(world, CLEANUP_TICK_INCREMENT))
         {
             this.isDirty = false;
-            ColonyManager.markDirty();
+            @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+            ColonyManager.saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, this.getID())), this.getColonyTag());
         }
     }
 
