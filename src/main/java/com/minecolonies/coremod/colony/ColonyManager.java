@@ -201,7 +201,10 @@ public final class ColonyManager
                 {
                     ownedChunks.add(new ChunkLoadStorage(id, pos, add));
                 }
-                closeChunks.add(new ChunkLoadStorage(id, pos, add));
+                else
+                {
+                    closeChunks.add(new ChunkLoadStorage(id, pos, add));
+                }
             }
         }
         Log.getLogger().warn("llllaaaa");
