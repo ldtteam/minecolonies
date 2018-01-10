@@ -166,11 +166,11 @@ public final class ColonyManager
     public static void notifyChunksInRange(final World world, final boolean add, final int id, final BlockPos center)
     {
         final Chunk centralChunk = world.getChunkFromBlockCoords(center);
-        final IColonyTagCapability cap = centralChunk.getCapability(CLOSE_COLONY_CAP, null);
         if(centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() == id && add)
         {
             return;
         }
+        final IColonyTagCapability cap = centralChunk.getCapability(CLOSE_COLONY_CAP, null);
 
         if(add)
         {
@@ -203,6 +203,7 @@ public final class ColonyManager
                 closeChunks.add(new ChunkLoadStorage(id, new BlockPos(i, 0, j), add));
             }
         }
+        Log.getLogger().warn("llllaaaa");
     }
 
     /**

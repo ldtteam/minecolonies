@@ -28,7 +28,7 @@ public class ColonyTagCapabilityProvider implements ICapabilitySerializable<NBTB
     }
 
     @Override
-    public void deserializeNBT(NBTBase nbt)
+    public void deserializeNBT(final NBTBase nbt)
     {
         CLOSE_COLONY_CAP.getStorage().readNBT(CLOSE_COLONY_CAP, colonyList, null, nbt);
     }

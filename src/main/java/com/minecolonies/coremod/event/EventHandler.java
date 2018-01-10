@@ -81,9 +81,12 @@ public class EventHandler
                     }
                     colony = ColonyManager.getClosestIColony(world, player.getPosition());
 
-                    event.getLeft().add(LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.nextColony",
-                      (int) Math.sqrt(colony.getDistanceSquared(player.getPosition())), ColonyManager.getMinimumDistanceBetweenTownHalls()));
-                    return;
+                    if(colony !=  null)
+                    {
+                        event.getLeft().add(LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.nextColony",
+                                (int) Math.sqrt(colony.getDistanceSquared(player.getPosition())), ColonyManager.getMinimumDistanceBetweenTownHalls()));
+                        return;
+                    }
                 }
 
                 event.getLeft().add(colony.getName() + " : "
@@ -120,7 +123,6 @@ public class EventHandler
             final Chunk oldChunk = world.getChunkFromChunkCoords(event.getOldChunkX(), event.getOldChunkZ());
 
             final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null);
-            final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null);
 
             if(newCloseColonies.getAllCloseColonies().isEmpty())
             {
@@ -128,6 +130,7 @@ public class EventHandler
             }
             MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(newCloseColonies, newChunk.x, newChunk.z));
             @NotNull final EntityPlayerMP player = (EntityPlayerMP) entity;
+            final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null);
 
             // Add new subscribers to colony.
             for(final int colonyId: newCloseColonies.getAllCloseColonies())

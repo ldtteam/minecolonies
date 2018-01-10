@@ -37,7 +37,7 @@ import org.jetbrains.annotations.NotNull;
 public class MineColonies
 {
     @CapabilityInject(IColonyTagCapability.class)
-    public static Capability<IColonyTagCapability> CLOSE_COLONY_CAP = null;
+    public static Capability<IColonyTagCapability> CLOSE_COLONY_CAP;
 
     private static final Logger logger = LogManager.getLogger(Constants.MOD_ID);
     /**
