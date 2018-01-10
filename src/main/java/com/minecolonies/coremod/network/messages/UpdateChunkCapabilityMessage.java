@@ -67,7 +67,7 @@ public class UpdateChunkCapabilityMessage implements IMessage, IMessageHandler<U
         x = buf.readInt();
         z = buf.readInt();
         owningColonyId = buf.readInt();
-        int size = buf.readInt();
+        final int size = buf.readInt();
         closeColonies = new ArrayList<>();
         for(int i = 0; i < size; i++)
         {

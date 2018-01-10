@@ -121,12 +121,13 @@ public class EventHandler
         {
             final World world = entity.getEntityWorld();
             final Chunk newChunk = world.getChunkFromChunkCoords(event.getNewChunkX(), event.getNewChunkZ());
-            final Chunk oldChunk = world.getChunkFromChunkCoords(event.getOldChunkX(), event.getOldChunkZ());
 
             final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null);
 
             MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(newCloseColonies, newChunk.x, newChunk.z));
             @NotNull final EntityPlayerMP player = (EntityPlayerMP) entity;
+
+            final Chunk oldChunk = world.getChunkFromChunkCoords(event.getOldChunkX(), event.getOldChunkZ());
             final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null);
 
             // Add new subscribers to colony.
@@ -313,6 +314,7 @@ public class EventHandler
         {
             return canOwnerPlaceTownHallHere(world, player, colony, pos);
         }
+
 
         colony = ColonyManager.getClosestIColony(world, pos);
         if (colony == null)

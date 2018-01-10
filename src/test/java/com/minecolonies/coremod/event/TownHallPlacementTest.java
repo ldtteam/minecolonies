@@ -190,6 +190,7 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
         when(ColonyManager.getClosestIColony(world, PLACE_POS)).thenReturn(colony);
         when(colony.isCoordInColony(world, PLACE_POS)).thenReturn(false);
         when(colony.getDistanceSquared(PLACE_POS)).thenReturn(0L);
+        when(ColonyManager.isTooCloseToColony(world, PLACE_POS)).thenReturn(true);
 
         Assert.assertFalse(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
