@@ -60,6 +60,11 @@ public interface IColonyTagCapability
     IColonyTagCapability addColony(final int id);
 
     /**
+     * Reset the capability.
+     */
+    void reset();
+
+    /**
      * The implementation of the colonyTagCapability.
      */
     public class Impl implements IColonyTagCapability
@@ -86,6 +91,13 @@ public interface IColonyTagCapability
         }
 
         @Override
+        public void reset()
+        {
+            colonies.clear();
+            owningColony = 0;
+        }
+
+        @Override
         public IColonyTagCapability removecolony(final int id)
         {
             colonies.add(id);
@@ -99,9 +111,6 @@ public interface IColonyTagCapability
         @Override
         public IColonyTagCapability setOwningColony(final int id)
         {
-            if(id != this.owningColony)
-                Log.getLogger().info("Setting owned colony: " + id);
-
             this.owningColony = id;
             return this;
         }

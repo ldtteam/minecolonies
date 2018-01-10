@@ -126,11 +126,6 @@ public class EventHandler
             final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null);
 
             Log.getLogger().info("X: " + event.getNewChunkX() + " Z: " + event.getNewChunkZ() + " Owned: " + newCloseColonies.getOwningColony());
-            Log.getLogger().info("Close-size: " + newCloseColonies.getAllCloseColonies().size());
-            if(newCloseColonies.getAllCloseColonies().isEmpty())
-            {
-                return;
-            }
             MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(newCloseColonies, newChunk.x, newChunk.z));
             @NotNull final EntityPlayerMP player = (EntityPlayerMP) entity;
             final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null);
@@ -230,10 +225,7 @@ public class EventHandler
         {
             // this was the simple way of doing it, minecraft calls onBlockActivated
             // and uses that return value, but I didn't want to call it twice
-            if (playerRightClickInteract(player, world, event.getPos())
-                  && world.getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut)
-
-
+            if (playerRightClickInteract(player, world, event.getPos()) && world.getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut)
             {
                 final IColony colony = ColonyManager.getIColony(world, event.getPos());
                 if (colony != null

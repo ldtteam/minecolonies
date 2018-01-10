@@ -207,7 +207,6 @@ public final class ColonyManager
                 }
             }
         }
-        Log.getLogger().warn("llllaaaa");
     }
 
     /**
@@ -215,6 +214,11 @@ public final class ColonyManager
      */
     private static void loadChunkAndNotify(final World world)
     {
+        if(world.provider.getDimension() != 0)
+        {
+            return;
+        }
+
         if(!ownedChunks.isEmpty())
         {
             final ChunkLoadStorage storage = ownedChunks.get(0);
@@ -225,7 +229,6 @@ public final class ColonyManager
             final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
             if(storage.isAdd())
             {
-                Log.getLogger().info("X: " + idNow.getX() + " Z: " + idNow.getZ());
                 cap.setOwningColony(id);
                 cap.addColony(id);
             }
@@ -233,8 +236,7 @@ public final class ColonyManager
             {
                 cap.removecolony(id);
             }
-            MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(chunk.getCapability(CLOSE_COLONY_CAP, null), chunk.x, chunk.z));
-            chunk.markDirty();
+            MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
         }
         else if(!closeChunks.isEmpty())
         {
@@ -253,7 +255,6 @@ public final class ColonyManager
             {
                 cap.removecolony(id);
             }
-            chunk.markDirty();
         }
     }
 
