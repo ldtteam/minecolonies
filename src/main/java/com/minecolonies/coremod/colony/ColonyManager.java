@@ -981,6 +981,22 @@ public final class ColonyManager
                     (int) ((Math.cos(45.0 / HALF_A_CIRCLE * Math.PI) * Configurations.gameplay.workingRangeTownHall) / BLOCKS_PER_CHUNK);
         }
 
+        ownedChunks.clear();
+        closeChunks.clear();
+        if (compound.hasKey(OWNED_CHUNKS_TO_LOAD_TAG))
+        {
+            ownedChunks.addAll(NBTUtils.streamCompound(compound.getTagList(OWNED_CHUNKS_TO_LOAD_TAG, NBT.TAG_COMPOUND))
+                    .map(ChunkLoadStorage::new)
+                    .collect(Collectors.toList()));
+        }
+
+        if (compound.hasKey(CLOSE_CHUNKS_TO_LOAD_TAG))
+        {
+            closeChunks.addAll(NBTUtils.streamCompound(compound.getTagList(CLOSE_CHUNKS_TO_LOAD_TAG, NBT.TAG_COMPOUND))
+                    .map(ChunkLoadStorage::new)
+                    .collect(Collectors.toList()));
+        }
+
         final NBTTagList colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
         for (int i = 0; i < colonyTags.tagCount(); ++i)
         {
@@ -1000,23 +1016,6 @@ public final class ColonyManager
             compatabilityManager.readFromNBT(compound.getCompoundTag(TAG_COMPATABILITY_MANAGER));
         }
         compatabilityManager.discover(world);
-
-        ownedChunks.clear();
-        closeChunks.clear();
-        if (compound.hasKey(OWNED_CHUNKS_TO_LOAD_TAG))
-        {
-            ownedChunks.addAll(NBTUtils.streamCompound(compound.getTagList(OWNED_CHUNKS_TO_LOAD_TAG, NBT.TAG_COMPOUND))
-                    .map(ChunkLoadStorage::new)
-                    .collect(Collectors.toList()));
-        }
-
-        if (compound.hasKey(CLOSE_CHUNKS_TO_LOAD_TAG))
-        {
-            closeChunks.addAll(NBTUtils.streamCompound(compound.getTagList(CLOSE_CHUNKS_TO_LOAD_TAG, NBT.TAG_COMPOUND))
-                    .map(ChunkLoadStorage::new)
-                    .collect(Collectors.toList()));
-        }
-
         Log.getLogger().info(String.format("Loaded %d colonies", colonies.size()));
     }
 
