@@ -42,7 +42,6 @@ import static com.minecolonies.api.util.constant.ColonyConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 import static com.minecolonies.coremod.colony.ColonyManager.FILENAME_COLONY;
 import static com.minecolonies.coremod.colony.ColonyManager.FILENAME_MINECOLONIES_PATH;
 

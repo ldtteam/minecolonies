@@ -733,7 +733,6 @@ public final class ColonyManager
                             if (colonyData != null)
                             {
                                 @NotNull final Colony colony = Colony.loadColony(colonyData, world);
-                                ColonyManager.notifyChunksInRange(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
                                 colonies.add(colony);
 
                                 addColonyByWorld(colony);
@@ -858,10 +857,7 @@ public final class ColonyManager
             for (int i = 0; i < colonyTags.tagCount(); ++i)
             {
                 @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i), world);
-                ColonyManager.notifyChunksInRange(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
-
                 colonies.add(colony);
-
                 addColonyByWorld(colony);
             }
         }
