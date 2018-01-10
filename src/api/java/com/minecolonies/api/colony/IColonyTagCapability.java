@@ -1,6 +1,5 @@
 package com.minecolonies.api.colony;
 
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;

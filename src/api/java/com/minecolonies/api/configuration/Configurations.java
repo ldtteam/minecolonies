@@ -28,7 +28,7 @@ public class Configurations
         public int workingRangeTownHall = 100;
 
         @Config.Comment("Colony size (radius in chunks around central colony chunk)")
-        public int workingRangeTownHallChunks = 6;
+        public int workingRangeTownHallChunks = workingRangeTownHall / 16;
 
         @Config.Comment("Padding between colonies  - deprecated, don't use")
         public int townHallPadding = 20;
