@@ -803,6 +803,7 @@ public final class ColonyManager
         }
 
         compCompound.setBoolean(TAG_DISTANCE, true);
+        compound.setBoolean(TAG_DISTANCE, true);
     }
 
     /**
