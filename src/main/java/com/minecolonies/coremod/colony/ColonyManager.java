@@ -166,13 +166,23 @@ public final class ColonyManager
     public static void notifyChunksInRange(final World world, final boolean add, final int id, final BlockPos center)
     {
         final Chunk centralChunk = world.getChunkFromBlockCoords(center);
+        final IColonyTagCapability cap = centralChunk.getCapability(CLOSE_COLONY_CAP, null);
         if(centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() == id && add)
         {
             return;
         }
-        MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(centralChunk.getCapability(CLOSE_COLONY_CAP, null), centralChunk.x, centralChunk.z));
 
-        ownedChunks.add(new ChunkLoadStorage(id, center, add));
+        if(add)
+        {
+            cap.setOwningColony(id);
+            cap.addColony(id);
+        }
+        else
+        {
+            cap.removecolony(id);
+        }
+        centralChunk.markDirty();
+        MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(centralChunk.getCapability(CLOSE_COLONY_CAP, null), centralChunk.x, centralChunk.z));
 
         final int chunkX = centralChunk.x;
         final int chunkZ = centralChunk.z;
@@ -218,6 +228,7 @@ public final class ColonyManager
             {
                 cap.removecolony(id);
             }
+            chunk.markDirty();
         }
         else if(!closeChunks.isEmpty())
         {
@@ -236,6 +247,7 @@ public final class ColonyManager
             {
                 cap.removecolony(id);
             }
+            chunk.markDirty();
         }
     }
 
