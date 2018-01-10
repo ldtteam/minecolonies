@@ -125,7 +125,7 @@ public class EventHandler
 
             final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null);
 
-            Log.getLogger().info("Owned: " + newCloseColonies.getOwningColony());
+            Log.getLogger().info("X: " + event.getNewChunkX() + " Z: " + event.getNewChunkZ() + " Owned: " + newCloseColonies.getOwningColony());
             Log.getLogger().info("Close-size: " + newCloseColonies.getAllCloseColonies().size());
             if(newCloseColonies.getAllCloseColonies().isEmpty())
             {

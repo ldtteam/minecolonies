@@ -3,15 +3,16 @@ package com.minecolonies.api.colony;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONIES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 
 /**
@@ -123,16 +124,21 @@ public interface IColonyTagCapability
         @Override
         public NBTBase writeNBT(@NotNull final Capability<IColonyTagCapability> capability, @NotNull final IColonyTagCapability instance, @Nullable final EnumFacing side)
         {
-            return instance.getAllCloseColonies().stream().map(id -> Storage.write(id)).collect(NBTUtils.toNBTTagList());
+            final NBTTagCompound compound = new NBTTagCompound();
+            compound.setInteger(TAG_ID, instance.getOwningColony());
+            compound.setTag(TAG_COLONIES, instance.getAllCloseColonies().stream().map(id -> Storage.write(id)).collect(NBTUtils.toNBTTagList()));
+            return compound;
         }
 
         @Override
         public void readNBT(@NotNull final Capability<IColonyTagCapability> capability, @NotNull final IColonyTagCapability instance,
                 @Nullable final EnumFacing side, @NotNull final NBTBase nbt)
         {
-            if(nbt instanceof NBTTagList)
+            if(nbt instanceof NBTTagCompound && ((NBTTagCompound) nbt).hasKey(TAG_ID))
             {
-                NBTUtils.streamCompound((NBTTagList) nbt).map(compound -> compound.getInteger(TAG_ID)).forEach(instance::addColony);
+                instance.setOwningColony(((NBTTagCompound) nbt).getInteger(TAG_ID));
+                NBTUtils.streamCompound(((NBTTagCompound) nbt).getTagList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
+                        .map(compound -> compound.getInteger(TAG_ID)).forEach(instance::addColony);
             }
         }
 
