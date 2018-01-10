@@ -76,7 +76,10 @@ public interface IColonyTagCapability
         @Override
         public IColonyTagCapability addColony(final int id)
         {
-            colonies.add(id);
+            if(!colonies.contains(id))
+            {
+                colonies.add(id);
+            }
             return this;
         }
 

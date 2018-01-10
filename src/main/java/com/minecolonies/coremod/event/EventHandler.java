@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
@@ -126,6 +125,8 @@ public class EventHandler
 
             final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null);
 
+            Log.getLogger().info("Owned: " + newCloseColonies.getOwningColony());
+            Log.getLogger().info("Close-size: " + newCloseColonies.getAllCloseColonies().size());
             if(newCloseColonies.getAllCloseColonies().isEmpty())
             {
                 return;

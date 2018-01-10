@@ -196,11 +196,12 @@ public final class ColonyManager
         {
             for(int j = chunkZ - maxRange; j <= chunkZ + maxRange; j++)
             {
+                final BlockPos pos = new BlockPos(i, 0, j);
                 if(i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range)
                 {
-                    ownedChunks.add(new ChunkLoadStorage(id, new BlockPos(i, 0, j), add));
+                    ownedChunks.add(new ChunkLoadStorage(id, pos, add));
                 }
-                closeChunks.add(new ChunkLoadStorage(id, new BlockPos(i, 0, j), add));
+                closeChunks.add(new ChunkLoadStorage(id, pos, add));
             }
         }
         Log.getLogger().warn("llllaaaa");
@@ -222,6 +223,7 @@ public final class ColonyManager
 
             if(storage.isAdd())
             {
+                Log.getLogger().info("X: " + idNow.getX() + " Z: " + idNow.getZ());
                 cap.setOwningColony(id);
                 cap.addColony(id);
             }
