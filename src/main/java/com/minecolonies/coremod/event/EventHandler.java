@@ -95,6 +95,7 @@ public class EventHandler
                         + LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.blocksFromCenter",
                         (int) Math.sqrt(colony.getDistanceSquared(player.getPosition()))));
             }
+        }
     }
 
     /**
