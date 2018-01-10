@@ -49,9 +49,10 @@ public class UpdateChunkCapabilityMessage implements IMessage, IMessageHandler<U
     }
 
     /**
-     * Creates a message to handle chunk compatabilities..
-     * @param colonyId the colony.
-     * @param pos the chunk pos.
+     * Create a message to update the chunk cap on the client side.
+     * @param tagCapability the cap.
+     * @param x the x pos.
+     * @param z the z pos.
      */
     public UpdateChunkCapabilityMessage(@NotNull final IColonyTagCapability tagCapability, final int x, final int z)
     {

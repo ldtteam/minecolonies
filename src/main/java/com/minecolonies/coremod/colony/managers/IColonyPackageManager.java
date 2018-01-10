@@ -81,7 +81,7 @@ public interface IColonyPackageManager
 
     /**
      * Remove an old subsriber from the colony.
-     * @param subscriber the subscriber to remove.
+     * @param player the subscriber to remove.
      */
     void removeSubscriber(@NotNull final EntityPlayerMP player);
 }
