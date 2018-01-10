@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony;
 
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -98,6 +99,9 @@ public interface IColonyTagCapability
         @Override
         public IColonyTagCapability setOwningColony(final int id)
         {
+            if(id != this.owningColony)
+                Log.getLogger().info("Setting owned colony: " + id);
+
             this.owningColony = id;
             return this;
         }

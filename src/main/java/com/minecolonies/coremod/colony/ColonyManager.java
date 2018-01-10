@@ -223,7 +223,6 @@ public final class ColonyManager
             ownedChunks.remove(0);
             final Chunk chunk = world.getChunkFromChunkCoords(idNow.getX(), idNow.getZ());
             final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
-
             if(storage.isAdd())
             {
                 Log.getLogger().info("X: " + idNow.getX() + " Z: " + idNow.getZ());
@@ -234,6 +233,7 @@ public final class ColonyManager
             {
                 cap.removecolony(id);
             }
+            MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(chunk.getCapability(CLOSE_COLONY_CAP, null), chunk.x, chunk.z));
             chunk.markDirty();
         }
         else if(!closeChunks.isEmpty())
