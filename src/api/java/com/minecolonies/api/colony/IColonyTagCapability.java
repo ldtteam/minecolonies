@@ -27,7 +27,7 @@ public interface IColonyTagCapability
      * @return the capability.
      */
     @NotNull
-    IColonyTagCapability removecolony(int id);
+    IColonyTagCapability removeColony(int id);
 
     /**
      * Set the owning colony.
@@ -97,9 +97,9 @@ public interface IColonyTagCapability
         }
 
         @Override
-        public IColonyTagCapability removecolony(final int id)
+        public IColonyTagCapability removeColony(final int id)
         {
-            colonies.add(id);
+            colonies.remove(id);
             if(owningColony == id)
             {
                 this.owningColony = 0;

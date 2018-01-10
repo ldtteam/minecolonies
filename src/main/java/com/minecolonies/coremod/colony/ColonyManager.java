@@ -185,7 +185,7 @@ public final class ColonyManager
         }
         else
         {
-            cap.removecolony(id);
+            cap.removeColony(id);
         }
         centralChunk.markDirty();
         MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(centralChunk.getCapability(CLOSE_COLONY_CAP, null), centralChunk.x, centralChunk.z));
@@ -227,7 +227,7 @@ public final class ColonyManager
             {
                 return;
             }
-
+            Log.getLogger().info("Adding owned chunk");
             final BlockPos idNow = storage.getPos();
             final int id = storage.getColonyId();
             ownedChunks.remove(0);
@@ -240,7 +240,7 @@ public final class ColonyManager
             }
             else
             {
-                cap.removecolony(id);
+                cap.removeColony(id);
             }
             MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
         }
@@ -264,7 +264,7 @@ public final class ColonyManager
             }
             else
             {
-                cap.removecolony(id);
+                cap.removeColony(id);
             }
             MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
         }
@@ -985,9 +985,9 @@ public final class ColonyManager
         for (int i = 0; i < colonyTags.tagCount(); ++i)
         {
             @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i), world);
-            ColonyManager.notifyChunksInRange(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
             colonies.add(colony);
             addColonyByWorld(colony);
+            ColonyManager.notifyChunksInRange(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
         }
 
         if (compound.hasUniqueId(TAG_UUID))
