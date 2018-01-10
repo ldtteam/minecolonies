@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.permissions.Rank;
@@ -1098,7 +1099,7 @@ public class Colony implements IColony
      */
     public List<EntityPlayer> getVisitingPlayers()
     {
-        return new ArrayList<>(visitingPlayers);
+        return ImmutableList.copyOf(visitingPlayers);
     }
 
     /**
