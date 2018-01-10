@@ -5,6 +5,7 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.Objects;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DIMENSION;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
@@ -34,6 +35,11 @@ public class ChunkLoadStorage
     private final boolean add;
 
     /**
+     * The dimension of the chunk.
+     */
+    private final int dimension;
+
+    /**
      * Intitialize a ChunLoadStorage from nbt.
      * @param compound the compound to use.
      */
@@ -42,6 +48,7 @@ public class ChunkLoadStorage
         this.colonyId = compound.getInteger(TAG_ID);
         this.pos = BlockPosUtil.readFromNBT(compound, TAG_POS);
         this.add = compound.getBoolean(TAG_ADD);
+        this.dimension = compound.getInteger(TAG_DIMENSION);
     }
 
     /**
@@ -49,12 +56,14 @@ public class ChunkLoadStorage
      * @param colonyId the id of the colony.
      * @param pos the chunk pos.
      * @param add the operation type.
+     * @param dimension the dimension.
      */
-    public ChunkLoadStorage(final int colonyId, final BlockPos pos, final boolean add)
+    public ChunkLoadStorage(final int colonyId, final BlockPos pos, final boolean add, final int dimension)
     {
         this.colonyId = colonyId;
         this.pos = pos;
         this.add = add;
+        this.dimension = dimension;
     }
 
     /**
@@ -67,6 +76,7 @@ public class ChunkLoadStorage
         compound.setInteger(TAG_ID, colonyId);
         BlockPosUtil.writeToNBT(compound, TAG_POS, pos);
         compound.setBoolean(TAG_ADD, add);
+        compound.setInteger(TAG_DIMENSION, dimension);
         return compound;
     }
 
@@ -97,6 +107,15 @@ public class ChunkLoadStorage
         return add;
     }
 
+    /**
+     * Getter for the dimension.
+     * @return the dimension id.
+     */
+    public int getDimension()
+    {
+        return dimension;
+    }
+
     @Override
     public boolean equals(final Object o)
     {
@@ -108,15 +127,17 @@ public class ChunkLoadStorage
         {
             return false;
         }
-        final ChunkLoadStorage that = (ChunkLoadStorage) o;
-        return colonyId == that.colonyId &&
-                add == that.add &&
-                Objects.equals(pos, that.pos);
+        final ChunkLoadStorage storage = (ChunkLoadStorage) o;
+        return colonyId == storage.colonyId &&
+                add == storage.add &&
+                dimension == storage.dimension &&
+                Objects.equals(pos, storage.pos);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(colonyId, pos, add);
+
+        return Objects.hash(colonyId, pos, add, dimension);
     }
 }

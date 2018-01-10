@@ -154,7 +154,7 @@ public final class ColonyManager
         colony.getStatsManager().triggerAchievement(ModAchievements.achievementTownhall);
         Log.getLogger().info(String.format("New Colony Id: %d by %s", colony.getID(), player.getName()));
 
-        ColonyManager.notifyChunksInRange(colony.getWorld(), true, colony.getID(), colony.getCenter());
+        ColonyManager.notifyChunksInRange(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
         return colony;
     }
 
@@ -163,7 +163,7 @@ public final class ColonyManager
      * @param world the world of the colony.
      * @param add remove or add
      */
-    public static void notifyChunksInRange(final World world, final boolean add, final int id, final BlockPos center)
+    public static void notifyChunksInRange(final World world, final boolean add, final int id, final BlockPos center, final int dimension)
     {
         final Chunk centralChunk = world.getChunkFromBlockCoords(center);
         if(centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() == id && add)
@@ -199,11 +199,11 @@ public final class ColonyManager
                 final BlockPos pos = new BlockPos(i, 0, j);
                 if(i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range)
                 {
-                    ownedChunks.add(new ChunkLoadStorage(id, pos, add));
+                    ownedChunks.add(new ChunkLoadStorage(id, pos, add, dimension));
                 }
                 else
                 {
-                    closeChunks.add(new ChunkLoadStorage(id, pos, add));
+                    closeChunks.add(new ChunkLoadStorage(id, pos, add, dimension));
                 }
             }
         }
@@ -214,14 +214,14 @@ public final class ColonyManager
      */
     private static void loadChunkAndNotify(final World world)
     {
-        if(world.provider.getDimension() != 0)
-        {
-            return;
-        }
-
         if(!ownedChunks.isEmpty())
         {
             final ChunkLoadStorage storage = ownedChunks.get(0);
+            if(world.provider.getDimension() != storage.getDimension())
+            {
+                return;
+            }
+
             final BlockPos idNow = storage.getPos();
             final int id = storage.getColonyId();
             ownedChunks.remove(0);
@@ -241,6 +241,11 @@ public final class ColonyManager
         else if(!closeChunks.isEmpty())
         {
             final ChunkLoadStorage storage = closeChunks.get(0);
+            if(world.provider.getDimension() != storage.getDimension())
+            {
+                return;
+            }
+            
             final BlockPos idNow = storage.getPos();
             final int id = storage.getColonyId();
             closeChunks.remove(0);
@@ -284,7 +289,7 @@ public final class ColonyManager
         try
         {
             final Colony colony = getColony(id);
-            ColonyManager.notifyChunksInRange(colony.getWorld(), false, id, colony.getCenter());
+            ColonyManager.notifyChunksInRange(colony.getWorld(), false, id, colony.getCenter(), colony.getDimension());
             final Set<World> colonyWorlds = new HashSet<>();
             Log.getLogger().info("Removing citizens for " + id);
             for (final CitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
@@ -966,7 +971,7 @@ public final class ColonyManager
         for (int i = 0; i < colonyTags.tagCount(); ++i)
         {
             @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i), world);
-            ColonyManager.notifyChunksInRange(colony.getWorld(), true, colony.getID(), colony.getCenter());
+            ColonyManager.notifyChunksInRange(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
 
             colonies.add(colony);
 
