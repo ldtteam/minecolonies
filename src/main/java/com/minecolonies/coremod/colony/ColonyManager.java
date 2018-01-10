@@ -46,6 +46,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
+import static com.minecolonies.api.util.constant.Constants.HALF_A_CIRCLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
@@ -54,6 +55,11 @@ import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
  */
 public final class ColonyManager
 {
+    /**
+     * Distance NBT tag.
+     */
+    private static final String TAG_DISTANCE = "dist";
+
     /**
      * The file name of the minecolonies path.
      */
@@ -90,7 +96,7 @@ public final class ColonyManager
      * The list of colony views.
      */
     @NotNull
-    private static final ColonyList<ColonyView>     colonyViews           = new ColonyList<>();
+    private static final ColonyList<ColonyView>     colonyViews = new ColonyList<>();
 
     /**
      * Amount of worlds loaded.
@@ -795,6 +801,8 @@ public final class ColonyManager
         {
             compound.setTag(CLOSE_CHUNKS_TO_LOAD_TAG, closeChunks.stream().map(ChunkLoadStorage::toNBT).collect(NBTUtils.toNBTTagList()));
         }
+
+        compCompound.setBoolean(TAG_DISTANCE, true);
     }
 
     /**
@@ -967,6 +975,12 @@ public final class ColonyManager
      */
     public static void readFromNBT(@NotNull final NBTTagCompound compound, @NotNull final World world)
     {
+        if(!compound.hasKey(TAG_DISTANCE))
+        {
+            Configurations.gameplay.workingRangeTownHallChunks =
+                    (int) ((Math.cos(45.0 / HALF_A_CIRCLE * Math.PI) * Configurations.gameplay.workingRangeTownHall) / BLOCKS_PER_CHUNK);
+        }
+
         final NBTTagList colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
         for (int i = 0; i < colonyTags.tagCount(); ++i)
         {

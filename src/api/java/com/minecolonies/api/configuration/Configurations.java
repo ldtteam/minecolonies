@@ -25,10 +25,10 @@ public class Configurations
         public boolean builderPlaceConstructionTape = true;
 
         @Config.Comment("Colony size (radius) - deprecated, don't use")
-        public int workingRangeTownHall = 100;
+        public int workingRangeTownHall = 200;
 
         @Config.Comment("Colony size (radius in chunks around central colony chunk)")
-        public int workingRangeTownHallChunks = workingRangeTownHall / 16;
+        public int workingRangeTownHallChunks = 8;
 
         @Config.Comment("Padding between colonies  - deprecated, don't use")
         public int townHallPadding = 20;
