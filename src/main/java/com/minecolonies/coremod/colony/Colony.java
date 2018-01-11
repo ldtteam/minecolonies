@@ -1123,12 +1123,9 @@ public class Colony implements IColony
      */
     public void removeVisitingPlayer(final EntityPlayer player)
     {
-        if(visitingPlayers.contains(player))
-        {
-            visitingPlayers.remove(player);
-            LanguageHandler.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName());
-        }
+        visitingPlayers.remove(player);
+        LanguageHandler.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
+        LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName());
     }
 
     /**

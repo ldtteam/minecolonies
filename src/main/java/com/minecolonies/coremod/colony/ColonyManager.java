@@ -278,7 +278,6 @@ public final class ColonyManager
             {
                 return;
             }
-            Log.getLogger().info("Adding owned chunk");
             final BlockPos idNow = storage.getPos();
             final int id = storage.getColonyId();
             ownedChunks.remove(pos);

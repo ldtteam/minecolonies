@@ -80,7 +80,9 @@ public class ColonyPackageManager implements IColonyPackageManager
     @Override
     public Set<EntityPlayerMP> getSubscribers()
     {
-        return new HashSet<>(subscribers);
+        final Set<EntityPlayerMP> set = new HashSet<>(oldSubscribers);
+        set.addAll(subscribers);
+        return set;
     }
 
     @Override

@@ -130,21 +130,16 @@ public class EventHandler
 
             MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(newCloseColonies, newChunk.x, newChunk.z));
             @NotNull final EntityPlayerMP player = (EntityPlayerMP) entity;
-            Log.getLogger().info("Chunk: " + newCloseColonies.getAllCloseColonies().size());
             final Chunk oldChunk = world.getChunkFromChunkCoords(event.getOldChunkX(), event.getOldChunkZ());
             final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null);
 
             // Add new subscribers to colony.
             for(final int colonyId: newCloseColonies.getAllCloseColonies())
             {
-                if(!oldCloseColonies.getAllCloseColonies().contains(colonyId))
+                final Colony colony = ColonyManager.getColony(colonyId);
+                if(colony != null)
                 {
-                    final Colony colony = ColonyManager.getColony(colonyId);
-
-                    if(colony != null)
-                    {
-                        colony.getPackageManager().addSubscribers(player);
-                    }
+                    colony.getPackageManager().addSubscribers(player);
                 }
             }
 
