@@ -74,6 +74,11 @@ public final class ColonyManager
     private static final String FILENAME_MINECOLONIES_BACKUP = "colonies-%s.dat";
 
     /**
+     * Only store the map to nbt after 1000 elements again.
+     */
+    private static final int RELOAD_AFTER_X_ELEMENTS = 1000;
+
+    /**
      * The damage source used to kill citizens.
      */
     private static final DamageSource               CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
@@ -117,6 +122,11 @@ public final class ColonyManager
     private static volatile UUID    serverUUID          = null;
 
     /**
+     * Removed elements of the list of chunks to load.
+     */
+    private static int removedElements = 0;
+
+    /**
      * Creates a new compatabilityManager.
      */
     private static final ICompatabilityManager compatabilityManager = new CompatabilityManager();
@@ -125,7 +135,7 @@ public final class ColonyManager
      * List of all belonging chunks of the colony which have not been loaded to be notified yet.
      */
     private static final Map<ChunkPos, ChunkLoadStorage> ownedChunks = new HashMap<>();
-    private static final Map<ChunkPos, ChunkLoadStorage> closeChunks = new HashMap<>();
+    private static final List<ChunkLoadStorage> closeChunks = new ArrayList<>();
 
     private ColonyManager()
     {
@@ -207,9 +217,47 @@ public final class ColonyManager
                 }
                 else
                 {
-                    closeChunks.put(new ChunkPos(i,j,dimension), new ChunkLoadStorage(id, pos, add, dimension));
+                    closeChunks.add(new ChunkLoadStorage(id, pos, add, dimension));
                 }
             }
+        }
+    }
+
+    /**
+     * Load each chunk on world tick.
+     * @param world the world.
+     */
+    private static void loadChunkAndNotify(final World world)
+    {
+        if(!ownedChunks.isEmpty())
+        {
+            final ChunkPos storage = ownedChunks.keySet().iterator().next();
+            loadChunk(world, storage.getX(), storage.getZ(), storage.getDim());
+        }
+        else if(!closeChunks.isEmpty())
+        {
+            final ChunkLoadStorage storage = closeChunks.get(0);
+            if(world.provider.getDimension() != storage.getDimension())
+            {
+                return;
+            }
+
+            final BlockPos idNow = storage.getPos();
+            final int id = storage.getColonyId();
+            closeChunks.remove(0);
+            final Chunk chunk = world.getChunkFromChunkCoords(idNow.getX(), idNow.getZ());
+            final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+
+            if(storage.isAdd())
+            {
+                cap.addColony(id);
+            }
+            else
+            {
+                cap.removeColony(id);
+            }
+            MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
+            removedElements++;
         }
     }
 
@@ -246,30 +294,7 @@ public final class ColonyManager
                 cap.removeColony(id);
             }
             MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
-        }
-        else if(!closeChunks.isEmpty() && closeChunks.containsKey(pos))
-        {
-            final ChunkLoadStorage storage = closeChunks.get(pos);
-            if(world.provider.getDimension() != storage.getDimension())
-            {
-                return;
-            }
-
-            final BlockPos idNow = storage.getPos();
-            final int id = storage.getColonyId();
-            closeChunks.remove(pos);
-            final Chunk chunk = world.getChunkFromChunkCoords(idNow.getX(), idNow.getZ());
-            final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
-
-            if(storage.isAdd())
-            {
-                cap.addColony(id);
-            }
-            else
-            {
-                cap.removeColony(id);
-            }
-            MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
+            removedElements++;
         }
     }
 
@@ -786,8 +811,6 @@ public final class ColonyManager
      */
     public static void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        final long sStart = System.nanoTime();
-        Log.getLogger().info("Run into writeToNbt on the colonyManager");
         //Get the colonies NBT tags and store them in a NBTTagList.
         compound.setTag(TAG_COLONIES, colonies.stream().map(Colony::getColonyTag).collect(NBTUtils.toNBTTagList()));
         if (serverUUID != null)
@@ -799,17 +822,19 @@ public final class ColonyManager
         compatabilityManager.writeToNBT(compCompound);
         compound.setTag(TAG_COMPATABILITY_MANAGER, compCompound);
 
-        if (!ownedChunks.isEmpty())
+        if(removedElements >= RELOAD_AFTER_X_ELEMENTS)
         {
-            compound.setTag(OWNED_CHUNKS_TO_LOAD_TAG, ownedChunks.values().stream().map(ChunkLoadStorage::toNBT).collect(NBTUtils.toNBTTagList()));
-        }
-        if (!closeChunks.isEmpty())
-        {
-            compound.setTag(CLOSE_CHUNKS_TO_LOAD_TAG, closeChunks.values().stream().map(ChunkLoadStorage::toNBT).collect(NBTUtils.toNBTTagList()));
+            if (!ownedChunks.isEmpty())
+            {
+                compound.setTag(OWNED_CHUNKS_TO_LOAD_TAG, ownedChunks.values().stream().map(ChunkLoadStorage::toNBT).collect(NBTUtils.toNBTTagList()));
+            }
+            if (!closeChunks.isEmpty())
+            {
+                compound.setTag(CLOSE_CHUNKS_TO_LOAD_TAG, closeChunks.stream().map(ChunkLoadStorage::toNBT).collect(NBTUtils.toNBTTagList()));
+            }
+            removedElements = 0;
         }
         compound.setBoolean(TAG_DISTANCE, true);
-
-        Log.getLogger().info("Finish writeToNbt on the colonyManager, duration: " + ((System.nanoTime() - sStart)/ NANO_TIME_DIVIDER ));
     }
 
     /**
@@ -869,6 +894,7 @@ public final class ColonyManager
      */
     public static void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
+        loadChunkAndNotify(event.world);
         getColonies(event.world).forEach(c -> c.onWorldTick(event));
     }
 
@@ -998,9 +1024,9 @@ public final class ColonyManager
 
         if (compound.hasKey(CLOSE_CHUNKS_TO_LOAD_TAG))
         {
-            closeChunks.putAll(NBTUtils.streamCompound(compound.getTagList(CLOSE_CHUNKS_TO_LOAD_TAG, NBT.TAG_COMPOUND))
-                    .map(comp -> new HashMap.SimpleEntry<>(new ChunkPos(comp), new ChunkLoadStorage(comp)))
-                    .collect(Collectors.toMap(HashMap.SimpleEntry::getKey, HashMap.SimpleEntry::getValue)));
+            closeChunks.addAll(NBTUtils.streamCompound(compound.getTagList(CLOSE_CHUNKS_TO_LOAD_TAG, NBT.TAG_COMPOUND))
+                    .map(ChunkLoadStorage::new)
+                    .collect(Collectors.toList()));
         }
 
         final NBTTagList colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
