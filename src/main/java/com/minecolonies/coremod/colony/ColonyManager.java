@@ -258,6 +258,7 @@ public final class ColonyManager
             }
             MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
             removedElements++;
+            chunk.markDirty();
         }
     }
 
@@ -294,6 +295,7 @@ public final class ColonyManager
             }
             MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
             removedElements++;
+            chunk.markDirty();
         }
     }
 
