@@ -141,12 +141,6 @@ public final class ModBlocks
         blockSolidSubstitution.registerItemBlock(registry);
         blockSubstitution.registerItemBlock(registry);
         blockRack.registerItemBlock(registry);
-        blockTimberFrameAcacia.registerItemBlock(registry);
-        blockTimberFrameDarkOak.registerItemBlock(registry);
-        blockTimberFrameSpruce.registerItemBlock(registry);
-        blockTimberFrameJungle.registerItemBlock(registry);
-        blockTimberFrameBirch.registerItemBlock(registry);
-        blockTimberFrameOak.registerItemBlock(registry);
         blockWayPoint.registerItemBlock(registry);
         blockHutBarracksTower.registerItemBlock(registry);
         blockHutBarracks.registerItemBlock(registry);
@@ -160,5 +154,11 @@ public final class ModBlocks
         blockShingleDarkOak.registerItemBlock(registry);
         blockShingleAcacia.registerItemBlock(registry);
         blockShingleSlab.registerItemBlock(registry);
+        blockTimberFrameAcacia.registerItemBlock(registry);
+        blockTimberFrameDarkOak.registerItemBlock(registry);
+        blockTimberFrameSpruce.registerItemBlock(registry);
+        blockTimberFrameJungle.registerItemBlock(registry);
+        blockTimberFrameBirch.registerItemBlock(registry);
+        blockTimberFrameOak.registerItemBlock(registry);
     }
 }

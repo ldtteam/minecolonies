@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
-import static com.sun.deploy.util.SessionState.init;
 
 /**
  * Decorative block
@@ -47,7 +46,7 @@ public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame
     {
         super(Material.WOOD);
         this.setDefaultState(this.blockState.getBaseState().withProperty(TYPE, TimberFrameType.PLAIN));
-        init(name);
+        initBlock(name);
     }
     /**
      * initialize the block
@@ -72,6 +71,7 @@ public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame
     {
         registry.register((new ItemColored(this, true)).setRegistryName(this.getRegistryName()));
     }
+
     /**
      * Get the MapColor for this Block and the given BlockState
      */
