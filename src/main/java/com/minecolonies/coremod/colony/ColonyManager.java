@@ -7,10 +7,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.compatibility.CompatabilityManager;
 import com.minecolonies.api.compatibility.ICompatabilityManager;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.ChunkLoadStorage;
-import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
@@ -126,8 +123,8 @@ public final class ColonyManager
     /**
      * List of all belonging chunks of the colony which have not been loaded to be notified yet.
      */
-    private static final List<ChunkLoadStorage> ownedChunks = new ArrayList<>();
-    private static final List<ChunkLoadStorage> closeChunks = new ArrayList<>();
+    private static final Map<ChunkPos, ChunkLoadStorage> ownedChunks = new HashMap<>();
+    private static final Map<ChunkPos, ChunkLoadStorage> closeChunks = new HashMap<>();
 
     private ColonyManager()
     {
@@ -205,24 +202,29 @@ public final class ColonyManager
                 final BlockPos pos = new BlockPos(i, 0, j);
                 if(i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range)
                 {
-                    ownedChunks.add(new ChunkLoadStorage(id, pos, add, dimension));
+                    ownedChunks.put(new ChunkPos(i,j,dimension), new ChunkLoadStorage(id, pos, add, dimension));
                 }
                 else
                 {
-                    closeChunks.add(new ChunkLoadStorage(id, pos, add, dimension));
+                    closeChunks.put(new ChunkPos(i,j,dimension), new ChunkLoadStorage(id, pos, add, dimension));
                 }
             }
         }
     }
 
     /**
-     * Load the chunks and notify them about the update. (1 for one).
+     * Load the colony info for a certain chunk.
+     * @param world the world.
+     * @param x the x pos.
+     * @param y the y pos.
+     * @param dim the dimension.
      */
-    private static void loadChunkAndNotify(final World world)
+    public static void loadChunk(final World world, final int x, final int y, final int dim)
     {
-        if(!ownedChunks.isEmpty())
+        final ChunkPos pos = new ChunkPos(x, y, dim);
+        if(!ownedChunks.isEmpty() && ownedChunks.containsKey(pos))
         {
-            final ChunkLoadStorage storage = ownedChunks.get(0);
+            final ChunkLoadStorage storage = ownedChunks.get(pos);
             if(world.provider.getDimension() != storage.getDimension())
             {
                 return;
@@ -230,7 +232,7 @@ public final class ColonyManager
             Log.getLogger().info("Adding owned chunk");
             final BlockPos idNow = storage.getPos();
             final int id = storage.getColonyId();
-            ownedChunks.remove(0);
+            ownedChunks.remove(pos);
             final Chunk chunk = world.getChunkFromChunkCoords(idNow.getX(), idNow.getZ());
             final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
             if(storage.isAdd())
@@ -244,17 +246,17 @@ public final class ColonyManager
             }
             MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
         }
-        else if(!closeChunks.isEmpty())
+        else if(!closeChunks.isEmpty() && closeChunks.containsKey(pos))
         {
-            final ChunkLoadStorage storage = closeChunks.get(0);
+            final ChunkLoadStorage storage = closeChunks.get(pos);
             if(world.provider.getDimension() != storage.getDimension())
             {
                 return;
             }
-            
+
             final BlockPos idNow = storage.getPos();
             final int id = storage.getColonyId();
-            closeChunks.remove(0);
+            closeChunks.remove(pos);
             final Chunk chunk = world.getChunkFromChunkCoords(idNow.getX(), idNow.getZ());
             final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
 
@@ -796,11 +798,11 @@ public final class ColonyManager
 
         if (!ownedChunks.isEmpty())
         {
-            compound.setTag(OWNED_CHUNKS_TO_LOAD_TAG, ownedChunks.stream().map(ChunkLoadStorage::toNBT).collect(NBTUtils.toNBTTagList()));
+            compound.setTag(OWNED_CHUNKS_TO_LOAD_TAG, ownedChunks.values().stream().map(ChunkLoadStorage::toNBT).collect(NBTUtils.toNBTTagList()));
         }
         if (!closeChunks.isEmpty())
         {
-            compound.setTag(CLOSE_CHUNKS_TO_LOAD_TAG, closeChunks.stream().map(ChunkLoadStorage::toNBT).collect(NBTUtils.toNBTTagList()));
+            compound.setTag(CLOSE_CHUNKS_TO_LOAD_TAG, closeChunks.values().stream().map(ChunkLoadStorage::toNBT).collect(NBTUtils.toNBTTagList()));
         }
         compound.setBoolean(TAG_DISTANCE, true);
     }
@@ -862,7 +864,6 @@ public final class ColonyManager
      */
     public static void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
-        loadChunkAndNotify(event.world);
         getColonies(event.world).forEach(c -> c.onWorldTick(event));
     }
 
@@ -985,16 +986,16 @@ public final class ColonyManager
         closeChunks.clear();
         if (compound.hasKey(OWNED_CHUNKS_TO_LOAD_TAG))
         {
-            ownedChunks.addAll(NBTUtils.streamCompound(compound.getTagList(OWNED_CHUNKS_TO_LOAD_TAG, NBT.TAG_COMPOUND))
-                    .map(ChunkLoadStorage::new)
-                    .collect(Collectors.toList()));
+            ownedChunks.putAll(NBTUtils.streamCompound(compound.getTagList(OWNED_CHUNKS_TO_LOAD_TAG, NBT.TAG_COMPOUND))
+                    .map(comp -> new HashMap.SimpleEntry<>(new ChunkPos(comp), new ChunkLoadStorage(comp)))
+                    .collect(Collectors.toMap(HashMap.SimpleEntry::getKey, HashMap.SimpleEntry::getValue)));
         }
 
         if (compound.hasKey(CLOSE_CHUNKS_TO_LOAD_TAG))
         {
-            closeChunks.addAll(NBTUtils.streamCompound(compound.getTagList(CLOSE_CHUNKS_TO_LOAD_TAG, NBT.TAG_COMPOUND))
-                    .map(ChunkLoadStorage::new)
-                    .collect(Collectors.toList()));
+            closeChunks.putAll(NBTUtils.streamCompound(compound.getTagList(CLOSE_CHUNKS_TO_LOAD_TAG, NBT.TAG_COMPOUND))
+                    .map(comp -> new HashMap.SimpleEntry<>(new ChunkPos(comp), new ChunkLoadStorage(comp)))
+                    .collect(Collectors.toMap(HashMap.SimpleEntry::getKey, HashMap.SimpleEntry::getValue)));
         }
 
         final NBTTagList colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
