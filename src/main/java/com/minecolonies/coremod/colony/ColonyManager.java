@@ -221,6 +221,7 @@ public final class ColonyManager
                 }
             }
         }
+        removedElements = RELOAD_AFTER_X_ELEMENTS;
     }
 
     /**
@@ -241,8 +242,9 @@ public final class ColonyManager
             {
                 return;
             }
-
             final BlockPos idNow = storage.getPos();
+            Log.getLogger().info("Loading chunk with close colony: " + idNow.getX() + ":" + idNow.getZ());
+
             final int id = storage.getColonyId();
             closeChunks.remove(0);
             final Chunk chunk = world.getChunkFromChunkCoords(idNow.getX(), idNow.getZ());
@@ -266,12 +268,12 @@ public final class ColonyManager
      * Load the colony info for a certain chunk.
      * @param world the world.
      * @param x the x pos.
-     * @param y the y pos.
+     * @param z the z pos.
      * @param dim the dimension.
      */
-    public static void loadChunk(final World world, final int x, final int y, final int dim)
+    public static void loadChunk(final World world, final int x, final int z, final int dim)
     {
-        final ChunkPos pos = new ChunkPos(x, y, dim);
+        final ChunkPos pos = new ChunkPos(x, z, dim);
         if(!ownedChunks.isEmpty() && ownedChunks.containsKey(pos))
         {
             final ChunkLoadStorage storage = ownedChunks.get(pos);
@@ -279,6 +281,8 @@ public final class ColonyManager
             {
                 return;
             }
+            Log.getLogger().info("Loading chunk with owning colony: " + x + ":" + z);
+
             final BlockPos idNow = storage.getPos();
             final int id = storage.getColonyId();
             ownedChunks.remove(pos);
@@ -825,6 +829,7 @@ public final class ColonyManager
 
         if(removedElements >= RELOAD_AFTER_X_ELEMENTS)
         {
+            Log.getLogger().info("Storing: " + (ownedChunks.size() + closeChunks.size()) + " elements");
             if (!ownedChunks.isEmpty())
             {
                 compound.setTag(OWNED_CHUNKS_TO_LOAD_TAG, ownedChunks.values().stream().map(ChunkLoadStorage::toNBT).collect(NBTUtils.toNBTTagList()));

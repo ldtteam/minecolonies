@@ -107,8 +107,6 @@ public class EventHandler
         event.addCapability(new ResourceLocation(Constants.MOD_ID, "closeColony"), new ColonyTagCapabilityProvider());
     }
 
-    //todo loading chunk public static void loadChunk(final World world, final int x, final int y, final int dim)
-
     /**
      * Event called when the player enters a new chunk.
      * @param event the event.
@@ -121,7 +119,7 @@ public class EventHandler
         //  Add nearby players
         if (entity instanceof EntityPlayerMP && entity.dimension == 0)
         {
-            ColonyManager.loadChunk(entity.world, event.getNewChunkX(), event.getNewChunkZ(), entity.world.provider.getDimension());
+            ColonyManager.loadChunk(entity.world, event.getNewChunkX(), event.getNewChunkZ(), entity.dimension);
             
             final World world = entity.getEntityWorld();
             final Chunk newChunk = world.getChunkFromChunkCoords(event.getNewChunkX(), event.getNewChunkZ());
@@ -132,7 +130,7 @@ public class EventHandler
             @NotNull final EntityPlayerMP player = (EntityPlayerMP) entity;
             final Chunk oldChunk = world.getChunkFromChunkCoords(event.getOldChunkX(), event.getOldChunkZ());
             final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null);
-
+            Log.getLogger().info("chunk has: " + newCloseColonies.getAllCloseColonies());
             // Add new subscribers to colony.
             for(final int colonyId: newCloseColonies.getAllCloseColonies())
             {
