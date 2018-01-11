@@ -8,7 +8,6 @@ import com.minecolonies.api.compatibility.ICompatabilityManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
@@ -35,11 +34,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -774,7 +770,7 @@ public final class ColonyManager
         try(FileOutputStream fos = new FileOutputStream(getBackupSaveLocation(new Date())))
         {
             @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-            ZipOutputStream zos = new ZipOutputStream(fos);
+            final ZipOutputStream zos = new ZipOutputStream(fos);
 
             for (int i = 0; i < colonies.size() + BUFFER; i++)
             {
@@ -791,7 +787,10 @@ public final class ColonyManager
         }
         catch (final Exception e)
         {
-            e.printStackTrace();
+            /**
+             * Intentionally not being thrown.
+             */
+            Log.getLogger().warn("Unable to backup colony data, please contact an administrator");
             return false;
         }
 
@@ -818,7 +817,10 @@ public final class ColonyManager
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            /**
+             * Intentionally not being thrown.
+             */
+            Log.getLogger().warn("Error packing " + fileName + " into the zip.");
         }
     }
 
