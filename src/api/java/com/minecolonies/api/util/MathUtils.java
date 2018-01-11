@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class MathUtils
 {
-    public static final int NANO_TIME_DIVIDER = 1000 * 1000 * 1000;
+    private static final int NANO_TIME_DIVIDER = 1000 * 1000 * 1000;
 
     /**
      * Private constructor to hide the public one.

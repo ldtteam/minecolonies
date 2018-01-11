@@ -1096,15 +1096,12 @@ public class Colony implements IColony
      * Get all visiting players.
      * @return the list.
      */
-    public List<EntityPlayer> getVisitingPlayers()
+    public ImmutableList<EntityPlayer> getVisitingPlayers()
     {
         return ImmutableList.copyOf(visitingPlayers);
     }
 
-    /**
-     * Add a visiting player.
-     * @param player the player.
-     */
+    @Override
     public void addVisitingPlayer(final EntityPlayer player)
     {
         final Rank rank = getPermissions().getRank(player);
@@ -1116,10 +1113,7 @@ public class Colony implements IColony
         }
     }
 
-    /**
-     * Remove a visiting player.
-     * @param player the player.
-     */
+    @Override
     public void removeVisitingPlayer(final EntityPlayer player)
     {
         if(!getMessageEntityPlayers().contains(player))

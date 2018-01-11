@@ -3,7 +3,6 @@ package com.minecolonies.coremod.event;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
@@ -12,11 +11,11 @@ import javax.annotation.Nullable;
 
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
-public class ColonyTagCapabilityProvider implements ICapabilitySerializable<NBTBase>
+public class MinecoloniesChunkCapabilityProvider implements ICapabilitySerializable<NBTBase>
 {
     private final IColonyTagCapability colonyList;
 
-    public ColonyTagCapabilityProvider()
+    public MinecoloniesChunkCapabilityProvider()
     {
         this.colonyList = new IColonyTagCapability.Impl();
     }

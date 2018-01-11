@@ -19,6 +19,7 @@ import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -755,6 +756,22 @@ public final class ColonyView implements IColony
     public IRequester getRequesterBuildingForPosition(@NotNull final BlockPos pos)
     {
         return getBuilding(pos);
+    }
+
+    @Override
+    public void removeVisitingPlayer(final EntityPlayer player)
+    {
+        /**
+         * Intentionally left empty.
+         */
+    }
+
+    @Override
+    public void addVisitingPlayer(final EntityPlayer player)
+    {
+        /**
+         * Intentionally left empty.
+         */
     }
 
     /**

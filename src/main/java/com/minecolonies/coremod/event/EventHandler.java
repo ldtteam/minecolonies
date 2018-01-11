@@ -45,7 +45,6 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
-import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
  * Handles all forge events.
@@ -104,7 +103,7 @@ public class EventHandler
     @SubscribeEvent
     public void onAttachingCapabilities(@NotNull final AttachCapabilitiesEvent<Chunk> event)
     {
-        event.addCapability(new ResourceLocation(Constants.MOD_ID, "closeColony"), new ColonyTagCapabilityProvider());
+        event.addCapability(new ResourceLocation(Constants.MOD_ID, "closeColony"), new MinecoloniesChunkCapabilityProvider());
     }
 
     /**
