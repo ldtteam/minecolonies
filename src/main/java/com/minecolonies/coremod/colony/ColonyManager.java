@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony;
 
+import com.google.common.io.Files;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
@@ -802,17 +803,8 @@ public final class ColonyManager
         final File file = new File(folder, fileName);
         try(FileInputStream fis = new FileInputStream(file))
         {
-            final ZipEntry zipEntry = new ZipEntry(fileName);
-            zos.putNextEntry(zipEntry);
-
-            final byte[] bytes = new byte[1024];
-            int length;
-            while ((length = fis.read(bytes)) >= 0)
-            {
-                zos.write(bytes, 0, length);
-            }
-
-            zos.closeEntry();
+            zos.putNextEntry(new ZipEntry(fileName));
+            Files.copy(file, zos);
             fis.close();
         }
         catch (Exception e)
