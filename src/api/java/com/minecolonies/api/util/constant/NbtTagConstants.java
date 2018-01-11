@@ -179,6 +179,18 @@ public final class NbtTagConstants
     public static final String TAG_INVENTORY = "inventory";
 
     /**
+     * Tag used when a Compound wraps a list.
+     */
+    public static final String TAG_LIST = "List";
+
+    /**
+     * Tag used when we store a Request.
+     */
+    public static final String TAG_REQUEST = "Request";
+
+    public static final String TAG_RESOLVER = "Resolver";
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private NbtTagConstants()
