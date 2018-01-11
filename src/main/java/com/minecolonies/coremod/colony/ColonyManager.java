@@ -265,9 +265,9 @@ public final class ColonyManager
             {
                 cap.removeColony(id);
             }
+            chunk.markDirty();
             MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
             removedElements++;
-            chunk.markDirty();
 
             if(closeChunks.isEmpty())
             {
@@ -317,9 +317,9 @@ public final class ColonyManager
             {
                 cap.removeColony(id);
             }
+            chunk.markDirty();
             MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
             removedElements++;
-            chunk.markDirty();
         }
     }
 
