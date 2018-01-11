@@ -76,7 +76,7 @@ public final class ColonyManager
     /**
      * Only store the map to nbt after 1000 elements again.
      */
-    private static final int RELOAD_AFTER_X_ELEMENTS = 1000;
+    private static final int RELOAD_AFTER_X_ELEMENTS = 5000;
 
     /**
      * The damage source used to kill citizens.
@@ -243,8 +243,10 @@ public final class ColonyManager
                 return;
             }
             final BlockPos idNow = storage.getPos();
-            Log.getLogger().info("Loading chunk with close colony: " + idNow.getX() + ":" + idNow.getZ());
-
+            if (removedElements % 100 == 0)
+            {
+                Log.getLogger().info("Loaded 100 chunks with close colony, now loading: " + idNow.getX() + ":" + idNow.getZ());
+            }
             final int id = storage.getColonyId();
             closeChunks.remove(0);
             final Chunk chunk = world.getChunkFromChunkCoords(idNow.getX(), idNow.getZ());
@@ -281,7 +283,10 @@ public final class ColonyManager
             {
                 return;
             }
-            Log.getLogger().info("Loading chunk with owning colony: " + x + ":" + z);
+            if (removedElements % 100 == 0)
+            {
+                Log.getLogger().info("Loaded 100 chunks owning close colony, now loading: " + x + ":" + z);
+            }
 
             final BlockPos idNow = storage.getPos();
             final int id = storage.getColonyId();

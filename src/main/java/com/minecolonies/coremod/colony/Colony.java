@@ -525,7 +525,6 @@ public class Colony implements IColony
                 visitingPlayers.remove(player);
             }
         }
-
     }
 
     /**

@@ -130,7 +130,8 @@ public class EventHandler
             @NotNull final EntityPlayerMP player = (EntityPlayerMP) entity;
             final Chunk oldChunk = world.getChunkFromChunkCoords(event.getOldChunkX(), event.getOldChunkZ());
             final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null);
-            Log.getLogger().info("chunk has: " + newCloseColonies.getAllCloseColonies());
+            Log.getLogger().info("chunk has colonies: " + newCloseColonies.getAllCloseColonies());
+
             // Add new subscribers to colony.
             for(final int colonyId: newCloseColonies.getAllCloseColonies())
             {
