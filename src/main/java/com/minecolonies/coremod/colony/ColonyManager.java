@@ -74,7 +74,7 @@ public final class ColonyManager
     private static final String FILENAME_MINECOLONIES_BACKUP = "colonies-%s.dat";
 
     /**
-     * Only store the map to nbt after 1000 elements again.
+     * Only store the map to nbt after x elements again.
      */
     private static final int RELOAD_AFTER_X_ELEMENTS = 5000;
 
@@ -100,6 +100,11 @@ public final class ColonyManager
      */
     @NotNull
     private static final ColonyList<ColonyView>     colonyViews = new ColonyList<>();
+
+    /**
+     * Static variable defining after how many elements to log.
+     */
+    private static final int LOG_PER_X = 100;
 
     /**
      * Amount of worlds loaded.
@@ -243,7 +248,7 @@ public final class ColonyManager
                 return;
             }
             final BlockPos idNow = storage.getPos();
-            if (removedElements % 100 == 0)
+            if (removedElements % LOG_PER_X == 0)
             {
                 Log.getLogger().info("Loaded 100 chunks with close colony, now loading: " + idNow.getX() + ":" + idNow.getZ());
             }
@@ -263,6 +268,16 @@ public final class ColonyManager
             MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
             removedElements++;
             chunk.markDirty();
+
+            if(closeChunks.isEmpty())
+            {
+                markDirty();
+            }
+        }
+
+        if(removedElements >= RELOAD_AFTER_X_ELEMENTS)
+        {
+            markDirty();
         }
     }
 
@@ -283,7 +298,7 @@ public final class ColonyManager
             {
                 return;
             }
-            if (removedElements % 100 == 0)
+            if (removedElements % LOG_PER_X == 0)
             {
                 Log.getLogger().info("Loaded 100 chunks owning close colony, now loading: " + x + ":" + z);
             }
@@ -832,19 +847,17 @@ public final class ColonyManager
         compatabilityManager.writeToNBT(compCompound);
         compound.setTag(TAG_COMPATABILITY_MANAGER, compCompound);
 
-        if(removedElements >= RELOAD_AFTER_X_ELEMENTS)
+        Log.getLogger().info("Storing: " + (ownedChunks.size() + closeChunks.size()) + " elements");
+        if (!ownedChunks.isEmpty())
         {
-            Log.getLogger().info("Storing: " + (ownedChunks.size() + closeChunks.size()) + " elements");
-            if (!ownedChunks.isEmpty())
-            {
-                compound.setTag(OWNED_CHUNKS_TO_LOAD_TAG, ownedChunks.values().stream().map(ChunkLoadStorage::toNBT).collect(NBTUtils.toNBTTagList()));
-            }
-            if (!closeChunks.isEmpty())
-            {
-                compound.setTag(CLOSE_CHUNKS_TO_LOAD_TAG, closeChunks.stream().map(ChunkLoadStorage::toNBT).collect(NBTUtils.toNBTTagList()));
-            }
-            removedElements = 0;
+            compound.setTag(OWNED_CHUNKS_TO_LOAD_TAG, ownedChunks.values().stream().map(ChunkLoadStorage::toNBT).collect(NBTUtils.toNBTTagList()));
         }
+        if (!closeChunks.isEmpty())
+        {
+            compound.setTag(CLOSE_CHUNKS_TO_LOAD_TAG, closeChunks.stream().map(ChunkLoadStorage::toNBT).collect(NBTUtils.toNBTTagList()));
+        }
+        removedElements = 0;
+
         compound.setBoolean(TAG_DISTANCE, true);
     }
 
