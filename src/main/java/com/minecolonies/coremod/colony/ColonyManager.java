@@ -42,6 +42,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.MathUtils.NANO_TIME_DIVIDER;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.Constants.HALF_A_CIRCLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -785,6 +786,8 @@ public final class ColonyManager
      */
     public static void writeToNBT(@NotNull final NBTTagCompound compound)
     {
+        final long sStart = System.nanoTime();
+        Log.getLogger().info("Run into writeToNbt on the colonyManager");
         //Get the colonies NBT tags and store them in a NBTTagList.
         compound.setTag(TAG_COLONIES, colonies.stream().map(Colony::getColonyTag).collect(NBTUtils.toNBTTagList()));
         if (serverUUID != null)
@@ -805,6 +808,8 @@ public final class ColonyManager
             compound.setTag(CLOSE_CHUNKS_TO_LOAD_TAG, closeChunks.values().stream().map(ChunkLoadStorage::toNBT).collect(NBTUtils.toNBTTagList()));
         }
         compound.setBoolean(TAG_DISTANCE, true);
+
+        Log.getLogger().info("Finish writeToNbt on the colonyManager, duration: " + ((System.nanoTime() - sStart)/ NANO_TIME_DIVIDER ));
     }
 
     /**
