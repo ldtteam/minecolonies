@@ -533,3 +533,10 @@ tile.minecolonies.blockshingle_jungle.name=Jungle Shingle
 tile.minecolonies.blockshingle_dark_oak.name=Dark Oak Shingle
 tile.minecolonies.blockshingle_acacia.name=Acacia Shingle
 tile.minecolonies.blockShingleSlab.name=Shingle slab
+
+tile.minecolonies.blockTimberFrame_oak.name= Oak Timber Frame
+tile.minecolonies.blockTimberFrame_spruce.name= Spruce Timber Frame
+tile.minecolonies.blockTimberFrame_birch.name= Birch Timber Frame
+tile.minecolonies.blockTimberFrame_jungle.name= Jungle Timber Frame
+tile.minecolonies.blockTimberFrame_dark_oak.name= Dark Oak Timber Frame
+tile.minecolonies.blockTimberFrame_acacia.name= Acacia Timber Frame

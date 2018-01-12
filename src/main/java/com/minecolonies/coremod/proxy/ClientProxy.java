@@ -249,27 +249,58 @@ public class ClientProxy extends CommonProxy
 
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameOak), 0,
                 new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
-                        BlockTimberFrame.TYPE + "_" + BlockPlanks.EnumType.OAK.getName()), INVENTORY));
+                        BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.OAK.getName()), INVENTORY));
 
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameBirch), 0,
                 new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
-                        BlockTimberFrame.TYPE + "_" + BlockPlanks.EnumType.BIRCH.getName()), INVENTORY));
+                        BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.BIRCH.getName()), INVENTORY));
 
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameSpruce), 0,
                 new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
-                        BlockTimberFrame.TYPE + "_" + BlockPlanks.EnumType.SPRUCE.getName()), INVENTORY));
+                        BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.SPRUCE.getName()), INVENTORY));
 
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameJungle), 0,
                 new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
-                        BlockTimberFrame.TYPE + "_" + BlockPlanks.EnumType.JUNGLE.getName()), INVENTORY));
+                        BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.JUNGLE.getName()), INVENTORY));
 
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameDarkOak), 0,
                 new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
-                        BlockTimberFrame.TYPE + "_" + BlockPlanks.EnumType.DARK_OAK.getName()), INVENTORY));
+                        BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.DARK_OAK.getName()), INVENTORY));
 
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameAcacia), 0,
                 new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
-                        BlockTimberFrame.TYPE + "_" + BlockPlanks.EnumType.ACACIA.getName()), INVENTORY));
+                        BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.ACACIA.getName()), INVENTORY));
+
+        for (final TimberFrameType type : TimberFrameType.values())
+        {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameOak), type.getMetadata(),
+                    new ModelResourceLocation(ModBlocks.blockTimberFrameOak.getRegistryName() + "_" + type.getName(), INVENTORY));
+        }
+        for (final TimberFrameType type : TimberFrameType.values())
+        {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameSpruce), type.getMetadata(),
+                    new ModelResourceLocation(ModBlocks.blockTimberFrameSpruce.getRegistryName() + "_" + type.getName(), INVENTORY));
+        }
+        for (final TimberFrameType type : TimberFrameType.values())
+        {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameBirch), type.getMetadata(),
+                    new ModelResourceLocation(ModBlocks.blockTimberFrameBirch.getRegistryName() + "_" + type.getName(), INVENTORY));
+        }
+        for (final TimberFrameType type : TimberFrameType.values())
+        {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameAcacia), type.getMetadata(),
+                    new ModelResourceLocation(ModBlocks.blockTimberFrameAcacia.getRegistryName() + "_" + type.getName(), INVENTORY));
+        }
+        for (final TimberFrameType type : TimberFrameType.values())
+        {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameJungle), type.getMetadata(),
+                    new ModelResourceLocation(ModBlocks.blockTimberFrameJungle.getRegistryName() + "_" + type.getName(), INVENTORY));
+        }
+        for (final TimberFrameType type : TimberFrameType.values())
+        {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameDarkOak), type.getMetadata(),
+                    new ModelResourceLocation(ModBlocks.blockTimberFrameDarkOak.getRegistryName() + "_" + type.getName(), INVENTORY));
+        }
     }
 
     @Override
