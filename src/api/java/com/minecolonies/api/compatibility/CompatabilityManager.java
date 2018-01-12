@@ -102,7 +102,7 @@ public class CompatabilityManager implements ICompatabilityManager
     @Override
     public boolean isOre(final IBlockState block)
     {
-        if(block instanceof BlockOre || block instanceof BlockRedstoneOre)
+        if(block.getBlock() instanceof BlockOre || block.getBlock() instanceof BlockRedstoneOre)
         {
             return true;
         }
