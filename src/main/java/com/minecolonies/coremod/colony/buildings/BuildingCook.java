@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -12,6 +13,7 @@ import net.minecraft.block.BlockFurnace;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -72,6 +74,9 @@ public class BuildingCook extends AbstractBuildingWorker
     public BuildingCook(final Colony c, final BlockPos l)
     {
         super(c, l);
+        keepX.put(ItemStackUtils.ISFOOD, Integer.MAX_VALUE);
+        keepX.put(ItemStackUtils.ISCOOKABLE, Integer.MAX_VALUE);
+        keepX.put(TileEntityFurnace::isItemFuel, Integer.MAX_VALUE);
     }
 
     @NotNull

@@ -9,13 +9,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+
 /**
  * Class describing the Ancient Tome item.
  */
 public class ItemAncientTome extends AbstractItemMinecolonies
 {
-    private static final int MAX_STACK_SIZE = 64;
-
     private boolean raidWillHappen = true;
 
     /**
@@ -25,7 +25,7 @@ public class ItemAncientTome extends AbstractItemMinecolonies
     {
         super("ancienttome");
         super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        setMaxStackSize(MAX_STACK_SIZE);
+        setMaxStackSize(STACKSIZE);
     }
 
     @Override
