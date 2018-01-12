@@ -284,7 +284,15 @@ public final class StandardFactoryController implements IFactoryController
             throw (IllegalArgumentException) new IllegalArgumentException("The given compound holds an unknown output type for this Controller").initCause(e);
         }
 
-        return factory.deserialize(this, compound.getCompoundTag(NBT_DATA));
+        try
+        {
+            return factory.deserialize(this, compound.getCompoundTag(NBT_DATA));
+        }
+        catch (Throwable throwable)
+        {
+            Log.getLogger().error(throwable);
+            return null;
+        }
     }
 
     private String processClassRenaming(@NotNull final String previousClassName)

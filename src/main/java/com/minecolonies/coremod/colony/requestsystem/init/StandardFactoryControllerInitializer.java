@@ -1,10 +1,13 @@
 package com.minecolonies.coremod.colony.requestsystem.init;
 
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.factory.standard.IntegerFactory;
+import com.minecolonies.api.colony.requestsystem.factory.standard.TypeTokenFactory;
 import com.minecolonies.api.colony.requestsystem.token.InitializedTokenFactory;
 import com.minecolonies.api.colony.requestsystem.token.RandomSeededTokenFactory;
 import com.minecolonies.api.colony.requestsystem.token.StandardTokenFactory;
 import com.minecolonies.api.crafting.RecipeStorageFactory;
+import com.minecolonies.coremod.colony.requestsystem.data.*;
 import com.minecolonies.coremod.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
 import com.minecolonies.coremod.colony.requestsystem.requesters.factories.BuildingBasedRequesterFactory;
@@ -45,6 +48,14 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new StandardPlayerRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRetryingRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new RecipeStorageFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new IntegerFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new TypeTokenFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestIdentitiesDataStore.Factory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestResolversIdentitiesDataStore.Factory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardProviderRequestResolverAssignmentDataStore.Factory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestResolverRequestAssignmentDataStore.Factory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestableTypeRequestResolverAssignmentDataStore.Factory());
+
 
         StandardFactoryController.getInstance().registerNewClassRenaming("com.minecolonies.coremod.colony.requestsystem.resolvers.PlayerRequestResolver", "com.minecolonies.coremod.colony.requestsystem.resolvers.StandardPlayerRequestResolver");
     }

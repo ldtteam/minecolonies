@@ -190,6 +190,8 @@ public final class NbtTagConstants
 
     public static final String TAG_RESOLVER = "Resolver";
 
+    public static final String TAG_VALUE = "Value";
+
     /**
      * Private constructor to hide the implicit one.
      */

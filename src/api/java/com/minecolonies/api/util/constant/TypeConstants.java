@@ -21,6 +21,11 @@ import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
  */
 public final class TypeConstants
 {
+    /////Java types
+    public static final TypeToken<Integer>  INTEGER = TypeToken.of(Integer.class);
+    public static final TypeToken<TypeToken> TYPETOKEN = TypeToken.of(TypeToken.class);
+    public static final TypeToken<Class> CLASS = TypeToken.of(Class.class);
+
     /////General purpose
     @SuppressWarnings(RAWTYPES)
     public static final TypeToken<IToken>           ITOKEN           = TypeToken.of(IToken.class);
