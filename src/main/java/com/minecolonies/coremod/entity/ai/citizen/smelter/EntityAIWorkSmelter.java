@@ -350,7 +350,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
         while(amount > 0)
         {
             final ItemStack copyStack = ingots.copy();
-            if(amount  < ingots.getMaxStackSize())
+            if(amount < ingots.getMaxStackSize())
             {
                 copyStack.stackSize = amount;
             }
@@ -360,7 +360,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
             }
             amount -= copyStack.stackSize;
 
-            final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(worker.getInventoryCitizen()), ingots);
+            final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(worker.getInventoryCitizen()), copyStack);
             if(!ItemStackUtils.isEmpty(resultStack))
             {
                 resultStack.stackSize += amount / multiplier;
