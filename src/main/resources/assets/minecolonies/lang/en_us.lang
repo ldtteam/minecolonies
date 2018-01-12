@@ -542,3 +542,8 @@ com.minecolonies.coremod.citizen.rename.same=Renaming failed: 2 Citizen are not 
 com.minecolonies.coremod.citizen.rename.notAllowed=Renaming failed: You're not allowed to rename your Citizen.
 
 
+com.minecolonies.coremod.request.smeltableore=Smeltable Ore
+tile.minecolonies.blockhutsmeltery.name=Smeltery
+com.minecolonies.coremod.gui.workerHuts.Smeltery=Smeltery
+com.minecolonies.coremod.job.smelter=Smelter
+tile.minecolonies.blockHutSmeltery.name=Smeltery
