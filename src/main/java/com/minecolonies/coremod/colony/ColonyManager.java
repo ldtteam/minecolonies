@@ -230,6 +230,9 @@ public final class ColonyManager
         {
             Log.getLogger().warn("Deleting Colony " + id + " errored:", e);
         }
+        @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, id));
+        file.delete();
         ColonyManager.markDirty();
     }
 
