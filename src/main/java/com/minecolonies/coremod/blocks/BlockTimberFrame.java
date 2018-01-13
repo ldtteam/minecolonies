@@ -25,7 +25,7 @@ import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame>
 {
 
-    public static final PropertyEnum<TimberFrameType> TYPE       = PropertyEnum.create("type", TimberFrameType.class);
+    private static final PropertyEnum<TimberFrameType> TYPE       = PropertyEnum.create("type", TimberFrameType.class);
 
     /**
      * This blocks name.
@@ -76,8 +76,8 @@ public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame
      * Get the MapColor for this Block and the given BlockState
      */
     @NotNull
-    @Deprecated
     @Override
+    @Deprecated
     public MapColor getMapColor(@NotNull final IBlockState state)
     {
         return state.getValue(TYPE).getMapColor();
@@ -87,8 +87,8 @@ public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame
      * Convert the given metadata into a BlockState for this Block
      */
     @NotNull
-    @Deprecated
     @Override
+    @Deprecated
     public IBlockState getStateFromMeta(final int meta)
     {
         return this.getDefaultState().withProperty(TYPE, TimberFrameType.byMetadata(meta));

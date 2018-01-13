@@ -21,7 +21,7 @@ public enum TimberFrameType implements IStringSerializable
     private static final TimberFrameType[] META_LOOKUP = new TimberFrameType[values().length];
     static
     {
-        for (TimberFrameType enumtype : values())
+        for (final TimberFrameType enumtype : values())
         {
             META_LOOKUP[enumtype.getMetadata()] = enumtype;
         }
@@ -42,7 +42,7 @@ public enum TimberFrameType implements IStringSerializable
         this.unlocalizedName = unlocalizedNameIn;
         this.mapColor = mapColorIn;
     }
-    public static TimberFrameType byMetadata(int meta)
+    public static TimberFrameType byMetadata(final int meta)
     {
         int tempMeta = meta;
         if (tempMeta < 0 || tempMeta >= META_LOOKUP.length)
