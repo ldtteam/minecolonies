@@ -24,7 +24,7 @@ public class StandardProviderRequestResolverAssignmentDataStore implements IProv
 {
 
     private final Map<IToken<?>, Collection<IToken<?>>> assignments;
-    private final IToken<?> id;
+    private IToken<?> id;
 
     public StandardProviderRequestResolverAssignmentDataStore(
       final IToken<?> id,
@@ -50,6 +50,12 @@ public class StandardProviderRequestResolverAssignmentDataStore implements IProv
     public IToken<?> getId()
     {
         return id;
+    }
+
+    @Override
+    public void setId(final IToken<?> id)
+    {
+        this.id = id;
     }
 
     public static class Factory implements IFactory<FactoryVoidInput, StandardProviderRequestResolverAssignmentDataStore>

@@ -11,7 +11,6 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -31,19 +30,19 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TOKEN;
  */
 public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDataStore
 {
-    private final IToken<?> token;
+    private IToken<?>                     id;
     private final BiMap<IToken<?>, IRequest<?>> map;
 
     public StandardRequestIdentitiesDataStore(
-      final IToken<?> token,
+      final IToken<?> id,
       final BiMap<IToken<?>, IRequest<?>> map) {
-        this.token = token;
+        this.id = id;
         this.map = map;
     }
 
     public StandardRequestIdentitiesDataStore()
     {
-        this.token = StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN);
+        this.id = StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN);
         this.map = HashBiMap.create();
     }
 
@@ -56,7 +55,13 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
     @Override
     public IToken<?> getId()
     {
-        return token;
+        return id;
+    }
+
+    @Override
+    public void setId(final IToken<?> id)
+    {
+        this.id = id;
     }
 
     public static class Factory implements IFactory<FactoryVoidInput, StandardRequestIdentitiesDataStore>

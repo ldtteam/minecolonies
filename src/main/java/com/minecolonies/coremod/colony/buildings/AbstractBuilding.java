@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -34,9 +35,7 @@ import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.StructureWrapper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockChest;
 import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockFurnace;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
@@ -46,7 +45,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -159,29 +157,13 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      */
     @NotNull
     private final Colony colony;
+
     /**
-     * List of all open requests made by this building.
-     * <p>
-     * The key in this map is the class for the request type.
-     * The value is a list of tokens that represent the open requests inside the colony.
+     * The data store id for request system related data.
      */
     @NotNull
-    @SuppressWarnings(RAWTYPES)
-    private final Map<TypeToken, Collection<IToken<?>>> openRequests = new HashMap<>();
-    /**
-     * Keeps track of which citizen created what request. Citizen -> Request direction.
-     */
-    private final HashMap<Integer, Collection<IToken<?>>> citizensByRequests = new HashMap<>();
+    private IToken<?> rsDataStoreToken;
 
-    /**
-     * Keeps track of which citizen has completed requests. Citizen -> Request direction.
-     */
-    private final HashMap<Integer, Collection<IToken<?>>> citizensByCompletedRequests = new HashMap<>();
-
-    /**
-     * Keeps track of which citizen created what request. Request -> Citizen direction.
-     */
-    private final HashMap<IToken<?>, Integer> requestsByCitizen = new HashMap<>();
     /**
      * The ID of the building. Needed in the request system to identify it.
      */
@@ -242,6 +224,18 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         this.colony = colony;
 
         this.requester = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(BuildingBasedRequester.class), this);
+        setupRsDataStore();
+    }
+
+    protected void setupRsDataStore()
+    {
+        this.rsDataStoreToken = colony.getRequestManager()
+                                  .getDataStoreManager()
+                                  .get(
+                                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                                    TypeConstants.REQUEST_SYSTEM_BUILDING_DATA_STORE
+                                  )
+                                  .getId();
     }
 
     /**
@@ -429,47 +423,14 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             this.requester = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(BuildingBasedRequester.class), this);
         }
 
-        this.openRequests.clear();
-        if (compound.hasKey(TAG_OPEN_REQUESTS))
+        if (compound.hasKey(TAG_RS_BUILDING_DATASTORE))
         {
-            final NBTTagList requests = compound.getTagList(TAG_OPEN_REQUESTS, Constants.NBT.TAG_COMPOUND);
-            NBTUtils.streamCompound(requests).forEach(orc -> {
-                final Class<?> clazz;
-                try
-                {
-                    clazz = Class.forName(orc.getString(TAG_TOKEN));
-                }
-                catch (final ClassNotFoundException e)
-                {
-                    Log.getLogger().error("Missing request type from game: " + orc.getString(TAG_TOKEN), e);
-                    return;
-                }
-
-                final NBTTagList assigned = orc.getTagList(TAG_ASSIGNMENTS, Constants.NBT.TAG_COMPOUND);
-                final Collection<IToken<?>> tokens = NBTUtils.streamCompound(assigned)
-                                              .map(tc -> (IToken<?>) StandardFactoryController.getInstance().deserialize(tc))
-                                              .collect(Collectors.toList());
-
-                openRequests.put(TypeToken.of(clazz), tokens);
-            });
+            this.rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(TAG_RS_BUILDING_DATASTORE));
         }
-
-        this.citizensByRequests.clear();
-        if (compound.hasKey(TAG_CITIZEN_BY_REQUEST))
+        else
         {
-            final NBTTagList citizensByRequestList = compound.getTagList(TAG_CITIZEN_BY_REQUEST, Constants.NBT.TAG_COMPOUND);
-            NBTUtils.streamCompound(citizensByRequestList).forEach(cbrc -> processIntegerKeyTokenList(cbrc, citizensByRequests));
+            setupRsDataStore();
         }
-
-        this.citizensByCompletedRequests.clear();
-        if (compound.hasKey(TAG_CITIZEN_BY_COMPLETED_REQUEST))
-        {
-            final NBTTagList citizensByCompletedRequestList = compound.getTagList(TAG_CITIZEN_BY_COMPLETED_REQUEST, Constants.NBT.TAG_COMPOUND);
-            NBTUtils.streamCompound(citizensByCompletedRequestList).forEach(cbrc -> processIntegerKeyTokenList(cbrc, citizensByCompletedRequests));
-        }
-
-        this.requestsByCitizen.clear();
-        this.citizensByRequests.keySet().forEach(citizen -> this.citizensByRequests.get(citizen).forEach(requestToken -> this.requestsByCitizen.put(requestToken, citizen)));
     }
 
     public static void processIntegerKeyTokenList(final NBTTagCompound compound, final Map<Integer, Collection<IToken<?>>> outputMap)
@@ -693,32 +654,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
     private void writeRequestSystemToNBT(final NBTTagCompound compound)
     {
-        compound.setTag(TAG_REQUESTOR_ID, StandardFactoryController.getInstance().serialize(this.requester));
-
-        compound.setTag(TAG_OPEN_REQUESTS, this.openRequests.keySet().stream().map(clazz -> {
-            NBTTagCompound requestTypeCompound = new NBTTagCompound();
-
-            requestTypeCompound.setString(TAG_TOKEN, clazz.getRawType().getName());
-            requestTypeCompound.setTag(TAG_ASSIGNMENTS, this.openRequests.get(clazz)
-                                                          .stream().map(token -> StandardFactoryController.getInstance().serialize(token)).collect(NBTUtils.toNBTTagList()));
-
-            return requestTypeCompound;
-        }).collect(NBTUtils.toNBTTagList()));
-
-        compound.setTag(TAG_CITIZEN_BY_REQUEST, writeIntegerKeyTokenListToNBT(this.citizensByRequests));
-        compound.setTag(TAG_CITIZEN_BY_COMPLETED_REQUEST, writeIntegerKeyTokenListToNBT(this.citizensByCompletedRequests));
-    }
-
-    private static NBTTagList writeIntegerKeyTokenListToNBT(final Map<Integer, Collection<IToken<?>>> input)
-    {
-        return input.keySet().stream().map(key -> {
-            NBTTagCompound compound = new NBTTagCompound();
-
-            compound.setInteger(TAG_TOKEN, key);
-            compound.setTag(TAG_ASSIGNMENTS, input.get(key).stream().map(token -> StandardFactoryController.getInstance().serialize(token)).collect(NBTUtils.toNBTTagList()));
-
-            return compound;
-        }).collect(NBTUtils.toNBTTagList());
+        compound.setTag(TAG_RS_BUILDING_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
     }
 
     /**
@@ -1385,6 +1321,31 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
     //------------------------- !START! RequestSystem handling for minecolonies buildings -------------------------//
 
+    private IRequestSystemBuildingDataStore getDataStore()
+    {
+        return colony.getRequestManager().getDataStoreManager().get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_BUILDING_DATA_STORE);
+    }
+
+    private Map<TypeToken<?>, Collection<IToken<?>>> getOpenRequestsByRequestableType()
+    {
+        return getDataStore().getOpenRequestsByRequestableType();
+    }
+
+    private Map<Integer, Collection<IToken<?>>> getOpenRequestsByCitizen()
+    {
+        return getDataStore().getOpenRequestsByCitizen();
+    }
+
+    private Map<Integer, Collection<IToken<?>>> getCompletedRequestsByCitizen()
+    {
+        return getDataStore().getCompletedRequestsByCitizen();
+    }
+
+    private Map<IToken<?>, Integer> getCitizensByRequest()
+    {
+        return getDataStore().getCitizensByRequest();
+    }
+
     public <R extends IRequestable> IToken<?> createRequest(@NotNull final CitizenData citizenData, @NotNull final R requested)
     {
         final IToken<?> requestToken = colony.getRequestManager().createRequest(requester, requested);
@@ -1408,19 +1369,19 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      */
     private void addRequestToMaps(@NotNull final Integer citizenId, @NotNull final IToken<?> requestToken, @NotNull final TypeToken<?> requested)
     {
-        if (!openRequests.containsKey(requested))
+        if (!getOpenRequestsByRequestableType().containsKey(requested))
         {
-            openRequests.put(requested, new ArrayList<>());
+            getOpenRequestsByRequestableType().put(requested, new ArrayList<>());
         }
-        openRequests.get(requested).add(requestToken);
+        getOpenRequestsByRequestableType().get(requested).add(requestToken);
 
-        requestsByCitizen.put(requestToken, citizenId);
+        getCitizensByRequest().put(requestToken, citizenId);
 
-        if (!citizensByRequests.containsKey(citizenId))
+        if (!getOpenRequestsByCitizen().containsKey(citizenId))
         {
-            citizensByRequests.put(citizenId, new ArrayList<>());
+            getOpenRequestsByCitizen().put(citizenId, new ArrayList<>());
         }
-        citizensByRequests.get(citizenId).add(requestToken);
+        getOpenRequestsByCitizen().get(citizenId).add(requestToken);
     }
 
     public boolean hasWorkerOpenRequests(@NotNull final CitizenData citizen)
@@ -1431,12 +1392,12 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     @SuppressWarnings(RAWTYPES)
     public ImmutableList<IRequest> getOpenRequests(@NotNull final CitizenData data)
     {
-        if (!citizensByRequests.containsKey(data.getId()))
+        if (!getOpenRequestsByCitizen().containsKey(data.getId()))
         {
             return ImmutableList.of();
         }
 
-        return ImmutableList.copyOf(citizensByRequests.get(data.getId()).stream().map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
+        return ImmutableList.copyOf(getOpenRequestsByCitizen().get(data.getId()).stream().map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
     }
 
     @SuppressWarnings(RAWTYPES)
@@ -1472,12 +1433,12 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     @SuppressWarnings(RAWTYPES)
     public ImmutableList<IRequest> getCompletedRequests(@NotNull final CitizenData data)
     {
-        if (!citizensByCompletedRequests.containsKey(data.getId()))
+        if (!getCompletedRequestsByCitizen().containsKey(data.getId()))
         {
             return ImmutableList.of();
         }
 
-        return ImmutableList.copyOf(citizensByCompletedRequests.get(data.getId()).stream()
+        return ImmutableList.copyOf(getCompletedRequestsByCitizen().get(data.getId()).stream()
                                       .map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
     }
 
@@ -1511,15 +1472,15 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
     public void markRequestAsAccepted(@NotNull final CitizenData data, @NotNull final IToken<?> token)
     {
-        if (!citizensByCompletedRequests.containsKey(data.getId()) || !citizensByCompletedRequests.get(data.getId()).contains(token))
+        if (!getCompletedRequestsByCitizen().containsKey(data.getId()) || !getCompletedRequestsByCitizen().get(data.getId()).contains(token))
         {
             throw new IllegalArgumentException("The given token " + token + " is not known as a completed request waiting for acceptance by the citizen.");
         }
 
-        citizensByCompletedRequests.get(data.getId()).remove(token);
-        if (citizensByCompletedRequests.get(data.getId()).isEmpty())
+        getCompletedRequestsByCitizen().get(data.getId()).remove(token);
+        if (getCompletedRequestsByCitizen().get(data.getId()).isEmpty())
         {
-            citizensByCompletedRequests.remove(data.getId());
+            getCompletedRequestsByCitizen().remove(data.getId());
         }
 
         getColony().getRequestManager().updateRequestState(token, RequestState.RECEIVED);
@@ -1532,28 +1493,28 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         {
             getColony().getRequestManager().updateRequestState(request.getToken(), RequestState.CANCELLED);
 
-            if (openRequests.containsKey(TypeToken.of(request.getRequest().getClass())))
+            if (getOpenRequestsByRequestableType().containsKey(TypeToken.of(request.getRequest().getClass())))
             {
-                openRequests.get(TypeToken.of(request.getRequest().getClass())).remove(request.getToken());
-                if (openRequests.get(TypeToken.of(request.getRequest().getClass())).isEmpty())
+                getOpenRequestsByRequestableType().get(TypeToken.of(request.getRequest().getClass())).remove(request.getToken());
+                if (getOpenRequestsByRequestableType().get(TypeToken.of(request.getRequest().getClass())).isEmpty())
                 {
-                    openRequests.remove(TypeToken.of(request.getRequest().getClass()));
+                    getOpenRequestsByRequestableType().remove(TypeToken.of(request.getRequest().getClass()));
                 }
             }
 
-            requestsByCitizen.remove(request.getToken());
+            getCitizensByRequest().remove(request.getToken());
         });
 
         getCompletedRequests(data).forEach(request -> getColony().getRequestManager().updateRequestState(request.getToken(), RequestState.RECEIVED));
 
-        if (citizensByRequests.containsKey(data.getId()))
+        if (getOpenRequestsByCitizen().containsKey(data.getId()))
         {
-            citizensByRequests.remove(data.getId());
+            getOpenRequestsByCitizen().remove(data.getId());
         }
 
-        if (citizensByCompletedRequests.containsKey(data.getId()))
+        if (getCompletedRequestsByCitizen().containsKey(data.getId()))
         {
-            citizensByCompletedRequests.remove(data.getId());
+            getCompletedRequestsByCitizen().remove(data.getId());
         }
 
         markDirty();
@@ -1575,7 +1536,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             return;
         }
 
-        for (final int citizenId : citizensByRequests.keySet())
+        for (final int citizenId : getOpenRequestsByCitizen().keySet())
         {
             final CitizenData data = getColony().getCitizenManager().getCitizen(citizenId);
 
@@ -1666,27 +1627,27 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     @Override
     public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        final Integer citizenThatRequested = requestsByCitizen.remove(token);
-        citizensByRequests.get(citizenThatRequested).remove(token);
+        final Integer citizenThatRequested = getCitizensByRequest().remove(token);
+        getOpenRequestsByCitizen().get(citizenThatRequested).remove(token);
 
-        if (citizensByRequests.get(citizenThatRequested).isEmpty())
+        if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
         {
-            citizensByRequests.remove(citizenThatRequested);
+            getOpenRequestsByCitizen().remove(citizenThatRequested);
         }
 
         final IRequest<?> requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
-        openRequests.get(TypeToken.of(requestThatCompleted.getRequest().getClass())).remove(token);
+        getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).remove(token);
 
-        if (openRequests.get(TypeToken.of(requestThatCompleted.getRequest().getClass())).isEmpty())
+        if (getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).isEmpty())
         {
-            openRequests.remove(TypeToken.of(requestThatCompleted.getRequest().getClass()));
+            getOpenRequestsByRequestableType().remove(TypeToken.of(requestThatCompleted.getRequest().getClass()));
         }
 
-        if (!citizensByCompletedRequests.containsKey(citizenThatRequested))
+        if (!getCompletedRequestsByCitizen().containsKey(citizenThatRequested))
         {
-            citizensByCompletedRequests.put(citizenThatRequested, new ArrayList<>());
+            getCompletedRequestsByCitizen().put(citizenThatRequested, new ArrayList<>());
         }
-        citizensByCompletedRequests.get(citizenThatRequested).add(token);
+        getCompletedRequestsByCitizen().get(citizenThatRequested).add(token);
 
         markDirty();
     }
@@ -1695,23 +1656,23 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     @NotNull
     public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken token)
     {
-        final int citizenThatRequested = requestsByCitizen.remove(token);
-        citizensByRequests.get(citizenThatRequested).remove(token);
+        final int citizenThatRequested = getCitizensByRequest().remove(token);
+        getOpenRequestsByCitizen().get(citizenThatRequested).remove(token);
 
-        if (citizensByRequests.get(citizenThatRequested).isEmpty())
+        if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
         {
-            citizensByRequests.remove(citizenThatRequested);
+            getOpenRequestsByCitizen().remove(citizenThatRequested);
         }
 
         final IRequest<?> requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
         if (requestThatCompleted != null)
         {
-            if (openRequests.containsKey(TypeToken.of(requestThatCompleted.getRequest().getClass()))){
-                openRequests.get(TypeToken.of(requestThatCompleted.getRequest().getClass())).remove(token);
+            if (getOpenRequestsByRequestableType().containsKey(TypeToken.of(requestThatCompleted.getRequest().getClass()))){
+                getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).remove(token);
 
-                if (openRequests.get(TypeToken.of(requestThatCompleted.getRequest().getClass())).isEmpty())
+                if (getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).isEmpty())
                 {
-                    openRequests.remove(TypeToken.of(requestThatCompleted.getRequest().getClass()));
+                    getOpenRequestsByRequestableType().remove(TypeToken.of(requestThatCompleted.getRequest().getClass()));
                 }
             }
         }
@@ -1728,23 +1689,23 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     @Override
     public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        if (!requestsByCitizen.containsKey(token))
+        if (!getCitizensByRequest().containsKey(token))
         {
             return new TextComponentString("<UNKNOWN>");
         }
 
-        final Integer citizenData = requestsByCitizen.get(token);
+        final Integer citizenData = getCitizensByRequest().get(token);
         return new TextComponentString(this.getSchematicName() + " " + getColony().getCitizenManager().getCitizen(citizenData).getName());
     }
 
     public Optional<CitizenData> getCitizenForRequest(@NotNull final IToken token)
     {
-        if (!requestsByCitizen.containsKey(token) || getColony() == null)
+        if (!getCitizensByRequest().containsKey(token) || getColony() == null)
         {
             return Optional.empty();
         }
 
-        int citizenID = requestsByCitizen.get(token);
+        int citizenID = getCitizensByRequest().get(token);
         return Optional.of(getColony().getCitizenManager().getCitizen(citizenID));
     }
 

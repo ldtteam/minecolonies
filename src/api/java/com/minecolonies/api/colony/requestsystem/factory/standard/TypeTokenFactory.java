@@ -3,6 +3,8 @@ package com.minecolonies.api.colony.requestsystem.factory.standard;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.colony.requestsystem.factory.ITypeOverrideHandler;
+import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.NBTTagCompound;
@@ -54,6 +56,22 @@ public class TypeTokenFactory implements IFactory<Class, TypeToken>
         catch (ClassNotFoundException e)
         {
             throw new IllegalStateException("Failed to create TypeToken", e);
+        }
+    }
+
+    public static class TypeTokenSubTypeOverrideHandler implements ITypeOverrideHandler<TypeToken>
+    {
+
+        @Override
+        public boolean matches(final TypeToken<?> inputType)
+        {
+            return ReflectionUtils.getSuperClasses(inputType).contains(TypeConstants.TYPETOKEN);
+        }
+
+        @Override
+        public TypeToken<TypeToken> getOutputType()
+        {
+            return TypeConstants.TYPETOKEN;
         }
     }
 }

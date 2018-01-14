@@ -28,19 +28,19 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
  */
 public class StandardRequestResolversIdentitiesDataStore implements IRequestResolverIdentitiesDataStore
 {
-    private final IToken<?>                             token;
+    private IToken<?>                                   id;
     private final BiMap<IToken<?>, IRequestResolver<?>> map;
 
     public StandardRequestResolversIdentitiesDataStore(
-      final IToken<?> token,
+      final IToken<?> id,
       final BiMap<IToken<?>, IRequestResolver<?>> map) {
-        this.token = token;
+        this.id = id;
         this.map = map;
     }
 
     public StandardRequestResolversIdentitiesDataStore()
     {
-        this.token = StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN);
+        this.id = StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN);
         this.map = HashBiMap.create();
     }
 
@@ -53,7 +53,13 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
     @Override
     public IToken<?> getId()
     {
-        return token;
+        return id;
+    }
+
+    @Override
+    public void setId(final IToken<?> id)
+    {
+        this.id = id;
     }
 
     public static class Factory implements IFactory<FactoryVoidInput, StandardRequestResolversIdentitiesDataStore>
@@ -90,9 +96,11 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
 
             systemCompound.setTag(TAG_TOKEN, controller.serialize(standardRequestIdentitiesDataStore.getId()));
             systemCompound.setTag(TAG_LIST, standardRequestIdentitiesDataStore.getIdentities().keySet().stream().map(token -> {
-                NBTTagCompound mapCompound = new NBTTagCompound();
+                final NBTTagCompound mapCompound = new NBTTagCompound();
+
                 mapCompound.setTag(TAG_TOKEN, controller.serialize(token));
                 mapCompound.setTag(TAG_RESOLVER, controller.serialize(standardRequestIdentitiesDataStore.getIdentities().get(token)));
+
                 return mapCompound;
             }).collect(NBTUtils.toNBTTagList()));
 

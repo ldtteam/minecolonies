@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.requestsystem.management;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.data.*;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
@@ -21,27 +22,21 @@ import java.util.Set;
  */
 public interface IStandardRequestManager extends IRequestManager
 {
-    @NotNull
-    BiMap<IToken<?>, IRequestResolver<? extends IRequestable>> getResolverBiMap();
 
     @NotNull
-    BiMap<IToken<?>, IRequest<?>> getRequestBiMap();
+    IRequestIdentitiesDataStore getRequestIdentitiesDataStore();
 
     @NotNull
-    Map<IToken<?>, ImmutableCollection<IToken<?>>> getProviderResolverMap();
+    IRequestResolverIdentitiesDataStore getRequestResolverIdentitiesDataStore();
 
     @NotNull
-    Map<IToken<?>, Set<IToken<?>>> getResolverRequestMap();
+    IProviderResolverAssignmentDataStore getProviderResolverAssignmentDataStore();
 
     @NotNull
-    Map<IToken<?>, IToken<?>> getRequestResolverMap();
+    IRequestResolverRequestAssignmentDataStore getRequestResolverRequestAssignmentDataStore();
 
     @NotNull
-    Map<TypeToken<?>, Collection<IRequestResolver<?>>> getRequestClassResolverMap();
-
-    boolean isDataSimulation();
-
-    boolean isResolvingSimulation();
+    IRequestableTypeRequestResolverAssignmentDataStore getRequestableTypeRequestResolverAssignmentDataStore();
 
     int getCurrentVersion();
 
