@@ -302,7 +302,7 @@ public abstract class AbstractBuildingView implements IRequester
     @Override
     public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        if (!getCitizensByRequest().containsKey(token))
+        if (getColony() == null || !getCitizensByRequest().containsKey(token) || getColony().getCitizen(getCitizensByRequest().get(token)) == null)
         {
             return new TextComponentString("<UNKNOWN>");
         }

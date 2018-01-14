@@ -207,8 +207,9 @@ public class Image extends Pane
         if (this.customSized)
         {
             // /Draw
-            drawModalRectWithCustomSizedTexture(x, y,
+            drawScaledCustomSizeModalRect(x, y,
               imageOffsetX, imageOffsetY,
+                    mapWidth, mapHeight,
               imageWidth != 0 ? imageWidth : getWidth(),
               imageHeight != 0 ? imageHeight : getHeight(),
               mapWidth, mapHeight);

@@ -142,7 +142,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     @Override
     public void onOpened()
     {
-        String[] labels = new String[] {request.getLongDisplayString().getFormattedText()};
+        final String[] labels = new String[] {request.getLongDisplayString().getFormattedText()};
         final Box box = findPaneOfTypeByID(BOX_ID_REQUEST, Box.class);
         int y = Y_OFFSET_EACH_TEXTFIELD;
         for (final String s : labels)
@@ -169,7 +169,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
             logo.setImage(request.getDisplayIcon());
         }
 
-        ColonyView view = ColonyManager.getColonyView(colonyId);
+        final ColonyView view = ColonyManager.getColonyView(colonyId);
         findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
         final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
         targetLabel.setLabelText(request.getRequester().getDeliveryLocation().toString());
