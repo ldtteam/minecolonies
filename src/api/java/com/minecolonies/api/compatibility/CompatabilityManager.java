@@ -113,6 +113,10 @@ public class CompatabilityManager implements ICompatabilityManager
     @Override
     public boolean isOre(@NotNull final ItemStack stack)
     {
+        if(ItemStackUtils.isEmpty(stack))
+        {
+            return false;
+        }
         final int[] ids = OreDictionary.getOreIDs(stack);
         for(final int id : ids)
         {
