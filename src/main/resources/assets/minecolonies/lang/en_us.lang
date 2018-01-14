@@ -154,6 +154,13 @@ com.minecolonies.coremod.gui.townHall.population.guards=Guards: %d
 com.minecolonies.coremod.gui.townHall.population.lumberjacks=Lumberjacks: %d
 com.minecolonies.coremod.gui.townHall.population.farmers=Farmers: %d
 com.minecolonies.coremod.gui.townHall.population.bakers=Bakers: %d
+com.minecolonies.coremod.gui.townHall.population.smelters=Smelters: %d
+com.minecolonies.coremod.gui.townHall.population.shepherds=Shepherds: %d
+com.minecolonies.coremod.gui.townHall.population.chickenherders=Chickenherders: %d
+com.minecolonies.coremod.gui.townHall.population.cowboys=Cowboys: %d
+com.minecolonies.coremod.gui.townHall.population.swineherders=Swineherders: %d
+
+
 com.minecolonies.coremod.gui.workerHuts.upgradeUnavailable=No Upgrade Available
 com.minecolonies.coremod.gui.townHall.actions=Actions
 com.minecolonies.coremod.gui.warehouse.toStonemason=Deliver to Stonemason:
