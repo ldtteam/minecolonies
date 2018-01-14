@@ -426,7 +426,8 @@ public class WindowCitizen extends AbstractWindowSkeleton
                 }
 
                 ColonyView view = ColonyManager.getColonyView(citizen.getColonyId());
-                rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
+                rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
+                        .setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
                 rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
                   .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
 
