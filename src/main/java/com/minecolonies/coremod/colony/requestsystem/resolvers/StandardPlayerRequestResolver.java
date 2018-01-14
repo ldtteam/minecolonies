@@ -127,13 +127,13 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 
                     LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
                             request.getRequester().getDisplayName(manager, request.getToken()).getFormattedText(),
-                            getRequestMessage(request),
+                            getRequestMessage(request).getFormattedText(),
                             request.getRequester().getRequesterLocation().toString()
                     );
                 }
                 LanguageHandler.sendPlayersMessage(players, "com.minecolonies.requestsystem.playerresolver",
                         colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(manager, request.getToken()).getFormattedText(),
-                        getRequestMessage(request),
+                        getRequestMessage(request).getFormattedText(),
                         request.getRequester().getRequesterLocation().toString());
             }
         }

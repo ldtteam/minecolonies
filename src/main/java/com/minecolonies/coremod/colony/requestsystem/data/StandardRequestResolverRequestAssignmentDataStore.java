@@ -25,7 +25,7 @@ public class StandardRequestResolverRequestAssignmentDataStore implements IReque
 {
 
     private final Map<IToken<?>, Collection<IToken<?>>> assignments;
-    private final IToken<?> id;
+    private IToken<?> id;
 
     public StandardRequestResolverRequestAssignmentDataStore(
       final IToken<?> id,
@@ -51,6 +51,12 @@ public class StandardRequestResolverRequestAssignmentDataStore implements IReque
     public IToken<?> getId()
     {
         return id;
+    }
+
+    @Override
+    public void setId(final IToken<?> id)
+    {
+        this.id = id;
     }
 
     public static class Factory implements IFactory<FactoryVoidInput, StandardRequestResolverRequestAssignmentDataStore>
@@ -83,11 +89,11 @@ public class StandardRequestResolverRequestAssignmentDataStore implements IReque
         public NBTTagCompound serialize(
           @NotNull final IFactoryController controller, @NotNull final StandardRequestResolverRequestAssignmentDataStore standardProviderRequestResolverAssignmentDataStore)
         {
-            NBTTagCompound compound = new NBTTagCompound();
+           final NBTTagCompound compound = new NBTTagCompound();
 
             compound.setTag(NbtTagConstants.TAG_TOKEN, controller.serialize(standardProviderRequestResolverAssignmentDataStore.id));
             compound.setTag(NbtTagConstants.TAG_LIST, standardProviderRequestResolverAssignmentDataStore.assignments.keySet().stream().map(t -> {
-                NBTTagCompound entryCompound = new NBTTagCompound();
+                final NBTTagCompound entryCompound = new NBTTagCompound();
 
                 entryCompound.setTag(NbtTagConstants.TAG_TOKEN, controller.serialize(t));
                 entryCompound.setTag(NbtTagConstants.TAG_LIST, standardProviderRequestResolverAssignmentDataStore.assignments.get(t).stream()
@@ -104,8 +110,8 @@ public class StandardRequestResolverRequestAssignmentDataStore implements IReque
         @Override
         public StandardRequestResolverRequestAssignmentDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt) throws Throwable
         {
-            IToken<?> token = controller.deserialize(nbt.getCompoundTag(NbtTagConstants.TAG_TOKEN));
-            Map<IToken<?>, Collection<IToken<?>>> map = NBTUtils.streamCompound(nbt.getTagList(NbtTagConstants.TAG_LIST, Constants.NBT.TAG_COMPOUND))
+            final IToken<?> token = controller.deserialize(nbt.getCompoundTag(NbtTagConstants.TAG_TOKEN));
+            final Map<IToken<?>, Collection<IToken<?>>> map = NBTUtils.streamCompound(nbt.getTagList(NbtTagConstants.TAG_LIST, Constants.NBT.TAG_COMPOUND))
                                                           .map(nbtTagCompound -> {
                                                               final IToken<?> elementToken = controller.deserialize(nbtTagCompound.getCompoundTag(NbtTagConstants.TAG_TOKEN));
                                                               final Collection<IToken<?>> elements = NBTUtils.streamCompound(nbtTagCompound.getTagList(NbtTagConstants.TAG_LIST,

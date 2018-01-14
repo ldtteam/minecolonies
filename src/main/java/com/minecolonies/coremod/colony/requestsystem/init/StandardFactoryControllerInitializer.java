@@ -55,7 +55,11 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new StandardProviderRequestResolverAssignmentDataStore.Factory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestResolverRequestAssignmentDataStore.Factory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestableTypeRequestResolverAssignmentDataStore.Factory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestSystemBuildingDataStore.Factory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestSystemDeliveryManJobDataStore.Factory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardDataStoreManager.Factory());
 
+        StandardFactoryController.getInstance().registerNewTypeOverrideHandler(new TypeTokenFactory.TypeTokenSubTypeOverrideHandler());
 
         StandardFactoryController.getInstance().registerNewClassRenaming("com.minecolonies.coremod.colony.requestsystem.resolvers.PlayerRequestResolver", "com.minecolonies.coremod.colony.requestsystem.resolvers.StandardPlayerRequestResolver");
     }

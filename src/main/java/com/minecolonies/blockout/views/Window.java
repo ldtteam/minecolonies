@@ -7,12 +7,14 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 
 /**
  * Blockout window, high level root pane.
  */
+@SideOnly(Side.CLIENT)
 public class Window extends View
 {
     /**

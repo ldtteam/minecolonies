@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequest
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * Class used to handle the inner workings of the request system with regards to providers.
@@ -25,9 +26,9 @@ public final class ProviderHandler
      *
      * @throws IllegalArgumentException when the token is not belonging to a registered provider.
      */
-    public static ImmutableCollection<IToken<?>> getRegisteredResolvers(final IStandardRequestManager manager, final IRequestResolverProvider provider)
+    public static Collection<IToken<?>> getRegisteredResolvers(final IStandardRequestManager manager, final IRequestResolverProvider provider)
     {
-        return manager.getProviderResolverMap().get(provider.getToken());
+        return manager.getProviderResolverAssignmentDataStore().getAssignments().get(provider.getToken());
     }
 
     /**
@@ -42,7 +43,7 @@ public final class ProviderHandler
         final ImmutableList.Builder<IToken<?>> resolverListBuilder = new ImmutableList.Builder<>();
         resolverListBuilder.addAll(ResolverHandler.registerResolvers(manager, provider.getResolvers()));
 
-        manager.getProviderResolverMap().put(provider.getToken(), resolverListBuilder.build());
+        manager.getProviderResolverAssignmentDataStore().getAssignments().put(provider.getToken(), resolverListBuilder.build());
         manager.getColony().markDirty();
     }
 
@@ -64,14 +65,14 @@ public final class ProviderHandler
         LogHandler.log("Removing provider: " + token);
 
         //Get the resolvers that are being removed.
-        final ImmutableCollection<IToken<?>> assignedResolvers = getRegisteredResolvers(manager, token);
+        final Collection<IToken<?>> assignedResolvers = getRegisteredResolvers(manager, token);
         for (final IToken<?> resolverToken : assignedResolvers)
         {
             //Skip if the resolver has no requests assigned.
-            if (!manager.getResolverRequestMap().containsKey(resolverToken) || manager.getResolverRequestMap().get(resolverToken).isEmpty())
+            if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolverToken) || manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken).isEmpty())
             {
                 LogHandler.log("Removing resolver without assigned requests: " + resolverToken);
-                manager.getResolverRequestMap().remove(resolverToken);
+                manager.getRequestResolverRequestAssignmentDataStore().getAssignments().remove(resolverToken);
 
                 ResolverHandler.removeResolver(manager, resolverToken);
 
@@ -79,7 +80,7 @@ public final class ProviderHandler
             }
 
             //Clone the original list to modify it during iteration, if need be.
-            final Collection<IToken<?>> assignedRequests = new ArrayList<>(manager.getResolverRequestMap().get(resolverToken));
+            final Collection<IToken<?>> assignedRequests = new ArrayList<>(manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken));
             LogHandler.log("Starting reassignment of already registered requests registered to resolver with token: " + resolverToken);
 
             //Get all assigned requests and reassign them.
@@ -94,7 +95,7 @@ public final class ProviderHandler
         }
 
         //Removing the data from the maps.
-        manager.getProviderResolverMap().remove(token);
+        manager.getProviderResolverAssignmentDataStore().getAssignments().remove(token);
         manager.getColony().markDirty();
         LogHandler.log("Removed provider: " + token);
     }
@@ -108,9 +109,9 @@ public final class ProviderHandler
      *
      * @throws IllegalArgumentException when the token is not belonging to a registered provider.
      */
-    public static ImmutableCollection<IToken<?>> getRegisteredResolvers(final IStandardRequestManager manager, final IToken<?> token)
+    public static Collection<IToken<?>> getRegisteredResolvers(final IStandardRequestManager manager, final IToken<?> token)
     {
-        return manager.getProviderResolverMap().get(token);
+        return manager.getProviderResolverAssignmentDataStore().getAssignments().get(token);
     }
 
     public static void removeProvider(final IStandardRequestManager manager, final IRequestResolverProvider provider)

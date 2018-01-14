@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class StandardRequestableTypeRequestResolverAssignmentDataStore implements IRequestableTypeRequestResolverAssignmentDataStore
 {
 
-    private final IToken<?> id;
+    private IToken<?> id;
     private final Map<TypeToken<?>, Collection<IToken<?>>> assignments;
 
     public StandardRequestableTypeRequestResolverAssignmentDataStore(
@@ -49,6 +49,12 @@ public class StandardRequestableTypeRequestResolverAssignmentDataStore implement
     public IToken<?> getId()
     {
         return id;
+    }
+
+    @Override
+    public void setId(final IToken<?> id)
+    {
+        this.id = id;
     }
 
     public static class Factory implements IFactory<FactoryVoidInput, StandardRequestableTypeRequestResolverAssignmentDataStore>

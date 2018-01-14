@@ -12,4 +12,11 @@ public interface IDataStore
      * @return The {@link IToken} for this {@link IDataStore}
      */
     IToken<?> getId();
+
+    /**
+     * Method to set the {@link IToken} used to identify this {@link IDataStore}.
+     * Used during creation to setup the initial Id.
+     * @param id The new Id.
+     */
+    void setId(IToken<?> id);
 }
