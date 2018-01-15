@@ -270,8 +270,9 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
-    public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos)
+    public AxisAlignedBB getBoundingBox(final IBlockState stateIn, final IBlockAccess source, final BlockPos pos)
     {
+        final IBlockState state = getActualState(stateIn, source, pos);
         if(state.getValue(VARIANT).equals(Type.CORNER))
         {
             if (state.getValue(FACING).equals(NORTH))
