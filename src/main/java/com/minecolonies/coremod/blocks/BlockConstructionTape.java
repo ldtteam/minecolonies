@@ -5,6 +5,7 @@ import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
@@ -27,8 +28,7 @@ import java.util.Locale;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
-import static net.minecraft.util.EnumFacing.EAST;
-import static net.minecraft.util.EnumFacing.WEST;
+import static net.minecraft.util.EnumFacing.*;
 
 /**
  * This block is used as a border to show the size of the building.
@@ -109,6 +109,87 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
      * Height of the collision box.
      */
     private static final double HEIGHT_COLLISION = 1.0;
+
+    /**
+     * Start of the collision box at x facing North.
+     */
+    private static final double N_START_COLLISION_X = 0.0;
+
+    /**
+     * End of the collision box facing North.
+     */
+    private static final double N_END_COLLISION_X = 0.5625;
+
+    /**
+     * Start of the collision box at z facing North.
+     */
+    private static final double N_START_COLLISION_Z = 0.0;
+
+    /**
+     * End of the collision box facing North.
+     */
+    private static final double N_END_COLLISION_Z = 0.5625;
+
+    /**
+     * Start of the collision box at x facing West.
+     */
+    private static final double W_START_COLLISION_X = 0.0;
+
+    /**
+     * Start of the collision box at z facing West.
+     */
+    private static final double W_START_COLLISION_Z = 0.4375;
+
+    /**
+     * End of the collision box facing West.
+     */
+    private static final double W_END_COLLISION_Z = 1.0;
+
+    /**
+     * Start of the collision box at x facing South.
+     */
+    private static final double S_START_COLLISION_X = 0.4375;
+
+    /**
+     * End of the collision box facing South.
+     */
+    private static final double S_END_COLLISION_X = 1.0;
+
+    /**
+     * Start of the collision box at z facing South.
+     */
+    private static final double S_START_COLLISION_Z = 0.4375;
+
+    /**
+     * End of the collision box facing South.
+     */
+    private static final double S_END_COLLISION_Z = 1.0;
+
+    /**
+     * Start of the collision box at x facing East.
+     */
+    private static final double E_START_COLLISION_X = 0.4375;
+
+    /**
+     * End of the collision box facing East.
+     */
+    private static final double E_END_COLLISION_X = 1.0;
+
+    /**
+     * Start of the collision box at z facing East.
+     */
+    private static final double E_START_COLLISION_Z = 0.0;
+
+    /**
+     * End of the collision box facing West.
+     */
+    private static final double W_END_COLLISION_X = 0.5625;
+
+    /**
+     * End of the collision box facing East.
+     */
+    private static final double E_END_COLLISION_Z = 0.5625;
+
     /**
      * How much light goes through the block.
      */
@@ -191,6 +272,45 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     @Deprecated
     public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos)
     {
+        if(state.getValue(VARIANT).equals(Type.CORNER))
+        {
+            if (state.getValue(FACING).equals(NORTH))
+            {
+                return new AxisAlignedBB((float) N_START_COLLISION_X,
+                        (float) BOTTOM_COLLISION,
+                        (float) N_START_COLLISION_Z,
+                        (float) N_END_COLLISION_X,
+                        (float) HEIGHT_COLLISION,
+                        (float) N_END_COLLISION_Z);
+            }
+            if (state.getValue(FACING).equals(WEST))
+            {
+                return new AxisAlignedBB((float) W_START_COLLISION_X,
+                        (float) BOTTOM_COLLISION,
+                        (float) W_START_COLLISION_Z,
+                        (float) W_END_COLLISION_X,
+                        (float) HEIGHT_COLLISION,
+                        (float) W_END_COLLISION_Z);
+            }
+            if (state.getValue(FACING).equals(SOUTH))
+            {
+                return new AxisAlignedBB((float) S_START_COLLISION_X,
+                        (float) BOTTOM_COLLISION,
+                        (float) S_START_COLLISION_Z,
+                        (float) S_END_COLLISION_X,
+                        (float) HEIGHT_COLLISION,
+                        (float) S_END_COLLISION_Z);
+            }
+            else
+            {
+                return new AxisAlignedBB((float) E_START_COLLISION_X,
+                        (float) BOTTOM_COLLISION,
+                        (float) E_START_COLLISION_Z,
+                        (float) E_END_COLLISION_X,
+                        (float) HEIGHT_COLLISION,
+                        (float) E_END_COLLISION_Z);
+            }
+        }
 
         if (state.getValue(FACING).equals(EAST) || state.getValue(FACING).equals(WEST))
         {
@@ -236,11 +356,11 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
                 world.getBlockState(position.north()).getBlock() instanceof BlockConstructionTape,
                 world.getBlockState(position.south()).getBlock() instanceof BlockConstructionTape};
 
-        if((connectors[0] && connectors[1]) || (connectors[2] && connectors[3]))
+        if((connectors[0] && connectors[2]) || (connectors[0] && connectors[3]) || (connectors[1] && connectors[3]) || (connectors[1] && connectors[2]))
         {
-            return state.withProperty(VARIANT, Type.STRAIGHT);
+            return state.withProperty(VARIANT, Type.CORNER);
         }
-        return state.withProperty(VARIANT, Type.CORNER);
+        return state.withProperty(VARIANT, Type.STRAIGHT);
     }
 
     /**
@@ -293,9 +413,13 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
         return BlockRenderLayer.SOLID;
     }
 
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
     @SuppressWarnings(DEPRECATION)
     @NotNull
     @Override
+    @Deprecated
     public IBlockState getStateForPlacement(
                                              final World worldIn,
                                              final BlockPos pos,
@@ -314,7 +438,7 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, FACING);
+        return new BlockStateContainer(this, new IProperty[] {FACING, VARIANT});
     }
 
     /**
