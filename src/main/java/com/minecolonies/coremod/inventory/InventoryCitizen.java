@@ -502,10 +502,10 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * Adds the item stack to the inventory, returns false if it is impossible.
+     * Adds the item stack to the inventory, returns true if it is impossible.
      *
      * @param itemStackIn stack to add.
-     * @return true if possible.
+     * @return false if possible.
      */
     public boolean addItemStackToInventory(final ItemStack itemStackIn)
     {
