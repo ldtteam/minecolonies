@@ -78,9 +78,17 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
 
     @Nullable
     @Override
-    public IRequest<?> onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request)
+    public IRequest<?> onRequestCancelled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request)
     {
         return null;
+    }
+
+    @Override
+    public void onRequestBeingOverruled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request)
+    {
+        //NOOP
     }
 
     @Override

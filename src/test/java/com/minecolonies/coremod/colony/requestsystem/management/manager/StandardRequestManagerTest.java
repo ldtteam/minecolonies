@@ -408,13 +408,19 @@ public class StandardRequestManagerTest
             return null;
         }
 
-        @SuppressWarnings(RAWTYPES)
         @Nullable
         @Override
-        public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request)
-          throws IllegalArgumentException
+        public IRequest<?> onRequestCancelled(
+          @NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request)
         {
             return null;
+        }
+
+        @Override
+        public void onRequestBeingOverruled(
+          @NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request)
+        {
+
         }
 
         @Override

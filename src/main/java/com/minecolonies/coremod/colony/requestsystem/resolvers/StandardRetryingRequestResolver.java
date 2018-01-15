@@ -122,13 +122,11 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
         return null;
     }
 
-    @SuppressWarnings(RAWTYPES)
     @Nullable
     @Override
-    public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
+    public IRequest<?> onRequestCancelled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
     {
-        //Okey somebody completed it or what ever.
-        //Lets remove if from our data structures:
         if (assignedRequests.containsKey(request.getToken()))
         {
             delays.remove(request.getToken());
@@ -137,6 +135,13 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 
         //No further processing needed.
         return null;
+    }
+
+    @Override
+    public void onRequestBeingOverruled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
+    {
+        onRequestCancelled(manager, request);
     }
 
     @Override

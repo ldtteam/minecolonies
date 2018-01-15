@@ -36,10 +36,14 @@ public abstract class AbstractBuildingDependentRequestResolver<R extends IReques
     {
         if (!manager.getColony().getWorld().isRemote)
         {
-            final AbstractBuilding building = getBuilding(manager, requestToCheck.getToken()).map(r -> (AbstractBuilding) r).get();
-            if (building != null)
+            final ILocation requesterLocation = requestToCheck.getRequester().getRequesterLocation();
+            if (requesterLocation.equals(getRequesterLocation()))
             {
-                return canResolveForBuilding(manager, requestToCheck, building);
+                final AbstractBuilding building = getBuilding(manager, requestToCheck.getToken()).map(r -> (AbstractBuilding) r).get();
+                if (building != null)
+                {
+                    return canResolveForBuilding(manager, requestToCheck, building);
+                }
             }
         }
 

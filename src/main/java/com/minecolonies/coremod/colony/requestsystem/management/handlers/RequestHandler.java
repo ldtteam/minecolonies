@@ -343,6 +343,9 @@ public final class RequestHandler
             currentChildren.forEach(t -> onRequestCancelled(manager, t));
         }
 
+        //Notify the resolver.
+        ResolverHandler.getResolverForRequest(manager, token).onRequestBeingOverruled(manager, request);
+
         //This will notify everyone :D
         manager.updateRequestState(token, RequestState.COMPLETED);
     }
@@ -398,7 +401,7 @@ public final class RequestHandler
 
         //Now lets get ourselfs a clean up.
         final IRequestResolver<?> targetResolver = ResolverHandler.getResolverForRequest(manager, request);
-        processParentReplacement(manager, request, targetResolver.onRequestCancelledOrOverruled(manager, request));
+        processParentReplacement(manager, request, targetResolver.onRequestCancelled(manager, request));
 
         manager.updateRequestState(token, RequestState.FINALIZING);
     }

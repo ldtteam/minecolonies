@@ -125,9 +125,17 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     @Nullable
     @Override
-    public IRequest<?> onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public IRequest<?> onRequestCancelled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         return null;
+    }
+
+    @Override
+    public void onRequestBeingOverruled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    {
+
     }
 
     private static Set<TileEntityWareHouse> getWareHousesInColony(Colony colony)
