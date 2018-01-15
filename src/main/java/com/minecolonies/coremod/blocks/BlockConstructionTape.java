@@ -3,14 +3,17 @@ package com.minecolonies.coremod.blocks;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -21,6 +24,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
@@ -33,6 +37,10 @@ import static net.minecraft.util.EnumFacing.WEST;
  */
 public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstructionTape>
 {
+    /**
+     * The variants of the shingle slab.
+     */
+    public static final PropertyEnum<Type> VARIANT = PropertyEnum.create("variant", Type.class);
 
     /**
      * The position it faces.
@@ -124,7 +132,7 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     private void initBlock()
     {
         setRegistryName(BLOCK_NAME);
-        setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
+        setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
         setHardness(BLOCK_HARDNESS);
@@ -206,6 +214,37 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     }
 
     /**
+     * @deprecated remove when minecraft invents something better.
+     */
+    @Deprecated
+    @Override
+    public IBlockState getActualState(@NotNull final IBlockState state, @NotNull final IBlockAccess worldIn, @NotNull final BlockPos pos)
+    {
+        return getTapeShape(state, worldIn, pos);
+    }
+
+    /**
+     * Get the step shape of the slab
+     * @param state the state.
+     * @param world the world.
+     * @param position the position.Re
+     * @return the blockState to use.
+     */
+    private static IBlockState getTapeShape(@NotNull final IBlockState state, @NotNull final IBlockAccess world, @NotNull final BlockPos position)
+    {
+        final boolean[] connectors = new boolean[]{world.getBlockState(position.east()).getBlock() instanceof BlockConstructionTape,
+                world.getBlockState(position.west()).getBlock() instanceof BlockConstructionTape,
+                world.getBlockState(position.north()).getBlock() instanceof BlockConstructionTape,
+                world.getBlockState(position.south()).getBlock() instanceof BlockConstructionTape};
+
+        if((connectors[0] && connectors[1]) || (connectors[2] && connectors[3]))
+        {
+            return state.withProperty(VARIANT, Type.STRAIGHT);
+        }
+        return state.withProperty(VARIANT, Type.CORNER);
+    }
+
+    /**
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
     @SuppressWarnings(DEPRECATION)
@@ -278,4 +317,84 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     {
         return new BlockStateContainer(this, FACING);
     }
+
+    /**
+     * Types that the {@link BlockConstructionTape} supports
+     */
+    public enum Type implements IStringSerializable
+    {
+        STRAIGHT(0, "straight", MapColor.WOOD),
+        CORNER(1, "corner", MapColor.OBSIDIAN);
+
+        private static final Type[] META_LOOKUP = new Type[values().length];
+        static
+        {
+            for (Type enumtype : values())
+            {
+                META_LOOKUP[enumtype.getMetadata()] = enumtype;
+            }
+        }
+        private final int      meta;
+        private final String   name;
+        private final String   unlocalizedName;
+        /**
+         * The color that represents this entry on a map.
+         */
+        private final MapColor mapColor;
+
+        Type(final int metaIn, final String nameIn, final MapColor mapColorIn)
+        {
+            this(metaIn, nameIn, nameIn, mapColorIn);
+        }
+
+        Type(final int metaIn, final String nameIn, final String unlocalizedNameIn, final MapColor mapColorIn)
+        {
+            this.meta = metaIn;
+            this.name = nameIn;
+            this.unlocalizedName = unlocalizedNameIn;
+            this.mapColor = mapColorIn;
+        }
+
+        public static Type byMetadata(int meta)
+        {
+            int tempMeta = meta;
+            if (tempMeta < 0 || tempMeta >= META_LOOKUP.length)
+            {
+                tempMeta = 0;
+            }
+
+            return META_LOOKUP[tempMeta];
+        }
+
+        public int getMetadata()
+        {
+            return this.meta;
+        }
+
+        /**
+         * The color which represents this entry on a map.
+         */
+        public MapColor getMapColor()
+        {
+            return this.mapColor;
+        }
+
+        @Override
+        public String toString()
+        {
+            return this.name;
+        }
+
+        @NotNull
+        public String getName()
+        {
+            return this.name;
+        }
+
+        public String getUnlocalizedName()
+        {
+            return this.unlocalizedName;
+        }
+    }
+
 }
