@@ -48,7 +48,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
     @Override
     public TypeToken<? extends IDeliverable> getRequestType()
     {
-        return TypeConstants.DELIVERY;
+        return TypeConstants.DELIVERABLE;
     }
 
     @Override

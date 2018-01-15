@@ -413,14 +413,17 @@ public class WindowCitizen extends AbstractWindowSkeleton
                 final IRequest<?> request = wrapper.getRequest();
                 final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
                 final List<ItemStack> displayStacks = request.getDisplayStacks();
+                final Image logo = rowPane.findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
 
                 if (!displayStacks.isEmpty())
                 {
+                    logo.setVisible(false);
+                    exampleStackDisplay.setVisible(true);
                     exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
                 }
                 else
                 {
-                    final Image logo = rowPane.findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
+                    exampleStackDisplay.setVisible(false);
                     logo.setVisible(true);
                     logo.setImage(request.getDisplayIcon());
                 }
@@ -433,7 +436,18 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
                 if (wrapper.getDepth() > 0)
                 {
-                    rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
+                    request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
+                        if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
+                        {
+                            rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
+                        }
+                    });
+
+                    if (!(request.getRequest() instanceof IDeliverable))
+                    {
+                        rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
+                    }
+
                     rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();
                 }
                 else {
@@ -719,7 +733,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
         if (getOpenRequestTreeOfCitizen().size() > row && row >= 0)
         {
-            button.disable();
             @NotNull final IRequest tRequest = getOpenRequestTreeOfCitizen().get(row).getRequest();
 
             if (!(tRequest.getRequest() instanceof IDeliverable))

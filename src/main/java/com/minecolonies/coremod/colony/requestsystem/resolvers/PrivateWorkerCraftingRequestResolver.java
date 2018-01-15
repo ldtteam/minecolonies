@@ -103,6 +103,11 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
     {
         IRequest<?> request = manager.getRequestForToken(token);
 
+        if (request == null)
+        {
+            return new TextComponentString("<UNKNOWN>");
+        }
+
         if (request.hasParent())
         {
             request = manager.getRequestForToken(request.getParent());

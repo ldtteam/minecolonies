@@ -104,7 +104,7 @@ public final class PlacementHandlers
             if (placer.getOwnBuilding()
                   .getOpenRequestsOfTypeFiltered(
                     placer.getWorker().getCitizenData(),
-                          TypeConstants.DELIVERY,
+                          TypeConstants.DELIVERABLE,
                     (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(placedStack))
                   .isEmpty())
             {

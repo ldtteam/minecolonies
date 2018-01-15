@@ -37,7 +37,7 @@ public final class TypeConstants
     public static final TypeToken<IRequestable>     REQUESTABLE      = TypeToken.of(IRequestable.class);
     public static final TypeToken<IRetryable>       RETRYABLE        = TypeToken.of(IRetryable.class);
     public static final TypeToken<RecipeStorage>    RECIPE           = TypeToken.of(RecipeStorage.class);
-    public static final TypeToken<IDeliverable>     DELIVERY         = TypeToken.of(IDeliverable.class);
+    public static final TypeToken<IDeliverable>     DELIVERABLE      = TypeToken.of(IDeliverable.class);
 
     /////Request system specific
     public static final TypeToken<IPlayerRequestResolver>   PLAYER_REQUEST_RESOLVER   = TypeToken.of(IPlayerRequestResolver.class);

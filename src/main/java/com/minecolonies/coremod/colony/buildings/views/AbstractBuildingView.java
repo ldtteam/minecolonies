@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -302,12 +303,18 @@ public abstract class AbstractBuildingView implements IRequester
     @Override
     public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        if (getColony() == null || !getCitizensByRequest().containsKey(token) || getColony().getCitizen(getCitizensByRequest().get(token)) == null)
-        {
-            return new TextComponentString("<UNKNOWN>");
-        }
+        try {
+            if (getColony() == null || !getCitizensByRequest().containsKey(token) || getColony().getCitizen(getCitizensByRequest().get(token)) == null)
+            {
+                return new TextComponentString("<UNKNOWN>");
+            }
 
-        return new TextComponentString(getColony().getCitizen(getCitizensByRequest().get(token)).getName());
+            return new TextComponentString(getColony().getCitizen(getCitizensByRequest().get(token)).getName());
+        } catch (Exception ex)
+        {
+            Log.getLogger().warn(ex);
+            return new TextComponentString("");
+        }
     }
 
     public int getBuildingDmPrio()

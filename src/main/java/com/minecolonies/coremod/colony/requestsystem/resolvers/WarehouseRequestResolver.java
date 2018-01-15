@@ -46,7 +46,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     @Override
     public TypeToken<? extends IDeliverable> getRequestType()
     {
-        return TypeConstants.DELIVERY;
+        return TypeConstants.DELIVERABLE;
     }
 
     @Override

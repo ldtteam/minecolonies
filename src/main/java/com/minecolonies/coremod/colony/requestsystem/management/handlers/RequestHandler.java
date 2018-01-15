@@ -330,7 +330,7 @@ public final class RequestHandler
     {
         @SuppressWarnings(RAWTYPES) final IRequest request = getRequest(manager, token);
 
-        if (manager.getRequestResolverRequestAssignmentDataStore().getAssignmentForValue(token) != null)
+        if (manager.getRequestResolverRequestAssignmentDataStore().getAssignmentForValue(token) == null)
         {
             manager.getRequestIdentitiesDataStore().getIdentities().remove(token);
             return;
@@ -342,10 +342,6 @@ public final class RequestHandler
             final ImmutableCollection<IToken<?>> currentChildren = request.getChildren();
             currentChildren.forEach(t -> onRequestCancelled(manager, t));
         }
-
-        //Now lets get ourselfs a clean up.
-        @SuppressWarnings(RAWTYPES) final IRequestResolver targetResolver = ResolverHandler.getResolverForRequest(manager, request);
-        processParentReplacement(manager, request, targetResolver.onRequestCancelledOrOverruled(manager, request));
 
         //This will notify everyone :D
         manager.updateRequestState(token, RequestState.COMPLETED);

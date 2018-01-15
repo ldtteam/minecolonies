@@ -137,17 +137,16 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         addMapping("Barracks", BuildingBarracks.class, BuildingBarracks.View.class, BlockHutBarracks.class);
         addMapping("BarracksTower", BuildingBarracksTower.class, BuildingBarracksTower.View.class, BlockHutBarracksTower.class);
         addMapping("Smeltery", BuildingSmeltery.class, BuildingSmeltery.View.class, BlockHutSmeltery.class);
-
     }
     /**
      * List of items the worker should keep.
      */
-    protected final Map<Predicate<ItemStack>, Integer> keepX = new HashMap<>();
+    protected final Map<Predicate<ItemStack>, Integer> keepX         = new HashMap<>();
     /**
      * A list which contains the position of all containers which belong to the
      * worker building.
      */
-    private final List<BlockPos> containerList = new ArrayList<>();
+    private final   List<BlockPos>                     containerList = new ArrayList<>();
     /**
      * The location of the building.
      */
@@ -156,7 +155,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      * The colony the building belongs to.
      */
     @NotNull
-    private final Colony colony;
+    private final Colony   colony;
 
     /**
      * The data store id for request system related data.
@@ -167,7 +166,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     /**
      * The ID of the building. Needed in the request system to identify it.
      */
-    private IRequester requester;
+    private IRequester               requester;
     /**
      * The tileEntity of the building.
      */
@@ -175,23 +174,23 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     /**
      * The level of the building.
      */
-    private int buildingLevel = 0;
+    private int     buildingLevel = 0;
     /**
      * The rotation of the building.
      */
-    private int rotation = 0;
+    private int     rotation      = 0;
     /**
      * The mirror of the building.
      */
-    private boolean isMirrored = false;
+    private boolean isMirrored    = false;
     /**
      * The building style.
      */
-    private String style = "wooden";
+    private String  style         = "wooden";
     /**
      * Made to check if the building has to update the server/client.
      */
-    private boolean dirty = false;
+    private boolean dirty         = false;
     /**
      * Corners of the building.
      */
@@ -202,11 +201,11 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     /**
      * Priority of the building in the pickUpList.
      */
-    private int pickUpPriority = 1;
+    private int     pickUpPriority = 1;
     /**
      * Is being gathered right now
      */
-    private boolean beingGathered = false;
+    private boolean beingGathered  = false;
     /**
      * Height of the building.
      */
@@ -249,10 +248,10 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      * @param parentBlock   subclass of Block, located in {@link com.minecolonies.coremod.blocks}.
      */
     private static void addMapping(
-                                    final String name,
-                                    @NotNull final Class<? extends AbstractBuilding> buildingClass,
-                                    @NotNull final Class<? extends AbstractBuildingView> viewClass,
-                                    @NotNull final Class<? extends AbstractBlockHut<?>> parentBlock)
+      final String name,
+      @NotNull final Class<? extends AbstractBuilding> buildingClass,
+      @NotNull final Class<? extends AbstractBuildingView> viewClass,
+      @NotNull final Class<? extends AbstractBlockHut<?>> parentBlock)
     {
         final int buildingHashCode = buildingClass.getName().hashCode();
 
@@ -438,8 +437,8 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         final Integer key = compound.getInteger(TAG_TOKEN);
         final NBTTagList assignments = compound.getTagList(TAG_ASSIGNMENTS, Constants.NBT.TAG_COMPOUND);
         final Collection<IToken<?>> tokens = NBTUtils.streamCompound(assignments)
-                                      .map(tc -> (IToken<?>) StandardFactoryController.getInstance().deserialize(tc))
-                                      .collect(Collectors.toList());
+                                               .map(tc -> (IToken<?>) StandardFactoryController.getInstance().deserialize(tc))
+                                               .collect(Collectors.toList());
 
         outputMap.put(key, tokens);
     }
@@ -983,6 +982,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
     /**
      * Get the height of the building.
+     *
      * @return the height..
      */
     public int getHeight()
@@ -1173,6 +1173,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
     /**
      * Calculates the area of the building.
+     *
      * @param world the world.
      * @return the AxisAlignedBB.
      */
@@ -1397,7 +1398,11 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             return ImmutableList.of();
         }
 
-        return ImmutableList.copyOf(getOpenRequestsByCitizen().get(data.getId()).stream().map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
+        return ImmutableList.copyOf(getOpenRequestsByCitizen().get(data.getId())
+                                      .stream()
+                                      .map(getColony().getRequestManager()::getRequestForToken)
+                                      .filter(Objects::nonNull)
+                                      .iterator());
     }
 
     @SuppressWarnings(RAWTYPES)
@@ -1413,8 +1418,8 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
     @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(
-                                                                           @NotNull final CitizenData citizenData,
-                                                                           final TypeToken<R> requestType)
+      @NotNull final CitizenData citizenData,
+      final TypeToken<R> requestType)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
@@ -1456,9 +1461,9 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
     @SuppressWarnings({GENERIC_WILDCARD, RAWTYPES, UNCHECKED})
     public <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfTypeFiltered(
-                                                                                        @NotNull final CitizenData citizenData,
-                                                                                        final TypeToken<R> requestType,
-                                                                                        final Predicate<IRequest<? extends R>> filter)
+      @NotNull final CitizenData citizenData,
+      final TypeToken<R> requestType,
+      final Predicate<IRequest<? extends R>> filter)
     {
         return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
                                       .filter(request -> {
@@ -1545,8 +1550,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
                 continue;
             }
 
-            final IRequest<? extends IDeliverable> target = getOpenRequestsOfTypeFiltered(data, TypeConstants.DELIVERY,
-              request -> request.getRequest().matches(stack)).stream().findFirst().orElse(null);
+            final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(getOpenRequestsOfType(data, TypeConstants.DELIVERABLE), stack);
 
             if (target == null)
             {
@@ -1557,11 +1561,12 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             return;
         }
     }
+
     @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
-                                                                                   @NotNull final CitizenData citizenData,
-                                                                                   final TypeToken<R> requestType,
-                                                                                   final Predicate<IRequest<? extends R>> filter)
+      @NotNull final CitizenData citizenData,
+      final TypeToken<R> requestType,
+      final Predicate<IRequest<? extends R>> filter)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
@@ -1580,9 +1585,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             return false;
         }
 
-        final IRequest<?> target = getOpenRequestsOfTypeFiltered(citizenData, TypeConstants.DELIVERY, request -> request.getRequest().matches(stack)).stream()
-                                  .findFirst()
-                                  .orElse(null);
+        final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(getOpenRequestsOfType(citizenData, TypeConstants.DELIVERABLE),stack);
 
         if (target == null)
         {
@@ -1591,6 +1594,40 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
         getColony().getRequestManager().overruleRequest(target.getToken(), stack.copy());
         return true;
+    }
+
+    private IRequest<? extends IDeliverable> getFirstOverullingRequestFromInputList(@NotNull Collection<IRequest<? extends IDeliverable>> queue, @NotNull final ItemStack stack)
+    {
+        if (queue.isEmpty())
+        {
+            return null;
+        }
+
+        return queue
+                 .stream()
+                 .filter(request -> request.getRequest().matches(stack))
+                 .findFirst()
+                 .orElseGet(() ->
+                              getFirstOverullingRequestFromInputList(queue
+                                                                       .stream()
+                                                                       .flatMap(r -> flattenDeliverableChildRequests(r).stream())
+                                                                       .collect(Collectors.toList()),
+                                stack));
+    }
+
+    private Collection<IRequest<? extends IDeliverable>> flattenDeliverableChildRequests(@NotNull final IRequest<? extends IDeliverable> request)
+    {
+        if (!request.hasChildren())
+        {
+            return ImmutableList.of();
+        }
+
+        return request.getChildren()
+                 .stream()
+                 .map(getColony().getRequestManager()::getRequestForToken)
+                 .filter(request1 -> request1.getRequest() instanceof IDeliverable)
+                 .map(request1 -> (IRequest<? extends IDeliverable>) request1)
+                 .collect(Collectors.toList());
     }
 
     @Override
@@ -1667,7 +1704,8 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         final IRequest<?> requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
         if (requestThatCompleted != null)
         {
-            if (getOpenRequestsByRequestableType().containsKey(TypeToken.of(requestThatCompleted.getRequest().getClass()))){
+            if (getOpenRequestsByRequestableType().containsKey(TypeToken.of(requestThatCompleted.getRequest().getClass())))
+            {
                 getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).remove(token);
 
                 if (getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).isEmpty())
@@ -1735,9 +1773,9 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
             //Add additional containers
             providers.addAll(getAdditionalCountainers().stream()
-                    .map(getTileEntity().getWorld()::getTileEntity)
-                    .filter(entity -> (entity instanceof TileEntityChest) || (entity instanceof TileEntityRack))
-                    .collect(Collectors.toSet()));
+                               .map(getTileEntity().getWorld()::getTileEntity)
+                               .filter(entity -> (entity instanceof TileEntityChest) || (entity instanceof TileEntityRack))
+                               .collect(Collectors.toSet()));
             providers.removeIf(Objects::isNull);
 
             //Map all providers to IItemHandlers.
@@ -1755,5 +1793,4 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     }
 
     //------------------------- !End! Capabilities handling for minecolonies buildings -------------------------//
-
 }

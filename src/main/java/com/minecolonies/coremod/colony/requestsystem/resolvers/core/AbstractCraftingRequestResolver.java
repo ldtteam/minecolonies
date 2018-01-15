@@ -41,7 +41,21 @@ public abstract class AbstractCraftingRequestResolver extends AbstractBuildingDe
     public boolean canResolveForBuilding(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request, @NotNull final AbstractBuilding building)
     {
+        if (createsCraftingCycle(manager, request, request))
+            return false;
+
         return building instanceof AbstractBuildingWorker && canBuildingCraftStack((AbstractBuildingWorker) building, request.getRequest().getStack());
+    }
+
+    protected boolean createsCraftingCycle(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request, @NotNull final IRequest<? extends Stack> target)
+    {
+        if (!request.equals(target) && request.getRequest().equals(target.getRequest()))
+            return true;
+
+        if (!request.hasParent())
+            return false;
+
+        return createsCraftingCycle(manager, manager.getRequestForToken(request.getParent()), target);
     }
 
     public abstract boolean canBuildingCraftStack(@NotNull final AbstractBuildingWorker building, ItemStack stack);
