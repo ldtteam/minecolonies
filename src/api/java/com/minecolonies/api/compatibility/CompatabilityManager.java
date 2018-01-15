@@ -102,7 +102,7 @@ public class CompatabilityManager implements ICompatabilityManager
     @Override
     public boolean isOre(final IBlockState block)
     {
-        if(block instanceof BlockOre || block instanceof BlockRedstoneOre)
+        if(block.getBlock() instanceof BlockOre || block.getBlock() instanceof BlockRedstoneOre)
         {
             return true;
         }
@@ -113,6 +113,10 @@ public class CompatabilityManager implements ICompatabilityManager
     @Override
     public boolean isOre(@NotNull final ItemStack stack)
     {
+        if(ItemStackUtils.isEmpty(stack))
+        {
+            return false;
+        }
         final int[] ids = OreDictionary.getOreIDs(stack);
         for(final int id : ids)
         {
