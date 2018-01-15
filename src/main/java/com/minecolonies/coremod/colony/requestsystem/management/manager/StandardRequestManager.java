@@ -73,7 +73,7 @@ public class StandardRequestManager implements IStandardRequestManager
      * The fallback resolver used to resolve directly to the player.
      */
     @NotNull
-    private       IPlayerRequestResolver                       playerResolver          = null;
+    private IPlayerRequestResolver                       playerResolver          = null;
     /**
      * The fallback resolver used to resolve using retries.
      * Not all requests might support this feature, requests that do should implement {@link IRetryable} on their requestable.
@@ -372,6 +372,9 @@ public class StandardRequestManager implements IStandardRequestManager
     {
         dataStoreManager.removeAll();
         setup();
+
+        this.playerResolver.onSystemReset();
+        this.retryingResolver.onSystemReset();
 
         ResolverHandler.registerResolver(this, this.playerResolver);
         ResolverHandler.registerResolver(this, this.retryingResolver);

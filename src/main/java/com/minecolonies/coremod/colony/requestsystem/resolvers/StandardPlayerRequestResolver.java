@@ -216,6 +216,12 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
         return ImmutableList.copyOf(assignedRequests);
     }
 
+    @Override
+    public void onSystemReset()
+    {
+        assignedRequests.clear();
+    }
+
     public void setAllAssignedRequests(final Set<IToken<?>> assignedRequests)
     {
         this.assignedRequests.clear();

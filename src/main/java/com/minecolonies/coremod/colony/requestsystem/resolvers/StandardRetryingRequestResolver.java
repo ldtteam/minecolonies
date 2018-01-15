@@ -191,6 +191,13 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
         return ImmutableList.copyOf(assignedRequests.keySet());
     }
 
+    @Override
+    public void onSystemReset()
+    {
+        assignedRequests.clear();
+        delays.clear();
+    }
+
     public void setCurrent(@Nullable final IToken<?> token)
     {
         this.current = token;

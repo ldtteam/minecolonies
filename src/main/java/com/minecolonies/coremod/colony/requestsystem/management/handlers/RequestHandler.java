@@ -487,8 +487,6 @@ public final class RequestHandler
         LogHandler.log("Removing " + token + " from the Manager as it has been completed and its package has been received by the requester.");
         getRequest(manager, token);
 
-        manager.getRequestIdentitiesDataStore().getIdentities().remove(token);
-
         if (isAssigned(manager, token))
         {
             final IRequestResolver<?> resolver = ResolverHandler.getResolverForRequest(manager, token);
@@ -498,6 +496,8 @@ public final class RequestHandler
                 manager.getRequestResolverRequestAssignmentDataStore().getAssignments().remove(resolver.getRequesterId());
             }
         }
+
+        manager.getRequestIdentitiesDataStore().getIdentities().remove(token);
     }
 
     /**
