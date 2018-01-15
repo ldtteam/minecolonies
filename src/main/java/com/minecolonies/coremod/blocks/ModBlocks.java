@@ -38,16 +38,20 @@ public final class ModBlocks
     public static BlockHutCowboy              blockHutCowboy;
     public static BlockHutSwineHerder         blockHutSwineHerder;
     public static BlockHutChickenHerder       blockHutChickenHerder;
+    public static BlockHutBarracks            blockHutBarracks;
+    public static BlockHutBarracksTower       blockHutBarracksTower;
+    public static BlockHutCook                blockHutCook;
+    public static BlockHutSmeltery            blockHutSmeltery;
+
+    /**
+     * Utility blocks.
+     */
     public static BlockConstructionTape       blockConstructionTape;
-    public static BlockConstructionTapeCorner blockConstructionTapeCorner;
     public static BlockMinecoloniesRack       blockRack;
     public static BlockTimberFrame            blockTimberFrame;
     public static BlockWaypoint               blockWayPoint;
-    public static BlockHutBarracks            blockHutBarracks;
-    public static BlockHutBarracksTower       blockHutBarracksTower;
     public static BlockInfoPoster             blockInfoPoster;
     public static BlockPaperwall              blockPaperWall;
-    public static BlockHutCook                blockHutCook;
     public static BlockShingle                blockShingleOak;
     public static BlockShingle                blockShingleBirch;
     public static BlockShingle                blockShingleJungle;
@@ -55,7 +59,7 @@ public final class ModBlocks
     public static BlockShingle                blockShingleDarkOak;
     public static BlockShingle                blockShingleAcacia;
     public static BlockShingleSlab            blockShingleSlab;
-    public static BlockHutSmeltery            blockHutSmeltery;
+
 
 
     /**
@@ -74,7 +78,6 @@ public final class ModBlocks
     public static void init(final IForgeRegistry<Block> registry)
     {
         blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
-        blockConstructionTapeCorner = new BlockConstructionTapeCorner().registerBlock(registry);
         blockHutBaker = new BlockHutBaker().registerBlock(registry);
         blockHutBlacksmith = new BlockHutBlacksmith().registerBlock(registry);
         blockHutBuilder = new BlockHutBuilder().registerBlock(registry);
@@ -124,7 +127,6 @@ public final class ModBlocks
     public static void registerItemBlock(final IForgeRegistry<Item> registry)
     {
         blockConstructionTape.registerItemBlock(registry);
-        blockConstructionTapeCorner.registerItemBlock(registry);
         blockHutBaker.registerItemBlock(registry);
         blockHutBlacksmith.registerItemBlock(registry);
         blockHutBuilder.registerItemBlock(registry);
