@@ -11,6 +11,7 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
+import com.minecolonies.coremod.util.text.NonSiblingFormattingTextComponent;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
@@ -19,7 +20,9 @@ import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -60,7 +63,11 @@ public final class StandardRequests
         @Override
         public ITextComponent getShortDisplayString()
         {
-            return new TextComponentTranslation(getRequest().getCount() + " " + getRequest().getStack().getTextComponent().getFormattedText());
+            final ITextComponent combined = new NonSiblingFormattingTextComponent();
+            combined.appendSibling(new TextComponentString(getRequest().getCount() + " "));
+            combined.appendSibling(getRequest().getStack().getTextComponent());
+            combined.getStyle().setColor(TextFormatting.BLACK);
+            return combined;
         }
 
         @NotNull
@@ -105,7 +112,9 @@ public final class StandardRequests
         @Override
         public ITextComponent getShortDisplayString()
         {
-            return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_DELIVERY).appendSibling(getDelivery().getTextComponent());
+            final ITextComponent result = new NonSiblingFormattingTextComponent();
+            result.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_DELIVERY).appendSibling( new TextComponentString(getRequest().getStack().getCount() + " ")).appendSibling(getRequest().getStack().getTextComponent()));
+            return result;
         }
 
         @NotNull
@@ -119,7 +128,7 @@ public final class StandardRequests
         @Override
         public ResourceLocation getDisplayIcon()
         {
-            return new ResourceLocation("minecolonies:textures/gui/citizen/colonist_button_small.png");
+            return new ResourceLocation("minecolonies:textures/gui/citizen/delivery.png");
         }
     }
 
@@ -142,7 +151,10 @@ public final class StandardRequests
         @Override
         public ITextComponent getLongDisplayString()
         {
+            final ITextComponent result = new NonSiblingFormattingTextComponent();
             final ITextComponent preType = new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PRETYPE);
+
+            result.appendSibling(preType);
 
             preType.appendSibling(getRequest().getToolClass().getDisplayName());
 
@@ -170,7 +182,9 @@ public final class StandardRequests
         @Override
         public ITextComponent getShortDisplayString()
         {
-            return getRequest().getToolClass().getDisplayName();
+            final ITextComponent result = new NonSiblingFormattingTextComponent();
+            result.appendSibling(getRequest().getToolClass().getDisplayName());
+            return result;
         }
 
         @NotNull
@@ -222,7 +236,9 @@ public final class StandardRequests
         @Override
         public ITextComponent getShortDisplayString()
         {
-            return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_FOOD);
+            final ITextComponent result = new NonSiblingFormattingTextComponent();
+            result.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_FOOD));
+            return result;
         }
 
         @NotNull
@@ -327,7 +343,9 @@ public final class StandardRequests
         @Override
         public ITextComponent getShortDisplayString()
         {
-            return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_BURNABLE);
+            final ITextComponent result = new NonSiblingFormattingTextComponent();
+            result.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_BURNABLE));
+            return result;
         }
 
         @NotNull

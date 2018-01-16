@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.requestsystem.manager;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.requestsystem.data.IDataStoreManager;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
@@ -175,4 +176,16 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
      */
     @NotNull
     IRetryingRequestResolver getRetryingRequestResolver();
+
+    /**
+     * Get the data store manager.
+     * @return The data store manager.
+     */
+    @NotNull
+    IDataStoreManager getDataStoreManager();
+
+    /**
+     * Called to reset the RS.
+     */
+    void reset();
 }

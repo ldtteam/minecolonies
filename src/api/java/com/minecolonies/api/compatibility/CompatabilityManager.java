@@ -24,10 +24,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.Constants.ORES;
 import static com.minecolonies.api.util.constant.Constants.SAPLINGS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 

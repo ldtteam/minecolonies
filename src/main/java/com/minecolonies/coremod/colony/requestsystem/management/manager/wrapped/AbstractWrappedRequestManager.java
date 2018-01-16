@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.requestsystem.data.IDataStoreManager;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -232,5 +233,18 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     public void update()
     {
         wrappedManager.update();
+    }
+
+    @NotNull
+    @Override
+    public IDataStoreManager getDataStoreManager()
+    {
+        return wrappedManager.getDataStoreManager();
+    }
+
+    @Override
+    public void reset()
+    {
+        wrappedManager.reset();
     }
 }

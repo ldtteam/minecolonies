@@ -117,23 +117,6 @@ public class StandardRequestManagerTest
     }
 
     @Test
-    public void deserializeNBT() throws Exception
-    {
-        requestManager.onProviderAddedToColony(provider);
-
-        final StringRequestable hello = new StringRequestable("Hello");
-        final StringRequestable Test2 = new StringRequestable("Test 2");
-        requestManager.createRequest(TestRequester.INSTANCE, hello);
-        requestManager.createAndAssignRequest(TestRequester.INSTANCE, Test2);
-
-        final NBTTagCompound compound = requestManager.serializeNBT();
-
-        StandardRequestManager deserializedVariant = new StandardRequestManager(colony);
-        deserializedVariant.onProviderAddedToColony(provider);
-        deserializedVariant.deserializeNBT(compound);
-    }
-
-    @Test
     public void getFactoryController() throws Exception
     {
         assertEquals(StandardFactoryController.getInstance(), requestManager.getFactoryController());
@@ -408,13 +391,19 @@ public class StandardRequestManagerTest
             return null;
         }
 
-        @SuppressWarnings(RAWTYPES)
         @Nullable
         @Override
-        public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request)
-          throws IllegalArgumentException
+        public IRequest<?> onRequestCancelled(
+          @NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request)
         {
             return null;
+        }
+
+        @Override
+        public void onRequestBeingOverruled(
+          @NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request)
+        {
+
         }
 
         @Override
@@ -438,20 +427,20 @@ public class StandardRequestManagerTest
         }
 
         @Override
-        public void onRequestComplete(@NotNull final IToken<?> token)
+        public void onRequestComplete(@NotNull final IRequestManager manager,@NotNull final IToken<?> token)
         {
             //NOOP
         }
 
         @Override
-        public void onRequestCancelled(@NotNull final IToken<?> token)
+        public void onRequestCancelled(@NotNull final IRequestManager manager,@NotNull final IToken<?> token)
         {
             //NOOP
         }
 
         @NotNull
         @Override
-        public ITextComponent getDisplayName(@NotNull final IToken<?> token)
+        public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
         {
             //Not used in test.
             return null;
@@ -527,20 +516,20 @@ public class StandardRequestManagerTest
         }
 
         @Override
-        public void onRequestComplete(@NotNull final IToken<?> token)
+        public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
         {
             return;
         }
 
         @Override
-        public void onRequestCancelled(@NotNull final IToken<?> token)
+        public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
         {
             return;
         }
 
         @NotNull
         @Override
-        public ITextComponent getDisplayName(@NotNull final IToken<?> token)
+        public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
         {
             return new TextComponentString("Test Requester");
         }

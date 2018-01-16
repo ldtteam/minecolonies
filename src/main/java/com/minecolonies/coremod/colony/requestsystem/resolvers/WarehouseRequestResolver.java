@@ -15,6 +15,7 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -28,12 +29,13 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.RSConstants.CONST_WAREHOUSE_RESOLVER_PRIORITY;
+
 /**
  * ----------------------- Not Documented Object ---------------------
  */
 public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverable>
 {
-
     public WarehouseRequestResolver(
                                      @NotNull final ILocation location,
                                      @NotNull final IToken<?> token)
@@ -44,7 +46,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     @Override
     public TypeToken<? extends IDeliverable> getRequestType()
     {
-        return TypeToken.of(IDeliverable.class);
+        return TypeConstants.DELIVERABLE;
     }
 
     @Override
@@ -123,9 +125,17 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     @Nullable
     @Override
-    public IRequest<?> onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public IRequest<?> onRequestCancelled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         return null;
+    }
+
+    @Override
+    public void onRequestBeingOverruled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    {
+
     }
 
     private static Set<TileEntityWareHouse> getWareHousesInColony(Colony colony)
@@ -137,19 +147,26 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     }
 
     @Override
-    public void onRequestComplete(@NotNull final IToken<?> token)
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
     }
 
     @Override
-    public void onRequestCancelled(@NotNull final IToken<?> token)
+    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-
+        //Somebody cancelled the delivery.
+        //reassign the parent request.
+        final IRequest request = manager.getRequestForToken(token);
+        if (request.hasParent())
+        {
+            final IRequest parent = manager.getRequestForToken(token);
+            manager.reassignRequest(parent.getToken(), ImmutableList.of());
+        }
     }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken<?> token)
+    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME);
     }
@@ -157,6 +174,6 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     @Override
     public int getPriority()
     {
-        return CONST_DEFAULT_RESOLVER_PRIORITY + 50;
+        return CONST_WAREHOUSE_RESOLVER_PRIORITY;
     }
 }

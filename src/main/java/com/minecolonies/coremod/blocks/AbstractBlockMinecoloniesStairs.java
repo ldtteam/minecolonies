@@ -11,8 +11,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 
-import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
-
 public abstract class AbstractBlockMinecoloniesStairs<B extends AbstractBlockMinecoloniesStairs<B>> extends BlockStairs implements IBlockMinecolonies<B>
 {
     protected AbstractBlockMinecoloniesStairs(final IBlockState modelState)

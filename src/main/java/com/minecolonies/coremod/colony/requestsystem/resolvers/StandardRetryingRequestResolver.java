@@ -24,10 +24,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.RSConstants.CONST_RETRYING_RESOLVER_PRIORITY;
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 
 public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 {
+
 
     private static final Integer CONST_RETRYING_ID_SCALE = -20000;
 
@@ -120,13 +122,11 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
         return null;
     }
 
-    @SuppressWarnings(RAWTYPES)
     @Nullable
     @Override
-    public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
+    public IRequest<?> onRequestCancelled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
     {
-        //Okey somebody completed it or what ever.
-        //Lets remove if from our data structures:
         if (assignedRequests.containsKey(request.getToken()))
         {
             delays.remove(request.getToken());
@@ -138,9 +138,16 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     }
 
     @Override
+    public void onRequestBeingOverruled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
+    {
+        onRequestCancelled(manager, request);
+    }
+
+    @Override
     public int getPriority()
     {
-        return AbstractRequestResolver.CONST_DEFAULT_RESOLVER_PRIORITY - 50;
+        return CONST_RETRYING_RESOLVER_PRIORITY;
     }
 
     @Override
@@ -189,6 +196,13 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
         return ImmutableList.copyOf(assignedRequests.keySet());
     }
 
+    @Override
+    public void onSystemReset()
+    {
+        assignedRequests.clear();
+        delays.clear();
+    }
+
     public void setCurrent(@Nullable final IToken<?> token)
     {
         this.current = token;
@@ -208,20 +222,20 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     }
 
     @Override
-    public void onRequestComplete(@NotNull final IToken<?> token)
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         //Noop, we do not schedule child requests. So this is never called.
     }
 
     @Override
-    public void onRequestCancelled(@NotNull final IToken<?> token)
+    public void onRequestCancelled( @NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         //Noop, see onRequestComplete.
     }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken<?> token)
+    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         return new TextComponentString("Player");
     }

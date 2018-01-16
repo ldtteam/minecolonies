@@ -7,10 +7,9 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
-import static com.minecolonies.api.util.constant.Suppression.MAGIC_NUMBERS_SHOULD_NOT_BE_USED;
-
 import static com.minecolonies.api.util.constant.CitizenConstants.AVERAGE_SATURATION;
 import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
+import static com.minecolonies.api.util.constant.Suppression.MAGIC_NUMBERS_SHOULD_NOT_BE_USED;
 
 /**
  * Class containing the fisherman sounds.
