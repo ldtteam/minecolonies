@@ -131,7 +131,7 @@ public class StandardRequestManagerTest
         final IToken<?> token = requestManager.createAndAssignRequest(TestRequester.INSTANCE, requestable);
         assertNotNull(token);
 
-        @SuppressWarnings(UNCHECKED) final IRequest<? extends StringRequestable> request = requestManager.getRequestForToken(token);
+        @SuppressWarnings(UNCHECKED) final IRequest<? extends StringRequestable> request = (IRequest<? extends StringRequestable>) requestManager.getRequestForToken(token);
         assertNotNull(request);
         assertEquals(requestable, request.getRequest());
 

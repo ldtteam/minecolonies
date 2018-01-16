@@ -287,10 +287,10 @@ public class BuildingWareHouse extends AbstractBuilding
     }
 
     @Override
-    public ImmutableCollection<IRequestResolver> getResolvers()
+    public ImmutableCollection<IRequestResolver<?>> getResolvers()
     {
-        ImmutableCollection<IRequestResolver> supers = super.getResolvers();
-        ImmutableList.Builder<IRequestResolver> builder = ImmutableList.builder();
+        ImmutableCollection<IRequestResolver<?>> supers = super.getResolvers();
+        ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
 
         builder.addAll(supers);
         builder.add(new WarehouseRequestResolver(getRequester().getRequesterLocation(),

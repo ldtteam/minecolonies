@@ -48,6 +48,12 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
         this.location = factoryController.getNewInstance(TypeConstants.ILOCATION, manager.getColony().getCenter(), manager.getColony().getWorld().provider.getDimension());
     }
 
+    public StandardRetryingRequestResolver(final IToken<?> id, final ILocation location)
+    {
+        this.id = id;
+        this.location = location;
+    }
+
     @Override
     public void updateManager(final IRequestManager manager)
     {
@@ -77,12 +83,6 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     public IToken<?> getCurrentlyBeingReassignedRequest()
     {
         return current;
-    }
-
-    public StandardRetryingRequestResolver(final IToken<?> id, final ILocation location)
-    {
-        this.id = id;
-        this.location = location;
     }
 
     @Override
@@ -249,12 +249,12 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
         this.delays.putAll(newDelays);
     }
 
-    public HashMap<IToken<?>, Integer> getDelays()
+    public Map<IToken<?>, Integer> getDelays()
     {
         return delays;
     }
 
-    public HashMap<IToken<?>, Integer> getAssignedRequests()
+    public Map<IToken<?>, Integer> getAssignedRequests()
     {
         return assignedRequests;
     }

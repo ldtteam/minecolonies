@@ -39,11 +39,8 @@ public abstract class AbstractBuildingDependentRequestResolver<R extends IReques
             final ILocation requesterLocation = requestToCheck.getRequester().getRequesterLocation();
             if (requesterLocation.equals(getRequesterLocation()))
             {
-                final AbstractBuilding building = getBuilding(manager, requestToCheck.getToken()).map(r -> (AbstractBuilding) r).get();
-                if (building != null)
-                {
-                    return canResolveForBuilding(manager, requestToCheck, building);
-                }
+                final Optional<AbstractBuilding> building = getBuilding(manager, requestToCheck.getToken()).map(r -> (AbstractBuilding) r);
+                return building.map(b -> canResolveForBuilding(manager, requestToCheck, b)).orElse(false);
             }
         }
 

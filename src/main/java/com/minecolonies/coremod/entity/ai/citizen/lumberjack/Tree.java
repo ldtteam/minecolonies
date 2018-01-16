@@ -13,6 +13,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -325,7 +326,7 @@ public class Tree
      * Check if the Lj is supposed to cut a tree.
      *
      * @param world      the world it is in.
-     * @param pos        the position a leaf is at.
+     * @param leafPos        the position a leaf is at.
      * @param treesToCut the trees he is supposed to cut.
      * @return false if not.
      */

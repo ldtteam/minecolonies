@@ -108,13 +108,11 @@ configFile.withReader {
 }
 
 dependencies {
-    deobfCompile "slimeknights.mantle:Mantle:${config.minecraft_version}-${config.mantle_version}"
-    deobfCompile "slimeknights:TConstruct:${config.minecraft_version}-${config.tinker_version}"
+    deobfCompile "slimeknights.mantle:Mantle:1.12-${config.mantle_version}"
+    deobfCompile "slimeknights:TConstruct:1.12-${config.tinker_version}"
 
     structuresCompile sourceSets.api.output
     //blockOutCompile sourceSets.api.output
-
-    deobfCompile "gigaherz.guidebook:Guidebook-1.11.0:${config.guidebook_version}"
 
     // compile against the JEI API but do not include it at runtime
     deobfProvided "mezz.jei:jei_${config.minecraft_version}:${config.jei_version}:api"

@@ -571,3 +571,11 @@ tile.minecolonies.blockhutsmeltery.name=Smeltery
 com.minecolonies.coremod.gui.workerHuts.Smeltery=Smeltery
 com.minecolonies.coremod.job.smelter=Smelter
 tile.minecolonies.blockHutSmeltery.name=Smeltery
+
+com.minecolonies.coremod.gui.recipe.remove=Remove
+com.minecolonies.coremod.gui.workerHuts.crafting=Teach recipe
+com.minecolonies.coremod.gui.recipe.done=Succesfully saved recipe!
+com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
+com.minecolonies.coremod.resolvers.crafter.private=Crafting
+
+com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe=You have not learned this recipe yet!

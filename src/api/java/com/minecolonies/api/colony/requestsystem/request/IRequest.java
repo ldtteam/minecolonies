@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Used to represent requests, of type R, made to the internal market of the colony.
@@ -267,4 +268,7 @@ public interface IRequest<R extends IRequestable>
      */
     @NotNull
     ResourceLocation getDisplayIcon();
+
+    @NotNull
+    <T> Optional<T> getRequestOfType(final Class<T> tClass);
 }

@@ -155,6 +155,8 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
             }
 
             buildingWorker.markDirty();
+
+
         }
     }
 }

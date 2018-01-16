@@ -216,47 +216,30 @@ public class StandardRequestManager implements IStandardRequestManager
         return RequestHandler.reassignRequest(this, request, resolverTokenBlackList);
     }
 
-    /**
-     * Method to get a request for a given token.
-     * <p>
-     * Returned value is a defensive copy. However should not be modified!
-     *
-     * @param token The token to get a request for.
-     * @return The request of the given type for that token.
-     *
-     * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the given type T.
-     */
-    @SuppressWarnings({UNCHECKED,RAWTYPES})
     @Nullable
     @Override
-    public IRequest getRequestForToken(@NotNull final IToken<?> token)
+    public IRequest<?> getRequestForToken(@NotNull final IToken<?> token) throws IllegalArgumentException
     {
-        final IRequest internalRequest = RequestHandler.getRequestOrNull(this, token);
+        final IRequest<?> internalRequest = RequestHandler.getRequestOrNull(this, token);
 
         if (internalRequest == null)
         {
             return null;
         }
 
-        //final NBTTagCompound requestData = getFactoryController().serialize(internalRequest);
-
         return internalRequest;
     }
 
-    @SuppressWarnings(RAWTYPES)
     @NotNull
     @Override
-    public IRequestResolver getResolverForToken(@NotNull final IToken<?> token)
+    public IRequestResolver<?> getResolverForToken(@NotNull final IToken<?> token) throws IllegalArgumentException
     {
-        final IRequestResolver resolver = ResolverHandler.getResolver(this, token);
-
-        return getFactoryController().deserialize(getFactoryController().serialize(resolver));
+        return ResolverHandler.getResolver(this, token);
     }
 
-    @SuppressWarnings(RAWTYPES)
     @Nullable
     @Override
-    public IRequestResolver getResolverForRequest(@NotNull final IToken<?> requestToken)
+    public IRequestResolver<?> getResolverForRequest(@NotNull final IToken<?> requestToken) throws IllegalArgumentException
     {
         final IRequest<?> request = RequestHandler.getRequest(this, requestToken);
 

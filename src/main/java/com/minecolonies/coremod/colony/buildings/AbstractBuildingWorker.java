@@ -658,7 +658,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
          */
         public void removeRecipe(final int i)
         {
-            if(i < recipes.size() && i > 0)
+            if(i < recipes.size() && i >= 0)
             {
                 recipes.remove(i);
             }

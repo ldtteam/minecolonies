@@ -174,7 +174,8 @@ public class JobDeliveryman extends AbstractJob
         {
             return null;
         }
-        return getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
+
+        return (IRequest<Delivery>) getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
     }
 
     /**

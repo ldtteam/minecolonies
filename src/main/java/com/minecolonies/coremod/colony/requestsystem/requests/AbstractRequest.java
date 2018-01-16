@@ -467,6 +467,19 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         return itemExamples;
     }
 
+    @NotNull
+    @Override
+    public <T> Optional<T> getRequestOfType(final Class<T> tClass)
+    {
+        final R request = getRequest();
+        if (tClass.isInstance(request))
+        {
+            return Optional.of(tClass.cast(request));
+        }
+
+        return Optional.empty();
+    }
+
     @Override
     public boolean equals(final Object o)
     {

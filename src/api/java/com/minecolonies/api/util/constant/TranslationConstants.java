@@ -172,7 +172,8 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING                 = "com.minecolonies.coremod.status.cowboy.milking";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_SHEPHERD_SHEARING              = "com.minecolonies.coremod.status.shepherd.shearing";
-
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_COMPAT_JEI_CRAFTIN_TEACHING_UNKNOWN_RECIPE = "com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe";
 
     private TranslationConstants()
     {
