@@ -20,6 +20,17 @@ repositories {
         name 'DVS1 Maven FS'
         url 'http://dvs1.progwml6.com/files/maven'
     }
+    maven {
+        // location of a maven mirror for JEI files, as a fallback
+        name = "ModMaven"
+        url = "modmaven.k-4u.nl"
+    }
+}
+
+repositories {
+    maven {
+        url 'http://dogforce-games.com/maven'
+    }
 }
 
 sonarqube {
@@ -97,11 +108,18 @@ configFile.withReader {
 }
 
 dependencies {
-    deobfCompile "slimeknights.mantle:Mantle:1.12-${config.mantle_version}"
-    deobfCompile "slimeknights:TConstruct:1.12-${config.tinker_version}"
+    deobfCompile "slimeknights.mantle:Mantle:${config.minecraft_version}-${config.mantle_version}"
+    deobfCompile "slimeknights:TConstruct:${config.minecraft_version}-${config.tinker_version}"
 
     structuresCompile sourceSets.api.output
     //blockOutCompile sourceSets.api.output
+
+    deobfCompile "gigaherz.guidebook:Guidebook-1.11.0:${config.guidebook_version}"
+
+    // compile against the JEI API but do not include it at runtime
+    deobfProvided "mezz.jei:jei_${config.minecraft_version}:${config.jei_version}:api"
+    // at runtime, use the full JEI jar
+    runtime "mezz.jei:jei_${config.minecraft_version}:${config.jei_version}"
 
     testCompile sourceSets.structures.output
     testCompile sourceSets.blockOut.output
@@ -155,17 +173,23 @@ processResources {
 
 compileJava {
     options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint"
+    options.compilerArgs << "-Xlint:all"
+    options.compilerArgs << "-Xmaxwarns"
+    options.compilerArgs << "9999"
 }
 
 compileApiJava {
     options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint"
+    options.compilerArgs << "-Xlint:all"
+    options.compilerArgs << "-Xmaxwarns"
+    options.compilerArgs << "9999"
 }
 
 compileBlockOutJava {
     options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint"
+    options.compilerArgs << "-Xlint:all"
+    options.compilerArgs << "-Xmaxwarns"
+    options.compilerArgs << "9999"
 }
 
 task apiJar(type: Jar) {

@@ -53,12 +53,12 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      * IT IS VITAL THAT THE REQUEST RETURNED ARE NOT YET ASSIGNED. SIMULATION AND OTHER STRATEGIES WILL FAIL ELSE!
      * THE MANAGER GIVEN WILL HANDLE ASSIGNING HIMSELF!
      *
-     * @param request The request to resolve.
      * @param manager The manager that is attempting to resolve using this resolver.
+     * @param request The request to resolve.
      * @return The tokens of required requests if the attempt was successful (an empty list is allowed to indicate no requirements), null if the attempt failed.
      */
     @Nullable
-    List<IToken> attemptResolve(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
+    List<IToken<?>> attemptResolve(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
 
     /**
      * Method used to resolve a given request.
@@ -75,7 +75,7 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      *                          and all requirements should be available to this resolver at this point in time.
      */
     @Nullable
-    void resolve(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request) throws RuntimeException;
+    void resolve(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
 
     /**
      * Method called by the given manager to request a followup request.
@@ -86,7 +86,7 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      * @return The followup request for the completed request. Null if none is needed.
      */
     @Nullable
-    IRequest getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> completedRequest);
+    IRequest<?> getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> completedRequest);
 
     /**
      * Method used to indicate to this resolver that a parent of a request assigned to him has been cancelled,
@@ -97,14 +97,30 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      * <p>
      * The returned request will then be used as the new parent and should be used to clean up the results of this request.
      *
-     * @param manager The manager that indicates the cancelling or overrulling
-     * @param request The request that has been cancelled or overrulled.
+     * @param manager The manager that indicates the cancelling
+     * @param request The request that has been cancelled.
      * @return the new request if necessary. It should not be assigned yet.
      *
-     * @throws IllegalArgumentException is thrown when the cancelling or overrulling failed.
+     * @throws IllegalArgumentException is thrown when the cancelling failed.
      */
     @Nullable
-    IRequest onRequestCancelledOrOverruled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request) throws IllegalArgumentException;
+    IRequest<?> onRequestCancelled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
+
+    /**
+     * Method used to indicate to this resolver that a parent of a request assigned to him has been cancelled,
+     * and that the resolver of the parent did not return a cleanup request.
+     * <p>
+     * If a followup request is needed (For example picking up crafting results to bring them to storage) a request can be made to the given manager
+     * which will properly handle the processing of the new request.
+     * <p>
+     * The returned request will then be used as the new parent and should be used to clean up the results of this request.
+     *
+     * @param manager The manager that indicates the cancelling
+     * @param request The request that has been cancelled.
+     *
+     * @throws IllegalArgumentException is thrown when the cancelling failed.
+     */
+    void onRequestBeingOverruled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
 
     /**
      * The priority of this resolver.

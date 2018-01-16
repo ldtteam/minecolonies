@@ -21,7 +21,7 @@ public class Burnable implements IDeliverable
     private final int count;
 
     @NotNull
-    private ItemStack result;
+    private ItemStack result = ItemStackUtils.EMPTY;
 
     public Burnable(final int count) {this.count = count;}
 
@@ -77,7 +77,33 @@ public class Burnable implements IDeliverable
         return result;
     }
 
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof Burnable))
+        {
+            return false;
+        }
 
+        final Burnable burnable = (Burnable) o;
 
+        if (getCount() != burnable.getCount())
+        {
+            return false;
+        }
 
+        return ItemStackUtils.compareItemStacksIgnoreStackSize(getResult(), burnable.getResult());
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result1 = getCount();
+        result1 = 31 * result1 + getResult().hashCode();
+        return result1;
+    }
 }

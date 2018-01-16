@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.requestsystem.requester;
 
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +16,7 @@ public interface IRequester
      *
      * @return The id of this requester.
      */
-    IToken getRequesterId();
+    IToken<?> getRequesterId();
 
     /**
      * Method used to get the location that a delivery has to be brought to.
@@ -43,7 +44,7 @@ public interface IRequester
      * @param token the token of the request.
      */
     @NotNull
-    void onRequestComplete(@NotNull final IToken token);
+    void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token);
 
     /**
      * Method called by the request system to notify this requester that a request has been overruled.
@@ -51,7 +52,7 @@ public interface IRequester
      * @param token The token of the request.
      */
     @NotNull
-    void onRequestCancelled(@NotNull final IToken token);
+    void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token);
 
     /**
      * Gets the name of the requester that requested the request given by the token.
@@ -60,5 +61,5 @@ public interface IRequester
      * @return The display name of the requester.
      */
     @NotNull
-    ITextComponent getDisplayName(@NotNull final IToken token);
+    ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token);
 }

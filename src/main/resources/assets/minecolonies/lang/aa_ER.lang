@@ -1,3 +1,4 @@
+#X-Generator: crowdin.com
 tile.minecolonies.blockHutCitizen.name=Citizen's Hut
 tile.minecolonies.blockHutBaker.name=Bakery
 tile.minecolonies.blockHutBlacksmith.name=Forge
@@ -130,7 +131,7 @@ com.minecolonies.coremod.gui.hiring.description=Choose a worker for the job.
 com.minecolonies.coremod.gui.townHall.population.deliverymen=Deliverymen: %d
 com.minecolonies.coremod.gui.townHall.population.miners=Miners: %d
 com.minecolonies.coremod.gui.townHall.population.fishermen=Fishermen: %d
-com.minecolonies.coremod.gui.townHall.population.guards=Guards: %d
+com.minecolonies.coremod.gui.townHall.population.Guards=Guards: %d
 com.minecolonies.coremod.gui.townHall.population.lumberjacks=Lumberjacks: %d
 com.minecolonies.coremod.gui.townHall.population.farmers=Farmers: %d
 com.minecolonies.coremod.gui.townHall.population.bakers=Bakers: %d
@@ -258,7 +259,7 @@ com.minecolonies.coremod.gui.structure.rename=Rename Structure
 com.minecolonies.coremod.gui.structure.delete=Delete Structure
 com.minecolonies.coremod.gui.structure.delete.title=Delete Structure
 com.minecolonies.coremod.gui.structure.delete.body=Do you want to delete %s?
-//death achievements
+//death=achievements
 achievement.miner.death.lava=Dug too deep.
 achievement.miner.death.fall=It's the stop at the end.
 achievement.lumberjack.death.tree=I am groot!
@@ -271,7 +272,7 @@ achievement.lumberjack.death.tree.desc=Your lumberjack is killed by a tree.
 achievement.fisher.death.guardian.desc=Your fisherman is killed by a guardian.
 achievement.guard.death.enderman.desc=Your guard is killed by an enderman.
 achievement.player.death.guard.desc=You are killed by one of your guards.
-//statistics achievements
+//statistics=achievements
 achievement.builder.hutsBuilt.one=A roof over my head.
 achievement.builder.hutsBuilt.25=I think, I can handle that.
 achievement.builder.hutsBuilt.100=We built this city...
@@ -400,9 +401,6 @@ com.minecolonies.coremod.permission.attack_entity=Attack entities
 com.minecolonies.coremod.permission.access_free_blocks=Access free-blocks
 
 item.supplyCampDeployer.invalid=Requiring a flat ground of at least 16*17.
-item.minecolonies.supplyChestDeployer.name=SupplyShip Chest
-item.minecolonies.supplyCampDeployer.name=SupplyCamp Chest
-com.minecolonies.coremod.error.supplyChestAlreadyPlaced=You have already placed a supply ship or supply camp!
 com.minecolonies.coremod.gui.townHall.currentHappiness=Overall happiness:
 com.minecolonies.coremod.job.guard.toolClickGuardTooFar=Too far away from guard tower, please upgrade your guardtower.
 com.minecolonies.coremod.saturation.0=I'm starving, I can't work anymore
@@ -423,7 +421,6 @@ com.minecolonies.coremod.baker.noFurnace=My building doesn't have any furnaces, 
 com.minecolonies.coremod.job.baker=Baker
 com.minecolonies.coremod.gui.workerHuts.saplingList=Tasklist
 
-com.minecolonies.coremod.gui.workerHuts.saplingList=Tasklist
 com.minecolonies.coremod.gui.townHall.housing=Housing assignment mode:
 com.minecolonies.coremod.gui.home.assign=Assign %d citizens
 com.minecolonies.coremod.gui.workerHuts.unassign=Remove citizen
@@ -442,7 +439,6 @@ com.minecolonies.coremod.status.decorating=Decorating
 com.minecolonies.coremod.status.gathering=Gathering
 com.minecolonies.coremod.status.spawning=Spawning entities
 com.minecolonies.coremod.status.waitingForBuild=Waiting for request
-com.minecolonies.coremod.status.gathering=Gathering
 com.minecolonies.coremod.status.delivering=Delivering
 com.minecolonies.coremod.status.dumping=Dumping
 com.minecolonies.coremod.status.hoeing=Hoeing
@@ -491,7 +487,7 @@ com.minecolonies.coremod.request.tool.pretype=Tool of class:
 com.minecolonies.coremod.request.tool.preminlevel=with minimal level:
 com.minecolonies.coremod.request.tool.premaxlevel=with maximal level:
 
-com.minecolonies.coremod.general.and= and
+com.minecolonies.coremod.general.and=and
 
 com.minecolonies.coremod.tooltype.none=Unknown
 com.minecolonies.coremod.tooltype.pickaxe=Pickaxe
@@ -524,4 +520,5 @@ item.supplyChestDeployer.invalid=You must place it in a fitting pool of water.
 item.supplyChestDeployer.missing=Are you trying to trick me, pick up that Supplyship again?
 com.minecolonies.coremod.citizen.rename.same=Renaming failed: 2 Citizen are not allowed to have the same name!
 com.minecolonies.coremod.citizen.rename.notAllowed=Renaming failed: You're not allowed to rename your Citizen.
+
 

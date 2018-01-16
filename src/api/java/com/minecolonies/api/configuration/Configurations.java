@@ -803,5 +803,8 @@ public class Configurations
 
         @Config.Comment("Should the request system creatively resolve (if possible) when the player is required to resolve a request.")
         public boolean creativeResolve = false;
+
+        @Config.Comment("Should the player be allowed to use the '/mc colony rs reset' command?")
+        public boolean canPlayerUseResetCommand = false;
     }
 }

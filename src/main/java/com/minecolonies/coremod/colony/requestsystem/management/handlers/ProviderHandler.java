@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequest
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * Class used to handle the inner workings of the request system with regards to providers.
@@ -25,31 +26,9 @@ public final class ProviderHandler
      *
      * @throws IllegalArgumentException when the token is not belonging to a registered provider.
      */
-    public static ImmutableCollection<IToken> getRegisteredResolvers(final IStandardRequestManager manager, final IRequestResolverProvider provider)
-      throws IllegalArgumentException
+    public static Collection<IToken<?>> getRegisteredResolvers(final IStandardRequestManager manager, final IRequestResolverProvider provider)
     {
-        //Check if the token is registered.
-        getProvider(manager, provider.getToken());
-
-        return manager.getProviderResolverMap().get(provider.getToken());
-    }
-
-    /**
-     * Method used to get a provider from a token.
-     *
-     * @param token The token to get the provider form.
-     * @return The provider that corresponds to the given token
-     *
-     * @throws IllegalArgumentException when no provider is not registered with the given token.
-     */
-    public static IRequestResolverProvider getProvider(final IStandardRequestManager manager, final IToken token) throws IllegalArgumentException
-    {
-        if (!manager.getProviderBiMap().containsKey(token))
-        {
-            throw new IllegalArgumentException("The given token for a provider is not registered");
-        }
-
-        return manager.getProviderBiMap().get(token);
+        return manager.getProviderResolverAssignmentDataStore().getAssignments().get(provider.getToken());
     }
 
     /**
@@ -59,24 +38,16 @@ public final class ProviderHandler
      * @param provider The provider that provides the resolvers.
      * @throws IllegalArgumentException is thrown when a provider is already registered.
      */
-    public static void registerProvider(final IStandardRequestManager manager, final IRequestResolverProvider provider) throws IllegalArgumentException
+    public static void registerProvider(final IStandardRequestManager manager, final IRequestResolverProvider provider)
     {
-        if (manager.getProviderBiMap().containsKey(provider.getToken()) ||
-              manager.getProviderBiMap().containsValue(provider))
-        {
-            throw new IllegalArgumentException("The given provider is already registered");
-        }
-
-        manager.getProviderBiMap().put(provider.getToken(), provider);
-
-        final ImmutableList.Builder<IToken> resolverListBuilder = new ImmutableList.Builder<>();
+        final ImmutableList.Builder<IToken<?>> resolverListBuilder = new ImmutableList.Builder<>();
         resolverListBuilder.addAll(ResolverHandler.registerResolvers(manager, provider.getResolvers()));
 
-        manager.getProviderResolverMap().put(provider.getToken(), resolverListBuilder.build());
+        manager.getProviderResolverAssignmentDataStore().getAssignments().put(provider.getToken(), resolverListBuilder.build());
         manager.getColony().markDirty();
     }
 
-    public static void removeProvider(final IStandardRequestManager manager, final IToken token) throws IllegalArgumentException
+    public static void removeProvider(final IStandardRequestManager manager, final IToken<?> token)
     {
         removeProviderInternal(manager, token);
     }
@@ -89,21 +60,19 @@ public final class ProviderHandler
      * @throws IllegalArgumentException is thrown when the token is not registered to a provider, or when the data stored in the manager is in conflict.
      */
     @SuppressWarnings(Suppression.UNCHECKED)
-    public static void removeProviderInternal(final IStandardRequestManager manager, final IToken token) throws IllegalArgumentException
+    public static void removeProviderInternal(final IStandardRequestManager manager, final IToken<?> token)
     {
-        final IRequestResolverProvider provider = getProvider(manager, token);
-
-        LogHandler.log("Removing provider: " + provider);
+        LogHandler.log("Removing provider: " + token);
 
         //Get the resolvers that are being removed.
-        final ImmutableCollection<IToken> assignedResolvers = getRegisteredResolvers(manager, token);
-        for (final IToken resolverToken : assignedResolvers)
+        final Collection<IToken<?>> assignedResolvers = getRegisteredResolvers(manager, token);
+        for (final IToken<?> resolverToken : assignedResolvers)
         {
             //Skip if the resolver has no requests assigned.
-            if (!manager.getResolverRequestMap().containsKey(resolverToken) || manager.getResolverRequestMap().get(resolverToken).isEmpty())
+            if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolverToken) || manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken).isEmpty())
             {
                 LogHandler.log("Removing resolver without assigned requests: " + resolverToken);
-                manager.getResolverRequestMap().remove(resolverToken);
+                manager.getRequestResolverRequestAssignmentDataStore().getAssignments().remove(resolverToken);
 
                 ResolverHandler.removeResolver(manager, resolverToken);
 
@@ -111,11 +80,11 @@ public final class ProviderHandler
             }
 
             //Clone the original list to modify it during iteration, if need be.
-            final Collection<IToken> assignedRequests = new ArrayList<>(manager.getResolverRequestMap().get(resolverToken));
+            final Collection<IToken<?>> assignedRequests = new ArrayList<>(manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken));
             LogHandler.log("Starting reassignment of already registered requests registered to resolver with token: " + resolverToken);
 
             //Get all assigned requests and reassign them.
-            for (final IToken requestToken : assignedRequests)
+            for (final IToken<?> requestToken : assignedRequests)
             {
                 manager.reassignRequest(requestToken, assignedResolvers);
             }
@@ -126,10 +95,9 @@ public final class ProviderHandler
         }
 
         //Removing the data from the maps.
-        manager.getProviderBiMap().remove(provider.getToken());
-        manager.getProviderResolverMap().remove(provider.getToken());
+        manager.getProviderResolverAssignmentDataStore().getAssignments().remove(token);
         manager.getColony().markDirty();
-        LogHandler.log("Removed provider: " + provider);
+        LogHandler.log("Removed provider: " + token);
     }
 
     /**
@@ -141,23 +109,13 @@ public final class ProviderHandler
      *
      * @throws IllegalArgumentException when the token is not belonging to a registered provider.
      */
-    public static ImmutableCollection<IToken> getRegisteredResolvers(final IStandardRequestManager manager, final IToken token) throws IllegalArgumentException
+    public static Collection<IToken<?>> getRegisteredResolvers(final IStandardRequestManager manager, final IToken<?> token)
     {
-        //Check if the token is registered.
-        getProvider(manager, token);
-
-        return manager.getProviderResolverMap().get(token);
+        return manager.getProviderResolverAssignmentDataStore().getAssignments().get(token);
     }
 
-    public static void removeProvider(final IStandardRequestManager manager, final IRequestResolverProvider provider) throws IllegalArgumentException
+    public static void removeProvider(final IStandardRequestManager manager, final IRequestResolverProvider provider)
     {
-        final IRequestResolverProvider registeredProvider = getProvider(manager, provider.getToken());
-
-        if (!registeredProvider.equals(provider))
-        {
-            throw new IllegalArgumentException("The given providers token is registered to a different provider!");
-        }
-
         removeProviderInternal(manager, provider.getToken());
     }
 }

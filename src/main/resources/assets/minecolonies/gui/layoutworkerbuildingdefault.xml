@@ -1,3 +1,4 @@
+
 <layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
     <label id="name" size="100% 11" pos="0 0"
@@ -10,13 +11,13 @@
     <label id="workerLevel" size="100% 11" pos="0 44"
            textalign="MIDDLE" color="black"/>
 
-    <button id="hire" align="TOP_MIDDLE" size="116 20" pos="0 64"
+    <button id="hire" align="TOP_MIDDLE" size="116 20" pos="0 60"
             label="$(com.minecolonies.coremod.gui.workerHuts.hire)"/>
-    <button id="recall" align="TOP_MIDDLE" size="116 20" pos="0 88"
+    <button id="recall" align="TOP_MIDDLE" size="116 20" pos="0 82"
             label="$(com.minecolonies.coremod.gui.workerHuts.recall)"/>
-    <button id="build" align="TOP_MIDDLE" size="116 20" pos="0 120"
+    <button id="build" align="TOP_MIDDLE" size="116 20" pos="0 104"
             label="$(com.minecolonies.coremod.gui.workerHuts.upgrade)"/>
-    <button id="repair" align="TOP_MIDDLE" size="116 20" pos="0 144"
+    <button id="repair" align="TOP_MIDDLE" size="116 20" pos="0 126"
             label="$(com.minecolonies.coremod.gui.workerHuts.repair)"/>
 
     <label size="100% 11" pos="0 172"

@@ -126,7 +126,8 @@ public class WindowClipBoard extends AbstractWindowSkeleton
                 logo.setImage(request.getDisplayIcon());
             }
 
-            rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(request.getToken()).getFormattedText());
+            ColonyView view = ColonyManager.getColonyView(colonyId);
+            rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
 
             rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
               .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));

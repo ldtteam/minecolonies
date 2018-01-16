@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.sounds;
 
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;

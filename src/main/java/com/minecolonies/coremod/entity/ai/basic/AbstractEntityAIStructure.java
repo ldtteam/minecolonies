@@ -1,8 +1,5 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
-import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.ModBlocks;

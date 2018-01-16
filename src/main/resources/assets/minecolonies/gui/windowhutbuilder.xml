@@ -22,24 +22,32 @@
             <label id="workerLevel" size="100% 11" pos="0 44"
                    textalign="MIDDLE" color="black"/>
 
-            <buttonimage id="hire" align="TOP_MIDDLE" size="129 17" pos="0 64"
+            <buttonimage id="hire" align="TOP_MIDDLE" size="129 17" pos="0 60"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                          label="$(com.minecolonies.coremod.gui.workerHuts.hire)" textcolor="black"/>
-            <buttonimage id="recall" align="TOP_MIDDLE" size="129 17" pos="0 88"
+            <buttonimage id="recall" align="TOP_MIDDLE" size="129 17" pos="0 78"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                          label="$(com.minecolonies.coremod.gui.workerHuts.recall)" textcolor="black"/>
-            <buttonimage id="build" align="TOP_MIDDLE" size="129 17" pos="0 120"
+            <buttonimage id="build" align="TOP_MIDDLE" size="129 17" pos="0 100"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                          label="$(com.minecolonies.coremod.gui.workerHuts.upgrade)" textcolor="black"/>
-            <buttonimage id="repair" align="TOP_MIDDLE" size="129 17" pos="0 144"
+            <buttonimage id="repair" align="TOP_MIDDLE" size="129 17" pos="0 118"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                          label="$(com.minecolonies.coremod.gui.workerHuts.repair)" textcolor="black"/>
 
-            <label size="100% 11" pos="0 172"
+            <label size="100% 11" pos="0 135"
                    label="$(com.minecolonies.coremod.gui.workerHuts.buildPrio)"
                    textalign="MIDDLE" color="black"/>
-            <label id="type" size="100% 11" pos="0 182"
+            <label id="type" size="100% 11" pos="0 148"
                    textalign="MIDDLE" color="black"/>
+
+
+            <buttonimage id="recipelist" align="TOP_MIDDLE" size="129 17" pos="0 160"
+                         source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                         label="$(com.minecolonies.coremod.gui.workerHuts.listRecipes)" textcolor="black"/>
+            <buttonimage id="crafting" align="TOP_MIDDLE" size="129 17" pos="0 178"
+                         source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                         label="$(com.minecolonies.coremod.gui.workerHuts.crafting)" textcolor="black"/>
         </view>
 
         <view id="resourceActions" size="100% 100%">

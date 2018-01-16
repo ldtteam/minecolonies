@@ -3,6 +3,8 @@ package com.minecolonies.coremod.colony.requestsystem.requesters;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.MineColonies;
@@ -18,7 +20,7 @@ import java.util.Optional;
 /**
  * A class that functions as the connection between a building and the request system.
  */
-public class BuildingBasedRequester implements IRequester
+public class BuildingBasedRequester implements IBuildingBasedRequester
 {
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
@@ -28,27 +30,27 @@ public class BuildingBasedRequester implements IRequester
 
     private final ILocation location;
 
-    private final IToken requesterId;
+    private final IToken<?> requesterId;
 
     private IRequester building = null;
 
-    public BuildingBasedRequester(final ILocation location, final IToken requesterId)
+    public BuildingBasedRequester(final ILocation location, final IToken<?> requesterId)
     {
         this.location = location;
         this.requesterId = requesterId;
     }
 
-    public static BuildingBasedRequester deserialize(IFactoryController controller, NBTTagCompound compound)
+    public static BuildingBasedRequester deserialize(final IFactoryController controller, final NBTTagCompound compound)
     {
-        ILocation location = controller.deserialize(compound.getCompoundTag(NBT_LOCATION));
-        IToken token = controller.deserialize(compound.getCompoundTag(NBT_ID));
+        final ILocation location = controller.deserialize(compound.getCompoundTag(NBT_LOCATION));
+        final IToken<?> token = controller.deserialize(compound.getCompoundTag(NBT_ID));
 
         return new BuildingBasedRequester(location, token);
     }
 
-    public NBTTagCompound serialize(IFactoryController controller)
+    public NBTTagCompound serialize(final IFactoryController controller)
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        final NBTTagCompound compound = new NBTTagCompound();
 
         compound.setTag(NBT_LOCATION, controller.serialize(getRequesterLocation()));
         compound.setTag(NBT_ID, controller.serialize(getRequesterId()));
@@ -57,7 +59,7 @@ public class BuildingBasedRequester implements IRequester
     }
 
     @Override
-    public IToken getRequesterId()
+    public IToken<?> getRequesterId()
     {
         return requesterId;
     }
@@ -69,28 +71,27 @@ public class BuildingBasedRequester implements IRequester
         return location;
     }
 
-    @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IToken token)
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        getBuilding().ifPresent(requester -> requester.onRequestComplete(token));
+        getBuilding(manager, token).ifPresent(requester -> requester.onRequestComplete(manager, token));
+    }
+
+    @Override
+    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    {
+        getBuilding(manager, token).ifPresent(requester -> requester.onRequestCancelled(manager, token));
     }
 
     @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IToken token)
+    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        getBuilding().ifPresent(requester -> requester.onRequestCancelled(token));
+        return getBuilding(manager, token).map(requester -> requester.getDisplayName(manager, token)).orElseGet(() -> new TextComponentString("<UNKNOWN>"));
     }
 
-    @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken token)
-    {
-        return getBuilding().map(requester -> requester.getDisplayName(token)).orElseGet(() -> new TextComponentString("<UNKNOWN>"));
-    }
-
-    public Optional<IRequester> getBuilding()
+    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         updateBuilding();
         return Optional.ofNullable(building);

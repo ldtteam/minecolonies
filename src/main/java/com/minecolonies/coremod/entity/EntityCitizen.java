@@ -69,8 +69,10 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.Suppression.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
+import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_NOT_ALLOWED;
+import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_SAME;
 
 /**
  * The Class used to represent the citizen entities.

@@ -74,7 +74,6 @@ public class NBTUtils
 
         private final NBTTagList list;
         private int currentIndex = 0;
-
         private TagListIterator(final NBTTagList list) {this.list = list;}
 
         @Override

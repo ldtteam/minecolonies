@@ -25,9 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDINGS;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NEW_FIELDS;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 public class BuildingManager implements IBuildingManager
 {
@@ -315,6 +313,7 @@ public class BuildingManager implements IBuildingManager
                     building.setStyle(colony.getStyle());
                 }
                 ConstructionTapeHelper.placeConstructionTape(building.getLocation(), building.getCorners(), world);
+                colony.getRequestManager().onProviderAddedToColony(building);
             }
             else
             {
@@ -422,9 +421,9 @@ public class BuildingManager implements IBuildingManager
         {
             wareHouse = (BuildingWareHouse) building;
         }
-
-        colony.getRequestManager().onProviderAddedToColony(building);
     }
+
+
 
     /**
      * Sends packages to update the buildings.

@@ -29,7 +29,8 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZENS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MAX_CITIZENS;
 
 public class CitizenManager implements ICitizenManager
 {

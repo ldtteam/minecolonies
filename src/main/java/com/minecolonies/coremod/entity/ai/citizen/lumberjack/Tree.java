@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.colony.ColonyManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
@@ -13,7 +13,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
