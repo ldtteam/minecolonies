@@ -196,6 +196,10 @@ public final class ItemStackUtils
         {
             isATool = itemStack.getItem() instanceof ItemFishingRod;
         }
+        else if (ToolType.SHEARS.equals(toolType))
+        {
+            isATool = itemStack.getItem() instanceof ItemShears;
+        }
         return isATool;
     }
 

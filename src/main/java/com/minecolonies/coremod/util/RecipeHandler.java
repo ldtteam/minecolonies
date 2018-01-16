@@ -60,8 +60,6 @@ public final class RecipeHandler
     {
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockConstructionTape, ONE_FORTH_OF_A_STACK), "SWS", "S S", "S S",
           'S', Items.STICK, 'W', new ItemStack(Blocks.WOOL, 1, Constants.YELLOW));
-        GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.blockConstructionTapeCorner, 1), ModBlocks.blockConstructionTape);
-        GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.blockConstructionTape, 1), ModBlocks.blockConstructionTapeCorner);
 
         // Register the hust
         addHutRecipe(new ItemStack(ModBlocks.blockHutMiner, 1), Items.WOODEN_PICKAXE);
@@ -84,6 +82,11 @@ public final class RecipeHandler
         addHutRecipe(new ItemStack(ModBlocks.blockHutBaker, 1), Items.WHEAT);
         addHutRecipe(new ItemStack(ModBlocks.blockHutBarracks, 1), Blocks.IRON_BLOCK);
         addHutRecipe(new ItemStack(ModBlocks.blockHutCook, 1), Items.APPLE);
+        addHutRecipe(new ItemStack(ModBlocks.blockHutSmeltery, 1), Items.IRON_INGOT);
+        addHutRecipe(new ItemStack(ModBlocks.blockHutShepherd, 1), Items.SHEARS);
+        addHutRecipe(new ItemStack(ModBlocks.blockHutCowboy, 1), Items.LEATHER);
+        addHutRecipe(new ItemStack(ModBlocks.blockHutSwineHerder, 1), Items.PORKCHOP);
+        addHutRecipe(new ItemStack(ModBlocks.blockHutChickenHerder, 1), Items.EGG);
 
         //Register Scepters
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.scanTool, 1), "  I", " S ", "S  ", 'I', Items.IRON_INGOT, 'S', WOODEN_STICK));

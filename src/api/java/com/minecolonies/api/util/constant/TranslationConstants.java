@@ -156,6 +156,24 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME = "com.minecolonies.coremod.resolvers.crafter.private";
 
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_DECIDING                = "com.minecolonies.coremod.status.herder.deciding";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOHUT              = "com.minecolonies.coremod.status.herder.goingToHut";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_BREEDING                = "com.minecolonies.coremod.status.herder.breeding";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_SEARCHING               = "com.minecolonies.coremod.status.herder.searching";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOANIMAL           = "com.minecolonies.coremod.status.herder.goingToAnimal";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING              = "com.minecolonies.coremod.status.herder.butchering";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING                 = "com.minecolonies.coremod.status.cowboy.milking";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_SHEPHERD_SHEARING              = "com.minecolonies.coremod.status.shepherd.shearing";
+
+
     private TranslationConstants()
     {
         //empty default

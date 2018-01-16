@@ -95,7 +95,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         {
             final ItemStack stack = mainWorker.getInventoryCitizen().getStackInSlot(i);
 
-            if(ItemStackUtils.isEmpty(stack) && stack.getItem() != SAPLING_STACK.getItem())
+            if(ItemStackUtils.isEmpty(stack) || stack.getItem() != SAPLING_STACK.getItem())
             {
                 continue;
             }

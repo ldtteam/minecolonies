@@ -336,5 +336,47 @@ public enum AIState
     /**
      * Smelt stuff he finds in his hut to ingots.
      */
-    SMELTER_SMELT_STUFF
+    SMELTER_SMELT_STUFF,
+
+    /*
+### Herders ###
+     */
+
+    /**
+     * Decide what AIstate to go to next.
+     */
+    HERDER_DECIDE,
+
+    /**
+     * Breed two animals together.
+     */
+    HERDER_BREED,
+
+    /**
+     * Butcher an animal.
+     */
+    HERDER_BUTCHER,
+
+    /**
+     * Pickup items within area.
+     */
+    HERDER_PICKUP,
+
+    /*
+### Cowboy ###
+     */
+
+    /**
+     * Milk cows!
+     */
+    COWBOY_MILK,
+
+    /*
+### Shepherd ###
+     */
+
+    /**
+     * Shear a sheep!
+     */
+    SHEPHERD_SHEAR
 }
