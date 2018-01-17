@@ -400,7 +400,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
         citizenToServe.clear();
         final List<EntityCitizen> citizenList = world.getEntitiesWithinAABB(EntityCitizen.class,
-                range, cit -> !(cit.getColonyJob() instanceof JobCook) && cit.getCitizenData().getSaturation() <= 0);
+                range, cit -> !(cit.getColonyJob() instanceof JobCook) && cit.getCitizenData() != null && cit.getCitizenData().getSaturation() <= 0);
         if (!citizenList.isEmpty())
         {
             citizenToServe.addAll(citizenList);
