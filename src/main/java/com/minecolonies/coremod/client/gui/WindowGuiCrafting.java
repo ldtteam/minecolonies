@@ -31,12 +31,12 @@ public class WindowGuiCrafting extends GuiContainer
     /**
      * X offset of the button.
      */
-    private static final int BUTTON_X_OFFSET = 75;
+    private static final int BUTTON_X_OFFSET = 15;
 
     /**
      * Y offset of the button.
      */
-    private static final int BUTTON_Y_POS = 210;
+    private static final int BUTTON_Y_POS = 170;
 
     /**
      * Button width.
@@ -95,7 +95,7 @@ public class WindowGuiCrafting extends GuiContainer
     public void initGui()
     {
         super.initGui();
-        this.doneButton = this.addButton(new GuiButton(0, this.width / 2 - BUTTON_X_OFFSET, BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("gui.done", new Object[0])));
+        this.doneButton = this.addButton(new GuiButton(0, guiLeft + BUTTON_X_OFFSET, guiTop + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("gui.done")));
     }
 
     @Override

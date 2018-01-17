@@ -8,37 +8,37 @@
 
         <view id="levelActions" size="100% 100%">
             <layout source="minecolonies:gui/windowbase.xml"/>
-            <label size="100% 11" pos="0 10"
+            <label size="100% 11" pos="0 12"
                    label="$(com.minecolonies.coremod.gui.workerHuts.guardActions)" color="black"
                    textalign="BOTTOM_MIDDLE"/>
 
-            <buttonimage id="job" size="86 17" pos="40 25"
+            <buttonimage id="job" size="86 17" pos="50 25"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                          label="$(com.minecolonies.coremod.gui.workerHuts.knight)" textcolor="black"/>
 
-            <label size="50% 11" pos="40 40" label="$(com.minecolonies.coremod.gui.workerHuts.assign)" color="black"
+            <label size="50% 11" pos="45 44" label="$(com.minecolonies.coremod.gui.workerHuts.assign)" color="black"
                    textalign="BOTTOM_MIDDLE"/>
-            <buttonimage id="assign" size="86 17" pos="40 55"
+            <buttonimage id="assign" size="86 17" pos="50 55"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                          label="$(com.minecolonies.coremod.gui.workerHuts.modeA)" textcolor="black"/>
 
-            <label size="50% 11" pos="40 70" label="$(com.minecolonies.coremod.gui.workerHuts.patrol)" color="black"
+            <label size="50% 11" pos="45 74" label="$(com.minecolonies.coremod.gui.workerHuts.patrol)" color="black"
                    textalign="BOTTOM_MIDDLE"/>
-            <buttonimage id="patrol" size="86 17" pos="40 85"
+            <buttonimage id="patrol" size="86 17" pos="50 85"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                          label="$(com.minecolonies.coremod.gui.workerHuts.modeA)" textcolor="black"/>
 
-            <label size="50% 11" pos="40 100" label="$(com.minecolonies.coremod.gui.workerHuts.retrieve)" color="black"
+            <label size="50% 11" pos="45 104" label="$(com.minecolonies.coremod.gui.workerHuts.retrieve)" color="black"
                    textalign="BOTTOM_MIDDLE"/>
-            <buttonimage id="retrieve" size="86 17" pos="40 115"
+            <buttonimage id="retrieve" size="86 17" pos="50 115"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                          label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)" textcolor="black"/>
 
-            <button id="patrolling" size="30% 14" pos="10 135"
+            <button id="patrolling" size="30% 14" pos="15 135"
                     label="$(com.minecolonies.coremod.gui.workerHuts.task.patrol)"/>
-            <button id="following" size="30% 14" pos="62 135"
+            <button id="following" size="30% 14" pos="67 135"
                     label="$(com.minecolonies.coremod.gui.workerHuts.task.follow)"/>
-            <button id="guarding" size="30% 14" pos="114 135"
+            <button id="guarding" size="30% 14" pos="119 135"
                     label="$(com.minecolonies.coremod.gui.workerHuts.task.guard)"/>
 
             <buttonimage id="setTarget" size="129 17" pos="25 160"

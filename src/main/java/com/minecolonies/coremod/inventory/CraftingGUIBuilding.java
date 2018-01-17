@@ -13,7 +13,6 @@ import net.minecraft.network.play.server.SPacketSetSlot;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class CraftingGUIBuilding extends Container
@@ -74,11 +73,6 @@ public class CraftingGUIBuilding extends Container
     private static final int CRAFTING_SLOTS = 5;
 
     /**
-     * Amount of slots per line in the GUI.
-     */
-    private static final int SLOTS_PER_LINE = 9;
-
-    /**
      * Start slot of the player hotbar.
      */
     private static final int HOTBAR_START = 32;
@@ -111,7 +105,8 @@ public class CraftingGUIBuilding extends Container
         this.worldObj = worldIn;
         this.player = playerInventory.player;
 
-        this.addSlotToContainer(new SlotCrafting(playerInventory.player, this.craftMatrix, this.craftResult, 0, X_CRAFT_RESULT, Y_CRAFT_RESULT) {
+        this.addSlotToContainer(new SlotCrafting(playerInventory.player, this.craftMatrix, this.craftResult, 0, X_CRAFT_RESULT, Y_CRAFT_RESULT)
+        {
             @Override
             public boolean canTakeStack(final EntityPlayer playerIn)
             {
@@ -123,7 +118,8 @@ public class CraftingGUIBuilding extends Container
         {
             for (int j = 0; j < 2; ++j)
             {
-                this.addSlotToContainer(new Slot(this.craftMatrix, j + i * 2, X_OFFSET_CRAFTING + j * INVENTORY_OFFSET_EACH, Y_OFFSET_CRAFTING + i * INVENTORY_OFFSET_EACH){
+                this.addSlotToContainer(new Slot(this.craftMatrix, j + i * 2, X_OFFSET_CRAFTING + j * INVENTORY_OFFSET_EACH, Y_OFFSET_CRAFTING + i * INVENTORY_OFFSET_EACH)
+                {
                     @Override
                     public int getSlotStackLimit()
                     {
@@ -131,7 +127,7 @@ public class CraftingGUIBuilding extends Container
                     }
 
                     @Override
-                    public ItemStack onTake(EntityPlayer p_190901_1_, ItemStack p_190901_2_)
+                    public ItemStack onTake(final EntityPlayer player, final ItemStack stack)
                     {
                         return ItemStack.EMPTY;
                     }
@@ -195,11 +191,16 @@ public class CraftingGUIBuilding extends Container
     @Override
     public void onCraftMatrixChanged(final IInventory inventoryIn)
     {
-        if (!worldObj.isRemote) {
+        if (!worldObj.isRemote)
+        {
             EntityPlayerMP entityplayermp = (EntityPlayerMP) player;
             ItemStack itemstack = ItemStack.EMPTY;
             IRecipe irecipe = CraftingManager.findMatchingRecipe(craftMatrix, worldObj);
-            if (irecipe != null && (irecipe.isDynamic() || !worldObj.getGameRules().getBoolean("doLimitedCrafting") || entityplayermp.getRecipeBook().isUnlocked(irecipe) || entityplayermp.isCreative())) {
+            if (irecipe != null && (irecipe.isDynamic()
+                    || !worldObj.getGameRules().getBoolean("doLimitedCrafting")
+                    || entityplayermp.getRecipeBook().isUnlocked(irecipe)
+                    || entityplayermp.isCreative()))
+            {
                 this.craftResult.setRecipeUsed(irecipe);
                 itemstack = irecipe.getCraftingResult(this.craftMatrix);
             }
@@ -222,8 +223,10 @@ public class CraftingGUIBuilding extends Container
     {
         if (slotId >= 1 && slotId < 5)
         {
-            if (mode == ClickType.PICKUP || mode == ClickType.PICKUP_ALL ||
-                  mode == ClickType.SWAP) // 1 is shift-click
+            // 1 is shift-click
+            if (mode == ClickType.PICKUP
+                    || mode == ClickType.PICKUP_ALL
+                    || mode == ClickType.SWAP)
             {
                 Slot slot = this.inventorySlots.get(slotId);
 
