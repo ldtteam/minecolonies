@@ -3,14 +3,18 @@ package com.minecolonies.coremod.blocks;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -20,11 +24,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
-import static net.minecraft.util.EnumFacing.EAST;
-import static net.minecraft.util.EnumFacing.WEST;
+import static net.minecraft.util.EnumFacing.*;
 
 /**
  * This block is used as a border to show the size of the building.
@@ -32,6 +36,10 @@ import static net.minecraft.util.EnumFacing.WEST;
  */
 public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstructionTape>
 {
+    /**
+     * The variants of the shingle slab.
+     */
+    public static final PropertyEnum<Type> VARIANT = PropertyEnum.create("variant", Type.class);
 
     /**
      * The position it faces.
@@ -101,6 +109,87 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
      * Height of the collision box.
      */
     private static final double HEIGHT_COLLISION = 1.0;
+
+    /**
+     * Start of the collision box at x facing North.
+     */
+    private static final double N_START_COLLISION_X = 0.0;
+
+    /**
+     * End of the collision box facing North.
+     */
+    private static final double N_END_COLLISION_X = 0.5625;
+
+    /**
+     * Start of the collision box at z facing North.
+     */
+    private static final double N_START_COLLISION_Z = 0.0;
+
+    /**
+     * End of the collision box facing North.
+     */
+    private static final double N_END_COLLISION_Z = 0.5625;
+
+    /**
+     * Start of the collision box at x facing West.
+     */
+    private static final double W_START_COLLISION_X = 0.0;
+
+    /**
+     * Start of the collision box at z facing West.
+     */
+    private static final double W_START_COLLISION_Z = 0.4375;
+
+    /**
+     * End of the collision box facing West.
+     */
+    private static final double W_END_COLLISION_Z = 1.0;
+
+    /**
+     * Start of the collision box at x facing South.
+     */
+    private static final double S_START_COLLISION_X = 0.4375;
+
+    /**
+     * End of the collision box facing South.
+     */
+    private static final double S_END_COLLISION_X = 1.0;
+
+    /**
+     * Start of the collision box at z facing South.
+     */
+    private static final double S_START_COLLISION_Z = 0.4375;
+
+    /**
+     * End of the collision box facing South.
+     */
+    private static final double S_END_COLLISION_Z = 1.0;
+
+    /**
+     * Start of the collision box at x facing East.
+     */
+    private static final double E_START_COLLISION_X = 0.4375;
+
+    /**
+     * End of the collision box facing East.
+     */
+    private static final double E_END_COLLISION_X = 1.0;
+
+    /**
+     * Start of the collision box at z facing East.
+     */
+    private static final double E_START_COLLISION_Z = 0.0;
+
+    /**
+     * End of the collision box facing West.
+     */
+    private static final double W_END_COLLISION_X = 0.5625;
+
+    /**
+     * End of the collision box facing East.
+     */
+    private static final double E_END_COLLISION_Z = 0.5625;
+
     /**
      * How much light goes through the block.
      */
@@ -123,7 +212,7 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     private void initBlock()
     {
         setRegistryName(BLOCK_NAME);
-        setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
+        setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
         setHardness(BLOCK_HARDNESS);
@@ -181,8 +270,48 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
-    public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos)
+    public AxisAlignedBB getBoundingBox(final IBlockState stateIn, final IBlockAccess source, final BlockPos pos)
     {
+        final IBlockState state = getActualState(stateIn, source, pos);
+        if(state.getValue(VARIANT).equals(Type.CORNER))
+        {
+            if (state.getValue(FACING).equals(NORTH))
+            {
+                return new AxisAlignedBB((float) N_START_COLLISION_X,
+                        (float) BOTTOM_COLLISION,
+                        (float) N_START_COLLISION_Z,
+                        (float) N_END_COLLISION_X,
+                        (float) HEIGHT_COLLISION,
+                        (float) N_END_COLLISION_Z);
+            }
+            if (state.getValue(FACING).equals(WEST))
+            {
+                return new AxisAlignedBB((float) W_START_COLLISION_X,
+                        (float) BOTTOM_COLLISION,
+                        (float) W_START_COLLISION_Z,
+                        (float) W_END_COLLISION_X,
+                        (float) HEIGHT_COLLISION,
+                        (float) W_END_COLLISION_Z);
+            }
+            if (state.getValue(FACING).equals(SOUTH))
+            {
+                return new AxisAlignedBB((float) S_START_COLLISION_X,
+                        (float) BOTTOM_COLLISION,
+                        (float) S_START_COLLISION_Z,
+                        (float) S_END_COLLISION_X,
+                        (float) HEIGHT_COLLISION,
+                        (float) S_END_COLLISION_Z);
+            }
+            else
+            {
+                return new AxisAlignedBB((float) E_START_COLLISION_X,
+                        (float) BOTTOM_COLLISION,
+                        (float) E_START_COLLISION_Z,
+                        (float) E_END_COLLISION_X,
+                        (float) HEIGHT_COLLISION,
+                        (float) E_END_COLLISION_Z);
+            }
+        }
 
         if (state.getValue(FACING).equals(EAST) || state.getValue(FACING).equals(WEST))
         {
@@ -202,6 +331,37 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
                                       (float) HEIGHT_COLLISION,
                                       (float) SN_END_COLLISION_Z);
         }
+    }
+
+    /**
+     * @deprecated remove when minecraft invents something better.
+     */
+    @Deprecated
+    @Override
+    public IBlockState getActualState(@NotNull final IBlockState state, @NotNull final IBlockAccess worldIn, @NotNull final BlockPos pos)
+    {
+        return getTapeShape(state, worldIn, pos);
+    }
+
+    /**
+     * Get the step shape of the slab
+     * @param state the state.
+     * @param world the world.
+     * @param position the position.Re
+     * @return the blockState to use.
+     */
+    private static IBlockState getTapeShape(@NotNull final IBlockState state, @NotNull final IBlockAccess world, @NotNull final BlockPos position)
+    {
+        final boolean[] connectors = new boolean[]{world.getBlockState(position.east()).getBlock() instanceof BlockConstructionTape,
+                world.getBlockState(position.west()).getBlock() instanceof BlockConstructionTape,
+                world.getBlockState(position.north()).getBlock() instanceof BlockConstructionTape,
+                world.getBlockState(position.south()).getBlock() instanceof BlockConstructionTape};
+
+        if((connectors[0] && connectors[2]) || (connectors[0] && connectors[3]) || (connectors[1] && connectors[3]) || (connectors[1] && connectors[2]))
+        {
+            return state.withProperty(VARIANT, Type.CORNER);
+        }
+        return state.withProperty(VARIANT, Type.STRAIGHT);
     }
 
     /**
@@ -249,9 +409,13 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
         return BlockRenderLayer.SOLID;
     }
 
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
     @SuppressWarnings(DEPRECATION)
     @NotNull
     @Override
+    @Deprecated
     public IBlockState getStateForPlacement(
                                              final World worldIn,
                                              final BlockPos pos,
@@ -270,6 +434,86 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, FACING);
+        return new BlockStateContainer(this, new IProperty[] {FACING, VARIANT});
     }
+
+    /**
+     * Types that the {@link BlockConstructionTape} supports
+     */
+    public enum Type implements IStringSerializable
+    {
+        STRAIGHT(0, "straight", MapColor.WOOD),
+        CORNER(1, "corner", MapColor.OBSIDIAN);
+
+        private static final Type[] META_LOOKUP = new Type[values().length];
+        static
+        {
+            for (Type enumtype : values())
+            {
+                META_LOOKUP[enumtype.getMetadata()] = enumtype;
+            }
+        }
+        private final int      meta;
+        private final String   name;
+        private final String   unlocalizedName;
+        /**
+         * The color that represents this entry on a map.
+         */
+        private final MapColor mapColor;
+
+        Type(final int metaIn, final String nameIn, final MapColor mapColorIn)
+        {
+            this(metaIn, nameIn, nameIn, mapColorIn);
+        }
+
+        Type(final int metaIn, final String nameIn, final String unlocalizedNameIn, final MapColor mapColorIn)
+        {
+            this.meta = metaIn;
+            this.name = nameIn;
+            this.unlocalizedName = unlocalizedNameIn;
+            this.mapColor = mapColorIn;
+        }
+
+        public static Type byMetadata(int meta)
+        {
+            int tempMeta = meta;
+            if (tempMeta < 0 || tempMeta >= META_LOOKUP.length)
+            {
+                tempMeta = 0;
+            }
+
+            return META_LOOKUP[tempMeta];
+        }
+
+        public int getMetadata()
+        {
+            return this.meta;
+        }
+
+        /**
+         * The color which represents this entry on a map.
+         */
+        public MapColor getMapColor()
+        {
+            return this.mapColor;
+        }
+
+        @Override
+        public String toString()
+        {
+            return this.name;
+        }
+
+        @NotNull
+        public String getName()
+        {
+            return this.name;
+        }
+
+        public String getUnlocalizedName()
+        {
+            return this.unlocalizedName;
+        }
+    }
+
 }
