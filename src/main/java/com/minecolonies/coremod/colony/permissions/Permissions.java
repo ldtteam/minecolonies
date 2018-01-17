@@ -1055,10 +1055,4 @@ public class Permissions implements IPermissions
             return players.containsKey(player.getUniqueID());
         }
     }
-
-
-
-
-
-
 }
