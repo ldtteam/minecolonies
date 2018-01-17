@@ -9,8 +9,10 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.blockout.views.Window;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -153,13 +155,22 @@ public abstract class AbstractBuildingView implements IRequester
 
     /**
      * Open the associated BlockOut window for this building.
+     * If the player is sneaking open the inventory else open the GUI directly.
+     * @param shouldOpenInv if the player is sneaking.
      */
-    public void openGui()
+    public void openGui(final boolean shouldOpenInv)
     {
-        @Nullable final Window window = getWindow();
-        if (window != null)
+        if(shouldOpenInv)
         {
-            window.open();
+            MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(getID()));
+        }
+        else
+        {
+            @Nullable final Window window = getWindow();
+            if (window != null)
+            {
+                window.open();
+            }
         }
     }
 
