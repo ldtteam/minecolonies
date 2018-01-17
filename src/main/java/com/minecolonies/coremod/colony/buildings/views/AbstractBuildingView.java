@@ -156,11 +156,11 @@ public abstract class AbstractBuildingView implements IRequester
     /**
      * Open the associated BlockOut window for this building.
      * If the player is sneaking open the inventory else open the GUI directly.
-     * @param isPlayerSneaking if the player is sneaking.
+     * @param shouldOpenInv if the player is sneaking.
      */
-    public void openGui(final boolean isPlayerSneaking)
+    public void openGui(final boolean shouldOpenInv)
     {
-        if(isPlayerSneaking)
+        if(shouldOpenInv)
         {
             MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(getID()));
         }

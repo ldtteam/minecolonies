@@ -571,7 +571,7 @@ tile.minecolonies.blockHutSmeltery.name=Smeltery
 
 event.minecolonies.raidMessage1=Mysterious warriors have been spotted near the encampment.
 event.minecolonies.raidMessage2=Citizens report rumors of raiders nearby!
-event.minecolonies.raidMessage3=Buckle up cowboy! There's some darn raiders commin' for you Tonight!
+event.minecolonies.raidMessage3=Buckle up cowboy! There's some darn raiders commin' for you tonight!
 event.minecolonies.raidMessage4=A huge horde of raiders is commin' your way, and they're not here to play!
 com.minecolonies.coremod.gui.workerHuts.toggleAllOn=Toggle all (on)
 com.minecolonies.coremod.gui.workerHuts.toggleAllOff=Toggle all (off)
