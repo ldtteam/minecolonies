@@ -87,7 +87,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
      */
     private void inventoryClicked()
     {
-        MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(building));
+        MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(building.getID()));
     }
 
     @Override
