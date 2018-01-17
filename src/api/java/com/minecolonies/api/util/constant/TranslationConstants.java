@@ -177,6 +177,10 @@ public final class TranslationConstants
     public static final String ENTERING_COLONY_MESSAGE_NOTIFY                                 = "com.minecolonies.coremod.enteringColonyNotify";
     @NonNls
     public static final String LEAVING_COLONY_MESSAGE_NOTIFY                                  = "com.minecolonies.coremod.leavingColonyNotify";
+    @NonNls
+    public static final String TOGGLE_ALL_OPTIONS_ON                                          = "com.minecolonies.coremod.gui.workerHuts.toggleAllOn";
+    @NonNls
+    public static final String TOGGLE_ALL_OPTIONS_OFF                                         = "com.minecolonies.coremod.gui.workerHuts.toggleAllOff";
 
     private TranslationConstants()
     {

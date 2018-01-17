@@ -15,6 +15,7 @@ import com.minecolonies.coremod.network.messages.LumberjackSaplingSelectorMessag
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -39,6 +40,11 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
      * Id of the button to change between true and false of the sapling.
      */
     private static final String BUTTON_CURRENT_SAPLING = "switch";
+
+    /**
+     * Id of the button to switch all buttons.
+     */
+    private static final String BUTTON_TOGGLE_ALL = "toggleAll";
 
     /**
      * String describing on for the gui.
@@ -163,6 +169,26 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
             treesToFell.put(saplingStack, shouldCut);
             MineColonies.getNetwork().sendToServer(new LumberjackSaplingSelectorMessage(building, saplingStack.getItemStack(), shouldCut));
 
+            this.ownBuilding.treesToFell.clear();
+            this.ownBuilding.treesToFell.putAll(treesToFell);
+        }
+        else if(button.getID().equals(BUTTON_TOGGLE_ALL))
+        {
+            final boolean on = button.getLabel().equals(LanguageHandler.format(TOGGLE_ALL_OPTIONS_ON));
+
+            if(on)
+            {
+                button.setLabel(LanguageHandler.format(TOGGLE_ALL_OPTIONS_OFF));
+            }
+            else
+            {
+                button.setLabel(LanguageHandler.format(TOGGLE_ALL_OPTIONS_ON));
+            }
+
+            for(final Map.Entry<ItemStorage, Boolean> entry: new HashSet<Map.Entry<ItemStorage, Boolean>>(treesToFell.entrySet()))
+            {
+                treesToFell.put(entry.getKey(), on);
+            }
             this.ownBuilding.treesToFell.clear();
             this.ownBuilding.treesToFell.putAll(treesToFell);
         }

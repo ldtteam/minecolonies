@@ -1,17 +1,23 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemSword;
+import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -41,6 +47,11 @@ public class BuildingSmeltery extends AbstractBuildingWorker
     private static final int MAX_BUILDING_LEVEL = 5;
 
     /**
+     * Amount of swords and armor to keep at the worker.
+     */
+    private static final int STUFF_TO_KEEP = 10;
+
+    /**
      * Tag to store the furnace position.
      */
     private static final String TAG_POS = "pos";
@@ -64,6 +75,11 @@ public class BuildingSmeltery extends AbstractBuildingWorker
     public BuildingSmeltery(final Colony c, final BlockPos l)
     {
         super(c, l);
+        keepX.put(ColonyManager.getCompatabilityManager()::isOre, Integer.MAX_VALUE);
+        keepX.put(TileEntityFurnace::isItemFuel, Integer.MAX_VALUE);
+        keepX.put(stack -> !ItemStackUtils.isEmpty(stack)
+                && (stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool || stack.getItem() instanceof ItemArmor)
+                , STUFF_TO_KEEP);
     }
 
     @NotNull

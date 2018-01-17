@@ -114,7 +114,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
         if (!walkingToAnimal(cow) && equipItem(new ItemStack(Items.BUCKET, 1)))
         {
 
-            if (worker.getInventoryCitizen().addItemStackToInventory(new ItemStack(Items.MILK_BUCKET)))
+            if (!worker.getInventoryCitizen().addItemStackToInventory(new ItemStack(Items.MILK_BUCKET)))
             {
                 worker.removeHeldItem();
                 equipItem(new ItemStack(Items.MILK_BUCKET));

@@ -9,6 +9,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.coremod.blocks.BlockHutField;
 import com.minecolonies.coremod.blocks.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.Colony;
@@ -272,7 +273,7 @@ public class EventHandler
     private static void handleEventCancellation(@NotNull final PlayerInteractEvent event, @NotNull final EntityPlayer player)
     {
         final Block heldBlock = Block.getBlockFromItem(player.getHeldItemMainhand().getItem());
-        if (heldBlock instanceof AbstractBlockHut)
+        if (heldBlock instanceof AbstractBlockHut || heldBlock instanceof BlockHutField)
         {
             event.setCanceled(!onBlockHutPlaced(event.getWorld(), player, heldBlock, event.getPos().offset(event.getFace())));
         }

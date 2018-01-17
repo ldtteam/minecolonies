@@ -25,15 +25,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+
 /**
  * Basic inventory for the citizens.
  */
 public class InventoryCitizen implements IInventory
 {
-    /**
-     * Max size of the stacks.
-     */
-    private static final int                    MAX_STACK_SIZE   = 64;
     /**
      * The returned slot if a slot hasn't been found.
      */
@@ -368,7 +366,7 @@ public class InventoryCitizen implements IInventory
     @Override
     public int getInventoryStackLimit()
     {
-        return MAX_STACK_SIZE;
+        return STACKSIZE;
     }
 
     /**
@@ -504,10 +502,10 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * Adds the item stack to the inventory, returns false if it is impossible.
+     * Adds the item stack to the inventory, returns true if it is impossible.
      *
      * @param itemStackIn stack to add.
-     * @return true if possible.
+     * @return false if possible.
      */
     public boolean addItemStackToInventory(final ItemStack itemStackIn)
     {

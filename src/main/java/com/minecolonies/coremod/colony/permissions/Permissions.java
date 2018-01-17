@@ -208,6 +208,10 @@ public class Permissions implements IPermissions
     private void markDirty()
     {
         dirty = true;
+        if(colony != null)
+        {
+            colony.markDirty();
+        }
     }
 
     /**
@@ -683,7 +687,9 @@ public class Permissions implements IPermissions
         markDirty();
         AchievementUtils.syncAchievements(colony);
         return true;
-    }    /**
+    }
+
+    /**
      * Returns the rank belonging to the UUID.
      *
      * @param id UUID that you want to check rank of.
@@ -1049,10 +1055,4 @@ public class Permissions implements IPermissions
             return players.containsKey(player.getUniqueID());
         }
     }
-
-
-
-
-
-
 }

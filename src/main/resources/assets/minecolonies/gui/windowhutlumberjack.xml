@@ -7,13 +7,15 @@
         <view id="saplingActions" size="100% 100%">
             <label size="100% 11" pos="0 0"
                    label="$(com.minecolonies.coremod.gui.workerHuts.saplingList)" color="black" textalign="BOTTOM_MIDDLE"/>
-            <list id="trees" size="78% 85%" pos="30 20">
+            <list id="trees" size="78% 75%" pos="30 20">
                 <box size="100% 30" linewidth="2">
                     <itemicon id="symbol" size="16 16" pos="5 2" color="black"/>
                     <label id="name" size="50 12" pos="35 16" textalign="MIDDLE_LEFT" color="black"/>
                     <button id="switch" size="100 12" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOn)"/>
                 </box>
             </list>
+            <button id="toggleAll" size="100 15" pos="40 175" label="$(com.minecolonies.coremod.gui.workerHuts.toggleAllOn)"/>
+
         </view>
 
 

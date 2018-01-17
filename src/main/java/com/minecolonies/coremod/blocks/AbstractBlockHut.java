@@ -210,7 +210,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
                   && building.getColony() != null
                   && building.getColony().getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS))
             {
-                building.openGui();
+                building.openGui(playerIn.isSneaking());
             }
         }
         return true;

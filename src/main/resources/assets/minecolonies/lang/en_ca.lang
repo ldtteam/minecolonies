@@ -25,7 +25,7 @@ item.minecolonies.supplyChestDeployer.name=SupplyShip Chest
 item.minecolonies.supplyCampDeployer.name=SupplyCamp Chest
 item.minecolonies.ancienttome.name=Ancient Tome
 item.minecolonies.chiefsword.name=Chief Sword
-event.minecolonies.raidMessage=Buckle up cowboy! There's some darn raiders commin' for you Tonight!
+event.minecolonies.raidMessage=Buckle up cowboy! There's some darn raiders commin' for you tonight!
 
 item.minecolonies.scepterGold.name=Building Tool
 item.minecolonies.scepterSteel.name=Scan Tool
