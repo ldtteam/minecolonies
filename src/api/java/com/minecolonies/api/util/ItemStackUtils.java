@@ -57,13 +57,17 @@ public final class ItemStackUtils
     /**
      * Predicate describing food.
      */
-    public static final Predicate<ItemStack> ISFOOD = itemStack -> !ItemStackUtils.isEmpty(itemStack)
-            && itemStack.getItem() instanceof ItemFood;
+    public static final Predicate<ItemStack> ISFOOD = itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood;
+
+    /**
+     * Predicate describing things which work in the furnace.
+     */
+    public static final Predicate<ItemStack> IS_SMELTABLE = itemStack -> !ItemStackUtils.isEmpty(FurnaceRecipes.instance().getSmeltingResult(itemStack));
 
     /**
      * Predicate describing cookables.
      */
-    public static final Predicate<ItemStack> ISCOOKABLE = ISFOOD.and(itemStack -> !ItemStackUtils.isEmpty(FurnaceRecipes.instance().getSmeltingResult(itemStack)));
+    public static final Predicate<ItemStack> ISCOOKABLE = ISFOOD.and(IS_SMELTABLE);
 
     /**
      * Private constructor to hide the implicit one.
@@ -191,6 +195,10 @@ public final class ItemStackUtils
         else if (ToolType.FISHINGROD.equals(toolType))
         {
             isATool = itemStack.getItem() instanceof ItemFishingRod;
+        }
+        else if (ToolType.SHEARS.equals(toolType))
+        {
+            isATool = itemStack.getItem() instanceof ItemShears;
         }
         return isATool;
     }

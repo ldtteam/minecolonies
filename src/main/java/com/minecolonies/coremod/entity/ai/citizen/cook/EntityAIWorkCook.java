@@ -12,11 +12,9 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.tileentities.TileEntityRack;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -138,7 +136,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
         if (getOwnBuilding().getCountOfPredicateInHut(TileEntityFurnace::isItemFuel, 1, world) < 1)
         {
-            if(!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Food.class)))
+            if(!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Burnable.class)))
             {
                 worker.getCitizenData().createRequestAsync(new Burnable(Constants.STACKSIZE));
             }
@@ -161,7 +159,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
                 return getState();
             }
 
-            final boolean transfered = tryTransferFromPosToCook(walkTo, TileEntityFurnace::isItemFuel);
+            final boolean transfered = tryTransferFromPosToWorker(walkTo, TileEntityFurnace::isItemFuel);
             if (!transfered)
             {
                 walkTo = null;
@@ -242,7 +240,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             return getState();
         }
 
-        final boolean transfered = tryTransferFromPosToCook(pos, needsCurrently);
+        final boolean transfered = tryTransferFromPosToWorker(pos, needsCurrently);
         if (transfered)
         {
             return COOK_SERVE;
@@ -297,7 +295,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             for (final BlockPos pos : ((BuildingCook) getOwnBuilding()).getFurnaces())
             {
                 final TileEntity entity = world.getTileEntity(pos);
-                if (ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(COOK_SLOT)))
+                if (entity instanceof TileEntityFurnace && ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(COOK_SLOT)))
                 {
                     walkTo = pos;
                 }
@@ -342,35 +340,6 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         walkTo = null;
         setDelay(STANDARD_DELAY);
         return COOK_COOK_FOOD;
-    }
-
-    /**
-     * Try to transfer a item matching a predicate from a position to the cook.
-     *
-     * @param pos       the position to transfer it from.
-     * @param predicate the predicate to evaluate.
-     * @return true if succesful.
-     */
-    private boolean tryTransferFromPosToCook(final BlockPos pos, @NotNull final Predicate<ItemStack> predicate)
-    {
-        final TileEntity entity = world.getTileEntity(pos);
-        if (entity instanceof TileEntityChest)
-        {
-            return InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
-                    new InvWrapper((TileEntityChest) entity),
-                    predicate,
-                    Constants.STACKSIZE,
-                    new InvWrapper(worker.getInventoryCitizen()));
-        }
-        else if (entity instanceof TileEntityRack)
-        {
-            return InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
-                    ((TileEntityRack) entity).getInventory(),
-                    predicate,
-                    Constants.STACKSIZE,
-                    new InvWrapper(worker.getInventoryCitizen()));
-        }
-        return false;
     }
 
     private BlockPos getPositionOfOvenToRetrieveFrom()

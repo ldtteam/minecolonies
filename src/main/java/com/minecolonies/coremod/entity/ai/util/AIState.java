@@ -308,5 +308,75 @@ public enum AIState
     /**
      * Serve food to the citizen inside the building.
      */
-    COOK_SERVE
+    COOK_SERVE,
+
+    /*
+    ###Smelter###
+     */
+    /**
+     * Get some burnable material for the furnace.
+     */
+    SMELTER_GET_FIREWOOD,
+
+    /**
+     * smelter smelts ore until its a bar.
+     */
+    SMELTER_SMELT_ORE,
+
+    /**
+     * Gathering ore from his building.
+     */
+    SMELTER_GATHERING,
+
+    /**
+     * Retrieve the ore from the furnace.
+     */
+    SMELTER_RETRIEVE_ORE,
+
+    /**
+     * Smelt stuff he finds in his hut to ingots.
+     */
+    SMELTER_SMELT_STUFF,
+
+    /*
+### Herders ###
+     */
+
+    /**
+     * Decide what AIstate to go to next.
+     */
+    HERDER_DECIDE,
+
+    /**
+     * Breed two animals together.
+     */
+    HERDER_BREED,
+
+    /**
+     * Butcher an animal.
+     */
+    HERDER_BUTCHER,
+
+    /**
+     * Pickup items within area.
+     */
+    HERDER_PICKUP,
+
+    /*
+### Cowboy ###
+     */
+
+    /**
+     * Milk cows!
+     */
+    COWBOY_MILK,
+
+    /*
+### Shepherd ###
+     */
+
+    /**
+     * Shear a sheep!
+     */
+    SHEPHERD_SHEAR
 }

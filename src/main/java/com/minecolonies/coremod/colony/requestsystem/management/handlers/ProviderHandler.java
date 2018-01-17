@@ -75,6 +75,7 @@ public final class ProviderHandler
         resolverListBuilder.addAll(ResolverHandler.registerResolvers(manager, provider.getResolvers()));
 
         manager.getProviderResolverMap().put(provider.getToken(), resolverListBuilder.build());
+        manager.getColony().markDirty();
     }
 
     public static void removeProvider(final IStandardRequestManager manager, final IToken<?> token)
@@ -129,7 +130,7 @@ public final class ProviderHandler
         //Removing the data from the maps.
         manager.getProviderBiMap().remove(provider.getToken());
         manager.getProviderResolverMap().remove(provider.getToken());
-
+        manager.getColony().markDirty();
         LogHandler.log("Removed provider: " + provider);
     }
 

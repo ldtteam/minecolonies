@@ -11,7 +11,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 public final class ColonyConstants
 {
     //  Settings
-    public static final int CITIZEN_CLEANUP_TICK_INCREMENT = 5 * TICKS_SECOND;
+    public static final int CLEANUP_TICK_INCREMENT = 5 * TICKS_SECOND;
 
     public static final int NUM_ACHIEVEMENT_FIRST  = 1;
     public static final int NUM_ACHIEVEMENT_SECOND = 25;

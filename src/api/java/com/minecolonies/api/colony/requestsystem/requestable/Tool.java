@@ -153,6 +153,12 @@ public class Tool implements IDeliverable
     private Set<String> getToolClasses(final ItemStack stack)
     {
         final Set set = new HashSet();
+
+        if(ItemStackUtils.isEmpty(stack))
+        {
+            return set;
+        }
+
         set.addAll(stack.getItem().getToolClasses(stack));
 
         if(stack.getItem() instanceof ItemBow)
@@ -170,6 +176,10 @@ public class Tool implements IDeliverable
         else if(stack.getItem() instanceof ItemFishingRod)
         {
             set.add("rod");
+        }
+        else if(stack.getItem() instanceof  ItemShears)
+        {
+            set.add("shears");
         }
         return set;
     }

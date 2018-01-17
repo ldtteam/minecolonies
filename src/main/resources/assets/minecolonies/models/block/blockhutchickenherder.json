@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "particle": "blocks/planks_oak",
+    "down": "blocks/planks_oak",
+    "up": "minecolonies:blocks/blockHutChickenHerderTop",
+    "north": "minecolonies:blocks/sideChest",
+    "east": "minecolonies:blocks/sideChest",
+    "south": "minecolonies:blocks/sideChest",
+    "west": "minecolonies:blocks/sideChest"
+  }
+}

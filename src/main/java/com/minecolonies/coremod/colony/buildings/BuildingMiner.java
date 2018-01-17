@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -35,10 +36,6 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
  */
 public class BuildingMiner extends AbstractBuildingWorker
 {
-    /**
-     * Amount of items to be kept.
-     */
-    private static final int    STACK_MAX_SIZE     = 64;
     /**
      * The NBT Tag to store the floorBlock.
      */
@@ -206,13 +203,13 @@ public class BuildingMiner extends AbstractBuildingWorker
         final ItemStack stackPlanks = new ItemStack(Blocks.PLANKS);
         final ItemStack stackDirt = new ItemStack(Blocks.DIRT);
 
-        keepX.put(stackLadder::isItemEqual, STACK_MAX_SIZE);
-        keepX.put(stackFence::isItemEqual, STACK_MAX_SIZE);
-        keepX.put(stackTorch::isItemEqual, STACK_MAX_SIZE);
-        keepX.put(stackCobble::isItemEqual, STACK_MAX_SIZE);
-        keepX.put(stackSlab::isItemEqual, STACK_MAX_SIZE);
-        keepX.put(stackPlanks::isItemEqual, STACK_MAX_SIZE);
-        keepX.put(stackDirt::isItemEqual, STACK_MAX_SIZE);
+        keepX.put(stackLadder::isItemEqual, STACKSIZE);
+        keepX.put(stackFence::isItemEqual, STACKSIZE);
+        keepX.put(stackTorch::isItemEqual, STACKSIZE);
+        keepX.put(stackCobble::isItemEqual, STACKSIZE);
+        keepX.put(stackSlab::isItemEqual, STACKSIZE);
+        keepX.put(stackPlanks::isItemEqual, STACKSIZE);
+        keepX.put(stackDirt::isItemEqual, STACKSIZE);
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
@@ -251,11 +248,11 @@ public class BuildingMiner extends AbstractBuildingWorker
 
         if (newLevel == 1)
         {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingMiner, this.getColony());
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingMiner);
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeMinerMax, this.getColony());
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeMinerMax);
         }
     }
 

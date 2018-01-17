@@ -6,7 +6,6 @@ import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockConstructionTape;
-import com.minecolonies.coremod.blocks.BlockConstructionTapeCorner;
 import com.minecolonies.coremod.blocks.BlockHutField;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -934,8 +933,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             {
                 return block.getBlock() instanceof BlockDoor
                          || block.getBlock() instanceof BlockFenceGate
-                         || block.getBlock() instanceof BlockConstructionTape
-                         || block.getBlock() instanceof BlockConstructionTapeCorner;
+                         || block.getBlock() instanceof BlockConstructionTape;
             }
             else if (block.getMaterial().isLiquid())
             {
@@ -969,7 +967,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             return SurfaceType.NOT_PASSABLE;
         }
 
-        if (block instanceof BlockConstructionTape || block instanceof BlockConstructionTapeCorner)
+        if (block instanceof BlockConstructionTape)
         {
             return SurfaceType.DROPABLE;
         }

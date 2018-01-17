@@ -15,9 +15,11 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
+import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
@@ -616,11 +618,30 @@ public class CitizenData
     }
 
     /**
-     * Sets {@link EntityCitizen} to null for the instance.
+     * Updates {@link EntityCitizen} for the instance.
      */
-    public void clearCitizenEntity()
+    public void updateCitizenEntityIfNeccessary()
     {
-        entity = null;
+        colony.getCitizenManager().spawnCitizen(this, colony.getWorld());
+        entity = this.getCitizenEntity();
+
+        BlockPos location = null;
+        if(getWorkBuilding() == null)
+        {
+            if(colony.hasTownHall())
+            {
+                location = colony.getBuildingManager().getTownHall().getLocation();
+            }
+        }
+        else
+        {
+            location = getWorkBuilding().getLocation();
+        }
+
+        if(location != null)
+        {
+            TeleportHelper.teleportCitizen(entity, colony.getWorld(), location);
+        }
     }
 
     /**

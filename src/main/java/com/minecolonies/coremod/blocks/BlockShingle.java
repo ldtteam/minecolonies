@@ -11,7 +11,7 @@ public class BlockShingle extends AbstractBlockMinecoloniesStairs<BlockShingle>
     /**
      * The hardness this block has.
      */
-    private static final float BLOCK_HARDNESS = 0.0F;
+    private static final float BLOCK_HARDNESS = 3F;
 
     /**
      * The resistance this block has.

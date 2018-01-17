@@ -88,13 +88,16 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         DELIVERYMAN("Deliveryman", 1),
         MINER("Miner", 1),
         // Lumberjack: 4 male, 1 female
-        LUMBERJACK("Lumberjack", 1),
-        FARMER("Farmer", 1),
-        FISHERMAN("Fisherman", 1),
-        ARCHER_GUARD("Archer", 1),
-        KNIGHT_GUARD("Knight", 1),
-        BAKER("Baker", 1);
-
+        LUMBERJACK("lumberjack", 1),
+        FARMER("farmer", 1),
+        FISHERMAN("fisherman", 1),
+        ARCHER_GUARD("archer", 1),
+        KNIGHT_GUARD("knight", 1),
+        BAKER("baker", 1),
+        SHEEP_FARMER("sheepfarmer", 1),
+        COW_FARMER("cowfarmer", 1),
+        PIG_FARMER("pigfarmer", 1),
+        CHICKEN_FARMER("chickenfarmer", 1);
         /**
          * String describing the citizen.
          * Used by the renderer.

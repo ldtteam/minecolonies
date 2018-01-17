@@ -34,16 +34,24 @@ public final class ModBlocks
     public static BlockHutField               blockHutField;
     public static BlockHutGuardTower          blockHutGuardTower;
     public static BlockHutWareHouse           blockHutWareHouse;
+    public static BlockHutShepherd            blockHutShepherd;
+    public static BlockHutCowboy              blockHutCowboy;
+    public static BlockHutSwineHerder         blockHutSwineHerder;
+    public static BlockHutChickenHerder       blockHutChickenHerder;
+    public static BlockHutBarracks            blockHutBarracks;
+    public static BlockHutBarracksTower       blockHutBarracksTower;
+    public static BlockHutCook                blockHutCook;
+    public static BlockHutSmeltery            blockHutSmeltery;
+
+    /**
+     * Utility blocks.
+     */
     public static BlockConstructionTape       blockConstructionTape;
-    public static BlockConstructionTapeCorner blockConstructionTapeCorner;
     public static BlockMinecoloniesRack       blockRack;
     public static BlockTimberFrame            blockTimberFrame;
     public static BlockWaypoint               blockWayPoint;
-    public static BlockHutBarracks            blockHutBarracks;
-    public static BlockHutBarracksTower       blockHutBarracksTower;
     public static BlockInfoPoster             blockInfoPoster;
     public static BlockPaperwall              blockPaperWall;
-    public static BlockHutCook                blockHutCook;
     public static BlockShingle                blockShingleOak;
     public static BlockShingle                blockShingleBirch;
     public static BlockShingle                blockShingleJungle;
@@ -51,6 +59,8 @@ public final class ModBlocks
     public static BlockShingle                blockShingleDarkOak;
     public static BlockShingle                blockShingleAcacia;
     public static BlockShingleSlab            blockShingleSlab;
+
+
 
     /**
      * Private constructor to hide the implicit public one.
@@ -68,7 +78,6 @@ public final class ModBlocks
     public static void init(final IForgeRegistry<Block> registry)
     {
         blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
-        blockConstructionTapeCorner = new BlockConstructionTapeCorner().registerBlock(registry);
         blockHutBaker = new BlockHutBaker().registerBlock(registry);
         blockHutBlacksmith = new BlockHutBlacksmith().registerBlock(registry);
         blockHutBuilder = new BlockHutBuilder().registerBlock(registry);
@@ -83,6 +92,10 @@ public final class ModBlocks
         blockHutStonemason = new BlockHutStonemason().registerBlock(registry);
         blockHutTownHall = new BlockHutTownHall().registerBlock(registry);
         blockHutWareHouse = new BlockHutWareHouse().registerBlock(registry);
+        blockHutShepherd = new BlockHutShepherd().registerBlock(registry);
+        blockHutCowboy = new BlockHutCowboy().registerBlock(registry);
+        blockHutSwineHerder = new BlockHutSwineHerder().registerBlock(registry);
+        blockHutChickenHerder = new BlockHutChickenHerder().registerBlock(registry);
         blockSolidSubstitution = new BlockSolidSubstitution().registerBlock(registry);
         blockSubstitution = new BlockSubstitution().registerBlock(registry);
         blockRack = new BlockMinecoloniesRack().registerBlock(registry);
@@ -93,6 +106,7 @@ public final class ModBlocks
         blockInfoPoster = new BlockInfoPoster().registerBlock(registry);
         blockPaperWall = new BlockPaperwall().registerBlock(registry);
         blockHutCook   = new BlockHutCook().registerBlock(registry);
+        blockHutSmeltery = new BlockHutSmeltery().registerBlock(registry);
 
         blockShingleOak = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK),
                 BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.OAK.getName()).registerBlock(registry);
@@ -113,7 +127,6 @@ public final class ModBlocks
     public static void registerItemBlock(final IForgeRegistry<Item> registry)
     {
         blockConstructionTape.registerItemBlock(registry);
-        blockConstructionTapeCorner.registerItemBlock(registry);
         blockHutBaker.registerItemBlock(registry);
         blockHutBlacksmith.registerItemBlock(registry);
         blockHutBuilder.registerItemBlock(registry);
@@ -128,6 +141,10 @@ public final class ModBlocks
         blockHutStonemason.registerItemBlock(registry);
         blockHutTownHall.registerItemBlock(registry);
         blockHutWareHouse.registerItemBlock(registry);
+        blockHutShepherd.registerItemBlock(registry);
+        blockHutCowboy.registerItemBlock(registry);
+        blockHutSwineHerder.registerItemBlock(registry);
+        blockHutChickenHerder.registerItemBlock(registry);
         blockSolidSubstitution.registerItemBlock(registry);
         blockSubstitution.registerItemBlock(registry);
         blockRack.registerItemBlock(registry);
@@ -145,5 +162,6 @@ public final class ModBlocks
         blockShingleDarkOak.registerItemBlock(registry);
         blockShingleAcacia.registerItemBlock(registry);
         blockShingleSlab.registerItemBlock(registry);
+        blockHutSmeltery.registerItemBlock(registry);
     }
 }

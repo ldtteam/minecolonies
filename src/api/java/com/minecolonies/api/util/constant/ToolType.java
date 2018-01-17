@@ -10,6 +10,13 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 public enum ToolType implements IToolType
 {
+    /**
+     * Note to future coders: You must add these to both:
+     * com.minecolonies.api.colony.requestsystem.requestable.Tool.getToolClasses
+     * and,
+     * com.minecolonies.api.util.ItemStackUtils.isTool
+     * to be usable by the RS system
+     */
     NONE("", false, new TextComponentTranslation(COM_MINECOLONIES_TOOLTYPE_NONE)),
     PICKAXE("pickaxe", true, new TextComponentTranslation(COM_MINECOLONIES_TOOLTYPE_PICKAXE)),
     SHOVEL("shovel", true, new TextComponentTranslation(COM_MINECOLONIES_TOOLTYPE_SHOVEL)),

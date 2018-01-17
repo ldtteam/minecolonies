@@ -42,16 +42,21 @@ public abstract class AbstractJob
     private static final String TAG_TYPE           = "type";
     private static final String TAG_ASYNC_REQUESTS = "asyncRequests";
 
-    private static final String MAPPING_PLACEHOLDER = "Placeholder";
-    private static final String MAPPING_BUILDER     = "Builder";
-    private static final String MAPPING_DELIVERY    = "Deliveryman";
-    private static final String MAPPING_MINER       = "Miner";
-    private static final String MAPPING_LUMBERJACK  = "Lumberjack";
-    private static final String MAPPING_FARMER      = "Farmer";
-    private static final String MAPPING_FISHERMAN   = "Fisherman";
-    private static final String MAPPING_TOWER_GUARD = "GuardTower";
-    private static final String MAPPING_BAKER       = "Baker";
-    private static final String MAPPING_COOK        = "Cook";
+    private static final String MAPPING_PLACEHOLDER    = "Placeholder";
+    private static final String MAPPING_BUILDER        = "Builder";
+    private static final String MAPPING_DELIVERY       = "Deliveryman";
+    private static final String MAPPING_MINER          = "Miner";
+    private static final String MAPPING_LUMBERJACK     = "Lumberjack";
+    private static final String MAPPING_FARMER         = "Farmer";
+    private static final String MAPPING_FISHERMAN      = "Fisherman";
+    private static final String MAPPING_TOWER_GUARD    = "GuardTower";
+    private static final String MAPPING_BAKER          = "Baker";
+    private static final String MAPPING_COOK           = "Cook";
+    private static final String MAPPING_SHEPHERD       = "Shepherd";
+    private static final String MAPPING_COWBOY         = "Cowboy";
+    private static final String MAPPING_SWINE_HERDER   = "SwineHerder";
+    private static final String MAPPING_CHICKEN_HERDER = "ChickenHerder";
+    private static final String MAPPING_SMELTER        = "Smelter";
 
     /**
      * The priority assigned with every main AI job.
@@ -76,6 +81,11 @@ public abstract class AbstractJob
         addMapping(MAPPING_TOWER_GUARD, JobGuard.class);
         addMapping(MAPPING_BAKER, JobBaker.class);
         addMapping(MAPPING_COOK, JobCook.class);
+        addMapping(MAPPING_SHEPHERD, JobShepherd.class);
+        addMapping(MAPPING_COWBOY, JobCowboy.class);
+        addMapping(MAPPING_SWINE_HERDER, JobSwineHerder.class);
+        addMapping(MAPPING_CHICKEN_HERDER, JobChickenHerder.class);
+        addMapping(MAPPING_SMELTER, JobSmelter.class);
     }
 
     /**

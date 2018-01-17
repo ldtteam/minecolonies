@@ -9,6 +9,9 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.blockout.Log;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.requestable.SmeltableOre;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
@@ -24,6 +27,8 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static com.minecolonies.api.compatibility.CompatabilityManager.ORE_STRING;
 
 /**
  * Final class holding all the requests for requestables inside minecolonie
@@ -245,6 +250,57 @@ public final class StandardRequests
             }
 
             return foodExamples;
+        }
+    }
+
+    public static class SmeltAbleOreRequest extends AbstractRequest<SmeltableOre>
+    {
+
+        private static ImmutableList<ItemStack> oreExamples;
+
+        SmeltAbleOreRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final SmeltableOre requested)
+        {
+            super(requester, token, requested);
+        }
+
+        SmeltAbleOreRequest(
+                @NotNull final IRequester requester,
+                @NotNull final IToken token,
+                @NotNull final RequestState state,
+                @NotNull final SmeltableOre requested)
+        {
+            super(requester, token, state, requested);
+
+        }
+
+        @NotNull
+        @Override
+        public ITextComponent getShortDisplayString()
+        {
+            return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE);
+        }
+
+        @Override
+        public List<ItemStack> getDisplayStacks()
+        {
+            if (oreExamples == null)
+            {
+                oreExamples =
+                        ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
+                            NonNullList<ItemStack> stacks = NonNullList.create();
+                            try
+                            {
+                                item.getSubItems(item,null, stacks);
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
+                            }
+
+                            return stacks.stream().filter(ColonyManager.getCompatabilityManager()::isOre);
+                        }).collect(Collectors.toList()));
+            }
+            return oreExamples;
         }
     }
 
