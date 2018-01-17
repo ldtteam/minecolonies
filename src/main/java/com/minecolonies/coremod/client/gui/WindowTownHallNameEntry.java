@@ -55,7 +55,7 @@ public class WindowTownHallNameEntry extends Window implements ButtonHandler
 
         if (colony.getTownHall() != null)
         {
-            colony.getTownHall().openGui();
+            colony.getTownHall().openGui(false);
         }
     }
 }

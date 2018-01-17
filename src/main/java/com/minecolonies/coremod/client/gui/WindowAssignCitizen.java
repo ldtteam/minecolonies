@@ -192,7 +192,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
 
         if (colony.getTownHall() != null)
         {
-            building.openGui();
+            building.openGui(false);
         }
     }
 }
