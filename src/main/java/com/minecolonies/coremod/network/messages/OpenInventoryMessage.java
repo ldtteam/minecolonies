@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -55,29 +54,29 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     }
 
     /**
-     * Creates an open inventory message for a citizen.
-     *
-     * @param citizen {@link CitizenDataView}
+     * Creates an open inventory message for the citizen.
+     * @param name the name of the citizen.
+     * @param id its id.
      */
-    public OpenInventoryMessage(@NotNull final CitizenDataView citizen)
+    public OpenInventoryMessage(@NotNull final String name, @NotNull final int id)
     {
         super();
         inventoryType = InventoryType.INVENTORY_CITIZEN;
-        name = citizen.getName();
-        this.entityID = citizen.getEntityId();
+        this.name = name;
+        this.entityID = id;
     }
 
     /**
      * Creates an open inventory message for a building.
      *
-     * @param building {@link AbstractBuildingView}
+     * @param pos the position of the building.
      */
-    public OpenInventoryMessage(@NotNull final AbstractBuildingView building)
+    public OpenInventoryMessage(@NotNull final BlockPos pos)
     {
         super();
         inventoryType = InventoryType.INVENTORY_CHEST;
         name = "";
-        tePos = building.getLocation();
+        tePos = pos;
     }
 
     /**
