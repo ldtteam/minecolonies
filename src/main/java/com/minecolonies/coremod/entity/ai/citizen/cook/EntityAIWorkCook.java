@@ -47,7 +47,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
     /**
      * This times the building level the worker has to keep.
      */
-    private static final int LEAST_KEEP_FOOD_MULTIPLIER = 10;
+    private static final int LEAST_KEEP_FOOD_MULTIPLIER = 64;
 
     /**
      * The amount of food which should be served to the woker.
