@@ -28,11 +28,6 @@ item.minecolonies.supplyChestDeployer.name=SupplyShip Chest
 item.minecolonies.supplyCampDeployer.name=SupplyCamp Chest
 item.minecolonies.ancienttome.name=Ancient Tome
 item.minecolonies.chiefsword.name=Chief Sword
-event.minecolonies.raidMessage1=Mysterious warriors have been spotted near the encampment.
-event.minecolonies.raidMessage2=Citizens report rumors of raiders nearby!
-event.minecolonies.raidMessage3=Buckle up cowboy! There's some darn raiders commin' for you Tonight!
-event.minecolonies.raidMessage4=A huge horde of raiders is commin' your way, and they're not here to play!
-
 item.minecolonies.scepterGold.name=Building Tool
 item.minecolonies.scepterSteel.name=Scan Tool
 item.minecolonies.caliper.name=Caliper
@@ -573,3 +568,10 @@ tile.minecolonies.blockhutsmeltery.name=Smeltery
 com.minecolonies.coremod.gui.workerHuts.Smeltery=Smeltery
 com.minecolonies.coremod.job.smelter=Smelter
 tile.minecolonies.blockHutSmeltery.name=Smeltery
+
+event.minecolonies.raidMessage1=Mysterious warriors have been spotted near the encampment.
+event.minecolonies.raidMessage2=Citizens report rumors of raiders nearby!
+event.minecolonies.raidMessage3=Buckle up cowboy! There's some darn raiders commin' for you Tonight!
+event.minecolonies.raidMessage4=A huge horde of raiders is commin' your way, and they're not here to play!
+com.minecolonies.coremod.gui.workerHuts.toggleAllOn=Toggle all (on)
+com.minecolonies.coremod.gui.workerHuts.toggleAllOff=Toggle all (off)

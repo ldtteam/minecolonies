@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE;
@@ -27,10 +28,15 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_HOUR;
 public class ColonyPackageManager implements IColonyPackageManager
 {
     /**
+     * 1 in x chance to update the permissions.
+     */
+    private static final int CHANCE_TO_UPDATE = 1000;
+
+    /**
      * List of players subscribing to the colony.
      */
     @NotNull
-    private Set<EntityPlayerMP> subscribers = new HashSet<>();
+    private Set<EntityPlayerMP> subscribers   = new HashSet<>();
 
     /**
      * Variables taking care of updating the views.
@@ -51,6 +57,11 @@ public class ColonyPackageManager implements IColonyPackageManager
      * The colony of the manager.
      */
     private final Colony colony;
+
+    /**
+     * Random object.
+     */
+    private final Random random = new Random();
 
     /**
      * Creates the ColonyPackageManager for a colony.
@@ -192,7 +203,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     public void sendPermissionsPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers)
     {
         final Permissions permissions = colony.getPermissions();
-        if (permissions.isDirty() || hasNewSubscribers)
+        if (permissions.isDirty() || hasNewSubscribers || random.nextInt(CHANCE_TO_UPDATE) <= 1)
         {
             subscribers
                     .stream()

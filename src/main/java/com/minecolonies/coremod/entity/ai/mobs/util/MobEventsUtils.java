@@ -71,7 +71,7 @@ public final class MobEventsUtils
             return;
         }
 
-        int horde = numberOfSpawns(colony);
+        final int horde = numberOfSpawns(colony);
         if(horde == 0)
         {
             return;

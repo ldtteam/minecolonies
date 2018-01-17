@@ -92,7 +92,7 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_JOB_FARMER                            = "com.minecolonies.coremod.job.Farmer";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_JOB_COOK                             = "com.minecolonies.coremod.job.cook";
+    public static final String COM_MINECOLONIES_COREMOD_JOB_COOK                              = "com.minecolonies.coremod.job.cook";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN                       = "com.minecolonies.coremod.gui.home.assign";
     @NonNls
@@ -146,13 +146,13 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_CLIPBOARD_NEED_COLONY                         = "com.minecolonies.coremod.item.clipboard.needColony";
     @NonNls
-    public static final String COM_MINECOLONIES_CLIPBOARD_COLONY_SET = "com.minecolonies.coremod.item.clipboard.registered";
+    public static final String COM_MINECOLONIES_CLIPBOARD_COLONY_SET                          = "com.minecolonies.coremod.item.clipboard.registered";
     @NonNls
-    public static final String CITIZEN_RENAME_SAME                   = "com.minecolonies.coremod.citizen.rename.same";
+    public static final String CITIZEN_RENAME_SAME                                            = "com.minecolonies.coremod.citizen.rename.same";
     @NonNls
-    public static final String CITIZEN_RENAME_NOT_ALLOWED            = "com.minecolonies.coremod.citizen.rename.notAllowed";
-    public static final String COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE = "com.minecolonies.coremod.request.smeltableore";
-
+    public static final String CITIZEN_RENAME_NOT_ALLOWED                                     = "com.minecolonies.coremod.citizen.rename.notAllowed";
+    @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE                        = "com.minecolonies.coremod.request.smeltableore";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_DECIDING                = "com.minecolonies.coremod.status.herder.deciding";
     @NonNls
@@ -169,7 +169,10 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING                 = "com.minecolonies.coremod.status.cowboy.milking";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_SHEPHERD_SHEARING              = "com.minecolonies.coremod.status.shepherd.shearing";
-
+    @NonNls
+    public static final String TOGGLE_ALL_OPTIONS_ON                                          = "com.minecolonies.coremod.gui.workerHuts.toggleAllOn";
+    @NonNls
+    public static final String TOGGLE_ALL_OPTIONS_OFF                                         = "com.minecolonies.coremod.gui.workerHuts.toggleAllOff";
 
     private TranslationConstants()
     {
