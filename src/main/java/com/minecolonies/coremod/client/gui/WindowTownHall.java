@@ -554,7 +554,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         final ColonyView ally = allies.get(row);
         final ITextComponent teleport = new TextComponentString(LanguageHandler.format(DO_REALLY_WANNA_TP, ally.getName()))
                 .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-                        new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND)
+                        new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + ally.getID())
                 ));
 
         Minecraft.getMinecraft().player.sendMessage(teleport);
