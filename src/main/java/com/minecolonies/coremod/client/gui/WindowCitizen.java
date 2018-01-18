@@ -684,7 +684,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
                 findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
                 break;
             case INVENTORY_BUTTON_ID:
-                MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(citizen));
+                MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(citizen.getName(), citizen.getEntityId()));
                 break;
             case REQUEST_DETAIL:
                 detailedClicked(button);

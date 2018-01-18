@@ -27,10 +27,15 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_HOUR;
 public class ColonyPackageManager implements IColonyPackageManager
 {
     /**
+     * 1 in x chance to update the permissions.
+     */
+    private static final int CHANCE_TO_UPDATE = 1000;
+
+    /**
      * List of players subscribing to the colony.
      */
     @NotNull
-    private Set<EntityPlayerMP> subscribers = new HashSet<>();
+    private Set<EntityPlayerMP> subscribers   = new HashSet<>();
 
     /**
      * Variables taking care of updating the views.
@@ -197,7 +202,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     public void sendPermissionsPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers)
     {
         final Permissions permissions = colony.getPermissions();
-        if (permissions.isDirty() || hasNewSubscribers)
+        if (permissions.isDirty() || hasNewSubscribers || colony.getWorld().rand.nextInt(CHANCE_TO_UPDATE) <= 1)
         {
             subscribers
                     .stream()

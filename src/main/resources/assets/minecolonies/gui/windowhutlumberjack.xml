@@ -17,6 +17,8 @@
                     <button id="switch" size="100 12" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOn)"/>
                 </box>
             </list>
+            <button id="toggleAll" size="100 15" pos="40 175" label="$(com.minecolonies.coremod.gui.workerHuts.toggleAllOn)"/>
+
         </view>
     </switch>
     <buttonimage id="prevPage" align="TOP_LEFT" size="26 8" pos="12 15" source="minecolonies:textures/gui/builderhut/builder_sketch_arrow_left_c.png"/>

@@ -143,6 +143,8 @@ public final class Settings
         rotation = 0;
         isMirrored = false;
         staticSchematicMode = false;
+        freeMode = null;
+        staticSchematicName = "";
     }
 
     /**

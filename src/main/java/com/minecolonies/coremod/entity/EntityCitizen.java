@@ -25,6 +25,7 @@ import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
+import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -720,7 +721,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public boolean processInteract(final EntityPlayer player, final EnumHand hand)
     {
-
         final ColonyView colonyView = ColonyManager.getColonyView(colonyId);
         if (colonyView != null && !colonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
@@ -734,10 +734,17 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (CompatibilityUtils.getWorld(this).isRemote)
         {
-            final CitizenDataView citizenDataView = getCitizenDataView();
-            if (citizenDataView != null)
+            if(player.isSneaking())
             {
-                MineColonies.proxy.showCitizenWindow(citizenDataView);
+                MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(this.getName(), this.getEntityId()));
+            }
+            else
+            {
+                final CitizenDataView citizenDataView = getCitizenDataView();
+                if (citizenDataView != null)
+                {
+                    MineColonies.proxy.showCitizenWindow(citizenDataView);
+                }
             }
         }
         return true;
