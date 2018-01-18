@@ -179,7 +179,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
         }
         else if (button.getID().equals(BUTTON_CANCEL))
         {
-            building.openGui();
+            building.openGui(false);
         }
     }
 }
