@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
@@ -16,11 +18,19 @@ import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.WorkOrderView;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.*;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.RoundingMode;
@@ -28,6 +38,8 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.coremod.commands.colonycommands.ListColoniesCommand.TELEPORT_COMMAND;
 
 /**
  * Window for the town hall.
@@ -35,318 +47,14 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View>
 {
     /**
-     * Id of the info button in the GUI.
-     */
-    private static final String BUTTON_INFO = "info";
-
-    /**
-     * Id of the action button in the GUI.
-     */
-    private static final String BUTTON_ACTIONS = "actions";
-
-    /**
-     * Id of the settings button in the GUI.
-     */
-    private static final String BUTTON_SETTINGS = "settings";
-
-    /**
-     * Id of the permissions button in the GUI.
-     */
-    private static final String BUTTON_PERMISSIONS = "permissions";
-
-    /**
-     * Id of the citizens button in the GUI.
-     */
-    private static final String BUTTON_CITIZENS = "citizens";
-
-    /**
-     * Id of the citizens button in the GUI.
-     */
-    private static final String BUTTON_WORKORDER = "workOrder";
-
-    /**
-     * Id of the recall button in the GUI.
-     */
-    private static final String BUTTON_RECALL = "recall";
-
-    /**
-     * Id of the change specialization button in the GUI.
-     */
-    private static final String BUTTON_CHANGE_SPEC = "changeSpec";
-
-    /**
-     * Id of the rename button in the GUI.
-     */
-    private static final String BUTTON_RENAME = "rename";
-
-    /**
-     * Id of the add player button in the GUI.
-     */
-    private static final String BUTTON_ADD_PLAYER = "addPlayer";
-
-    /**
-     * Id of the toggle job button in the GUI.
-     */
-    private static final String BUTTON_TOGGLE_JOB = "toggleJob";
-
-    /**
-     * Id of the toggle job button in the GUI.
-     */
-    private static final String BUTTON_TOGGLE_HOUSING = "toggleHousing";
-
-    /**
-     * Id of the remove player button in the GUI..
-     */
-    private static final String BUTTON_REMOVE_PLAYER = "removePlayer";
-
-    /**
-     * Id of the promote player button in the GUI..
-     */
-    private static final String BUTTON_PROMOTE = "promote";
-
-    /**
-     * TAG to retrieve the string for on.
-     */
-    private static final String ON = "com.minecolonies.coremod.gui.workerHuts.retrieveOn";
-
-    /**
-     * TAG to retrieve the string for off.
-     */
-    private static final String OFF = "com.minecolonies.coremod.gui.workerHuts.retrieveOff";
-
-    /**
-     * Id of the demote player button in the GUI..
-     */
-    private static final String BUTTON_DEMOTE = "demote";
-
-    /**
-     * Id of the up button in the GUI.
-     */
-    private static final String BUTTON_UP = "up";
-
-    /**
-     * Id of the up button in the GUI.
-     */
-    private static final String BUTTON_DOWN = "down";
-
-    /**
-     * The id of the delete button in the GUI.
-     */
-    private static final String BUTTON_DELETE = "delete";
-
-    /**
-     * Id of the input bar to add players. in the GUI.
-     */
-    private static final String INPUT_ADDPLAYER_NAME = "addPlayerName";
-
-    /**
-     * Id of the page view in the GUI.
-     */
-    private static final String VIEW_PAGES = "pages";
-
-    /**
-     * Id of the info page in the GUI.
-     */
-    private static final String PAGE_INFO = "pageInfo";
-
-    /**
-     * Id of the actions page in the GUI.
-     */
-    private static final String PAGE_ACTIONS = "pageActions";
-
-    /**
-     * Id of the settings page in the GUI.
-     */
-    private static final String PAGE_SETTINGS = "pageSettings";
-
-    /**
-     * Id of the permissions page in the GUI.
-     */
-    private static final String PAGE_PERMISSIONS = "pagePermissions";
-
-    /**
-     * Id of the citizens page in the GUI.
-     */
-    private static final String PAGE_CITIZENS = "pageCitizens";
-
-    /**
-     * Id of the citizens page in the GUI.
-     */
-    private static final String PAGE_WORKORDER = "pageWorkOrder";
-
-    /**
-     * Id of the user list in the GUI.
-     */
-    private static final String LIST_USERS = "users";
-
-    /**
-     * Id of the citizens list in the GUI.
-     */
-    private static final String LIST_CITIZENS = "citizenList";
-
-    /**
-     * Id of the workOrder list in the GUI.
-     */
-    private static final String LIST_WORKORDER  = "workOrderList";
-    /**
-     * Id of the current specializations label in the GUI.
-     */
-    private static final String HAPPINESS_LABEL = "happiness";
-
-    /**
-     * Id of the total citizens label in the GUI.
-     */
-    private static final String TOTAL_CITIZENS_LABEL = "totalCitizens";
-
-    /**
      * Black color.
      */
-    private static final int BLACK = Color.getByName("black", 0);
+    public static final int BLACK                     = Color.getByName("black", 0);
 
     /**
-     * Statistics label width.
+     * Min TH level to teleport to another colony.
      */
-    private static final int STATISTICS_LABEL_WIDTH = 100;
-
-    /**
-     * Statistics label height.
-     */
-    private static final int STATISTICS_LABEL_HEIGHT = 11;
-
-    /**
-     * Id of the total assignee label in the GUI.
-     */
-    private static final String ASSIGNEE_LABEL = "assignee";
-
-    /**
-     * Id of the total work label in the GUI.
-     */
-    private static final String WORK_LABEL = "work";
-
-    /**
-     * Id of the hidden workorder id in the GUI.
-     */
-    private static final String HIDDEN_WORKORDER_ID = "hiddenId";
-
-    /**
-     * The position of the hidden id in the workOrder window.
-     */
-    private static final int HIDDEN_ID_POSITION = 5;
-
-    /**
-     * The distance to move the ribbon.
-     */
-    private static final int RIBBON_OFFSET = 5;
-
-    /**
-     * Link to the xml file of the window.
-     */
-    private static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/windowtownhall.xml";
-
-    /**
-     * The button to go to the previous permission settings page.
-     */
-    private static final String BUTTON_PREV_PAGE_PERM = "prevPagePerm";
-
-    /**
-     * The button to go to the next permission settings page.
-     */
-    private static final String BUTTON_NEXT_PAGE_PERM = "nextPagePerm";
-
-    /**
-     * The button to go to the officer permission settings page.
-     */
-    private static final String BUTTON_MANAGE_OFFICER = "officerPage";
-
-    /**
-     * The button to go to the friend permission settings page.
-     */
-    private static final String BUTTON_MANAGE_FRIEND = "friendPage";
-
-    /**
-     * The button to go to the neutral permission settings page.
-     */
-    private static final String BUTTON_MANAGE_NEUTRAL = "neutralPage";
-
-    /**
-     * The button to go to the hostile permission settings page.
-     */
-    private static final String BUTTON_MANAGE_HOSTILE = "hostilePage";
-
-    /**
-     * Id of the switch view of the perm pages.
-     */
-    private static final String VIEW_PERM_PAGES = "permPages";
-
-    /**
-     * Id of the switch view of the different groups.
-     */
-    private static final String VIEW_PERM_GROUPS = "userGroups";
-
-    /**
-     * The view of the permission management.
-     */
-    private static final String PERMISSION_VIEW = "managePermissions";
-
-    /**
-     * Button to trigger the permission changes.
-     */
-    private static final String BUTTON_TRIGGER = "trigger";
-
-    /**
-     * The id of the officer permission view.
-     */
-    private static final String VIEW_OFFICER = "officer";
-
-    /**
-     * The id of the officer permission view.
-     */
-    private static final String VIEW_FRIEND = "friend";
-
-    /**
-     * The id of the officer permission view.
-     */
-    private static final String VIEW_NEUTRAL = "neutral";
-
-    /**
-     * The id of the officer permission view.
-     */
-    private static final String VIEW_HOSTILE = "hostile";
-
-    /**
-     * The list of actions for a certain permission group.
-     */
-    private static final String LIST_ACTIONS = "actions";
-
-    /**
-     * The list of free blocks to be interacted with.
-     */
-    private static final String LIST_FREE_BLOCKS = "blocks";
-
-    /**
-     * Key to get readable permission values.
-     */
-    private static final String KEY_TO_PERMISSIONS = "com.minecolonies.coremod.permission.";
-
-    /**
-     * Ignored index starts at this line, ignore this amount after this index.
-     */
-    private static final int IGNORE_INDEX = 3;
-
-    /**
-     * Button clicked to add a block to the colony to be freely interacted with.
-     */
-    private static final String BUTTON_ADD_BLOCK = "addBlock";
-
-    /**
-     * Input field with the blockName or position to add.
-     */
-    private static final String INPUT_BLOCK_NAME = "addBlockName";
-
-    /**
-     * Button to remove a block or position of the list.
-     */
-    private static final String BUTTON_REMOVE_BLOCK = "removeBlock";
+    private static final int MIN_TH_LEVEL_TO_TELEPORT = 3;
 
     /**
      * List of workOrders.
@@ -363,6 +71,18 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     @NotNull
     private final List<Player> users = new ArrayList<>();
+
+    /**
+     * List of citizens.
+     */
+    @NotNull
+    private final List<ColonyView> allies = new ArrayList<>();
+
+    /**
+     * List of citizens.
+     */
+    @NotNull
+    private final List<ColonyView> feuds = new ArrayList<>();
 
     /**
      * List of citizens.
@@ -397,6 +117,16 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private ScrollingList freeBlocksList;
 
     /**
+     * The ScrollingList of all allies.
+     */
+    private final ScrollingList alliesList;
+
+    /**
+     * The ScrollingList of all feuds.
+     */
+    private final ScrollingList feudsList;
+
+    /**
      * Constructor for the town hall window.
      *
      * @param townHall {@link BuildingTownHall.View}.
@@ -406,9 +136,14 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         super(townHall, Constants.MOD_ID + TOWNHALL_RESOURCE_SUFFIX);
         this.townHall = townHall;
 
+        alliesList = findPaneOfTypeByID(LIST_ALLIES, ScrollingList.class);
+        feudsList = findPaneOfTypeByID(LIST_FEUDS, ScrollingList.class);
+
         updateUsers();
         updateCitizens();
         updateWorkOrders();
+        updateAllies();
+        updateFeuds();
 
         tabsToPages.put(BUTTON_ACTIONS, PAGE_ACTIONS);
         tabsToPages.put(BUTTON_INFO, PAGE_INFO);
@@ -438,7 +173,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_MANAGE_NEUTRAL, this::editNeutral);
         registerButton(BUTTON_MANAGE_HOSTILE, this::editHostile);
 
-
+        registerButton(BUTTON_TP, this::teleportToColony);
         registerButton(BUTTON_UP, this::updatePriority);
         registerButton(BUTTON_DOWN, this::updatePriority);
         registerButton(BUTTON_DELETE, this::deleteWorkOrder);
@@ -459,6 +194,99 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         users.clear();
         users.addAll(townHall.getColony().getPlayers().values());
         users.sort(Comparator.comparing(Player::getRank, Rank::compareTo));
+    }
+
+    /**
+     * Clears and resets all allies.
+     */
+    private void updateAllies()
+    {
+        allies.clear();
+        final ColonyView colony = building.getColony();
+        for (final Player player : colony.getPermissions().getPlayersByRank(Rank.OFFICER))
+        {
+            final IColony col = ColonyManager.getIColonyByOwner(Minecraft.getMinecraft().world, player.getID());
+            if (col != null && col instanceof ColonyView)
+            {
+                for (final Player owner : colony.getPermissions().getPlayersByRank(Rank.OWNER))
+                {
+                    if (col.getPermissions().getRank(owner.getID()) == Rank.OFFICER)
+                    {
+                        allies.add((ColonyView) col);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Clears and resets all feuds.
+     */
+    private void updateFeuds()
+    {
+        feuds.clear();
+        final ColonyView colony = building.getColony();
+        for (final Player player : colony.getPermissions().getPlayersByRank(Rank.HOSTILE))
+        {
+            final IColony col = ColonyManager.getIColonyByOwner(Minecraft.getMinecraft().world, player.getID());
+            if (col != null && col instanceof ColonyView)
+            {
+                for (final Player owner : colony.getPermissions().getPlayersByRank(Rank.OWNER))
+                {
+                    if (col.getPermissions().getRank(owner.getID()) == Rank.HOSTILE)
+                    {
+                        feuds.add((ColonyView) col);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Fills the allies and feuds lists.
+     */
+    private void fillAlliesAndFeudsList()
+    {
+        alliesList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return allies.size();
+            }
+
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                final ColonyView colonyView = allies.get(index);
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(colonyView.getName());
+                final long distance = BlockPosUtil.getDistance2D(colonyView.getCenter(), building.getLocation());
+                rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText(String.valueOf((int) distance) + "b");
+
+                if(townHall.getBuildingLevel() < MIN_TH_LEVEL_TO_TELEPORT || Configurations.gameplay.canPlayerUseColonyTPCommand)
+                {
+                    rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class).hide();
+                }
+            }
+        });
+
+        feudsList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return feuds.size();
+            }
+
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                final ColonyView colonyView = feuds.get(index);
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(colonyView.getName());
+                final long distance = BlockPosUtil.getDistance2D(colonyView.getCenter(), building.getLocation());
+                rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText(String.valueOf((int) distance));
+            }
+        });
     }
 
     /**
@@ -535,12 +363,12 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             {
                 if (index < freeBlocks.size())
                 {
-                    rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(freeBlocks.get(index).getRegistryName().toString());
+                    rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(freeBlocks.get(index).getRegistryName().toString());
                 }
                 else
                 {
                     final BlockPos pos = freePositions.get(index - freeBlocks.size());
-                    rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
+                    rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
                 }
             }
         });
@@ -588,7 +416,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         {
             index = Integer.valueOf(((Label) pane).getLabelText());
         }
-        final boolean trigger = LanguageHandler.format(ON).equals(button.getLabel());
+        final boolean trigger = LanguageHandler.format(RETRIEVE_ON).equals(button.getLabel());
         final Action action = Action.values()[index];
         final Rank rank = Rank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH));
 
@@ -597,11 +425,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
         if (trigger)
         {
-            button.setLabel(LanguageHandler.format(OFF));
+            button.setLabel(LanguageHandler.format(RETRIEVE_OFF));
         }
         else
         {
-            button.setLabel(LanguageHandler.format(ON));
+            button.setLabel(LanguageHandler.format(RETRIEVE_ON));
         }
     }
 
@@ -661,11 +489,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                     return;
                 }
 
-                rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(name);
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(name);
                 final boolean isTriggered = townHall.getColony().getPermissions().hasPermission(Rank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH)), action);
                 rowPane.findPaneOfTypeByID("trigger", Button.class)
-                  .setLabel(isTriggered ? LanguageHandler.format(ON)
-                              : LanguageHandler.format(OFF));
+                  .setLabel(isTriggered ? LanguageHandler.format(RETRIEVE_ON)
+                              : LanguageHandler.format(RETRIEVE_OFF));
                 rowPane.findPaneOfTypeByID("index", Label.class).setLabelText(Integer.toString(actionIndex));
             }
         });
@@ -713,6 +541,23 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         findPaneOfTypeByID(BUTTON_MANAGE_HOSTILE, Button.class).setEnabled(false);
 
         fillPermissionList(VIEW_HOSTILE);
+    }
+
+    /**
+     * On Button click teleport to the colony..
+     *
+     * @param button the clicked button.
+     */
+    private void teleportToColony(@NotNull final Button button)
+    {
+        final int row = alliesList.getListElementIndexByPane(button);
+        final ColonyView ally = allies.get(row);
+        final ITextComponent teleport = new TextComponentString(LanguageHandler.format(DO_REALLY_WANNA_TP, ally.getName()))
+                .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+                        new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + ally.getID())
+                ));
+
+        Minecraft.getMinecraft().player.sendMessage(teleport);
     }
 
     /**
@@ -798,6 +643,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         fillCitizensList();
         fillWorkOrderList();
         fillFreeBlockList();
+        fillAlliesAndFeudsList();
 
         if (townHall.getColony().isManualHiring())
         {
@@ -822,7 +668,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         {
             final int length = citizen.getJob().split("\\.").length;
             final String job = citizen.getJob().split("\\.")[length  - 1].toLowerCase(Locale.ENGLISH);
-            jobCountMap.put(job, (jobCountMap.get(job) == null ? 1 : (jobCountMap.get(job) + 1)));
+            jobCountMap.put(job, jobCountMap.get(job) == null ? 1 : (jobCountMap.get(job) + 1));
         }
 
         final String numberOfCitizens =
@@ -856,7 +702,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             workerLabel.setTextAlignment(Alignment.MIDDLE_LEFT);
             workerLabel.setColor(BLACK, BLACK);
             final String job = entry.getKey();
-            final String labelJobKey = (job.endsWith("man") ? job.replace("man", "men") : (job + "s"));
+            final String labelJobKey = job.endsWith("man") ? job.replace("man", "men") : (job + "s");
             final String numberOfWorkers = LanguageHandler.format(
                     "com.minecolonies.coremod.gui.townHall.population." + labelJobKey, entry.getValue());
             workerLabel.setLabelText(numberOfWorkers);
@@ -885,7 +731,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 final Player player = users.get(index);
                 String rank = player.getRank().name();
                 rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase(Locale.ENGLISH).substring(1);
-                rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(player.getName());
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(player.getName());
                 rowPane.findPaneOfTypeByID("rank", Label.class).setLabelText(rank);
             }
         });
@@ -910,7 +756,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             {
                 final CitizenDataView citizen = citizens.get(index);
 
-                rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(citizen.getName());
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(citizen.getName());
             }
         });
     }
