@@ -80,6 +80,26 @@
                         label="$(com.minecolonies.coremod.gui.townHall.rename)"/>
             </group>
 
+            <label size="100% 11" pos="205 30" style="bold"
+                   label="$(com.minecolonies.coremod.gui.townHall.allies)" color="green"/>
+            <list id="allies" size="153 75" pos="205 45">
+                <box size="100% 25" linewidth="2">
+                    <label id="name" size="100 12" pos="5 0" color="black"/>
+                    <label id="dist" size="40 13" pos="112 12" color="black"/>
+
+                    <button id="tp" size="100 12" pos="5 12" label="$(com.minecolonies.coremod.permission.teleport_to_colony)"/>
+                </box>
+            </list>
+
+            <label size="100% 11" pos="210 130" style="bold"
+                   label="$(com.minecolonies.coremod.gui.townHall.feuds)" color="red"/>
+            <list id="feuds" size="150 50" pos="120 140">
+                <box size="100% 25" linewidth="2">
+                    <label id="name" size="100 12" pos="5 0" color="black"/>
+                    <label id="dist" size="40 12" pos="105 0" color="black"/>
+                </box>
+            </list>
+
         </view>
         <view id="pageInfo">
             <group size="100% 22" pos="70 40">
