@@ -31,7 +31,7 @@ public class WindowGuiCrafting extends GuiContainer
     /**
      * X offset of the button.
      */
-    private static final int BUTTON_X_OFFSET = 15;
+    private static final int BUTTON_X_OFFSET = 1;
 
     /**
      * Y offset of the button.
