@@ -206,7 +206,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         for (final Player player : colony.getPermissions().getPlayersByRank(Rank.OFFICER))
         {
             final IColony col = ColonyManager.getIColonyByOwner(Minecraft.getMinecraft().world, player.getID());
-            if (col != null && col instanceof ColonyView)
+            if (col instanceof ColonyView)
             {
                 for (final Player owner : colony.getPermissions().getPlayersByRank(Rank.OWNER))
                 {
@@ -229,7 +229,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         for (final Player player : colony.getPermissions().getPlayersByRank(Rank.HOSTILE))
         {
             final IColony col = ColonyManager.getIColonyByOwner(Minecraft.getMinecraft().world, player.getID());
-            if (col != null && col instanceof ColonyView)
+            if (col instanceof ColonyView)
             {
                 for (final Player owner : colony.getPermissions().getPlayersByRank(Rank.OWNER))
                 {
@@ -261,7 +261,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 final ColonyView colonyView = allies.get(index);
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(colonyView.getName());
                 final long distance = BlockPosUtil.getDistance2D(colonyView.getCenter(), building.getLocation());
-                rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText(String.valueOf((int) distance) + "b");
+                rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText((int) distance + "b");
 
                 if(townHall.getBuildingLevel() < MIN_TH_LEVEL_TO_TELEPORT || Configurations.gameplay.canPlayerUseColonyTPCommand)
                 {
