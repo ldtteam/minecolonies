@@ -11,8 +11,7 @@
       "ore": "plankWood"
     },
     "D": {
-      "item": "minecraft:wooden_door",
-      "data": 0
+      "item": "minecraft:spruce_door"
     },
     "T": {
       "item": "minecolonies:sceptergold"
