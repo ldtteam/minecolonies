@@ -94,21 +94,21 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_JOB_COOK                                   = "com.minecolonies.coremod.job.cook";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN                            = "com.minecolonies.coremod.gui.home.assign";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN             = "com.minecolonies.coremod.gui.home.assign";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF                             = "com.minecolonies.coremod.gui.hiring.off";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF              = "com.minecolonies.coremod.gui.hiring.off";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_HIRING_ON                              = "com.minecolonies.coremod.gui.hiring.on";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_HIRING_ON               = "com.minecolonies.coremod.gui.hiring.on";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON                 = "com.minecolonies.coremod.gui.workerHuts.retrieveOn";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON  = "com.minecolonies.coremod.gui.workerHuts.retrieveOn";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF                = "com.minecolonies.coremod.gui.workerHuts.retrieveOff";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF = "com.minecolonies.coremod.gui.workerHuts.retrieveOff";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0                     = "com.minecolonies.coremod.gui.workerHuts.level0";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0      = "com.minecolonies.coremod.gui.workerHuts.level0";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_LUMBERJACK                             = "com.minecolonies.coremod.job.Lumberjack";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_LUMBERJACK              = "com.minecolonies.coremod.job.Lumberjack";
     @NonNls
-    public static final String COM_MINECOLONIES_REQUESTS_DELIVERY                                  = "com.minecolonies.coremod.request.delivery";
+    public static final String COM_MINECOLONIES_REQUESTS_DELIVERY                   = "com.minecolonies.coremod.request.delivery";
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_FOOD                                      = "com.minecolonies.coremod.request.food";
     @NonNls

@@ -416,7 +416,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         {
             index = Integer.valueOf(((Label) pane).getLabelText());
         }
-        final boolean trigger = LanguageHandler.format(RETRIEVE_ON).equals(button.getLabel());
+        final boolean trigger = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON).equals(button.getLabel());
         final Action action = Action.values()[index];
         final Rank rank = Rank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH));
 
@@ -425,11 +425,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
         if (trigger)
         {
-            button.setLabel(LanguageHandler.format(RETRIEVE_OFF));
+            button.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
         }
         else
         {
-            button.setLabel(LanguageHandler.format(RETRIEVE_ON));
+            button.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON));
         }
     }
 
@@ -492,8 +492,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(name);
                 final boolean isTriggered = townHall.getColony().getPermissions().hasPermission(Rank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH)), action);
                 rowPane.findPaneOfTypeByID("trigger", Button.class)
-                  .setLabel(isTriggered ? LanguageHandler.format(RETRIEVE_ON)
-                              : LanguageHandler.format(RETRIEVE_OFF));
+                  .setLabel(isTriggered ? LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON)
+                              : LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
                 rowPane.findPaneOfTypeByID("index", Label.class).setLabelText(Integer.toString(actionIndex));
             }
         });
