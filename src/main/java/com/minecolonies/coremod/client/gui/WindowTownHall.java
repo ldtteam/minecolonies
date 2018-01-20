@@ -10,6 +10,7 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Alignment;
+import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.*;
 import com.minecolonies.blockout.views.Group;
@@ -262,7 +263,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 final long distance = BlockPosUtil.getDistance2D(colonyView.getCenter(), building.getLocation());
                 rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText((int) distance + "b");
 
-                if(townHall.getBuildingLevel() < MIN_TH_LEVEL_TO_TELEPORT || Configurations.gameplay.canPlayerUseColonyTPCommand)
+                if(townHall.getBuildingLevel() < MIN_TH_LEVEL_TO_TELEPORT || Configurations.Gameplay.canPlayerUseColonyTPCommand)
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class).hide();
                 }
