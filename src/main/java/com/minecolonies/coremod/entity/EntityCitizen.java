@@ -659,7 +659,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
-            return (T) new InvWrapper(getCitizenData().getInventory());
+            final CitizenData data = getCitizenData();
+            if (data == null)
+            {
+                return super.getCapability(capability, facing);
+            }
+            final InventoryCitizen inv = data.getInventory();
+            return (T) new InvWrapper(inv);
         }
 
         return super.getCapability(capability, facing);
@@ -668,6 +674,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public boolean hasCapability(final Capability<?> capability, final EnumFacing facing)
     {
+        if (getCitizenData() == null)
+        {
+            return super.hasCapability(capability, facing);
+        }
+
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
             return true;
