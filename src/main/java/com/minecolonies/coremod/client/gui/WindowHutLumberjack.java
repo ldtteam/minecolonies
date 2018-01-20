@@ -49,12 +49,12 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     /**
      * String describing on for the gui.
      */
-    private static final String ON = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON);
+    private static final String ON = LanguageHandler.format(RETRIEVE_ON);
 
     /**
      * String describing off for the gui.
      */
-    private static final String OFF = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF);
+    private static final String OFF = LanguageHandler.format(RETRIEVE_OFF);
 
     /**
      * Id of the pages view.

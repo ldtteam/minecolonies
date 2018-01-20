@@ -28,7 +28,7 @@ public class ListColoniesCommand extends AbstractSingleCommand
     private static final String COORDINATES_TEXT       = "§2Coordinates: §f";
     private static final String COORDINATES_XYZ        = "§4x=§f%s §4y=§f%s §4z=§f%s";
     private static final String LIST_COMMAND_SUGGESTED = "/mc colonies list ";
-    private static final String TELEPORT_COMMAND       = "/mc colony teleport ";
+    public static final  String TELEPORT_COMMAND       = "/mc colony teleport ";
     private static final String PAGE_TOP_LEFT          = "§2   ------------------ page ";
     private static final String PAGE_TOP_RIGHT         = " ------------------";
     private static final String PAGE_TOP_MIDDLE        = " of ";
@@ -110,10 +110,12 @@ public class ListColoniesCommand extends AbstractSingleCommand
                                                                                                                       String.format(COMMAND_COLONY_INFO, colony.getID())))));
             final BlockPos center = colony.getCenter();
 
-            final ITextComponent teleport = new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ()))
-                                              .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-                                                new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + colony.getID())
-                                              ));
+            final ITextComponent teleport = new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ()));
+            if(isPlayerOpped(sender))
+            {
+                teleport.setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+                                new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + colony.getID())));
+            }
 
             sender.sendMessage(teleport);
         }
