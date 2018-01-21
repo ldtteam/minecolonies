@@ -1036,7 +1036,6 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     {
         this.style = style;
         this.markDirty();
-        this.onUpgradeComplete(this.getBuildingLevel());
     }
 
     /**

@@ -91,6 +91,7 @@ public class BuildingSetStyleMessage extends AbstractMessage<BuildingSetStyleMes
                 if(building.getTileEntity() != null)
                 {
                     building.getTileEntity().setStyle(message.style);
+                    building.onUpgradeComplete(building.getBuildingLevel());
                 }
             }
         }
