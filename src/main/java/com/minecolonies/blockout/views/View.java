@@ -1,9 +1,6 @@
 package com.minecolonies.blockout.views;
 
-import com.minecolonies.blockout.Alignment;
-import com.minecolonies.blockout.Loader;
-import com.minecolonies.blockout.Pane;
-import com.minecolonies.blockout.PaneParams;
+import com.minecolonies.blockout.*;
 import net.minecraft.client.renderer.GlStateManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -79,6 +76,19 @@ public class View extends Pane
         children.stream().filter(this::childIsVisible).forEach(child -> child.draw(drawX, drawY));
 
         GlStateManager.popMatrix();
+    }
+
+    @Override
+    public void scrollInput(final int wheel)
+    {
+        for (final Pane child : children)
+        {
+            final Pane found = child.findPaneByID(id);
+            if (found != null)
+            {
+                child.scrollInput(wheel);
+            }
+        }
     }
 
     @Nullable

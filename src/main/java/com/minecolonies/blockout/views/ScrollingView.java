@@ -4,6 +4,7 @@ import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.PaneParams;
 import com.minecolonies.blockout.controls.Scrollbar;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.input.Mouse;
 
 /**
  * Basic scrolling view.
@@ -63,6 +64,12 @@ public class ScrollingView extends View
         container.setSize(getInteriorWidth() - scrollbarWidth, getInteriorHeight());
         scrollbar.setPosition(getInteriorWidth() - scrollbarWidth, 0);
         scrollbar.setSize(scrollbarWidth, getInteriorHeight());
+    }
+
+    @Override
+    public void scrollInput(final int wheel)
+    {
+        this.setScrollY(getScrollY() + -wheel);
     }
 
     public ScrollingContainer getContainer()

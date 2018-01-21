@@ -131,10 +131,9 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
             return;
         }
 
-        buttonBuild.setEnabled(!buildingView.isBuildingMaxLevel() && !buildingView.isRepairing());
         if (buildingView.isBuildingMaxLevel())
         {
-            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.upgradeUnavailable"));
+            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.switchStyle"));
         }
         else if (buildingView.isBuilding())
         {

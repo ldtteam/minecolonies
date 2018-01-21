@@ -95,6 +95,10 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         {
             buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.build"));
         }
+        else if(building.getBuildingLevel() == building.getBuildingMaxLevel())
+        {
+            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.switchStyle"));
+        }
         else
         {
             buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.upgrade"));
@@ -115,7 +119,14 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     private void confirmClicked()
     {
         MineColonies.getNetwork().sendToServer(new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())));
-        MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
+        if(building.getBuildingLevel() == building.getBuildingMaxLevel())
+        {
+            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR));
+        }
+        else
+        {
+            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
+        }
         cancelClicked();
     }
 
@@ -155,8 +166,9 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         final World world = Minecraft.getMinecraft().world;
         resources.clear();
 
+        int nextLevel = building.getBuildingLevel() == building.getBuildingMaxLevel() ? building.getBuildingMaxLevel() : building.getBuildingLevel() + 1;
         final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, styles.get(stylesDropDownList.getSelectedIndex()) ,
-                building.getSchematicName() + (building.getBuildingLevel() + 1));
+                building.getSchematicName() + nextLevel);
         final StructureWrapper wrapper = new StructureWrapper(world, sn.toString());
         wrapper.setPosition(building.getLocation());
         wrapper.rotate(building.getRotation(), world, building.getLocation(), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);

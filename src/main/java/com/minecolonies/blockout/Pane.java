@@ -579,6 +579,17 @@ public class Pane extends Gui
         }
     }
 
+    /**
+     * Wheel input.
+     * @param wheel minus for down, plus for up.
+     */
+    public void scrollInput(final int wheel)
+    {
+        /**
+         * Can be overwritten by child classes
+         */
+    }
+
     private static class ScissorsInfo
     {
         private final int x;
