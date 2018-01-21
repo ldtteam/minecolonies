@@ -83,8 +83,7 @@ public class View extends Pane
     {
         for (final Pane child : children)
         {
-            final Pane found = child.findPaneByID(id);
-            if (found != null)
+            if (child != null)
             {
                 child.scrollInput(wheel);
             }
