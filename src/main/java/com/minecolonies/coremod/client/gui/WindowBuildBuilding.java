@@ -18,6 +18,7 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.StructureName;
@@ -206,7 +207,9 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton implements Butto
 
             if (block != null
                     && block != Blocks.AIR
-                    && !AbstractEntityAIStructure.isBlockFree(block, 0))
+                    && !AbstractEntityAIStructure.isBlockFree(block, 0)
+                    && block != ModBlocks.blockSolidSubstitution
+                    && block != ModBlocks.blockSubstitution)
             {
                 if (wrapper.getBlockInfo().tileentityData != null)
                 {
