@@ -138,13 +138,8 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton implements Butto
      */
     private void updateStyles()
     {
-        String currentStyle = "";
-        if (stylesDropDownList.getSelectedIndex() > -1 && stylesDropDownList.getSelectedIndex() < styles.size())
-        {
-            currentStyle = styles.get(stylesDropDownList.getSelectedIndex());
-        }
         styles = Structures.getStylesFor(building.getSchematicName());
-        int newIndex = styles.indexOf(currentStyle);
+        int newIndex = styles.indexOf(building.getStyle());
         if (newIndex == -1)
         {
             newIndex = 0;
@@ -286,16 +281,6 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton implements Butto
                 return "";
             }
         });
-        int currentStyleIndex = 0;
-        for(int i = 0; i < styles.size(); i++)
-        {
-            final String style = styles.get(i);
-            if(style.equalsIgnoreCase(building.getStyle()))
-            {
-                currentStyleIndex = i;
-            }
-        }
-        stylesDropDownList.setSelectedIndex(currentStyleIndex);
     }
 
     /**
