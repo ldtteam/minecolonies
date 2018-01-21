@@ -4,7 +4,6 @@ import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.PaneParams;
 import com.minecolonies.blockout.controls.Scrollbar;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.input.Mouse;
 
 /**
  * Basic scrolling view.
