@@ -39,9 +39,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -49,7 +49,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Window for selecting the style and confirming the resources.
  */
-public class WindowBuildBuilding extends AbstractWindowSkeleton implements ButtonHandler
+public class WindowBuildBuilding extends AbstractWindowSkeleton
 {
     /**
      * Link to the xml file of the window.
@@ -62,14 +62,9 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton implements Butto
     private final AbstractBuildingView building;
 
     /**
-     * The colony.
-     */
-    private final ColonyView colony;
-
-    /**
      * Contains all resources needed for a certain build.
      */
-    private final HashMap<String, ItemStorage> resources = new HashMap<>();
+    private final Map<String, ItemStorage> resources = new HashMap<>();
 
     /**
      * Drop down list for style.
@@ -91,8 +86,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton implements Butto
     public WindowBuildBuilding(final ColonyView c, final BlockPos buildingId)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
-        this.colony = c;
-        building = (AbstractBuildingView) colony.getBuilding(buildingId);
+        building = c.getBuilding(buildingId);
         initStyleNavigation();
         registerButton(BUTTON_BUILD, this::confirmClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
@@ -161,7 +155,8 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton implements Butto
         final World world = Minecraft.getMinecraft().world;
         resources.clear();
 
-        final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, styles.get(stylesDropDownList.getSelectedIndex()) , building.getSchematicName() + (building.getBuildingLevel() + 1));
+        final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, styles.get(stylesDropDownList.getSelectedIndex()) ,
+                building.getSchematicName() + (building.getBuildingLevel() + 1));
         final StructureWrapper wrapper = new StructureWrapper(world, sn.toString());
         wrapper.setPosition(building.getLocation());
         wrapper.rotate(building.getRotation(), world, building.getLocation(), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
@@ -186,8 +181,8 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton implements Butto
                 continue;
             }
 
-            @Nullable IBlockState blockState = blockInfo.blockState;
-            @Nullable Block block = blockState.getBlock();
+            @Nullable final IBlockState blockState = blockInfo.blockState;
+            @Nullable final Block block = blockState.getBlock();
 
             if (wrapper.isStructureBlockEqualWorldBlock()
                     || (blockState.getBlock() instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
@@ -212,7 +207,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton implements Butto
 
                     for (final ItemStack stack : itemList)
                     {
-                       addNeededResource(stack, 1);
+                        addNeededResource(stack, 1);
                     }
                 }
 
