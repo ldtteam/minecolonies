@@ -166,7 +166,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         final World world = Minecraft.getMinecraft().world;
         resources.clear();
 
-        int nextLevel = building.getBuildingLevel() == building.getBuildingMaxLevel() ? building.getBuildingMaxLevel() : building.getBuildingLevel() + 1;
+        final int nextLevel = building.getBuildingLevel() == building.getBuildingMaxLevel() ? building.getBuildingMaxLevel() : building.getBuildingLevel() + 1;
         final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, styles.get(stylesDropDownList.getSelectedIndex()) ,
                 building.getSchematicName() + nextLevel);
         final StructureWrapper wrapper = new StructureWrapper(world, sn.toString());

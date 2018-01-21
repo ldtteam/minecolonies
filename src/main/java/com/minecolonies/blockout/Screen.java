@@ -82,7 +82,7 @@ public class Screen extends GuiScreen
     public void handleMouseInput() throws IOException
     {
         super.handleMouseInput();
-        int wheel = Mouse.getDWheel();
+        final int wheel = Mouse.getDWheel();
         if(wheel != 0)
         {
             window.scrollInput(wheel);

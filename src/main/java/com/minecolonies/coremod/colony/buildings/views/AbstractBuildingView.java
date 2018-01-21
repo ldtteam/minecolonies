@@ -25,10 +25,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZEN_BY_REQUEST;
@@ -91,7 +88,7 @@ public abstract class AbstractBuildingView implements IRequester
     /**
      * Keeps track of which citizen created what request. Citizen -> Request direction.
      */
-    private final HashMap<Integer, Collection<IToken>> citizensByRequests = new HashMap<>();
+    private final Map<Integer, Collection<IToken>> citizensByRequests = new HashMap<>();
 
     /**
      * The Schematic name of the building.
