@@ -262,10 +262,15 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(colonyView.getName());
                 final long distance = BlockPosUtil.getDistance2D(colonyView.getCenter(), building.getLocation());
                 rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText((int) distance + "b");
-
+                final Button button = rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class);
                 if(townHall.getBuildingLevel() < MIN_TH_LEVEL_TO_TELEPORT || Configurations.gameplay.canPlayerUseColonyTPCommand)
                 {
-                    rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class).hide();
+                    button.setLabel(LanguageHandler.format(TH_TOO_LOW));
+                    button.disable();
+                }
+                else
+                {
+                    button.enable();
                 }
             }
         });
