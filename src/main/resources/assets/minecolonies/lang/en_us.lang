@@ -579,3 +579,4 @@ com.minecolonies.coremod.gui.workerHuts.toggleAllOff=Toggle all (off)
 com.minecolonies.coremod.gui.townHall.allies=Allies:
 com.minecolonies.coremod.gui.townHall.feuds=Feuds:
 com.minecolonies.coremod.gui.townHall.tp=Do you really want to teleport to: %s [YES]
+com.minecolonies.coremod.gui.townHall.tooLow=TH too low
