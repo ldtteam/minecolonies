@@ -62,7 +62,7 @@ public class View extends Pane
     }
 
     @Override
-    protected void drawSelf(final int mx, final int my)
+    public void drawSelf(final int mx, final int my)
     {
         //  Translate the drawing origin to our x,y.
         GlStateManager.pushMatrix();

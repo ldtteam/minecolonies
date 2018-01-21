@@ -317,7 +317,7 @@ public class Pane extends Gui
      * @param mx Mouse x (relative to parent).
      * @param my Mouse y (relative to parent).
      */
-    protected void drawSelf(final int mx, final int my)
+    public void drawSelf(final int mx, final int my)
     {
         // Can be overloaded
     }

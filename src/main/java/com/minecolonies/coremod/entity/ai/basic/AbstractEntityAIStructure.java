@@ -807,7 +807,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.spawning"));
 
-        final Entity entity = getEntityFromEntityInfoOrNull(entityInfo);
+        final Entity entity = ItemStackUtils.getEntityFromEntityInfoOrNull(entityInfo, world);
         if (entity != null && !isEntityAtPosition(entity, world))
         {
             final List<ItemStack> request = new ArrayList<>();
@@ -870,26 +870,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         return true;
-    }
-
-    /**
-     * Get the entity of an entityInfo object.
-     *
-     * @param entityInfo the input.
-     * @return the output object or null.
-     */
-    @Nullable
-    public Entity getEntityFromEntityInfoOrNull(final Template.EntityInfo entityInfo)
-    {
-        try
-        {
-            return EntityList.createEntityFromNBT(entityInfo.entityData, world);
-        }
-        catch (final RuntimeException e)
-        {
-            Log.getLogger().info("Couldn't restore entitiy", e);
-            return null;
-        }
     }
 
     /**
