@@ -175,6 +175,8 @@ public final class TranslationConstants
     public static final String TOGGLE_ALL_OPTIONS_OFF                                         = "com.minecolonies.coremod.gui.workerHuts.toggleAllOff";
     @NonNls
     public static final String DO_REALLY_WANNA_TP                                             ="com.minecolonies.coremod.gui.townHall.tp";
+    @NonNls
+    public static final String TH_TOO_LOW                                                     ="com.minecolonies.coremod.gui.townHall.tooLow";
 
     private TranslationConstants()
     {
