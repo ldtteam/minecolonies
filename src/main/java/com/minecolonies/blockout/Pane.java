@@ -317,7 +317,7 @@ public class Pane extends Gui
      * @param mx Mouse x (relative to parent).
      * @param my Mouse y (relative to parent).
      */
-    protected void drawSelf(final int mx, final int my)
+    public void drawSelf(final int mx, final int my)
     {
         // Can be overloaded
     }
@@ -577,6 +577,17 @@ public class Pane extends Gui
             final int scale = Screen.getScale();
             GL11.glScissor(info.x * scale, mc.displayHeight - ((info.y + info.height) * scale), info.width * scale, info.height * scale);
         }
+    }
+
+    /**
+     * Wheel input.
+     * @param wheel minus for down, plus for up.
+     */
+    public void scrollInput(final int wheel)
+    {
+        /**
+         * Can be overwritten by child classes
+         */
     }
 
     private static class ScissorsInfo

@@ -248,7 +248,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         final EntityCitizen builder = getMainWorkerEntity();
 
         InventoryCitizen builderInventory = null;
-        if (builder != null)
+        if (builder != null && builder.getCitizenData() != null)
         {
             builderInventory = builder.getInventoryCitizen();
         }

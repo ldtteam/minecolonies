@@ -576,7 +576,10 @@ public class WindowCitizen extends AbstractWindowSkeleton
         }
 
         final AbstractBuildingView building = colonyView.getBuilding(buildingPos);
-
+        if(building == null)
+        {
+            return ImmutableList.of();
+        }
         return building.getOpenRequests(citizen);
     }
 
