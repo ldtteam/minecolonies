@@ -193,7 +193,7 @@ public class Image extends Pane
      * @param my Mouse y (relative to parent)
      */
     @Override
-    protected void drawSelf(final int mx, final int my)
+    public void drawSelf(final int mx, final int my)
     {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
