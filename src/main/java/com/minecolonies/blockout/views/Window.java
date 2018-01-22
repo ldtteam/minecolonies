@@ -124,7 +124,7 @@ public class Window extends View
     }
 
     @Override
-    protected void drawSelf(final int mx, final int my)
+    public void drawSelf(final int mx, final int my)
     {
         updateDebugging();
 

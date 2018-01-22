@@ -65,6 +65,12 @@ public class ScrollingView extends View
         scrollbar.setSize(scrollbarWidth, getInteriorHeight());
     }
 
+    @Override
+    public void scrollInput(final int wheel)
+    {
+        this.setScrollY(getScrollY() + -wheel);
+    }
+
     public ScrollingContainer getContainer()
     {
         return container;

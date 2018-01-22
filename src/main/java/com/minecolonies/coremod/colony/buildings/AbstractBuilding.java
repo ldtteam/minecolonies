@@ -971,6 +971,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     public void setStyle(final String style)
     {
         this.style = style;
+        this.markDirty();
     }
 
     /**
@@ -1020,7 +1021,10 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         buf.writeInt(getMaxBuildingLevel());
         buf.writeInt(getPickUpPriority());
         buf.writeInt(getCurrentWorkOrderLevel());
-
+        ByteBufUtils.writeUTF8String(buf, style);
+        ByteBufUtils.writeUTF8String(buf, this.getSchematicName());
+        buf.writeInt(rotation);
+        buf.writeBoolean(isMirrored);
         NBTTagCompound requestSystemCompound = new NBTTagCompound();
         writeRequestSystemToNBT(requestSystemCompound);
 
