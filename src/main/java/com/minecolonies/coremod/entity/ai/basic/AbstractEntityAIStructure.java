@@ -1,8 +1,5 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
-import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.ModBlocks;
@@ -18,7 +15,6 @@ import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Blocks;
@@ -807,7 +803,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.spawning"));
 
-        final Entity entity = getEntityFromEntityInfoOrNull(entityInfo);
+        final Entity entity = ItemStackUtils.getEntityFromEntityInfoOrNull(entityInfo, world);
         if (entity != null && !isEntityAtPosition(entity, world))
         {
             final List<ItemStack> request = new ArrayList<>();
@@ -870,26 +866,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         return true;
-    }
-
-    /**
-     * Get the entity of an entityInfo object.
-     *
-     * @param entityInfo the input.
-     * @return the output object or null.
-     */
-    @Nullable
-    public Entity getEntityFromEntityInfoOrNull(final Template.EntityInfo entityInfo)
-    {
-        try
-        {
-            return EntityList.createEntityFromNBT(entityInfo.entityData, world);
-        }
-        catch (final RuntimeException e)
-        {
-            Log.getLogger().info("Couldn't restore entitiy", e);
-            return null;
-        }
     }
 
     /**

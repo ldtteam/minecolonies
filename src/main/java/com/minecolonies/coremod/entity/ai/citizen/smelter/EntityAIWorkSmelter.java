@@ -378,6 +378,11 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
             needsCurrently = EntityAIWorkSmelter::isSmeltableOre;
         }
 
+        if(getOwnBuilding() == null || getOwnBuilding().getTileEntity() == null)
+        {
+            return START_WORKING;
+        }
+
         final BlockPos pos = getOwnBuilding().getTileEntity().getPositionOfChestWithItemStack(needsCurrently);
         if (pos == null)
         {

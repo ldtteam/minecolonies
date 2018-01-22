@@ -25,10 +25,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZEN_BY_REQUEST;
@@ -42,21 +39,66 @@ import static com.minecolonies.coremod.colony.buildings.AbstractBuilding.process
  */
 public abstract class AbstractBuildingView implements IRequester
 {
+    /**
+     * The colony of the building.
+     */
     private final ColonyView colony;
+
+    /**
+     * It's location.
+     */
     @NotNull
     private final BlockPos   location;
+
     /**
      * Keeps track of which citizen created what request. Request -> Citizen direction.
      */
     private final HashMap<IToken, Integer> requestsByCitizen = new HashMap<>();
+
+    /**
+     * The building level.
+     */
     private int buildingLevel    = 0;
+
+    /**
+     * The max building level.
+     */
     private int buildingMaxLevel = 0;
+
+    /**
+     * The dm priority.
+     */
     private int buildingDmPrio   = 1;
+
+    /**
+     * Rotation of the building.
+     */
+    private int rotation;
+
+    /**
+     * Mirror of the building.
+     */
+    private boolean isMirrored;
+
+    /**
+     * The workOrderLevel.
+     */
     private int workOrderLevel   = NO_WORK_ORDER;
+
     /**
      * Keeps track of which citizen created what request. Citizen -> Request direction.
      */
-    private HashMap<Integer, Collection<IToken>> citizensByRequests = new HashMap<>();
+    private final Map<Integer, Collection<IToken>> citizensByRequests = new HashMap<>();
+
+    /**
+     * The Schematic name of the building.
+     */
+    private String schematicName;
+
+    /**
+     * The style of the building.
+     */
+    private String style;
 
     /**
      * Creates a building view.
@@ -134,6 +176,42 @@ public abstract class AbstractBuildingView implements IRequester
     }
 
     /**
+     * Getter for the schematic name.
+     * @return the schematic name.
+     */
+    public String getSchematicName()
+    {
+        return schematicName;
+    }
+
+    /**
+     * Getter for the style.
+     * @return the style string.
+     */
+    public String getStyle()
+    {
+        return style;
+    }
+
+    /**
+     * Getter for the rotation.
+     * @return the rotation.
+     */
+    public int getRotation()
+    {
+        return rotation;
+    }
+
+    /**
+     * Getter for the mirror.
+     * @return true if mirrored.
+     */
+    public boolean isMirrored()
+    {
+        return isMirrored;
+    }
+
+    /**
      * Get the current work order level.
      *
      * @return 0 if none, othewise the current level worked on
@@ -196,6 +274,10 @@ public abstract class AbstractBuildingView implements IRequester
         buildingMaxLevel = buf.readInt();
         buildingDmPrio = buf.readInt();
         workOrderLevel = buf.readInt();
+        style = ByteBufUtils.readUTF8String(buf);
+        schematicName = ByteBufUtils.readUTF8String(buf);
+        rotation = buf.readInt();
+        isMirrored = buf.readBoolean();
 
         loadRequestSystemFromNBT(ByteBufUtils.readTag(buf));
     }
