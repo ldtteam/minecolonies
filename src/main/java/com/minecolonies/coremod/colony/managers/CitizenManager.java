@@ -128,6 +128,11 @@ public class CitizenManager implements ICitizenManager
     @Override
     public void spawnCitizen(@Nullable final CitizenData data, @Nullable final World world)
     {
+        if(!colony.getBuildingManager().hasTownHall())
+        {
+            return;
+        }
+
         final BlockPos townHallLocation = colony.getBuildingManager().getTownHall().getLocation();
         if (!world.isBlockLoaded(townHallLocation))
         {

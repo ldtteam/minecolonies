@@ -314,7 +314,9 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
         int size = 0;
 
-        for (@NotNull final BlockPos field : getColony().getBuildingManager().getFields())
+        final List<BlockPos> fields = new ArrayList<>(getColony().getBuildingManager().getFields());
+
+        for (@NotNull final BlockPos field : fields)
         {
             final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
             if (scareCrow instanceof ScarecrowTileEntity)
