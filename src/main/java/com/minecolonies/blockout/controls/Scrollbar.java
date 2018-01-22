@@ -76,6 +76,11 @@ public class Scrollbar extends Pane
      */
     public void dragScroll(final int my)
     {
+        if(container.getContentHeight() == 0)
+        {
+            return;
+        }
+
         final int barClickYNow = getScrollBarYPos() + barClickY;
         final int deltaFromClickPos = my - barClickYNow;
 
