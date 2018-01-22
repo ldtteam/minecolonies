@@ -20,19 +20,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityFlowerPot;
-import net.minecraft.tileentity.TileEntityLockable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -226,7 +217,14 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
             if (entityInfo != null)
             {
-                requestEntityToBuildingIfRequired(entityInfo);
+                for (final ItemStack stack : ItemStackUtils.getListOfStackForEntity(entityInfo, world, worker))
+                {
+                    final BuildingBuilder building = (BuildingBuilder) getOwnBuilding();
+                    if (!ItemStackUtils.isEmpty(stack))
+                    {
+                        building.addNeededResource(stack, 1);
+                    }
+                }
             }
 
             if (blockInfo == null)
@@ -265,55 +263,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     }
 
     /**
-     * Adds entities to the builder building if he needs it.
-     */
-    private void requestEntityToBuildingIfRequired(final Template.EntityInfo entityInfo)
-    {
-        if (entityInfo != null)
-        {
-            final Entity entity = getEntityFromEntityInfoOrNull(entityInfo);
-
-            if (entity != null)
-            {
-                final List<ItemStack> request = new ArrayList<>();
-                if (entity instanceof EntityItemFrame)
-                {
-                    final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
-                    if (!ItemStackUtils.isEmpty(stack))
-                    {
-                        ItemStackUtils.setSize(stack, 1);
-                        request.add(stack);
-                    }
-                    request.add(new ItemStack(Items.ITEM_FRAME, 1));
-                }
-                else if (entity instanceof EntityArmorStand)
-                {
-                    request.add(entity.getPickedResult(new RayTraceResult(worker)));
-                    entity.getArmorInventoryList().forEach(request::add);
-                    entity.getHeldEquipment().forEach(request::add);
-                }
-                else if (entity instanceof EntityMob)
-                {
-                    //Don't try to request the monster.
-                }
-                else
-                {
-                    request.add(entity.getPickedResult(new RayTraceResult(worker)));
-                }
-
-                for (final ItemStack stack : request)
-                {
-                    final BuildingBuilder building = (BuildingBuilder) getOwnBuilding();
-                    if (!ItemStackUtils.isEmpty(stack))
-                    {
-                        building.addNeededResource(stack, 1);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Add blocks to the builder building if he needs it.
      *
      * @param building   the building.
@@ -333,34 +282,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         building.addNeededResource(BlockUtils.getItemStackFromBlockState(blockState), 1);
-    }
-
-    /**
-     * Get itemStack of tileEntityData. Retrieve the data from the tileEntity.
-     *
-     * @param compound the tileEntity stored in a compound.
-     * @return the list of itemstacks.
-     */
-    private List<ItemStack> getItemStacksOfTileEntity(final NBTTagCompound compound)
-    {
-        final List<ItemStack> items = new ArrayList<>();
-        final TileEntity tileEntity = TileEntity.create(world, compound);
-        if (tileEntity instanceof TileEntityFlowerPot)
-        {
-            items.add(((TileEntityFlowerPot) tileEntity).getFlowerItemStack());
-        }
-        else if (tileEntity instanceof TileEntityLockable)
-        {
-            for (int i = 0; i < ((TileEntityLockable) tileEntity).getSizeInventory(); i++)
-            {
-                final ItemStack stack = ((TileEntityLockable) tileEntity).getStackInSlot(i);
-                if (stack != null)
-                {
-                    items.add(stack);
-                }
-            }
-        }
-        return items;
     }
 
     private AIState startWorkingAtOwnBuilding()
@@ -484,7 +405,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         if (job.getStructure() != null && job.getStructure().getBlockInfo() != null && job.getStructure().getBlockInfo().tileentityData != null)
         {
-            return getItemStacksOfTileEntity(job.getStructure().getBlockInfo().tileentityData);
+            return ItemStackUtils.getItemStacksOfTileEntity(job.getStructure().getBlockInfo().tileentityData, world);
         }
         return Collections.emptyList();
     }

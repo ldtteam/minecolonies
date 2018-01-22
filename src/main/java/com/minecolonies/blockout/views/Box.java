@@ -33,7 +33,7 @@ public class Box extends View
     }
 
     @Override
-    protected void drawSelf(final int mx, final int my)
+    public void drawSelf(final int mx, final int my)
     {
         Render.drawOutlineRect(x, y, x + getWidth(), y + getHeight(), lineWidth, color);
 

@@ -34,131 +34,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.minecolonies.api.util.constant.WindowConstants.*;
+
 /**
  * BuildTool window.
  */
 public class WindowBuildTool extends AbstractWindowSkeleton
 {
-    /**
-     * This button is used to set the previous available building type.
-     */
-    private static final String BUTTON_PREVIOUS_TYPE_ID = "previousBuildingType";
-
-    /**
-     * This drop down list is used to set the section either huts (Builder, Town Hall), decorations or scan mode.
-     */
-    private static final String DROPDOWN_TYPE_ID = "buildingType";
-
-    /**
-     * This button is used to set the next available building type.
-     */
-    private static final String BUTTON_NEXT_TYPE_ID = "nextBuildingType";
-
-    /**
-     * This button is used to set the previous available style.
-     */
-    private static final String BUTTON_PREVIOUS_STYLE_ID = "previousStyle";
-
-    /**
-     * This drop down list is used to choose which style should be used.
-     */
-    private static final String DROPDOWN_STYLE_ID = "style";
-
-    /**
-     * This button is used to set the next available style.
-     */
-    private static final String BUTTON_NEXT_STYLE_ID = "nextStyle";
-
-    /**
-     * This button is used to set the previous available schematic.
-     */
-    private static final String BUTTON_PREVIOUS_SCHEMATIC_ID = "previousSchematic";
-
-    /**
-     * This drop down list is used to set the schematic.
-     */
-    private static final String DROPDOWN_SCHEMATIC_ID = "schematic";
-
-    /**
-     * This button is used to set the next available schematic.
-     */
-    private static final String BUTTON_NEXT_SCHEMATIC_ID = "nextSchematic";
-
-    /**
-     * This button will send a packet to the server telling it to place this hut/decoration.
-     */
-    private static final String BUTTON_CONFIRM = "confirm";
-
-    /**
-     * This button will remove the currently rendered structure.
-     */
-    private static final String BUTTON_CANCEL = "cancel";
-
-    /**
-     * This button will rotateWithMirror the structure counterclockwise.
-     */
-    private static final String BUTTON_ROTATE_LEFT = "rotateLeft";
-
-    /**
-     * This button will rotated the structure clockwise.
-     */
-    private static final String BUTTON_ROTATE_RIGHT = "rotateRight";
-
-    /**
-     * Move the structure preview up.
-     */
-    private static final String BUTTON_UP = "up";
-
-    /**
-     * Move the structure preview down.
-     */
-    private static final String BUTTON_DOWN = "down";
-
-    /**
-     * Move the structure preview forward.
-     */
-    private static final String BUTTON_FORWARD = "forward";
-
-    /**
-     * Move the structure preview back.
-     */
-    private static final String BUTTON_BACKWARD = "backward";
-
-    /**
-     * Move the structure preview left.
-     */
-    private static final String BUTTON_LEFT = "left";
-
-    /**
-     * Move the structure preview right.
-     */
-    private static final String BUTTON_RIGHT = "right";
-
-    /**
-     * Rename the scanned structure.
-     */
-    private static final String BUTTON_RENAME = "rename";
-
-    /**
-     * Delete the scanned structure.
-     */
-    private static final String BUTTON_DELETE = "delete";
-
-    /**
-     * Mirror the structure.
-     */
-    private static final String BUTTON_MIRROR = "mirror";
-
-    /**
-     * Resource suffix.
-     */
-    private static final String BUILD_TOOL_RESOURCE_SUFFIX = ":gui/windowbuilldtool.xml";
-
-    /**
-     * Hut prefix.
-     */
-    private static final String HUT_PREFIX = ":blockHut";
-
     /**
      * Enum of possibly free blocks for the normal player.
      */

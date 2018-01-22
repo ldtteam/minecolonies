@@ -487,7 +487,7 @@ public class ButtonImage extends Button
      * @param my Mouse y (relative to parent)
      */
     @Override
-    protected void drawSelf(final int mx, final int my)
+    public void drawSelf(final int mx, final int my)
     {
         final boolean mouseOver = isPointInPane(mx, my);
 

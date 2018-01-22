@@ -1,0 +1,30 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
+        lightbox="true"
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+
+    <buttonimage id="previousStyle" size="14 15"  pos="140 0" label="&lt;"
+                 source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
+    <dropdown id="style" size="129 17" pos="155 0" maxContentHeight="75" dropDownSize="140 75" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black">
+        <view size="100% 15">
+            <label id="id" size="100% 100%" label="" pos="0 0"/>
+            <buttonimage id="button" size="129 17"  pos="0 0"
+                         source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
+        </view>
+    </dropdown>
+    <buttonimage id="nextStyle" size="14 15" pos="285 0" label="&gt;"
+                 source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
+
+    <list id="resources" size="80% 80%" pos="30 20">
+        <box size="100% 30" linewidth="2">
+            <itemicon id="resourceIcon" size="24 24" pos="1 1"/>
+            <label id="resourceName" size="140 12" pos="30 9" color="white"/>
+            <label id="resourceQuantity" size="12 12" pos="170 9" color="white"/>
+        </box>
+    </list>
+    <buttonimage id="cancel" align="TOP_MIDDLE" size="129 17" pos="-70 220"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(gui.cancel)" textcolor="black"/>
+    <buttonimage id="build" align="TOP_MIDDLE" size="129 17" pos="70 220"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(com.minecolonies.coremod.gui.workerHuts.upgrade)" textcolor="black"/>
+</window>
