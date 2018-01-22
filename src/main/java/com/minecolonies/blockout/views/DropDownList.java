@@ -2,10 +2,7 @@ package com.minecolonies.blockout.views;
 
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.PaneParams;
-import com.minecolonies.blockout.controls.Button;
-import com.minecolonies.blockout.controls.ButtonHandler;
-import com.minecolonies.blockout.controls.ButtonVanilla;
-import com.minecolonies.blockout.controls.Label;
+import com.minecolonies.blockout.controls.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -23,7 +20,7 @@ public class DropDownList extends View implements ButtonHandler
     /**
      * button to access to the list.
      */
-    protected ButtonVanilla button;
+    protected Button button;
 
     /**
      * List to choose from.
@@ -75,7 +72,14 @@ public class DropDownList extends View implements ButtonHandler
         //When unknown, we use the same height as it is wide.
         dropDownHeight = dropDownSize == null ? width : dropDownSize.getY();
 
-        button = new ButtonVanilla(params);
+        if(params.getStringAttribute("source", "").isEmpty())
+        {
+            button = new ButtonVanilla(params);
+        }
+        else
+        {
+            button = new ButtonImage(params);
+        }
         button.putInside(this);
 
         overlay = new OverlayView();
@@ -291,7 +295,7 @@ public class DropDownList extends View implements ButtonHandler
     }
 
     @Override
-    protected void drawSelf(final int mx, final int my)
+    public void drawSelf(final int mx, final int my)
     {
         button.drawSelf(mx, my);
     }

@@ -100,9 +100,9 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_HIRING_ON                         = "com.minecolonies.coremod.gui.hiring.on";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON            = "com.minecolonies.coremod.gui.workerHuts.retrieveOn";
+    public static final String RETRIEVE_ON                                                    = "com.minecolonies.coremod.gui.workerHuts.retrieveOn";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF           = "com.minecolonies.coremod.gui.workerHuts.retrieveOff";
+    public static final String RETRIEVE_OFF                                                   = "com.minecolonies.coremod.gui.workerHuts.retrieveOff";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0                = "com.minecolonies.coremod.gui.workerHuts.level0";
     @NonNls
@@ -173,6 +173,10 @@ public final class TranslationConstants
     public static final String TOGGLE_ALL_OPTIONS_ON                                          = "com.minecolonies.coremod.gui.workerHuts.toggleAllOn";
     @NonNls
     public static final String TOGGLE_ALL_OPTIONS_OFF                                         = "com.minecolonies.coremod.gui.workerHuts.toggleAllOff";
+    @NonNls
+    public static final String DO_REALLY_WANNA_TP                                             ="com.minecolonies.coremod.gui.townHall.tp";
+    @NonNls
+    public static final String TH_TOO_LOW                                                     ="com.minecolonies.coremod.gui.townHall.tooLow";
 
     private TranslationConstants()
     {
