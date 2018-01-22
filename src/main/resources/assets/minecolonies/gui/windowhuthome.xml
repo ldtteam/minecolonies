@@ -3,10 +3,10 @@
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
     <layout source="minecolonies:gui/layoutBuildingDefault.xml"/>
 
-    <button id="assign" align="TOP_MIDDLE" size="116 20" pos="0 24"
+    <button id="assign" align="TOP_MIDDLE" size="116 20" pos="0 30"
             label="$(com.minecolonies.coremod.gui.workerHuts.assign)"/>
 
-    <list id="assignedCitizen" size="78% 90" pos="20 120">
+    <list id="assignedCitizen" size="78% 60" pos="25 52">
         <box size="100% 30" linewidth="2">
             <label id="name" size="100 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
             <button id="remove" size="100 12" pos="5 15" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.unassign)"/>
