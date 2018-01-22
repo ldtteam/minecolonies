@@ -88,7 +88,7 @@ public abstract class AbstractBuildingView implements IRequester
     /**
      * Keeps track of which citizen created what request. Citizen -> Request direction.
      */
-    private final Map<Integer, Collection<IToken>> citizensByRequests = new HashMap<>();
+    private final Map<Integer, Collection<IToken<?>>> citizensByRequests = new HashMap<>();
 
     /**
      * The Schematic name of the building.

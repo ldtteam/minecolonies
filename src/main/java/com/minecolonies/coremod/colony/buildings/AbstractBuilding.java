@@ -171,7 +171,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     /**
      * Keeps track of which citizen created what request. Citizen -> Request direction.
      */
-    private final Map<Integer, Collection<IToken>> citizensByRequests = new HashMap<>();
+    private final Map<Integer, Collection<IToken<?>>> citizensByRequests = new HashMap<>();
 
     /**
      * Keeps track of which citizen has completed requests. Citizen -> Request direction.
