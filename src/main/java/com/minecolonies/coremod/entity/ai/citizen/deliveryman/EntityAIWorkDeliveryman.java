@@ -361,7 +361,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         finallyAssignedTokens.forEach(iToken -> worker.getColony().getRequestManager().reassignRequest(iToken, ImmutableList.of()));
 
-        if (job.getReturning())
+        if (job.isReturning())
         {
             job.setReturning(false);
         }
@@ -400,7 +400,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private AIState deliver()
     {
-        if (job.getReturning())
+        if (job.isReturning())
         {
             return DUMPING;
         }
@@ -513,7 +513,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             final IRequest<? extends Delivery> request = job.getCurrentTask();
             if (request != null)
             {
-                if (job.getReturning())
+                if (job.isReturning())
                 {
                     return DUMPING;
                 }
@@ -595,7 +595,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(null);
             return GATHERING;
         }
-        else if (job.getReturning())
+        else if (job.isReturning())
         {
             ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(null);
             return DUMPING;

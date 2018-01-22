@@ -21,7 +21,7 @@ public class Stack implements IDeliverable
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     @NotNull
-    private final ItemStack stack;
+    private final ItemStack theStack;
 
     @NotNull
     private boolean matchMeta = false;
@@ -35,17 +35,43 @@ public class Stack implements IDeliverable
     @NotNull
     private ItemStack result = ItemStackUtils.EMPTY;
 
+    /**
+     * Create a Stack deliverable.
+     * @param stack the required stack.
+     */
     public Stack(@NotNull final ItemStack stack)
     {
+        this.theStack = stack.copy();
+
         if (ItemStackUtils.isEmpty(stack))
         {
             throw new IllegalArgumentException("Cannot deliver Empty Stack.");
         }
 
         setMatchMeta(true).setMatchNBT(true);
+        this.theStack.setCount(Math.min(this.theStack.getCount(), this.theStack.getMaxStackSize()));
+    }
 
-        this.stack = stack.copy();
-        this.stack.setCount(Math.min(this.stack.getCount(), this.stack.getMaxStackSize()));
+    /**
+     * Create a Stack deliverable.
+     * @param stack the required stack.
+     * @param matchMeta if meta has to be matched.
+     * @param matchNBT if NBT has to be matched.
+     * @param matchOreDic if the oredict has to be matched.
+     * @param result the result stack.
+     */
+    public Stack(
+            @NotNull final ItemStack stack,
+            @NotNull final boolean matchMeta,
+            @NotNull final boolean matchNBT,
+            @NotNull final boolean matchOreDic,
+            @NotNull final ItemStack result)
+    {
+        this.theStack = stack;
+        this.matchMeta = matchMeta;
+        this.matchNBT = matchNBT;
+        this.matchOreDic = matchOreDic;
+        this.result = result;
     }
 
     public Stack setMatchNBT(final boolean match)
@@ -60,24 +86,16 @@ public class Stack implements IDeliverable
         return this;
     }
 
-    public Stack(
-                  @NotNull final ItemStack stack,
-                  @NotNull final boolean matchMeta,
-                  @NotNull final boolean matchNBT,
-                  @NotNull final boolean matchOreDic,
-                  @NotNull final ItemStack result)
-    {
-        this.stack = stack;
-        this.matchMeta = matchMeta;
-        this.matchNBT = matchNBT;
-        this.matchOreDic = matchOreDic;
-        this.result = result;
-    }
-
+    /**
+     * Serialize the deliverable.
+     * @param controller the controller.
+     * @param input the input.
+     * @return the compound.
+     */
     public static NBTTagCompound serialize(IFactoryController controller, Stack input)
     {
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setTag(NBT_STACK, input.stack.serializeNBT());
+        compound.setTag(NBT_STACK, input.theStack.serializeNBT());
         compound.setBoolean(NBT_MATCHMETA, input.matchMeta);
         compound.setBoolean(NBT_MATCHNBT, input.matchNBT);
         compound.setBoolean(NBT_MATCHOREDIC, input.matchOreDic);
@@ -90,6 +108,12 @@ public class Stack implements IDeliverable
         return compound;
     }
 
+    /**
+     * Deserialize the deliverable.
+     * @param controller the controller.
+     * @param compound the compound.
+     * @return the deliverable.
+     */
     public static Stack deserialize(IFactoryController controller, NBTTagCompound compound)
     {
         ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_STACK));
@@ -115,13 +139,13 @@ public class Stack implements IDeliverable
     @Override
     public int getCount()
     {
-        return stack.getCount();
+        return theStack.getCount();
     }
 
     @NotNull
     public ItemStack getStack()
     {
-        return stack;
+        return theStack;
     }    @Override
     public void setResult(@NotNull final ItemStack result)
     {

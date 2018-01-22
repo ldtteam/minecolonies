@@ -20,7 +20,7 @@ public class ChatSpamFilterTest extends AbstractMockStaticsTest
     private ChatSpamFilter filter;
 
     @Before
-    public void setup()
+    public void setUp()
     {
         filter = new ChatSpamFilter(citizen);
         when(citizen.getOffsetTicks()).thenReturn(0);

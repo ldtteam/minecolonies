@@ -216,7 +216,7 @@ public class JobDeliveryman extends AbstractJob
      *
      * @return True when this DMan is returning the warehouse to clean his inventory.
      */
-    public boolean getReturning()
+    public boolean isReturning()
     {
         return returning;
     }

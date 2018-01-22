@@ -442,7 +442,9 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     public List<ItemStack> getDisplayStacks()
     {
         if (!(getRequest() instanceof IDeliverable))
+        {
             return Lists.newArrayList();
+        }
 
         IDeliverable deliverable = (IDeliverable) getRequest();
 
