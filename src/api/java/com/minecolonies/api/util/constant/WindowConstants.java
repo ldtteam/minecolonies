@@ -330,9 +330,134 @@ public final class WindowConstants
      */
     public static final String BUTTON_REMOVE_BLOCK = "removeBlock";
 
+    /**
+     * This button is used to set the previous available building type.
+     */
+    public static final String BUTTON_PREVIOUS_TYPE_ID = "previousBuildingType";
 
     /**
-     * private constructor to hide implicit public one.
+     * This drop down list is used to set the section either huts (Builder, Town Hall), decorations or scan mode.
+     */
+    public static final String DROPDOWN_TYPE_ID = "buildingType";
+
+    /**
+     * This button is used to set the next available building type.
+     */
+    public static final String BUTTON_NEXT_TYPE_ID = "nextBuildingType";
+
+    /**
+     * This button is used to set the previous available style.
+     */
+    public static final String BUTTON_PREVIOUS_STYLE_ID = "previousStyle";
+
+    /**
+     * This drop down list is used to choose which style should be used.
+     */
+    public static final String DROPDOWN_STYLE_ID = "style";
+
+    /**
+     * This button is used to set the next available style.
+     */
+    public static final String BUTTON_NEXT_STYLE_ID = "nextStyle";
+
+    /**
+     * This button is used to set the previous available schematic.
+     */
+    public static final String BUTTON_PREVIOUS_SCHEMATIC_ID = "previousSchematic";
+
+    /**
+     * This drop down list is used to set the schematic.
+     */
+    public static final String DROPDOWN_SCHEMATIC_ID = "schematic";
+
+    /**
+     * This button is used to set the next available schematic.
+     */
+    public static final String BUTTON_NEXT_SCHEMATIC_ID = "nextSchematic";
+
+    /**
+     * This button will send a packet to the server telling it to place this hut/decoration.
+     */
+    public static final String BUTTON_CONFIRM = "confirm";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String BUTTON_CANCEL = "cancel";
+
+    /**
+     * This button will rotateWithMirror the structure counterclockwise.
+     */
+    public static final String BUTTON_ROTATE_LEFT = "rotateLeft";
+
+    /**
+     * This button will rotated the structure clockwise.
+     */
+    public static final String BUTTON_ROTATE_RIGHT = "rotateRight";
+
+    /**
+     * Move the structure preview forward.
+     */
+    public static final String BUTTON_FORWARD = "forward";
+
+    /**
+     * Move the structure preview back.
+     */
+    public static final String BUTTON_BACKWARD = "backward";
+
+    /**
+     * Move the structure preview left.
+     */
+    public static final String BUTTON_LEFT = "left";
+
+    /**
+     * Move the structure preview right.
+     */
+    public static final String BUTTON_RIGHT = "right";
+
+    /**
+     * Mirror the structure.
+     */
+    public static final String BUTTON_MIRROR = "mirror";
+
+    /**
+     * Resource suffix.
+     */
+    public static final String BUILD_TOOL_RESOURCE_SUFFIX = ":gui/windowbuilldtool.xml";
+
+    /**
+     * Hut prefix.
+     */
+    public static final String HUT_PREFIX = ":blockHut";
+
+    /**
+     * The builders gui file.
+     */
+    public static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutbuilder.xml";
+    public static final String LIST_RESOURCES              = "resources";
+    public static final String PAGE_RESOURCES              = "resourceActions";
+    public static final String RESOURCE_NAME               = "resourceName";
+    public static final String RESOURCE_AVAILABLE_NEEDED   = "resourceAvailableNeeded";
+    public static final String RESOURCE_MISSING            = "resourceMissing";
+    public static final String RESOURCE_ADD                = "resourceAdd";
+    public static final String RESOURCE_ID                 = "resourceId";
+    public static final String RESOURCE_QUANTITY_MISSING   = "resourceQuantity";
+    public static final String RESOURCE_ICON               = "resourceIcon";
+
+    /**
+     * Id of the type label in the GUI.
+     */
+    public static final String LABEL_BUILDINGTYPE = "type";
+
+    public static final String BUTTON_BUILD        = "build";
+    public static final String BUTTON_REPAIR       = "repair";
+    public static final String BUTTON_INVENTORY    = "inventory";
+    public static final String LABEL_BUILDING_NAME = "name";
+    public static final String BUTTON_PREVPAGE     = "prevPage";
+    public static final String BUTTON_NEXTPAGE     = "nextPage";
+
+    /**
+     * public constructor to hide implicit public one.
      */
     private WindowConstants()
     {
