@@ -563,14 +563,17 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
     private ImmutableList<IRequest> getOpenRequestsOfCitizenFromBuilding(final BlockPos buildingPos)
     {
-        ColonyView colonyView = ColonyManager.getClosestColonyView(FMLClientHandler.instance().getWorldClient(), buildingPos);
+        final ColonyView colonyView = ColonyManager.getClosestColonyView(FMLClientHandler.instance().getWorldClient(), buildingPos);
         if (colonyView == null)
         {
             return ImmutableList.of();
         }
 
-        AbstractBuildingView building = colonyView.getBuilding(buildingPos);
-
+        final AbstractBuildingView building = colonyView.getBuilding(buildingPos);
+        if(building == null)
+        {
+            return ImmutableList.of();
+        }
         return building.getOpenRequests(citizen);
     }
 
