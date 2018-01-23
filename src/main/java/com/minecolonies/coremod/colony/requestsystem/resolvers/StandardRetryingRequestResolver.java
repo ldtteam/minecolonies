@@ -30,13 +30,12 @@ import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 {
 
-
     private static final Integer CONST_RETRYING_ID_SCALE = -20000;
 
     private       IRequestManager manager;
     private final ILocation       location;
-    private final IToken<?>          id;
-    private       IToken<?>          current;
+    private final IToken<?>       id;
+    private       IToken<?>       current;
     private final HashMap<IToken<?>, Integer> delays           = new HashMap<>();
     private final HashMap<IToken<?>, Integer> assignedRequests = new HashMap<>();
 
@@ -107,7 +106,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 
     @Override
     public void resolve(
-                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request) throws RuntimeException
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request) throws RuntimeException
     {
         delays.put(request.getToken(), getMaximalDelayBetweenRetriesInTicks());
         assignedRequests.put(request.getToken(), assignedRequests.containsKey(request.getToken()) ? assignedRequests.get(request.getToken()) + 1 : 1);
@@ -171,9 +170,11 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
             this.setCurrent(t);
             final IToken<?> resultingResolver;
 
-            try {
+            try
+            {
                 resultingResolver = manager.reassignRequest(t, blackList);
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 assignedRequests.remove(t);
                 delays.remove(t);
@@ -238,7 +239,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     }
 
     @Override
-    public void onRequestCancelled( @NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         //Noop, see onRequestComplete.
     }
