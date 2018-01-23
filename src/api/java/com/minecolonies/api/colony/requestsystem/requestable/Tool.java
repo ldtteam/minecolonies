@@ -8,6 +8,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -34,7 +35,7 @@ public class Tool implements IDeliverable
     @NotNull
     private final Integer maxLevel;
 
-    @NotNull
+    @Nullable
     private ItemStack result;
 
     public Tool(@NotNull final IToolType toolClass, @NotNull final Integer minLevel, @NotNull final Integer maxLevel)
@@ -103,7 +104,9 @@ public class Tool implements IDeliverable
     public Integer getMaxLevel()
     {
         return maxLevel;
-    }    /**
+    }
+
+    /**
      * The resulting stack if set during creation, else ItemStack.Empty.
      *
      * @return The resulting stack.
@@ -127,7 +130,6 @@ public class Tool implements IDeliverable
         final IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
         final Integer minLevel = nbt.getInteger(NBT_MIN_LEVEL);
         final Integer maxLevel = nbt.getInteger(NBT_MAX_LEVEL);
-        final ItemStack result = new ItemStack(nbt.getCompoundTag(NBT_RESULT));
 
         ItemStack result;
         if(nbt.hasKey(NBT_RESULT))
@@ -147,7 +149,7 @@ public class Tool implements IDeliverable
     {
         //API:Map the given strings a proper way.
         final boolean toolTypeResult = !ItemStackUtils.isEmpty(stack)
-                && stack.getCount() >= 1
+                && stack.stackSize >= 1
                 && getToolClasses(stack).stream()
                 .filter(s -> getToolClass().getName().equalsIgnoreCase(s))
                 .map(ToolType::getToolType)

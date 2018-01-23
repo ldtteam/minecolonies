@@ -49,7 +49,7 @@ public class Stack implements IDeliverable
         }
 
         setMatchMeta(true).setMatchNBT(true);
-        this.theStack.setCount(Math.min(this.theStack.getCount(), this.theStack.getMaxStackSize()));
+        this.theStack.stackSize = Math.min(this.theStack.stackSize, this.theStack.getMaxStackSize());
     }
 
     /**
@@ -139,7 +139,7 @@ public class Stack implements IDeliverable
     @Override
     public int getCount()
     {
-        return theStack.getCount();
+        return theStack.stackSize;
     }
 
     @NotNull

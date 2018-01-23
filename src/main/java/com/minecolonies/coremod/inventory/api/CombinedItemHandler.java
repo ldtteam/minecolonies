@@ -267,31 +267,10 @@ public class CombinedItemHandler
         return null;
     }
 
-    @Override
-    public int getSlotLimit(final int slot)
-    {
-        int slotIndex = slot;
-        for (final IItemHandlerModifiable modifiable : handlers)
-        {
-            if (slotIndex >= modifiable.getSlots())
-            {
-                slotIndex-=modifiable.getSlots();
-            }
-            else
-            {
-                return modifiable.getSlotLimit(slotIndex);
-            }
-        }
-
-        return 0;
-    }
-
     protected IItemHandlerModifiable[] getHandlers()
     {
         return handlers;
     }
-
-
 
     /**
      * Method to set the name of this {@link IWorldNameable}.
