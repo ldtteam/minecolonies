@@ -632,7 +632,7 @@ public final class ColonyManager
         final NBTTagCompound compCompound = new NBTTagCompound();
         compatabilityManager.writeToNBT(compCompound);
         compound.setTag(TAG_COMPATABILITY_MANAGER, compCompound);
-        compound.setInteger(TAG_NEW_COLONIES, colonies.size());
+        compound.setInteger(TAG_NEW_COLONIES, colonies.getSize());
     }
 
     /**
