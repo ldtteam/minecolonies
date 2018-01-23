@@ -47,7 +47,7 @@ public class GuiHandler implements IGuiHandler
         }
         else if (id == ID.BUILDING_INVENTORY.ordinal())
         {
-            TileEntity entity = world.getTileEntity(new BlockPos(x, y, z));
+            final TileEntity entity = world.getTileEntity(new BlockPos(x, y, z));
             if (entity instanceof TileEntityColonyBuilding)
             {
                 final TileEntityColonyBuilding tileEntityColonyBuilding = (TileEntityColonyBuilding) entity;
@@ -97,7 +97,7 @@ public class GuiHandler implements IGuiHandler
         }
         else if (id == ID.BUILDING_INVENTORY.ordinal())
         {
-            TileEntity entity = world.getTileEntity(new BlockPos(x, y, z));
+            final TileEntity entity = world.getTileEntity(new BlockPos(x, y, z));
             if (entity instanceof TileEntityColonyBuilding)
             {
                 final TileEntityColonyBuilding tileEntityColonyBuilding = (TileEntityColonyBuilding) entity;

@@ -16,7 +16,7 @@ public final class LogHandler
      *
      * @param logEntry The string to write.
      */
-    public static void log(String logEntry)
+    public static void log(final String logEntry)
     {
         if (Configurations.requestSystem.enableDebugLogging)
         {

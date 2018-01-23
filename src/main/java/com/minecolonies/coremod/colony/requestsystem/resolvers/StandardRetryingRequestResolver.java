@@ -33,12 +33,12 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 
     private static final Integer CONST_RETRYING_ID_SCALE = -20000;
 
-    private IRequestManager manager;
-    private ILocation       location;
-    private IToken<?>       id;
-    private IToken<?>       current;
-    private HashMap<IToken<?>, Integer> delays           = new HashMap<>();
-    private HashMap<IToken<?>, Integer> assignedRequests = new HashMap<>();
+    private       IRequestManager manager;
+    private final ILocation       location;
+    private final IToken<?>          id;
+    private       IToken<?>          current;
+    private final HashMap<IToken<?>, Integer> delays           = new HashMap<>();
+    private final HashMap<IToken<?>, Integer> assignedRequests = new HashMap<>();
 
     public StandardRetryingRequestResolver(final IFactoryController factoryController, final IRequestManager manager)
     {

@@ -396,7 +396,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         {
             return setRandomWater();
         }
-        if (pathResult.getPathReachesDestination())
+        if (pathResult.isPathReachingDestination())
         {
             if (pathResult.pond != null)
             {

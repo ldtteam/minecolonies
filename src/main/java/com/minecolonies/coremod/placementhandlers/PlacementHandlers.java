@@ -152,7 +152,7 @@ public final class PlacementHandlers
                                                                                                                           == Items.FLINT_AND_STEEL)
                                   .isEmpty())
                             {
-                                Stack stack = new Stack(new ItemStack(Items.FLINT_AND_STEEL, 1)).setMatchMeta(false).setMatchNBT(false);
+                                final Stack stack = new Stack(new ItemStack(Items.FLINT_AND_STEEL, 1)).setMatchMeta(false).setMatchNBT(false);
                                 placer.getWorker().getCitizenData().createRequest(stack);
                             }
                             return ActionProcessingResult.DENY;
@@ -435,7 +435,7 @@ public final class PlacementHandlers
 
             if (placer != null && !infiniteResources)
             {
-                ItemStack placedStack = placer.getTotalAmount(new ItemStack(Blocks.DIRT, 1));
+                final ItemStack placedStack = placer.getTotalAmount(new ItemStack(Blocks.DIRT, 1));
                 if (!placer.holdEfficientTool(blockState.getBlock()))
                 {
                     return ActionProcessingResult.DENY;
@@ -670,7 +670,7 @@ public final class PlacementHandlers
                 }
             }
 
-            TileEntity entity = world.getTileEntity(pos);
+            final TileEntity entity = world.getTileEntity(pos);
             if (entity instanceof TileEntityChest)
             {
                 BuildingWareHouse.handleBuildingOverChest(pos, (TileEntityChest) entity, world);

@@ -116,9 +116,9 @@ public final class TeleportToColony
         if (dimension != colonyDimension)
         {
             playerToTeleport.sendMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
-            EntityPlayerMP entityPlayerMP = (EntityPlayerMP) sender;
-            MinecraftServer server = sender.getEntityWorld().getMinecraftServer();
-            WorldServer worldServer = server.getWorld(colonyDimension);
+            final EntityPlayerMP entityPlayerMP = (EntityPlayerMP) sender;
+            final MinecraftServer server = sender.getEntityWorld().getMinecraftServer();
+            final WorldServer worldServer = server.getWorld(colonyDimension);
 
             playerToTeleport.sendMessage(new TextComponentString("Hold onto your pants, we're going Inter-Dimensional!"));
             playerToTeleport.changeDimension(colonyDimension);

@@ -50,8 +50,8 @@ public interface IRequestFactory<T extends IRequestable, R extends IRequest<T>> 
 
         if (context.length == NUMBER_OF_PROPERTIES)
         {
-            IRequester requester = (IRequester) context[1];
-            IToken token = (IToken) context[0];
+            final IRequester requester = (IRequester) context[1];
+            final IToken token = (IToken) context[0];
 
             return this.getNewInstance(t, requester, token);
         }
@@ -61,9 +61,9 @@ public interface IRequestFactory<T extends IRequestable, R extends IRequest<T>> 
             throw new IllegalArgumentException("Unsupported context - Third context object is not a request state");
         }
 
-        IRequester requester = (IRequester) context[1];
-        IToken token = (IToken) context[0];
-        RequestState state = (RequestState) context[2];
+        final IRequester requester = (IRequester) context[1];
+        final IToken token = (IToken) context[0];
+        final RequestState state = (RequestState) context[2];
 
         return this.getNewInstance(t, requester, token, state);
     }

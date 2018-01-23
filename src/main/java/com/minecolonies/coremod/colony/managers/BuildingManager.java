@@ -302,7 +302,7 @@ public class BuildingManager implements IBuildingManager
                         tileEntity.getPosition()));
                 if (tileEntity.isMirrored())
                 {
-                    building.setMirror();
+                    building.invertMirror();
                 }
                 if (!tileEntity.getStyle().isEmpty())
                 {

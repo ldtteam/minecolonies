@@ -29,11 +29,11 @@ public interface IFactoryController
         {
             return getFactoryForInput((TypeToken<? extends Input>) TypeToken.of(Class.forName(className)));
         }
-        catch (IllegalArgumentException ex)
+        catch (final IllegalArgumentException ex)
         {
             throw ex;
         }
-        catch (Exception ex)
+        catch (final Exception ex)
         {
             throw new IllegalArgumentException("The given input name is unknown", ex);
         }
@@ -82,11 +82,11 @@ public interface IFactoryController
         {
             return getFactoryForOutput((TypeToken<? extends Output>) TypeToken.of(Class.forName(className)));
         }
-        catch (IllegalArgumentException ex)
+        catch (final IllegalArgumentException ex)
         {
             throw ex;
         }
-        catch (Exception ex)
+        catch (final Exception ex)
         {
             throw new IllegalArgumentException("The given output name is unknown", ex);
         }

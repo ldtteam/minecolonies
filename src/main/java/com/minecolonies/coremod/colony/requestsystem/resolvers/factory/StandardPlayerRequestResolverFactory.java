@@ -51,11 +51,11 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
                                                  @NotNull final Object... context)
       throws IllegalArgumentException
     {
-        ILocation location;
+        final ILocation location;
         try {
             location =
             factoryController.getNewInstance(TypeConstants.ILOCATION, iRequestManager.getColony().getCenter(), iRequestManager.getColony().getWorld().provider.getDimension());
-        } catch (Exception ex)
+        } catch (final Exception ex)
         {
             throw ex;
         }
@@ -68,7 +68,7 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
     @Override
     public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StandardPlayerRequestResolver playerRequestResolver)
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        final NBTTagCompound compound = new NBTTagCompound();
         compound.setTag(NBT_TOKEN, controller.serialize(playerRequestResolver.getRequesterId()));
         compound.setTag(NBT_LOCATION, controller.serialize(playerRequestResolver.getRequesterLocation()));
         compound.setTag(NBT_ASSIGNED_REQUESTS, playerRequestResolver.getAllAssignedRequests().stream().map(controller::serialize).collect(NBTUtils.toNBTTagList()));

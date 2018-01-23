@@ -367,7 +367,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         boolean hasChanged = false;
         for (int i = 0; i < latestStatus.length; i++)
         {
-            ITextComponent newStatus;
+            final ITextComponent newStatus;
             if (i >= status.length)
             {
                 newStatus = null;

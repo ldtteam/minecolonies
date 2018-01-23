@@ -274,9 +274,13 @@ public class CombinedItemHandler
         for (final IItemHandlerModifiable modifiable : handlers)
         {
             if (slotIndex >= modifiable.getSlots())
+            {
                 slotIndex-=modifiable.getSlots();
+            }
             else
+            {
                 return modifiable.getSlotLimit(slotIndex);
+            }
         }
 
         return 0;

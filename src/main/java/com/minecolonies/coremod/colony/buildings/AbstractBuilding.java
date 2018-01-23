@@ -186,7 +186,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     /**
      * The mirror of the building.
      */
-    private boolean isMirrored = false;
+    private boolean isBuildingMirrored = false;
     /**
      * The building style.
      */
@@ -385,7 +385,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             final NBTTagCompound containerCompound = containerTagList.getCompoundTagAt(i);
             containerList.add(NBTUtil.getPosFromTag(containerCompound));
         }
-        isMirrored = compound.getBoolean(TAG_MIRROR);
+        isBuildingMirrored = compound.getBoolean(TAG_MIRROR);
 
         if (compound.hasKey(TAG_CORNER1))
         {
@@ -630,7 +630,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             containerTagList.appendTag(NBTUtil.createPosTag(pos));
         }
         compound.setTag(TAG_CONTAINERS, containerTagList);
-        compound.setBoolean(TAG_MIRROR, isMirrored);
+        compound.setBoolean(TAG_MIRROR, isBuildingMirrored);
 
         compound.setInteger(TAG_CORNER1, this.cornerX1);
         compound.setInteger(TAG_CORNER2, this.cornerX2);
@@ -644,7 +644,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         compound.setInteger(TAG_PRIO, this.pickUpPriority);
     }
 
-    private void writeRequestSystemToNBT(NBTTagCompound compound)
+    private void writeRequestSystemToNBT(final NBTTagCompound compound)
     {
         compound.setTag(TAG_RS_BUILDING_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
     }
@@ -1024,8 +1024,8 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         ByteBufUtils.writeUTF8String(buf, style);
         ByteBufUtils.writeUTF8String(buf, this.getSchematicName());
         buf.writeInt(rotation);
-        buf.writeBoolean(isMirrored);
-        NBTTagCompound requestSystemCompound = new NBTTagCompound();
+        buf.writeBoolean(isBuildingMirrored);
+        final NBTTagCompound requestSystemCompound = new NBTTagCompound();
         writeRequestSystemToNBT(requestSystemCompound);
 
         ByteBufUtils.writeTag(buf, requestSystemCompound);
@@ -1075,7 +1075,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      */
     public boolean isMirrored()
     {
-        return isMirrored;
+        return isBuildingMirrored;
     }
 
     /**
@@ -1312,9 +1312,9 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     /**
      * Sets the mirror of the current building.
      */
-    public void setMirror()
+    public void invertMirror()
     {
-        this.isMirrored = !isMirrored;
+        this.isBuildingMirrored = !isBuildingMirrored;
     }
 
     //------------------------- !START! RequestSystem handling for minecolonies buildings -------------------------//
@@ -1365,7 +1365,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      * @param requestToken The {@link IToken} that is used to represent the request.
      * @param requested    The class of the type that has been requested eg. {@code ItemStack.class}
      */
-    private void addRequestToMaps(@NotNull Integer citizenId, @NotNull IToken requestToken, @NotNull TypeToken requested)
+    private void addRequestToMaps(@NotNull final Integer citizenId, @NotNull final IToken requestToken, @NotNull final TypeToken requested)
     {
         if (!getOpenRequestsByRequestableType().containsKey(requested))
         {
@@ -1382,7 +1382,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         getOpenRequestsByCitizen().get(citizenId).add(requestToken);
     }
 
-    public boolean hasWorkerOpenRequests(@NotNull CitizenData citizen)
+    public boolean hasWorkerOpenRequests(@NotNull final CitizenData citizen)
     {
         return !getOpenRequests(citizen).isEmpty();
     }
@@ -1740,7 +1740,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             return Optional.empty();
         }
 
-        int citizenID = getCitizensByRequest().get(token);
+        final int citizenID = requestsByCitizen.get(token);
         if(getColony().getCitizenManager().getCitizen(citizenID) == null)
         {
             return Optional.empty();

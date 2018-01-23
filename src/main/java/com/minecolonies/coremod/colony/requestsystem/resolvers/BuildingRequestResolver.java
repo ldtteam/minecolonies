@@ -57,7 +57,7 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     public boolean canResolveForBuilding(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        List<TileEntity> tileEntities = new ArrayList<>();
+        final List<TileEntity> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
         tileEntities.removeIf(Objects::isNull);
@@ -79,7 +79,7 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     public void resolveForBuilding(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        List<TileEntity> tileEntities = new ArrayList<>();
+        final List<TileEntity> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
 

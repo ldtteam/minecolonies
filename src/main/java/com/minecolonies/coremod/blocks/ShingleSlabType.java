@@ -19,7 +19,7 @@ public enum ShingleSlabType implements IStringSerializable
     private static final ShingleSlabType[] META_LOOKUP = new ShingleSlabType[values().length];
     static
     {
-        for (ShingleSlabType enumtype : values())
+        for (final ShingleSlabType enumtype : values())
         {
             META_LOOKUP[enumtype.getMetadata()] = enumtype;
         }
@@ -45,7 +45,7 @@ public enum ShingleSlabType implements IStringSerializable
         this.mapColor = mapColorIn;
     }
 
-    public static ShingleSlabType byMetadata(int meta)
+    public static ShingleSlabType byMetadata(final int meta)
     {
         int tempMeta = meta;
         if (tempMeta < 0 || tempMeta >= META_LOOKUP.length)

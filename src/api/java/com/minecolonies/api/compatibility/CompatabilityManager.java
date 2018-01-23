@@ -216,7 +216,7 @@ public class CompatabilityManager implements ICompatabilityManager
         {
             if (saps.getHasSubtypes())
             {
-                for(CreativeTabs tabs: CreativeTabs.CREATIVE_TAB_ARRAY)
+                for(final CreativeTabs tabs: CreativeTabs.CREATIVE_TAB_ARRAY)
                 {
                     final NonNullList<ItemStack> list = NonNullList.create();
                     saps.getItem().getSubItems(tabs, list);

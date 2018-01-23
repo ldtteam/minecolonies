@@ -74,7 +74,7 @@ public abstract class AbstractBuildingView implements IRequester
     /**
      * Mirror of the building.
      */
-    private boolean isMirrored;
+    private boolean isBuildingMirrored;
 
     /**
      * The workOrderLevel.
@@ -205,7 +205,7 @@ public abstract class AbstractBuildingView implements IRequester
      */
     public boolean isMirrored()
     {
-        return isMirrored;
+        return isBuildingMirrored;
     }
 
     /**
@@ -274,7 +274,7 @@ public abstract class AbstractBuildingView implements IRequester
         style = ByteBufUtils.readUTF8String(buf);
         schematicName = ByteBufUtils.readUTF8String(buf);
         rotation = buf.readInt();
-        isMirrored = buf.readBoolean();
+        isBuildingMirrored = buf.readBoolean();
 
         loadRequestSystemFromNBT(ByteBufUtils.readTag(buf));
     }

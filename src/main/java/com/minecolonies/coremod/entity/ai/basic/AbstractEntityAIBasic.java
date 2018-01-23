@@ -474,7 +474,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             @SuppressWarnings(RAWTYPES) final ImmutableList<IRequest> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
 
             completedRequests.stream().filter(r -> !(r.canBeDelivered())).forEach(r -> getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), r.getToken()));
-            @SuppressWarnings(RAWTYPES) IRequest firstDeliverableRequest = completedRequests.stream().filter(IRequest::canBeDelivered).findFirst().orElse(null);
+            @SuppressWarnings(RAWTYPES) final IRequest firstDeliverableRequest = completedRequests.stream().filter(IRequest::canBeDelivered).findFirst().orElse(null);
 
             if (firstDeliverableRequest != null)
             {
@@ -1241,15 +1241,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean tryTransferFromPosToWorker(final BlockPos pos, @NotNull final Predicate<ItemStack> predicate)
     {
-        final TileEntity entity = world.getTileEntity(pos);
-        if (entity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN))
-        {
-            return InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
-                    new InvWrapper((IInventory) entity),
-                    predicate,
-                    Constants.STACKSIZE,
-                    new InvWrapper(worker.getInventoryCitizen()));
-        }
-        return false;
+        return InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+                (ICapabilityProvider) world.getTileEntity(pos),
+                predicate,
+                Constants.STACKSIZE,
+                new InvWrapper(worker.getInventoryCitizen()));
     }
 }
