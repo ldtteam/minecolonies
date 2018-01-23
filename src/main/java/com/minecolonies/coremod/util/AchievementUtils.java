@@ -32,15 +32,12 @@ public final class AchievementUtils
      */
     public static void syncAchievements(@NotNull final Colony colony)
     {
-        @NotNull final List<Player> players = PermissionUtils.getPlayersWithAtLeastRank(colony, Rank.OFFICER);
-
-
+        /**@NotNull final List<Player> players = PermissionUtils.getPlayersWithAtLeastRank(colony, Rank.OFFICER);
         if (colony.getWorld() != null)
         {
             for (final Advancement achievement : colony.getStatsManager().getAchievements())
             {
-                //todo
-                /*if (player == null || ModAchievements.ad == achievement)
+                if (player == null || ModAchievements.ad == achievement)
                 {
                     if (player == null || ModAchievements.achievementGetSupply == achievement)
                     {
@@ -50,8 +47,9 @@ public final class AchievementUtils
                     player.addStat(achievement);
                 }
 
-                player.addStat(achievement);*/
+                player.addStat(achievement);
             }
         }
+        */
     }
 }

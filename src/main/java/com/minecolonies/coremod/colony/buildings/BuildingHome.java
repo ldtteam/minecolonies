@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT_FIRST;
 import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
 
 /**
@@ -264,7 +265,7 @@ public class BuildingHome extends AbstractBuildingHut
     {
         super.onUpgradeComplete(newLevel);
 
-        if (newLevel == 1)
+        if (newLevel == NUM_ACHIEVEMENT_FIRST)
         {
             this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingColonist);
         }

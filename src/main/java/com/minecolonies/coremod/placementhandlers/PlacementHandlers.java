@@ -435,12 +435,11 @@ public final class PlacementHandlers
 
             if (placer != null && !infiniteResources)
             {
-                final ItemStack placedStack = placer.getTotalAmount(new ItemStack(Blocks.DIRT, 1));
                 if (!placer.holdEfficientTool(blockState.getBlock()))
                 {
                     return ActionProcessingResult.DENY;
                 }
-
+                final ItemStack placedStack = placer.getTotalAmount(new ItemStack(Blocks.DIRT, 1));
                 final List<ItemStack> itemList = new ArrayList<>();
                 itemList.add(placedStack);
                 if (checkForListInInvAndRequest(placer, itemList))

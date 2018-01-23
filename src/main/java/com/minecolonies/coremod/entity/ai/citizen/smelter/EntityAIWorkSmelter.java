@@ -451,7 +451,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
                 if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel))
                 {
                     walkTo = null;
-                    return AIState.SMELTER_GET_FIREWOOD;
+                    return SMELTER_GET_FIREWOOD;
                 }
 
                 InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(

@@ -18,9 +18,6 @@ public class InventoryTest
 {
     private IInventory inventory;
 
-    @Mock
-    private Colony colony;
-
     @InjectMocks
     private BuildingTownHall building;
 
