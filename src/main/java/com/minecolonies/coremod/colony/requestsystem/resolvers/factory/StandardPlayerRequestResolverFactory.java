@@ -51,11 +51,11 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
                                                  @NotNull final Object... context)
       throws IllegalArgumentException
     {
-        ILocation location;
+        final ILocation location;
         try {
             location =
             factoryController.getNewInstance(TypeConstants.ILOCATION, iRequestManager.getColony().getCenter(), iRequestManager.getColony().getWorld().provider.getDimension());
-        } catch (Exception ex)
+        } catch (final Exception ex)
         {
             throw ex;
         }

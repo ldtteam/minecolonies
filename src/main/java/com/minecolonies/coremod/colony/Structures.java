@@ -67,7 +67,7 @@ public final class Structures
      * - scans/458764687564687654 => scans -> <none> -> 458764687564687654 , scan/458764687564687654
      */
     @NotNull
-    private static Map<String, Map<String, Map<String, String>>> schematicsMap = new HashMap<>();
+    private static final Map<String, Map<String, Map<String, String>>> schematicsMap = new HashMap<>();
 
     /**
      * md5 hash for the schematics.
@@ -78,7 +78,7 @@ public final class Structures
      * cache/458764687564687654 => 458764687564687654
      */
     @NotNull
-    private static Map<String, String> md5Map = new HashMap<>();
+    private static final Map<String, String> md5Map = new HashMap<>();
 
     /**
      * Whether or not the schematics list have changed.

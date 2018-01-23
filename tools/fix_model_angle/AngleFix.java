@@ -1,3 +1,5 @@
+package tools.fix_model_angle;
+
 import java.lang.Math;
 import java.util.Scanner;
 

@@ -104,7 +104,7 @@ public class StandardRequestManagerTest
     }
 
     @Test
-    public void serializeNBT() throws Exception
+    public void testSerializeNBT() throws Exception
     {
         requestManager.onProviderAddedToColony(provider);
 
@@ -120,7 +120,7 @@ public class StandardRequestManagerTest
     }
 
     @Test
-    public void deserializeNBT() throws Exception
+    public void testDeserializeNBT() throws Exception
     {
         requestManager.onProviderAddedToColony(provider);
 
@@ -131,19 +131,20 @@ public class StandardRequestManagerTest
 
         final NBTTagCompound compound = requestManager.serializeNBT();
 
-        StandardRequestManager deserializedVariant = new StandardRequestManager(colony);
+        final StandardRequestManager deserializedVariant = new StandardRequestManager(colony);
         deserializedVariant.onProviderAddedToColony(provider);
         deserializedVariant.deserializeNBT(compound);
+        assertEquals(requestManager.serializeNBT(), deserializedVariant.serializeNBT());
     }
 
     @Test
-    public void getFactoryController() throws Exception
+    public void testGetFactoryController() throws Exception
     {
         assertEquals(StandardFactoryController.getInstance(), requestManager.getFactoryController());
     }
 
     @Test
-    public void createAndAssignRequest() throws Exception
+    public void testCreateAndAssignRequest() throws Exception
     {
         requestManager.onProviderAddedToColony(provider);
 
@@ -161,7 +162,7 @@ public class StandardRequestManagerTest
     }
 
     @Test
-    public void updateRequestState() throws Exception
+    public void testUpdateRequestState() throws Exception
     {
         requestManager.onProviderAddedToColony(provider);
 
@@ -176,17 +177,18 @@ public class StandardRequestManagerTest
     }
 
     @Test
-    public void onProviderModificationTest() throws Exception
+    public void testOnProviderModificationTest() throws Exception
     {
         requestManager.onProviderAddedToColony(provider);
         requestManager.onProviderRemovedFromColony(provider);
+        assertNotNull(requestManager);
     }
 
     @Test
-    public void reassignRequest()
+    public void testReassignRequest()
     {
         requestManager.onProviderAddedToColony(provider);
-
+        assertNotNull(requestManager);
     }
 
     private static class TestResolvingProvider implements IRequestResolverProvider
@@ -295,7 +297,7 @@ public class StandardRequestManagerTest
 
     private static class StringRequestable implements IRequestable
     {
-        final String content;
+        protected final String content;
 
         private StringRequestable(final String content) {this.content = content;}
 
@@ -504,7 +506,7 @@ public class StandardRequestManagerTest
     private static class TestRequester implements IRequester
     {
 
-        static final TestRequester INSTANCE = new TestRequester();
+        protected static final TestRequester INSTANCE = new TestRequester();
 
         private final IToken<?> token;
 

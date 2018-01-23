@@ -8,6 +8,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -34,7 +35,7 @@ public class Tool implements IDeliverable
     @NotNull
     private final Integer maxLevel;
 
-    @NotNull
+    @Nullable
     private ItemStack result;
 
     public Tool(@NotNull final IToolType toolClass, @NotNull final Integer minLevel, @NotNull final Integer maxLevel)
@@ -57,9 +58,9 @@ public class Tool implements IDeliverable
      * @return The NBTTagCompound containing the tool data.
      */
     @NotNull
-    public static NBTTagCompound serialize(IFactoryController controller, Tool tool)
+    public static NBTTagCompound serialize(final IFactoryController controller, final Tool tool)
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        final NBTTagCompound compound = new NBTTagCompound();
 
         compound.setString(NBT_TYPE, tool.getToolClass().getName());
         compound.setInteger(NBT_MIN_LEVEL, tool.getMinLevel());
@@ -103,7 +104,9 @@ public class Tool implements IDeliverable
     public Integer getMaxLevel()
     {
         return maxLevel;
-    }    /**
+    }
+
+    /**
      * The resulting stack if set during creation, else ItemStack.Empty.
      *
      * @return The resulting stack.
@@ -121,12 +124,12 @@ public class Tool implements IDeliverable
      * @return An instance of Tool with the data contained in the given NBT.
      */
     @NotNull
-    public static Tool deserialize(IFactoryController controller, NBTTagCompound nbt)
+    public static Tool deserialize(final IFactoryController controller, final NBTTagCompound nbt)
     {
         //API:Map the given strings a proper way.
-        IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
-        Integer minLevel = nbt.getInteger(NBT_MIN_LEVEL);
-        Integer maxLevel = nbt.getInteger(NBT_MAX_LEVEL);
+        final IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
+        final Integer minLevel = nbt.getInteger(NBT_MIN_LEVEL);
+        final Integer maxLevel = nbt.getInteger(NBT_MAX_LEVEL);
 
         ItemStack result;
         if(nbt.hasKey(NBT_RESULT))
@@ -145,13 +148,13 @@ public class Tool implements IDeliverable
     public boolean matches(@NotNull final ItemStack stack)
     {
         //API:Map the given strings a proper way.
-        boolean toolTypeResult = !ItemStackUtils.isEmpty(stack)
-                                   && stack.stackSize >= 1
-                                   && getToolClasses(stack).stream()
-                                        .filter(s -> getToolClass().getName().equalsIgnoreCase(s))
-                                        .map(ToolType::getToolType)
-                                        .filter(t -> t != ToolType.NONE)
-                                        .anyMatch(t -> ItemStackUtils.hasToolLevel(stack, t, getMinLevel(), getMaxLevel()));
+        final boolean toolTypeResult = !ItemStackUtils.isEmpty(stack)
+                && stack.stackSize >= 1
+                && getToolClasses(stack).stream()
+                .filter(s -> getToolClass().getName().equalsIgnoreCase(s))
+                .map(ToolType::getToolType)
+                .filter(t -> t != ToolType.NONE)
+                .anyMatch(t -> ItemStackUtils.hasToolLevel(stack, t, getMinLevel(), getMaxLevel()));
 
         if (!toolTypeResult)
         {

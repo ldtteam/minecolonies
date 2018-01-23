@@ -35,9 +35,9 @@ public class Food implements IDeliverable
         this.result = result;
     }
 
-    public static NBTTagCompound serialize(IFactoryController controller, Food food)
+    public static NBTTagCompound serialize(final IFactoryController controller, final Food food)
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        final NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger(NBT_COUNT, food.count);
 
         if (!ItemStackUtils.isEmpty(food.result))
@@ -48,10 +48,10 @@ public class Food implements IDeliverable
         return compound;
     }
 
-    public static Food deserialize(IFactoryController controller, NBTTagCompound compound)
+    public static Food deserialize(final IFactoryController controller, final NBTTagCompound compound)
     {
-        int count = compound.getInteger(NBT_COUNT);
-        ItemStack result = compound.hasKey(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_RESULT)) : ItemStackUtils.EMPTY;
+        final int count = compound.getInteger(NBT_COUNT);
+        final ItemStack result = compound.hasKey(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_RESULT)) : ItemStackUtils.EMPTY;
 
         return new Food(count, result);
     }
