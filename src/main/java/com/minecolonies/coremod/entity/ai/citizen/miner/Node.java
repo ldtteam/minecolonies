@@ -89,8 +89,8 @@ public class Node
         // for backwards compatibility check if the types are doubles
         final boolean hasDoubles = compound.hasKey(TAG_X, Constants.NBT.TAG_DOUBLE);
 
-        int x;
-        int z;
+        final int x;
+        final int z;
         if (hasDoubles)
         {
             x = MathHelper.floor(compound.getDouble(TAG_X));

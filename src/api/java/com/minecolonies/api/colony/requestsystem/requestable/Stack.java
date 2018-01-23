@@ -92,9 +92,9 @@ public class Stack implements IDeliverable
      * @param input the input.
      * @return the compound.
      */
-    public static NBTTagCompound serialize(IFactoryController controller, Stack input)
+    public static NBTTagCompound serialize(final IFactoryController controller, final Stack input)
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        final NBTTagCompound compound = new NBTTagCompound();
         compound.setTag(NBT_STACK, input.theStack.serializeNBT());
         compound.setBoolean(NBT_MATCHMETA, input.matchMeta);
         compound.setBoolean(NBT_MATCHNBT, input.matchNBT);
@@ -114,13 +114,13 @@ public class Stack implements IDeliverable
      * @param compound the compound.
      * @return the deliverable.
      */
-    public static Stack deserialize(IFactoryController controller, NBTTagCompound compound)
+    public static Stack deserialize(final IFactoryController controller, final NBTTagCompound compound)
     {
-        ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_STACK));
-        boolean matchMeta = compound.getBoolean(NBT_MATCHMETA);
-        boolean matchNBT = compound.getBoolean(NBT_MATCHNBT);
-        boolean matchOreDic = compound.getBoolean(NBT_MATCHOREDIC);
-        ItemStack result = compound.hasKey(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_RESULT)) : ItemStackUtils.EMPTY;
+        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_STACK));
+        final boolean matchMeta = compound.getBoolean(NBT_MATCHMETA);
+        final boolean matchNBT = compound.getBoolean(NBT_MATCHNBT);
+        final boolean matchOreDic = compound.getBoolean(NBT_MATCHOREDIC);
+        final ItemStack result = compound.hasKey(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_RESULT)) : ItemStackUtils.EMPTY;
 
         return new Stack(stack, matchMeta, matchNBT, matchOreDic, result);
     }

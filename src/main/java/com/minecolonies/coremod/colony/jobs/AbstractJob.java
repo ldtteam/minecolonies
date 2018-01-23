@@ -101,7 +101,7 @@ public abstract class AbstractJob
     /**
      * A set of tokens that point to requests for which we do not wait.
      */
-    private Set<IToken> asyncRequests = new HashSet<>();
+    private final Set<IToken> asyncRequests = new HashSet<>();
 
     /**
      * Check if the worker has searched for food today.

@@ -122,12 +122,12 @@ public final class RequestHandler
 
         request.setState(new WrappedStaticStateRequestManager(manager), RequestState.ASSIGNING);
 
-        Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+        final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
         requestTypes.remove(TypeConstants.OBJECT);
 
-        Set<IToken> failedResolvers = new HashSet<>();
+        final Set<IToken> failedResolvers = new HashSet<>();
 
-        for (TypeToken requestType : requestTypes)
+        for (final TypeToken requestType : requestTypes)
         {
             if (!manager.getRequestClassResolverMap().containsKey(requestType))
             {

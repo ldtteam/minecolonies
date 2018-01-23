@@ -67,7 +67,7 @@ public final class ResolverHandler
 
         manager.getResolverBiMap().put(resolver.getRequesterId(), resolver);
 
-        Set<TypeToken> resolverTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
+        final Set<TypeToken> resolverTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
         resolverTypes.remove(TypeConstants.OBJECT);
         resolverTypes.forEach(c -> {
             if (!manager.getRequestClassResolverMap().containsKey(c))
@@ -182,7 +182,7 @@ public final class ResolverHandler
     public static void removeResolverInternal(final IStandardRequestManager manager, final IRequestResolver resolver)
     {
         manager.getResolverBiMap().remove(resolver.getRequesterId());
-        Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
+        final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
         requestTypes.remove(TypeConstants.OBJECT);
         requestTypes.forEach(c -> {
             LogHandler.log("Removing resolver: " + resolver + " with request type: " + c);

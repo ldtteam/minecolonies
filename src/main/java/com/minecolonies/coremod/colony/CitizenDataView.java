@@ -71,7 +71,7 @@ public class CitizenDataView
     /**
      * The 4 lines of the latest status.
      */
-    private ITextComponent[] latestStatus = new ITextComponent[MAX_LINES_OF_LATEST_LOG];
+    private final ITextComponent[] latestStatus = new ITextComponent[MAX_LINES_OF_LATEST_LOG];
 
     private InventoryCitizen inventory;
 
@@ -306,7 +306,7 @@ public class CitizenDataView
 
         colonyId = buf.readInt();
 
-        NBTTagCompound compound = ByteBufUtils.readTag(buf);
+        final NBTTagCompound compound = ByteBufUtils.readTag(buf);
         inventory = new InventoryCitizen(this.name, true);
         final NBTTagList nbttaglist = compound.getTagList("inventory", 10);
         this.inventory.readFromNBT(nbttaglist);

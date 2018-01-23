@@ -295,16 +295,16 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private BlockPos getWeightedRandom()
     {
         double completeWeight = 0.0;
-        for (AbstractBuilding building : worker.getColony().getBuildingManager().getBuildings().values())
+        for (final AbstractBuilding building : worker.getColony().getBuildingManager().getBuildings().values())
         {
             if (!building.isBeingGathered())
             {
                 completeWeight += building.getPickUpPriority();
             }
         }
-        double r = Math.random() * completeWeight;
+        final double r = Math.random() * completeWeight;
         double countWeight = 0.0;
-        for (AbstractBuilding building : worker.getColony().getBuildingManager().getBuildings().values())
+        for (final AbstractBuilding building : worker.getColony().getBuildingManager().getBuildings().values())
         {
             if (!building.isBeingGathered())
             {
@@ -406,7 +406,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         final BuildingDeliveryman deliveryHut = (getOwnBuilding() instanceof BuildingDeliveryman) ? (BuildingDeliveryman) getOwnBuilding() : null;
-        ILocation buildingToDeliver = deliveryHut == null ? null : deliveryHut.getBuildingToDeliver();
+        final ILocation buildingToDeliver = deliveryHut == null ? null : deliveryHut.getBuildingToDeliver();
 
         if (deliveryHut == null)
         {

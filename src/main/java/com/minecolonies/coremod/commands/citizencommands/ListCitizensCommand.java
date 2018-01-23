@@ -68,7 +68,7 @@ public class ListCitizensCommand extends AbstractSingleCommand
         {
             if (colonyId == -1)
             {
-                IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
+                final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
                 if (colony != null)
                 {
                     colonyId = colony.getID();

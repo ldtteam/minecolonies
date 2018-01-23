@@ -724,7 +724,7 @@ public final class ColonyManager
 
                     if (data.hasKey(TAG_NEW_COLONIES))
                     {
-                        int size = data.getInteger(TAG_NEW_COLONIES);
+                        final int size = data.getInteger(TAG_NEW_COLONIES);
 
                         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
                         for (int colonyId = 0; colonyId <= size; colonyId++)
@@ -810,7 +810,7 @@ public final class ColonyManager
             Files.copy(file, zos);
             fis.close();
         }
-        catch (Exception e)
+        catch (final Exception e)
         {
             /**
              * Intentionally not being thrown.

@@ -60,7 +60,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
                 final EntityPlayer player = server.getEntityWorld().getPlayerEntityByName(args[0]);
                 if (player != null)
                 {
-                    IColony tempColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
+                    final IColony tempColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
                     if (tempColony != null)
                     {
                         colonyId = tempColony.getID();

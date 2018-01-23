@@ -282,12 +282,12 @@ public abstract class AbstractBuildingView implements IRequester
         loadRequestSystemFromNBT(ByteBufUtils.readTag(buf));
     }
 
-    private void loadRequestSystemFromNBT(NBTTagCompound compound)
+    private void loadRequestSystemFromNBT(final NBTTagCompound compound)
     {
         this.citizensByRequests.clear();
         if (compound.hasKey(TAG_CITIZEN_BY_REQUEST))
         {
-            NBTTagList citizensByRequestList = compound.getTagList(TAG_CITIZEN_BY_REQUEST, Constants.NBT.TAG_COMPOUND);
+            final NBTTagList citizensByRequestList = compound.getTagList(TAG_CITIZEN_BY_REQUEST, Constants.NBT.TAG_COMPOUND);
             NBTUtils.streamCompound(citizensByRequestList).forEach(cbrc -> processIntegerKeyTokenList(cbrc, citizensByRequests));
         }
 
@@ -332,7 +332,7 @@ public abstract class AbstractBuildingView implements IRequester
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
                                                                                                @NotNull final CitizenDataView citizenData,
                                                                                                final Class<R> requestType,
-                                                                                               Predicate<IRequest<? extends R>> filter)
+                                                                                               final Predicate<IRequest<? extends R>> filter)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
