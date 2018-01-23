@@ -340,17 +340,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
         resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
     }
 
-    /**
-     * Get a nice represetation of the pos string.
-     *
-     * @param pos the position.
-     * @return a nice string.
-     */
-    private static String getNicePositionString(final BlockPos pos)
-    {
-        return String.format(POSITION_STRING, pos.getX(), pos.getY(), pos.getZ());
-    }
-
     @Override
     public void onUpdate()
     {

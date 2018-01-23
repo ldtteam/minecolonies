@@ -23,14 +23,11 @@ public class AngleFix
         final float f = (float) Math.sin(z);
         final float m00 = c * e;
         final float m01 = b * d - a * c * f;
-        final float m02 = b * c * f + a * d;
         final float m10 = f;
         final float m11 = a * e;
-        final float m12 = -b * e;
         final float m20 = -d * e;
         final float m21 = a * d * f + b * c;
         final float m22 = a * c - b * d * f;
-        final float m33 = 1.0F;
 
         // Create ZYX ordered Euler angles from the matrix
         final float ox, oz;

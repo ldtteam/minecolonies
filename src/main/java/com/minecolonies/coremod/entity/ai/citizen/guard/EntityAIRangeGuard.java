@@ -301,8 +301,6 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     {
         final int powerEntchantment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.POWER, worker);
         final int punchEntchantment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.PUNCH, worker);
-
-        final DifficultyInstance difficulty = CompatibilityUtils.getWorld(worker).getDifficultyForLocation(new BlockPos(worker));
         arrowEntity.setDamage((baseDamage * BASE_DAMAGE_MULTIPLIER)
                                 + worker.getRandom().nextGaussian() * RANDOM_DAMAGE_MULTPLIER
                                 + CompatibilityUtils.getWorld(worker).getDifficulty().getDifficultyId() * DIFFICULTY_DAMAGE_INCREASE);
