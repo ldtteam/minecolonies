@@ -31,7 +31,7 @@ public enum ToolType implements IToolType
     static final private Map<String, IToolType> tools = new HashMap<>();
     static
     {
-        for (ToolType type : values())
+        for (final ToolType type : values())
         {
             tools.put(type.getName(), type);
         }

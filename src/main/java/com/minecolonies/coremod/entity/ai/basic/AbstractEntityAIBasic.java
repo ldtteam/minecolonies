@@ -1241,15 +1241,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean tryTransferFromPosToWorker(final BlockPos pos, @NotNull final Predicate<ItemStack> predicate)
     {
-        final TileEntity entity = world.getTileEntity(pos);
-        if (entity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN))
-        {
-            return InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
-                    new InvWrapper((IInventory) entity),
-                    predicate,
-                    Constants.STACKSIZE,
-                    new InvWrapper(worker.getInventoryCitizen()));
-        }
-        return false;
+        return InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+                (ICapabilityProvider) world.getTileEntity(pos),
+                predicate,
+                Constants.STACKSIZE,
+                new InvWrapper(worker.getInventoryCitizen()));
     }
 }

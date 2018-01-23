@@ -171,11 +171,7 @@ public final class ItemStackUtils
                     entity.getArmorInventoryList().forEach(request::add);
                     entity.getHeldEquipment().forEach(request::add);
                 }
-                else if (entity instanceof EntityMob)
-                {
-                    //Don't try to request the monster.
-                }
-                else
+                else if (!(entity instanceof EntityMob))
                 {
                     request.add(entity.getPickedResult(new RayTraceResult(placer)));
                 }

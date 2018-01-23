@@ -331,7 +331,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             building.setRotation(rotation);
             if (mirror)
             {
-                building.setMirror();
+                building.invertMirror();
             }
         }
     }

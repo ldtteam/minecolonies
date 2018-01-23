@@ -15,7 +15,7 @@ public class ScrollingView extends View
     protected ScrollingContainer container;
     protected Scrollbar          scrollbar;
     //  Params
-    private int scrollbarWidth = DEFAULT_SCROLLBAR_WIDTH;
+    private final int scrollbarWidth = DEFAULT_SCROLLBAR_WIDTH;
 
     /**
      * Required default constructor.

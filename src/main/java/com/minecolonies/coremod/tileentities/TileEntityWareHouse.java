@@ -47,7 +47,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     {
         if (getBuilding() != null)
         {
-            Set<TileEntity> tileEntities = getBuilding().getAdditionalCountainers().stream().map(pos -> getWorld().getTileEntity(pos)).collect(Collectors.toSet());
+            final Set<TileEntity> tileEntities = getBuilding().getAdditionalCountainers().stream().map(pos -> getWorld().getTileEntity(pos)).collect(Collectors.toSet());
             tileEntities.removeIf(Objects::isNull);
             tileEntities.add(this);
 
@@ -72,7 +72,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     {
         if (getBuilding() != null)
         {
-            Set<TileEntity> tileEntities = getBuilding().getAdditionalCountainers().stream().map(pos -> getWorld().getTileEntity(pos)).collect(Collectors.toSet());
+            final Set<TileEntity> tileEntities = getBuilding().getAdditionalCountainers().stream().map(pos -> getWorld().getTileEntity(pos)).collect(Collectors.toSet());
             tileEntities.removeIf(Objects::isNull);
             tileEntities.add(this);
 

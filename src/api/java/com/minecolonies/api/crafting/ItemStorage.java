@@ -21,7 +21,7 @@ public class ItemStorage
     /**
      * Set this to ignore the damage value in comparisons.
      */
-    private final boolean ignoreDamageValue;
+    private final boolean shouldIgnoreDamageValue;
 
     /**
      * Amount of the storage.
@@ -38,7 +38,7 @@ public class ItemStorage
     public ItemStorage(@NotNull final ItemStack stack, final int amount, final boolean ignoreDamageValue)
     {
         this.stack = stack;
-        this.ignoreDamageValue = ignoreDamageValue;
+        this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.amount = amount;
     }
 
@@ -51,7 +51,7 @@ public class ItemStorage
     public ItemStorage(@NotNull final ItemStack stack, final boolean ignoreDamageValue)
     {
         this.stack = stack;
-        this.ignoreDamageValue = ignoreDamageValue;
+        this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.amount = ItemStackUtils.getSize(stack);
     }
 
@@ -63,7 +63,7 @@ public class ItemStorage
     public ItemStorage(@NotNull final ItemStack stack)
     {
         this.stack = stack;
-        this.ignoreDamageValue = false;
+        this.shouldIgnoreDamageValue = false;
         this.amount = ItemStackUtils.getSize(stack);
     }
 
@@ -123,7 +123,7 @@ public class ItemStorage
      */
     public boolean ignoreDamageValue()
     {
-        return ignoreDamageValue;
+        return shouldIgnoreDamageValue;
     }
 
     @Override
@@ -147,7 +147,7 @@ public class ItemStorage
         final ItemStorage that = (ItemStorage) o;
 
 
-        return getItem().equals(that.getItem()) && (this.ignoreDamageValue || that.getDamageValue() == this.getDamageValue());
+        return getItem().equals(that.getItem()) && (this.shouldIgnoreDamageValue || that.getDamageValue() == this.getDamageValue());
     }
 
     /**
