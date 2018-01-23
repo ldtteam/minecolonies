@@ -441,7 +441,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      */
     public void addRecipe(final IToken token)
     {
-        if(canRecipeBeAdded() && Math.pow(2, getBuildingLevel()) + 100 >= recipes.size())
+        if(canRecipeBeAdded() && Math.pow(2, getBuildingLevel()) >= (recipes.size() + 1))
         {
             recipes.add(token);
         }
