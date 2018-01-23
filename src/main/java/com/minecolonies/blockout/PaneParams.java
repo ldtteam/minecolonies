@@ -415,7 +415,7 @@ public class PaneParams
 
         final Matcher m = RGBA_PATTERN.matcher(attr);
 
-        if (attr.startsWith("#"))
+        if (attr.charAt(0) == '#')
         {
             //  CSS Hex format: #00112233
             return Integer.parseInt(attr.substring(1), 16);

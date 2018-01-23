@@ -199,7 +199,7 @@ public final class StandardRequests
                 foodExamples = ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false)
                                                       .filter(item -> item instanceof ItemFood)
                                                       .flatMap(item -> {
-                                                          NonNullList<ItemStack> stacks = NonNullList.create();
+                                                          final NonNullList<ItemStack> stacks = NonNullList.create();
                                                           try
                                                           {
                                                               item.getSubItems( CreativeTabs.SEARCH, stacks);
@@ -252,7 +252,7 @@ public final class StandardRequests
             {
                 oreExamples =
                         ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
-                            NonNullList<ItemStack> stacks = NonNullList.create();
+                            final NonNullList<ItemStack> stacks = NonNullList.create();
                             try
                             {
                                 item.getSubItems(CreativeTabs.SEARCH, stacks);
@@ -302,7 +302,7 @@ public final class StandardRequests
             {
                 burnableExamples =
                   ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
-                      NonNullList<ItemStack> stacks = NonNullList.create();
+                      final NonNullList<ItemStack> stacks = NonNullList.create();
                       try
                       {
                           item.getSubItems( CreativeTabs.SEARCH, stacks);
