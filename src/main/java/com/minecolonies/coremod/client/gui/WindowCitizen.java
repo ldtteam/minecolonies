@@ -88,11 +88,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
     private static final String REQUEST_CANCEL = "cancel";
 
     /**
-     * Nice representation string for a position.
-     */
-    private static final String POSITION_STRING = "x: %d - y: %d - z: %d";
-
-    /**
      * Xp-bar height.
      */
     private static final int XP_HEIGHT = 5;

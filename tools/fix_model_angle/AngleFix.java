@@ -30,7 +30,8 @@ public class AngleFix
         final float m22 = a * c - b * d * f;
 
         // Create ZYX ordered Euler angles from the matrix
-        final float ox, oz;
+        final float ox;
+        final float oz;
         final float oy = (float) Math.asin(clamp(-m20, -1, 1));
         if (abs(m20) < 0.99999) {
             ox = (float) Math.atan2(m21, m22);

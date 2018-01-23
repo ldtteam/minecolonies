@@ -47,9 +47,9 @@ public class StructureName
         final StringBuilder name = new StringBuilder(prefix);
         if (style != null && !style.isEmpty())
         {
-            name.append(Structures.SCHEMATICS_SEPARATOR + style);
+            name.append(Structures.SCHEMATICS_SEPARATOR).append(style);
         }
-        name.append(Structures.SCHEMATICS_SEPARATOR + schematic);
+        name.append(Structures.SCHEMATICS_SEPARATOR).append(schematic);
         init(name.toString());
     }
 
