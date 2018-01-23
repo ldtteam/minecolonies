@@ -27,6 +27,11 @@ public final class TeleportToColony
     private static final String NO_TOWNHALL      = "Target colony has no town hall, can't teleport.";
 
     /**
+     * The minimum valid colony id.
+     */
+    private static final int MIN_COLONY_ID       = 1;
+
+    /**
      * Private constructor to hide the implicit public one.
      */
     private TeleportToColony()
@@ -134,7 +139,7 @@ public final class TeleportToColony
             }
         }
 
-        if (colID >= 1)
+        if (colID >= MIN_COLONY_ID)
         {
             playerToTeleport.setPositionAndUpdate(position.getX(), position.getY() + 2.0, position.getZ());
         }

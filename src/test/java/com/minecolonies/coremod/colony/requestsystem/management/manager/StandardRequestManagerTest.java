@@ -56,6 +56,11 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class StandardRequestManagerTest
 {
+    /**
+     * What to log for each run.
+     */
+    private static final String LOG = "hello";
+
     @Mock
     private Colony colony;
 
@@ -106,7 +111,7 @@ public class StandardRequestManagerTest
         requestManager.onProviderAddedToColony(provider);
 
 
-        final StringRequestable hello = new StringRequestable("Hello");
+        final StringRequestable hello = new StringRequestable(LOG);
         final StringRequestable Test2 = new StringRequestable("Test 2");
         requestManager.createRequest(TestRequester.INSTANCE, hello);
         requestManager.createRequest(TestRequester.INSTANCE, Test2);
@@ -121,7 +126,7 @@ public class StandardRequestManagerTest
     {
         requestManager.onProviderAddedToColony(provider);
 
-        final StringRequestable hello = new StringRequestable("Hello");
+        final StringRequestable hello = new StringRequestable(LOG);
         final StringRequestable Test2 = new StringRequestable("Test 2");
         requestManager.createRequest(TestRequester.INSTANCE, hello);
         requestManager.createAndAssignRequest(TestRequester.INSTANCE, Test2);
@@ -145,7 +150,7 @@ public class StandardRequestManagerTest
     {
         requestManager.onProviderAddedToColony(provider);
 
-        final StringRequestable requestable = new StringRequestable("Hello");
+        final StringRequestable requestable = new StringRequestable(LOG);
         final IToken<?> token = requestManager.createAndAssignRequest(TestRequester.INSTANCE, requestable);
         assertNotNull(token);
 
@@ -163,7 +168,7 @@ public class StandardRequestManagerTest
     {
         requestManager.onProviderAddedToColony(provider);
 
-        final StringRequestable hello = new StringRequestable("Hello");
+        final StringRequestable hello = new StringRequestable(LOG);
         final IToken<?> token = requestManager.createAndAssignRequest(TestRequester.INSTANCE, hello);
 
         final RequestState originalState = requestManager.getRequestForToken(token).getState();

@@ -91,11 +91,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
     private static final String REQUEST_CANCEL = "cancel";
 
     /**
-     * Nice representation string for a position.
-     */
-    private static final String POSITION_STRING = "x: %d - y: %d - z: %d";
-
-    /**
      * Xp-bar height.
      */
     private static final int XP_HEIGHT = 5;
@@ -341,17 +336,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
         this.citizen = citizen;
 
         resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
-    }
-
-    /**
-     * Get a nice represetation of the pos string.
-     *
-     * @param pos the position.
-     * @return a nice string.
-     */
-    private static String getNicePositionString(final BlockPos pos)
-    {
-        return String.format(POSITION_STRING, pos.getX(), pos.getY(), pos.getZ());
     }
 
     @Override

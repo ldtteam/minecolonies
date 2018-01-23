@@ -779,6 +779,21 @@ public class CitizenData
 
         ByteBufUtils.writeUTF8String(buf, (job != null) ? job.getName() : "");
 
+        writeStatusToBuffer(buf);
+
+        buf.writeInt(colony.getID());
+
+        final NBTTagCompound compound = new NBTTagCompound();
+        compound.setTag("inventory", inventory.writeToNBT(new NBTTagList()));
+        ByteBufUtils.writeTag(buf, compound);
+    }
+
+    /**
+     * Writes the citizen status to the byteBuffer.
+     * @param buf the buffer.
+     */
+    private void writeStatusToBuffer(@NotNull final ByteBuf buf)
+    {
         final EntityCitizen citizen = getCitizenEntity();
         if (citizen != null)
         {
@@ -793,12 +808,6 @@ public class CitizenData
         {
             buf.writeInt(0);
         }
-
-        buf.writeInt(colony.getID());
-
-        final NBTTagCompound compound = new NBTTagCompound();
-        compound.setTag("inventory", inventory.writeToNBT(new NBTTagList()));
-        ByteBufUtils.writeTag(buf, compound);
     }
 
     /**

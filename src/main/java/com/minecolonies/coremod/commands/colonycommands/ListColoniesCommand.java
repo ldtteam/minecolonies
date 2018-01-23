@@ -53,7 +53,7 @@ public class ListColoniesCommand extends AbstractSingleCommand
     @Override
     public String getCommandUsage(@NotNull final ICommandSender sender)
     {
-        return super.getCommandUsage(sender) + "";
+        return super.getCommandUsage(sender);
     }
 
     @Override
