@@ -12,4 +12,9 @@ public interface IQueuedRequestResolver<R extends IRequestable> extends IRequest
      * @return A list of all assigned tokens.
      */
     ImmutableList<IToken<?>> getAllAssignedRequests();
+
+    /**
+     * Called when the request system this is part of gets reset.
+     */
+    void onSystemReset();
 }

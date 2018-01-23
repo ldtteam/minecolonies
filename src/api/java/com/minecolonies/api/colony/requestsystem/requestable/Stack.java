@@ -163,8 +163,48 @@ public class Stack implements IDeliverable
         return result;
     }
 
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof Stack))
+        {
+            return false;
+        }
 
+        final Stack stack1 = (Stack) o;
 
+        if (matchMeta != stack1.matchMeta)
+        {
+            return false;
+        }
+        if (matchNBT != stack1.matchNBT)
+        {
+            return false;
+        }
+        if (matchOreDic != stack1.matchOreDic)
+        {
+            return false;
+        }
+        if (!ItemStackUtils.compareItemStacksIgnoreStackSize(getStack(), stack1.getStack()))
+        {
+            return false;
+        }
+        return ItemStackUtils.compareItemStacksIgnoreStackSize(getResult(), stack1.getResult());
+    }
 
+    @Override
+    public int hashCode()
+    {
+        int result1 = getStack().hashCode();
+        result1 = 31 * result1 + (matchMeta ? 1 : 0);
+        result1 = 31 * result1 + (matchNBT ? 1 : 0);
+        result1 = 31 * result1 + (matchOreDic ? 1 : 0);
+        result1 = 31 * result1 + getResult().hashCode();
+        return result1;
+    }
 }
 

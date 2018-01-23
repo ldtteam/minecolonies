@@ -46,6 +46,10 @@ public final class TeleportHelper
             citizen.getProxy().reset();
         }
         citizen.getNavigator().clearPathEntity();
+        if(citizen.getProxy() != null)
+        {
+            citizen.getProxy().reset();
+        }
 
         return true;
     }

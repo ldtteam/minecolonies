@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.blockout.views.Window;
@@ -25,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 

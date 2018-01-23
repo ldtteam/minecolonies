@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.blocks;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Hut for the stone mason.
@@ -20,4 +21,5 @@ public class BlockHutStonemason extends AbstractBlockHut<BlockHutStonemason>
     {
         return "blockHutStonemason";
     }
+
 }

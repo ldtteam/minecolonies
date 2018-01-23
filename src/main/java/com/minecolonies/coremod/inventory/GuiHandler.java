@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.inventory;
 
+import com.minecolonies.coremod.client.gui.WindowGuiCrafting;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
@@ -11,6 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Class which handles the GUI inventory.
@@ -31,6 +34,15 @@ public class GuiHandler implements IGuiHandler
             else if (tileEntity instanceof TileEntityRack)
             {
                 return new ContainerRack((TileEntityRack) tileEntity, ((TileEntityRack) tileEntity).getOtherChest(), player.inventory);
+            }
+            else
+            {
+                @Nullable final AbstractBuildingView building = ColonyManager.getBuildingView(new BlockPos(x,y,z));
+                if (building != null)
+                {
+                    return new CraftingGUIBuilding(player.inventory, world);
+                }
+                return null;
             }
         }
         else if (id == ID.BUILDING_INVENTORY.ordinal())
@@ -56,7 +68,6 @@ public class GuiHandler implements IGuiHandler
                                                               building.getID(),
                                                               citizen.getId());
         }
-
         return null;
     }
 
@@ -75,6 +86,14 @@ public class GuiHandler implements IGuiHandler
             {
                 return new GuiRack(player.inventory, (TileEntityRack) tileEntity, ((TileEntityRack) tileEntity).getOtherChest(), world, pos);
             }
+            else
+            {
+                @Nullable final AbstractBuildingView building = ColonyManager.getBuildingView(new BlockPos(x,y,z));
+                if (building != null)
+                {
+                    return new WindowGuiCrafting(player.inventory, world, building);
+                }
+            }
         }
         else if (id == ID.BUILDING_INVENTORY.ordinal())
         {
@@ -92,7 +111,6 @@ public class GuiHandler implements IGuiHandler
 
             return new GuiChest(player.inventory, citizenDataView.getInventory());
         }
-
         return null;
     }
 

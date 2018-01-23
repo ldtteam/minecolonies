@@ -1,12 +1,16 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.data.IRequestSystemDeliveryManJobDataStore;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.constant.NbtTagConstants;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
@@ -32,9 +36,7 @@ public class JobDeliveryman extends AbstractJob
     private static final String TAG_CURRENT_TASK = "currentTask";
     private static final String TAG_RETURNING    = "returning";
 
-    private final LinkedList<IToken<?>> taskQueue = new LinkedList<>();
-
-    private boolean returning;
+    private IToken<?> rsDataStoreToken;
 
     /**
      * Instantiates the job for the deliveryman.
@@ -44,25 +46,34 @@ public class JobDeliveryman extends AbstractJob
     public JobDeliveryman(final CitizenData entity)
     {
         super(entity);
+        setupRsDataStore();
+    }
+
+    private void setupRsDataStore()
+    {
+        rsDataStoreToken = this.getCitizen()
+                             .getColony()
+                             .getRequestManager()
+                             .getDataStoreManager()
+                             .get(
+                               StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                               TypeConstants.REQUEST_SYSTEM_DELIVERY_MAN_JOB_DATA_STORE
+                             )
+                             .getId();
     }
 
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        taskQueue.clear();
-        if (compound.hasKey(TAG_CURRENT_TASK))
-        {
-            final NBTTagList queuItems = compound.getTagList(TAG_CURRENT_TASK, Constants.NBT.TAG_COMPOUND);
-            NBTUtils.streamCompound(queuItems)
-              .map(tokenCompound -> (IToken) StandardFactoryController.getInstance().deserialize(tokenCompound))
-              .forEach(taskQueue::add);
-        }
 
-        returning = false;
-        if (compound.hasKey(TAG_RETURNING))
+        if(compound.hasKey(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
         {
-            returning = compound.getBoolean(TAG_RETURNING);
+            rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
+        }
+        else
+        {
+            setupRsDataStore();
         }
     }
 
@@ -84,9 +95,7 @@ public class JobDeliveryman extends AbstractJob
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        final NBTTagList queuList = taskQueue.stream().map(iToken -> StandardFactoryController.getInstance().serialize(iToken)).collect(NBTUtils.toNBTTagList());
-        compound.setTag(TAG_CURRENT_TASK, queuList);
-        compound.setBoolean(TAG_RETURNING, returning);
+        compound.setTag(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
     }
 
     /**
@@ -133,6 +142,16 @@ public class JobDeliveryman extends AbstractJob
         return null;
     }
 
+    private IRequestSystemDeliveryManJobDataStore getDataStore()
+    {
+        return getCitizen().getColony().getRequestManager().getDataStoreManager().get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_DELIVERY_MAN_JOB_DATA_STORE);
+    }
+
+    private LinkedList<IToken<?>> getTaskQueueFromDataStore()
+    {
+        return getDataStore().getQueue();
+    }
+
     /**
      * Returns whether or not the job has a currentTask.
      *
@@ -140,7 +159,7 @@ public class JobDeliveryman extends AbstractJob
      */
     public boolean hasTask()
     {
-        return !taskQueue.isEmpty() || returning;
+        return !getTaskQueueFromDataStore().isEmpty() || getDataStore().isReturning();
     }
 
     /**
@@ -151,11 +170,12 @@ public class JobDeliveryman extends AbstractJob
     @SuppressWarnings(UNCHECKED)
     public IRequest<Delivery> getCurrentTask()
     {
-        if (taskQueue.isEmpty())
+        if (getTaskQueueFromDataStore().isEmpty())
         {
             return null;
         }
-        return getColony().getRequestManager().getRequestForToken(taskQueue.peekFirst());
+
+        return (IRequest<Delivery>) getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
     }
 
     /**
@@ -165,7 +185,7 @@ public class JobDeliveryman extends AbstractJob
      */
     public void addRequest(@NotNull final IToken<?> token)
     {
-        taskQueue.add(token);
+        getTaskQueueFromDataStore().add(token);
     }
 
     /**
@@ -175,13 +195,13 @@ public class JobDeliveryman extends AbstractJob
      */
     public void finishRequest(final boolean successful)
     {
-        if (taskQueue.isEmpty())
+        if (getTaskQueueFromDataStore().isEmpty())
         {
             return;
         }
 
         this.setReturning(true);
-        final IToken<?> current = taskQueue.removeFirst();
+        final IToken<?> current = getTaskQueueFromDataStore().removeFirst();
 
         getColony().getRequestManager().updateRequestState(current, successful ? RequestState.COMPLETED : RequestState.CANCELLED);
     }
@@ -193,14 +213,14 @@ public class JobDeliveryman extends AbstractJob
      */
     public void onTaskDeletion(@NotNull final IToken<?> token)
     {
-        if (taskQueue.contains(token))
+        if (getTaskQueueFromDataStore().contains(token))
         {
-            if (taskQueue.peek().equals(token))
+            if (getTaskQueueFromDataStore().peek().equals(token))
             {
                 this.setReturning(true);
             }
 
-            taskQueue.remove(token);
+            getTaskQueueFromDataStore().remove(token);
         }
     }
 
@@ -211,7 +231,7 @@ public class JobDeliveryman extends AbstractJob
      */
     public List<IToken<?>> getTaskQueue()
     {
-        return ImmutableList.copyOf(taskQueue);
+        return ImmutableList.copyOf(getTaskQueueFromDataStore());
     }
 
     /**
@@ -221,7 +241,7 @@ public class JobDeliveryman extends AbstractJob
      */
     public boolean isReturning()
     {
-        return returning;
+        return getDataStore().isReturning();
     }
 
     /**
@@ -232,6 +252,6 @@ public class JobDeliveryman extends AbstractJob
      */
     public void setReturning(final boolean returning)
     {
-        this.returning = returning;
+        getDataStore().setReturning(returning);
     }
 }
