@@ -452,7 +452,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         {
             itemExamples =
               ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
-                  NonNullList<ItemStack> stacks = NonNullList.create();
+                  final NonNullList<ItemStack> stacks = NonNullList.create();
                   try
                   {
                       item.getSubItems(CreativeTabs.SEARCH, stacks);

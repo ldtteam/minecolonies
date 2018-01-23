@@ -8,6 +8,8 @@ import com.minecolonies.coremod.colony.ColonyView;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT_FIRST;
+
 /**
  * Class used to manage the townHall building block.
  */
@@ -52,7 +54,7 @@ public class BuildingTownHall extends AbstractBuildingHut
     {
         super.onUpgradeComplete(newLevel);
 
-        if (newLevel == 1)
+        if (newLevel == NUM_ACHIEVEMENT_FIRST)
         {
             this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingTownhall);
         }
