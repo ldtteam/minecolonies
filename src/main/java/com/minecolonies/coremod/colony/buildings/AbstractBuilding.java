@@ -1374,7 +1374,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     /**
      * Sets the mirror of the current building.
      */
-    public void setMirror()
+    public void invertMirror()
     {
         this.isBuildingMirrored = !isBuildingMirrored;
     }
