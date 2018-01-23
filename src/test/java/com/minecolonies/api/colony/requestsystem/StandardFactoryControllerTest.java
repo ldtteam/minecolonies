@@ -13,6 +13,7 @@ import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFac
 import net.minecraft.nbt.NBTTagCompound;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.UUID;
@@ -42,37 +43,39 @@ public class StandardFactoryControllerTest
     }
 
     @Test
-    public void getFactoryForInput()
+    public void testGetFactoryForInput()
     {
         final IFactory<UUID, ?> inputBasedFactory = StandardFactoryController.getInstance().getFactoryForInput(TypeConstants.UUID);
+        assertNotNull(inputBasedFactory);
         //assertEquals(inputBasedFactory, factory);
     }
 
     @Test
-    public void getFactoryForOutput()
+    public void testGetFactoryForOutput()
     {
         final IFactory<?, StandardToken> outputBasedFactory = StandardFactoryController.getInstance().getFactoryForOutput(TypeConstants.STANDARDTOKEN);
         assertEquals(outputBasedFactory, factory);
     }
 
     @Test
-    public void registerNewFactory()
+    public void testRegisterNewFactory()
     {
         StandardFactoryController.getInstance().registerNewFactory(new StaticLocation.Factory());
         StandardFactoryController.getInstance().registerNewFactory(new EntityLocation.Factory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.ItemStackRequestFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.DeliveryRequestFactory());
+        assertNotNull(StandardFactoryController.getInstance());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void registerNewFactoryDuplicate()
+    public void testRegisterNewFactoryDuplicate()
     {
         StandardFactoryController.getInstance().registerNewFactory(factory);
-        assertFalse(true);
+        assertNotNull(StandardFactoryController.getInstance());
     }
 
     @Test
-    public void serialize()
+    public void testSerialize()
     {
         final StandardToken standardToken = new StandardToken(UUID.randomUUID());
         final IToken token = standardToken;
@@ -87,7 +90,7 @@ public class StandardFactoryControllerTest
     }
 
     @Test
-    public void deserialize()
+    public void testDeserialize()
     {
         final StandardToken standardToken = new StandardToken(UUID.randomUUID());
         final IToken token = standardToken;
@@ -99,7 +102,7 @@ public class StandardFactoryControllerTest
     }
 
     @Test
-    public void getNewInstance()
+    public void testGetNewInstance()
     {
         final UUID id = UUID.randomUUID();
         final IToken token = new StandardToken(id);

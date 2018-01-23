@@ -381,7 +381,7 @@ public final class StandardRequestFactories
     {
     }
 
-    public static <T extends IRequestable> NBTTagCompound serializeToNBT(IFactoryController controller, IRequest<T> request, IObjectToNBTConverter<T> typeSerialization)
+    public static <T extends IRequestable> NBTTagCompound serializeToNBT(final IFactoryController controller, final IRequest<T> request, final IObjectToNBTConverter<T> typeSerialization)
     {
         final NBTTagCompound compound = new NBTTagCompound();
 
@@ -417,10 +417,10 @@ public final class StandardRequestFactories
     }
 
     public static <T extends IRequestable, R extends IRequest<T>> R deserializeFromNBT(
-                                                                                        IFactoryController controller,
-                                                                                        NBTTagCompound compound,
-                                                                                        INBTToObjectConverter<T> typeDeserialization,
-                                                                                        IObjectConstructor<T, R> objectConstructor)
+                                                                                        final IFactoryController controller,
+                                                                                        final NBTTagCompound compound,
+                                                                                        final INBTToObjectConverter<T> typeDeserialization,
+                                                                                        final IObjectConstructor<T, R> objectConstructor)
     {
         final IRequester requester = controller.deserialize(compound.getCompoundTag(NBT_REQUESTER));
         final IToken token = controller.deserialize(compound.getCompoundTag(NBT_TOKEN));

@@ -70,11 +70,11 @@ public class MakeNotAutoDeletable extends AbstractSingleCommand
 
         sender.sendMessage(new TextComponentString(Arrays.toString(args)));
 
-        int colonyId;
+        final int colonyId;
         colonyId = Integer.parseInt(args[0]);
         final Colony colony = ColonyManager.getColony(colonyId);
 
-        boolean canBeDeleted;
+        final boolean canBeDeleted;
         canBeDeleted = Boolean.parseBoolean(args[1]);
 
         if (colony == null)

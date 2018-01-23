@@ -138,7 +138,7 @@ public final class StandardFactoryController implements IFactoryController
                     }
 
                     Log.getLogger().debug("Found matching Factory for Primary input type.");
-                    for (IFactory factory : factories)
+                    for (final IFactory factory : factories)
                     {
                         final Set<TypeToken> secondaryOutputSet = ReflectionUtils.getSuperClasses(factory.getFactoryOutputType());
                         if (secondaryOutputSet.contains(output))

@@ -82,7 +82,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
 
         if (senderEntity instanceof EntityPlayer)
         {
-            EntityPlayer player = (EntityPlayer) sender;
+            final EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, ADDOFFICER, colonyId))
             {
                 senderEntity.sendMessage(new TextComponentString(NOT_PERMITTED));

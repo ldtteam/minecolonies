@@ -66,9 +66,9 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
             return false;
         }
 
-        AbstractBuilding building = getBuildingFromRequest(manager, requestToCheck);
+        final AbstractBuilding building = getBuildingFromRequest(manager, requestToCheck);
 
-        List<TileEntity> tileEntities = new ArrayList<>();
+        final List<TileEntity> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
         tileEntities.removeIf(Objects::isNull);
@@ -96,9 +96,9 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
     public void resolve(
                          @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws RuntimeException
     {
-        AbstractBuilding building = getBuildingFromRequest(manager, request);
+        final AbstractBuilding building = getBuildingFromRequest(manager, request);
 
-        List<TileEntity> tileEntities = new ArrayList<>();
+        final List<TileEntity> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
 
@@ -116,7 +116,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
     private AbstractBuilding getBuildingFromRequest(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws RuntimeException
     {
-        BuildingBasedRequester requester = (BuildingBasedRequester) request.getRequester();
+        final BuildingBasedRequester requester = (BuildingBasedRequester) request.getRequester();
         return requester.getBuilding().map(r -> {
             if (r instanceof AbstractBuildingView && manager.getColony() instanceof Colony)
             {

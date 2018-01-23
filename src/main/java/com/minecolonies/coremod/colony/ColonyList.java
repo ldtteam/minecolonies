@@ -17,8 +17,6 @@ import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
-//TODO extend list/collection
-
 /**
  * Data structure for storing colonies, optimized for performance.
  *
@@ -187,7 +185,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      *
      * @return number of Colonies in the list.
      */
-    public int size()
+    public int getSize()
     {
         return size;
     }

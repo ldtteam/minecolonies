@@ -184,11 +184,6 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     {
         if (checkPermissions(ColonyManager.getClosestColony(player.getEntityWorld(), message.tePos), player))
         {
-            //@NotNull final InventoryField inventoryField = ColonyManager.getColony(message.colonyId).getField(message.tePos).getInventoryField();
-            if (!StringUtils.isNullOrEmpty(message.name))
-            {
-                // inventoryField.setCustomName(message.name);
-            }
             player.openGui(MineColonies.instance,
               GuiHandler.ID.BUILDING_INVENTORY.ordinal(),
               player.getEntityWorld(),

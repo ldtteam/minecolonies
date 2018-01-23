@@ -91,15 +91,15 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                     ((BuildingBasedRequester) request.getRequester()).getBuilding().isPresent() &&
                     ((BuildingBasedRequester) request.getRequester()).getBuilding().get() instanceof AbstractBuilding)
             {
-                AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding().get();
-                Optional<CitizenData> citizenDataOptional = building.getCitizenForRequest(request.getToken());
+                final AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding().get();
+                final Optional<CitizenData> citizenDataOptional = building.getCitizenForRequest(request.getToken());
 
-                List<ItemStack> resolvablestacks = request.getDisplayStacks();
+                final List<ItemStack> resolvablestacks = request.getDisplayStacks();
                 if (!resolvablestacks.isEmpty() && citizenDataOptional.isPresent())
                 {
-                    ItemStack resolveStack = resolvablestacks.get(0);
+                    final ItemStack resolveStack = resolvablestacks.get(0);
                     resolveStack.setCount(Math.min(((IDeliverable) request.getRequest()).getCount(), resolveStack.getMaxStackSize()));
-                    ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(
+                    final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(
                             new InvWrapper(citizenDataOptional.get().getCitizenEntity().getInventoryCitizen()),
                             resolveStack);
 

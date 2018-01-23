@@ -57,9 +57,9 @@ public class Tool implements IDeliverable
      * @return The NBTTagCompound containing the tool data.
      */
     @NotNull
-    public static NBTTagCompound serialize(IFactoryController controller, Tool tool)
+    public static NBTTagCompound serialize(final IFactoryController controller, final Tool tool)
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        final NBTTagCompound compound = new NBTTagCompound();
 
         compound.setString(NBT_TYPE, tool.getToolClass().getName());
         compound.setInteger(NBT_MIN_LEVEL, tool.getMinLevel());
@@ -119,13 +119,13 @@ public class Tool implements IDeliverable
      * @return An instance of Tool with the data contained in the given NBT.
      */
     @NotNull
-    public static Tool deserialize(IFactoryController controller, NBTTagCompound nbt)
+    public static Tool deserialize(final IFactoryController controller, final NBTTagCompound nbt)
     {
         //API:Map the given strings a proper way.
-        IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
-        Integer minLevel = nbt.getInteger(NBT_MIN_LEVEL);
-        Integer maxLevel = nbt.getInteger(NBT_MAX_LEVEL);
-        ItemStack result = new ItemStack(nbt.getCompoundTag(NBT_RESULT));
+        final IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
+        final Integer minLevel = nbt.getInteger(NBT_MIN_LEVEL);
+        final Integer maxLevel = nbt.getInteger(NBT_MAX_LEVEL);
+        final ItemStack result = new ItemStack(nbt.getCompoundTag(NBT_RESULT));
 
         return new Tool(type, minLevel, maxLevel, result);
     }
@@ -134,7 +134,7 @@ public class Tool implements IDeliverable
     public boolean matches(@NotNull final ItemStack stack)
     {
         //API:Map the given strings a proper way.
-        boolean toolTypeResult = !ItemStackUtils.isEmpty(stack)
+        final boolean toolTypeResult = !ItemStackUtils.isEmpty(stack)
                 && stack.getCount() >= 1
                 && getToolClasses(stack).stream()
                 .filter(s -> getToolClass().getName().equalsIgnoreCase(s))

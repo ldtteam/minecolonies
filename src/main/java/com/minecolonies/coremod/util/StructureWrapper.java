@@ -709,7 +709,7 @@ public final class StructureWrapper
     /**
      * @return The StructureProxy that houses all the info about what is stored in a structure.
      */
-    public StructureProxy structure()
+    public StructureProxy getStructure()
     {
         return structure;
     }
