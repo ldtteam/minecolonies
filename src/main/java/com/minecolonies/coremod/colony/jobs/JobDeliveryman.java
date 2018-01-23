@@ -30,7 +30,7 @@ public class JobDeliveryman extends AbstractJob
     private static final String TAG_CURRENT_TASK = "currentTask";
     private static final String TAG_RETURNING    = "returning";
 
-    private LinkedList<IToken> taskQueue = new LinkedList<>();
+    private final LinkedList<IToken> taskQueue = new LinkedList<>();
 
     private boolean returning;
 
@@ -51,7 +51,7 @@ public class JobDeliveryman extends AbstractJob
         taskQueue.clear();
         if (compound.hasKey(TAG_CURRENT_TASK))
         {
-            NBTTagList queuItems = compound.getTagList(TAG_CURRENT_TASK, Constants.NBT.TAG_COMPOUND);
+            final NBTTagList queuItems = compound.getTagList(TAG_CURRENT_TASK, Constants.NBT.TAG_COMPOUND);
             NBTUtils.streamCompound(queuItems)
               .map(tokenCompound -> (IToken) StandardFactoryController.getInstance().deserialize(tokenCompound))
               .forEach(taskQueue::add);
@@ -82,7 +82,7 @@ public class JobDeliveryman extends AbstractJob
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        NBTTagList queuList = taskQueue.stream().map(iToken -> StandardFactoryController.getInstance().serialize(iToken)).collect(NBTUtils.toNBTTagList());
+        final NBTTagList queuList = taskQueue.stream().map(iToken -> StandardFactoryController.getInstance().serialize(iToken)).collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_CURRENT_TASK, queuList);
         compound.setBoolean(TAG_RETURNING, returning);
     }
@@ -178,7 +178,7 @@ public class JobDeliveryman extends AbstractJob
         }
 
         this.setReturning(true);
-        IToken current = taskQueue.removeFirst();
+        final IToken current = taskQueue.removeFirst();
 
         getColony().getRequestManager().updateRequestState(current, successful ? RequestState.COMPLETED : RequestState.CANCELLED);
     }
@@ -216,7 +216,7 @@ public class JobDeliveryman extends AbstractJob
      *
      * @return True when this DMan is returning the warehouse to clean his inventory.
      */
-    public boolean getReturning()
+    public boolean isReturning()
     {
         return returning;
     }

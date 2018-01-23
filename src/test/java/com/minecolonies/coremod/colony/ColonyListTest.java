@@ -51,7 +51,7 @@ public class ColonyListTest
     private ColonyList<Colony> list;
 
     @Before
-    public void setup() throws NoSuchFieldException, IllegalAccessException
+    public void setUp() throws NoSuchFieldException, IllegalAccessException
     {
         list = new ColonyList<>();
 
@@ -108,7 +108,7 @@ public class ColonyListTest
             assertEquals(colony, list.get(colony.getID()));
         }
 
-        assertEquals(ColonyList.INITIAL_SIZE + 1, list.size());
+        assertEquals(ColonyList.INITIAL_SIZE + 1, list.getSize());
     }
 
     @Test
@@ -117,7 +117,7 @@ public class ColonyListTest
         list.add(colony1);
 
         assertEquals(colony1, list.get(1));
-        assertEquals(1, list.size());
+        assertEquals(1, list.getSize());
     }
 
     @Test
@@ -154,7 +154,7 @@ public class ColonyListTest
         when(colony.getID()).thenReturn(id);
         list.add(colony);
 
-        assertEquals(1, list.size());
+        assertEquals(1, list.getSize());
         assertEquals(colony, list.get(id));
     }
 
@@ -186,7 +186,7 @@ public class ColonyListTest
 
         list.add(colony1);
 
-        assertEquals(1, list.size());
+        assertEquals(1, list.getSize());
         assertEquals(colony1, list.get(1));
     }
 
@@ -215,11 +215,11 @@ public class ColonyListTest
     @Test
     public void testSize()
     {
-        assertEquals(0, list.size());
+        assertEquals(0, list.getSize());
         list.add(colony1);
         list.add(colony2);
 
-        assertEquals(2, list.size());
+        assertEquals(2, list.getSize());
     }
 
     @Test
@@ -238,7 +238,7 @@ public class ColonyListTest
 
         final List<Colony> copy = list.getCopyAsList();
 
-        assertEquals(list.size(), copy.size());
+        assertEquals(list.getSize(), copy.size());
         assertEquals(1, copy.get(0).getID());
         assertEquals(2, copy.get(1).getID());
     }
@@ -259,6 +259,6 @@ public class ColonyListTest
             itr.next();
         }
 
-        assertEquals(list.size(), count);
+        assertEquals(list.getSize(), count);
     }
 }

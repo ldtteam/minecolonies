@@ -266,7 +266,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE + searchIncrement, 1.0D, ((BuildingLumberjack) building).getTreesToCut());
             return getState();
         }
-        if (pathResult.getPathReachesDestination())
+        if (pathResult.isPathReachingDestination())
         {
             return setNewTree();
         }

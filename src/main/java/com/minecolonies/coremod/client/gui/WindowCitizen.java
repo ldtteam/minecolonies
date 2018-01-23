@@ -542,7 +542,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
     private ImmutableList<IRequest> getOpenRequestsOfCitizen()
     {
-        ArrayList<IRequest> requests = new ArrayList<>();
+        final ArrayList<IRequest> requests = new ArrayList<>();
         if (citizen.getWorkBuilding() != null)
         {
             requests.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getWorkBuilding()));

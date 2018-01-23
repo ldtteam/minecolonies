@@ -473,7 +473,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             final ImmutableList<IRequest> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
 
             completedRequests.stream().filter(r -> !(r.canBeDelivered())).forEach(r -> getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), r.getToken()));
-            IRequest firstDeliverableRequest = completedRequests.stream().filter(r -> r.canBeDelivered()).findFirst().orElse(null);
+            final IRequest firstDeliverableRequest = completedRequests.stream().filter(r -> r.canBeDelivered()).findFirst().orElse(null);
 
             if (firstDeliverableRequest != null)
             {
@@ -1167,7 +1167,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           TypeToken.of(IDeliverable.class),
           (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
-            Stack stackRequest = new Stack(stack);
+            final Stack stackRequest = new Stack(stack);
             worker.getCitizenData().createRequest(stackRequest);
         }
 
@@ -1224,7 +1224,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeToken.of(IDeliverable.class),
           (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
-            Stack stackRequest = new Stack(stack);
+            final Stack stackRequest = new Stack(stack);
             worker.getCitizenData().createRequestAsync(stackRequest);
         }
 

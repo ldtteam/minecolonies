@@ -882,7 +882,7 @@ public final class ColonyManager
         removedElements = 0;
 
         compound.setBoolean(TAG_DISTANCE, true);
-        compound.setInteger(TAG_NEW_COLONIES, colonies.size());
+        compound.setInteger(TAG_NEW_COLONIES, colonies.getSize());
     }
 
     /**
@@ -975,7 +975,7 @@ public final class ColonyManager
 
                     if (data.hasKey(TAG_NEW_COLONIES))
                     {
-                        int size = data.getInteger(TAG_NEW_COLONIES);
+                        final int size = data.getInteger(TAG_NEW_COLONIES);
 
                         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
                         for (int colonyId = 0; colonyId <= size; colonyId++)
@@ -990,7 +990,7 @@ public final class ColonyManager
                             }
                         }
                     }
-                    Log.getLogger().info(String.format("Loaded %d colonies", colonies.size()));
+                    Log.getLogger().info(String.format("Loaded %d colonies", colonies.getSize()));
                 }
 
                 if (serverUUID == null)
@@ -1027,7 +1027,7 @@ public final class ColonyManager
             @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
             final ZipOutputStream zos = new ZipOutputStream(fos);
 
-            for (int i = 0; i < colonies.size() + BUFFER; i++)
+            for (int i = 0; i < colonies.getSize() + BUFFER; i++)
             {
                 @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i));
                 if (file.exists())
@@ -1061,7 +1061,7 @@ public final class ColonyManager
             Files.copy(file, zos);
             fis.close();
         }
-        catch (Exception e)
+        catch (final Exception e)
         {
             /**
              * Intentionally not being thrown.
@@ -1142,7 +1142,7 @@ public final class ColonyManager
             compatabilityManager.readFromNBT(compound.getCompoundTag(TAG_COMPATABILITY_MANAGER));
         }
         compatabilityManager.discover(world);
-        Log.getLogger().info(String.format("Loaded %d colonies", colonies.size()));
+        Log.getLogger().info(String.format("Loaded %d colonies", colonies.getSize()));
     }
 
     /**

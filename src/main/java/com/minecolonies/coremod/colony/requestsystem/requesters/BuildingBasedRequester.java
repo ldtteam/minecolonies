@@ -38,17 +38,17 @@ public class BuildingBasedRequester implements IRequester
         this.requesterId = requesterId;
     }
 
-    public static BuildingBasedRequester deserialize(IFactoryController controller, NBTTagCompound compound)
+    public static BuildingBasedRequester deserialize(final IFactoryController controller, final NBTTagCompound compound)
     {
-        ILocation location = controller.deserialize(compound.getCompoundTag(NBT_LOCATION));
-        IToken token = controller.deserialize(compound.getCompoundTag(NBT_ID));
+        final ILocation location = controller.deserialize(compound.getCompoundTag(NBT_LOCATION));
+        final IToken token = controller.deserialize(compound.getCompoundTag(NBT_ID));
 
         return new BuildingBasedRequester(location, token);
     }
 
-    public NBTTagCompound serialize(IFactoryController controller)
+    public NBTTagCompound serialize(final IFactoryController controller)
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        final NBTTagCompound compound = new NBTTagCompound();
 
         compound.setTag(NBT_LOCATION, controller.serialize(getRequesterLocation()));
         compound.setTag(NBT_ID, controller.serialize(getRequesterId()));
