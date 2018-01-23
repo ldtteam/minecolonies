@@ -23,6 +23,11 @@ public class DistanceSquaredTest
      */
     private static final int MAX_HEIGHT = 500;
 
+    /**
+     * String decribing test.
+     */
+    private static final String DIM_STRING = "%d Dim distance between %s and %s";
+
     @Test
     public void testDistance2DTwoPositions()
     {
@@ -31,7 +36,7 @@ public class DistanceSquaredTest
             final BlockPos posA = new BlockPos(i * i, 0, i * 2);
             final BlockPos posB = new BlockPos(i, 0, i * i * i);
 
-            assertThat("2Dim distance between " + posA + " and " + posB,
+            assertThat(String.format(DIM_STRING, 2, posA.toString(), posB.toString()),
                     BlockPosUtil.getDistanceSquared2D(posA, posB), greaterThanOrEqualTo(0L));
         }
     }
@@ -44,7 +49,7 @@ public class DistanceSquaredTest
             final BlockPos posA = new BlockPos(MAX_POSITION - i, 0, MAX_POSITION - i);
             final BlockPos posB = new BlockPos(-MAX_POSITION + i, 0, -MAX_POSITION + i);
 
-            assertThat("2Dim distance between " + posA + " and " + posB,
+            assertThat(String.format(DIM_STRING, 2, posA.toString(), posB.toString()),
                     BlockPosUtil.getDistanceSquared2D(posA, posB), greaterThanOrEqualTo(0L));
         }
     }
@@ -57,7 +62,7 @@ public class DistanceSquaredTest
             final BlockPos posA = new BlockPos(i * i, i % 200, i * 2);
             final BlockPos posB = new BlockPos(i, (i + 100) % 200, i * i * i);
 
-            assertThat("3Dim distance between " + posA + " and " + posB,
+            assertThat(String.format(DIM_STRING, 3, posA.toString(), posB.toString()),
                     BlockPosUtil.getDistanceSquared(posA, posB), greaterThanOrEqualTo(0L));
         }
     }
@@ -70,7 +75,7 @@ public class DistanceSquaredTest
             final BlockPos posA = new BlockPos(MAX_POSITION - i, 0, MAX_POSITION - i);
             final BlockPos posB = new BlockPos(-MAX_POSITION + i, i, -MAX_POSITION + i);
 
-            assertThat("3Dim distance between " + posA + " and " + posB,
+            assertThat(String.format(DIM_STRING, 3, posA.toString(), posB.toString()),
                     BlockPosUtil.getDistanceSquared(posA, posB), greaterThanOrEqualTo(0L));
         }
     }
