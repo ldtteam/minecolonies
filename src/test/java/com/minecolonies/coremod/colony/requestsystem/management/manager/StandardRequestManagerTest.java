@@ -122,24 +122,6 @@ public class StandardRequestManagerTest
     }
 
     @Test
-    public void testDeserializeNBT() throws Exception
-    {
-        requestManager.onProviderAddedToColony(provider);
-
-        final StringRequestable hello = new StringRequestable(LOG);
-        final StringRequestable Test2 = new StringRequestable("Test 2");
-        requestManager.createRequest(TestRequester.INSTANCE, hello);
-        requestManager.createAndAssignRequest(TestRequester.INSTANCE, Test2);
-
-        final NBTTagCompound compound = requestManager.serializeNBT();
-
-        final StandardRequestManager deserializedVariant = new StandardRequestManager(colony);
-        deserializedVariant.onProviderAddedToColony(provider);
-        deserializedVariant.deserializeNBT(compound);
-        assertEquals(requestManager.serializeNBT(), deserializedVariant.serializeNBT());
-    }
-
-    @Test
     public void testGetFactoryController() throws Exception
     {
         assertEquals(StandardFactoryController.getInstance(), requestManager.getFactoryController());
