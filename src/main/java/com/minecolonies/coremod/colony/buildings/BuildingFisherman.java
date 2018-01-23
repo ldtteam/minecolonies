@@ -13,6 +13,7 @@ import com.minecolonies.coremod.colony.jobs.JobFisherman;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT_FIRST;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -72,7 +73,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
     {
         super.onUpgradeComplete(newLevel);
 
-        if (newLevel == 1)
+        if (newLevel == NUM_ACHIEVEMENT_FIRST)
         {
             this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingFisher);
         }

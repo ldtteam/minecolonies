@@ -182,15 +182,13 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         }
         else if(message.freeMode !=  null )
         {
-            final List<ItemStack> stacks = new ArrayList<>();
-            final int chestHeight;
-
             if(player.getStatFile().readStat(StatList.getObjectUseStats(ModItems.supplyChest)) > 0)
             {
                 LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.error.supplyChestAlreadyPlaced");
                 return;
             }
-
+            final List<ItemStack> stacks = new ArrayList<>();
+            final int chestHeight;
             if(message.freeMode == WindowBuildTool.FreeMode.SUPPLYSHIP)
             {
                 stacks.add(new ItemStack(ModItems.supplyChest));

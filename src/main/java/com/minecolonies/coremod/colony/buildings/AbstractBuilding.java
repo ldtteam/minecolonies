@@ -1420,7 +1420,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
-                                          Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
                                           return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
@@ -1449,7 +1449,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     {
         return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
                                       .filter(request -> {
-                                          Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
                                           return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
@@ -1464,7 +1464,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     {
         return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
                                       .filter(request -> {
-                                          Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
                                           return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
@@ -1567,7 +1567,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
-                                          Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
                                           return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
@@ -1763,8 +1763,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
     @Nullable
     @Override
-    public <T> T getCapability(
-      @Nonnull final Capability<T> capability, @Nullable final EnumFacing facing)
+    public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final EnumFacing facing)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null)
         {
@@ -1785,10 +1784,10 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
                                                               .stream()
                                                               .flatMap(provider -> InventoryUtils.getItemHandlersFromProvider(provider).stream())
                                                               .filter(handler -> handler instanceof IItemHandlerModifiable)
-                                                              .map(handler -> ((IItemHandlerModifiable) handler))
+                                                              .map(handler -> (IItemHandlerModifiable) handler)
                                                               .collect(Collectors.toSet());
 
-            return (T) new CombinedItemHandler(getSchematicName(), modifiables.toArray(new IItemHandlerModifiable[0]));
+            return (T) new CombinedItemHandler(getSchematicName(), modifiables.toArray(new IItemHandlerModifiable[modifiables.size()]));
         }
 
         return null;

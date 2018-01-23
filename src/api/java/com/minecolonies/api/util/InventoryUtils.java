@@ -1358,7 +1358,6 @@ public class InventoryUtils
         {
             return true;
         }
-        final ItemStack originalStack = sourceStack.copy();
 
         for (int i = 0; i < targetHandler.getSlots(); i++)
         {
@@ -1370,6 +1369,7 @@ public class InventoryUtils
             }
         }
 
+        final ItemStack originalStack = sourceStack.copy();
         if (!ItemStack.areItemStacksEqual(sourceStack, originalStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(sourceStack, originalStack))
         {
             final int usedAmount = ItemStackUtils.getSize(sourceStack) - ItemStackUtils.getSize(originalStack);

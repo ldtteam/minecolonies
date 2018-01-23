@@ -27,8 +27,6 @@ public class GuiMinecoloniesBuildingInventory extends GuiContainer
         this.upperChestInventory = containerMinecoloniesBuildingInventory.getPlayerInventory();
         this.lowerChestInventory = containerMinecoloniesBuildingInventory.getLowerChestInventory();
         this.allowUserInput = false;
-        final int i = 222;
-        final int j = 114;
         this.inventoryRows = containerMinecoloniesBuildingInventory.getLowerChestInventory().getSizeInventory() / 9;
         this.ySize = 114 + this.inventoryRows * 18;
     }

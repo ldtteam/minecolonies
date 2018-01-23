@@ -314,9 +314,8 @@ public abstract class AbstractBuildingView implements IRequester
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
-                                          Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
-                                          //TODO: Check on the types of this, it is TypeToken and Class, possible mismatch
-                                          return requestTypes.contains(TypeToken.of(requestType));
+                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
                                       .iterator());
@@ -356,8 +355,8 @@ public abstract class AbstractBuildingView implements IRequester
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
-                                          Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
-                                          return requestTypes.contains(TypeToken.of(requestType));
+                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
                                       .filter(filter)
