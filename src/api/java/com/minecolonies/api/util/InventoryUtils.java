@@ -1389,7 +1389,7 @@ public class InventoryUtils
     {
         int currentAmount = amount;
 
-        for(IItemHandler handler : getItemHandlersFromProvider(targetProvider))
+        for(final IItemHandler handler : getItemHandlersFromProvider(targetProvider))
         {
             currentAmount = transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(sourceProvider, itemStackSelectionPredicate, amount, handler);
 
@@ -1416,7 +1416,7 @@ public class InventoryUtils
       @NotNull final int amount, @NotNull final IItemHandler targetHandler)
     {
         int currentAmount = amount;
-        for (IItemHandler handler : getItemHandlersFromProvider(sourceProvider))
+        for (final IItemHandler handler : getItemHandlersFromProvider(sourceProvider))
         {
             currentAmount = transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandlerWithResult(handler, itemStackSelectionPredicate, currentAmount, targetHandler);
 

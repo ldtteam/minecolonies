@@ -201,7 +201,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     /**
      * The mirror of the building.
      */
-    private boolean isMirrored = false;
+    private boolean isBuildingMirrored = false;
     /**
      * The building style.
      */
@@ -388,7 +388,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             final NBTTagCompound containerCompound = containerTagList.getCompoundTagAt(i);
             containerList.add(NBTUtil.getPosFromTag(containerCompound));
         }
-        isMirrored = compound.getBoolean(TAG_MIRROR);
+        isBuildingMirrored = compound.getBoolean(TAG_MIRROR);
 
         if (compound.hasKey(TAG_CORNER1))
         {
@@ -677,7 +677,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             containerTagList.appendTag(NBTUtil.createPosTag(pos));
         }
         compound.setTag(TAG_CONTAINERS, containerTagList);
-        compound.setBoolean(TAG_MIRROR, isMirrored);
+        compound.setBoolean(TAG_MIRROR, isBuildingMirrored);
 
         compound.setInteger(TAG_CORNER1, this.cornerX1);
         compound.setInteger(TAG_CORNER2, this.cornerX2);
@@ -1088,8 +1088,8 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         ByteBufUtils.writeUTF8String(buf, style);
         ByteBufUtils.writeUTF8String(buf, this.getSchematicName());
         buf.writeInt(rotation);
-        buf.writeBoolean(isMirrored);
-        NBTTagCompound requestSystemCompound = new NBTTagCompound();
+        buf.writeBoolean(isBuildingMirrored);
+        final NBTTagCompound requestSystemCompound = new NBTTagCompound();
         writeRequestSystemToNBT(requestSystemCompound);
 
         ByteBufUtils.writeTag(buf, requestSystemCompound);
@@ -1139,7 +1139,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      */
     public boolean isMirrored()
     {
-        return isMirrored;
+        return isBuildingMirrored;
     }
 
     /**
@@ -1375,9 +1375,9 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     /**
      * Sets the mirror of the current building.
      */
-    public void setMirror()
+    public void invertMirror()
     {
-        this.isMirrored = !isMirrored;
+        this.isBuildingMirrored = !isBuildingMirrored;
     }
 
     //------------------------- !START! RequestSystem handling for minecolonies buildings -------------------------//
@@ -1736,7 +1736,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             return Optional.empty();
         }
 
-        int citizenID = requestsByCitizen.get(token);
+        final int citizenID = requestsByCitizen.get(token);
         if(getColony().getCitizenManager().getCitizen(citizenID) == null)
         {
             return Optional.empty();

@@ -52,8 +52,8 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     {
         if (!manager.getColony().getWorld().isRemote)
         {
-            Colony colony = (Colony) manager.getColony();
-            Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
+            final Colony colony = (Colony) manager.getColony();
+            final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
             wareHouses.removeIf(Objects::isNull);
             
             return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchinItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack)));
@@ -76,10 +76,10 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
             return null;
         }
 
-        Colony colony = (Colony) manager.getColony();
-        Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
+        final Colony colony = (Colony) manager.getColony();
+        final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
 
-        for (TileEntityWareHouse wareHouse : wareHouses)
+        for (final TileEntityWareHouse wareHouse : wareHouses)
         {
             ItemStack matchingStack = wareHouse.getFirstMatchingItemStackInWarehouse(itemStack -> request.getRequest().matches(itemStack));
             if (ItemStackUtils.isEmpty(matchingStack))
@@ -93,12 +93,12 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
             final ItemStack deliveryStack = matchingStack.copy();
             request.setDelivery(deliveryStack.copy());
 
-            BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> ItemStack.areItemsEqual(itemStack, deliveryStack));
-            ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().provider.getDimension());
+            final BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> ItemStack.areItemsEqual(itemStack, deliveryStack));
+            final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().provider.getDimension());
 
-            Delivery delivery = new Delivery(itemStackLocation, request.getRequester().getRequesterLocation(), deliveryStack.copy());
+            final Delivery delivery = new Delivery(itemStackLocation, request.getRequester().getRequesterLocation(), deliveryStack.copy());
 
-            IToken<?> requestToken = manager.createRequest(new WarehouseRequestResolver(request.getRequester().getRequesterLocation(), request.getToken()), delivery);
+            final IToken<?> requestToken = manager.createRequest(new WarehouseRequestResolver(request.getRequester().getRequesterLocation(), request.getToken()), delivery);
 
             return ImmutableList.of(requestToken);
         }
@@ -128,7 +128,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         return null;
     }
 
-    private static Set<TileEntityWareHouse> getWareHousesInColony(Colony colony)
+    private static Set<TileEntityWareHouse> getWareHousesInColony(final Colony colony)
     {
         return colony.getBuildingManager().getBuildings().values().stream()
                  .filter(building -> building instanceof BuildingWareHouse)

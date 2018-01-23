@@ -54,7 +54,7 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
     }
 
     @Override
-    void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
+    public void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
     {
         final CitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
         final EntityCitizen entityCitizen = citizenData.getCitizenEntity();

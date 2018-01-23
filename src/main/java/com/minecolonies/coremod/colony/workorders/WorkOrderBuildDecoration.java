@@ -31,7 +31,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     private static final String TAG_SCHEMATIC_MD5     = "schematicMD5";
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
 
-    protected boolean  isMirrored;
+    protected boolean  isBuildingMirrored;
     protected BlockPos buildingLocation;
     protected int      buildingRotation;
     protected String   structureName;
@@ -69,7 +69,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         this.buildingRotation = rotation;
         this.buildingLocation = location;
         this.cleared = false;
-        this.isMirrored = mirror;
+        this.isBuildingMirrored = mirror;
         this.requested = false;
     }
 
@@ -115,7 +115,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
 
         buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
         requested = compound.getBoolean(TAG_IS_REQUESTED);
-        isMirrored = compound.getBoolean(TAG_IS_MIRRORED);
+        isBuildingMirrored = compound.getBoolean(TAG_IS_MIRRORED);
     }
 
     /**
@@ -147,7 +147,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         }
         compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
         compound.setBoolean(TAG_IS_REQUESTED, requested);
-        compound.setBoolean(TAG_IS_MIRRORED, isMirrored);
+        compound.setBoolean(TAG_IS_MIRRORED, isBuildingMirrored);
     }
 
     @Override
@@ -364,6 +364,6 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      */
     public boolean isMirrored()
     {
-        return isMirrored;
+        return isBuildingMirrored;
     }
 }

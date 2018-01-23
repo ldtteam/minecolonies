@@ -17,7 +17,7 @@ public enum PaperwallType implements IStringSerializable
     private static final PaperwallType[] META_LOOKUP = new PaperwallType[values().length];
     static
     {
-        for (PaperwallType enumtype : values())
+        for (final PaperwallType enumtype : values())
         {
             META_LOOKUP[enumtype.getMetadata()] = enumtype;
         }
@@ -43,7 +43,7 @@ public enum PaperwallType implements IStringSerializable
         this.mapColor = mapColorIn;
     }
 
-    public static PaperwallType byMetadata(int meta)
+    public static PaperwallType byMetadata(final int meta)
     {
         int tempMeta = meta;
         if (tempMeta < 0 || tempMeta >= META_LOOKUP.length)

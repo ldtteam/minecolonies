@@ -453,7 +453,7 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
         private static final Type[] META_LOOKUP = new Type[values().length];
         static
         {
-            for (Type enumtype : values())
+            for (final Type enumtype : values())
             {
                 META_LOOKUP[enumtype.getMetadata()] = enumtype;
             }
@@ -479,7 +479,7 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
             this.mapColor = mapColorIn;
         }
 
-        public static Type byMetadata(int meta)
+        public static Type byMetadata(final int meta)
         {
             int tempMeta = meta;
             if (tempMeta < 0 || tempMeta >= META_LOOKUP.length)
