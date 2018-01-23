@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.colony.ColonyManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
@@ -326,7 +326,7 @@ public class Tree
      * Check if the Lj is supposed to cut a tree.
      *
      * @param world      the world it is in.
-     * @param pos        the position a leaf is at.
+     * @param leafPos        the position a leaf is at.
      * @param treesToCut the trees he is supposed to cut.
      * @return false if not.
      */

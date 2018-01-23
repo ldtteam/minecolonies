@@ -28,7 +28,7 @@ public class DeliveryRequestResolverFactory implements IRequestResolverFactory<D
     @Override
     public TypeToken<? extends ILocation> getFactoryInputType()
     {
-        return TypeToken.of(ILocation.class);
+        return TypeConstants.ILOCATION;
     }
 
     @NotNull

@@ -4,13 +4,13 @@
 
     <image source="minecolonies:textures/gui/citizen/colonist_papper_sketch.png" size="190 244"/>
 
-    <switch id="pages" size="100% 200px" pos="0 7">
+    <switch id="pages" size="100% 100%" pos="0 7">
 
-        <view id="pageActions" size="100% 200px" pos="0 7">
+        <view id="pageActions" size="100% 100%" pos="0 7">
             <layout source="minecolonies:gui/citizen/layouts/main.xml"/>
         </view>
 
-        <view id="requestsView" size="100% 200px" pos="0 7">
+        <view id="requestsView" size="100% 100%" pos="0 7">
             <layout source="minecolonies:gui/citizen/layouts/requests.xml"/>
         </view>
 

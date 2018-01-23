@@ -429,6 +429,7 @@ public class InventoryUtils
         final Set<IItemHandler> handlerList = Arrays.stream(EnumFacing.VALUES)
                                                 .filter(facing -> provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
                                                 .map(facing -> provider.getCapability(ITEM_HANDLER_CAPABILITY, facing))
+                                                .filter(Objects::nonNull)
                                                 .collect(Collectors.toSet());
 
         if (provider.hasCapability(ITEM_HANDLER_CAPABILITY, null))
@@ -439,6 +440,8 @@ public class InventoryUtils
                 handlerList.add(nullHandler);
             }
         }
+
+        handlerList.removeIf(Objects::isNull);
 
         return handlerList;
     }

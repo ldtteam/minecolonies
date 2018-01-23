@@ -2,6 +2,8 @@ package com.minecolonies.coremod.commands;
 
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.coremod.commands.colonycommands.*;
+import com.minecolonies.coremod.commands.colonycommands.requestsystem.RSCommand;
+import com.minecolonies.coremod.commands.colonycommands.requestsystem.RSResetCommand;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -27,6 +29,7 @@ public class ColonyCommand extends AbstractSplitCommand
         .put(MakeNotAutoDeletable.DESC, new MakeNotAutoDeletable(MinecoloniesCommand.DESC, ColonyCommand.DESC, MakeNotAutoDeletable.DESC))
         .put(DoRaidNowCommand.DESC, new DoRaidNowCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, DoRaidNowCommand.DESC))
         .put(DoRaidTonightCommand.DESC, new DoRaidTonightCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, DoRaidTonightCommand.DESC))
+        .put(RSCommand.DESC, new RSCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, RSCommand.DESC))
         .build();
 
     /**

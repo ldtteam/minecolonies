@@ -1,13 +1,13 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        inherit="minecolonies:gui/windowBase.xml"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
+        lightbox="false"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
-    <switch id="pages" size="100% 200px" pos="0 7">
+    <switch id="pages" size="100% 100%">
         <view id="pageActions" size="100% 100%">
-            <layout source="minecolonies:gui/layoutWorkerBuildingDefault.xml"/>
+            <layout source="minecolonies:gui/windowworkerbuildingdefault.xml"/>
         </view>
 
         <view id="pageFields" size="100% 100%" pos="0 1">
-
+            <layout source="minecolonies:gui/windowbase.xml"/>
             <label id="AssignmentModeLabel" label="$(com.minecolonies.coremod.gui.workerHuts.farmerHut.AssignmentMode)"
                    pos="20 30"/>
             <button id="assignmentMode" size="60 15" label="$(com.minecolonies.coremod.gui.hiring.off)" pos="50 40"/>
@@ -29,11 +29,6 @@
             </list>
         </view>
     </switch>
-
-    <button id="prevPage" align="TOP_LEFT" size="20 20" pos="10 5" label="&lt;&lt;"/>
-    <button id="nextPage" align="TOP_RIGHT" size="20 20" pos="10 5" label="&gt;&gt;"/>
-
-    <button id="inventory"
-            align="BOTTOM_MIDDLE" size="116 20" pos="0 13"
-            label="$(container.inventory)"/>
+    <buttonimage id="prevPage" align="TOP_LEFT" size="26 8" pos="12 15" source="minecolonies:textures/gui/builderhut/builder_sketch_arrow_left_c.png"/>
+    <buttonimage id="nextPage" align="TOP_RIGHT" size="26 8" pos="12 15" source="minecolonies:textures/gui/builderhut/builder_sketch_arrow_right_c.png"/>
 </window>

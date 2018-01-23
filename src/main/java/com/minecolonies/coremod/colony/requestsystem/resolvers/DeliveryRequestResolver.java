@@ -12,7 +12,9 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +25,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 {
     public DeliveryRequestResolver(
                                     @NotNull final ILocation location,
-                                    @NotNull final IToken token)
+                                    @NotNull final IToken<?> token)
     {
         super(location, token);
     }
@@ -62,7 +64,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @Nullable
     @Override
-    public List<IToken> attemptResolve(
+    public List<IToken<?>> attemptResolve(
                                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
         if (manager.getColony().getWorld().isRemote)
@@ -96,7 +98,6 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         return Lists.newArrayList();
     }
 
-    @Nullable
     @Override
     public void resolve(
                          @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws RuntimeException
@@ -106,7 +107,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @Nullable
     @Override
-    public IRequest getFollowupRequestForCompletion(
+    public IRequest<?> getFollowupRequestForCompletion(
                                                      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> completedRequest)
     {
         return null;
@@ -114,17 +115,17 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @Nullable
     @Override
-    public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
-            throws IllegalArgumentException
+    public IRequest<?> onRequestCancelled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
             final Colony colony = (Colony) manager.getColony();
             final CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
-                                            .stream()
-                                            .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).getTaskQueue().contains(request.getToken()))
-                                            .findFirst()
-                                            .orElse(null);
+                                                  .stream()
+                                                  .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).getTaskQueue().contains(request.getToken()))
+                                                  .findFirst()
+                                                  .orElse(null);
 
             if (freeDeliveryMan == null)
             {
@@ -140,16 +141,21 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         return null;
     }
 
-    @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IToken token)
+    public void onRequestBeingOverruled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+    {
+        onRequestCancelled(manager, request);
+    }
+
+    @Override
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         //We are not scheduling any child requests. So this should never be called.
     }
 
-    @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         //Noop
     }
