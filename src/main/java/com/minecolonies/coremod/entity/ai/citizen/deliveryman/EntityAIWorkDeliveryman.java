@@ -295,16 +295,16 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private BlockPos getWeightedRandom()
     {
         double completeWeight = 0.0;
-        for (AbstractBuilding building : worker.getColony().getBuildingManager().getBuildings().values())
+        for (final AbstractBuilding building : worker.getColony().getBuildingManager().getBuildings().values())
         {
             if (!building.isBeingGathered())
             {
                 completeWeight += building.getPickUpPriority();
             }
         }
-        double r = Math.random() * completeWeight;
+        final double r = Math.random() * completeWeight;
         double countWeight = 0.0;
-        for (AbstractBuilding building : worker.getColony().getBuildingManager().getBuildings().values())
+        for (final AbstractBuilding building : worker.getColony().getBuildingManager().getBuildings().values())
         {
             if (!building.isBeingGathered())
             {
@@ -361,7 +361,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         finallyAssignedTokens.forEach(iToken -> worker.getColony().getRequestManager().reassignRequest(iToken, ImmutableList.of()));
 
-        if (job.getReturning())
+        if (job.isReturning())
         {
             job.setReturning(false);
         }
@@ -400,13 +400,13 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private AIState deliver()
     {
-        if (job.getReturning())
+        if (job.isReturning())
         {
             return DUMPING;
         }
 
         final BuildingDeliveryman deliveryHut = (getOwnBuilding() instanceof BuildingDeliveryman) ? (BuildingDeliveryman) getOwnBuilding() : null;
-        ILocation buildingToDeliver = deliveryHut == null ? null : deliveryHut.getBuildingToDeliver();
+        final ILocation buildingToDeliver = deliveryHut == null ? null : deliveryHut.getBuildingToDeliver();
 
         if (deliveryHut == null)
         {
@@ -513,7 +513,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             final IRequest<? extends Delivery> request = job.getCurrentTask();
             if (request != null)
             {
-                if (job.getReturning())
+                if (job.isReturning())
                 {
                     return DUMPING;
                 }
@@ -595,7 +595,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(null);
             return GATHERING;
         }
-        else if (job.getReturning())
+        else if (job.isReturning())
         {
             ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(null);
             return DUMPING;

@@ -78,7 +78,7 @@ public abstract class AbstractBuildingView implements IRequester
     /**
      * Mirror of the building.
      */
-    private boolean isMirrored;
+    private boolean isBuildingMirrored;
 
     /**
      * The workOrderLevel.
@@ -208,7 +208,7 @@ public abstract class AbstractBuildingView implements IRequester
      */
     public boolean isMirrored()
     {
-        return isMirrored;
+        return isBuildingMirrored;
     }
 
     /**
@@ -277,17 +277,17 @@ public abstract class AbstractBuildingView implements IRequester
         style = ByteBufUtils.readUTF8String(buf);
         schematicName = ByteBufUtils.readUTF8String(buf);
         rotation = buf.readInt();
-        isMirrored = buf.readBoolean();
+        isBuildingMirrored = buf.readBoolean();
 
         loadRequestSystemFromNBT(ByteBufUtils.readTag(buf));
     }
 
-    private void loadRequestSystemFromNBT(NBTTagCompound compound)
+    private void loadRequestSystemFromNBT(final NBTTagCompound compound)
     {
         this.citizensByRequests.clear();
         if (compound.hasKey(TAG_CITIZEN_BY_REQUEST))
         {
-            NBTTagList citizensByRequestList = compound.getTagList(TAG_CITIZEN_BY_REQUEST, Constants.NBT.TAG_COMPOUND);
+            final NBTTagList citizensByRequestList = compound.getTagList(TAG_CITIZEN_BY_REQUEST, Constants.NBT.TAG_COMPOUND);
             NBTUtils.streamCompound(citizensByRequestList).forEach(cbrc -> processIntegerKeyTokenList(cbrc, citizensByRequests));
         }
 
@@ -332,7 +332,7 @@ public abstract class AbstractBuildingView implements IRequester
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
                                                                                                @NotNull final CitizenDataView citizenData,
                                                                                                final Class<R> requestType,
-                                                                                               Predicate<IRequest<? extends R>> filter)
+                                                                                               final Predicate<IRequest<? extends R>> filter)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {

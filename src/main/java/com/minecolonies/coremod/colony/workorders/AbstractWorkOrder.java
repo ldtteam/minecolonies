@@ -247,7 +247,7 @@ public abstract class AbstractWorkOrder
      *
      * @param citizen {@link CitizenData}
      */
-    void setClaimedBy(@Nullable final CitizenData citizen)
+    public void setClaimedBy(@Nullable final CitizenData citizen)
     {
         changed = true;
         claimedBy = (citizen != null) ? citizen.getId() : 0;

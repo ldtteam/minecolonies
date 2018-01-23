@@ -43,8 +43,8 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
             return false;
         }
 
-        Colony colony = (Colony) manager.getColony();
-        CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
+        final Colony colony = (Colony) manager.getColony();
+        final CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
                                         .stream()
                                         .filter(c -> c.getCitizenEntity() != null
                                                 && requestToCheck.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
@@ -70,8 +70,8 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
             return null;
         }
 
-        Colony colony = (Colony) manager.getColony();
-        CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
+        final Colony colony = (Colony) manager.getColony();
+        final CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
                                         .stream()
                                         .filter(c -> c.getCitizenEntity() != null && request.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
                                         .filter(c -> c.getJob() instanceof JobDeliveryman)
@@ -90,7 +90,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
             return null;
         }
 
-        JobDeliveryman job = (JobDeliveryman) freeDeliveryMan.getJob();
+        final JobDeliveryman job = (JobDeliveryman) freeDeliveryMan.getJob();
         job.addRequest(request.getToken());
 
         return Lists.newArrayList();
@@ -119,8 +119,8 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     {
         if (!manager.getColony().getWorld().isRemote)
         {
-            Colony colony = (Colony) manager.getColony();
-            CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
+            final Colony colony = (Colony) manager.getColony();
+            final CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
                                             .stream()
                                             .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).getTaskQueue().contains(request.getToken()))
                                             .findFirst()
@@ -132,7 +132,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
             }
             else
             {
-                JobDeliveryman job = (JobDeliveryman) freeDeliveryMan.getJob();
+                final JobDeliveryman job = (JobDeliveryman) freeDeliveryMan.getJob();
                 job.onTaskDeletion(request.getToken());
             }
         }

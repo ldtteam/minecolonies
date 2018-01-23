@@ -100,7 +100,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             }
 
             boolean isAlreadyInList = false;
-            for(Map.Entry<Predicate<ItemStack>, Integer> entry : tempKeep.entrySet())
+            for(final Map.Entry<Predicate<ItemStack>, Integer> entry : tempKeep.entrySet())
             {
                 if(entry.getKey().test(stack))
                 {
