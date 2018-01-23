@@ -2,7 +2,6 @@ package com.minecolonies.coremod.compatibility.jei.transer;
 
 import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.inventory.CraftingGUIBuilding;
 import com.minecolonies.coremod.network.messages.TransferRecipeCrafingTeachingMessage;
@@ -16,9 +15,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.text.translation.I18n;
 
 import javax.annotation.Nullable;
@@ -28,7 +24,10 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
 {
     private final IRecipeTransferHandlerHelper handlerHelper;
 
-    public PrivateCraftingTeachingTransferHandler(final IRecipeTransferHandlerHelper handlerHelper) {this.handlerHelper = handlerHelper;}
+    public PrivateCraftingTeachingTransferHandler(final IRecipeTransferHandlerHelper handlerHelper)
+    {
+        this.handlerHelper = handlerHelper;
+    }
 
     @Override
     public Class<CraftingGUIBuilding> getContainerClass()
@@ -39,7 +38,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
     @Nullable
     @Override
     public IRecipeTransferError transferRecipe(
-      final CraftingGUIBuilding craftingGUIBuilding, final IRecipeLayout recipeLayout, final EntityPlayer entityPlayer, final boolean b, final boolean b1)
+            final CraftingGUIBuilding craftingGUIBuilding, final IRecipeLayout recipeLayout, final EntityPlayer entityPlayer, final boolean b, final boolean b1)
     {
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
 
@@ -54,10 +53,14 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
         guiIngredients.put(4, ItemStackUtils.EMPTY);
 
         int inputIndex = 0;
-        for (IGuiIngredient<ItemStack> ingredient : itemStackGroup.getGuiIngredients().values()) {
-            if (ingredient.isInput()) {
-                if (!ingredient.getAllIngredients().isEmpty()) {
-                    if (badIndexes.contains(inputIndex)) {
+        for (IGuiIngredient<ItemStack> ingredient : itemStackGroup.getGuiIngredients().values())
+        {
+            if (ingredient.isInput())
+            {
+                if (!ingredient.getAllIngredients().isEmpty())
+                {
+                    if (badIndexes.contains(inputIndex))
+                    {
                         String tooltipMessage = I18n.translateToLocal("jei.tooltip.error.recipe.transfer.too.large.player.inventory");
                         return handlerHelper.createUserErrorForSlots(tooltipMessage, badIndexes);
                     }
@@ -67,7 +70,8 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
             }
         }
 
-        final InventoryCrafting craftMatrix = new InventoryCrafting(new Container() {
+        final InventoryCrafting craftMatrix = new InventoryCrafting(new Container()
+        {
             @Override
             public boolean canInteractWith(final EntityPlayer entityPlayer)
             {
@@ -80,21 +84,8 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
         craftMatrix.setInventorySlotContents(2, guiIngredients.get(3));
         craftMatrix.setInventorySlotContents(3, guiIngredients.get(4));
 
-
-        final IRecipe recipe = CraftingManager.findMatchingRecipe(craftMatrix, craftingGUIBuilding.getWorldObj());
-        if (recipe == null)
+        if (b1)
         {
-            return handlerHelper.createInternalError();
-        }
-
-        final RecipeBook book = MineColonies.proxy.getRecipeBookFromPlayer(entityPlayer);
-        if (craftingGUIBuilding.getWorldObj().getGameRules().getBoolean("doLimitedCrafting") && !craftingGUIBuilding.getPlayer().isCreative()  && !book.isUnlocked(recipe))
-        {
-            String tooltipMessage = I18n.translateToLocal(TranslationConstants.COM_MINECOLONIES_COREMOD_COMPAT_JEI_CRAFTIN_TEACHING_UNKNOWN_RECIPE);
-            return handlerHelper.createUserErrorWithTooltip(tooltipMessage);
-        }
-
-        if (b1) {
             final TransferRecipeCrafingTeachingMessage message = new TransferRecipeCrafingTeachingMessage(guiIngredients);
             MineColonies.getNetwork().sendToServer(message);
         }

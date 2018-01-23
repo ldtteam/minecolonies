@@ -2,9 +2,7 @@ package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.colony.CitizenDataView;
-import net.minecraft.client.util.RecipeBookClient;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -113,11 +111,4 @@ public interface IProxy
     @Nullable
     World getWorld(final int dimension);
 
-    /**
-     * Returns the recipe book from the player.
-     * @param player THe player.
-     * @return The recipe book.
-     */
-    @NotNull
-    RecipeBook getRecipeBookFromPlayer(@NotNull final EntityPlayer player);
 }

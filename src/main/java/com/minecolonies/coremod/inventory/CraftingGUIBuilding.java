@@ -193,16 +193,12 @@ public class CraftingGUIBuilding extends Container
     {
         if (!worldObj.isRemote)
         {
-            EntityPlayerMP entityplayermp = (EntityPlayerMP) player;
-            ItemStack itemstack = ItemStack.EMPTY;
-            IRecipe irecipe = CraftingManager.findMatchingRecipe(craftMatrix, worldObj);
-            if (irecipe != null && (irecipe.isDynamic()
-                    || !worldObj.getGameRules().getBoolean("doLimitedCrafting")
-                    || entityplayermp.getRecipeBook().isUnlocked(irecipe)
-                    || entityplayermp.isCreative()))
+            final EntityPlayerMP entityplayermp = (EntityPlayerMP) player;
+            final ItemStack itemstack = CraftingManager.getInstance().findMatchingRecipe(craftMatrix, worldObj);
+            if (ItemStackUtils.isEmpty(itemstack))
             {
-                this.craftResult.setRecipeUsed(irecipe);
-                itemstack = irecipe.getCraftingResult(this.craftMatrix);
+                super.onCraftMatrixChanged(inventoryIn);
+                return;
             }
 
             this.craftResult.setInventorySlotContents(0, itemstack);

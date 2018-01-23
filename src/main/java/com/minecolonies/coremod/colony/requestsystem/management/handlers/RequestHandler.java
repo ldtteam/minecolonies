@@ -37,8 +37,8 @@ public final class RequestHandler
         final IToken<UUID> token = TokenHandler.generateNewToken(manager);
 
         final IRequest<Request> constructedRequest = manager.getFactoryController()
-                                                       .getNewInstance(TypeToken.of((Class<? extends IRequest<Request>>) RequestMappingHandler.getRequestableMappings()
-                                                                                                                           .get(request.getClass())), request, token, requester);
+                .getNewInstance(TypeToken.of((Class<? extends IRequest<Request>>) RequestMappingHandler.getRequestableMappings()
+                        .get(request.getClass())), request, token, requester);
 
         LogHandler.log("Creating request for: " + request + ", token: " + token + " and output: " + constructedRequest);
 
@@ -50,7 +50,7 @@ public final class RequestHandler
     public static void registerRequest(final IStandardRequestManager manager, final IRequest<?> request)
     {
         if (manager.getRequestIdentitiesDataStore().getIdentities().containsKey(request.getToken()) ||
-              manager.getRequestIdentitiesDataStore().getIdentities().containsValue(request))
+                manager.getRequestIdentitiesDataStore().getIdentities().containsValue(request))
         {
             throw new IllegalArgumentException("The given request is already known to this manager");
         }
@@ -134,17 +134,17 @@ public final class RequestHandler
             }
 
             Collection<IRequestResolver<?>> resolversForRequestType = manager.getRequestableTypeRequestResolverAssignmentDataStore()
-                                                                        .getAssignments()
-                                                                        .get(requestType)
-                                                                        .stream()
-                                                                        .map(iToken -> ResolverHandler.getResolver(manager, iToken))
-                                                                        .collect(Collectors.toList());
+                    .getAssignments()
+                    .get(requestType)
+                    .stream()
+                    .map(iToken -> ResolverHandler.getResolver(manager, iToken))
+                    .collect(Collectors.toList());
 
             resolversForRequestType = resolversForRequestType.stream()
-                                        .filter(r -> r.getRequestType().isSupertypeOf(request.getRequestType()))
-                                        .filter(r -> !failedResolvers.contains(r.getRequesterId()))
-                                        .sorted(Comparator.comparing(r -> -1 * r.getPriority()))
-                                        .collect(Collectors.toSet());
+                    .filter(r -> r.getRequestType().isSupertypeOf(request.getRequestType()))
+                    .filter(r -> !failedResolvers.contains(r.getRequesterId()))
+                    .sorted(Comparator.comparing(r -> -1 * r.getPriority()))
+                    .collect(Collectors.toSet());
 
             for (final IRequestResolver<?> resolver : resolversForRequestType)
             {
@@ -177,7 +177,7 @@ public final class RequestHandler
                 ResolverHandler.addRequestToResolver(manager, resolver, request);
 
                 for (final IToken<?> childRequestToken :
-                  attemptResult)
+                        attemptResult)
                 {
                     @SuppressWarnings(RAWTYPES) final IRequest childRequest = RequestHandler.getRequest(manager, childRequestToken);
 

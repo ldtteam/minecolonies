@@ -17,8 +17,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
-
 /**
  * Used to represent requests, of type R, made to the internal market of the colony.
  *
@@ -43,7 +41,7 @@ public interface IRequest<R extends IRequestable>
      * @param <T> generic token.
      * @return the token representing the request outside of the management system.
      */
-    <T extends IToken<?>> T getToken();
+    <T extends IToken> T getToken();
 
     /**
      * Used to determine which type of request this is.
@@ -121,7 +119,7 @@ public interface IRequest<R extends IRequestable>
      * @return The parent of this request, or null if it has no parent.
      */
     @Nullable
-    <T extends IToken<?>> T getParent();
+    <T extends IToken> T getParent();
 
     /**
      * Method used to set the parent of a request.
@@ -129,7 +127,7 @@ public interface IRequest<R extends IRequestable>
      * @param <T>    generic token.
      * @param parent The new parent, or null to clear the existing one.
      */
-    <T extends IToken<?>> void setParent(@Nullable T parent);
+    <T extends IToken> void setParent(@Nullable T parent);
 
     /**
      * Returns true if this request has a parent, false if not.
@@ -144,7 +142,7 @@ public interface IRequest<R extends IRequestable>
      * @param <T>   generic token.
      * @param child The new child request to add.
      */
-    <T extends IToken<?>> void addChild(@NotNull T child);
+    <T extends IToken> void addChild(@NotNull T child);
 
     /**
      * Method to add multiple children in a single call.
@@ -152,8 +150,7 @@ public interface IRequest<R extends IRequestable>
      * @param <T>      generic token.
      * @param children An array of children to add.
      */
-    @SuppressWarnings(UNCHECKED)
-    <T extends IToken<?>> void addChildren(@NotNull T... children);
+    <T extends IToken> void addChildren(@NotNull T... children);
 
     /**
      * Method to add multiple children in a single call.
@@ -161,7 +158,7 @@ public interface IRequest<R extends IRequestable>
      * @param <T>      generic token.
      * @param children A collection of children to add.
      */
-    <T extends IToken<?>> void addChildren(@NotNull Collection<T> children);
+    <T extends IToken> void addChildren(@NotNull Collection<T> children);
 
     /**
      * Method used to remove a single Child.
@@ -169,7 +166,7 @@ public interface IRequest<R extends IRequestable>
      * @param <T>   generic token.
      * @param child The new child request to remove.
      */
-    <T extends IToken<?>> void removeChild(@NotNull T child);
+    <T extends IToken> void removeChild(@NotNull T child);
 
     /**
      * Method to remove multiple children in a single call.
@@ -177,8 +174,7 @@ public interface IRequest<R extends IRequestable>
      * @param <T>      generic token.
      * @param children An array of children to remove.
      */
-    @SuppressWarnings(UNCHECKED)
-    <T extends IToken<?>> void removeChildren(@NotNull T... children);
+    <T extends IToken> void removeChildren(@NotNull T... children);
 
     /**
      * Method to remove multiple children in a single call.
@@ -186,7 +182,7 @@ public interface IRequest<R extends IRequestable>
      * @param <T>      generic token.
      * @param children A collection of children to remove.
      */
-    <T extends IToken<?>> void removeChildren(@NotNull Collection<T> children);
+    <T extends IToken> void removeChildren(@NotNull Collection<T> children);
 
     /**
      * Method to check if this request has children.
@@ -202,7 +198,7 @@ public interface IRequest<R extends IRequestable>
      * @return An immutable collection of the children of this request.
      */
     @NotNull
-    ImmutableCollection<IToken<?>> getChildren();
+    ImmutableCollection<IToken> getChildren();
 
     /**
      * Method called by a child state to indicate that its state has been updated.
@@ -210,7 +206,7 @@ public interface IRequest<R extends IRequestable>
      * @param manager The manager that caused the update on the child.
      * @param child   The child that was updated.
      */
-    void childStateUpdated(@NotNull IRequestManager manager, @NotNull IToken<?> child);
+    void childStateUpdated(@NotNull IRequestManager manager, @NotNull IToken child);
 
     /**
      * Method used to indicate that the result of this request can be delivered.
