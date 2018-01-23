@@ -325,7 +325,12 @@ public abstract class AbstractBuildingView implements IRequester
     @SuppressWarnings(RAWTYPES)
     public ImmutableList<IRequest> getOpenRequests(@NotNull final CitizenDataView data)
     {
-        if (!getOpenRequestsByCitizen().containsKey(data.getId()))
+        if (data == null || getColony() == null || getColony().getRequestManager() == null)
+        {
+            return  ImmutableList.of();
+        }
+
+        if (!citizensByRequests.containsKey(data.getId()))
         {
             return ImmutableList.of();
         }

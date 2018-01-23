@@ -169,7 +169,17 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
             Integer currentAttempt = assignedRequests.get(t);
 
             this.setCurrent(t);
-            final IToken<?> resultingResolver = manager.reassignRequest(t, blackList);
+            final IToken<?> resultingResolver;
+
+            try {
+                resultingResolver = manager.reassignRequest(t, blackList);
+            } catch (Exception ex)
+            {
+                assignedRequests.remove(t);
+                delays.remove(t);
+                return false;
+            }
+
             this.setCurrent(null);
 
             assignedRequests.put(t, ++currentAttempt);
