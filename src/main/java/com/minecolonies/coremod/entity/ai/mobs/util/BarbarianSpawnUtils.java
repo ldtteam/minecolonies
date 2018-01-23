@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.mobs.util;
 
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -167,6 +168,7 @@ public final class BarbarianSpawnUtils
             final int x = spawnLocation.getX();
             final int y = spawnLocation.getY();
             final int z = spawnLocation.getZ();
+            Log.getLogger().info("[Spawning]: Spawning: " + x + " " + z);
 
             IntStream.range(0, numberOfSpawns).forEach(theInteger ->
             {
@@ -176,6 +178,7 @@ public final class BarbarianSpawnUtils
                 {
                     setBarbarianEquipment(entity);
                     entity.setLocationAndAngles(x, y, z, MathHelper.wrapDegrees(world.rand.nextFloat() * WHOLE_CIRCLE), 0.0F);
+                    Log.getLogger().info("[Entity]: Spawning: " + x + " " + z);
                     CompatibilityUtils.spawnEntity(world, entity);
                 }
             });
