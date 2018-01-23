@@ -44,13 +44,13 @@ public class StructureName
      */
     public StructureName(@NotNull final String prefix, final String style, @NotNull final String schematic)
     {
-        String name = prefix;
+        final StringBuilder name = new StringBuilder(prefix);
         if (style != null && !style.isEmpty())
         {
-            name = name + Structures.SCHEMATICS_SEPARATOR + style;
+            name.append(Structures.SCHEMATICS_SEPARATOR).append(style);
         }
-        name = name + Structures.SCHEMATICS_SEPARATOR + schematic;
-        init(name);
+        name.append(Structures.SCHEMATICS_SEPARATOR).append(schematic);
+        init(name.toString());
     }
 
     /**

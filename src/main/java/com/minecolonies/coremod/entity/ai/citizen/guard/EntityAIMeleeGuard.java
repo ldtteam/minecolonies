@@ -118,7 +118,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     {
         if (checkForToolOrWeapon(ToolType.SWORD))
         {
-            return AIState.GUARD_SEARCH_TARGET;
+            return GUARD_SEARCH_TARGET;
         }
         InventoryFunctions.matchFirstInProviderWithSimpleAction(worker,
           stack -> !ItemStackUtils.isEmpty(stack)
@@ -137,7 +137,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     {
         if (worker.getColony() == null)
         {
-            return AIState.GUARD_GATHERING;
+            return GUARD_GATHERING;
         }
 
         if (huntDownlastAttacker())
@@ -150,7 +150,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             targetEntity = null;
             worker.addExperience(EXP_PER_MOD_DEATH);
             worker.setAIMoveSpeed((float) 1.0D);
-            return AIState.GUARD_GATHERING;
+            return GUARD_GATHERING;
         }
 
         if (worker.getEntitySenses().canSee(targetEntity) && worker.getDistance(targetEntity) <= MIN_ATTACK_DISTANCE)
@@ -163,26 +163,26 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
 
             if (killedEnemy)
             {
-                return AIState.GUARD_GATHERING;
+                return GUARD_GATHERING;
             }
 
             if (attacksExecuted >= getMaxAttacksUntilRestock())
             {
-                return AIState.GUARD_RESTOCK;
+                return GUARD_RESTOCK;
             }
 
-            return AIState.GUARD_HUNT_DOWN_TARGET;
+            return GUARD_HUNT_DOWN_TARGET;
         }
 
         if (shouldReturnToTarget(targetEntity.getPosition(), FOLLOW_RANGE))
         {
-            return AIState.GUARD_PATROL;
+            return GUARD_PATROL;
         }
 
         worker.setAIMoveSpeed((float) (BASE_FOLLOW_SPEED + BASE_FOLLOW_SPEED_MULTIPLIER * worker.getCitizenData().getLevel()));
         worker.isWorkerAtSiteWithMove(targetEntity.getPosition(), (int) MIN_ATTACK_DISTANCE);
 
-        return AIState.GUARD_SEARCH_TARGET;
+        return GUARD_SEARCH_TARGET;
     }
 
     private boolean attackEntity(@NotNull final EntityLivingBase entityToAttack, final float baseDamage)

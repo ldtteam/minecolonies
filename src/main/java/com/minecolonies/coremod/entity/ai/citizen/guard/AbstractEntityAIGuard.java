@@ -220,7 +220,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     {
         if (walkToBuilding())
         {
-            return AIState.GUARD_RESTOCK;
+            return GUARD_RESTOCK;
         }
 
         final AbstractBuildingWorker workBuilding = getOwnBuilding();
@@ -252,7 +252,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
             }
         }
         attacksExecuted = 0;
-        return AIState.GUARD_SEARCH_TARGET;
+        return GUARD_SEARCH_TARGET;
     }
 
     @Override
@@ -308,7 +308,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     {
         if (entityList.isEmpty())
         {
-            return AIState.GUARD_PATROL;
+            return GUARD_PATROL;
         }
 
         final Entity entity = entityList.get(0);
@@ -326,11 +326,11 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                     {
                         targetEntity = (EntityLivingBase) entity;
                         worker.getNavigator().clearPath();
-                        return AIState.GUARD_HUNT_DOWN_TARGET;
+                        return GUARD_HUNT_DOWN_TARGET;
                     }
                     entityList.remove(0);
                     setDelay(BASE_DELAY);
-                    return AIState.GUARD_GET_TARGET;
+                    return GUARD_GET_TARGET;
                 }
                 else
                 {
@@ -338,7 +338,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
 
                     worker.getNavigator().clearPath();
                     targetEntity = (EntityLivingBase) entity;
-                    return AIState.GUARD_HUNT_DOWN_TARGET;
+                    return GUARD_HUNT_DOWN_TARGET;
                 }
             }
 
@@ -350,7 +350,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
 
         entityList.remove(0);
         setDelay(BASE_DELAY);
-        return AIState.GUARD_GET_TARGET;
+        return GUARD_GET_TARGET;
     }
 
     /**
@@ -363,7 +363,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         if (huntDownlastAttacker())
         {
             targetEntity = this.worker.getLastAttackedEntity();
-            return AIState.GUARD_HUNT_DOWN_TARGET;
+            return GUARD_HUNT_DOWN_TARGET;
         }
 
         if (targetEntity == null)
@@ -377,7 +377,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
 
         if (targetEntity != null && targetEntity.isEntityAlive() && worker.getEntitySenses().canSee(targetEntity))
         {
-            return AIState.GUARD_HUNT_DOWN_TARGET;
+            return GUARD_HUNT_DOWN_TARGET;
         }
 
         setDelay(BASE_DELAY);
@@ -390,12 +390,12 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
             else
             {
                 currentSearchDistance = START_SEARCH_DISTANCE;
-                return AIState.GUARD_PATROL;
+                return GUARD_PATROL;
             }
 
-            return AIState.GUARD_SEARCH_TARGET;
+            return GUARD_SEARCH_TARGET;
         }
-        return AIState.GUARD_GET_TARGET;
+        return GUARD_GET_TARGET;
     }
 
     public boolean huntDownlastAttacker()
@@ -474,7 +474,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
             }
         }
 
-        return AIState.GUARD_SEARCH_TARGET;
+        return GUARD_SEARCH_TARGET;
     }
 
     /**
@@ -493,7 +493,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
             if (pos != null)
             {
                 currentPathTarget = pos;
-                return AIState.GUARD_SEARCH_TARGET;
+                return GUARD_SEARCH_TARGET;
             }
         }
         else if (building.getTask().equals(AbstractBuildingGuards.Task.GUARD))
@@ -506,7 +506,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                 pos = building.getLocation();
             }
             currentPathTarget = pos;
-            return AIState.GUARD_SEARCH_TARGET;
+            return GUARD_SEARCH_TARGET;
         }
         else if (building.getTask().equals(AbstractBuildingGuards.Task.FOLLOW))
         {
@@ -529,12 +529,12 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                 building.setTask(AbstractBuildingGuards.Task.GUARD);
             }
             currentPathTarget = pos;
-            return AIState.GUARD_SEARCH_TARGET;
+            return GUARD_SEARCH_TARGET;
         }
         worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.patrolling"));
 
         currentPathTarget = getRandomBuilding();
-        return AIState.GUARD_SEARCH_TARGET;
+        return GUARD_SEARCH_TARGET;
     }
 
     /**

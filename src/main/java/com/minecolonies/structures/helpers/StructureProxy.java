@@ -14,6 +14,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.Constants.ROTATE_ONCE;
+import static com.minecolonies.api.util.constant.Constants.ROTATE_THREE_TIMES;
+import static com.minecolonies.api.util.constant.Constants.ROTATE_TWICE;
+
 /**
  * Proxy class translating the structures method to something we can use.
  */
@@ -212,13 +216,13 @@ public class StructureProxy
         final Rotation rotation;
         switch (times)
         {
-            case 1:
+            case ROTATE_ONCE:
                 rotation = Rotation.CLOCKWISE_90;
                 break;
-            case 2:
+            case ROTATE_TWICE:
                 rotation = Rotation.CLOCKWISE_180;
                 break;
-            case 3:
+            case ROTATE_THREE_TIMES:
                 rotation = Rotation.COUNTERCLOCKWISE_90;
                 break;
             default:
@@ -308,15 +312,15 @@ public class StructureProxy
         if (!foundHut)
         {
             BlockPos tempSize = size;
-            if (rotation == 1)
+            if (rotation == ROTATE_ONCE)
             {
                 tempSize = new BlockPos(-size.getX(), size.getY(), size.getZ());
             }
-            if (rotation == 2)
+            if (rotation == ROTATE_TWICE)
             {
                 tempSize = new BlockPos(-size.getX(), size.getY(), -size.getZ());
             }
-            if (rotation == 3)
+            if (rotation == ROTATE_THREE_TIMES)
             {
                 tempSize = new BlockPos(size.getX(), size.getY(), -size.getZ());
             }
