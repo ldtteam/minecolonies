@@ -18,8 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.RETRIEVE_OFF;
-import static com.minecolonies.api.util.constant.TranslationConstants.RETRIEVE_ON;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON;
 
 /**
  * Window for the guardTower hut.
@@ -78,8 +78,8 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     private static final String VIEW_PAGES                      = "pages";
     private static final String AUTO                            = LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.modeA");
     private static final String MANUAL                          = LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.modeM");
-    private static final String ON                              = LanguageHandler.format(RETRIEVE_ON);
-    private static final String OFF                             = LanguageHandler.format(RETRIEVE_OFF);
+    private static final String ON                              = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON);
+    private static final String OFF                             = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF);
     private static final String HUT_GUARD_TOWER_RESOURCE_SUFFIX = ":gui/windowhutguardtower.xml";
     /**
      * Buttons used in the application.

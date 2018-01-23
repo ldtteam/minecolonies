@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Pane;
@@ -10,7 +11,6 @@ import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.BuildingLumberjack;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.network.messages.LumberjackSaplingSelectorMessage;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -49,12 +49,12 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     /**
      * String describing on for the gui.
      */
-    private static final String ON = LanguageHandler.format(RETRIEVE_ON);
+    private static final String ON = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON);
 
     /**
      * String describing off for the gui.
      */
-    private static final String OFF = LanguageHandler.format(RETRIEVE_OFF);
+    private static final String OFF = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF);
 
     /**
      * Id of the pages view.

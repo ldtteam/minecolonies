@@ -73,4 +73,38 @@ public class Delivery implements IRequestable
 
         return new Delivery(start, target, stack);
     }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof Delivery))
+        {
+            return false;
+        }
+
+        final Delivery delivery = (Delivery) o;
+
+        if (!getStart().equals(delivery.getStart()))
+        {
+            return false;
+        }
+        if (!getTarget().equals(delivery.getTarget()))
+        {
+            return false;
+        }
+        return ItemStackUtils.compareItemStacksIgnoreStackSize(getStack(), delivery.getStack());
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = getStart().hashCode();
+        result = 31 * result + getTarget().hashCode();
+        result = 31 * result + getStack().hashCode();
+        return result;
+    }
 }

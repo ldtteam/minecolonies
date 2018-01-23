@@ -82,9 +82,8 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
         final IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
         final ILocation location = controller.deserialize(nbt.getCompoundTag(NBT_LOCATION));
 
-        final Set<IToken> assignedRequests =
-          NBTUtils.streamCompound(nbt.getTagList(NBT_ASSIGNED_REQUESTS, Constants.NBT.TAG_COMPOUND)).map(c -> (IToken) controller.deserialize(c)).collect(
-            Collectors.toSet());
+        final Set<IToken<?>> assignedRequests =
+          NBTUtils.streamCompound(nbt.getTagList(NBT_ASSIGNED_REQUESTS, Constants.NBT.TAG_COMPOUND)).map(c -> (IToken<?>) controller.deserialize(c)).collect(Collectors.toSet());
 
         final StandardPlayerRequestResolver resolver = new StandardPlayerRequestResolver(location, token);
         resolver.setAllAssignedRequests(assignedRequests);

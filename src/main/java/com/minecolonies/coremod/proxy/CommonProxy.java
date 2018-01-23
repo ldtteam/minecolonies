@@ -15,8 +15,11 @@ import com.minecolonies.coremod.inventory.GuiHandler;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.*;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -280,5 +283,12 @@ public class CommonProxy implements IProxy
     private int getNextEntityId()
     {
         return nextEntityId++;
+    }
+
+    @NotNull
+    @Override
+    public RecipeBook getRecipeBookFromPlayer(@NotNull final EntityPlayer player)
+    {
+        return ((EntityPlayerMP) player).getRecipeBook();
     }
 }

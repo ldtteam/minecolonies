@@ -57,9 +57,10 @@ entity.fisherman.messageWaterTooFar=Fisherman's hut is too far from water!
 entity.minecolonies.Barbarian.name=Barbarian
 entity.minecolonies.ArcherBarbarian.name=Archer Barbarian
 entity.minecolonies.ChiefBarbarian.name=Chief Barbarian
-death.attack.Barbarian=%d was Sliced & Diced by a Barbarian!
-death.attack.ChiefBarbarian=%d was Macerated by a Great Chief!
-death.attack.ArcherBarbarian=%d was ravaged by an Archer Barbarian
+death.attack.entity.Barbarian=%d was Sliced & Diced by a Barbarian!
+death.attack.entity.ChiefBarbarian=%d was Macerated by a Great Chief!
+death.attack.entity.ArcherBarbarian=%d was ravaged by an Archer Barbarian
+entity.ArcherBarbarian.name=Barbarian Archer
 achievement.supply=A new start
 achievement.supply.desc=Get supplies
 achievement.wandofbuilding=Wand of Building
@@ -575,6 +576,13 @@ event.minecolonies.raidMessage3=Buckle up cowboy! There's some darn raiders comm
 event.minecolonies.raidMessage4=A huge horde of raiders is commin' your way, and they're not here to play!
 com.minecolonies.coremod.gui.workerHuts.toggleAllOn=Toggle all (on)
 com.minecolonies.coremod.gui.workerHuts.toggleAllOff=Toggle all (off)
+com.minecolonies.coremod.gui.recipe.remove=Remove
+com.minecolonies.coremod.gui.workerHuts.crafting=Teach recipe
+com.minecolonies.coremod.gui.recipe.done=Succesfully saved recipe!
+com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
+com.minecolonies.coremod.resolvers.crafter.private=Crafting
+
+com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe=You have not learned this recipe yet!
 
 com.minecolonies.coremod.gui.townHall.allies=Allies:
 com.minecolonies.coremod.gui.townHall.feuds=Feuds:
