@@ -1622,6 +1622,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         return request.getChildren()
                  .stream()
                  .map(getColony().getRequestManager()::getRequestForToken)
+                 .filter(Objects::nonNull)
                  .filter(request1 -> request1.getRequest() instanceof IDeliverable)
                  .map(request1 -> (IRequest<? extends IDeliverable>) request1)
                  .collect(Collectors.toList());
