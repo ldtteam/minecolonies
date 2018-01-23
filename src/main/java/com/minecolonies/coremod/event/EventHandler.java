@@ -214,7 +214,7 @@ public class EventHandler
         }
     }
 
-    static boolean onTownHallPlaced(@NotNull final World world, @NotNull final EntityPlayer player, final BlockPos pos)
+    protected static boolean onTownHallPlaced(@NotNull final World world, @NotNull final EntityPlayer player, final BlockPos pos)
     {
         IColony colony = ColonyManager.getIColonyByOwner(world, player);
         if (colony != null)

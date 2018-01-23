@@ -78,8 +78,8 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
     @Override
     public ImmutableCollection<IRequestResolver<?>> getResolvers()
     {
-        ImmutableCollection<IRequestResolver<?>> supers = super.getResolvers();
-        ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
+        final ImmutableCollection<IRequestResolver<?>> supers = super.getResolvers();
+        final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
 
         builder.addAll(supers);
         builder.add(new DeliveryRequestResolver(getRequester().getRequesterLocation(),

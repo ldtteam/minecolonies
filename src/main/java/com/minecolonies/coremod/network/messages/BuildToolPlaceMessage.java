@@ -249,7 +249,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
             building.setRotation(rotation);
             if (mirror)
             {
-                building.setMirror();
+                building.invertMirror();
             }
         }
     }

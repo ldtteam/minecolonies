@@ -63,7 +63,7 @@ public class BuildingCook extends AbstractBuildingWorker
     /**
      * Is true when the Cook put something in the oven.
      */
-    private boolean isSomethingInOven = true;
+    private boolean isOvenFull = true;
 
     /**
      * Instantiates a new cook building.
@@ -128,7 +128,7 @@ public class BuildingCook extends AbstractBuildingWorker
             furnacesTagList.appendTag(furnaceCompound);
         }
         compound.setTag(TAG_FURNACES, furnacesTagList);
-        compound.setBoolean(TAG_COOKING, isSomethingInOven);
+        compound.setBoolean(TAG_COOKING, isOvenFull);
     }
 
     @Override
@@ -140,7 +140,7 @@ public class BuildingCook extends AbstractBuildingWorker
         {
             furnaces.add(NBTUtil.getPosFromTag(furnaceTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
         }
-        isSomethingInOven = compound.getBoolean(TAG_COOKING);
+        isOvenFull = compound.getBoolean(TAG_COOKING);
     }
 
     @Override
@@ -161,7 +161,7 @@ public class BuildingCook extends AbstractBuildingWorker
      */
     public boolean isSomethingInOven()
     {
-        return isSomethingInOven;
+        return isOvenFull;
     }
 
     /**
@@ -171,7 +171,7 @@ public class BuildingCook extends AbstractBuildingWorker
      */
     public void setIsSomethingInOven(final boolean set)
     {
-        isSomethingInOven = set;
+        isOvenFull = set;
     }
 
     /**

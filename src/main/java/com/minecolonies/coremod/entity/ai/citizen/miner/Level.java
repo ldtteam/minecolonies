@@ -136,8 +136,8 @@ public class Level
 
         final boolean hasDoubles = compound.hasKey(TAG_LADDERX, Constants.NBT.TAG_DOUBLE);
 
-        int ladderX;
-        int ladderZ;
+        final int ladderX;
+        final int ladderZ;
         if (hasDoubles)
         {
             ladderX = MathHelper.floor(compound.getDouble(TAG_LADDERX));

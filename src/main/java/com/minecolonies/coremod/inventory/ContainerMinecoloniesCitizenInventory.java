@@ -127,7 +127,7 @@ public class ContainerMinecoloniesCitizenInventory extends Container
      *                 {@link #inventorySlots}.
      */
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
+    public ItemStack transferStackInSlot(final EntityPlayer playerIn, final int index)
     {
         final Slot slot = this.inventorySlots.get(index);
 
@@ -168,7 +168,7 @@ public class ContainerMinecoloniesCitizenInventory extends Container
      * Called when the container is closed.
      */
     @Override
-    public void onContainerClosed(EntityPlayer playerIn)
+    public void onContainerClosed(final EntityPlayer playerIn)
     {
         super.onContainerClosed(playerIn);
         this.chestInventory.closeInventory(playerIn);
@@ -177,7 +177,7 @@ public class ContainerMinecoloniesCitizenInventory extends Container
     /**
      * Determines whether supplied player can use this container
      */
-    public boolean canInteractWith(EntityPlayer playerIn)
+    public boolean canInteractWith(final EntityPlayer playerIn)
     {
         return this.chestInventory.isUsableByPlayer(playerIn);
     }

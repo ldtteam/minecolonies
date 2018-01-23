@@ -130,7 +130,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
         final ItemStack itemStackToTake = message.itemStack.copy();
         ItemStackUtils.setSize(itemStackToTake, message.quantity);
 
-        ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(citizen.getInventoryCitizen()), itemStackToTake);
+        final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(citizen.getInventoryCitizen()), itemStackToTake);
         if (!isCreative)
         {
             int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);
