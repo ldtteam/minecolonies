@@ -27,7 +27,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     protected final EntityCreature entity;
     protected final World          world;
     protected final double         speed;
-    protected final Colony         colony;
+    protected Colony         colony;
     /**
      * The navigator for this entity.
      */
@@ -51,7 +51,6 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         this.entity = creatureIn;
         this.speed = speedIn;
         this.world = creatureIn.getEntityWorld();
-        this.colony = ColonyManager.getClosestColony(world, creatureIn.getPosition());
         this.newNavigator = new PathNavigate(entity, world);
         updateNavigatorField();
         this.newNavigator.setCanSwim(true);
@@ -156,12 +155,12 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
      */
     private BlockPos getRandomBuilding()
     {
-        if (colony == null)
+        if (getColony() == null)
         {
             return null;
         }
 
-        final Collection<AbstractBuilding> buildingList = colony.getBuildingManager().getBuildings().values();
+        final Collection<AbstractBuilding> buildingList = getColony().getBuildingManager().getBuildings().values();
         final Object[] buildingArray = buildingList.toArray();
         if (buildingArray.length != 0)
         {
@@ -176,15 +175,12 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         }
     }
 
-    /**
-     * returns the center of the colony
-     *
-     * @return BlockPos of the center
-     */
-    @Nullable
-    protected BlockPos getPosition()
+    @NotNull
+    public Colony getColony()
     {
-        colony.getBuildingManager().getBuildings();
-        return colony.getCenter();
+        if (colony == null)
+            colony = ColonyManager.getColony(world, entity.getPosition());
+
+        return colony;
     }
 }
