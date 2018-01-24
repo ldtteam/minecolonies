@@ -108,7 +108,8 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
      *
      * @return Boolean value of whether or not to continue executing
      */
-    public boolean continueExecuting()
+    @Override
+    public boolean shouldContinueExecuting()
     {
         return !this.entity.getNavigator().noPath() && this.entity.isEntityAlive();
     }
@@ -116,6 +117,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     /**
      * Is executed when the ai Starts Executing
      */
+    @Override
     public void startExecuting()
     {
         updateNavigatorField();
@@ -178,7 +180,9 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     public Colony getColony()
     {
         if (colony == null)
+        {
             colony = ColonyManager.getClosestColony(world, entity.getPosition());
+        }
 
         return colony;
     }
