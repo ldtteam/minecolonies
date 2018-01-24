@@ -148,11 +148,13 @@ public final class ResolverHandler
             throw new IllegalArgumentException("The given resolver and the resolver that is registered with its token are not the same.");
         }
 
-        if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(registeredResolver.getRequesterId()) && manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(registeredResolver.getRequesterId()).size() > 0)
+        if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments()
+                .containsKey(registeredResolver.getRequesterId())
+                && !manager.getRequestResolverRequestAssignmentDataStore().getAssignments()
+                .get(registeredResolver.getRequesterId()).isEmpty())
         {
             throw new IllegalArgumentException("Cannot remove a resolver that is still in use. Reassign all registered requests before removing");
         }
-
 
         removeResolverInternal(manager, resolver);
     }
@@ -190,7 +192,7 @@ public final class ResolverHandler
         requestTypes.remove(TypeConstants.OBJECT);
         requestTypes.forEach(c -> {
             LogHandler.log("Removing resolver: " + resolver + " with request type: " + c);
-            manager.getRequestableTypeRequestResolverAssignmentDataStore().getAssignments().get(c).remove(resolver);
+            manager.getRequestableTypeRequestResolverAssignmentDataStore().getAssignments().get(c).remove(resolver.getRequesterId());
         });
     }
 
@@ -303,8 +305,7 @@ public final class ResolverHandler
         RequestHandler.getRequest(manager, requestToken);
 
         @Nullable
-        IToken<?> resolverToken = manager.getRequestResolverRequestAssignmentDataStore().getAssignmentForValue(requestToken);
-
+        final IToken<?> resolverToken = manager.getRequestResolverRequestAssignmentDataStore().getAssignmentForValue(requestToken);
         if (resolverToken == null)
         {
             throw new IllegalArgumentException("The given request: " + requestToken + " is not resolved.");

@@ -3,6 +3,7 @@ package com.minecolonies.coremod;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
+import com.minecolonies.coremod.colony.BarbarianSpawnEventHandler;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
@@ -50,6 +51,7 @@ public class MineColonies
 
     static
     {
+        MinecraftForge.EVENT_BUS.register(new BarbarianSpawnEventHandler());
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         MinecraftForge.EVENT_BUS.register(new FMLEventHandler());
     }

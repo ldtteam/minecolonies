@@ -54,6 +54,7 @@ entity.miner.messageNeedBetterTools=I need better tools!
 entity.miner.messageMoreBlocks=I need more %s!
 entity.miner.messageRequiresBetterHut=Please upgrade my hut to dig deeper!
 entity.fisherman.messageWaterTooFar=Fisherman's hut is too far from water!
+entity.Barbarian.name=Barbarian
 entity.minecolonies.Barbarian.name=Barbarian
 entity.minecolonies.ArcherBarbarian.name=Archer Barbarian
 entity.minecolonies.ChiefBarbarian.name=Chief Barbarian
