@@ -175,7 +175,7 @@ public final class BarbarianSpawnUtils
                 if (entity != null)
                 {
                     setBarbarianEquipment(entity);
-                    entity.setPositionAndRotation(x, y, z, (float) MathHelper.wrapDegrees(world.rand.nextDouble() * WHOLE_CIRCLE), 0.0F);
+                    entity.setPositionAndRotation(x, y + 1, z, (float) MathHelper.wrapDegrees(world.rand.nextDouble() * WHOLE_CIRCLE), 0.0F);
                     entity.applyInternalEntityAttributes();
                     CompatibilityUtils.spawnEntity(world, entity);
                 }

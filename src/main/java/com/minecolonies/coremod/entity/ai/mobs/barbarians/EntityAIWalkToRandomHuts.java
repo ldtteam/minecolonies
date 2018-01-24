@@ -175,11 +175,10 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         }
     }
 
-    @NotNull
     public Colony getColony()
     {
         if (colony == null)
-            colony = ColonyManager.getColony(world, entity.getPosition());
+            colony = ColonyManager.getClosestColony(world, entity.getPosition());
 
         return colony;
     }
