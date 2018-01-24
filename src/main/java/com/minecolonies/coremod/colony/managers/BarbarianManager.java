@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.util.EnumFacing;
@@ -137,7 +136,6 @@ public class BarbarianManager implements IBarbarianManager
         final double x = Math.round(thePos.getX() + 3 * Math.sin(rads));
         final double z = Math.round(thePos.getZ() + 3 * Math.cos(rads));
 
-        Log.getLogger().info("Spawning at: " + x + " " + z);
         return new BlockPos(x, thePos.getY(), z);
     }
 
