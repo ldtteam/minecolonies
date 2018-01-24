@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.mobs.util;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Colony;
@@ -165,7 +166,7 @@ public final class BarbarianSpawnUtils
         {
 
             final int x = spawnLocation.getX();
-            final int y = spawnLocation.getY();
+            final int y = BlockPosUtil.getFloor(spawnLocation, world).getY();
             final int z = spawnLocation.getZ();
 
             IntStream.range(0, numberOfSpawns).forEach(theInteger ->

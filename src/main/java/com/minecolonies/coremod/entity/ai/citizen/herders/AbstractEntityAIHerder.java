@@ -488,8 +488,6 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         if (!walkingToAnimal(animal) && worker.getHeldItemMainhand() != null && animal != null)
         {
-            new DamageSource(worker.getName());
-
             worker.swingArm(EnumHand.MAIN_HAND);
             animal.attackEntityFrom(new DamageSource(worker.getName()), (float) BUTCHERING_ATTACK_DAMAGE);
 
