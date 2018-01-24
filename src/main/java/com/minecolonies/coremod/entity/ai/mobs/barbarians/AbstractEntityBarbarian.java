@@ -232,11 +232,6 @@ public abstract class AbstractEntityBarbarian extends EntityMob
         return BarbarianSounds.barbarianDeath;
     }
 
-    @Override
-    protected void applyEntityAttributes()
-    {
-    }
-
     public void applyInternalEntityAttributes()
     {
         BarbarianSpawnUtils.setBarbarianAttributes(this, getColony());
