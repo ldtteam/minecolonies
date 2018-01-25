@@ -5,6 +5,9 @@ import net.minecraft.block.BlockPlanks;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Class to create the modBlocks.
  * References to the blocks can be made here
@@ -12,12 +15,23 @@ import net.minecraftforge.fml.common.registry.IForgeRegistry;
  * We disabled the following finals since we are neither able to mark the items as final, nor do we want to provide public accessors.
  */
 @SuppressWarnings({"squid:ClassVariableVisibilityCheck", "squid:S2444", "squid:S1444", "squid:S1820",})
+
 public final class ModBlocks
 {
     /*
      * Creating objects for all blocks in the mod.
      * References can be made to here.
      */
+
+    public static List<BlockTimberFrame> timberFrames = new ArrayList<>();
+        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.OAK.getName()).registerBlock(registry));
+        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.JUNGLE.getName()).registerBlock(registry));
+        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.BIRCH.getName()).registerBlock(registry));
+        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.SPRUCE.getName()).registerBlock(registry));
+        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.DARK_OAK.getName()).registerBlock(registry););
+        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.ACACIA.getName()).registerBlock(registry););
+
+
     public static BlockHutTownHall            blockHutTownHall;
     public static BlockHutCitizen             blockHutCitizen;
     public static BlockHutMiner               blockHutMiner;
