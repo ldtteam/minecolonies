@@ -28,6 +28,7 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import com.minecolonies.structures.event.RenderEventHandler;
 import com.minecolonies.structures.helpers.Settings;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -271,36 +272,9 @@ public class ClientProxy extends CommonProxy
                 new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
                         BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.ACACIA.getName()), INVENTORY));
 
-        for (final TimberFrameType type : TimberFrameType.values())
-        {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameOak), type.getMetadata(),
-                    new ModelResourceLocation(ModBlocks.blockTimberFrameOak.getRegistryName() + "_" + type.getName(), INVENTORY));
-        }
-        for (final TimberFrameType type : TimberFrameType.values())
-        {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameSpruce), type.getMetadata(),
-                    new ModelResourceLocation(ModBlocks.blockTimberFrameSpruce.getRegistryName() + "_" + type.getName(), INVENTORY));
-        }
-        for (final TimberFrameType type : TimberFrameType.values())
-        {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameBirch), type.getMetadata(),
-                    new ModelResourceLocation(ModBlocks.blockTimberFrameBirch.getRegistryName() + "_" + type.getName(), INVENTORY));
-        }
-        for (final TimberFrameType type : TimberFrameType.values())
-        {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameAcacia), type.getMetadata(),
-                    new ModelResourceLocation(ModBlocks.blockTimberFrameAcacia.getRegistryName() + "_" + type.getName(), INVENTORY));
-        }
-        for (final TimberFrameType type : TimberFrameType.values())
-        {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameJungle), type.getMetadata(),
-                    new ModelResourceLocation(ModBlocks.blockTimberFrameJungle.getRegistryName() + "_" + type.getName(), INVENTORY));
-        }
-        for (final TimberFrameType type : TimberFrameType.values())
-        {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockTimberFrameDarkOak), type.getMetadata(),
-                    new ModelResourceLocation(ModBlocks.blockTimberFrameDarkOak.getRegistryName() + "_" + type.getName(), INVENTORY));
-        }
+        for (final BlockTimberFrame frame : ModBlocks.timberFrames)
+                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock((Block) ModBlocks.timberFrames),
+                        new ModelResourceLocation(frame.getRegistryName() + "_" + TimberFrameType.getName(), INVENTORY));
     }
 
     @Override

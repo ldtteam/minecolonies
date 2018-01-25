@@ -42,7 +42,7 @@ public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame
     /**
      * Constructor for the TimberFrame
      */
-    BlockTimberFrame(final String name)
+    public BlockTimberFrame(final String name)
     {
         super(Material.WOOD);
         this.setDefaultState(this.blockState.getBaseState().withProperty(TYPE, TimberFrameType.PLAIN));

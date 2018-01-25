@@ -24,14 +24,6 @@ public final class ModBlocks
      */
 
     public static List<BlockTimberFrame> timberFrames = new ArrayList<>();
-        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.OAK.getName()).registerBlock(registry));
-        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.JUNGLE.getName()).registerBlock(registry));
-        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.BIRCH.getName()).registerBlock(registry));
-        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.SPRUCE.getName()).registerBlock(registry));
-        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.DARK_OAK.getName()).registerBlock(registry););
-        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.ACACIA.getName()).registerBlock(registry););
-
-
     public static BlockHutTownHall            blockHutTownHall;
     public static BlockHutCitizen             blockHutCitizen;
     public static BlockHutMiner               blockHutMiner;
@@ -132,7 +124,20 @@ public final class ModBlocks
         blockTimberFrameDarkOak = new BlockTimberFrame(BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.DARK_OAK.getName()).registerBlock(registry);
         blockTimberFrameAcacia = new BlockTimberFrame(BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.ACACIA.getName()).registerBlock(registry);
 
+        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.OAK.getName()).registerBlock(registry));
+        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.JUNGLE.getName()).registerBlock(registry));
+        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.BIRCH.getName()).registerBlock(registry));
+        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.SPRUCE.getName()).registerBlock(registry));
+        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.DARK_OAK.getName()).registerBlock(registry));
+        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.ACACIA.getName()).registerBlock(registry));
+
+        for (final BlockPlanks.EnumType type: BlockPlanks.EnumType.values())
+        {
+            timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + type.getName()).registerBlock(registry));
+        }
     }
+
+
 
     public static void registerItemBlock(final IForgeRegistry<Item> registry)
     {
