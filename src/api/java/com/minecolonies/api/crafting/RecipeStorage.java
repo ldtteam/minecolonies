@@ -216,7 +216,7 @@ public class RecipeStorage implements IRecipeStorage
     @Override
     public boolean fullfillRecipe(final List<IItemHandler> handlers)
     {
-        if(!checkForFreeSpace(handlers))
+        if(!checkForFreeSpace(handlers) || !canFullFillRecipe(handlers.toArray(new IItemHandler[0])))
         {
             return false;
         }
