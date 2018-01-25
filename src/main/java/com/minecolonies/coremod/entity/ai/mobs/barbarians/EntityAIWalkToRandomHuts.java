@@ -109,7 +109,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
      * @return Boolean value of whether or not to continue executing
      */
     @Override
-    public boolean shouldContinueExecuting()
+    public boolean continueExecuting()
     {
         return !this.entity.getNavigator().noPath() && this.entity.isEntityAlive();
     }

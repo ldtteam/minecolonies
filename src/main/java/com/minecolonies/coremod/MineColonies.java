@@ -7,11 +7,14 @@ import com.minecolonies.coremod.colony.BarbarianSpawnEventHandler;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
+import com.minecolonies.coremod.event.EventHandler;
+import com.minecolonies.coremod.event.FMLEventHandler;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.util.RecipeHandler;
 import gigaherz.guidebook.client.BookRegistryEvent;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -49,13 +52,6 @@ public class MineColonies
     public static IProxy       proxy;
 
     private static SimpleNetworkWrapper network;
-
-    static
-    {
-        MinecraftForge.EVENT_BUS.register(new BarbarianSpawnEventHandler());
-        MinecraftForge.EVENT_BUS.register(new EventHandler());
-        MinecraftForge.EVENT_BUS.register(new FMLEventHandler());
-    }
 
     /**
      * Returns whether the side is client or not
