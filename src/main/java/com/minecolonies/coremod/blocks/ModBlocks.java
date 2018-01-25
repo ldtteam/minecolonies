@@ -117,13 +117,6 @@ public final class ModBlocks
                 BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.ACACIA.getName()).registerBlock(registry);
         blockShingleSlab = new BlockShingleSlab().registerBlock(registry);
 
-        blockTimberFrameOak = new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.OAK.getName()).registerBlock(registry);
-        blockTimberFrameJungle = new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.JUNGLE.getName()).registerBlock(registry);
-        blockTimberFrameBirch = new BlockTimberFrame(BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.BIRCH.getName()).registerBlock(registry);
-        blockTimberFrameSpruce = new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.SPRUCE.getName()).registerBlock(registry);
-        blockTimberFrameDarkOak = new BlockTimberFrame(BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.DARK_OAK.getName()).registerBlock(registry);
-        blockTimberFrameAcacia = new BlockTimberFrame(BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.ACACIA.getName()).registerBlock(registry);
-
         timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.OAK.getName()).registerBlock(registry));
         timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.JUNGLE.getName()).registerBlock(registry));
         timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.BIRCH.getName()).registerBlock(registry));
