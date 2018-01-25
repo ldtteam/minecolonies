@@ -289,19 +289,9 @@ public abstract class AbstractBuildingView implements IRequester
         return colony.getRequestManager().getDataStoreManager().get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_BUILDING_DATA_STORE);
     }
 
-    private Map<TypeToken<?>, Collection<IToken<?>>> getOpenRequestsByRequestableType()
-    {
-        return getDataStore().getOpenRequestsByRequestableType();
-    }
-
     private Map<Integer, Collection<IToken<?>>> getOpenRequestsByCitizen()
     {
         return getDataStore().getOpenRequestsByCitizen();
-    }
-
-    private Map<Integer, Collection<IToken<?>>> getCompletedRequestsByCitizen()
-    {
-        return getDataStore().getCompletedRequestsByCitizen();
     }
 
     private Map<IToken<?>, Integer> getCitizensByRequest()
@@ -315,7 +305,7 @@ public abstract class AbstractBuildingView implements IRequester
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
                                           final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
-                                          return requestTypes.contains(requestType);
+                                          return requestTypes.contains(TypeToken.of(requestType));
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
                                       .iterator());
@@ -358,7 +348,7 @@ public abstract class AbstractBuildingView implements IRequester
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
                                           final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
-                                          return requestTypes.contains(requestType);
+                                          return requestTypes.contains(TypeToken.of(requestType));
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
                                       .filter(filter)
@@ -398,14 +388,16 @@ public abstract class AbstractBuildingView implements IRequester
     @Override
     public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        try {
+        try
+        {
             if (getColony() == null || !getCitizensByRequest().containsKey(token) || getColony().getCitizen(getCitizensByRequest().get(token)) == null)
             {
                 return new TextComponentString("<UNKNOWN>");
             }
 
             return new TextComponentString(getColony().getCitizen(getCitizensByRequest().get(token)).getName());
-        } catch (Exception ex)
+        }
+        catch (final Exception ex)
         {
             Log.getLogger().warn(ex);
             return new TextComponentString("");
