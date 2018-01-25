@@ -195,7 +195,7 @@ public class MineColonies
         getNetwork().registerMessage(SaveScanMessage.class, SaveScanMessage.class, ++id, Side.CLIENT);
 
         //JEI Messages
-        getNetwork().registerMessage(TransferRecipeCrafingTeachingMessage.class, TransferRecipeCrafingTeachingMessage.class, id++, Side.SERVER);
+        getNetwork().registerMessage(TransferRecipeCrafingTeachingMessage.class, TransferRecipeCrafingTeachingMessage.class, ++id, Side.SERVER);
     }
 
     public static SimpleNetworkWrapper getNetwork()

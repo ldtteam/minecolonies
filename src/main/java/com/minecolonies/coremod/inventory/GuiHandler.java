@@ -3,6 +3,7 @@ package com.minecolonies.coremod.inventory;
 import com.minecolonies.coremod.client.gui.WindowGuiCrafting;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
@@ -89,9 +90,9 @@ public class GuiHandler implements IGuiHandler
             else
             {
                 @Nullable final AbstractBuildingView building = ColonyManager.getBuildingView(new BlockPos(x,y,z));
-                if (building != null)
+                if (building instanceof AbstractBuildingWorker.View)
                 {
-                    return new WindowGuiCrafting(player.inventory, world, building);
+                    return new WindowGuiCrafting(player.inventory, world, (AbstractBuildingWorker.View) building);
                 }
             }
         }
