@@ -1537,8 +1537,6 @@ public class InventoryUtils
         return false;
     }
 
-    //TODO (UPDATE To 1.11): Update next two methods to reflect 1.11 Changes.
-
     /**
      * Method to swap the ItemStacks from the given source {@link IItemHandler}
      * to the given target {@link IItemHandler}.

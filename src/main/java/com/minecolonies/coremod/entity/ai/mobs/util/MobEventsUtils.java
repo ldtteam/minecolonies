@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.mobs.util;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -78,7 +79,7 @@ public final class MobEventsUtils
         }
 
         final BlockPos targetSpawnPoint = calculateSpawnLocation(world, colony);
-
+        Log.getLogger().info("[BarbarianEvent]: Spawning: " + targetSpawnPoint.getX() + " " + targetSpawnPoint.getZ());
         if (targetSpawnPoint.equals(colony.getCenter()))
         {
             return;
@@ -171,6 +172,7 @@ public final class MobEventsUtils
 
         if (pos.equals(colony.getCenter()))
         {
+            Log.getLogger().info("Spawning at colony center: " + colony.getCenter().getX() + " " + colony.getCenter().getZ());
             return colony.getCenter();
         }
 
