@@ -4,6 +4,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.inventory.CraftingGUIBuilding;
 import com.minecolonies.coremod.network.messages.AddRemoveRecipeMessage;
@@ -76,7 +77,7 @@ public class WindowGuiCrafting extends GuiContainer
     /**
      * The building the window belongs to.
      */
-    private final AbstractBuildingView building;
+    private final AbstractBuildingWorker.View building;
 
     /**
      * Create a crafting gui window.
@@ -85,7 +86,7 @@ public class WindowGuiCrafting extends GuiContainer
      * @param worldIn       the world.
      * @param building      the building.
      */
-    public WindowGuiCrafting(final InventoryPlayer playerInv, final World worldIn, final AbstractBuildingView building)
+    public WindowGuiCrafting(final InventoryPlayer playerInv, final World worldIn, final AbstractBuildingWorker.View building)
     {
         super(new CraftingGUIBuilding(playerInv, worldIn));
         this.building = building;
@@ -95,7 +96,14 @@ public class WindowGuiCrafting extends GuiContainer
     public void initGui()
     {
         super.initGui();
+
         this.doneButton = this.addButton(new GuiButton(0, guiLeft + BUTTON_X_OFFSET, guiTop + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("gui.done")));
+
+        if(Math.pow(2, building.getBuildingLevel()) >= (building.getRecipes().size() + 1))
+        {
+            this.doneButton.displayString = LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
+            this.doneButton.enabled = false;
+        }
     }
 
     @Override
