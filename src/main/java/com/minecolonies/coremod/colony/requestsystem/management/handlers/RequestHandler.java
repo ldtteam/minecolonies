@@ -144,7 +144,7 @@ public final class RequestHandler
                                         .filter(r -> r.getRequestType().isSupertypeOf(request.getRequestType()))
                                         .filter(r -> !failedResolvers.contains(r.getRequesterId()))
                                         .sorted(Comparator.comparing(r -> -1 * r.getPriority()))
-                                        .collect(Collectors.toSet());
+                                        .collect(Collectors.toCollection(LinkedHashSet::new));
 
             for (final IRequestResolver<?> resolver : resolversForRequestType)
             {
