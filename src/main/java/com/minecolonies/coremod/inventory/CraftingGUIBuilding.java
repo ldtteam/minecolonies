@@ -195,12 +195,6 @@ public class CraftingGUIBuilding extends Container
         {
             final EntityPlayerMP entityplayermp = (EntityPlayerMP) player;
             final ItemStack itemstack = CraftingManager.getInstance().findMatchingRecipe(craftMatrix, worldObj);
-            if (ItemStackUtils.isEmpty(itemstack))
-            {
-                super.onCraftMatrixChanged(inventoryIn);
-                return;
-            }
-
             this.craftResult.setInventorySlotContents(0, itemstack);
             entityplayermp.connection.sendPacket(new SPacketSetSlot(this.windowId, 0, itemstack));
         }
@@ -215,7 +209,7 @@ public class CraftingGUIBuilding extends Container
     }
 
     @Override
-    public ItemStack slotClick(int slotId, int clickedButton, ClickType mode, EntityPlayer playerIn)
+    public ItemStack slotClick(final int slotId, final int clickedButton, final ClickType mode, final EntityPlayer playerIn)
     {
         if (slotId >= 1 && slotId < 5)
         {
@@ -224,9 +218,9 @@ public class CraftingGUIBuilding extends Container
                     || mode == ClickType.PICKUP_ALL
                     || mode == ClickType.SWAP)
             {
-                Slot slot = this.inventorySlots.get(slotId);
+                final Slot slot = this.inventorySlots.get(slotId);
 
-                ItemStack dropping = playerIn.inventory.getItemStack();
+                final ItemStack dropping = playerIn.inventory.getItemStack();
 
                 return handleSlotClick(slot, dropping);
             }
@@ -237,11 +231,11 @@ public class CraftingGUIBuilding extends Container
         return super.slotClick(slotId, clickedButton, mode, playerIn);
     }
 
-    public ItemStack handleSlotClick(Slot slot, ItemStack stack)
+    public ItemStack handleSlotClick(final Slot slot, final ItemStack stack)
     {
         if (stack.getCount() > 0)
         {
-            ItemStack copy = stack.copy();
+            final ItemStack copy = stack.copy();
             copy.setCount(1);
             slot.putStack(copy);
         }

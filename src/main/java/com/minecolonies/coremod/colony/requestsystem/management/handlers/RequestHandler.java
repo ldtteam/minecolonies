@@ -141,7 +141,7 @@ public final class RequestHandler
                     .collect(Collectors.toList());
 
             resolversForRequestType = resolversForRequestType.stream()
-                    .filter(r -> r.getRequestType().isSupertypeOf(request.getRequestType()))
+                    .filter(r -> r.getRequestType().isAssignableFrom(request.getRequestType()))
                     .filter(r -> !failedResolvers.contains(r.getRequesterId()))
                     .sorted(Comparator.comparing(r -> -1 * r.getPriority()))
                     .collect(Collectors.toSet());
