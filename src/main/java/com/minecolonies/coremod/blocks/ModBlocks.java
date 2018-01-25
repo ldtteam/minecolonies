@@ -43,12 +43,6 @@ public final class ModBlocks
     public static BlockConstructionTape       blockConstructionTape;
     public static BlockConstructionTapeCorner blockConstructionTapeCorner;
     public static BlockMinecoloniesRack       blockRack;
-    public static BlockTimberFrame            blockTimberFrameOak;
-    public static BlockTimberFrame            blockTimberFrameAcacia;
-    public static BlockTimberFrame            blockTimberFrameJungle;
-    public static BlockTimberFrame            blockTimberFrameBirch;
-    public static BlockTimberFrame            blockTimberFrameDarkOak;
-    public static BlockTimberFrame            blockTimberFrameSpruce;
     public static BlockWaypoint               blockWayPoint;
     public static BlockHutBarracks            blockHutBarracks;
     public static BlockHutBarracksTower       blockHutBarracksTower;
@@ -117,13 +111,6 @@ public final class ModBlocks
                 BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.ACACIA.getName()).registerBlock(registry);
         blockShingleSlab = new BlockShingleSlab().registerBlock(registry);
 
-        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.OAK.getName()).registerBlock(registry));
-        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.JUNGLE.getName()).registerBlock(registry));
-        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.BIRCH.getName()).registerBlock(registry));
-        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.SPRUCE.getName()).registerBlock(registry));
-        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.DARK_OAK.getName()).registerBlock(registry));
-        timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + BlockPlanks.EnumType.ACACIA.getName()).registerBlock(registry));
-
         for (final BlockPlanks.EnumType type: BlockPlanks.EnumType.values())
         {
             timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + type.getName()).registerBlock(registry));
@@ -166,11 +153,10 @@ public final class ModBlocks
         blockShingleDarkOak.registerItemBlock(registry);
         blockShingleAcacia.registerItemBlock(registry);
         blockShingleSlab.registerItemBlock(registry);
-        blockTimberFrameAcacia.registerItemBlock(registry);
-        blockTimberFrameDarkOak.registerItemBlock(registry);
-        blockTimberFrameSpruce.registerItemBlock(registry);
-        blockTimberFrameJungle.registerItemBlock(registry);
-        blockTimberFrameBirch.registerItemBlock(registry);
-        blockTimberFrameOak.registerItemBlock(registry);
+
+        for (final BlockTimberFrame frame: timberFrames)
+        {
+            frame.registerItemBlock(registry);
+        }
     }
 }
