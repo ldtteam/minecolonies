@@ -830,7 +830,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
             if (!Configurations.gameplay.builderInfiniteResources)
             {
-                if(PlacementHandlers.checkForListInInvAndRequest(this, request))
+                if(PlacementHandlers.checkForListInInvAndRequest(this, new ArrayList<>(request)))
                 {
                     return false;
                 }
