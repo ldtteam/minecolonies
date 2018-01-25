@@ -47,7 +47,6 @@ public class RSResetCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-
         if (args.length == 0)
         {
             sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
@@ -78,7 +77,7 @@ public class RSResetCommand extends AbstractSingleCommand
 
         if (senderEntity instanceof EntityPlayer)
         {
-            EntityPlayer player = (EntityPlayer) sender;
+            final EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, RSRESET, colonyId))
             {
                 senderEntity.sendMessage(new TextComponentString(NOT_PERMITTED));
