@@ -252,7 +252,7 @@ public class ClientProxy extends CommonProxy
         {
             for (final TimberFrameType type : TimberFrameType.values())
             {
-                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock((Block) ModBlocks.timberFrames), type.getMetadata(),
+                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(frame), type.getMetadata(),
                         new ModelResourceLocation(frame.getRegistryName() + "_" + type.getName(), INVENTORY));
             }
         }
