@@ -325,7 +325,8 @@ public abstract class AbstractBuildingView implements IRequester
         }
 
         return ImmutableList.copyOf(getOpenRequestsByCitizen().get(data.getId())
-                .stream().map(getColony().getRequestManager()::getRequestForToken)
+                .stream().filter(Objects::nonNull)
+                .map(getColony().getRequestManager()::getRequestForToken)
                 .filter(Objects::nonNull).iterator());
     }
 
