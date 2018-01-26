@@ -66,6 +66,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     private static final int ACTIONS_FOR_DUMP = 10;
 
     /**
+     * Area the worker targets.
+     */
+    private AxisAlignedBB targetArea = null;
+
+    /**
      * Creates the abstract part of the AI.
      * Always use this constructor!
      *
@@ -347,7 +352,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             return null;
         }
 
-        return getOwnBuilding().getTargetableArea(world);
+        if(targetArea == null)
+        {
+            targetArea = getOwnBuilding().getTargetableArea(world);
+        }
+        return targetArea;
     }
 
     /**
