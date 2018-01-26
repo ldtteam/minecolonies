@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.NBTUtils;
@@ -61,11 +62,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      * NBTTag to store the recipes list.
      */
     private static final String TAG_RECIPES = "recipes";
-
-    /**
-     * Tag to serialize ITokens.
-     */
-    private static final String TAG_TOKEN = "tokenTag";
 
     /**
      * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
@@ -514,8 +510,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         }
 
         buf.writeInt(recipes.size());
-        for(final IToken token: recipes)
+        for(final IToken token: new ArrayList<>(recipes))
         {
+            if(ColonyManager.getRecipeManager().getRecipes().get(token) == null)
+            {
+                removeRecipe(token);
+            }
             ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(token));
         }
     }
@@ -639,7 +639,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             for(int i = 0; i < recipesSize; i++)
             {
                 final IToken token = StandardFactoryController.getInstance().deserialize(ByteBufUtils.readTag(buf));
-                recipes.add(ColonyManager.getRecipeManager().getRecipes().get(token));
+                final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
+                if(storage != null)
+                {
+                    recipes.add(storage);
+                }
             }
         }
 

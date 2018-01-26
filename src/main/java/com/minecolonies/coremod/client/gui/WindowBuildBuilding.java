@@ -361,6 +361,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
                 resourceLabel.setLabelText(resource.getItemStack().getDisplayName());
                 quantityLabel.setLabelText(Integer.toString(resource.getAmount()));
                 resourceLabel.setColor(WHITE, WHITE);
+                quantityLabel.setColor(WHITE, WHITE);
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(new ItemStack(resource.getItem(), 1, resource.getDamageValue()));
             }
         });
