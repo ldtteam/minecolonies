@@ -63,11 +63,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     private static final String TAG_RECIPES = "recipes";
 
     /**
-     * Tag to serialize ITokens.
-     */
-    private static final String TAG_TOKEN = "tokenTag";
-
-    /**
      * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
      */
     private final List<IToken> recipes = new ArrayList<>();
@@ -514,8 +509,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         }
 
         buf.writeInt(recipes.size());
-        for(final IToken token: recipes)
+        for(final IToken token: new ArrayList<>(recipes))
         {
+            if(ColonyManager.getRecipeManager().getRecipes().get(token) == null)
+            {
+                removeRecipe(token);
+            }
             ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(token));
         }
     }
@@ -639,7 +638,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             for(int i = 0; i < recipesSize; i++)
             {
                 final IToken token = StandardFactoryController.getInstance().deserialize(ByteBufUtils.readTag(buf));
-                recipes.add(ColonyManager.getRecipeManager().getRecipes().get(token));
+                final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
+                if(storage != null)
+                {
+                    recipes.add(storage);
+                }
             }
         }
 
