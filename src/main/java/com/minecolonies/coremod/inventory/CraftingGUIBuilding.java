@@ -193,9 +193,9 @@ public class CraftingGUIBuilding extends Container
     {
         if (!worldObj.isRemote)
         {
-            EntityPlayerMP entityplayermp = (EntityPlayerMP) player;
+            final EntityPlayerMP entityplayermp = (EntityPlayerMP) player;
             ItemStack itemstack = ItemStack.EMPTY;
-            IRecipe irecipe = CraftingManager.findMatchingRecipe(craftMatrix, worldObj);
+            final IRecipe irecipe = CraftingManager.findMatchingRecipe(craftMatrix, worldObj);
             if (irecipe != null && (irecipe.isDynamic()
                     || !worldObj.getGameRules().getBoolean("doLimitedCrafting")
                     || entityplayermp.getRecipeBook().isUnlocked(irecipe)
@@ -219,18 +219,18 @@ public class CraftingGUIBuilding extends Container
     }
 
     @Override
-    public ItemStack slotClick(int slotId, int clickedButton, ClickType mode, EntityPlayer playerIn)
+    public ItemStack slotClick(final int slotId, final int clickedButton, final ClickType mode, final EntityPlayer playerIn)
     {
-        if (slotId >= 1 && slotId < 5)
+        if (slotId >= 1 && slotId < CRAFTING_SLOTS)
         {
             // 1 is shift-click
             if (mode == ClickType.PICKUP
                     || mode == ClickType.PICKUP_ALL
                     || mode == ClickType.SWAP)
             {
-                Slot slot = this.inventorySlots.get(slotId);
+                final Slot slot = this.inventorySlots.get(slotId);
 
-                ItemStack dropping = playerIn.inventory.getItemStack();
+                final ItemStack dropping = playerIn.inventory.getItemStack();
 
                 return handleSlotClick(slot, dropping);
             }
@@ -238,14 +238,19 @@ public class CraftingGUIBuilding extends Container
             return ItemStack.EMPTY;
         }
 
+        if(mode == ClickType.QUICK_MOVE)
+        {
+            return ItemStack.EMPTY;
+        }
+
         return super.slotClick(slotId, clickedButton, mode, playerIn);
     }
 
-    public ItemStack handleSlotClick(Slot slot, ItemStack stack)
+    public ItemStack handleSlotClick(final Slot slot, final ItemStack stack)
     {
         if (stack.getCount() > 0)
         {
-            ItemStack copy = stack.copy();
+            final ItemStack copy = stack.copy();
             copy.setCount(1);
             slot.putStack(copy);
         }
@@ -261,12 +266,12 @@ public class CraftingGUIBuilding extends Container
     @Override
     public ItemStack transferStackInSlot(final EntityPlayer playerIn, final int index)
     {
-        if (index <= 5)
+        if (index <= CRAFTING_SLOTS)
         {
             return ItemStack.EMPTY;
         }
 
-        ItemStack itemstack = null;
+        ItemStack itemstack = ItemStackUtils.EMPTY;
         final Slot slot = this.inventorySlots.get(index);
 
         if (slot != null && slot.getHasStack())
@@ -278,26 +283,20 @@ public class CraftingGUIBuilding extends Container
             {
                 if (!this.mergeItemStack(itemstack1, CRAFTING_SLOTS, TOTAL_SLOTS, true))
                 {
-                    return null;
+                    return ItemStackUtils.EMPTY;
                 }
 
                 slot.onSlotChange(itemstack1, itemstack);
             }
-            else if (index >= CRAFTING_SLOTS && index < HOTBAR_START)
+            else if (index < HOTBAR_START)
             {
                 if (!this.mergeItemStack(itemstack1, HOTBAR_START, TOTAL_SLOTS, false))
                 {
-                    return null;
+                    return ItemStackUtils.EMPTY;
                 }
             }
-            else if (index >= HOTBAR_START && index < TOTAL_SLOTS)
-            {
-                if (!this.mergeItemStack(itemstack1, CRAFTING_SLOTS, HOTBAR_START, false))
-                {
-                    return null;
-                }
-            }
-            else if (!this.mergeItemStack(itemstack1, CRAFTING_SLOTS, TOTAL_SLOTS, false))
+            else if ((index < TOTAL_SLOTS && !this.mergeItemStack(itemstack1, CRAFTING_SLOTS, HOTBAR_START, false))
+                    || !this.mergeItemStack(itemstack1, CRAFTING_SLOTS, TOTAL_SLOTS, false))
             {
                 return null;
             }
@@ -313,7 +312,7 @@ public class CraftingGUIBuilding extends Container
 
             if (itemstack1.getCount() == itemstack.getCount())
             {
-                return null;
+                return ItemStackUtils.EMPTY;
             }
 
             slot.onTake(playerIn, itemstack1);
