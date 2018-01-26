@@ -5,6 +5,7 @@ import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.ItemIcon;
@@ -69,6 +70,11 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      * Drop down list for style.
      */
     private       DropDownList     stylesDropDownList;
+
+    /**
+     * White color.
+     */
+    private static final int WHITE     = Color.getByName("white", 0);
 
     /**
      * List of style for the section.
@@ -165,7 +171,8 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         final World world = Minecraft.getMinecraft().world;
         resources.clear();
 
-        final int nextLevel = building.getBuildingLevel() == building.getBuildingMaxLevel() ? building.getBuildingMaxLevel() : building.getBuildingLevel() + 1;
+        final int nextLevel = building.getBuildingLevel() == building.getBuildingMaxLevel() ?
+                building.getBuildingMaxLevel() : (building.getBuildingLevel() + 1);
         final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, styles.get(stylesDropDownList.getSelectedIndex()) ,
                 building.getSchematicName() + nextLevel);
         final StructureWrapper wrapper = new StructureWrapper(world, sn.toString());
@@ -350,8 +357,11 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             {
                 final ItemStorage resource = tempRes.get(index);
                 final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
-                rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount()));
+                final Label quantityLabel = rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class);
                 resourceLabel.setLabelText(resource.getItemStack().getDisplayName());
+                quantityLabel.setLabelText(Integer.toString(resource.getAmount()));
+                resourceLabel.setColor(WHITE, WHITE);
+                quantityLabel.setColor(WHITE, WHITE);
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(new ItemStack(resource.getItem(), 1, resource.getDamageValue()));
             }
         });
