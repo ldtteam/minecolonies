@@ -10,6 +10,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.play.server.SPacketEffect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -25,7 +26,7 @@ public final class TeleportToColony
     private static final String CANT_FIND_COLONY = "No Colony found for teleport, please define one.";
     private static final String CANT_FIND_PLAYER = "No player found for teleport, please define one.";
     private static final String NO_TOWNHALL      = "Target colony has no town hall, can't teleport.";
-
+    private static final int    SOUND_TYPE       = 1032;
     /**
      * The minimum valid colony id.
      */
@@ -118,35 +119,36 @@ public final class TeleportToColony
         final int dimension = playerToTeleport.getEntityWorld().provider.getDimension();
         final int colonyDimension = townHall.getColony().getDimension();
 
+        if (colID < MIN_COLONY_ID)
+        {
+            playerToTeleport.sendMessage(new TextComponentString(CANT_FIND_COLONY));
+            return;
+        }
+
+        final EntityPlayerMP entityPlayerMP = (EntityPlayerMP) sender;
         if (dimension != colonyDimension)
         {
             playerToTeleport.sendMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
-            final EntityPlayerMP entityPlayerMP = (EntityPlayerMP) sender;
             final MinecraftServer server = sender.getEntityWorld().getMinecraftServer();
             final WorldServer worldServer = server.getWorld(colonyDimension);
+
+            // Vanilla does that as well.
+            entityPlayerMP.connection.sendPacket(new SPacketEffect(SOUND_TYPE, BlockPos.ORIGIN, 0, false));
+            entityPlayerMP.addExperience(0);
+            entityPlayerMP.setPlayerHealthUpdated();
 
             playerToTeleport.sendMessage(new TextComponentString("Hold onto your pants, we're going Inter-Dimensional!"));
             playerToTeleport.changeDimension(colonyDimension);
 
             worldServer.getMinecraftServer().getPlayerList()
                     .transferPlayerToDimension(entityPlayerMP, colonyDimension, new Teleporter(worldServer));
-            playerToTeleport.setPositionAndUpdate(position.getX(), position.getY(), position.getZ());
             if (dimension == 1)
             {
-                playerToTeleport.setPositionAndUpdate(position.getX(), position.getY(), position.getZ());
                 worldServer.spawnEntity(playerToTeleport);
                 worldServer.updateEntityWithOptionalForce(playerToTeleport, false);
             }
         }
-
-        if (colID >= MIN_COLONY_ID)
-        {
-            playerToTeleport.setPositionAndUpdate(position.getX(), position.getY() + 2.0, position.getZ());
-        }
-        else
-        {
-            playerToTeleport.sendMessage(new TextComponentString(CANT_FIND_COLONY));
-        }
+        entityPlayerMP.connection.setPlayerLocation(position.getX(), position.getY() + 2.0, position.getZ(), entityPlayerMP.rotationYaw, entityPlayerMP.rotationPitch);
     }
 }
 
