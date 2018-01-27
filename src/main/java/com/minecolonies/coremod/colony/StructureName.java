@@ -5,8 +5,11 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.block.Block;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.minecolonies.api.util.constant.WindowConstants.HUT_PREFIX;
 
 /**
  * Class to handle schematic naming.
@@ -101,7 +104,7 @@ public class StructureName
             hut = schematic.split("\\d+")[0];
             section = Structures.SCHEMATICS_PREFIX;
 
-            if (Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut) != null)
+            if (Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut) != null || Block.getBlockFromName(Constants.MOD_ID + (HUT_PREFIX + hut).toLowerCase(Locale.ENGLISH)) != null)
             {
                 section = hut;
             }
