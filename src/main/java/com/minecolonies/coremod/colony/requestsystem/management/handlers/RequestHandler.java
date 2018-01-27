@@ -133,7 +133,7 @@ public final class RequestHandler
                 continue;
             }
 
-            Collection<IRequestResolver<?>> resolversForRequestType = manager.getRequestableTypeRequestResolverAssignmentDataStore()
+            List<IRequestResolver<?>> resolversForRequestType = manager.getRequestableTypeRequestResolverAssignmentDataStore()
                                                                         .getAssignments()
                                                                         .get(requestType)
                                                                         .stream()
@@ -143,8 +143,8 @@ public final class RequestHandler
             resolversForRequestType = resolversForRequestType.stream()
                                         .filter(r -> r.getRequestType().isSupertypeOf(request.getRequestType()))
                                         .filter(r -> !failedResolvers.contains(r.getRequesterId()))
-                                        .sorted(Comparator.comparing(r -> -1 * r.getPriority()))
-                                        .collect(Collectors.toCollection(LinkedHashSet::new));
+                                        .sorted(Comparator.comparingInt(r -> -1 * r.getPriority()))
+                                        .collect(Collectors.toList());
 
             for (final IRequestResolver<?> resolver : resolversForRequestType)
             {
