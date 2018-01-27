@@ -138,7 +138,6 @@ public final class TeleportToColony
             entityPlayerMP.setPlayerHealthUpdated();
 
             playerToTeleport.sendMessage(new TextComponentString("Hold onto your pants, we're going Inter-Dimensional!"));
-            playerToTeleport.changeDimension(colonyDimension);
 
             worldServer.getMinecraftServer().getPlayerList()
                     .transferPlayerToDimension(entityPlayerMP, colonyDimension, new Teleporter(worldServer));
