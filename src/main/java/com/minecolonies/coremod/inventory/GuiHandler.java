@@ -38,7 +38,7 @@ public class GuiHandler implements IGuiHandler
             }
             else
             {
-                @Nullable final AbstractBuildingView building = ColonyManager.getBuildingView(new BlockPos(x,y,z));
+                @Nullable final AbstractBuilding building = ColonyManager.getBuilding(world, new BlockPos(x,y,z));
                 if (building != null)
                 {
                     return new CraftingGUIBuilding(player.inventory, world);
