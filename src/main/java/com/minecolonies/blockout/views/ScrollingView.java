@@ -15,7 +15,7 @@ public class ScrollingView extends View
     protected ScrollingContainer container;
     protected Scrollbar          scrollbar;
     //  Params
-    private int scrollbarWidth = DEFAULT_SCROLLBAR_WIDTH;
+    private final int scrollbarWidth = DEFAULT_SCROLLBAR_WIDTH;
 
     /**
      * Required default constructor.
@@ -63,6 +63,12 @@ public class ScrollingView extends View
         container.setSize(getInteriorWidth() - scrollbarWidth, getInteriorHeight());
         scrollbar.setPosition(getInteriorWidth() - scrollbarWidth, 0);
         scrollbar.setSize(scrollbarWidth, getInteriorHeight());
+    }
+
+    @Override
+    public void scrollInput(final int wheel)
+    {
+        this.setScrollY(getScrollY() + -wheel);
     }
 
     public ScrollingContainer getContainer()

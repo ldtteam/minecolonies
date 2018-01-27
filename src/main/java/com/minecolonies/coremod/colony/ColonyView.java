@@ -69,7 +69,7 @@ public final class ColonyView implements IColony
     /**
      * Check if the colony has a warehouse.
      */
-    private boolean hasWarehouse;
+    private boolean hasColonyWarehouse;
 
     /**
      * The Positions which players can freely interact.
@@ -462,7 +462,7 @@ public final class ColonyView implements IColony
             freePositions.add(BlockPosUtil.readFromByteBuf(buf));
         }
         this.overallHappiness = buf.readDouble();
-        this.hasWarehouse = buf.readBoolean();
+        this.hasColonyWarehouse = buf.readBoolean();
 
         final int wayPointListSize = buf.readInt();
         for (int i = 0; i < wayPointListSize; i++)
@@ -666,7 +666,7 @@ public final class ColonyView implements IColony
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return w.provider.getDimension() == dimensionId
-                 && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.gameplay.workingRangeTownHall);
+                 && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.Gameplay.workingRangeTownHall);
     }
 
     @Override
@@ -695,7 +695,7 @@ public final class ColonyView implements IColony
     @Override
     public boolean hasWarehouse()
     {
-        return hasWarehouse;
+        return hasColonyWarehouse;
     }
 
     @Override

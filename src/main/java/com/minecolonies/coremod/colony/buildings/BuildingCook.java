@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -12,6 +13,7 @@ import net.minecraft.block.BlockFurnace;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -61,7 +63,7 @@ public class BuildingCook extends AbstractBuildingWorker
     /**
      * Is true when the Cook put something in the oven.
      */
-    private boolean isSomethingInOven = true;
+    private boolean isOvenFull = true;
 
     /**
      * Instantiates a new cook building.
@@ -72,6 +74,9 @@ public class BuildingCook extends AbstractBuildingWorker
     public BuildingCook(final Colony c, final BlockPos l)
     {
         super(c, l);
+        keepX.put(ItemStackUtils.ISFOOD, Integer.MAX_VALUE);
+        keepX.put(ItemStackUtils.ISCOOKABLE, Integer.MAX_VALUE);
+        keepX.put(TileEntityFurnace::isItemFuel, Integer.MAX_VALUE);
     }
 
     @NotNull
@@ -123,7 +128,7 @@ public class BuildingCook extends AbstractBuildingWorker
             furnacesTagList.appendTag(furnaceCompound);
         }
         compound.setTag(TAG_FURNACES, furnacesTagList);
-        compound.setBoolean(TAG_COOKING, isSomethingInOven);
+        compound.setBoolean(TAG_COOKING, isOvenFull);
     }
 
     @Override
@@ -135,7 +140,7 @@ public class BuildingCook extends AbstractBuildingWorker
         {
             furnaces.add(NBTUtil.getPosFromTag(furnaceTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
         }
-        isSomethingInOven = compound.getBoolean(TAG_COOKING);
+        isOvenFull = compound.getBoolean(TAG_COOKING);
     }
 
     @Override
@@ -156,7 +161,7 @@ public class BuildingCook extends AbstractBuildingWorker
      */
     public boolean isSomethingInOven()
     {
-        return isSomethingInOven;
+        return isOvenFull;
     }
 
     /**
@@ -166,7 +171,7 @@ public class BuildingCook extends AbstractBuildingWorker
      */
     public void setIsSomethingInOven(final boolean set)
     {
-        isSomethingInOven = set;
+        isOvenFull = set;
     }
 
     /**

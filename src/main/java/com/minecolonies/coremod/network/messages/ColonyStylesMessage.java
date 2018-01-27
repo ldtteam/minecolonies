@@ -54,7 +54,7 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     @Override
     public void toBytes(@NotNull final ByteBuf buf)
     {
-        buf.writeBoolean(Configurations.gameplay.allowPlayerSchematics);
+        buf.writeBoolean(Configurations.Gameplay.allowPlayerSchematics);
         writeMD5MapToByteBuf(buf);
     }
 

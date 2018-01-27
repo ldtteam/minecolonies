@@ -17,6 +17,7 @@ import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.util.StructureWrapper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -37,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Send build tool data to the server. Verify the data on the server side and then place the building.
@@ -256,13 +258,18 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
         if (tempColony != null
               && !tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
-              && BlockPosUtil.getDistance2D(tempColony.getCenter(), buildPos) >= Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)
+              && BlockPosUtil.getDistance2D(tempColony.getCenter(), buildPos) >= Configurations.Gameplay.workingRangeTownHall * 2 + Configurations.Gameplay.townHallPadding)
         {
             return;
         }
 
         final String hut = sn.getSection();
-        final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
+        Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
+        if(block instanceof BlockAir)
+        {
+            block = Block.getBlockFromName(Constants.MOD_ID + (":blockHut" + hut).toLowerCase(Locale.ENGLISH));
+        }
+
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
         {
             world.destroyBlock(buildPos, true);
@@ -324,7 +331,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             building.setRotation(rotation);
             if (mirror)
             {
-                building.setMirror();
+                building.invertMirror();
             }
         }
     }

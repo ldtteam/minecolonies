@@ -3,15 +3,29 @@ package com.minecolonies.api.util;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.entity.item.EntityItemFrame;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.*;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityFlowerPot;
+import net.minecraft.tileentity.TileEntityLockable;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.World;
+import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
@@ -57,13 +71,17 @@ public final class ItemStackUtils
     /**
      * Predicate describing food.
      */
-    public static final Predicate<ItemStack> ISFOOD = itemStack -> !ItemStackUtils.isEmpty(itemStack)
-            && itemStack.getItem() instanceof ItemFood;
+    public static final Predicate<ItemStack> ISFOOD = itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood;
+
+    /**
+     * Predicate describing things which work in the furnace.
+     */
+    public static final Predicate<ItemStack> IS_SMELTABLE = itemStack -> !ItemStackUtils.isEmpty(FurnaceRecipes.instance().getSmeltingResult(itemStack));
 
     /**
      * Predicate describing cookables.
      */
-    public static final Predicate<ItemStack> ISCOOKABLE = ISFOOD.and(itemStack -> !ItemStackUtils.isEmpty(FurnaceRecipes.instance().getSmeltingResult(itemStack)));
+    public static final Predicate<ItemStack> ISCOOKABLE = ISFOOD.and(IS_SMELTABLE);
 
     /**
      * Private constructor to hide the implicit one.
@@ -73,6 +91,95 @@ public final class ItemStackUtils
         /*
          * Intentionally left empty.
          */
+    }
+
+    /**
+     * Get itemStack of tileEntityData. Retrieve the data from the tileEntity.
+     *
+     * @param compound the tileEntity stored in a compound.
+     * @param world the world.
+     * @return the list of itemstacks.
+     */
+    public static List<ItemStack> getItemStacksOfTileEntity(final NBTTagCompound compound, final World world)
+    {
+        final List<ItemStack> items = new ArrayList<>();
+        final TileEntity tileEntity = TileEntity.create(world, compound);
+        if (tileEntity instanceof TileEntityFlowerPot)
+        {
+            items.add(((TileEntityFlowerPot) tileEntity).getFlowerItemStack());
+        }
+        else if (tileEntity instanceof TileEntityLockable)
+        {
+            for (int i = 0; i < ((TileEntityLockable) tileEntity).getSizeInventory(); i++)
+            {
+                final ItemStack stack = ((TileEntityLockable) tileEntity).getStackInSlot(i);
+                if (stack != null)
+                {
+                    items.add(stack);
+                }
+            }
+        }
+        return items;
+    }
+
+    /**
+     * Get the entity of an entityInfo object.
+     *
+     * @param entityInfo the input.
+     * @param world the world.
+     * @return the output object or null.
+     */
+    @Nullable
+    public static Entity getEntityFromEntityInfoOrNull(final Template.EntityInfo entityInfo, final World world)
+    {
+        try
+        {
+            return EntityList.createEntityFromNBT(entityInfo.entityData, world);
+        }
+        catch (final RuntimeException e)
+        {
+            Log.getLogger().info("Couldn't restore entitiy", e);
+            return null;
+        }
+    }
+
+    /**
+     * Adds entities to the builder building if he needs it.
+     */
+    public static List<ItemStack> getListOfStackForEntity(final Template.EntityInfo entityInfo, final World world, final Entity placer)
+    {
+        if (entityInfo != null)
+        {
+            final Entity entity = getEntityFromEntityInfoOrNull(entityInfo, world);
+
+            if (entity != null)
+            {
+                final List<ItemStack> request = new ArrayList<>();
+                if (entity instanceof EntityItemFrame)
+                {
+                    final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
+                    if (!ItemStackUtils.isEmpty(stack))
+                    {
+                        ItemStackUtils.setSize(stack, 1);
+                        request.add(stack);
+                    }
+                    request.add(new ItemStack(Items.ITEM_FRAME, 1));
+                }
+                else if (entity instanceof EntityArmorStand)
+                {
+                    request.add(entity.getPickedResult(new RayTraceResult(placer)));
+                    entity.getArmorInventoryList().forEach(request::add);
+                    entity.getHeldEquipment().forEach(request::add);
+                }
+                else if (!(entity instanceof EntityMob))
+                {
+                    request.add(entity.getPickedResult(new RayTraceResult(placer)));
+                }
+
+                return request;
+            }
+        }
+        return Collections.emptyList();
     }
 
     /**
@@ -191,6 +298,10 @@ public final class ItemStackUtils
         else if (ToolType.FISHINGROD.equals(toolType))
         {
             isATool = itemStack.getItem() instanceof ItemFishingRod;
+        }
+        else if (ToolType.SHEARS.equals(toolType))
+        {
+            isATool = itemStack.getItem() instanceof ItemShears;
         }
         return isATool;
     }

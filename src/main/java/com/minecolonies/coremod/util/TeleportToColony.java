@@ -86,7 +86,7 @@ public final class TeleportToColony
             teleportPlayer(playerToTeleport, colonyId, sender);
             return;
         }
-        sender.sendMessage(new TextComponentString("Please wait at least " + Configurations.gameplay.teleportBuffer + " seconds to teleport again"));
+        sender.sendMessage(new TextComponentString("Please wait at least " + Configurations.Gameplay.teleportBuffer + " seconds to teleport again"));
     }
 
     /**
@@ -116,9 +116,9 @@ public final class TeleportToColony
         if (dimension != colonyDimension)
         {
             playerToTeleport.sendMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
-            EntityPlayerMP entityPlayerMP = (EntityPlayerMP) sender;
-            MinecraftServer server = sender.getEntityWorld().getMinecraftServer();
-            WorldServer worldServer = server.worldServerForDimension(colonyDimension);
+            final EntityPlayerMP entityPlayerMP = (EntityPlayerMP) sender;
+            final MinecraftServer server = sender.getEntityWorld().getMinecraftServer();
+            final WorldServer worldServer = server.worldServerForDimension(colonyDimension);
 
             playerToTeleport.sendMessage(new TextComponentString("Hold onto your pants, we're going Inter-Dimensional!"));
             playerToTeleport.changeDimension(colonyDimension);

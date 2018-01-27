@@ -100,7 +100,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     /**
      * Fields should be assigned manually to the farmer.
      */
-    private boolean assignManually = false;
+    private boolean shouldAssignManually = false;
 
     /**
      * Public constructor which instantiates the building.
@@ -242,7 +242,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             final BlockPos fieldLocation = BlockPosUtil.readFromNBT(fieldCompound, TAG_FIELDS_BLOCKPOS);
             farmerFields.add(fieldLocation);
         }
-        assignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
+        shouldAssignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
 
         if (compound.hasKey(LAST_FIELD_TAG))
         {
@@ -263,7 +263,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             fieldTagList.appendTag(fieldCompound);
         }
         compound.setTag(TAG_FIELDS, fieldTagList);
-        compound.setBoolean(TAG_ASSIGN_MANUALLY, assignManually);
+        compound.setBoolean(TAG_ASSIGN_MANUALLY, shouldAssignManually);
 
         if (lastField != null)
         {
@@ -310,11 +310,13 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
-        buf.writeBoolean(assignManually);
+        buf.writeBoolean(shouldAssignManually);
 
         int size = 0;
 
-        for (@NotNull final BlockPos field : getColony().getBuildingManager().getFields())
+        final List<BlockPos> fields = new ArrayList<>(getColony().getBuildingManager().getFields());
+
+        for (@NotNull final BlockPos field : fields)
         {
             final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
             if (scareCrow instanceof ScarecrowTileEntity)
@@ -382,11 +384,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
         if (newLevel == 1)
         {
-            getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingFarmer, this.getColony());
+            getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingFarmer);
         }
         if (newLevel >= getMaxBuildingLevel())
         {
-            getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeFarmerMax, this.getColony());
+            getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeFarmerMax);
         }
     }
 
@@ -472,7 +474,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      */
     public boolean assignManually()
     {
-        return assignManually;
+        return shouldAssignManually;
     }
 
     /**
@@ -526,7 +528,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      */
     public void setAssignManually(final boolean assignManually)
     {
-        this.assignManually = assignManually;
+        this.shouldAssignManually = assignManually;
     }
 
     /**
@@ -537,7 +539,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         /**
          * Checks if fields should be assigned manually.
          */
-        private boolean assignFieldManually;
+        private boolean shouldAssignFieldManually;
 
         /**
          * Contains a view object of all the fields in the colony.
@@ -573,7 +575,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         {
             fields = new ArrayList<>();
             super.deserialize(buf);
-            assignFieldManually = buf.readBoolean();
+            shouldAssignFieldManually = buf.readBoolean();
             final int size = buf.readInt();
             for (int i = 1; i <= size; i++)
             {
@@ -604,7 +606,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
          */
         public boolean assignFieldManually()
         {
-            return assignFieldManually;
+            return shouldAssignFieldManually;
         }
 
         /**
@@ -636,7 +638,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         public void setAssignFieldManually(final boolean assignFieldManually)
         {
             MineColonies.getNetwork().sendToServer(new AssignmentModeMessage(this, assignFieldManually));
-            this.assignFieldManually = assignFieldManually;
+            this.shouldAssignFieldManually = assignFieldManually;
         }
 
         /**

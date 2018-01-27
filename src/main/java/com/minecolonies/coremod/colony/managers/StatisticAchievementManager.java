@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.minecolonies.coremod.achievements.MineColoniesAchievement;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.TriggerColonyAchievements;
@@ -37,13 +38,27 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
     private int plantedSaplings   = 0;
 
     /**
+     * The colony of the manager.
+     */
+    private final Colony colony;
+
+    /**
      * List of achievements within the colony.
      */
     @NotNull
     private final List<Achievement> colonyAchievements = new ArrayList<>();
 
+    /**
+     * Creates the Stat- and AchievementManager for a colony.
+     * @param colony the colony.
+     */
+    public StatisticAchievementManager(final Colony colony)
+    {
+        this.colony = colony;
+    }
+
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound, @NotNull final Colony colony)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         // Restore colony achievements
         final NBTTagList achievementTagList = compound.getTagList(TAG_ACHIEVEMENT_LIST, Constants.NBT.TAG_COMPOUND);
@@ -120,7 +135,7 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
     }
 
     @Override
-    public void incrementStatistic(@NotNull final String stat, @NotNull final Colony colony)
+    public void incrementStatistic(@NotNull final String stat)
     {
         final int statisticAmount = this.getStatisticAmount(stat);
         incrementStatisticAmount(stat);
@@ -239,28 +254,28 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
 
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_SETTLEMENT)
         {
-            this.triggerAchievement(ModAchievements.achievementSizeSettlement, colony);
+            this.triggerAchievement(ModAchievements.achievementSizeSettlement);
         }
 
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_TOWN)
         {
-            this.triggerAchievement(ModAchievements.achievementSizeTown, colony);
+            this.triggerAchievement(ModAchievements.achievementSizeTown);
         }
 
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_CITY)
         {
-            this.triggerAchievement(ModAchievements.achievementSizeCity, colony);
+            this.triggerAchievement(ModAchievements.achievementSizeCity);
 
         }
 
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_METROPOLIS)
         {
-            this.triggerAchievement(ModAchievements.achievementSizeMetropolis, colony);
+            this.triggerAchievement(ModAchievements.achievementSizeMetropolis);
         }
     }
     
     @Override
-    public void triggerAchievement(@NotNull final Achievement achievement, @NotNull final Colony colony)
+    public void triggerAchievement(@NotNull final Achievement achievement)
     {
         if (this.colonyAchievements.contains(achievement))
         {
@@ -270,5 +285,6 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
         this.colonyAchievements.add(achievement);
 
         AchievementUtils.syncAchievements(colony);
+        colony.markDirty();
     }
 }

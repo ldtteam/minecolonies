@@ -70,14 +70,14 @@ public class MarkBuildingDirtyMessage extends AbstractMessage<MarkBuildingDirtyM
         final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony == null)
         {
-            Log.getLogger().warn("TransferItemsRequestMessage colony is null");
+            Log.getLogger().warn("MarkBuildingDirtyMessage colony is null");
             return;
         }
 
         final AbstractBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
-        if (building == null)
+        if (building == null || building.getTileEntity() == null)
         {
-            Log.getLogger().warn("TransferItemsRequestMessage building is null");
+            Log.getLogger().warn("MarkBuildingDirtyMessage building or tileEntity is null");
             return;
         }
 

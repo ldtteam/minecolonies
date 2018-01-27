@@ -19,6 +19,11 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+
 /**
  * Basic inventory for the citizens.
  */
@@ -555,7 +560,7 @@ public class InventoryCitizen implements IInventory
     @Override
     public int getInventoryStackLimit()
     {
-        return MAX_STACK_SIZE;
+        return STACKSIZE;
     }
 
     /**

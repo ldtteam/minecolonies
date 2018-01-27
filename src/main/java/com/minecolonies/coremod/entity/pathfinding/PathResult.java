@@ -57,13 +57,13 @@ public class PathResult
      */
     public boolean failedToReachDestination()
     {
-        return !isComputing() && !getPathReachesDestination();
+        return !isComputing() && !isPathReachingDestination();
     }
 
     /**
      * @return true if the path is computed, and it reaches a desired destination.
      */
-    public boolean getPathReachesDestination()
+    public boolean isPathReachingDestination()
     {
         return pathReachesDestination;
     }

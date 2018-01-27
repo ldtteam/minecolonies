@@ -94,13 +94,13 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         {
             final ItemStack stack = mainWorker.getInventoryCitizen().getStackInSlot(i);
 
-            if(ItemStackUtils.isEmpty(stack) && stack.getItem() != SAPLING_STACK.getItem())
+            if(ItemStackUtils.isEmpty(stack) || stack.getItem() != SAPLING_STACK.getItem())
             {
                 continue;
             }
 
             boolean isAlreadyInList = false;
-            for(Map.Entry<Predicate<ItemStack>, Integer> entry : tempKeep.entrySet())
+            for(final Map.Entry<Predicate<ItemStack>, Integer> entry : tempKeep.entrySet())
             {
                 if(entry.getKey().test(stack))
                 {
@@ -177,11 +177,11 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
         if (newLevel == 1)
         {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingLumberjack, this.getColony());
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingLumberjack);
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax, this.getColony());
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax);
         }
     }
 

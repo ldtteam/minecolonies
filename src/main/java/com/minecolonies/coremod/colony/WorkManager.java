@@ -60,8 +60,9 @@ public class WorkManager
     {
         final AbstractWorkOrder workOrder = workOrders.get(orderId);
         workOrders.remove(orderId);
-        colony.removeWorkOrder(orderId);
+        colony.removeWorkOrderInView(orderId);
         workOrder.onRemoved(colony);
+        colony.markDirty();
     }
 
     /**

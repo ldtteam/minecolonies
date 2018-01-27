@@ -8,6 +8,8 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.constant.Suppression;
+import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagList;
@@ -273,6 +275,55 @@ public final class StandardRequestFactories
         }
     }
 
+    @SuppressWarnings(Suppression.BIG_CLASS)
+    public static final class SmeltableOreRequestFactory implements IRequestFactory<SmeltableOre, StandardRequests.SmeltAbleOreRequest>
+    {
+
+        @Override
+        public StandardRequests.SmeltAbleOreRequest getNewInstance(
+                @NotNull final SmeltableOre input,
+                @NotNull final IRequester location,
+                @NotNull final IToken token,
+                @NotNull final RequestState initialState)
+        {
+            return new StandardRequests.SmeltAbleOreRequest(location, token, initialState, input);
+        }
+
+        @NotNull
+        @Override
+        public TypeToken<? extends StandardRequests.SmeltAbleOreRequest> getFactoryOutputType()
+        {
+            return TypeToken.of(StandardRequests.SmeltAbleOreRequest.class);
+        }
+
+        @NotNull
+        @Override
+        public TypeToken<? extends SmeltableOre> getFactoryInputType()
+        {
+            return TypeToken.of(SmeltableOre.class);
+        }
+
+        @NotNull
+        @Override
+        public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.SmeltAbleOreRequest request)
+        {
+            return serializeToNBT(controller, request, SmeltableOre::serialize);
+        }
+
+        @NotNull
+        @Override
+        public StandardRequests.SmeltAbleOreRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+        {
+            return deserializeFromNBT(controller, nbt, SmeltableOre::deserialize,
+                    (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.SmeltAbleOreRequest.class),
+                            requested,
+                            token,
+                            requester,
+                            requestState));
+        }
+    }
+
+    @SuppressWarnings(Suppression.BIG_CLASS)
     public static final class BurnableRequestFactory implements IRequestFactory<Burnable, StandardRequests.BurnableRequest>
     {
 

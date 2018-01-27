@@ -24,27 +24,49 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFactories;
+import com.minecolonies.coremod.test.AbstractTest;
+import com.minecolonies.coremod.test.ReflectionUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class StandardRequestManagerTest
 {
+    @Mock
+    private Colony colony;
+
+    @Mock
+    private World world;
+
+    @Mock
+    private WorldProvider worldProvider;
+
+    @Mock
+    private BlockPos center;
 
     private StandardRequestManager   requestManager;
     private IRequestResolverProvider provider;
@@ -52,18 +74,25 @@ public class StandardRequestManagerTest
     @Before
     public void setUp() throws Exception
     {
-        Configurations.requestSystem.enableDebugLogging = true;
+
+        Configurations.RequestSystem.enableDebugLogging = true;
         requestManager = new StandardRequestManager();
 
         StandardFactoryControllerInitializer.onPreInit();
-
         StandardFactoryController.getInstance().registerNewFactory(new StringRequestableFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StringRequestFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StringResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new TestRequesterFactory());
 
-        RequestMappingHandler.registerRequestableTypeMapping(StringRequestable.class, StringRequest.class);
+        when(colony.getWorld()).thenReturn(world);
+        when(colony.getID()).thenReturn(1);
+        when(worldProvider.getDimension()).thenReturn(1);
+        ReflectionUtil.setFinalField(world, "provider", worldProvider);
+        when(colony.getCenter()).thenReturn(center);
 
+        requestManager = new StandardRequestManager(colony);
+
+        RequestMappingHandler.registerRequestableTypeMapping(StringRequestable.class, StringRequest.class);
         provider = new TestResolvingProvider();
     }
 
@@ -75,7 +104,7 @@ public class StandardRequestManagerTest
     }
 
     @Test
-    public void serializeNBT() throws Exception
+    public void testSerializeNBT() throws Exception
     {
         requestManager.onProviderAddedToColony(provider);
 
@@ -91,7 +120,7 @@ public class StandardRequestManagerTest
     }
 
     @Test
-    public void deserializeNBT() throws Exception
+    public void testDeserializeNBT() throws Exception
     {
         requestManager.onProviderAddedToColony(provider);
 
@@ -102,19 +131,20 @@ public class StandardRequestManagerTest
 
         final NBTTagCompound compound = requestManager.serializeNBT();
 
-        final StandardRequestManager deserializedVariant = new StandardRequestManager();
+        final StandardRequestManager deserializedVariant = new StandardRequestManager(colony);
         deserializedVariant.onProviderAddedToColony(provider);
         deserializedVariant.deserializeNBT(compound);
+        assertEquals(requestManager.serializeNBT(), deserializedVariant.serializeNBT());
     }
 
     @Test
-    public void getFactoryController() throws Exception
+    public void testGetFactoryController() throws Exception
     {
         assertEquals(StandardFactoryController.getInstance(), requestManager.getFactoryController());
     }
 
     @Test
-    public void createAndAssignRequest() throws Exception
+    public void testCreateAndAssignRequest() throws Exception
     {
         requestManager.onProviderAddedToColony(provider);
 
@@ -126,11 +156,13 @@ public class StandardRequestManagerTest
         assertNotNull(request);
         assertEquals(requestable, request.getRequest());
 
+        requestManager.updateRequestState(request.getToken(), RequestState.RECEIVED);
+
         requestManager.onProviderRemovedFromColony(provider);
     }
 
     @Test
-    public void updateRequestState() throws Exception
+    public void testUpdateRequestState() throws Exception
     {
         requestManager.onProviderAddedToColony(provider);
 
@@ -145,17 +177,18 @@ public class StandardRequestManagerTest
     }
 
     @Test
-    public void onProviderModificationTest() throws Exception
+    public void testOnProviderModificationTest() throws Exception
     {
         requestManager.onProviderAddedToColony(provider);
         requestManager.onProviderRemovedFromColony(provider);
+        assertNotNull(requestManager);
     }
 
     @Test
-    public void reassignRequest()
+    public void testReassignRequest()
     {
         requestManager.onProviderAddedToColony(provider);
-
+        assertNotNull(requestManager);
     }
 
     private static class TestResolvingProvider implements IRequestResolverProvider
@@ -264,7 +297,7 @@ public class StandardRequestManagerTest
 
     private static class StringRequestable implements IRequestable
     {
-        final String content;
+        protected final String content;
 
         private StringRequestable(final String content) {this.content = content;}
 
@@ -473,7 +506,7 @@ public class StandardRequestManagerTest
     private static class TestRequester implements IRequester
     {
 
-        static final TestRequester INSTANCE = new TestRequester();
+        protected static final TestRequester INSTANCE = new TestRequester();
 
         private final IToken<?> token;
 

@@ -15,6 +15,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.event.EventHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -27,6 +28,8 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Locale;
 
 /**
  * Send build tool data to the server. Verify the data on the server side and then place the building.
@@ -154,15 +157,20 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
                                    final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
         final String hut = sn.getSection();
-        final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
+        Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
         final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
         if (tempColony != null
               && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
                     && !(block instanceof BlockHutTownHall
                            && BlockPosUtil.getDistance2D(tempColony.getCenter(), buildPos) >=
-                                Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)))
+                                Configurations.Gameplay.workingRangeTownHall * 2 + Configurations.Gameplay.townHallPadding)))
         {
             return;
+        }
+
+        if(block instanceof BlockAir)
+        {
+            block = Block.getBlockFromName(Constants.MOD_ID + (":blockHut" + hut).toLowerCase(Locale.ENGLISH));
         }
 
         if (block != null && player.inventory.hasItemStack(new ItemStack(block)))
@@ -249,7 +257,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
             building.setRotation(rotation);
             if (mirror)
             {
-                building.setMirror();
+                building.invertMirror();
             }
         }
     }

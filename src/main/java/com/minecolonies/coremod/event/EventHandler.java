@@ -7,6 +7,7 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.coremod.blocks.BlockHutField;
 import com.minecolonies.coremod.blocks.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -181,7 +182,7 @@ public class EventHandler
     private static void handleEventCancellation(@NotNull final PlayerInteractEvent event, @NotNull final EntityPlayer player)
     {
         final Block heldBlock = Block.getBlockFromItem(player.getHeldItemMainhand().getItem());
-        if (heldBlock instanceof AbstractBlockHut)
+        if (heldBlock instanceof AbstractBlockHut || heldBlock instanceof BlockHutField)
         {
             event.setCanceled(!onBlockHutPlaced(event.getWorld(), player, heldBlock, event.getPos().offset(event.getFace())));
         }
@@ -213,7 +214,7 @@ public class EventHandler
         }
     }
 
-    static boolean onTownHallPlaced(@NotNull final World world, @NotNull final EntityPlayer player, final BlockPos pos)
+    protected static boolean onTownHallPlaced(@NotNull final World world, @NotNull final EntityPlayer player, final BlockPos pos)
     {
         IColony colony = ColonyManager.getIColonyByOwner(world, player);
         if (colony != null)
@@ -236,7 +237,7 @@ public class EventHandler
         if (onBlockHutPlaced(world, player, pos))
         {
             final IColony colony = ColonyManager.getClosestIColony(world, pos);
-            if (colony != null && (!Configurations.gameplay.limitToOneWareHousePerColony || !colony.hasWarehouse()))
+            if (colony != null && (!Configurations.Gameplay.limitToOneWareHousePerColony || !colony.hasWarehouse()))
             {
                 return true;
             }
@@ -326,7 +327,7 @@ public class EventHandler
             return false;
         }
 
-        if (Configurations.gameplay.protectVillages && world.getVillageCollection().getNearestVillage(pos, Configurations.gameplay.workingRangeTownHall) != null)
+        if (Configurations.Gameplay.protectVillages && world.getVillageCollection().getNearestVillage(pos, Configurations.Gameplay.workingRangeTownHall) != null)
         {
             Log.getLogger().warn("Village close by!");
             return false;

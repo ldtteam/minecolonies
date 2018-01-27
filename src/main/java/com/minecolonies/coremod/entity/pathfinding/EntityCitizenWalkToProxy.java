@@ -113,7 +113,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
             else if (targetY <= levelDepth && workerY > levelDepth)
             {
                 final BlockPos buildingPos = building.getLocation();
-                BlockPos newProxy;
+                final BlockPos newProxy;
 
                 //First calculate way to miner building.
                 newProxy = getProxy(buildingPos, citizen.getPosition(), BlockPosUtil.getDistanceSquared(citizen.getPosition(), buildingPos));

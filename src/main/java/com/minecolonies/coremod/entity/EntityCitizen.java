@@ -25,6 +25,7 @@ import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
+import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -150,7 +151,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         super(world);
         setSize((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT);
         this.enablePersistence();
-        this.setAlwaysRenderNameTag(Configurations.gameplay.alwaysRenderNameTag);
+        this.setAlwaysRenderNameTag(Configurations.Gameplay.alwaysRenderNameTag);
         this.newNavigator = new PathNavigate(this, world);
         updateNavigatorField();
         if (CompatibilityUtils.getWorld(this).isRemote)
@@ -307,7 +308,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         //Will help track down some hard to find bugs (Pathfinding etc.)
         if (citizenData != null)
         {
-            if (this.getColonyJob() != null && Configurations.gameplay.enableInDevelopmentFeatures)
+            if (this.getColonyJob() != null && Configurations.Gameplay.enableInDevelopmentFeatures)
             {
                 setCustomNameTag(citizenData.getName() + " (" + getStatus() + ")[" + this.getColonyJob().getNameTagDescription() + "]");
             }
@@ -364,7 +365,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         boolean hasChanged = false;
         for (int i = 0; i < latestStatus.length; i++)
         {
-            ITextComponent newStatus;
+            final ITextComponent newStatus;
             if (i >= status.length)
             {
                 newStatus = null;
@@ -590,7 +591,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                   "tile.blockHutTownHall.messageColonistDead",
                   citizenData.getName(), (int) posX, (int) posY, (int) posZ, damageSource.damageType);
             }
-            colony.getCitizenManager().removeCitizen(getCitizenData(), colony);
+            colony.getCitizenManager().removeCitizen(getCitizenData());
         }
         super.onDeath(damageSource);
     }
@@ -658,7 +659,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
-            return (T) new InvWrapper(getCitizenData().getInventory());
+            final CitizenData data = getCitizenData();
+            if (data == null)
+            {
+                return super.getCapability(capability, facing);
+            }
+            final InventoryCitizen inv = data.getInventory();
+            return (T) new InvWrapper(inv);
         }
 
         return super.getCapability(capability, facing);
@@ -667,6 +674,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public boolean hasCapability(final Capability<?> capability, final EnumFacing facing)
     {
+        if (getCitizenData() == null)
+        {
+            return super.hasCapability(capability, facing);
+        }
+
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
             return true;
@@ -713,7 +725,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public boolean processInteract(final EntityPlayer player, final EnumHand hand, final ItemStack stack)
     {
-
         final ColonyView colonyView = ColonyManager.getColonyView(colonyId);
         if (colonyView != null && !colonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
@@ -727,10 +738,17 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (CompatibilityUtils.getWorld(this).isRemote)
         {
-            final CitizenDataView citizenDataView = getCitizenDataView();
-            if (citizenDataView != null)
+            if(player.isSneaking())
             {
-                MineColonies.proxy.showCitizenWindow(citizenDataView);
+                MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(this.getName(), this.getEntityId()));
+            }
+            else
+            {
+                final CitizenDataView citizenDataView = getCitizenDataView();
+                if (citizenDataView != null)
+                {
+                    MineColonies.proxy.showCitizenWindow(citizenDataView);
+                }
             }
         }
         return true;
@@ -807,7 +825,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             if (getOffsetTicks() % TICKS_20 == 0)
             {
-                this.setAlwaysRenderNameTag(Configurations.gameplay.alwaysRenderNameTag);
+                this.setAlwaysRenderNameTag(Configurations.Gameplay.alwaysRenderNameTag);
                 pickupItems();
                 cleanupChatMessages();
                 updateColonyServer();
@@ -937,7 +955,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             @NotNull final Iterator<Map.Entry<String, Integer>> it = statusMessages.entrySet().iterator();
             while (it.hasNext())
             {
-                if (ticksExisted - it.next().getValue() > TICKS_20 * Configurations.gameplay.chatFrequency)
+                if (ticksExisted - it.next().getValue() > TICKS_20 * Configurations.Gameplay.chatFrequency)
                 {
                     it.remove();
                 }
@@ -950,10 +968,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if(citizenData != null && name != null)
         {
-            if(!name.contains(citizenData.getName()) && Configurations.gameplay.allowGlobalNameChanges >= 0)
+            if(!name.contains(citizenData.getName()) && Configurations.Gameplay.allowGlobalNameChanges >= 0)
             {
-                if (Configurations.gameplay.allowGlobalNameChanges == 0 &&
-                        Arrays.stream(Configurations.gameplay.specialPermGroup).noneMatch(owner -> owner.equals(colony.getPermissions().getOwnerName())))
+                if (Configurations.Gameplay.allowGlobalNameChanges == 0 &&
+                        Arrays.stream(Configurations.Gameplay.specialPermGroup).noneMatch(owner -> owner.equals(colony.getPermissions().getOwnerName())))
                 {
                     LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), CITIZEN_RENAME_NOT_ALLOWED);
                     return;
@@ -1612,7 +1630,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private boolean shouldWorkWhileRaining()
     {
-        return (this.getWorkBuilding() != null && (this.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL)) || Configurations.gameplay.workersAlwaysWorkInRain;
+        return (this.getWorkBuilding() != null && (this.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL)) || Configurations.Gameplay.workersAlwaysWorkInRain;
     }
 
     /**

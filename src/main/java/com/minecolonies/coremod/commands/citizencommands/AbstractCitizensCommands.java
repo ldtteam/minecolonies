@@ -60,7 +60,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
                 final EntityPlayer player = server.getEntityWorld().getPlayerEntityByName(args[0]);
                 if (player != null)
                 {
-                    IColony tempColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
+                    final IColony tempColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
                     if (tempColony != null)
                     {
                         colonyId = tempColony.getID();
@@ -133,7 +133,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
      *
      * @return the command.
      */
-    abstract Commands getCommand();
+    public abstract Commands getCommand();
 
     /**
      * Get a valid citizenid from the arguments.
@@ -179,5 +179,5 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
      * @param colonyId  the id for the colony
      * @param citizenId the id for the citizen
      */
-    abstract void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colonyId, final int citizenId);
+    public abstract void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colonyId, final int citizenId);
 }

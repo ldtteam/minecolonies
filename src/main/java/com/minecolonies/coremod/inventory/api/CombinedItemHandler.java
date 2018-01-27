@@ -272,8 +272,6 @@ public class CombinedItemHandler
         return handlers;
     }
 
-
-
     /**
      * Method to set the name of this {@link IWorldNameable}.
      *

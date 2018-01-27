@@ -18,7 +18,6 @@ public final class ModCreativeTabs
         public Item getTabIconItem()
         {
             this.setBackgroundImageName("minecolonies_background.png");
-            this.setNoScrollbar();
             return new ItemStack(ModBlocks.blockHutTownHall).getItem();
         }
 

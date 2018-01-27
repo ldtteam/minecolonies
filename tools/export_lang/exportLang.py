@@ -54,7 +54,7 @@ if __name__ == "__main__":
         print(mc_lang)
         with open("../../src/main/resources/assets/minecolonies/lang/" + mc_lang, 'w') as f:
             for k,v in strings.items():
-                if type(v) == type({}):
+                if isinstance(v, {}):
                     k = next(iter(v))
                     v = v[k]
                 if v == '':

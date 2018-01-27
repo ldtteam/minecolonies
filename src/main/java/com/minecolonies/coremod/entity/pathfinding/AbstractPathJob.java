@@ -6,7 +6,6 @@ import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockConstructionTape;
-import com.minecolonies.coremod.blocks.BlockConstructionTapeCorner;
 import com.minecolonies.coremod.blocks.BlockHutField;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -153,7 +152,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         allowJumpPointSearchTypeWalk = false;
 
-        if (Configurations.pathfinding.pathfindingDebugDraw)
+        if (Configurations.Pathfinding.pathfindingDebugDraw)
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();
@@ -428,7 +427,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         currentNode.setClosed();
 
-        if (Configurations.pathfinding.pathfindingDebugVerbosity == DEBUG_VERBOSITY_FULL)
+        if (Configurations.Pathfinding.pathfindingDebugVerbosity == DEBUG_VERBOSITY_FULL)
         {
             Log.getLogger().info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f",
               currentNode.pos.getX(), currentNode.pos.getY(), currentNode.pos.getZ(), currentNode.getCost(), currentNode.getScore()));
@@ -610,7 +609,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     private void doDebugPrinting(@NotNull final PathPoint[] points)
     {
-        if (Configurations.pathfinding.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
+        if (Configurations.Pathfinding.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
         {
             Log.getLogger().info("Path found:");
 
@@ -934,8 +933,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             {
                 return block.getBlock() instanceof BlockDoor
                          || block.getBlock() instanceof BlockFenceGate
-                         || block.getBlock() instanceof BlockConstructionTape
-                         || block.getBlock() instanceof BlockConstructionTapeCorner;
+                         || block.getBlock() instanceof BlockConstructionTape;
             }
             else if (block.getMaterial().isLiquid())
             {
@@ -969,7 +967,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             return SurfaceType.NOT_PASSABLE;
         }
 
-        if (block instanceof BlockConstructionTape || block instanceof BlockConstructionTapeCorner)
+        if (block instanceof BlockConstructionTape)
         {
             return SurfaceType.DROPABLE;
         }

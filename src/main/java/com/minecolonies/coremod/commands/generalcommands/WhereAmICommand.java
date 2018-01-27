@@ -32,6 +32,11 @@ public class WhereAmICommand extends AbstractSingleCommand
     /**
      * Position description string.
      */
+    public static final String NONE = "No colony close at all.";
+
+    /**
+     * Position description string.
+     */
     public static final String NONE_CLOSE = "You're not inside any colony, the closest colony is approx %.2f blocks away.";
 
     /**
@@ -60,10 +65,16 @@ public class WhereAmICommand extends AbstractSingleCommand
 
         final BlockPos playerPos = sender.getPosition();
         final IColony colony = ColonyManager.getClosestColony(server.getEntityWorld(), playerPos);
+
+        if(colony == null)
+        {
+            sender.sendMessage(new TextComponentString(NONE));
+            return;
+        }
         final BlockPos center = colony.getCenter();
         final double distance = BlockPosUtil.getDistanceSquared(center, new BlockPos(playerPos.getX(), center.getY(), playerPos.getZ()));
 
-        if (distance >= MathUtils.square(Configurations.gameplay.workingRangeTownHall + (double) Configurations.gameplay.townHallPadding))
+        if (distance >= MathUtils.square(Configurations.Gameplay.workingRangeTownHall + (double) Configurations.Gameplay.townHallPadding))
         {
             sender.sendMessage(new TextComponentString(String.format(NONE_CLOSE, Math.sqrt(distance))));
             return;

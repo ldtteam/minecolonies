@@ -1,8 +1,5 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
-import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.ModBlocks;
@@ -18,7 +15,6 @@ import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Blocks;
@@ -350,7 +346,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         final IBlockState decrease;
         for (final IPlacementHandler handlers : PlacementHandlers.handlers)
         {
-            final Object result = handlers.handle(world, coords, blockState, this, Configurations.gameplay.builderInfiniteResources, false);
+            final Object result = handlers.handle(world, coords, blockState, this, Configurations.Gameplay.builderInfiniteResources, false);
             if (result instanceof IPlacementHandler.ActionProcessingResult)
             {
                 if (result == ACCEPT)
@@ -447,9 +443,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
         }
 
-        if (Configurations.gameplay.builderBuildBlockDelay > 0 && blockToPlace != Blocks.AIR)
+        if (Configurations.Gameplay.builderBuildBlockDelay > 0 && blockToPlace != Blocks.AIR)
         {
-            setDelay(Configurations.gameplay.builderBuildBlockDelay * PROGRESS_MULTIPLIER / (worker.getLevel() + PROGRESS_MULTIPLIER));
+            setDelay(Configurations.Gameplay.builderBuildBlockDelay * PROGRESS_MULTIPLIER / (worker.getLevel() + PROGRESS_MULTIPLIER));
         }
 
         return true;
@@ -648,7 +644,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             worker.faceBlock(currentBlock.blockPosition);
 
             //We need to deal with materials
-            if (Configurations.gameplay.builderInfiniteResources || currentBlock.worldMetadata.getMaterial().isLiquid())
+            if (Configurations.Gameplay.builderInfiniteResources || currentBlock.worldMetadata.getMaterial().isLiquid())
             {
                 worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
                 world.setBlockToAir(currentBlock.blockPosition);
@@ -806,7 +802,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.spawning"));
 
-        final Entity entity = getEntityFromEntityInfoOrNull(entityInfo);
+        final Entity entity = ItemStackUtils.getEntityFromEntityInfoOrNull(entityInfo, world);
         if (entity != null && !isEntityAtPosition(entity, world))
         {
             final List<ItemStack> request = new ArrayList<>();
@@ -832,7 +828,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 request.add(entity.getPickedResult(new RayTraceResult(worker)));
             }
 
-            if (!Configurations.gameplay.builderInfiniteResources)
+            if (!Configurations.Gameplay.builderInfiniteResources)
             {
                 if(PlacementHandlers.checkForListInInvAndRequest(this, request))
                 {
@@ -869,26 +865,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         return true;
-    }
-
-    /**
-     * Get the entity of an entityInfo object.
-     *
-     * @param entityInfo the input.
-     * @return the output object or null.
-     */
-    @Nullable
-    public Entity getEntityFromEntityInfoOrNull(final Template.EntityInfo entityInfo)
-    {
-        try
-        {
-            return EntityList.createEntityFromNBT(entityInfo.entityData, world);
-        }
-        catch (final RuntimeException e)
-        {
-            Log.getLogger().info("Couldn't restore entitiy", e);
-            return null;
-        }
     }
 
     /**

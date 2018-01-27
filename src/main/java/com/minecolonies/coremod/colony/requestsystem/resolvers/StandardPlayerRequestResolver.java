@@ -85,23 +85,23 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
         final IColony colony = manager.getColony();
         if (colony instanceof Colony)
         {
-            if (Configurations.requestSystem.creativeResolve &&
+            if (Configurations.RequestSystem.creativeResolve &&
                   request.getRequest() instanceof IDeliverable &&
                   request.getRequester() instanceof BuildingBasedRequester &&
                   ((BuildingBasedRequester) request.getRequester()).getBuilding().isPresent() &&
                   ((BuildingBasedRequester) request.getRequester()).getBuilding().get() instanceof AbstractBuilding)
             {
-                AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding().get();
-                Optional<CitizenData> citizenDataOptional = building.getCitizenForRequest(request.getToken());
+                final AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding().get();
+                final Optional<CitizenData> citizenDataOptional = building.getCitizenForRequest(request.getToken());
 
-                List<ItemStack> resolvablestacks = request.getDisplayStacks();
+                final List<ItemStack> resolvablestacks = request.getDisplayStacks();
                 if (!resolvablestacks.isEmpty() && citizenDataOptional.isPresent())
                 {
-                    ItemStack resolveStack = resolvablestacks.get(0);
+                    final ItemStack resolveStack = resolvablestacks.get(0);
                     resolveStack.stackSize = Math.min(((IDeliverable) request.getRequest()).getCount(), resolveStack.getMaxStackSize());
-                    ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(
-                      new InvWrapper(citizenDataOptional.get().getCitizenEntity().getInventoryCitizen()),
-                      resolveStack);
+                    final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(
+                            new InvWrapper(citizenDataOptional.get().getCitizenEntity().getInventoryCitizen()),
+                            resolveStack);
 
                     if (ItemStackUtils.isEmpty(remainingItemStack))
                     {
@@ -115,21 +115,24 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
             final EntityPlayer owner = ServerUtils.getPlayerFromUUID(colony.getWorld(), ((Colony) colony).getPermissions().getOwner());
             final TextComponentString colonyDescription = new TextComponentString(colony.getName() + ":");
 
-            if (owner != null)
+            if(manager.getColony().getWorld().isDaytime())
             {
-                players.remove(owner);
+                if (owner != null)
+                {
+                    players.remove(owner);
 
-                LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
-                        request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
+                    LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
+                            request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
+                            request.getShortDisplayString().getFormattedText(),
+                            request.getRequester().getRequesterLocation().toString()
+                    );
+                }
+
+                LanguageHandler.sendPlayersMessage(players, "com.minecolonies.requestsystem.playerresolver",
+                        colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
                         request.getShortDisplayString().getFormattedText(),
-                        request.getRequester().getRequesterLocation().toString()
-                );
+                        request.getRequester().getRequesterLocation().toString());
             }
-
-            LanguageHandler.sendPlayersMessage(players, "com.minecolonies.requestsystem.playerresolver",
-                    colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
-                    request.getShortDisplayString().getFormattedText(),
-                    request.getRequester().getRequesterLocation().toString());
         }
 
         assignedRequests.add(request.getToken());

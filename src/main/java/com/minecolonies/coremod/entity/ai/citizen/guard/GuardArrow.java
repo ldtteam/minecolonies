@@ -66,10 +66,10 @@ public class GuardArrow extends EntityTippedArrow
                 final EntityPlayer player = (EntityPlayer) targetEntity;
                 if (colony.getPermissions().isColonyMember(player))
                 {
-                    this.colony.getStatsManager().triggerAchievement(ModAchievements.achievementPlayerDeathGuard, this.colony);
+                    this.colony.getStatsManager().triggerAchievement(ModAchievements.achievementPlayerDeathGuard);
                 }
             }
-            colony.getStatsManager().incrementStatistic("mobs", this.colony);
+            colony.getStatsManager().incrementStatistic("mobs");
         }
     }
 

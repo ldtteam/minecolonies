@@ -460,7 +460,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         {
             if (currentPathTarget == null
                   || BlockPosUtil.getDistance2D(building.getColony().getCenter(), currentPathTarget)
-                       > Configurations.gameplay.workingRangeTownHall + Configurations.gameplay.townHallPadding
+                       > Configurations.Gameplay.workingRangeTownHall + Configurations.Gameplay.townHallPadding
                   || currentPathTarget.getY() < 2)
             {
                 return getNextPatrollingTarget((AbstractBuildingGuards) building);
@@ -514,7 +514,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
 
             BlockPos pos = building.getPlayerToFollow();
             if (pos == null
-                  || BlockPosUtil.getDistance2D(pos, building.getColony().getCenter()) > Configurations.gameplay.workingRangeTownHall + Configurations.gameplay.townHallPadding)
+                  || BlockPosUtil.getDistance2D(pos, building.getColony().getCenter()) > Configurations.Gameplay.workingRangeTownHall + Configurations.Gameplay.townHallPadding)
             {
                 if (pos != null)
                 {
@@ -626,7 +626,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     protected void onKilledEntity(final EntityLivingBase killedEntity)
     {
         final Colony colony = this.getOwnBuilding().getColony();
-        colony.getStatsManager().incrementStatistic("mobs", worker.getColony());
+        colony.getStatsManager().incrementStatistic("mobs");
         this.incrementActionsDone();
         worker.getNavigator().clearPathEntity();
     }

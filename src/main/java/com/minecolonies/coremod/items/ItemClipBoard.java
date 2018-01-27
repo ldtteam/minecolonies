@@ -17,16 +17,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+
 /**
  * Class describing the clipboard item.
  */
 public class ItemClipBoard extends AbstractItemMinecolonies
 {
-    /**
-     * Max stack size of the item.
-     */
-    private static final int MAX_STACK_SIZE = 1;
-
     /**
      * Tag of the colony.
      */
@@ -39,7 +36,7 @@ public class ItemClipBoard extends AbstractItemMinecolonies
     {
         super("clipboard");
         super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        setMaxStackSize(MAX_STACK_SIZE);
+        setMaxStackSize(STACKSIZE);
     }
 
     @Override

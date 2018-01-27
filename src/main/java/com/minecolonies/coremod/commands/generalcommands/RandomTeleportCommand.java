@@ -30,10 +30,10 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.R
 public class RandomTeleportCommand extends AbstractSingleCommand
 {
     public static final  String DESC             = "rtp";
-    private static final int    ATTEMPTS         = Configurations.gameplay.numberOfAttemptsForSafeTP;
-    private static final int    UPPER_BOUNDS     = Configurations.gameplay.maxDistanceFromWorldSpawn * 2;
-    private static final int    LOWER_BOUNDS     = Configurations.gameplay.maxDistanceFromWorldSpawn;
-    private static final int    SPAWN_NO_TP      = Configurations.gameplay.minDistanceFromWorldSpawn;
+    private static final int    ATTEMPTS         = Configurations.Gameplay.numberOfAttemptsForSafeTP;
+    private static final int    UPPER_BOUNDS     = Configurations.Gameplay.maxDistanceFromWorldSpawn * 2;
+    private static final int    LOWER_BOUNDS     = Configurations.Gameplay.maxDistanceFromWorldSpawn;
+    private static final int    SPAWN_NO_TP      = Configurations.Gameplay.minDistanceFromWorldSpawn;
     private static final int    STARTING_Y       = 250;
     private static final double SAFETY_DROP      = 6;
     private static final int    FALL_DISTANCE    = 5;
@@ -57,7 +57,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
     }
 
     @Override
-    public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         if (SPAWN_NO_TP >= LOWER_BOUNDS)
         {
@@ -151,7 +151,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
                 else
                 {
                     sender.getCommandSenderEntity().sendMessage(
-                            new TextComponentString("Please wait at least " + Configurations.gameplay.teleportBuffer + " seconds to teleport again"));
+                            new TextComponentString("Please wait at least " + Configurations.Gameplay.teleportBuffer + " seconds to teleport again"));
                 }
                 return;
             }
@@ -189,7 +189,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
     }
 
     @Override
-    public boolean isUsernameIndex(@NotNull String[] args, int index)
+    public boolean isUsernameIndex(@NotNull final String[] args, final int index)
     {
         return index == 0;
     }

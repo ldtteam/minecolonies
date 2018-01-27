@@ -24,26 +24,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.WindowConstants.*;
+
 /**
  * Window for the builder hut.
  */
 public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuilderView>
 {
-    /**
-     * The builders gui file.
-     */
-    private static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutbuilder.xml";
-    private static final String LIST_RESOURCES              = "resources";
-    private static final String PAGE_RESOURCES              = "resourceActions";
-    private static final String VIEW_PAGES                  = "pages";
-    private static final String RESOURCE_NAME               = "resourceName";
-    private static final String RESOURCE_AVAILABLE_NEEDED   = "resourceAvailableNeeded";
-    private static final String RESOURCE_MISSING            = "resourceMissing";
-    private static final String RESOURCE_ADD                = "resourceAdd";
-    private static final String RESOURCE_ID                 = "resourceId";
-    private static final String RESOURCE_QUANTITY_MISSING   = "resourceQuantity";
-    private static final String RESOURCE_ICON               = "resourceIcon";
-
     private static final int RED       = Color.getByName("red", 0);
     private static final int DARKGREEN = Color.getByName("darkgreen", 0);
     private static final int BLACK     = Color.getByName("black", 0);

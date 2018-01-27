@@ -32,7 +32,7 @@ public class JobDeliveryman extends AbstractJob
     private static final String TAG_CURRENT_TASK = "currentTask";
     private static final String TAG_RETURNING    = "returning";
 
-    private LinkedList<IToken<?>> taskQueue = new LinkedList<>();
+    private final LinkedList<IToken<?>> taskQueue = new LinkedList<>();
 
     private boolean returning;
 
@@ -219,7 +219,7 @@ public class JobDeliveryman extends AbstractJob
      *
      * @return True when this DMan is returning the warehouse to clean his inventory.
      */
-    public boolean getReturning()
+    public boolean isReturning()
     {
         return returning;
     }

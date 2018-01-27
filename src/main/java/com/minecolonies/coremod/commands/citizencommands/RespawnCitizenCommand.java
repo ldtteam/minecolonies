@@ -45,7 +45,7 @@ public class RespawnCitizenCommand extends AbstractCitizensCommands
     }
 
     @Override
-    void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
+    public void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
     {
         final CitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
         final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
@@ -53,7 +53,7 @@ public class RespawnCitizenCommand extends AbstractCitizensCommands
 
         if (entityCitizen == null)
         {
-            colony.getCitizenManager().spawnCitizen(citizenData, colony.getWorld(), colony.getBuildingManager(), colony);
+            colony.getCitizenManager().spawnCitizen(citizenData, colony.getWorld());
             return;
         }
 

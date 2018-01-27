@@ -337,7 +337,7 @@ public final class StructureWrapper
                 return false;
             }
         }
-        while (isStructureBlockEqualWorldBlock() && count < Configurations.gameplay.maxBlocksCheckedByBuilder);
+        while (isStructureBlockEqualWorldBlock() && count < Configurations.Gameplay.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -489,7 +489,7 @@ public final class StructureWrapper
             }
         }
         //Check for air blocks and if blocks below the hut are different from the structure
-        while ((worldBlockAir() || isStructureBlockEqualWorldBlock()) && count < Configurations.gameplay.maxBlocksCheckedByBuilder);
+        while ((worldBlockAir() || isStructureBlockEqualWorldBlock()) && count < Configurations.Gameplay.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -510,7 +510,7 @@ public final class StructureWrapper
                 return false;
             }
         }
-        while ((isStructureBlockEqualWorldBlock() || isBlockNonSolid()) && count < Configurations.gameplay.maxBlocksCheckedByBuilder);
+        while ((isStructureBlockEqualWorldBlock() || isBlockNonSolid()) && count < Configurations.Gameplay.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -552,7 +552,7 @@ public final class StructureWrapper
                 return false;
             }
         }
-        while ((isStructureBlockEqualWorldBlock() || isBlockSolid()) && count < Configurations.gameplay.maxBlocksCheckedByBuilder);
+        while ((isStructureBlockEqualWorldBlock() || isBlockSolid()) && count < Configurations.Gameplay.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -709,7 +709,7 @@ public final class StructureWrapper
     /**
      * @return The StructureProxy that houses all the info about what is stored in a structure.
      */
-    public StructureProxy structure()
+    public StructureProxy getStructure()
     {
         return structure;
     }

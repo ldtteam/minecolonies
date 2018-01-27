@@ -7,7 +7,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +33,20 @@ public class BarbarianManager implements IBarbarianManager
      */
     private boolean haveBarbEvents = true;
 
+    /**
+     * The colony of the manager.
+     */
+    private final Colony colony;
+
+    /**
+     * Creates the BarbarianManager for a colony.
+     * @param colony the colony.
+     */
+    public BarbarianManager(final Colony colony)
+    {
+        this.colony = colony;
+    }
+
     @Override
     public boolean canHaveBarbEvents()
     {
@@ -56,6 +69,7 @@ public class BarbarianManager implements IBarbarianManager
     public void setCanHaveBarbEvents(final boolean canHave)
     {
         this.haveBarbEvents = canHave;
+        colony.markDirty();
     }
 
     @Override
@@ -71,7 +85,7 @@ public class BarbarianManager implements IBarbarianManager
     }
 
     @Override
-    public BlockPos getRandomOutsiderInDirection(final EnumFacing directionX, final EnumFacing directionZ, @NotNull final Colony colony)
+    public BlockPos getRandomOutsiderInDirection(final EnumFacing directionX, final EnumFacing directionZ)
     {
         final BlockPos center = colony.getCenter();
         final World world = colony.getWorld();

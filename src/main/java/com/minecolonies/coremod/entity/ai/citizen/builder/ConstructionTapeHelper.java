@@ -58,10 +58,9 @@ public final class ConstructionTapeHelper
      */
     public static void placeConstructionTape(final BlockPos pos, final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners, @NotNull final World world)
     {
-        if (Configurations.gameplay.builderPlaceConstructionTape)
+        if (Configurations.Gameplay.builderPlaceConstructionTape)
         {
             final IBlockState constructionTape = ModBlocks.blockConstructionTape.getDefaultState();
-            final IBlockState constructionTapeCorner = ModBlocks.blockConstructionTapeCorner.getDefaultState();
 
             final int x1 = corners.getFirst().getFirst();
             final int x3 = corners.getFirst().getSecond();
@@ -126,10 +125,10 @@ public final class ConstructionTapeHelper
             final BlockPos corner3 = new BlockPos(x3, newY, z1);
             newY = checkIfPlaceable(x3, y, z3, world);
             final BlockPos corner4 = new BlockPos(x3, newY, z3);
-            world.setBlockState(corner1, constructionTapeCorner.withProperty(FACING, EnumFacing.SOUTH));
-            world.setBlockState(corner2, constructionTapeCorner.withProperty(FACING, EnumFacing.EAST));
-            world.setBlockState(corner3, constructionTapeCorner.withProperty(FACING, EnumFacing.WEST));
-            world.setBlockState(corner4, constructionTapeCorner.withProperty(FACING, EnumFacing.NORTH));
+            world.setBlockState(corner1, constructionTape.withProperty(FACING, EnumFacing.SOUTH));
+            world.setBlockState(corner2, constructionTape.withProperty(FACING, EnumFacing.EAST));
+            world.setBlockState(corner3, constructionTape.withProperty(FACING, EnumFacing.WEST));
+            world.setBlockState(corner4, constructionTape.withProperty(FACING, EnumFacing.NORTH));
         }
     }
 
@@ -241,10 +240,10 @@ public final class ConstructionTapeHelper
         final BlockPos corner2 = new BlockPos(x1, 0, z3);
         final BlockPos corner3 = new BlockPos(x3, 0, z1);
         final BlockPos corner4 = new BlockPos(x3, 0, z3);
-        removeTapeIfNecessary(world, corner1, ModBlocks.blockConstructionTapeCorner);
-        removeTapeIfNecessary(world, corner2, ModBlocks.blockConstructionTapeCorner);
-        removeTapeIfNecessary(world, corner3, ModBlocks.blockConstructionTapeCorner);
-        removeTapeIfNecessary(world, corner4, ModBlocks.blockConstructionTapeCorner);
+        removeTapeIfNecessary(world, corner1, ModBlocks.blockConstructionTape);
+        removeTapeIfNecessary(world, corner2, ModBlocks.blockConstructionTape);
+        removeTapeIfNecessary(world, corner3, ModBlocks.blockConstructionTape);
+        removeTapeIfNecessary(world, corner4, ModBlocks.blockConstructionTape);
     }
 
     /**

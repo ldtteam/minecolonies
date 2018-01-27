@@ -106,22 +106,12 @@ public class TileEntityColonyBuilding extends TileEntityChest
                 colony = ColonyManager.getColony(colonyId);
             }
 
-            if (colony == null)
+            // It's most probably previewed building, please don't spam it here.
+            if (colony == null && !getWorld().isRemote)
             {
-                //we tried to update the colony it is still missing... so we...
-                if (getWorld().isRemote)
-                {
-                    /*
-                     * It's most probably previewed building, please don't spam it here.
-                     */
-                }
-                else
-                {
-                    //log on the server
-                    Log.getLogger()
-                            .warn(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] had colony.",
-                                    getWorld().getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
-                }
+                //log on the server
+                Log.getLogger().warn(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] had colony.",
+                                getWorld().getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
             }
         }
 
