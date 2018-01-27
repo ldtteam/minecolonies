@@ -319,7 +319,7 @@ public abstract class AbstractBuildingView implements IRequester
             return  ImmutableList.of();
         }
 
-        if (!getOpenRequestsByCitizen().containsKey(data.getId()) || getOpenRequestsByCitizen().get(data.getId()) == null)
+        if (!getOpenRequestsByCitizen().containsKey(data.getId()) || getOpenRequestsByCitizen().get(data.getId()) == null || getOpenRequestsByCitizen().get(data.getId()).isEmpty())
         {
             return ImmutableList.of();
         }
