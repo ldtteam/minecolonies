@@ -80,7 +80,8 @@ public final class ModBlocks
     /**
      * Initates all the blocks. At the correct time.
      */
-    public static void init(final IForgeRegistry<Block> registry) {
+    public static void init(final IForgeRegistry<Block> registry)
+    {
         blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
         blockHutBaker = new BlockHutBaker().registerBlock(registry);
         blockHutBlacksmith = new BlockHutBlacksmith().registerBlock(registry);

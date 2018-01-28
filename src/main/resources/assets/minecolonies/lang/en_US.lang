@@ -581,3 +581,10 @@ com.minecolonies.coremod.gui.townHall.feuds=Feuds:
 com.minecolonies.coremod.gui.townHall.tp=Do you really want to teleport to: %s [YES]
 com.minecolonies.coremod.gui.workerHuts.switchStyle=Switch Style
 com.minecolonies.coremod.gui.townHall.tooLow=TH too low
+
+tile.minecolonies.blockTimberFrame_oak.name=Oak Timber Frame
+tile.minecolonies.blockTimberFrame_spruce.name= Spruce Timber Frame
+tile.minecolonies.blockTimberFrame_birch.name=Birch Timber Frame
+tile.minecolonies.blockTimberFrame_jungle.name=Jungle Timber Frame
+tile.minecolonies.blockTimberFrame_acacia.name=Acacia Timber Frame
+tile.minecolonies.blockTimberFrame_dark_oak.name=Dark Oak Timber Frame

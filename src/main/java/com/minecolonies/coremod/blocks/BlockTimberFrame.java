@@ -42,7 +42,7 @@ public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame
     /**
      * Constructor for the TimberFrame
      */
-    public BlockTimberFrame(final String name)
+    BlockTimberFrame(final String name)
     {
         super(Material.WOOD);
         this.setDefaultState(this.blockState.getBaseState().withProperty(TYPE, TimberFrameType.PLAIN));
@@ -77,7 +77,6 @@ public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame
      */
     @NotNull
     @Override
-    @Deprecated
     public MapColor getMapColor(@NotNull final IBlockState state)
     {
         return state.getValue(TYPE).getMapColor();
@@ -88,7 +87,6 @@ public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame
      */
     @NotNull
     @Override
-    @Deprecated
     public IBlockState getStateFromMeta(final int meta)
     {
         return this.getDefaultState().withProperty(TYPE, TimberFrameType.byMetadata(meta));
