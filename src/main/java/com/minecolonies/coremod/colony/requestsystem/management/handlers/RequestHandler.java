@@ -357,6 +357,8 @@ public final class RequestHandler
             return;
         }
 
+        request.setState(new WrappedStaticStateRequestManager(manager), RequestState.CANCELLED);
+
         processInternalCancellation(manager, token);
 
         //Notify the requester.
@@ -377,7 +379,7 @@ public final class RequestHandler
     {
         @SuppressWarnings(RAWTYPES) final IRequest request = getRequest(manager, token);
 
-        if (manager.getRequestResolverRequestAssignmentDataStore().getAssignmentForValue(token) != null)
+        if (manager.getRequestResolverRequestAssignmentDataStore().getAssignmentForValue(token) == null)
         {
             return;
         }

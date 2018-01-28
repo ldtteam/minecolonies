@@ -168,7 +168,9 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         if (request.hasParent())
         {
             final IRequest parent = manager.getRequestForToken(token);
-            manager.reassignRequest(parent.getToken(), ImmutableList.of());
+
+            if (parent.getState() != RequestState.CANCELLED && parent.getState() != RequestState.OVERRULED)
+                manager.reassignRequest(parent.getToken(), ImmutableList.of());
         }
     }
 
