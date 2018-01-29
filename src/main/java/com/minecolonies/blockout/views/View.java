@@ -73,7 +73,7 @@ public class View extends Pane
         final int drawX = mx - paddedX;
         final int drawY = my - paddedY;
 
-        new ArrayList<>(children).stream().filter(this::childIsVisible).forEach(child -> child.draw(drawX, drawY));
+        children.stream().filter(this::childIsVisible).forEach(child -> child.draw(drawX, drawY));
 
         GlStateManager.popMatrix();
     }
