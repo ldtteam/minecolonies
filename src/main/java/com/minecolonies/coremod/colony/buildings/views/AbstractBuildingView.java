@@ -319,12 +319,19 @@ public abstract class AbstractBuildingView implements IRequester
             return  ImmutableList.of();
         }
 
-        if (!getOpenRequestsByCitizen().containsKey(data.getId()) || getOpenRequestsByCitizen().get(data.getId()) == null)
+        if (!getOpenRequestsByCitizen().containsKey(data.getId()))
         {
             return ImmutableList.of();
         }
 
-        return ImmutableList.copyOf(getOpenRequestsByCitizen().get(data.getId())
+        final Collection<IToken<?>> list = getOpenRequestsByCitizen().get(data.getId());
+
+        if(list == null || list.isEmpty())
+        {
+            return ImmutableList.of();
+        }
+
+        return ImmutableList.copyOf(list
                 .stream().filter(Objects::nonNull)
                 .map(getColony().getRequestManager()::getRequestForToken)
                 .filter(Objects::nonNull).iterator());

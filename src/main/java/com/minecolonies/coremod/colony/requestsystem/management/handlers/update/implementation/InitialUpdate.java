@@ -15,6 +15,6 @@ public class InitialUpdate implements IUpdateStep
     @Override
     public void update(@NotNull final IStandardRequestManager manager)
     {
-        //Noop the update handler will set this on his own.
+        //Noop
     }
 }
