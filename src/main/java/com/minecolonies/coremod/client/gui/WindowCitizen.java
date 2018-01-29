@@ -370,7 +370,8 @@ public class WindowCitizen extends AbstractWindowSkeleton
         createXpBar();
         createSkillContent();
 
-        resourceList.setDataProvider(new ScrollingList.DataProvider() {
+        resourceList.setDataProvider(new ScrollingList.DataProvider()
+        {
 
             private List<RequestWrapper> requestWrappers = null;
 
@@ -412,7 +413,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
                     logo.setImage(request.getDisplayIcon());
                 }
 
-                ColonyView view = ColonyManager.getColonyView(citizen.getColonyId());
+                final ColonyView view = ColonyManager.getColonyView(citizen.getColonyId());
                 rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
                         .setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
                 rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
@@ -434,7 +435,8 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
                     rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();
                 }
-                else {
+                else
+                {
                     request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
                         if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
                         {

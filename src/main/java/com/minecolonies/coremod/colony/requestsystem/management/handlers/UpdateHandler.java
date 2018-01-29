@@ -36,4 +36,9 @@ public class UpdateHandler
               manager.setCurrentVersion(s.updatesToVersion());
           });
     }
+
+    public static int getCurrentVersion()
+    {
+        return steps.stream().max(Comparator.comparing(IUpdateStep::updatesToVersion)).get().updatesToVersion();
+    }
 }

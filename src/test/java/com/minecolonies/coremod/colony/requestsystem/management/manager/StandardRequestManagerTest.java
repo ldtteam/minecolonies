@@ -25,10 +25,10 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.managers.IBuildingManager;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFactories;
-import com.minecolonies.coremod.test.AbstractTest;
 import com.minecolonies.coremod.test.ReflectionUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -46,12 +46,19 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.doThrow;
+import static org.powermock.api.mockito.PowerMockito.spy;
+import static org.powermock.api.support.membermodification.MemberMatcher.method;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StandardRequestManagerTest
@@ -73,8 +80,14 @@ public class StandardRequestManagerTest
     @Mock
     private BlockPos center;
 
+    @Mock
+    private IBuildingManager manager;
+
     private StandardRequestManager   requestManager;
     private IRequestResolverProvider provider;
+
+    private StringResolver resolverLowPrio;
+    private StringResolver resolverHighPrio;
 
     @Before
     public void setUp() throws Exception
@@ -88,6 +101,8 @@ public class StandardRequestManagerTest
 
         when(colony.getWorld()).thenReturn(world);
         when(colony.getID()).thenReturn(1);
+        when(colony.getBuildingManager()).thenReturn(manager);
+        when(manager.getBuildings()).thenReturn(new HashMap<>());
         when(worldProvider.getDimension()).thenReturn(1);
         ReflectionUtil.setFinalField(world, "provider", worldProvider);
         when(colony.getCenter()).thenReturn(center);
@@ -95,7 +110,13 @@ public class StandardRequestManagerTest
         requestManager = new StandardRequestManager(colony);
 
         RequestMappingHandler.registerRequestableTypeMapping(StringRequestable.class, StringRequest.class);
-        provider = new TestResolvingProvider();
+
+        resolverLowPrio = spy(new StringResolver(0));
+        resolverHighPrio = spy(new StringResolver(1));
+
+        doThrow(new AssertionError("Lower priority resolver got called!")).when(resolverLowPrio).resolve(anyObject(), anyObject());
+
+        provider = new TestResolvingProvider(resolverLowPrio, resolverHighPrio);
     }
 
     @After
@@ -103,22 +124,6 @@ public class StandardRequestManagerTest
     {
         requestManager = null;
         StandardFactoryController.reset();
-    }
-
-    @Test
-    public void testSerializeNBT() throws Exception
-    {
-        requestManager.onProviderAddedToColony(provider);
-
-
-        final StringRequestable hello = new StringRequestable(LOG);
-        final StringRequestable Test2 = new StringRequestable("Test 2");
-        requestManager.createRequest(TestRequester.INSTANCE, hello);
-        requestManager.createRequest(TestRequester.INSTANCE, Test2);
-
-        final NBTTagCompound compound = requestManager.serializeNBT();
-
-        assertNotNull(compound);
     }
 
     @Test
@@ -143,6 +148,15 @@ public class StandardRequestManagerTest
         requestManager.updateRequestState(request.getToken(), RequestState.RECEIVED);
 
         requestManager.onProviderRemovedFromColony(provider);
+    }
+
+    @Test
+    public void multiTestCreateAndAssignRequest() throws Exception
+    {
+        for (int i = 0; i < 100; i++)
+        {
+            testCreateAndAssignRequest();
+        }
     }
 
     @Test
@@ -181,10 +195,12 @@ public class StandardRequestManagerTest
         private final IToken<?>                                token;
         private final ImmutableCollection<IRequestResolver<?>> resolvers;
 
-        private TestResolvingProvider()
+        private TestResolvingProvider(
+          final StringResolver resolverLowPrio,
+          final StringResolver resolverHighPrio)
         {
             token = StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN);
-            resolvers = ImmutableList.of(new StringResolver());
+            resolvers = ImmutableList.of(resolverLowPrio, resolverHighPrio);
         }
 
         @SuppressWarnings(RAWTYPES)
@@ -354,6 +370,10 @@ public class StandardRequestManagerTest
 
     private static class StringResolver implements IRequestResolver<StringRequestable>
     {
+        private final IToken token = StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN);
+        private final Integer prio;
+
+        private StringResolver(final Integer prio) {this.prio = prio;}
 
         @Override
         public TypeToken<? extends StringRequestable> getRequestType()
@@ -382,7 +402,7 @@ public class StandardRequestManagerTest
         }
 
         @Override
-        public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request) throws RuntimeException
+        public void resolve(final IRequestManager manager, final IRequest<? extends StringRequestable> request) throws RuntimeException
         {
             System.out.println(request.getRequest().content);
             manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
@@ -415,14 +435,14 @@ public class StandardRequestManagerTest
         @Override
         public int getPriority()
         {
-            return 0;
+            return prio;
         }
 
         @SuppressWarnings(RAWTYPES)
         @Override
         public IToken getRequesterId()
         {
-            return TestRequester.INSTANCE.token;
+            return token;
         }
 
         @NotNull
@@ -475,21 +495,23 @@ public class StandardRequestManagerTest
         public StringResolver getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final ILocation iLocation, @NotNull final Object... context)
           throws IllegalArgumentException
         {
-            return new StringResolver();
+            return new StringResolver((Integer) context[0]);
         }
 
         @NotNull
         @Override
         public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StringResolver stackResolver)
         {
-            return new NBTTagCompound();
+            final NBTTagCompound compound = new NBTTagCompound();
+            compound.setInteger("prio", stackResolver.getPriority());
+            return compound;
         }
 
         @NotNull
         @Override
         public StringResolver deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
-            return new StringResolver();
+            return new StringResolver(nbt.getInteger("prio"));
         }
     }
 
