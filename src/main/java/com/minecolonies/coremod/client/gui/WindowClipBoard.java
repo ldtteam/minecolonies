@@ -115,7 +115,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
             final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
             final List<ItemStack> displayStacks = request.getDisplayStacks();
 
-            if (!displayStacks.isEmpty())
+            if (!displayStacks.isEmpty() && exampleStackDisplay != null)
             {
                 exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
             }
@@ -126,7 +126,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
                 logo.setImage(request.getDisplayIcon());
             }
 
-            ColonyView view = ColonyManager.getColonyView(colonyId);
+            final ColonyView view = ColonyManager.getColonyView(colonyId);
             rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
 
             rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
