@@ -25,6 +25,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.managers.IBuildingManager;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFactories;
@@ -45,6 +46,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -78,6 +80,9 @@ public class StandardRequestManagerTest
     @Mock
     private BlockPos center;
 
+    @Mock
+    private IBuildingManager manager;
+
     private StandardRequestManager   requestManager;
     private IRequestResolverProvider provider;
 
@@ -96,6 +101,8 @@ public class StandardRequestManagerTest
 
         when(colony.getWorld()).thenReturn(world);
         when(colony.getID()).thenReturn(1);
+        when(colony.getBuildingManager()).thenReturn(manager);
+        when(manager.getBuildings()).thenReturn(new HashMap<>());
         when(worldProvider.getDimension()).thenReturn(1);
         ReflectionUtil.setFinalField(world, "provider", worldProvider);
         when(colony.getCenter()).thenReturn(center);
