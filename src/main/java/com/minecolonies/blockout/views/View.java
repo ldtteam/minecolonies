@@ -73,7 +73,7 @@ public class View extends Pane
         final int drawX = mx - paddedX;
         final int drawY = my - paddedY;
 
-        children.stream().filter(this::childIsVisible).forEach(child -> child.draw(drawX, drawY));
+        new ArrayList<>(children).stream().filter(this::childIsVisible).forEach(child -> child.draw(drawX, drawY));
 
         GlStateManager.popMatrix();
     }
@@ -81,7 +81,7 @@ public class View extends Pane
     @Override
     public void scrollInput(final int wheel)
     {
-        for (final Pane child : children)
+        for (final Pane child : new ArrayList<>(children))
         {
             if (child != null)
             {
