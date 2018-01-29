@@ -22,11 +22,16 @@ import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequest
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.*;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.naming.spi.Resolver;
 import java.util.Collection;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static com.minecolonies.api.util.constant.Suppression.*;
 
@@ -47,8 +52,8 @@ public class StandardRequestManager implements IStandardRequestManager
     private static final String NBT_ID_PROVIDER_ASSIGNMENTS = "ProviderAssignmentsStoreId";
     private static final String NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS = "RequestResolverAssignmentsStoreId";
     private static final String NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS = "RequestableTypeAssignmentsStoreId";
-    private static final String NBT_PLAYER                        = "Player";
-    private static final String NBT_RETRYING                      = "Retrying";
+    private static final String NBT_ID_PLAYER                        = "PlayerRequestResolverId";
+    private static final String NBT_ID_RETRYING                      = "RetryingRequestResolverId";
     private static final String NBT_VERSION = "Version";
     ////---------------------------NBTTags-------------------------\\\\
 
@@ -62,6 +67,10 @@ public class StandardRequestManager implements IStandardRequestManager
 
     private IToken<?> requestableTypeRequestResolverAssignmentDataStoreId;
 
+    private IToken<?> playerRequestResolverId;
+
+    private IToken<?> retryingRequestResolverId;
+
     private IDataStoreManager dataStoreManager;
 
     /**
@@ -69,18 +78,6 @@ public class StandardRequestManager implements IStandardRequestManager
      */
     @NotNull
     private final IColony colony;
-    /**
-     * The fallback resolver used to resolve directly to the player.
-     */
-    @NotNull
-    private IPlayerRequestResolver                       playerResolver          = null;
-    /**
-     * The fallback resolver used to resolve using retries.
-     * Not all requests might support this feature, requests that do should implement {@link IRetryable} on their requestable.
-     * Anything that implements {@link IDeliverable} is by definition retryable.
-     */
-    @NotNull
-    private IRetryingRequestResolver retryingResolver = null;
 
     @NotNull
     private int version = -1;
@@ -88,24 +85,7 @@ public class StandardRequestManager implements IStandardRequestManager
     public StandardRequestManager(final IColony colony)
     {
         this.colony = colony;
-        setup();
-
-        this.playerResolver = getFactoryController().getNewInstance(TypeConstants.PLAYER_REQUEST_RESOLVER, this);
-        this.retryingResolver = getFactoryController().getNewInstance(TypeConstants.RETRYING_REQUEST_RESOLVER, this);
-        ResolverHandler.registerResolver(this, this.playerResolver);
-        ResolverHandler.registerResolver(this, this.retryingResolver);
-    }
-
-    /**
-     * Constructor for unit tests.
-     */
-    StandardRequestManager()
-    {
-        this.colony = null;
-        this.playerResolver = null;
-        this.retryingResolver = null;
-
-        setup();
+        reset();
     }
 
     private void setup()
@@ -117,6 +97,15 @@ public class StandardRequestManager implements IStandardRequestManager
         providerRequestResolverAssignmentDataStoreId = registerDataStore(TypeConstants.PROVIDER_REQUEST_RESOLVER_ASSIGNMENT_DATA_STORE);
         requestResolverRequestAssignmentDataStoreId = registerDataStore(TypeConstants.REQUEST_RESOLVER_REQUEST_ASSIGNMENT_DATA_STORE);
         requestableTypeRequestResolverAssignmentDataStoreId = registerDataStore(TypeConstants.REQUESTABLE_TYPE_REQUEST_RESOLVER_ASSIGNMENT_DATA_STORE);
+
+        final IRequestResolver<?> playerRequestResolver = StandardFactoryController.getInstance().getNewInstance(TypeConstants.PLAYER_REQUEST_RESOLVER, this);
+        final IRequestResolver<?> retryingRequestResolver = StandardFactoryController.getInstance().getNewInstance(TypeConstants.RETRYING_REQUEST_RESOLVER, this);
+
+        ResolverHandler.registerResolver(this, playerRequestResolver);
+        ResolverHandler.registerResolver(this, retryingRequestResolver);
+
+        this.playerRequestResolverId = playerRequestResolver.getRequesterId();
+        this.retryingRequestResolverId = retryingRequestResolver.getRequesterId();
     }
 
     private IToken<?> registerDataStore(TypeToken<? extends IDataStore> typeToken)
@@ -333,14 +322,14 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public IPlayerRequestResolver getPlayerResolver()
     {
-        return this.playerResolver;
+        return (IPlayerRequestResolver) ResolverHandler.getResolver(this, playerRequestResolverId);
     }
 
     @NotNull
     @Override
     public IRetryingRequestResolver getRetryingRequestResolver()
     {
-        return this.retryingResolver;
+        return (IRetryingRequestResolver) ResolverHandler.getResolver(this, retryingRequestResolverId);
     }
 
     @NotNull
@@ -353,14 +342,7 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public void reset()
     {
-        dataStoreManager.removeAll();
         setup();
-
-        this.playerResolver.onSystemReset();
-        this.retryingResolver.onSystemReset();
-
-        ResolverHandler.registerResolver(this, this.playerResolver);
-        ResolverHandler.registerResolver(this, this.retryingResolver);
 
         version = -1;
         UpdateHandler.handleUpdate(this);
@@ -375,17 +357,6 @@ public class StandardRequestManager implements IStandardRequestManager
     public NBTTagCompound serializeNBT()
     {
         final NBTTagCompound systemCompound = new NBTTagCompound();
-
-        if (this.playerResolver != null)
-        {
-            systemCompound.setTag(NBT_PLAYER, getFactoryController().serialize(playerResolver));
-        }
-
-        if (this.retryingResolver != null)
-        {
-            systemCompound.setTag(NBT_RETRYING, getFactoryController().serialize(retryingResolver));
-        }
-
         systemCompound.setInteger(NBT_VERSION, version);
 
         systemCompound.setTag(NBT_DATASTORE, getFactoryController().serialize(dataStoreManager));
@@ -394,6 +365,9 @@ public class StandardRequestManager implements IStandardRequestManager
         systemCompound.setTag(NBT_ID_PROVIDER_ASSIGNMENTS, getFactoryController().serialize(providerRequestResolverAssignmentDataStoreId));
         systemCompound.setTag(NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS, getFactoryController().serialize(requestResolverRequestAssignmentDataStoreId));
         systemCompound.setTag(NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS, getFactoryController().serialize(requestableTypeRequestResolverAssignmentDataStoreId));
+
+        systemCompound.setTag(NBT_ID_PLAYER, getFactoryController().serialize(playerRequestResolverId));
+        systemCompound.setTag(NBT_ID_RETRYING, getFactoryController().serialize(retryingRequestResolverId));
 
         return systemCompound;
     }
@@ -406,71 +380,90 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public void deserializeNBT(final NBTTagCompound nbt)
     {
-        if (nbt.hasKey(NBT_VERSION))
+        executeDeserializationStepOrMarkForUpdate(nbt,
+          NBT_VERSION,
+          NBTTagCompound::getInteger,
+          v -> version = v);
+
+        executeDeserializationStepOrMarkForUpdate(nbt,
+          NBT_DATASTORE,
+          NBTTagCompound::getCompoundTag,
+          c -> dataStoreManager = getFactoryController().deserialize(c));
+
+        executeDeserializationStepOrMarkForUpdate(nbt,
+          NBT_ID_REQUEST_IDENTITIES,
+          NBTTagCompound::getCompoundTag,
+          c -> requestIdentitiesDataStoreId = getFactoryController().deserialize(c));
+        executeDeserializationStepOrMarkForUpdate(nbt,
+          NBT_ID_REQUEST_RESOLVER_IDENTITIES,
+          NBTTagCompound::getCompoundTag,
+          c -> requestResolverIdentitiesDataStoreId = getFactoryController().deserialize(c));
+        executeDeserializationStepOrMarkForUpdate(nbt,
+          NBT_ID_PROVIDER_ASSIGNMENTS,
+          NBTTagCompound::getCompoundTag,
+          c -> providerRequestResolverAssignmentDataStoreId = getFactoryController().deserialize(c));
+        executeDeserializationStepOrMarkForUpdate(nbt,
+          NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS,
+          NBTTagCompound::getCompoundTag,
+          c -> requestResolverRequestAssignmentDataStoreId = getFactoryController().deserialize(c));
+        executeDeserializationStepOrMarkForUpdate(nbt,
+          NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS,
+          NBTTagCompound::getCompoundTag,
+          c -> requestableTypeRequestResolverAssignmentDataStoreId = getFactoryController().deserialize(c));
+
+        executeDeserializationStepOrMarkForUpdate(nbt,
+          NBT_ID_PLAYER,
+          NBTTagCompound::getCompoundTag,
+          c -> playerRequestResolverId = getFactoryController().deserialize(c));
+
+        executeDeserializationStepOrMarkForUpdate(nbt,
+          NBT_ID_RETRYING,
+          NBTTagCompound::getCompoundTag,
+          c -> retryingRequestResolverId = getFactoryController().deserialize(c));
+
+        updateIfRequired();
+    }
+
+    private <T> void executeDeserializationStepOrMarkForUpdate(@NotNull final NBTTagCompound nbt, @NotNull final String key, @NotNull final BiFunction<NBTTagCompound, String, T> extractor, @NotNull final Consumer<T> valueConsumer)
+    {
+        if (!nbt.hasKey(key))
         {
-            version = nbt.getInteger(NBT_VERSION);
+            markForUpdate();
+            return;
         }
 
-        if (nbt.hasKey(NBT_DATASTORE))
-        {
-            dataStoreManager = getFactoryController().deserialize(nbt.getCompoundTag(NBT_DATASTORE));
-            requestIdentitiesDataStoreId = getFactoryController().deserialize(nbt.getCompoundTag(NBT_ID_REQUEST_IDENTITIES));
-            requestResolverIdentitiesDataStoreId = getFactoryController().deserialize(nbt.getCompoundTag(NBT_ID_REQUEST_RESOLVER_IDENTITIES));
-            providerRequestResolverAssignmentDataStoreId = getFactoryController().deserialize(nbt.getCompoundTag(NBT_ID_PROVIDER_ASSIGNMENTS));
-            requestResolverRequestAssignmentDataStoreId = getFactoryController().deserialize(nbt.getCompoundTag(NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS));
-            requestableTypeRequestResolverAssignmentDataStoreId = getFactoryController().deserialize(nbt.getCompoundTag(NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS));
+        T base;
+        try {
+            base = extractor.apply(nbt, key);
+
         }
-        else
+        catch (Exception ex)
         {
-            setup();
+            markForUpdate();
+            return;
         }
 
-        if (playerResolver != null)
-        {
-            ResolverHandler.removeResolverInternal(this, this.playerResolver);
-        }
+        valueConsumer.accept(base);
+    }
 
-        if (retryingResolver != null)
-        {
-            ResolverHandler.removeResolverInternal(this, this.retryingResolver);
-        }
+    private void markForUpdate()
+    {
+        version = -1;
+    }
 
-        if (nbt.hasKey(NBT_PLAYER))
+    private void updateIfRequired()
+    {
+        if (version < UpdateHandler.getCurrentVersion())
         {
-            this.playerResolver = getFactoryController().deserialize(nbt.getCompoundTag(NBT_PLAYER));
+            reset();
         }
-        else
-        {
-            this.playerResolver = null;
-        }
-
-        if (nbt.hasKey(NBT_RETRYING))
-        {
-            this.retryingResolver = getFactoryController().deserialize(nbt.getCompoundTag(NBT_RETRYING));
-            this.retryingResolver.updateManager(this);
-        }
-        else
-        {
-            this.retryingResolver = null;
-        }
-
-        if (this.playerResolver != null)
-        {
-            ResolverHandler.registerResolver(this, this.playerResolver);
-        }
-
-        if (this.retryingResolver != null)
-        {
-            ResolverHandler.registerResolver(this, this.retryingResolver);
-        }
-
-        UpdateHandler.handleUpdate(this );
     }
 
     @Override
     public void update()
     {
-        this.retryingResolver.update();
+        this.getRetryingRequestResolver().update();
+        this.colony.markDirty();
     }
 
     @NotNull
