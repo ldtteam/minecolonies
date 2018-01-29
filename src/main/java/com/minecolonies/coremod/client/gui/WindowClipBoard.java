@@ -115,9 +115,12 @@ public class WindowClipBoard extends AbstractWindowSkeleton
             final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
             final List<ItemStack> displayStacks = request.getDisplayStacks();
 
-            if (!displayStacks.isEmpty() && exampleStackDisplay != null)
+            if (!displayStacks.isEmpty())
             {
-                exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
+                if(exampleStackDisplay != null)
+                {
+                    exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
+                }
             }
             else
             {
