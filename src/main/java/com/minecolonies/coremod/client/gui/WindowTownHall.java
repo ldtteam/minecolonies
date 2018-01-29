@@ -688,6 +688,10 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
 
         final Group group = findPaneOfTypeByID("citizen-stats", Group.class);
+        if (group == null)
+        {
+            return;
+        }
         final Integer unemployed = jobCountMap.get("") == null ? 0 : jobCountMap.get("");
         jobCountMap.remove("");
 

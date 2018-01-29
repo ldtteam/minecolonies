@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
@@ -57,8 +58,15 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
             final Colony colony = (Colony) manager.getColony();
             final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
             wareHouses.removeIf(Objects::isNull);
-            
-            return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchinItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack)));
+
+            try
+            {
+                return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchinItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack)));
+            } catch (Exception e)
+            {
+                Log.getLogger().error(e);
+            }
+
         }
 
         return false;
@@ -160,7 +168,9 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         if (request.hasParent())
         {
             final IRequest parent = manager.getRequestForToken(token);
-            manager.reassignRequest(parent.getToken(), ImmutableList.of());
+
+            if (parent.getState() != RequestState.CANCELLED && parent.getState() != RequestState.OVERRULED)
+                manager.reassignRequest(parent.getToken(), ImmutableList.of());
         }
     }
 
