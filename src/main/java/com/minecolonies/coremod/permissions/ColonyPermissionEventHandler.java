@@ -306,8 +306,9 @@ public class ColonyPermissionEventHandler
      * @param playerIn the player.
      * @param world    the world.
      * @param event    the event.
+     * @return true if canceled.
      */
-    private void checkEventCancelation(final Action action, @NotNull final EntityPlayer playerIn, @NotNull final World world, @NotNull final Event event)
+    private boolean checkEventCancelation(final Action action, @NotNull final EntityPlayer playerIn, @NotNull final World world, @NotNull final Event event)
     {
         @NotNull final EntityPlayer player = EntityUtils.getPlayerOfFakePlayer(playerIn, world);
 
@@ -316,7 +317,9 @@ public class ColonyPermissionEventHandler
               && !colony.getPermissions().hasPermission(player, action))
         {
             cancelEvent(event, player);
+            return true;
         }
+        return false;
     }
 
     /**
@@ -353,7 +356,10 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final ItemTossEvent event)
     {
-        checkEventCancelation(Action.TOSS_ITEM, event.getPlayer(), event.getPlayer().getEntityWorld(), event);
+        if (checkEventCancelation(Action.TOSS_ITEM, event.getPlayer(), event.getPlayer().getEntityWorld(), event))
+        {
+            event.getPlayer().inventory.addItemStackToInventory(event.getEntityItem().getEntityItem());
+        }
     }
 
     /**
