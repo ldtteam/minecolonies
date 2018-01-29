@@ -359,6 +359,9 @@ public class StandardRequestManager implements IStandardRequestManager
         this.playerResolver.onSystemReset();
         this.retryingResolver.onSystemReset();
 
+        ResolverHandler.registerResolver(this, this.playerResolver);
+        ResolverHandler.registerResolver(this, this.retryingResolver);
+
         version = -1;
         UpdateHandler.handleUpdate(this);
     }
