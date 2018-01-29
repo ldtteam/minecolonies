@@ -406,6 +406,25 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public void deserializeNBT(final NBTTagCompound nbt)
     {
+        if (nbt.hasKey(NBT_VERSION))
+        {
+            version = nbt.getInteger(NBT_VERSION);
+        }
+
+        if (nbt.hasKey(NBT_DATASTORE))
+        {
+            dataStoreManager = getFactoryController().deserialize(nbt.getCompoundTag(NBT_DATASTORE));
+            requestIdentitiesDataStoreId = getFactoryController().deserialize(nbt.getCompoundTag(NBT_ID_REQUEST_IDENTITIES));
+            requestResolverIdentitiesDataStoreId = getFactoryController().deserialize(nbt.getCompoundTag(NBT_ID_REQUEST_RESOLVER_IDENTITIES));
+            providerRequestResolverAssignmentDataStoreId = getFactoryController().deserialize(nbt.getCompoundTag(NBT_ID_PROVIDER_ASSIGNMENTS));
+            requestResolverRequestAssignmentDataStoreId = getFactoryController().deserialize(nbt.getCompoundTag(NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS));
+            requestableTypeRequestResolverAssignmentDataStoreId = getFactoryController().deserialize(nbt.getCompoundTag(NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS));
+        }
+        else
+        {
+            setup();
+        }
+
         if (playerResolver != null)
         {
             ResolverHandler.removeResolverInternal(this, this.playerResolver);
@@ -443,25 +462,6 @@ public class StandardRequestManager implements IStandardRequestManager
         if (this.retryingResolver != null)
         {
             ResolverHandler.registerResolver(this, this.retryingResolver);
-        }
-
-        if (nbt.hasKey(NBT_VERSION))
-        {
-            version = nbt.getInteger(NBT_VERSION);
-        }
-
-        if (nbt.hasKey(NBT_DATASTORE))
-        {
-            dataStoreManager = getFactoryController().deserialize(nbt.getCompoundTag(NBT_DATASTORE));
-            requestIdentitiesDataStoreId = getFactoryController().deserialize(nbt.getCompoundTag(NBT_ID_REQUEST_IDENTITIES));
-            requestResolverIdentitiesDataStoreId = getFactoryController().deserialize(nbt.getCompoundTag(NBT_ID_REQUEST_RESOLVER_IDENTITIES));
-            providerRequestResolverAssignmentDataStoreId = getFactoryController().deserialize(nbt.getCompoundTag(NBT_ID_PROVIDER_ASSIGNMENTS));
-            requestResolverRequestAssignmentDataStoreId = getFactoryController().deserialize(nbt.getCompoundTag(NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS));
-            requestableTypeRequestResolverAssignmentDataStoreId = getFactoryController().deserialize(nbt.getCompoundTag(NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS));
-        }
-        else
-        {
-            setup();
         }
 
         UpdateHandler.handleUpdate(this );
