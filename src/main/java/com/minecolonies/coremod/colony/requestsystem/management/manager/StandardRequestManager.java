@@ -463,7 +463,6 @@ public class StandardRequestManager implements IStandardRequestManager
     public void update()
     {
         this.getRetryingRequestResolver().update();
-        this.colony.markDirty();
     }
 
     @NotNull
