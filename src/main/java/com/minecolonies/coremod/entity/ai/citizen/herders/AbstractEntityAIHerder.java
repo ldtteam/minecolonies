@@ -499,7 +499,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     private void butcherAnimal(@Nullable final EntityAnimal animal)
     {
         worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING));
-        Log.getLogger().warn("Going to butcher: " + animal.getName());
+        Log.getLogger().warn("Going to butcherg"
+                + "");
         if (animal != null && !walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getHeldItemMainhand()))
         {
             Log.getLogger().warn("Killing the animal: " + animal.getName());

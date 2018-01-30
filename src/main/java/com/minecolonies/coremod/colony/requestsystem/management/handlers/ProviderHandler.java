@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.requestsystem.management.handlers;
 
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -9,7 +8,6 @@ import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequest
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * Class used to handle the inner workings of the request system with regards to providers.
