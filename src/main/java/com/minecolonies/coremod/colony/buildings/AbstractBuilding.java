@@ -1269,7 +1269,15 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      */
     public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
     {
-        return keepX;
+        final Map<Predicate<ItemStack>, Integer> toKeep = new HashMap<>();
+        toKeep.putAll(keepX);
+        final IRequestManager manager = colony.getRequestManager();
+        toKeep.put(stack -> this.getOpenRequestsByCitizen().values().stream()
+                .anyMatch(list -> list.stream()
+                        .anyMatch(token -> manager.getRequestForToken(token) instanceof IDeliverable
+                                && ((IDeliverable) manager.getRequestForToken(token).getRequest()).matches(stack))), Integer.MAX_VALUE);
+
+        return toKeep;
     }
 
     /**
