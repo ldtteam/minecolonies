@@ -358,7 +358,7 @@ public class ColonyPermissionEventHandler
     {
         if (checkEventCancelation(Action.TOSS_ITEM, event.getPlayer(), event.getPlayer().getEntityWorld(), event))
         {
-            event.getPlayer().inventory.addItemStackToInventory(event.getEntityItem().getEntityItem());
+            event.getPlayer().inventory.addItemStackToInventory(event.getEntityItem().getItem());
         }
     }
 
