@@ -1,26 +1,43 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemFood;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -41,6 +58,16 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     private static final String TAG_WORKER = "worker";
 
     /**
+     * NBTTag to store the recipes list.
+     */
+    private static final String TAG_RECIPES = "recipes";
+
+    /**
+     * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
+     */
+    private final List<IToken> recipes = new ArrayList<>();
+
+    /** 
      * Tag to store the id to NBT.
      */
     private static final String TAG_ID = "workerId";
@@ -109,6 +136,130 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             }
         }
         return false;
+    }
+
+    /**
+     * Method to check if the worker assigned to this building can craft an input stack.
+     * Checks a) if he knows the recipe and
+     *        b) if he has the required items in his inventory or in the hut.
+     * @param stack the stack which shall be crafted.
+     * @return true if possible.
+     */
+    public boolean canCraft(final ItemStack stack)
+    {
+        final Colony colony = getColony();
+
+        if(colony == null)
+        {
+            return false;
+        }
+
+        return getFirstFullFillableRecipe(stack) != null;
+    }
+
+    /**
+     * Check if is the worker has the knowledge to craft something.
+     * @param stack the stack to craft.
+     * @return the recipe storage if so.
+     */
+    @Nullable
+    public IRecipeStorage getFirstRecipe(final ItemStack stack)
+    {
+        for(final IToken token : recipes)
+        {
+            final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
+            if (storage != null && storage.getPrimaryOutput().isItemEqual(stack))
+            {
+                return storage;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get a fullfillable recipe to execute.
+     * @param tempStack the stack which should be crafted.
+     * @return the recipe or null.
+     */
+    public IRecipeStorage getFirstFullFillableRecipe(final ItemStack tempStack)
+    {
+        for(final IToken token : recipes)
+        {
+            final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
+            if(storage != null && storage.getPrimaryOutput().isItemEqual(tempStack))
+            {
+                final List<IItemHandler> handlers = getHandlers();
+                if(storage.canFullFillRecipe(handlers.toArray(new IItemHandler[handlers.size()])))
+                {
+                    return storage;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Try to fullfill a recipe.
+     * @param storage with the storage.
+     * @return true if successful.
+     */
+    public boolean fullFillRecipe(final IRecipeStorage storage)
+    {
+        final List<IItemHandler> handlers = getHandlers();
+        return storage.fullfillRecipe(handlers);
+    }
+
+    /**
+     * Switch indices of two recipes because of the priority.
+     * @param i the first index.
+     * @param j the second index.
+     */
+    public void switchIndex(final int i, final int j)
+    {
+        if(i < recipes.size() && j < recipes.size() && i >= 0 && j >= 0)
+        {
+            final IToken storage = recipes.get(i);
+            recipes.set(i, recipes.get(j));
+            recipes.set(j, storage);
+        }
+    }
+
+    /**
+     * Check if a recipe can be added.
+     * This is only important for 3x3 crafting.
+     * Workers shall override this if necessary.
+     * @return true if so.
+     */
+    public boolean canRecipeBeAdded()
+    {
+        return true;
+    }
+
+
+    /**
+     * Get all handlers accociated with this building.
+     * @return the handlers of the building + citizen.
+     */
+    public List<IItemHandler> getHandlers()
+    {
+        final Colony colony = getColony();
+        if(this.getWorkerEntities().isEmpty() || colony == null || colony.getWorld() == null)
+        {
+            return Collections.emptyList();
+        }
+
+        final List<IItemHandler> handlers = new ArrayList<>();
+        for(final EntityCitizen workerEntity: this.getWorkerEntities())
+        {
+            handlers.add(new InvWrapper(workerEntity.getInventoryCitizen()));
+        }
+        handlers.add(new InvWrapper(getTileEntity()));
+
+        for (final BlockPos pos : getAdditionalCountainers())
+        {
+            handlers.addAll(InventoryUtils.getItemHandlersFromProvider(colony.getWorld().getTileEntity(pos)));
+        }
+        return handlers;
     }
 
     /**
@@ -202,6 +353,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
                 }
             }
         }
+
+        recipes.clear();
+        final NBTTagList recipesTags = compound.getTagList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
+        recipes.addAll(NBTUtils.streamCompound(recipesTags)
+                .map(recipeCompound -> (IToken) StandardFactoryController.getInstance().deserialize(recipeCompound))
+                .collect(Collectors.toList()));
     }
 
     @Override
@@ -223,6 +380,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             }
             compound.setTag(TAG_WORKER, workersTagList);
         }
+
+        @NotNull final NBTTagList recipesTagList = recipes.stream()
+                .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
+                .collect(NBTUtils.toNBTTagList());
+        compound.setTag(TAG_RECIPES, recipesTagList);
     }
 
     @Override
@@ -266,6 +428,27 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             workers.remove(citizen);
         }
         markDirty();
+    }
+
+    /**
+     * Add a recipe to the building.
+     * @param token the id of the recipe.
+     */
+    public void addRecipe(final IToken token)
+    {
+        if(canRecipeBeAdded() && Math.pow(2, getBuildingLevel()) >= (recipes.size() + 1))
+        {
+            recipes.add(token);
+        }
+    }
+
+    /**
+     * Remove a recipe of the building.
+     * @param token the id of the recipe.
+     */
+    public void removeRecipe(final IToken token)
+    {
+        recipes.remove(token);
     }
 
     /**
@@ -318,10 +501,21 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
+
         buf.writeInt(workers.size());
         for (final CitizenData data : workers)
         {
             buf.writeInt(data == null ? 0 : data.getId());
+        }
+
+        buf.writeInt(recipes.size());
+        for(final IToken token: new ArrayList<>(recipes))
+        {
+            if(ColonyManager.getRecipeManager().getRecipes().get(token) == null)
+            {
+                removeRecipe(token);
+            }
+            ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(token));
         }
     }
 
@@ -370,6 +564,16 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         PLACEHOLDER
     }
 
+    @Override
+    public ImmutableCollection<IRequestResolver<?>> getResolvers()
+    {
+        return ImmutableList.of(
+                new BuildingRequestResolver(getRequester().getRequesterLocation(), getColony().getRequestManager()
+                        .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
+                new PrivateWorkerCraftingRequestResolver(getRequester().getRequesterLocation(), getColony().getRequestManager()
+                        .getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+    }
+
     /**
      * AbstractBuildingWorker View for clients.
      */
@@ -379,6 +583,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
          * List of the worker ids.
          */
         private final List<Integer> workerIDs = new ArrayList<>();
+
+        /**
+         * List of recipes.
+         */
+        private final List<IRecipeStorage> recipes = new ArrayList<>();
 
         /**
          * Creates the view representation of the building.
@@ -420,6 +629,56 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             for (int i = 0; i < size; i++)
             {
                 workerIDs.add(buf.readInt());
+            }
+
+
+            recipes.clear();
+
+            final int recipesSize = buf.readInt();
+            for(int i = 0; i < recipesSize; i++)
+            {
+                final IToken token = StandardFactoryController.getInstance().deserialize(ByteBufUtils.readTag(buf));
+                final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
+                if(storage != null)
+                {
+                    recipes.add(storage);
+                }
+            }
+        }
+
+        /**
+         * Get the list of recipes.
+         * @return copy of the list.
+         */
+        public List<IRecipeStorage> getRecipes()
+        {
+            return new ArrayList<>(recipes);
+        }
+
+        /**
+         * Remove a recipe from the list.
+         * @param i the index to remove.
+         */
+        public void removeRecipe(final int i)
+        {
+            if(i < recipes.size() && i >= 0)
+            {
+                recipes.remove(i);
+            }
+        }
+
+        /**
+         * Switch the indices of two recipes.
+         * @param i the first.
+         * @param j the second.
+         */
+        public void switchIndex(final int i, final int j)
+        {
+            if(i < recipes.size() && j < recipes.size() && i >= 0 && j >= 0)
+            {
+                final IRecipeStorage storage = recipes.get(i);
+                recipes.set(i, recipes.get(j));
+                recipes.set(j, storage);
             }
         }
 

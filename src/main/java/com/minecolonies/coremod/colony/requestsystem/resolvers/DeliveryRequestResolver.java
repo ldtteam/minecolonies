@@ -8,11 +8,14 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -113,17 +116,17 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @Nullable
     @Override
-    public IRequest<?> onRequestCancelledOrOverruled(
-                                                   @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+    public IRequest<?> onRequestCancelled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
             final Colony colony = (Colony) manager.getColony();
             final CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
-                                            .stream()
-                                            .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).getTaskQueue().contains(request.getToken()))
-                                            .findFirst()
-                                            .orElse(null);
+                                                  .stream()
+                                                  .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).getTaskQueue().contains(request.getToken()))
+                                                  .findFirst()
+                                                  .orElse(null);
 
             if (freeDeliveryMan == null)
             {
@@ -140,14 +143,21 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     }
 
     @Override
-    public void onRequestComplete(@NotNull final IToken<?> token)
+    public void onRequestBeingOverruled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+    {
+        onRequestCancelled(manager, request);
+    }
+
+    @Override
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         //We are not scheduling any child requests. So this should never be called.
     }
 
     @Override
-    public void onRequestCancelled(@NotNull final IToken<?> token)
+    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        //Noop
+        Log.getLogger().error("cancelled");
     }
 }

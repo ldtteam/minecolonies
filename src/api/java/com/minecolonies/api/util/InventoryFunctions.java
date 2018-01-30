@@ -16,6 +16,16 @@ import java.util.function.*;
 public final class InventoryFunctions
 {
     /**
+     * Private constructor to hide implicit one.
+     */
+    private InventoryFunctions()
+    {
+        /**
+         * Intentionally left empty.
+         */
+    }
+
+    /**
      * Search for a stack in an Inventory matching the predicate.
      *
      * @param provider the provider to search in

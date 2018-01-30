@@ -134,7 +134,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             return getState();
         }
 
-        if (getOwnBuilding().getCountOfPredicateInHut(TileEntityFurnace::isItemFuel, 1, world) < 1)
+        if (InventoryUtils.hasItemInProvider(getOwnBuilding(), TileEntityFurnace::isItemFuel))
         {
             if(!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Burnable.class)))
             {
@@ -378,10 +378,10 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             }
         }
 
-        final int amountOfFood = getOwnBuilding()
-                .getCountOfPredicateInHut(ItemStackUtils.ISFOOD,
-                        getOwnBuilding().getBuildingLevel() * LEAST_KEEP_FOOD_MULTIPLIER, world)
-                + InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), ItemStackUtils.ISFOOD);
+        int amountOfFood = InventoryUtils.getItemCountInProvider(getOwnBuilding(), ItemStackUtils.ISFOOD);
+
+
+        amountOfFood = Math.min(amountOfFood, getOwnBuilding().getBuildingLevel() * LEAST_KEEP_FOOD_MULTIPLIER) + InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), ItemStackUtils.ISFOOD);
 
         if (amountOfFood <= 0)
         {
@@ -422,7 +422,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             return getState();
         }
 
-        if (getOwnBuilding().getCountOfPredicateInHut(ItemStackUtils.ISCOOKABLE, 1, world) >= 1
+        if (InventoryUtils.hasItemInProvider(getOwnBuilding(), ItemStackUtils.ISCOOKABLE)
                 || InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), ItemStackUtils.ISCOOKABLE) >= 1)
         {
             worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.cooking"));

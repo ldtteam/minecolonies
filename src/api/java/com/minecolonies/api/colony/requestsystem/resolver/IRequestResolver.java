@@ -97,14 +97,30 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      * <p>
      * The returned request will then be used as the new parent and should be used to clean up the results of this request.
      *
-     * @param manager The manager that indicates the cancelling or overrulling
-     * @param request The request that has been cancelled or overrulled.
+     * @param manager The manager that indicates the cancelling
+     * @param request The request that has been cancelled.
      * @return the new request if necessary. It should not be assigned yet.
      *
-     * @throws IllegalArgumentException is thrown when the cancelling or overrulling failed.
+     * @throws IllegalArgumentException is thrown when the cancelling failed.
      */
     @Nullable
-    IRequest<?> onRequestCancelledOrOverruled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
+    IRequest<?> onRequestCancelled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
+
+    /**
+     * Method used to indicate to this resolver that a parent of a request assigned to him has been cancelled,
+     * and that the resolver of the parent did not return a cleanup request.
+     * <p>
+     * If a followup request is needed (For example picking up crafting results to bring them to storage) a request can be made to the given manager
+     * which will properly handle the processing of the new request.
+     * <p>
+     * The returned request will then be used as the new parent and should be used to clean up the results of this request.
+     *
+     * @param manager The manager that indicates the cancelling
+     * @param request The request that has been cancelled.
+     *
+     * @throws IllegalArgumentException is thrown when the cancelling failed.
+     */
+    void onRequestBeingOverruled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
 
     /**
      * The priority of this resolver.

@@ -7,8 +7,8 @@
 
     <label size="100% 11" pos="60 0"
            label="$(com.minecolonies.coremod.gui.citizen.requests)" color="black"/>
-    <list id="requests" size="78% 90%" pos="12 20">
-        <box id="requestx" size="90% 40" linewidth="2">
+    <list id="requests" size="67% 170px" pos="12 20">
+        <box id="requestx" size="100% 40" linewidth="2">
             <!--Item icon -->
             <itemicon id="requestStack" size="16 16" pos="1 3"/>
             <image id="deliveryImage" source="minecraft:textures/misc/shadow.png" size="16 16" pos="1 3" visible="false"/>
@@ -30,7 +30,7 @@
                          label="$(com.minecolonies.coremod.gui.citizen.requestsCancel)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
         </box>
     </list>
-    <buttonimage id="back" size="37 16" pos="75 180" textcolor="black"
+    <buttonimage id="back" size="37 16" pos="75 199" textcolor="black"
                  label="Back" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
 
 </layout>

@@ -67,6 +67,7 @@ public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMe
         {
             return ColonyManager.handleColonyViewMessage(message.colonyId, message.colonyBuffer, MineColonies.proxy.getWorldFromMessage(ctx), message.isNewSubscription);
         }
+
         return null;
     }
 }

@@ -426,6 +426,7 @@ public class InventoryUtils
         final Set<IItemHandler> handlerList = Arrays.stream(EnumFacing.VALUES)
                                                 .filter(facing -> provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
                                                 .map(facing -> provider.getCapability(ITEM_HANDLER_CAPABILITY, facing))
+                                                .filter(Objects::nonNull)
                                                 .collect(Collectors.toSet());
 
         if (provider.hasCapability(ITEM_HANDLER_CAPABILITY, null))
@@ -436,6 +437,8 @@ public class InventoryUtils
                 handlerList.add(nullHandler);
             }
         }
+
+        handlerList.removeIf(Objects::isNull);
 
         return handlerList;
     }
@@ -1352,7 +1355,6 @@ public class InventoryUtils
         {
             return true;
         }
-        final ItemStack originalStack = sourceStack.copy();
 
         for (int i = 0; i < targetHandler.getSlots(); i++)
         {
@@ -1364,6 +1366,7 @@ public class InventoryUtils
             }
         }
 
+        final ItemStack originalStack = sourceStack.copy();
         if (!ItemStack.areItemStacksEqual(sourceStack, originalStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(sourceStack, originalStack))
         {
             final int usedAmount = ItemStackUtils.getSize(sourceStack) - ItemStackUtils.getSize(originalStack);
@@ -1533,8 +1536,6 @@ public class InventoryUtils
 
         return false;
     }
-
-    //TODO (UPDATE To 1.11): Update next two methods to reflect 1.11 Changes.
 
     /**
      * Method to swap the ItemStacks from the given source {@link IItemHandler}

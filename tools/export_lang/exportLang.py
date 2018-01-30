@@ -2,7 +2,6 @@
 
 import sys
 import requests
-import json
 import os
 
 base_url = "https://poeditor.com/api/"

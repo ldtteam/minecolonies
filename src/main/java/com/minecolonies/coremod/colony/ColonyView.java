@@ -14,16 +14,15 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.colony.permissions.PermissionsView;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +40,7 @@ public final class ColonyView implements IColony
     private final Map<Integer, WorkOrderView>         workOrders  = new HashMap<>();
     //  Administration/permissions
     @NotNull
-    private final Permissions.View                    permissions = new Permissions.View();
+    private final PermissionsView                     permissions = new PermissionsView();
     @NotNull
     private final Map<BlockPos, AbstractBuildingView> buildings   = new HashMap<>();
     //  Citizenry
@@ -656,7 +655,7 @@ public final class ColonyView implements IColony
 
     @NotNull
     @Override
-    public Permissions.View getPermissions()
+    public PermissionsView getPermissions()
     {
         return permissions;
     }
@@ -728,8 +727,9 @@ public final class ColonyView implements IColony
     @Override
     public void markDirty()
     {
-        //NOOP
-        return;
+        /**
+         * Nothing to do here.
+         */
     }
 
     @Override

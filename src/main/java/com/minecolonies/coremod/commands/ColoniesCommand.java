@@ -2,6 +2,7 @@ package com.minecolonies.coremod.commands;
 
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.coremod.commands.colonycommands.ListColoniesCommand;
+import com.minecolonies.coremod.commands.colonycommands.requestsystem.RSResetAllCommand;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -17,8 +18,9 @@ public class ColoniesCommand extends AbstractSplitCommand
 
     private final ImmutableMap<String, ISubCommand> subCommands =
       new ImmutableMap.Builder<String, ISubCommand>()
-        .put("list", new ListColoniesCommand(MinecoloniesCommand.DESC, ColoniesCommand.DESC, "list"))
-        .build();
+        .put(ListColoniesCommand.DESC, new ListColoniesCommand(MinecoloniesCommand.DESC, ColoniesCommand.DESC, ListColoniesCommand.DESC))
+        .put(RSResetAllCommand.DESC, new RSResetAllCommand(MinecoloniesCommand.DESC, ColoniesCommand.DESC, RSResetAllCommand.DESC))
+              .build();
 
     /**
      * Initialize this command with it's parents.

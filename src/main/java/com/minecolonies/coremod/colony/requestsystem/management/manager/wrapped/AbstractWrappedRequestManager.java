@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.requestsystem.data.IDataStoreManager;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -72,7 +73,7 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      */
     @NotNull
     @Override
-    public <T extends IRequestable> IToken<?> createRequest(@NotNull final IRequester requester, @NotNull final T object)
+    public <T extends IRequestable> IToken<?> createRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
     {
         return wrappedManager.createRequest(requester, object);
     }
@@ -100,7 +101,7 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      */
     @NotNull
     @Override
-    public <T extends IRequestable> IToken<?> createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object)
+    public <T extends IRequestable> IToken<?> createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
     {
         final IToken<?> token = createRequest(requester, object);
         assignRequest(token);
@@ -108,7 +109,7 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     }
 
     @Override
-    public IToken<?> reassignRequest(@NotNull final IToken<?> token, @NotNull final Collection<IToken<?>> resolverTokenBlackList)
+    public IToken<?> reassignRequest(@NotNull final IToken<?> token, @NotNull final Collection<IToken<?>> resolverTokenBlackList) throws IllegalArgumentException
     {
         return wrappedManager.reassignRequest(token, resolverTokenBlackList);
     }
@@ -124,7 +125,7 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     @SuppressWarnings(RAWTYPES)
     @NotNull
     @Override
-    public IRequest getRequestForToken(@NotNull final IToken<?> token)
+    public IRequest<?> getRequestForToken(@NotNull final IToken<?> token) throws IllegalArgumentException
     {
         return RequestHandler.getRequestOrNull(wrappedManager, token);
     }
@@ -138,7 +139,7 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     @SuppressWarnings(RAWTYPES)
     @NotNull
     @Override
-    public IRequestResolver getResolverForToken(@NotNull final IToken<?> token)
+    public IRequestResolver<?> getResolverForToken(@NotNull final IToken<?> token) throws IllegalArgumentException
     {
         return wrappedManager.getResolverForToken(token);
     }
@@ -154,7 +155,7 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     @SuppressWarnings(RAWTYPES)
     @Nullable
     @Override
-    public IRequestResolver getResolverForRequest(@NotNull final IToken<?> requestToken)
+    public IRequestResolver<?> getResolverForRequest(@NotNull final IToken<?> requestToken) throws IllegalArgumentException
     {
         return wrappedManager.getResolverForRequest(requestToken);
     }
@@ -167,13 +168,13 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      * @throws IllegalArgumentException when the token is unknown to this manager.
      */
     @Override
-    public void updateRequestState(@NotNull final IToken<?> token, @NotNull final RequestState state)
+    public void updateRequestState(@NotNull final IToken<?> token, @NotNull final RequestState state) throws IllegalArgumentException
     {
         wrappedManager.updateRequestState(token, state);
     }
 
     @Override
-    public void overruleRequest(@NotNull final IToken<?> token, @Nullable final ItemStack stack)
+    public void overruleRequest(@NotNull final IToken<?> token, @Nullable final ItemStack stack) throws IllegalArgumentException
     {
         wrappedManager.overruleRequest(token, stack);
     }
@@ -232,5 +233,18 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     public void update()
     {
         wrappedManager.update();
+    }
+
+    @NotNull
+    @Override
+    public IDataStoreManager getDataStoreManager()
+    {
+        return wrappedManager.getDataStoreManager();
+    }
+
+    @Override
+    public void reset()
+    {
+        wrappedManager.reset();
     }
 }

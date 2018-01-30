@@ -1,15 +1,22 @@
-<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
-    <label id="name" size="100% 11" pos="0 0"
-           textalign="MIDDLE" color="red"/>
+<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+    <layout source="minecolonies:gui/windowBase.xml"/>
 
-    <button id="build" align="TOP_MIDDLE" size="116 20" pos="0 64"
-            label="$(com.minecolonies.coremod.gui.workerHuts.upgrade)"/>
-    <button id="repair" align="TOP_MIDDLE" size="116 20" pos="0 88"
-            label="$(com.minecolonies.coremod.gui.workerHuts.repair)"/>
-    <label size="100% 11" pos="0 172"
-           label="$(com.minecolonies.coremod.gui.workerHuts.buildPrio)"
-           textalign="MIDDLE" color="black"/>
-    <label id="type" size="100% 11" pos="0 182"
-           textalign="MIDDLE" color="black"/>
+
+            <image source="minecolonies:textures/gui/builderhut/builder_sketch_left.png" size="6 15" pos="44 12"/>
+            <image source="minecolonies:textures/gui/builderhut/builder_sketch_center.png" size="90 15" pos="50 12"/>
+            <image source="minecolonies:textures/gui/builderhut/builder_sketch_right.png" size="6 15" pos="140 12"/>
+
+            <label id="name" size="100% 11" pos="0 14"
+                   textalign="MIDDLE" color="red"/>
+            <buttonimage id="build" align="TOP_MIDDLE" size="129 17" pos="0 114"
+                         source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                         label="$(com.minecolonies.coremod.gui.workerHuts.upgrade)" textcolor="black"/>
+            <buttonimage id="repair" align="TOP_MIDDLE" size="129 17" pos="0 132"
+                         source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                         label="$(com.minecolonies.coremod.gui.workerHuts.repair)" textcolor="black"/>
+
+
+    <buttonimage id="inventory"
+                 align="BOTTOM_MIDDLE" size="86 17" pos="0 13"
+                 label="$(container.inventory)" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
 </layout>

@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -12,14 +11,10 @@ import com.minecolonies.blockout.views.Box;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
-import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.AbstractWrappedRequestManager;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
 import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -147,20 +142,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     @Override
     public void onOpened()
     {
-        String[] labels = request.getLongDisplayString().getFormattedText()
-                            .replace("§r", " ")
-                            .replace(": ", ":\n")
-
-                            .split("(?<=\n)");
-
-        final StringBuilder finalLabel = new StringBuilder();
-
-        for (final String s : labels)
-        {
-            finalLabel.append(WordUtils.wrap(s, WRAP_AFTER_X, "\n", true));
-        }
-
-        labels = finalLabel.toString().split("\n");
+        final String[] labels = new String[] {request.getLongDisplayString().getFormattedText()};
         final Box box = findPaneOfTypeByID(BOX_ID_REQUEST, Box.class);
         int y = Y_OFFSET_EACH_TEXTFIELD;
         for (final String s : labels)
@@ -187,7 +169,8 @@ public class WindowRequestDetail extends Window implements ButtonHandler
             logo.setImage(request.getDisplayIcon());
         }
 
-        findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(request.getToken()).getFormattedText());
+        final ColonyView view = ColonyManager.getColonyView(colonyId);
+        findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
         final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
         targetLabel.setLabelText(request.getRequester().getDeliveryLocation().toString());
 
@@ -208,7 +191,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
                 return;
             }
 
-            findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " + resolver.getDisplayName(request.getToken()).getFormattedText());
+            findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " + resolver.getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
         }
         catch(@SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS) final IllegalArgumentException e)
         {

@@ -1,15 +1,18 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Alignment;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.*;
+import com.minecolonies.blockout.views.Box;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.blockout.views.View;
@@ -89,11 +92,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
      * Id of the resource add button.
      */
     private static final String REQUEST_CANCEL = "cancel";
-
-    /**
-     * Nice representation string for a position.
-     */
-    private static final String POSITION_STRING = "x: %d - y: %d - z: %d";
 
     /**
      * Xp-bar height.
@@ -261,6 +259,11 @@ public class WindowCitizen extends AbstractWindowSkeleton
     private static final String WINDOW_ID_LIST_REQUESTS = "requests";
 
     /**
+     * Requests box id.
+     */
+    private static final String WINDOW_ID_REQUEST_BOX = "requestx";
+
+    /**
      * Requestst stack id.
      */
     private static final String LIST_ELEMENT_ID_REQUEST_STACK = "requestStack";
@@ -343,17 +346,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
         resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
     }
 
-    /**
-     * Get a nice represetation of the pos string.
-     *
-     * @param pos the position.
-     * @return a nice string.
-     */
-    private static String getNicePositionString(final BlockPos pos)
-    {
-        return String.format(POSITION_STRING, pos.getX(), pos.getY(), pos.getZ());
-    }
-
     @Override
     public void onUpdate()
     {
@@ -378,40 +370,81 @@ public class WindowCitizen extends AbstractWindowSkeleton
         createXpBar();
         createSkillContent();
 
-        resourceList.setDataProvider(() -> getOpenRequestsOfCitizen().size(), (int index, Pane rowPane) ->
+        resourceList.setDataProvider(new ScrollingList.DataProvider()
         {
-            @SuppressWarnings(RAWTYPES)
-            final ImmutableList<IRequest> openRequests = getOpenRequestsOfCitizen();
-            if (index < 0 || index >= openRequests.size())
+
+            private List<RequestWrapper> requestWrappers = null;
+
+            @Override
+            public int getElementCount()
             {
-                return;
+                requestWrappers = getOpenRequestTreeOfCitizen();
+                return requestWrappers.size();
             }
 
-            final IRequest<?> request = openRequests.get(index);
-            final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
-            final List<ItemStack> displayStacks = request.getDisplayStacks();
-
-            if (!displayStacks.isEmpty())
+            @Override
+            public void updateElement(final int index, final Pane rowPane)
             {
-                exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
-            }
-            else
-            {
-                final Image logo = findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
-                logo.setVisible(true);
-                logo.setImage(request.getDisplayIcon());
-            }
-
-            rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(request.getToken()).getFormattedText());
-            rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
-              .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
-
-            request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
-                if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
+                if (index < 0 || index >= requestWrappers.size())
                 {
-                    rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
+                    return;
                 }
-            });
+
+                final RequestWrapper wrapper = requestWrappers.get(index);
+                final Box wrapperBox = rowPane.findPaneOfTypeByID(WINDOW_ID_REQUEST_BOX, Box.class);
+                wrapperBox.setPosition(wrapperBox.getX() + 10*wrapper.getDepth(), wrapperBox.getY());
+                wrapperBox.setSize(wrapperBox.getParent().getWidth() - 10*wrapper.getDepth(), wrapperBox.getHeight());
+
+                final IRequest<?> request = wrapper.getRequest();
+                final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
+                final List<ItemStack> displayStacks = request.getDisplayStacks();
+                final Image logo = rowPane.findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
+
+                if (!displayStacks.isEmpty())
+                {
+                    logo.setVisible(false);
+                    exampleStackDisplay.setVisible(true);
+                    exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
+                }
+                else
+                {
+                    exampleStackDisplay.setVisible(false);
+                    logo.setVisible(true);
+                    logo.setImage(request.getDisplayIcon());
+                }
+
+                final ColonyView view = ColonyManager.getColonyView(citizen.getColonyId());
+                rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
+                        .setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
+                rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
+                  .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
+
+                if (wrapper.getDepth() > 0)
+                {
+                    request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
+                        if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
+                        {
+                            rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
+                        }
+                    });
+
+                    if (!(request.getRequest() instanceof IDeliverable))
+                    {
+                        rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
+                    }
+
+                    rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();
+                }
+                else
+                {
+                    request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
+                        if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
+                        {
+                            rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
+                        }
+                    });
+                }
+            }
         });
 
         //Tool of class:§rwith minimal level:§rWood or Gold§r and§rwith maximal level:§rWood or Gold§r
@@ -544,6 +577,46 @@ public class WindowCitizen extends AbstractWindowSkeleton
           LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.dexterity", citizen.getDexterity()));
     }
 
+    private ImmutableList<RequestWrapper> getOpenRequestTreeOfCitizen()
+    {
+        final ColonyView colonyView = ColonyManager.getClosestColonyView(FMLClientHandler.instance().getWorldClient(),
+          (citizen.getWorkBuilding() != null) ? citizen.getWorkBuilding() : citizen
+                                                                              .getHomeBuilding());
+        if (colonyView == null)
+        {
+            return ImmutableList.of();
+        }
+
+        final List<RequestWrapper> treeElements = new ArrayList<>();
+
+        getOpenRequestsOfCitizen().stream().forEach(r -> {
+            constructTreeFromRequest(colonyView.getRequestManager(), r, treeElements, 0);
+        });
+
+        return ImmutableList.copyOf(treeElements);
+    }
+
+    private void constructTreeFromRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request, @NotNull final List<RequestWrapper> list, int currentDepth)
+    {
+        list.add(new RequestWrapper(request, currentDepth));
+        if (request.hasChildren())
+        {
+            for (final Object o : request.getChildren())
+            {
+                if (o instanceof IToken<?>)
+                {
+                    final IToken<?> iToken = (IToken<?>) o;
+                    final IRequest<?> childRequest = manager.getRequestForToken(iToken);
+
+                    if (childRequest != null)
+                    {
+                        constructTreeFromRequest(manager, childRequest, list, currentDepth + 1);
+                    }
+                }
+            }
+        }
+    }
+
     @SuppressWarnings(RAWTYPES)
     private ImmutableList<IRequest> getOpenRequestsOfCitizen()
     {
@@ -620,9 +693,9 @@ public class WindowCitizen extends AbstractWindowSkeleton
     {
         final int row = resourceList.getListElementIndexByPane(button);
 
-        if (getOpenRequestsOfCitizen().size() > row)
+        if (getOpenRequestTreeOfCitizen().size() > row)
         {
-            @NotNull final WindowRequestDetail window = new WindowRequestDetail(citizen, getOpenRequestsOfCitizen().get(row), citizen.getColonyId());
+            @NotNull final WindowRequestDetail window = new WindowRequestDetail(citizen, getOpenRequestTreeOfCitizen().get(row).getRequest(), citizen.getColonyId());
             window.open();
         }
     }
@@ -631,9 +704,9 @@ public class WindowCitizen extends AbstractWindowSkeleton
     {
         final int row = resourceList.getListElementIndexByPane(button);
 
-        if (getOpenRequestsOfCitizen().size() > row && row >= 0)
+        if (getOpenRequestTreeOfCitizen().size() > row && row >= 0)
         {
-            @NotNull final IRequest<?> request = getOpenRequestsOfCitizen().get(row);
+            @NotNull final IRequest<?> request = getOpenRequestTreeOfCitizen().get(row).getRequest();
             MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.CANCELLED, null));
         }
     }
@@ -647,10 +720,9 @@ public class WindowCitizen extends AbstractWindowSkeleton
     {
         final int row = resourceList.getListElementIndexByPane(button);
 
-        if (getOpenRequestsOfCitizen().size() > row && row >= 0)
+        if (getOpenRequestTreeOfCitizen().size() > row && row >= 0)
         {
-            button.disable();
-            @NotNull final IRequest tRequest = getOpenRequestsOfCitizen().get(row);
+            @NotNull final IRequest tRequest = getOpenRequestTreeOfCitizen().get(row).getRequest();
 
             if (!(tRequest.getRequest() instanceof IDeliverable))
             {
@@ -683,6 +755,27 @@ public class WindowCitizen extends AbstractWindowSkeleton
             MineColonies.getNetwork().sendToServer(new TransferItemsToCitizenRequestMessage(citizen, itemStack, isCreative ? amount : count, citizen.getColonyId()));
             MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.OVERRULED, itemStack));
 
+        }
+    }
+
+    private final class RequestWrapper
+    {
+        private final IRequest request;
+        private final int depth;
+
+        private RequestWrapper(final IRequest request, final int depth) {
+            this.request = request;
+            this.depth = depth;
+        }
+
+        public IRequest getRequest()
+        {
+            return request;
+        }
+
+        public int getDepth()
+        {
+            return depth;
         }
     }
 }

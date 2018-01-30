@@ -135,23 +135,23 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
           /**
            * Check if we have to build something.
            */
-          new AITarget(IDLE, this::isThereAStructureToBuild, () -> AIState.START_BUILDING),
+          new AITarget(IDLE, this::isThereAStructureToBuild, () -> START_BUILDING),
           /**
            * Clear out the building area.
            */
-          new AITarget(CLEAR_STEP, generateStructureGenerator(this::clearStep, AIState.BUILDING_STEP)),
+          new AITarget(CLEAR_STEP, generateStructureGenerator(this::clearStep, BUILDING_STEP)),
           /**
            * Build the structure and foundation of the building.
            */
-          new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, AIState.SPAWN_STEP)),
+          new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, SPAWN_STEP)),
           /**
            * Spawn entities on the structure.
            */
-          new AITarget(SPAWN_STEP, generateStructureGenerator(this::spawnEntity, AIState.DECORATION_STEP)),
+          new AITarget(SPAWN_STEP, generateStructureGenerator(this::spawnEntity, DECORATION_STEP)),
           /**
            * Decorate the AbstractBuilding with torches etc.
            */
-          new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, AIState.COMPLETE_BUILD)),
+          new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, COMPLETE_BUILD)),
           /**
            * Finalize the building and give back control to the ai.
            */
@@ -206,19 +206,19 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private void switchStage(final AIState state)
     {
-        if (state.equals(AIState.BUILDING_STEP))
+        if (state.equals(BUILDING_STEP))
         {
             currentStructure.setStage(Structure.Stage.BUILD);
         }
-        else if (state.equals(AIState.DECORATION_STEP))
+        else if (state.equals(DECORATION_STEP))
         {
             currentStructure.setStage(Structure.Stage.DECORATE);
         }
-        else if (state.equals(AIState.SPAWN_STEP))
+        else if (state.equals(SPAWN_STEP))
         {
             currentStructure.setStage(Structure.Stage.SPAWN);
         }
-        else if (state.equals(AIState.COMPLETE_BUILD))
+        else if (state.equals(COMPLETE_BUILD))
         {
             currentStructure.setStage(Structure.Stage.COMPLETE);
         }
@@ -240,7 +240,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         workFrom = null;
         currentStructure = null;
 
-        return AIState.IDLE;
+        return IDLE;
     }
 
     /**
@@ -273,7 +273,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             worker.addExperience(XP_EACH_BUILDING);
         }
 
-        return AIState.PICK_UP_RESIDUALS;
+        return PICK_UP_RESIDUALS;
     }
 
     /**
@@ -709,20 +709,20 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         if (currentStructure == null)
         {
             onStartWithoutStructure();
-            return AIState.IDLE;
+            return IDLE;
         }
         switch (currentStructure.getStage())
         {
             case CLEAR:
-                return AIState.CLEAR_STEP;
+                return CLEAR_STEP;
             case BUILD:
-                return AIState.BUILDING_STEP;
+                return BUILDING_STEP;
             case DECORATE:
-                return AIState.DECORATION_STEP;
+                return DECORATION_STEP;
             case SPAWN:
-                return AIState.SPAWN_STEP;
+                return SPAWN_STEP;
             default:
-                return AIState.COMPLETE_BUILD;
+                return COMPLETE_BUILD;
         }
     }
 
@@ -830,7 +830,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
             if (!Configurations.gameplay.builderInfiniteResources)
             {
-                if(PlacementHandlers.checkForListInInvAndRequest(this, request))
+                if(PlacementHandlers.checkForListInInvAndRequest(this, new ArrayList<>(request)))
                 {
                     return false;
                 }

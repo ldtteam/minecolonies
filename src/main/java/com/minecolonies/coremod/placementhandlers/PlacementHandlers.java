@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
 import com.minecolonies.coremod.blocks.BlockWaypoint;
@@ -103,7 +104,7 @@ public final class PlacementHandlers
             if (placer.getOwnBuilding()
                   .getOpenRequestsOfTypeFiltered(
                     placer.getWorker().getCitizenData(),
-                    TypeToken.of(IDeliverable.class),
+                          TypeConstants.DELIVERABLE,
                     (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(placedStack))
                   .isEmpty())
             {
@@ -434,12 +435,11 @@ public final class PlacementHandlers
 
             if (placer != null && !infiniteResources)
             {
-                final ItemStack placedStack = placer.getTotalAmount(new ItemStack(Blocks.DIRT, 1));
                 if (!placer.holdEfficientTool(blockState.getBlock()))
                 {
                     return ActionProcessingResult.DENY;
                 }
-
+                final ItemStack placedStack = placer.getTotalAmount(new ItemStack(Blocks.DIRT, 1));
                 final List<ItemStack> itemList = new ArrayList<>();
                 itemList.add(placedStack);
                 if (checkForListInInvAndRequest(placer, itemList))

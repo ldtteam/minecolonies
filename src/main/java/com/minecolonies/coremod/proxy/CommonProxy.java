@@ -4,6 +4,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowBuildTool;
+import com.minecolonies.coremod.colony.BarbarianSpawnEventHandler;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
@@ -18,6 +19,8 @@ import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.sounds.ModSoundEvents;
 import com.minecolonies.coremod.tileentities.*;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -130,6 +133,7 @@ public class CommonProxy implements IProxy
     {
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         MinecraftForge.EVENT_BUS.register(new FMLEventHandler());
+        MinecraftForge.EVENT_BUS.register(new BarbarianSpawnEventHandler());
     }
 
     /*

@@ -2,12 +2,16 @@ package com.minecolonies.coremod.colony.buildings.views;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.ReflectionUtils;
+import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
@@ -15,11 +19,9 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,10 +29,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZEN_BY_REQUEST;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RS_BUILDING_DATASTORE;
 import static com.minecolonies.api.util.constant.Suppression.*;
 import static com.minecolonies.coremod.colony.buildings.AbstractBuilding.NO_WORK_ORDER;
-import static com.minecolonies.coremod.colony.buildings.AbstractBuilding.processIntegerKeyTokenList;
 
 /**
  * The AbstractBuilding View is the client-side representation of a AbstractBuilding.
@@ -49,11 +50,6 @@ public abstract class AbstractBuildingView implements IRequester
      */
     @NotNull
     private final BlockPos   location;
-
-    /**
-     * Keeps track of which citizen created what request. Request -> Citizen direction.
-     */
-    private final HashMap<IToken, Integer> requestsByCitizen = new HashMap<>();
 
     /**
      * The building level.
@@ -86,9 +82,10 @@ public abstract class AbstractBuildingView implements IRequester
     private int workOrderLevel   = NO_WORK_ORDER;
 
     /**
-     * Keeps track of which citizen created what request. Citizen -> Request direction.
+     * The data store id for request system related data.
      */
-    private final Map<Integer, Collection<IToken<?>>> citizensByRequests = new HashMap<>();
+    @NotNull
+    private IToken<?> rsDataStoreToken;
 
     /**
      * The Schematic name of the building.
@@ -284,16 +281,22 @@ public abstract class AbstractBuildingView implements IRequester
 
     private void loadRequestSystemFromNBT(final NBTTagCompound compound)
     {
-        this.citizensByRequests.clear();
-        if (compound.hasKey(TAG_CITIZEN_BY_REQUEST))
-        {
-            final NBTTagList citizensByRequestList = compound.getTagList(TAG_CITIZEN_BY_REQUEST, Constants.NBT.TAG_COMPOUND);
-            NBTUtils.streamCompound(citizensByRequestList).forEach(cbrc -> processIntegerKeyTokenList(cbrc, citizensByRequests));
-        }
+        this.rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(TAG_RS_BUILDING_DATASTORE));
+    }
 
+    private IRequestSystemBuildingDataStore getDataStore()
+    {
+        return colony.getRequestManager().getDataStoreManager().get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_BUILDING_DATA_STORE);
+    }
 
-        this.requestsByCitizen.clear();
-        this.citizensByRequests.keySet().forEach(citizen -> this.citizensByRequests.get(citizen).forEach(requestToken -> this.requestsByCitizen.put(requestToken, citizen)));
+    private Map<Integer, Collection<IToken<?>>> getOpenRequestsByCitizen()
+    {
+        return getDataStore().getOpenRequestsByCitizen();
+    }
+
+    private Map<IToken<?>, Integer> getCitizensByRequest()
+    {
+        return getDataStore().getCitizensByRequest();
     }
 
     @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
@@ -301,9 +304,8 @@ public abstract class AbstractBuildingView implements IRequester
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
-                                          Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
-                                          //TODO: Check on the types of this, it is TypeToken and Class, possible mismatch
-                                          return requestTypes.contains(requestType);
+                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          return requestTypes.contains(TypeToken.of(requestType));
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
                                       .iterator());
@@ -312,12 +314,27 @@ public abstract class AbstractBuildingView implements IRequester
     @SuppressWarnings(RAWTYPES)
     public ImmutableList<IRequest> getOpenRequests(@NotNull final CitizenDataView data)
     {
-        if (!citizensByRequests.containsKey(data.getId()))
+        if (data == null || getColony() == null || getColony().getRequestManager() == null)
+        {
+            return  ImmutableList.of();
+        }
+
+        if (!getOpenRequestsByCitizen().containsKey(data.getId()))
         {
             return ImmutableList.of();
         }
 
-        return ImmutableList.copyOf(citizensByRequests.get(data.getId()).stream().map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
+        final Collection<IToken<?>> list = getOpenRequestsByCitizen().get(data.getId());
+
+        if(list == null || list.isEmpty())
+        {
+            return ImmutableList.of();
+        }
+
+        return ImmutableList.copyOf(list
+                .stream().filter(Objects::nonNull)
+                .map(getColony().getRequestManager()::getRequestForToken)
+                .filter(Objects::nonNull).iterator());
     }
 
     /**
@@ -338,9 +355,8 @@ public abstract class AbstractBuildingView implements IRequester
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
-                                          Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
-                                          //TODO: Check on the types of this, it is TypeToken and Class, possible mismatch
-                                          return requestTypes.contains(requestType);
+                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          return requestTypes.contains(TypeToken.of(requestType));
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
                                       .filter(filter)
@@ -364,28 +380,36 @@ public abstract class AbstractBuildingView implements IRequester
 
     @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IToken<?> token)
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         //NOOP; Is Client side view.
     }
 
     @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IToken<?> token)
+    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         //NOOP; Is Client side view.
     }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken<?> token)
+    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        if (!requestsByCitizen.containsKey(token))
+        try
         {
-            return new TextComponentString("<UNKNOWN>");
-        }
+            if (getColony() == null || !getCitizensByRequest().containsKey(token) || getColony().getCitizen(getCitizensByRequest().get(token)) == null)
+            {
+                return new TextComponentString("<UNKNOWN>");
+            }
 
-        return new TextComponentString(getColony().getCitizen(requestsByCitizen.get(token)).getName());
+            return new TextComponentString(getColony().getCitizen(getCitizensByRequest().get(token)).getName());
+        }
+        catch (final Exception ex)
+        {
+            Log.getLogger().warn(ex);
+            return new TextComponentString("");
+        }
     }
 
     public int getBuildingDmPrio()

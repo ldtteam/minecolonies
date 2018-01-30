@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.gui;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.ButtonHandler;
+import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.Window;
 import org.jetbrains.annotations.NotNull;
 

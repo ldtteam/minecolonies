@@ -119,7 +119,10 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
             if (!displayStacks.isEmpty())
             {
-                exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
+                if(exampleStackDisplay != null)
+                {
+                    exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
+                }
             }
             else
             {
@@ -128,7 +131,8 @@ public class WindowClipBoard extends AbstractWindowSkeleton
                 logo.setImage(request.getDisplayIcon());
             }
 
-            rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(request.getToken()).getFormattedText());
+            final ColonyView view = ColonyManager.getColonyView(colonyId);
+            rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
 
             rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
               .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));

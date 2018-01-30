@@ -4,11 +4,11 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.colony.buildings.*;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.managers.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
@@ -503,10 +503,9 @@ public class Colony implements IColony
     {
         buildingManager.tick(event);
 
-        getRequestManager().update();
-
         if (event.phase == TickEvent.Phase.END)
         {
+            getRequestManager().update();
             packageManager.updateSubscribers();
         }
     }

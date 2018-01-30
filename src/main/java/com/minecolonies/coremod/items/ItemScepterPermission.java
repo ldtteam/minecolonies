@@ -113,24 +113,22 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
                                        final float hitY,
                                        final float hitZ)
     {
-        final ItemStack scepter = playerIn.getHeldItem(hand);
         if (!worldIn.isRemote)
         {
             return EnumActionResult.SUCCESS;
         }
-
+        final ItemStack scepter = playerIn.getHeldItem(hand);
         if (!scepter.hasTagCompound())
         {
             scepter.setTagCompound(new NBTTagCompound());
         }
-        final NBTTagCompound compound = scepter.getTagCompound();
 
         final ColonyView colonyView = ColonyManager.getClosestColonyView(worldIn, pos);
         if (colonyView == null)
         {
             return EnumActionResult.FAIL;
         }
-
+        final NBTTagCompound compound = scepter.getTagCompound();
         return handleItemAction(compound, playerIn, worldIn, pos, colonyView);
     }
 
@@ -150,12 +148,10 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
                                                      final EnumHand hand)
     {
         final ItemStack scepter = playerIn.getHeldItem(hand);
-
         if (worldIn.isRemote)
         {
             return new ActionResult<>(EnumActionResult.SUCCESS, scepter);
         }
-
         if (!scepter.hasTagCompound())
         {
             scepter.setTagCompound(new NBTTagCompound());
@@ -188,7 +184,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     }
 
     @NotNull
-    private EnumActionResult handleItemAction(
+    private static EnumActionResult handleItemAction(
                                                final NBTTagCompound compound,
                                                final EntityPlayer playerIn,
                                                final World worldIn,

@@ -421,7 +421,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         {
             index = Integer.valueOf(((Label) pane).getLabelText());
         }
-        final boolean trigger = LanguageHandler.format(RETRIEVE_ON).equals(button.getLabel());
+        final boolean trigger = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON).equals(button.getLabel());
         final Action action = Action.values()[index];
         final Rank rank = Rank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH));
 
@@ -430,11 +430,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
         if (trigger)
         {
-            button.setLabel(LanguageHandler.format(RETRIEVE_OFF));
+            button.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
         }
         else
         {
-            button.setLabel(LanguageHandler.format(RETRIEVE_ON));
+            button.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON));
         }
     }
 
@@ -497,8 +497,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(name);
                 final boolean isTriggered = townHall.getColony().getPermissions().hasPermission(Rank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH)), action);
                 rowPane.findPaneOfTypeByID("trigger", Button.class)
-                  .setLabel(isTriggered ? LanguageHandler.format(RETRIEVE_ON)
-                              : LanguageHandler.format(RETRIEVE_OFF));
+                  .setLabel(isTriggered ? LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON)
+                              : LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
                 rowPane.findPaneOfTypeByID("index", Label.class).setLabelText(Integer.toString(actionIndex));
             }
         });
@@ -688,6 +688,10 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
 
         final Group group = findPaneOfTypeByID("citizen-stats", Group.class);
+        if (group == null)
+        {
+            return;
+        }
         final Integer unemployed = jobCountMap.get("") == null ? 0 : jobCountMap.get("");
         jobCountMap.remove("");
 
@@ -789,9 +793,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 final WorkOrderView workOrder = workOrders.get(index);
                 String claimingCitizen = "";
 
+                final int numElements = getElementCount();
+
                 if (index == 0)
                 {
-                    if (getElementCount() == 1)
+                    if (numElements == 1)
                     {
                         rowPane.findPaneOfTypeByID(BUTTON_DOWN, Button.class).hide();
                     }
@@ -801,7 +807,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                     }
                     rowPane.findPaneOfTypeByID(BUTTON_UP, Button.class).hide();
                 }
-                else if (index == getElementCount() - 1)
+                else if (index == numElements - 1)
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_DOWN, Button.class).hide();
                 }

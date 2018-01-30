@@ -129,6 +129,11 @@ public class ColonyPackageManager implements IColonyPackageManager
             {
                 @NotNull final EntityPlayerMP player = (EntityPlayerMP) o;
 
+                if (player.connection.networkTickCount < 5)
+                {
+                    continue;
+                }
+
                 final double distance = player.getDistanceSq(colony.getCenter());
                 if (distance < MAX_SQ_DIST_SUBSCRIBER_UPDATE
                         || (oldSubscribers.contains(player) && distance < MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE))

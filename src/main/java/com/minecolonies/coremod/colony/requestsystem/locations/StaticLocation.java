@@ -63,6 +63,35 @@ public class StaticLocation implements ILocation
     }
 
     @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof StaticLocation))
+        {
+            return false;
+        }
+
+        final StaticLocation that = (StaticLocation) o;
+
+        if (getDimension() != that.getDimension())
+        {
+            return false;
+        }
+        return pos.equals(that.pos);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = pos.hashCode();
+        result = 31 * result + getDimension();
+        return result;
+    }
+
+    @Override
     public String toString()
     {
         return "Dim: " + dimension + " " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + " ";

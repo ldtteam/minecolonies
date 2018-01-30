@@ -69,12 +69,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     private static final int ACTIONS_UNTIL_DUMP = 1024;
 
     /**
-     * Position where the Builders constructs from.
-     */
-    @Nullable
-    private BlockPos workFrom = null;
-
-    /**
      * Initialize the builder and add all his tasks.
      *
      * @param job the job he has.
@@ -121,7 +115,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         if (!job.hasStructure())
         {
-            workFrom = null;
             loadStructure();
             final WorkOrderBuildDecoration wo = job.getWorkOrder();
             if (wo == null)
@@ -443,7 +436,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         if (job.getWorkOrder() == null)
         {
             super.resetTask();
-            workFrom = null;
             job.setStructure(null);
             job.setWorkOrder(null);
             resetCurrentStructure();

@@ -72,7 +72,8 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     /**
      * Sets the barbarians target colony on spawn Thus it never changes.
      */
-    private final Colony colony = ColonyManager.getClosestColony(CompatibilityUtils.getWorld(this), this.getPosition());
+    private Colony colony;
+
     /**
      * Random object.
      */
@@ -142,7 +143,17 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     @Override
     protected boolean canDespawn()
     {
-        return shouldDespawn() || colony == null;
+        return shouldDespawn() || getColony() == null;
+    }
+
+    public Colony getColony()
+    {
+        if (colony == null)
+        {
+            colony = ColonyManager.getClosestColony(CompatibilityUtils.getWorld(this), this.getPosition());
+        }
+
+        return colony;
     }
 
     /**
@@ -220,11 +231,9 @@ public abstract class AbstractEntityBarbarian extends EntityMob
         return BarbarianSounds.barbarianDeath;
     }
 
-    @Override
-    protected void applyEntityAttributes()
+    public void applyInternalEntityAttributes()
     {
-        super.applyEntityAttributes();
-        BarbarianSpawnUtils.setBarbarianAttributes(this, colony);
+        BarbarianSpawnUtils.setBarbarianAttributes(this, getColony());
     }
 
     @Override

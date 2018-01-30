@@ -70,8 +70,10 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.Suppression.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
+import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_NOT_ALLOWED;
+import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_SAME;
 
 /**
  * The Class used to represent the citizen entities.
@@ -1136,9 +1138,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         final RenderBipedCitizen.Model model = getModelID();
 
-        String textureBase = "textures/entity/" + model.textureBase;
-        textureBase += female ? "Female" : "Male";
-
+        final String textureBase = "textures/entity/" + model.textureBase + (female ? "Female" : "Male");
         final int moddedTextureId = (textureId % model.numTextures) + 1;
         texture = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + renderMetadata + ".png");
     }
@@ -1176,7 +1176,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 return;
             }
 
-            final double maxValue = Integer.MAX_VALUE - citizenData.getExperience();
             double localXp = xp * skillModifier / EXP_DIVIDER;
             final double workBuildingLevel = getWorkBuilding() == null ? 0 : getWorkBuilding().getBuildingLevel();
             final double bonusXp = (workBuildingLevel * (1 + citizenHutLevel) / Math.log(this.citizenData.getLevel() + 2.0D)) / 2;
@@ -1211,6 +1210,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 }
             }
 
+            final double maxValue = Integer.MAX_VALUE - citizenData.getExperience();
             if (localXp > maxValue)
             {
                 localXp = maxValue;
@@ -1537,7 +1537,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public boolean isAtHome()
     {
         @Nullable final AbstractBuilding homeBuilding = getHomeBuilding();
-        @Nullable final BlockPos homePosition = getHomePosition();
 
         if (homeBuilding instanceof BuildingHome)
         {
@@ -1548,6 +1547,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                     corners.getSecond().getSecond()).intersectsWithXZ(new Vec3d(this.getPosition()));
         }
 
+        @Nullable final BlockPos homePosition = getHomePosition();
         return homePosition != null && homePosition.distanceSq((int) Math.floor(posX), (int) posY, (int) Math.floor(posZ)) <= RANGE_TO_BE_HOME;
     }
 

@@ -214,7 +214,7 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
         setRegistryName(BLOCK_NAME);
         setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, NORTH));
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
         setLightOpacity(LIGHT_OPACITY);
@@ -231,11 +231,11 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     @Deprecated
     public IBlockState getStateFromMeta(final int meta)
     {
-        EnumFacing enumfacing = EnumFacing.getFront(meta);
+        EnumFacing enumfacing = getFront(meta);
 
         if (enumfacing.getAxis() == EnumFacing.Axis.Y)
         {
-            enumfacing = EnumFacing.NORTH;
+            enumfacing = NORTH;
         }
 
         return this.getDefaultState().withProperty(FACING, enumfacing);
@@ -431,7 +431,7 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
                                              final int meta,
                                              final EntityLivingBase placer)
     {
-        @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
+        @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 

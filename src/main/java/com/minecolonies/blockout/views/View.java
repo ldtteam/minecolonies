@@ -81,7 +81,7 @@ public class View extends Pane
     @Override
     public void scrollInput(final int wheel)
     {
-        for (final Pane child : children)
+        for (final Pane child : new ArrayList<>(children))
         {
             if (child != null)
             {

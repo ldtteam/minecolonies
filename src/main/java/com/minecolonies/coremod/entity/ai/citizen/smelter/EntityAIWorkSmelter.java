@@ -153,7 +153,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
             progress = 0;
             if(InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableToolOrWeapon) <= 0)
             {
-                if(getOwnBuilding().getCountOfPredicateInHut(EntityAIWorkSmelter::isSmeltableToolOrWeapon, 1, world) < 1)
+                if(InventoryUtils.hasItemInProvider(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableToolOrWeapon))
                 {
                     return START_WORKING;
                 }
@@ -260,7 +260,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
             return getState();
         }
 
-        if (getOwnBuilding().getCountOfPredicateInHut(TileEntityFurnace::isItemFuel, 1, world) < 1)
+        if (InventoryUtils.hasItemInProvider(getOwnBuilding(), TileEntityFurnace::isItemFuel))
         {
             if (!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Burnable.class)))
             {
@@ -451,7 +451,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
                 if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel))
                 {
                     walkTo = null;
-                    return AIState.SMELTER_GET_FIREWOOD;
+                    return SMELTER_GET_FIREWOOD;
                 }
 
                 InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
@@ -499,7 +499,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
             return SMELTER_RETRIEVE_ORE;
         }
 
-        final int amountOfOre = getOwnBuilding().getCountOfPredicateInHut(EntityAIWorkSmelter::isSmeltableOre, 1, world)
+        final int amountOfOre = InventoryUtils.getItemCountInProvider(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableOre)
                 + InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableOre);
 
         if (amountOfOre <= 0)
@@ -521,7 +521,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
      */
     private AIState checkForAdditionalJobs(final int amountOfOre)
     {
-        final int amountOfTools = getOwnBuilding().getCountOfPredicateInHut(EntityAIWorkSmelter::isSmeltableToolOrWeapon, 1, world)
+        final int amountOfTools = InventoryUtils.getItemCountInProvider(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableToolOrWeapon)
                 + InventoryUtils.getItemCountInItemHandler(
                 new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableToolOrWeapon);
 

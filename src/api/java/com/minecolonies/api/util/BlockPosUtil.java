@@ -27,11 +27,6 @@ import java.util.List;
 public final class BlockPosUtil
 {
     /**
-     * Min distance to availate two positions as close.
-     */
-    private static final double CLOSE_DISTANCE = 4.84;
-
-    /**
      * Max depth of the floor check to avoid endless void searching
      * (Stackoverflow).
      */
