@@ -18,6 +18,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,10 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
  */
 public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends EntityAnimal> extends AbstractEntityAIInteract<J>
 {
+    /**
+     * How many animals per hut level the worker should max have.
+     */
+    private static final int ANIMAL_MULTIPLIER = 2;
 
     /**
      * Tools and Items needed by the worker.
@@ -315,7 +320,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
     public int getMaxAnimalMultiplier()
     {
-        return 2;
+        return ANIMAL_MULTIPLIER;
     }
 
     /**
@@ -488,15 +493,13 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      *
      * @param animal the {@link EntityAnimal} we are butchering
      */
-    private void butcherAnimal(final EntityAnimal animal)
+    private void butcherAnimal(@Nullable final EntityAnimal animal)
     {
         worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING));
-
-        if (!walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getHeldItemMainhand()) && animal != null)
+        if (animal != null && !walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getHeldItemMainhand()))
         {
             worker.swingArm(EnumHand.MAIN_HAND);
             animal.attackEntityFrom(new DamageSource(worker.getName()), (float) BUTCHERING_ATTACK_DAMAGE);
-
             worker.getHeldItemMainhand().damageItem(1, animal);
         }
     }
