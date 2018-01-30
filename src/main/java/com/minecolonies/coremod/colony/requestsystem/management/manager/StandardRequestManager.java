@@ -110,8 +110,7 @@ public class StandardRequestManager implements IStandardRequestManager
 
     private IToken<?> registerDataStore(TypeToken<? extends IDataStore> typeToken)
     {
-        return dataStoreManager.get(StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-          StandardFactoryController.getInstance().getNewInstance(typeToken))
+        return dataStoreManager.get(StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN), typeToken)
                  .getId();
     }
 
