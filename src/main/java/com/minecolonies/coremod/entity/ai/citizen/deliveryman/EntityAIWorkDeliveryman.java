@@ -68,7 +68,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     /**
      * The inventory's slot which is held in hand.
      */
-    private static final int SLOT_HAND      = 0;
+    private static final int SLOT_HAND = 0;
+
+    /**
+     * The amoutn fo tries the dman has to get a random building.
+     */
+    private static final int TRIES_TO_GET_RANDOM_BUILDING = 3;
 
     /**
      * Next target the deliveryman should gather stuff at.
@@ -99,6 +104,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * To check if the dman gathered anything on his trip.
      */
     private boolean hasGathered = false;
+
+    /**
+     * The last delivery of the dman.
+     */
+    private ILocation lastDelivery = null;
 
     /**
      * Initialize the deliveryman and add all his tasks.
@@ -134,14 +144,18 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     {
         if (maximalGatherCount < 0)
         {
-            maximalGatherCount = Configurations.requestSystem.minimalBuildingsToGather + worker.getRandom().nextInt(Math.max(1, Configurations.requestSystem.maximalBuildingsToGather - Configurations.requestSystem.minimalBuildingsToGather));
+            maximalGatherCount = Configurations.requestSystem.minimalBuildingsToGather
+                    + worker.getRandom().nextInt(
+                            Math.max(1, Configurations.requestSystem.maximalBuildingsToGather - Configurations.requestSystem.minimalBuildingsToGather));
         }
 
         if (gatherTarget == null)
         {
             if (gatherCount == maximalGatherCount)
             {
-                maximalGatherCount = Configurations.requestSystem.minimalBuildingsToGather + worker.getRandom().nextInt(Math.max(1, Configurations.requestSystem.maximalBuildingsToGather - Configurations.requestSystem.minimalBuildingsToGather));
+                maximalGatherCount = Configurations.requestSystem.minimalBuildingsToGather
+                        + worker.getRandom().nextInt(
+                                Math.max(1, Configurations.requestSystem.maximalBuildingsToGather - Configurations.requestSystem.minimalBuildingsToGather));
                 gatherCount = 0;
                 return DUMPING;
             }
@@ -223,6 +237,27 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return pos;
         }
 
+        AbstractBuilding theBuilding = returnRandomBuilding();
+        for(int i = 0; i < TRIES_TO_GET_RANDOM_BUILDING; i++)
+        {
+            if(theBuilding != null && (lastDelivery == null || !theBuilding.getDeliveryLocation().equals(lastDelivery)))
+            {
+                lastDelivery = null;
+                return theBuilding.getLocation();
+            }
+            theBuilding = returnRandomBuilding();
+        }
+
+        lastDelivery = null;
+        return theBuilding == null ? null : theBuilding.getLocation();
+    }
+
+    /**
+     * Calculates a random building and returns it.
+     * @return
+     */
+    private AbstractBuilding returnRandomBuilding()
+    {
         final Collection<AbstractBuilding> buildingList = worker.getColony().getBuildingManager().getBuildings().values();
         final Object[] buildingArray = buildingList.toArray();
 
@@ -233,8 +268,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             return null;
         }
-
-        return building.getLocation();
+        return building;
     }
 
     /**
@@ -488,15 +522,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
         }
 
-
+        lastDelivery = deliveryHut.getBuildingToDeliver();
         worker.addExperience(1.0D);
         worker.setHeldItem(SLOT_HAND);
         deliveryHut.setBuildingToDeliver(null);
         job.finishRequest(true);
 
-        gatherTarget = buildingToDeliver.getInDimensionLocation();
         setDelay(WAIT_DELAY);
-        return GATHERING;
+        return START_WORKING;
     }
 
     /**
