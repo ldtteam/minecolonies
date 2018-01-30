@@ -194,11 +194,15 @@ public class CompatabilityManager implements ICompatabilityManager
         {
             if (!ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemBlock)
             {
-                final IBlockState state = ((ItemBlock) stack.getItem()).getBlock()
-                        .getStateForPlacement(world, BlockPos.ORIGIN, EnumFacing.NORTH, 0, 0, 0, stack.getMetadata(), null);
-                if (!ores.contains(state))
-                {
-                    ores.add(state);
+                try {
+                    final IBlockState state = ((ItemBlock) stack.getItem()).getBlock()
+                            .getStateForPlacement(world, BlockPos.ORIGIN, EnumFacing.NORTH, 0, 0, 0, stack.getMetadata(), null);
+                    if (!ores.contains(state))
+                    {
+                        ores.add(state);
+                    }
+                } catch (Exception e) {
+                    Log.getLogger().info("Error: " + e.getMessage());
                 }
             }
         }
