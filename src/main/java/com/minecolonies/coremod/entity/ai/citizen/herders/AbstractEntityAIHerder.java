@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.herders;
 
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
@@ -18,6 +19,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -137,6 +139,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         }
         else if (maxAnimals())
         {
+            Log.getLogger().warn("Herder has to Butcher!");
             return HERDER_BUTCHER;
         }
         else if (numOfBreedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem)
@@ -194,15 +197,18 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      */
     private AIState butcherAnimals()
     {
+        Log.getLogger().warn("Going into butcher animal state");
         setDelay(BUTCHER_DELAY);
 
         if (!maxAnimals())
         {
+            Log.getLogger().warn("Not enough animals");
             return HERDER_DECIDE;
         }
 
         if (!equipTool(ToolType.AXE))
         {
+            Log.getLogger().warn("No appopriate tool");
             return START_WORKING;
         }
 
@@ -221,6 +227,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         if (animal != null && !animal.isEntityAlive())
         {
+            Log.getLogger().warn("Butched succesfully, incrementing actions.");
             incrementActionsDone();
         }
 
@@ -414,6 +421,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             final int numOfAnimals = searchForAnimals().size();
             final int maxAnimals = getOwnBuilding().getBuildingLevel() * getMaxAnimalMultiplier();
 
+            Log.getLogger().warn("Amount of animals: " + numOfAnimals + " max: " + maxAnimals);
             return numOfAnimals > maxAnimals;
         }
         return true;
@@ -488,16 +496,18 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      *
      * @param animal the {@link EntityAnimal} we are butchering
      */
-    private void butcherAnimal(final EntityAnimal animal)
+    private void butcherAnimal(@Nullable final EntityAnimal animal)
     {
         worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING));
-
-        if (!walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getHeldItemMainhand()) && animal != null)
+        Log.getLogger().warn("Going to butcher: " + animal.getName());
+        if (animal != null && !walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getHeldItemMainhand()))
         {
+            Log.getLogger().warn("Killing the animal: " + animal.getName());
             worker.swingArm(EnumHand.MAIN_HAND);
             animal.attackEntityFrom(new DamageSource(worker.getName()), (float) BUTCHERING_ATTACK_DAMAGE);
 
             worker.getHeldItemMainhand().damageItem(1, animal);
+            Log.getLogger().warn("Killed the animal: " + animal.getName());
         }
     }
 
