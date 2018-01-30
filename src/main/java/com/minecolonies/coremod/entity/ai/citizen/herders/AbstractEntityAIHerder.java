@@ -39,8 +39,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Tools and Items needed by the worker.
      */
-    public final List<ToolType>  toolsNeeded   = new ArrayList<>();
-    public final List<ItemStack> itemsNeeded   = new ArrayList<>();
+    public final List<ToolType>  toolsNeeded = new ArrayList<>();
+    public final List<ItemStack> itemsNeeded = new ArrayList<>();
 
     /**
      * Amount of animals needed to bread.
