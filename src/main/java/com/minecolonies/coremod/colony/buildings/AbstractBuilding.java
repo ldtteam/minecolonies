@@ -1274,7 +1274,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         final IRequestManager manager = colony.getRequestManager();
         toKeep.put(stack -> this.getOpenRequestsByCitizen().values().stream()
                 .anyMatch(list -> list.stream()
-                        .anyMatch(token -> manager.getRequestForToken(token) instanceof IDeliverable
+                        .anyMatch(token -> manager.getRequestForToken(token).getRequest() instanceof IDeliverable
                                 && ((IDeliverable) manager.getRequestForToken(token).getRequest()).matches(stack))), Integer.MAX_VALUE);
 
         return toKeep;
