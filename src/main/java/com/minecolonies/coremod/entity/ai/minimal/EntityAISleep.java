@@ -109,6 +109,7 @@ public class EntityAISleep extends EntityAIBase
 
                 if (citizen.isWorkerAtSiteWithMove(usedBed, 1))
                 {
+                    citizen.trySleep(usedBed);
                     return true;
                 }
             }

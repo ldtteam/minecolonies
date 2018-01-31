@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.render;
 import com.minecolonies.coremod.client.model.*;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
@@ -67,6 +68,34 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         }
 
         super.doRender(citizen, d, d1, d2, f, f1);
+    }
+
+    @Override
+    protected void renderLivingAt(final EntityCitizen entityLivingBaseIn, final double x, final double y, final double z)
+    {
+        if (entityLivingBaseIn.isEntityAlive() && entityLivingBaseIn.isAsleep())
+        {
+            super.renderLivingAt(entityLivingBaseIn, x + (double)entityLivingBaseIn.renderOffsetX, y, z + (double)entityLivingBaseIn.renderOffsetZ);
+        }
+        else
+        {
+            super.renderLivingAt(entityLivingBaseIn, x, y, z);
+        }
+    }
+
+    @Override
+    protected void applyRotations(final EntityCitizen entityLiving, final float p_77043_2_, final float rotationYaw, final float partialTicks)
+    {
+        if (entityLiving.isEntityAlive() && entityLiving.isAsleep())
+        {
+            GlStateManager.rotate(entityLiving.getBedOrientationInDegrees(), 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotate(this.getDeathMaxRotation(entityLiving), 0.0F, 0.0F, 1.0F);
+            GlStateManager.rotate(270.0F, 0.0F, 1.0F, 0.0F);
+        }
+        else
+        {
+            super.applyRotations(entityLiving, p_77043_2_, rotationYaw, partialTicks);
+        }
     }
 
     @Override
