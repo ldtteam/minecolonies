@@ -24,7 +24,6 @@ import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -34,7 +33,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -157,7 +155,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             If yes, transition to NEEDS_ITEM.
             and wait for new items.
            */
-          new AITarget(() -> {
+          new AITarget(() ->
+          {
               return getState() == NEEDS_ITEM
                        || this.getOwnBuilding()
                             .hasWorkerOpenRequestsFiltered(
@@ -178,7 +177,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
            * Reset to idle if no specific tool is needed.
            */
-          new AITarget(() -> {
+          new AITarget(() ->
+          {
               return getState() == NEEDS_TOOL
                        && this.getOwnBuilding().getOpenRequestsOfType(
                 worker.getCitizenData(),
@@ -509,14 +509,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 {
                     //Seems like somebody else picked up our stack.
                     //Lets try this again.
-                    if (!async)
-                    {
-                        worker.getCitizenData().createRequest(firstDeliverableRequest.getRequest());
-                    }
-                    else
+                    if (async)
                     {
                         worker.getCitizenData().createRequestAsync(firstDeliverableRequest.getRequest());
                     }
+                    else
+                    {
+                        worker.getCitizenData().createRequest(firstDeliverableRequest.getRequest());
+                    }
+                }
+
+                if(async)
+                {
+                    return IDLE;
                 }
             }
         }
