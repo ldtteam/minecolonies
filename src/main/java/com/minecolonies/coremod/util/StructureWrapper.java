@@ -249,12 +249,15 @@ public final class StructureWrapper
             {
                 final IBlockState blockState = (IBlockState) result;
 
-                final Colony colony = ColonyManager.getClosestColony(world, pos);
-                final AbstractBuilding building = colony.getBuildingManager().getBuilding(position);
-
-                if (building != null)
+                final Colony colony = ColonyManager.getColony(world, pos);
+                if (colony != null)
                 {
-                    building.registerBlockPosition(blockState, pos, world);
+                    final AbstractBuilding building = colony.getBuildingManager().getBuilding(position);
+
+                    if (building != null)
+                    {
+                        building.registerBlockPosition(blockState, pos, world);
+                    }
                 }
 
                 return;

@@ -1086,7 +1086,6 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      * @param blockState to be registered
      * @param pos   of the blockState
      */
-    @SuppressWarnings("squid:S1172")
     public void registerBlockPosition(@NotNull final IBlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
     {
         registerBlockPosition(blockState.getBlock(), pos, world);
