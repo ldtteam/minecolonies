@@ -34,27 +34,23 @@ public class StandardDataStoreManager implements IDataStoreManager
     }
 
     @Override
-    public <T extends IDataStore> T get(final IToken<?> id, final T defaultInstance)
-    {
-        if (!storeMap.containsKey(id))
-        {
-            defaultInstance.setId(id);
-            storeMap.put(id, defaultInstance);
-        }
-
-        return (T) storeMap.get(id);
-    }
-
-    @Override
     public <T extends IDataStore> T get(final IToken<?> id, final TypeToken<T> type)
     {
-        return get(id, StandardFactoryController.getInstance().getNewInstance(type));
+        return get(id, () -> StandardFactoryController.getInstance().getNewInstance(type));
     }
 
     @Override
     public <T extends IDataStore> T get(final IToken<?> id, final Supplier<T> factory)
     {
-        return get(id, factory.get());
+        if (!storeMap.containsKey(id))
+        {
+            final T defaultInstance = factory.get();
+
+            defaultInstance.setId(id);
+            storeMap.put(id, defaultInstance);
+        }
+
+        return (T) storeMap.get(id);
     }
 
     @Override
