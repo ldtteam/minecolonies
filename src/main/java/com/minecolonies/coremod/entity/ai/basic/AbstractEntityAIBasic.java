@@ -518,11 +518,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                         worker.getCitizenData().createRequest(firstDeliverableRequest.getRequest());
                     }
                 }
-
-                if(async)
-                {
-                    return IDLE;
-                }
             }
         }
 
