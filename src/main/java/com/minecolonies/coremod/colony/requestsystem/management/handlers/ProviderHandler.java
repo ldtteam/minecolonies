@@ -64,10 +64,17 @@ public final class ProviderHandler
 
         //Get the resolvers that are being removed.
         final Collection<IToken<?>> assignedResolvers = getRegisteredResolvers(manager, token);
+
+        if(assignedResolvers == null)
+        {
+            return;
+        }
+
         for (final IToken<?> resolverToken : assignedResolvers)
         {
             //Skip if the resolver has no requests assigned.
-            if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolverToken) || manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken).isEmpty())
+            if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolverToken)
+                    || manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken).isEmpty())
             {
                 LogHandler.log("Removing resolver without assigned requests: " + resolverToken);
                 manager.getRequestResolverRequestAssignmentDataStore().getAssignments().remove(resolverToken);
