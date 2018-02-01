@@ -723,6 +723,29 @@ public class Permissions implements IPermissions
     }
 
     /**
+     * Adds a player to the rankings.
+     *
+     * @param id UUID of the player..
+     * @param rank Desired rank.
+     * @param name name of the player.
+     * @return True if succesful, otherwise false.
+     */
+    public boolean addPlayer(@NotNull final UUID id, final String name, final Rank rank)
+    {
+        @NotNull final Player p = new Player(id, name, rank);
+
+        if (players.containsKey(p.getID()))
+        {
+            players.remove(p.getID());
+        }
+        players.put(p.getID(), p);
+
+        markDirty();
+        AchievementUtils.syncAchievements(colony);
+        return true;
+    }
+
+    /**
      * Remove a player from the permissionMap.
      *
      * @param id UUID of the player.
