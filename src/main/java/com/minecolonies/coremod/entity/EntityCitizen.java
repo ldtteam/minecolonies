@@ -28,6 +28,7 @@ import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -60,6 +61,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -80,6 +83,14 @@ import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RE
  */
 public class EntityCitizen extends EntityAgeable implements INpc
 {
+    private static final float CONST_BED_HEIGHT = 0.6875f;
+    private static final float CONST_HALF_BLOCK = 0.5f;
+    private static final float CONST_SLEEPING_RENDER_OFFSET = -1.5f;
+
+    private static final int NINETY_DEGREE = 90;
+    private static final int HALF_ROTATION = 180;
+    private static final int THREE_QUARTERS = 270;
+
     private static final DataParameter<Integer> DATA_TEXTURE         = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> DATA_LEVEL           = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> DATA_IS_FEMALE       = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
@@ -87,6 +98,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private static final DataParameter<Integer> DATA_CITIZEN_ID      = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
     private static final DataParameter<String>  DATA_MODEL           = EntityDataManager.<String>createKey(EntityCitizen.class, DataSerializers.STRING);
     private static final DataParameter<String>  DATA_RENDER_METADATA = EntityDataManager.<String>createKey(EntityCitizen.class, DataSerializers.STRING);
+    private static final DataParameter<Boolean> DATA_IS_ASLEEP = EntityDataManager.createKey(EntityCitizen.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<BlockPos> DATA_BED_POS = EntityDataManager.createKey(EntityCitizen.class, DataSerializers.BLOCK_POS);
 
     private static Field navigatorField;
     @NotNull
@@ -772,6 +785,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
         dataManager.register(DATA_IS_FEMALE, 0);
         dataManager.register(DATA_MODEL, RenderBipedCitizen.Model.SETTLER.name());
         dataManager.register(DATA_RENDER_METADATA, "");
+        dataManager.register(DATA_IS_ASLEEP, false);
+        dataManager.register(DATA_BED_POS, new BlockPos(0,0,0));
     }
 
     @Override
@@ -1475,6 +1490,74 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
+     * Attempts a sleep interaction with the citizen and the given bed.
+     * @param bedLocation The possible location to sleep.
+     */
+    public void trySleep(final BlockPos bedLocation)
+    {
+        final IBlockState state = this.world.isBlockLoaded(bedLocation) ? this.world.getBlockState(bedLocation) : null;
+        final boolean isBed = state != null && state.getBlock().isBed(state, this.world, bedLocation, this);
+
+        if (!isBed)
+        {
+            return;
+        }
+
+        this.setPosition((double)((float)bedLocation.getX() + CONST_HALF_BLOCK), (double)((float)bedLocation.getY() + CONST_BED_HEIGHT), (double)((float)bedLocation.getZ() + CONST_HALF_BLOCK));
+
+        this.motionX = 0.0D;
+        this.motionY = 0.0D;
+        this.motionZ = 0.0D;
+
+        setIsAsleep(true);
+
+        dataManager.set(DATA_BED_POS, bedLocation);
+    }
+
+    public BlockPos getBedLocation()
+    {
+        return dataManager.get(DATA_BED_POS);
+    }
+
+    public float getRenderOffsetX()
+    {
+        if (!isAsleep())
+        {
+            return 0;
+        }
+
+        final IBlockState state = this.world.isBlockLoaded(getBedLocation()) ? this.world.getBlockState(getBedLocation()) : null;
+        final boolean isBed = state != null && state.getBlock().isBed(state, this.world, getBedLocation(), this);
+        final EnumFacing enumfacing = isBed && state.getBlock() instanceof BlockHorizontal ? state.getValue(BlockHorizontal.FACING) : null;
+
+        if (enumfacing == null)
+        {
+            return 0;
+        }
+
+        return CONST_SLEEPING_RENDER_OFFSET * (float)enumfacing.getFrontOffsetX();
+    }
+
+    public float getRenderOffsetZ()
+    {
+        if (!isAsleep())
+        {
+            return 0;
+        }
+
+        final IBlockState state = this.world.isBlockLoaded(getBedLocation()) ? this.world.getBlockState(getBedLocation()) : null;
+        final boolean isBed = state != null && state.getBlock().isBed(state, this.world, getBedLocation(), this);
+        final EnumFacing enumfacing = isBed && state.getBlock() instanceof BlockHorizontal ? state.getValue(BlockHorizontal.FACING) : null;
+
+        if (enumfacing == null)
+        {
+            return 0;
+        }
+
+        return CONST_SLEEPING_RENDER_OFFSET * (float)enumfacing.getFrontOffsetZ();
+    }
+
+    /**
      * Returns false if the newer Entity AI code should be run.
      */
     @Override
@@ -2007,6 +2090,59 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             homeBuilding.onWakeUp();
         }
+
+        setIsAsleep(false);
+        dataManager.set(DATA_BED_POS, new BlockPos(0,0,0));
+    }
+
+    /**
+     * Is the citizen a sleep?
+     *
+     * @return true when a sleep.
+     */
+    public boolean isAsleep()
+    {
+        return dataManager.get(DATA_IS_ASLEEP);
+    }
+
+    /**
+     * Sets if the citizen is a sleep.
+     * Caution: Use trySleep(BlockPos) for better control
+     *
+     * @param isAsleep True to make the citizen sleep.
+     */
+    public void setIsAsleep(final boolean isAsleep)
+    {
+        dataManager.set(DATA_IS_ASLEEP, isAsleep);
+    }
+
+    /**
+     * Returns the orientation of the bed in degrees.
+     */
+    @SideOnly(Side.CLIENT)
+    public float getBedOrientationInDegrees()
+    {
+        final IBlockState state = this.getBedLocation() == null ? null : this.world.getBlockState(getBedLocation());
+        if (state != null && state.getBlock().isBed(state, world, getBedLocation(), this))
+        {
+            final EnumFacing enumfacing = state.getBlock().getBedDirection(state, world, getBedLocation());
+
+            switch (enumfacing)
+            {
+                case SOUTH:
+                    return NINETY_DEGREE;
+                case WEST:
+                    return 0.0f;
+                case NORTH:
+                    return THREE_QUARTERS;
+                case EAST:
+                    return HALF_ROTATION;
+                default:
+                    return 0f;
+            }
+        }
+
+        return 0.0F;
     }
 
     /**

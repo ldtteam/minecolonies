@@ -13,7 +13,7 @@ import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT
 /**
  * Class used to manage the townHall building block.
  */
-public class BuildingTownHall extends AbstractBuildingHut
+public class BuildingTownHall extends BuildingHome
 {
     /**
      * Description of the block used to set this block.
@@ -67,7 +67,7 @@ public class BuildingTownHall extends AbstractBuildingHut
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingHut.View
+    public static class View extends BuildingHome.View
     {
         /**
          * Instantiates the view of the building.
