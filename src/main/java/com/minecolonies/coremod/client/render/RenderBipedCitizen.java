@@ -23,6 +23,8 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     private static final Map<Model, ModelBiped> idToMaleModelMap   = new EnumMap<>(Model.class);
     private static final Map<Model, ModelBiped> idToFemaleModelMap = new EnumMap<>(Model.class);
     private static final double                 SHADOW_SIZE        = 0.5F;
+    private static final int THREE_QUARTERS = 270;
+
     static
     {
         idToMaleModelMap.put(Model.DELIVERYMAN, new ModelEntityDeliverymanMale());
@@ -90,7 +92,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         {
             GlStateManager.rotate(entityLiving.getBedOrientationInDegrees(), 0.0F, 1.0F, 0.0F);
             GlStateManager.rotate(this.getDeathMaxRotation(entityLiving), 0.0F, 0.0F, 1.0F);
-            GlStateManager.rotate(270.0F, 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotate(THREE_QUARTERS, 0.0F, 1.0F, 0.0F);
         }
         else
         {

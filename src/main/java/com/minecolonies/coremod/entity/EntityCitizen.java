@@ -87,6 +87,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private static final float CONST_HALF_BLOCK = 0.5f;
     private static final float CONST_SLEEPING_RENDER_OFFSET = -1.5f;
 
+    private static final int NINETY_DEGREE = 90;
+    private static final int HALF_ROTATION = 180;
+    private static final int THREE_QUARTERS = 270;
 
     private static final DataParameter<Integer> DATA_TEXTURE         = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> DATA_LEVEL           = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
@@ -2127,13 +2130,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
             switch (enumfacing)
             {
                 case SOUTH:
-                    return 90.0f;
+                    return NINETY_DEGREE;
                 case WEST:
                     return 0.0f;
                 case NORTH:
-                    return 270.0f;
+                    return THREE_QUARTERS;
                 case EAST:
-                    return 180.0f;
+                    return HALF_ROTATION;
                 default:
                     return 0f;
             }
