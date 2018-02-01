@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BAKER_NO_FURNACES;
+import static com.minecolonies.api.util.constant.TranslationConstants.HUNGRY_INV_FULL;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -77,12 +78,12 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
     /**
      * Slot where cookables should be put in the furnace.
      */
-    private static final int COOK_SLOT   = 0;
+    public static final int COOK_SLOT = 0;
 
     /**
      * Slot where the fuel should be put in the furnace.
      */
-    private static final int FUEL_SLOT   = 1;
+    private static final int FUEL_SLOT                                 = 1;
 
     /**
      * The citizen the worker is currently trying to serve.
@@ -134,7 +135,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             return getState();
         }
 
-        if (InventoryUtils.hasItemInProvider(getOwnBuilding(), TileEntityFurnace::isItemFuel))
+        if (!InventoryUtils.hasItemInProvider(getOwnBuilding(), TileEntityFurnace::isItemFuel))
         {
             if(!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Burnable.class)))
             {
@@ -262,11 +263,18 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             return getState();
         }
 
+        if (InventoryUtils.isItemHandlerFull(new InvWrapper(citizenToServe.get(0).getInventoryCitizen())))
+        {
+            chatSpamFilter.talkWithoutSpam(HUNGRY_INV_FULL);
+            citizenToServe.remove(0);
+            setDelay(SERVE_DELAY);
+            return getState();
+        }
         InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
                 new InvWrapper(worker.getInventoryCitizen()),
                 ItemStackUtils.ISFOOD,
-                AMOUNT_OF_FOOD_TO_SERVE,
-                new InvWrapper(citizenToServe.get(0).getInventoryCitizen()));
+                AMOUNT_OF_FOOD_TO_SERVE, new InvWrapper(citizenToServe.get(0).getInventoryCitizen())
+                );
 
         citizenToServe.remove(0);
         setDelay(SERVE_DELAY);
@@ -333,7 +341,6 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
                         new InvWrapper((TileEntityFurnace) entity), FUEL_SLOT);
             }
 
-            ((BuildingCook) getOwnBuilding()).setIsSomethingInOven(true);
             walkTo = null;
             return START_WORKING;
         }
@@ -356,7 +363,6 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
                 return pos;
             }
         }
-        ((BuildingCook) getOwnBuilding()).setIsSomethingInOven(false);
         return null;
     }
 
@@ -368,20 +374,24 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
     private AIState startWorking()
     {
-        if (((BuildingCook) getOwnBuilding()).isSomethingInOven())
+        if (((BuildingCook) getOwnBuilding()).isSomethingInOven(world))
         {
             final BlockPos posOfOven = getPositionOfOvenToRetrieveFrom();
-            if(posOfOven != null)
+            final AIState nextState;
+            if(posOfOven == null)
+            {
+                nextState = COOK_COOK_FOOD;
+            }
+            else
             {
                 walkTo = posOfOven;
-                return COOK_RETRIEVE_FOOD;
+                nextState = COOK_RETRIEVE_FOOD;
             }
+            return nextState;
         }
 
-        int amountOfFood = InventoryUtils.getItemCountInProvider(getOwnBuilding(), ItemStackUtils.ISFOOD);
-
-
-        amountOfFood = Math.min(amountOfFood, getOwnBuilding().getBuildingLevel() * LEAST_KEEP_FOOD_MULTIPLIER) + InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), ItemStackUtils.ISFOOD);
+        final int amountOfFood = InventoryUtils.getItemCountInProvider(getOwnBuilding(), ItemStackUtils.ISFOOD)
+                + InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), ItemStackUtils.ISFOOD);
 
         if (amountOfFood <= 0)
         {
@@ -413,13 +423,10 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             return COOK_GATHERING;
         }
 
-        if (amountOfFood < getOwnBuilding().getBuildingLevel() * LEAST_KEEP_FOOD_MULTIPLIER)
+        if (amountOfFood < getOwnBuilding().getBuildingLevel() * LEAST_KEEP_FOOD_MULTIPLIER
+                && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Food.class)))
         {
-            if(!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Food.class)))
-            {
-                worker.getCitizenData().createRequestAsync(new Food(Constants.STACKSIZE));
-            }
-            return getState();
+            worker.getCitizenData().createRequestAsync(new Food(Constants.STACKSIZE));
         }
 
         if (InventoryUtils.hasItemInProvider(getOwnBuilding(), ItemStackUtils.ISCOOKABLE)

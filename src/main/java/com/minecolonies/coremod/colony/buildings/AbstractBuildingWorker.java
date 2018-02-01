@@ -508,14 +508,24 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             buf.writeInt(data == null ? 0 : data.getId());
         }
 
-        buf.writeInt(recipes.size());
+        final List<IRecipeStorage> storages = new ArrayList<>();
         for(final IToken token: new ArrayList<>(recipes))
         {
-            if(ColonyManager.getRecipeManager().getRecipes().get(token) == null)
+            final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
+            if(storage == null)
             {
                 removeRecipe(token);
             }
-            ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(token));
+            else
+            {
+                storages.add(storage);
+            }
+        }
+
+        buf.writeInt(storages.size());
+        for(final IRecipeStorage storage: storages)
+        {
+            ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(storage));
         }
     }
 
@@ -637,10 +647,10 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             final int recipesSize = buf.readInt();
             for(int i = 0; i < recipesSize; i++)
             {
-                final IToken token = StandardFactoryController.getInstance().deserialize(ByteBufUtils.readTag(buf));
-                final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
+                final IRecipeStorage storage = StandardFactoryController.getInstance().deserialize(ByteBufUtils.readTag(buf));
                 if(storage != null)
                 {
+                    ColonyManager.getRecipeManager().addRecipe(storage);
                     recipes.add(storage);
                 }
             }
