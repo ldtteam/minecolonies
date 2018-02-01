@@ -1305,7 +1305,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
 
         @Nullable final EntityCitizen existingCitizen = data.getCitizenEntity();
-        if (existingCitizen != null && existingCitizen != this)
+        if (existingCitizen != null && !existingCitizen.getPosition().equals(this.getPosition()))
         {
             // This Citizen already has a different Entity registered to it
             handleExistingCitizen(data, existingCitizen);
