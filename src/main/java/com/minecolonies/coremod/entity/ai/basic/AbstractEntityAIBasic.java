@@ -463,7 +463,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @NotNull
     private AIState lookForRequests()
     {
-        if (!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()) && !getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
+        if (!this.getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(), r -> !worker.getCitizenData().isRequestAsync(r.getToken()))
+              && !getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
             return IDLE;
         }
@@ -488,19 +489,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getToken());
 
                 final ItemStack deliveredItemStack = firstDeliverableRequest.getDelivery();
-                if(InventoryUtils.getItemCountInItemHandler(
-                        new InvWrapper(worker.getInventoryCitizen()), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount())
+                if (InventoryUtils.getItemCountInItemHandler(
+                  new InvWrapper(worker.getInventoryCitizen()), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount())
                 {
                     return NEEDS_ITEM;
                 }
 
                 //Takes one Stack from the hut if existent
                 if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount() &&
-                        InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
-                                getOwnBuilding(),
-                                deliveredItemStack::isItemEqualIgnoreDurability,
-                                deliveredItemStack.getCount(),
-                                new InvWrapper(worker.getInventoryCitizen())))
+                      InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+                        getOwnBuilding(),
+                        deliveredItemStack::isItemEqualIgnoreDurability,
+                        deliveredItemStack.getCount(),
+                        new InvWrapper(worker.getInventoryCitizen())))
                 {
 
                     return NEEDS_ITEM;
@@ -1165,7 +1166,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
 
         if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(),
-                TypeConstants.DELIVERABLE,
+          TypeConstants.DELIVERABLE,
           (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
             final Stack stackRequest = new Stack(stack);
@@ -1213,11 +1214,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
 
         if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), stack::isItemEqualIgnoreDurability) >= stack.getCount() &&
-            InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
-                    getOwnBuilding(),
-                    stack::isItemEqualIgnoreDurability,
-                    stack.getCount(),
-                    new InvWrapper(worker.getInventoryCitizen())))
+              InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+                getOwnBuilding(),
+                stack::isItemEqualIgnoreDurability,
+                stack.getCount(),
+                new InvWrapper(worker.getInventoryCitizen())))
         {
             return true;
         }
@@ -1242,9 +1243,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     public boolean tryTransferFromPosToWorker(final BlockPos pos, @NotNull final Predicate<ItemStack> predicate)
     {
         return InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
-                (ICapabilityProvider) world.getTileEntity(pos),
-                predicate,
-                Constants.STACKSIZE,
-                new InvWrapper(worker.getInventoryCitizen()));
+          (ICapabilityProvider) world.getTileEntity(pos),
+          predicate,
+          Constants.STACKSIZE,
+          new InvWrapper(worker.getInventoryCitizen()));
     }
 }
