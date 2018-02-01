@@ -13,6 +13,7 @@ import net.minecraft.block.BlockFurnace;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
+import static com.minecolonies.coremod.entity.ai.citizen.cook.EntityAIWorkCook.COOK_SLOT;
 
 /**
  * Class of the cook building.
@@ -159,19 +161,18 @@ public class BuildingCook extends AbstractBuildingWorker
      *
      * @return true if so.
      */
-    public boolean isSomethingInOven()
+    public boolean isSomethingInOven(final World world)
     {
-        return isOvenFull;
-    }
-
-    /**
-     * Set that something is in the oven.
-     *
-     * @param set true or false
-     */
-    public void setIsSomethingInOven(final boolean set)
-    {
-        isOvenFull = set;
+        for (final BlockPos pos : getFurnaces())
+        {
+            final TileEntity entity = world.getTileEntity(pos);
+            if (entity instanceof TileEntityFurnace && !((TileEntityFurnace) entity).isBurning()
+                && !ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(COOK_SLOT)))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
