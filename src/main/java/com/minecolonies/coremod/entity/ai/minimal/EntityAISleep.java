@@ -92,6 +92,11 @@ public class EntityAISleep extends EntityAIBase
                         {
                             usedBed = pos;
                             citizen.world.setBlockState(pos, state.withProperty(BlockBed.OCCUPIED, true), 0x03);
+
+                            final BlockPos feetPos = pos.offset(state.getValue(BlockBed.FACING).getOpposite());
+                            final IBlockState feetState = citizen.world.getBlockState(feetPos);
+                            citizen.world.setBlockState(feetPos, feetState.withProperty(BlockBed.OCCUPIED, true), 0x03);
+
                             return true;
                         }
                     }
@@ -101,12 +106,6 @@ public class EntityAISleep extends EntityAIBase
             }
             else
             {
-                if(new BlockPos(usedBed.getX(), citizen.posY, usedBed.getZ()).distanceSq(citizen.getHomePosition()) > RANGE_TO_BE_HOME * 2)
-                {
-                    usedBed = null;
-                    return true;
-                }
-
                 if (citizen.isWorkerAtSiteWithMove(usedBed, 1))
                 {
                     citizen.trySleep(usedBed);
@@ -122,7 +121,12 @@ public class EntityAISleep extends EntityAIBase
             final IBlockState state = citizen.world.getBlockState(usedBed);
             if (state.getBlock() instanceof BlockBed)
             {
-                citizen.world.setBlockState(usedBed, state.withProperty(BlockBed.OCCUPIED, false), 0x03);
+                final IBlockState headState = citizen.world.getBlockState(usedBed);
+                citizen.world.setBlockState(usedBed, headState.withProperty(BlockBed.OCCUPIED, false), 0x03);
+
+                final BlockPos feetPos = usedBed.offset(headState.getValue(BlockBed.FACING).getOpposite());
+                final IBlockState feetState = citizen.world.getBlockState(feetPos);
+                citizen.world.setBlockState(feetPos, feetState.withProperty(BlockBed.OCCUPIED, true), 0x03);
             }
             usedBed = null;
 

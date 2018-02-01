@@ -75,7 +75,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     {
         if (entityLivingBaseIn.isEntityAlive() && entityLivingBaseIn.isAsleep())
         {
-            super.renderLivingAt(entityLivingBaseIn, x + (double)entityLivingBaseIn.renderOffsetX, y, z + (double)entityLivingBaseIn.renderOffsetZ);
+            super.renderLivingAt(entityLivingBaseIn, x + (double)entityLivingBaseIn.getRenderOffsetX(), y, z + (double)entityLivingBaseIn.getRenderOffsetZ());
         }
         else
         {

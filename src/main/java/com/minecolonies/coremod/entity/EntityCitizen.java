@@ -83,6 +83,9 @@ import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RE
  */
 public class EntityCitizen extends EntityAgeable implements INpc
 {
+    private static final Float CONST_BED_HEIGHT = 0.6875f;
+    private static final Float CONST_HALF_BLOCK = 0.5f;
+
     private static final DataParameter<Integer> DATA_TEXTURE         = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> DATA_LEVEL           = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> DATA_IS_FEMALE       = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
@@ -91,6 +94,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private static final DataParameter<String>  DATA_MODEL           = EntityDataManager.<String>createKey(EntityCitizen.class, DataSerializers.STRING);
     private static final DataParameter<String>  DATA_RENDER_METADATA = EntityDataManager.<String>createKey(EntityCitizen.class, DataSerializers.STRING);
     private static final DataParameter<Boolean> DATA_IS_ASLEEP = EntityDataManager.createKey(EntityCitizen.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<BlockPos> DATA_BED_POS = EntityDataManager.createKey(EntityCitizen.class, DataSerializers.BLOCK_POS);
 
     private static Field navigatorField;
     @NotNull
@@ -147,11 +151,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     private NBTTagCompound dataBackup = null;
 
-    public float renderOffsetX;
-
-    public float renderOffsetZ;
-
-    public BlockPos bedLocation;
     /**
      * Citizen constructor.
      *
@@ -782,6 +781,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         dataManager.register(DATA_MODEL, RenderBipedCitizen.Model.SETTLER.name());
         dataManager.register(DATA_RENDER_METADATA, "");
         dataManager.register(DATA_IS_ASLEEP, false);
+        dataManager.register(DATA_BED_POS, new BlockPos(0,0,0));
     }
 
     @Override
@@ -1488,21 +1488,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         final IBlockState state = this.world.isBlockLoaded(bedLocation) ? this.world.getBlockState(bedLocation) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, this.world, bedLocation, this);
-        final EnumFacing enumfacing = isBed && state.getBlock() instanceof BlockHorizontal ? state.getValue(BlockHorizontal.FACING) : null;
 
-        this.setHealth(this.getMaxHealth());
+        if (!isBed)
+            return;
 
-        if (enumfacing != null) {
-            float f1 = 0.5F + (float)enumfacing.getFrontOffsetX();
-            float f = 0.5F + (float)enumfacing.getFrontOffsetZ();
-            this.setRenderOffsetForSleep(enumfacing);
-            this.setPosition((double)((float)bedLocation.getX() - f1), (double)((float)bedLocation.getY() + 0.6875F), (double)((float)bedLocation.getZ() + f));
-        }
-        else
-        {
-            this.setPosition((double)((float)bedLocation.getX() + 0.5F), (double)((float)bedLocation.getY() + 0.6875F), (double)((float)bedLocation.getZ() + 0.5F));
-        }
-
+        this.setPosition((double)((float)bedLocation.getX() + CONST_HALF_BLOCK), (double)((float)bedLocation.getY() + CONST_BED_HEIGHT), (double)((float)bedLocation.getZ() + CONST_HALF_BLOCK));
 
         this.motionX = 0.0D;
         this.motionY = 0.0D;
@@ -1510,13 +1500,50 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         setIsAsleep(true);
 
-        this.bedLocation = bedLocation;
+        dataManager.set(DATA_BED_POS, bedLocation);
     }
 
-    public void setRenderOffsetForSleep(EnumFacing bedDirection)
+    public BlockPos getBedLocation()
     {
-        this.renderOffsetX = 1.8F * (float)bedDirection.getFrontOffsetX();
-        this.renderOffsetZ = 1.8F * (float)bedDirection.getFrontOffsetZ();
+        return dataManager.get(DATA_BED_POS);
+    }
+
+    public float getRenderOffsetX()
+    {
+        if (!isAsleep())
+        {
+            return 0f;
+        }
+
+        final IBlockState state = this.world.isBlockLoaded(getBedLocation()) ? this.world.getBlockState(getBedLocation()) : null;
+        final boolean isBed = state != null && state.getBlock().isBed(state, this.world, getBedLocation(), this);
+        final EnumFacing enumfacing = isBed && state.getBlock() instanceof BlockHorizontal ? state.getValue(BlockHorizontal.FACING) : null;
+
+        if (enumfacing == null)
+        {
+            return 0f;
+        }
+
+        return -1.5F * (float)enumfacing.getFrontOffsetX();
+    }
+
+    public float getRenderOffsetZ()
+    {
+        if (!isAsleep())
+        {
+            return 0f;
+        }
+
+        final IBlockState state = this.world.isBlockLoaded(getBedLocation()) ? this.world.getBlockState(getBedLocation()) : null;
+        final boolean isBed = state != null && state.getBlock().isBed(state, this.world, getBedLocation(), this);
+        final EnumFacing enumfacing = isBed && state.getBlock() instanceof BlockHorizontal ? state.getValue(BlockHorizontal.FACING) : null;
+
+        if (enumfacing == null)
+        {
+            return 0f;
+        }
+
+        return -1.5F * (float)enumfacing.getFrontOffsetZ();
     }
 
     /**
@@ -2054,11 +2081,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
 
         setIsAsleep(false);
-
-        renderOffsetX = 0f;
-        renderOffsetZ = 0f;
-
-        bedLocation = null;
+        dataManager.set(DATA_BED_POS, new BlockPos(0,0,0));
     }
 
     public boolean isAsleep()
@@ -2077,10 +2100,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @SideOnly(Side.CLIENT)
     public float getBedOrientationInDegrees()
     {
-        IBlockState state = this.bedLocation == null ? null : this.world.getBlockState(bedLocation);
-        if (state != null && state.getBlock().isBed(state, world, bedLocation, this))
+        IBlockState state = this.getBedLocation() == null ? null : this.world.getBlockState(getBedLocation());
+        if (state != null && state.getBlock().isBed(state, world, getBedLocation(), this))
         {
-            EnumFacing enumfacing = state.getBlock().getBedDirection(state, world, bedLocation);
+            EnumFacing enumfacing = state.getBlock().getBedDirection(state, world, getBedLocation());
 
             switch (enumfacing)
             {
