@@ -146,6 +146,11 @@ public final class WindowConstants
     public static final String LIST_USERS = "users";
 
     /**
+     * If od the permEvent list in the GUI.
+     */
+    public static final String LIST_PERM_EVENT = "permeventslist";
+
+    /**
      * Id of the citizens list in the GUI.
      */
     public static final String LIST_CITIZENS = "citizenList";
@@ -174,6 +179,16 @@ public final class WindowConstants
      * Id of the name label in the GUI.
      */
     public static final String NAME_LABEL = "name";
+
+    /**
+     * Id of the pos label in the GUI.
+     */
+    public static final String POS_LABEL = "pos";
+
+    /**
+     * Id of the action label in the GUI.
+     */
+    public static final String ACTION_LABEL = "action";
 
     /**
      * Id of the distance label in the GUI.
@@ -254,6 +269,11 @@ public final class WindowConstants
      * The button to go to the hostile permission settings page.
      */
     public static final String BUTTON_MANAGE_HOSTILE = "hostilePage";
+
+    /**
+     * The button to add a player or fakeplayer to a colony.
+     */
+    public static final String BUTTON_ADD_PLAYER_OR_FAKEPLAYER = "addfakeplayer";
 
     /**
      * Id of the switch view of the perm pages.
