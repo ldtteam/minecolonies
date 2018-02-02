@@ -596,7 +596,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
         return ImmutableList.copyOf(treeElements);
     }
 
-    private void constructTreeFromRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request, @NotNull final List<RequestWrapper> list, int currentDepth)
+    private void constructTreeFromRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request, @NotNull final List<RequestWrapper> list, final int currentDepth)
     {
         list.add(new RequestWrapper(request, currentDepth));
         if (request.hasChildren())
@@ -754,8 +754,8 @@ public class WindowCitizen extends AbstractWindowSkeleton
             }
             MineColonies.getNetwork().sendToServer(new TransferItemsToCitizenRequestMessage(citizen, itemStack, isCreative ? amount : count, citizen.getColonyId()));
             MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.OVERRULED, itemStack));
-
         }
+        button.disable();
     }
 
     private final class RequestWrapper
@@ -763,7 +763,8 @@ public class WindowCitizen extends AbstractWindowSkeleton
         private final IRequest request;
         private final int depth;
 
-        private RequestWrapper(final IRequest request, final int depth) {
+        private RequestWrapper(final IRequest request, final int depth)
+        {
             this.request = request;
             this.depth = depth;
         }
