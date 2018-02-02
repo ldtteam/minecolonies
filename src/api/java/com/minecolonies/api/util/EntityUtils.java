@@ -180,7 +180,7 @@ public final class EntityUtils
     {
         return Utils.scanForBlockNearPoint(
           world,
-          nearPoint,
+          nearPoint.down(),
           1,
           1,
           1,
