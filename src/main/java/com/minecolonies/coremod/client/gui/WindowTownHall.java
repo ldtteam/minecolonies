@@ -1009,10 +1009,10 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      *
      * @param button Button that holds the user clicked on.
      */
-    private void addPlayerToColonyClicked(final Button button)
+    private void addPlayerToColonyClicked(@NotNull final Button button)
     {
         final int row = permEventList.getListElementIndexByPane(button);
-        if (row >= 0 && row < users.size())
+        if (row >= 0 && row < building.getPermissionEvents().size())
         {
             final PermissionEvent user = building.getPermissionEvents().get(row);
             MineColonies.getNetwork().sendToServer(new PermissionsMessage.AddPlayerOrFakePlayer(townHall.getColony(), user.getName(), user.getId()));

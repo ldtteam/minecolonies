@@ -121,7 +121,7 @@
                 </box>
             </list>
 
-            <group id="citizen-stats" align="TOP_MIDDLE" size="80% 100%" pos="0 60">
+            <group id="citizen-stats" align="TOP_MIDDLE" size="80% 100" pos="0 60">
                 <label id="totalCitizens" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
                 <label size="100% 11"/>
             </group>
