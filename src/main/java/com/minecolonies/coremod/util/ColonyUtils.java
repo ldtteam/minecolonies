@@ -2,7 +2,6 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
@@ -25,8 +24,9 @@ public class ColonyUtils
      */
     public static boolean isCitizenMissingFromWorld(@NotNull final CitizenData citizen)
     {
-        final EntityCitizen entityCitizen = citizen.getCitizenEntity();
-        return entityCitizen == null || CompatibilityUtils.getWorld(entityCitizen).getEntityByID(entityCitizen.getEntityId()) == null;
+        return citizen.getCitizenEntity()
+                 .map(entityCitizen -> CompatibilityUtils.getWorld(entityCitizen).getEntityByID(entityCitizen.getEntityId()) == null)
+                 .orElse(false);
     }
 
     /**
@@ -59,11 +59,11 @@ public class ColonyUtils
      * @return a tuple with the required corners.
      */
     public static Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> calculateCorners(
-                                                                                            final BlockPos pos,
-                                                                                            final World world,
-                                                                                            final StructureWrapper wrapper,
-                                                                                            final int rotation,
-                                                                                            final boolean isMirrored)
+      final BlockPos pos,
+      final World world,
+      final StructureWrapper wrapper,
+      final int rotation,
+      final boolean isMirrored)
     {
         wrapper.rotate(rotation, world, pos, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
         wrapper.setPosition(pos);

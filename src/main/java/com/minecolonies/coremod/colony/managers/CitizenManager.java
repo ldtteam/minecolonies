@@ -174,6 +174,11 @@ public class CitizenManager implements ICitizenManager
                             colony.getName());
                 }
             }
+            else
+            {
+                citizenData.setCitizenEntity(entity);
+            }
+
             entity.setColony(colony, citizenData);
 
             entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
@@ -375,7 +380,7 @@ public class CitizenManager implements ICitizenManager
         getCitizens()
                 .stream()
                 .filter(ColonyUtils::isCitizenMissingFromWorld)
-                .forEach(CitizenData::updateCitizenEntityIfNeccessary);
+                .forEach(CitizenData::updateCitizenEntityIfNecessary);
 
         //  Cleanup disappeared citizens
         //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!

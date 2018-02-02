@@ -15,7 +15,6 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,8 +24,8 @@ import java.util.List;
 public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 {
     public DeliveryRequestResolver(
-                                    @NotNull final ILocation location,
-                                    @NotNull final IToken<?> token)
+      @NotNull final ILocation location,
+      @NotNull final IToken<?> token)
     {
         super(location, token);
     }
@@ -39,7 +38,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @Override
     public boolean canResolve(
-                               @NotNull final IRequestManager manager, final IRequest<? extends Delivery> requestToCheck)
+      @NotNull final IRequestManager manager, final IRequest<? extends Delivery> requestToCheck)
     {
         if (manager.getColony().getWorld().isRemote)
         {
@@ -48,12 +47,15 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
         final Colony colony = (Colony) manager.getColony();
         final CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
-                                        .stream()
-                                        .filter(c -> c.getCitizenEntity() != null
-                                                && requestToCheck.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
-                                        .filter(c -> c.getJob() instanceof JobDeliveryman)
-                                        .findFirst()
-                                        .orElse(null);
+                                              .stream()
+                                              .filter(citizenData -> citizenData.getCitizenEntity()
+                                                                       .map(entityCitizen -> requestToCheck.getRequest()
+                                                                                               .getTarget()
+                                                                                               .isReachableFromLocation(entityCitizen.getLocation()))
+                                                                       .orElse(false))
+                                              .filter(c -> c.getJob() instanceof JobDeliveryman)
+                                              .findFirst()
+                                              .orElse(null);
 
         if (freeDeliveryMan == null)
         {
@@ -66,7 +68,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     @Nullable
     @Override
     public List<IToken<?>> attemptResolve(
-                                        @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
         if (manager.getColony().getWorld().isRemote)
         {
@@ -74,19 +76,25 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         }
 
         final Colony colony = (Colony) manager.getColony();
-        final CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
-                                        .stream()
-                                        .filter(c -> c.getCitizenEntity() != null && request.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
-                                        .filter(c -> c.getJob() instanceof JobDeliveryman)
-                                        .sorted(Comparator.comparing((CitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
-                                                  .thenComparing(Comparator.comparing(c -> {
-                                                      BlockPos targetPos = request.getRequest().getTarget().getInDimensionLocation();
-                                                      BlockPos entityLocation = c.getCitizenEntity().getLocation().getInDimensionLocation();
+        //We can do an instant get here, since we are already filtering on anything that has no entity.
+        final CitizenData freeDeliveryMan = colony.getCitizenManager()
+                                              .getCitizens()
+                                              .stream()
+                                              .filter(citizenData -> citizenData.getCitizenEntity()
+                                                                       .map(entityCitizen -> request.getRequest()
+                                                                                               .getTarget()
+                                                                                               .isReachableFromLocation(entityCitizen.getLocation()))
+                                                                       .orElse(false))
+                                              .filter(c -> c.getJob() instanceof JobDeliveryman)
+                                              .min(Comparator.comparing((CitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
+                                                     .thenComparing(Comparator.comparing(c -> {
+                                                         BlockPos targetPos = request.getRequest().getTarget().getInDimensionLocation();
+                                                         //We can do an instant get here, since we are already filtering on anything that has no entity.
+                                                         BlockPos entityLocation = c.getCitizenEntity().get().getLocation().getInDimensionLocation();
 
-                                                      return BlockPosUtil.getDistanceSquared(targetPos, entityLocation);
-                                                  })))
-                                        .findFirst()
-                                        .orElse(null);
+                                                         return BlockPosUtil.getDistanceSquared(targetPos, entityLocation);
+                                                     })))
+                                              .orElse(null);
 
         if (freeDeliveryMan == null)
         {
@@ -101,7 +109,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @Override
     public void resolve(
-                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws RuntimeException
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws RuntimeException
     {
         //Noop. The delivery man will resolve it.
     }
@@ -109,7 +117,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     @Nullable
     @Override
     public IRequest<?> getFollowupRequestForCompletion(
-                                                     @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> completedRequest)
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> completedRequest)
     {
         return null;
     }
