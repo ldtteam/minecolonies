@@ -6,7 +6,9 @@ import com.minecolonies.coremod.network.PacketUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -17,6 +19,7 @@ public class PermissionEvent
     /**
      * Player UUID.
      */
+    @Nullable
     private final UUID     id;
 
     /**
@@ -73,6 +76,7 @@ public class PermissionEvent
      * The UUID of the player causing the event.
      * @return the UUID.
      */
+    @Nullable
     public UUID getId()
     {
         return id;
@@ -122,5 +126,30 @@ public class PermissionEvent
         ByteBufUtils.writeUTF8String(buf, name);
         ByteBufUtils.writeUTF8String(buf, action.toString());
         BlockPosUtil.writeToByteBuf(buf, position);
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        final PermissionEvent that = (PermissionEvent) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(name, that.name) &&
+                action == that.action &&
+                Objects.equals(position, that.position);
+    }
+
+    @Override
+    public int hashCode()
+    {
+
+        return Objects.hash(id, name, action, position);
     }
 }
