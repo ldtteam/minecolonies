@@ -16,6 +16,8 @@ import com.minecolonies.coremod.network.messages.BuildToolPasteMessage;
 import com.minecolonies.coremod.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.coremod.network.messages.SchematicRequestMessage;
 import com.minecolonies.coremod.network.messages.SchematicSaveMessage;
+import com.minecolonies.coremod.placementhandlers.PlacementError;
+import com.minecolonies.coremod.placementhandlers.PlacementError.PlacementErrorType;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.block.Block;
@@ -32,7 +34,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -49,6 +53,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         SUPPLYSHIP,
         SUPPLYCAMP
     }
+
+    private static final String SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY = "item.supplyCampDeployer.invalid.solid_block_needed";
+    private static final String SUPPLY_CAMP_INVALID_NEEDS_AIR_ABOVE_MESSAGE_KEY = "item.supplyCampDeployer.invalid.air_block_needed";
+    private static final String SUPPLY_CAMP_INVALID_INSIDE_COLONY_MESSAGE_KEY = "item.supplyCampDeployer.invalid.inside_existing_colony";
+    private static final String SUPPLY_CAMP_INVALID = "item.supplyCampDeployer.invalid";
 
     /**
      * All possible rotations.
@@ -912,14 +921,46 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
         else if (FreeMode.SUPPLYCAMP == Settings.instance.getFreeMode())
         {
+            List<PlacementError> placementErrorList = new ArrayList<PlacementError>();
             if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
-                    Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()))))
+                    Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation())), placementErrorList))
             {
                 pasteNice();
             }
             else
             {
-                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyCampDeployer.invalid");
+                Map<PlacementErrorType, List<BlockPos>> blockPosListByErrorTypeMap = partitionPlacementErrorsByErrorType(
+                        placementErrorList);
+                for (Map.Entry<PlacementErrorType, List<BlockPos>> entry : blockPosListByErrorTypeMap.entrySet()) {
+                    PlacementErrorType placementErrorType = entry.getKey();
+                    List<BlockPos> blockPosList = entry.getValue();
+
+                    int numberOfBlocksTOReport = blockPosList.size() > 5 ? 5 : blockPosList.size();
+                    List<BlockPos> blocksToReportList = blockPosList.subList(0, numberOfBlocksTOReport);
+                    String outputList = blockListToCommaSeparatedString(blocksToReportList);
+                    if (blockPosList.size() > numberOfBlocksTOReport) {
+                        outputList += "...";
+                    }
+                    String errorMessage;
+                    switch(placementErrorType) {
+                        case NOT_SOLID:
+                            errorMessage = String.format(SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY, outputList);
+                            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage, outputList);
+                            break;
+                        case NEEDS_AIR_ABOVE:
+                            errorMessage = String.format(SUPPLY_CAMP_INVALID_NEEDS_AIR_ABOVE_MESSAGE_KEY, outputList);
+                            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage, outputList);
+                            break;
+                        case INSIDE_COLONY:
+                            errorMessage = SUPPLY_CAMP_INVALID_INSIDE_COLONY_MESSAGE_KEY;
+                            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage);
+                            break;
+                        default:
+                            errorMessage = SUPPLY_CAMP_INVALID;
+                            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage);
+                            break;
+                    }
+                }
             }
         }
 
@@ -927,6 +968,44 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         {
             cancelClicked();
         }
+    }
+
+    private String blockListToCommaSeparatedString(List<BlockPos> blocksToReportList) {
+        StringBuilder outputListStringBuilder = new StringBuilder();
+        boolean firstItem = true;
+        for (BlockPos blockPos : blocksToReportList) {
+            if (firstItem) {
+                firstItem = false;
+            } else {
+                outputListStringBuilder.append(',');
+                outputListStringBuilder.append(' ');
+            }
+            outputListStringBuilder.append('(');
+            outputListStringBuilder.append(blockPos.getX());
+            outputListStringBuilder.append(' ');
+            outputListStringBuilder.append(blockPos.getY());
+            outputListStringBuilder.append(' ');
+            outputListStringBuilder.append(blockPos.getZ());
+            outputListStringBuilder.append(')');
+        }
+        String outputList = outputListStringBuilder.toString();
+        return outputList;
+    }
+
+    private Map<PlacementErrorType, List<BlockPos>> partitionPlacementErrorsByErrorType(
+            List<PlacementError> placementErrorList) {
+        Map<PlacementErrorType, List<BlockPos>> blockPosListByErrorTypeMap = new HashMap<PlacementErrorType, List<BlockPos>>();
+        for (PlacementError placementError : placementErrorList) {
+            final PlacementErrorType key = placementError.getType();
+            final BlockPos blockPos = placementError.getPos();
+            List<BlockPos> blockPosList = blockPosListByErrorTypeMap.get(key);
+            if (null == blockPosList) {
+                blockPosList = new ArrayList<BlockPos>();
+                blockPosListByErrorTypeMap.put(key, blockPosList);
+            }
+            blockPosList.add(blockPos);
+        }
+        return blockPosListByErrorTypeMap;
     }
 
     /**
