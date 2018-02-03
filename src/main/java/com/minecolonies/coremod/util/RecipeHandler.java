@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class RecipeHandler
 {
+
     /**
      * Wooden stick string description.
      */
@@ -41,6 +42,29 @@ public final class RecipeHandler
     private static final int EIGHT_BLOCKS = 8;
 
     private static final int ONE_FORTH_OF_A_STACK = 16;
+
+    /**
+     * Wood types and timber frame types constants
+     */
+    private static final int META_ZERO = 0;
+
+    private static final int META_ONE = 1;
+
+    private static final int META_TWO = 2;
+
+    private static final int META_THREE = 3;
+
+    private static final int META_FOUR = 4;
+
+    private static final int META_FIVE = 5;
+
+    private static final int META_SIX = 6;
+
+    private static final int META_SEVEN = 7;
+
+    private static final int META_EIGHT = 8;
+
+    private static final int META_NINE = 9;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -88,7 +112,7 @@ public final class RecipeHandler
         addHutRecipe(new ItemStack(ModBlocks.blockHutSwineHerder, 1), Items.PORKCHOP);
         addHutRecipe(new ItemStack(ModBlocks.blockHutChickenHerder, 1), Items.EGG);
 
-        //Register Scepters
+        //Mod Items
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.scanTool, 1), "  I", " S ", "S  ", 'I', Items.IRON_INGOT, 'S', WOODEN_STICK));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.buildTool, 1), "  C", " S ", "S  ", 'C', "cobblestone", 'S', WOODEN_STICK));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.permTool, 1), "D", 'D', ModItems.scanTool));
@@ -101,15 +125,15 @@ public final class RecipeHandler
                                                     "XXX", "X#X", "XXX", 'X', "logWood", '#', ModItems.scanTool));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockWayPoint, ONE_FORTH_OF_A_STACK),
                                                     "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', ModItems.buildTool));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockTimberFrame, FOUR_BLOCKS), " W ", " W ", " WB", 'W', PLANK_WOOD, 'B', ModItems.buildTool));
         GameRegistry.addShapelessRecipe(new ItemStack(ModItems.clipboard, 1), new ItemStack(Items.STICK, 1), new ItemStack(Items.MAP, 1), new ItemStack(Items.DYE));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.clipboard), "WBW", "WLW", "WWW", 'L', Items.LEATHER, 'W', WOODEN_STICK, 'B', ModItems.buildTool));
 
         //Block Rack
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockRack, 1),
                                                     "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Blocks.IRON_BARS));
 
         //Building blocks
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockTimberFrame, FOUR_BLOCKS), " W ", " W ", " WB", 'W', PLANK_WOOD, 'B', ModItems.buildTool));
         GameRegistry.addRecipe(new ShapedOreRecipe(
                 new ItemStack(ModBlocks.blockPaperWall, EIGHT_BLOCKS, 0), "WWW", "PPP", "WWW", 'P', PAPER, 'W', new ItemStack(Blocks.PLANKS, 1, 0)));
         GameRegistry.addRecipe(new ShapedOreRecipe(
@@ -140,19 +164,204 @@ public final class RecipeHandler
 
         GameRegistry.addRecipe(new ShapedOreRecipe(
                 new ItemStack(ModBlocks.blockShingleSlab, EIGHT_BLOCKS, 0), "   ", "BBB", "SSS", 'B', Items.BRICK, 'S', WOODEN_STICK));
-        
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.clipboard), "WBW", "WLW", "WWW", 'L', Items.LEATHER, 'W', WOODEN_STICK, 'B', ModItems.buildTool));
 
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_ZERO), FOUR_BLOCKS, META_ZERO), " X ", " X ", " XB", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_ZERO), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_ZERO), FOUR_BLOCKS, META_ONE), "X X", " X ", "XBX", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_ZERO), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_ZERO), FOUR_BLOCKS, META_TWO), "SXS", "XBX", "SXS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_ZERO), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_ZERO), FOUR_BLOCKS, META_THREE), "SXS", "SXS", "SBS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_ZERO), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_ZERO), FOUR_BLOCKS, META_FOUR ), "SSS", "SXS", "SBS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_ZERO), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_ZERO), FOUR_BLOCKS, META_FIVE), "X  ", " X ", " BX", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_ZERO), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_ZERO), FOUR_BLOCKS, META_SIX), "  X", " X ", "XB ", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_ZERO), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_ZERO), FOUR_BLOCKS, META_SEVEN), "SXS", "SBS", "SSS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_ZERO), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_ZERO), FOUR_BLOCKS, META_EIGHT),"SSS", "XXX", "SBS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_ZERO), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_ZERO), FOUR_BLOCKS, META_NINE), "   ", "XXX", " B ", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_ZERO), 'B', ModItems.buildTool));
+
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_ONE), FOUR_BLOCKS, META_ZERO), " X ", " X ", " XB", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_ONE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_ONE), FOUR_BLOCKS, META_ONE), "X X", " X ", "XBX", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_ONE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_ONE), FOUR_BLOCKS, META_TWO), "SXS", "XBX", "SXS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_ONE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_ONE), FOUR_BLOCKS, META_THREE), "SXS", "SXS", "SBS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_ONE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_ONE), FOUR_BLOCKS, META_FOUR ), "SSS", "SXS", "SBS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_ONE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_ONE), FOUR_BLOCKS, META_FIVE), "X  ", " X ", " BX", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_ONE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_ONE), FOUR_BLOCKS, META_SIX), "  X", " X ", "XB ", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_ONE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_ONE), FOUR_BLOCKS, META_SEVEN), "SXS", "SBS", "SSS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_ONE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_ONE), FOUR_BLOCKS, META_EIGHT),"SSS", "XXX", "SBS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_ONE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_ONE), FOUR_BLOCKS, META_NINE), "   ", "XXX", " B ", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_ONE), 'B', ModItems.buildTool));
+
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_TWO), FOUR_BLOCKS, META_ZERO), " X ", " X ", " XB", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_TWO), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_TWO), FOUR_BLOCKS, META_ONE), "X X", " X ", "XBX", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_TWO), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_TWO), FOUR_BLOCKS, META_TWO), "SXS", "XBX", "SXS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_TWO), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_TWO), FOUR_BLOCKS, META_THREE), "SXS", "SXS", "SBS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_TWO), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_TWO), FOUR_BLOCKS, META_FOUR ), "SSS", "SXS", "SBS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_TWO), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_TWO), FOUR_BLOCKS, META_FIVE), "X  ", " X ", " BX", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_TWO), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_TWO), FOUR_BLOCKS, META_SIX), "  X", " X ", "XB ", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_TWO), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_TWO), FOUR_BLOCKS, META_SEVEN), "SXS", "SBS", "SSS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_TWO), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_TWO), FOUR_BLOCKS, META_EIGHT),"SSS", "XXX", "SBS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_TWO), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_TWO), FOUR_BLOCKS, META_NINE), "   ", "XXX", " B ", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_TWO), 'B', ModItems.buildTool));
+
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_THREE), FOUR_BLOCKS, META_ZERO), " X ", " X ", " XB", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_THREE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_THREE), FOUR_BLOCKS, META_ONE), "X X", " X ", "XBX", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_THREE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_THREE), FOUR_BLOCKS, META_TWO), "SXS", "XBX", "SXS", 'S',
+                WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_THREE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_THREE), FOUR_BLOCKS, META_THREE), "SXS", "SXS", "SBS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_THREE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_THREE), FOUR_BLOCKS, META_FOUR ), "SSS", "SXS", "SBS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_THREE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_THREE), FOUR_BLOCKS, META_FIVE), "X  ", " X ", " BX", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_THREE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_THREE), FOUR_BLOCKS, META_SIX), "  X", " X ", "XB ", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_THREE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_THREE), FOUR_BLOCKS, META_SEVEN), "SXS", "SBS", "SSS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_THREE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_THREE), FOUR_BLOCKS, META_EIGHT),"SSS", "XXX", "SBS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_THREE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_THREE), FOUR_BLOCKS, META_NINE), "   ", "XXX", " B ", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_THREE), 'B', ModItems.buildTool));
+
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_FOUR), FOUR_BLOCKS, META_ZERO), " X ", " X ", " XB", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_FOUR), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_FOUR), FOUR_BLOCKS, META_ONE), "X X", " X ", "XBX", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_FOUR), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_FOUR), FOUR_BLOCKS, META_TWO), "SXS", "XBX", "SXS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_FOUR), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_FOUR), FOUR_BLOCKS, META_THREE), "SXS", "SXS", "SBS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_FOUR), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_FOUR), FOUR_BLOCKS, META_FOUR ), "SSS", "SXS", "SBS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_FOUR), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_FOUR), FOUR_BLOCKS, META_FIVE), "X  ", " X ", " BX", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_FOUR), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_FOUR), FOUR_BLOCKS, META_SIX), "  X", " X ", "XB ", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_FOUR), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_FOUR), FOUR_BLOCKS, META_SEVEN), "SXS", "SBS", "SSS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_FOUR), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_FOUR), FOUR_BLOCKS, META_EIGHT),"SSS", "XXX", "SBS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_FOUR), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_FOUR), FOUR_BLOCKS, META_NINE), "   ", "XXX", " B ", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_FOUR), 'B', ModItems.buildTool));
+
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_FIVE), FOUR_BLOCKS, META_ZERO), " X ", " X ", " XB", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_FIVE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_FIVE), FOUR_BLOCKS, META_ONE), "X X", " X ", "XBX", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_FIVE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_FIVE), FOUR_BLOCKS, META_TWO), "SXS", "XBX", "SXS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_FIVE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_FIVE), FOUR_BLOCKS, META_THREE), "SXS", "SXS", "SBS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_FIVE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_FIVE), FOUR_BLOCKS, META_FOUR ), "SSS", "SXS", "SBS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_FIVE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_FIVE), FOUR_BLOCKS, META_FIVE), "X  ", " X ", " BX", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_FIVE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_FIVE), FOUR_BLOCKS, META_SIX), "  X", " X ", "XB ", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_FIVE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_FIVE), FOUR_BLOCKS, META_SEVEN), "SXS", "SBS", "SSS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_FIVE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_FIVE), FOUR_BLOCKS, META_EIGHT),"SSS", "XXX", "SBS", 'S', WOODEN_STICK, 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_FIVE), 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(ModBlocks.timberFrames.get(META_FIVE), FOUR_BLOCKS, META_NINE), "   ", "XXX", " B ", 'X',
+                new ItemStack(Blocks.PLANKS, 1, META_FIVE), 'B', ModItems.buildTool));
 
         //Field
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutField, 1),
                                                     " Y ", "X#X", " X ", 'X', WOODEN_STICK, '#', Items.LEATHER, 'Y', Blocks.HAY_BLOCK));
         //Double Fern
-        GameRegistry.addShapelessRecipe(new ItemStack(Blocks.DOUBLE_PLANT, 1, 3), new ItemStack(Blocks.TALLGRASS, 1, 2), new ItemStack(Blocks.TALLGRASS, 1, 2));
-
-
-        //enableInDevelopmentFeatures(enableInDevelopmentFeatures);
-        addSupplyChestRecipes(supplyChests);
+        GameRegistry.addShapelessRecipe(new ItemStack(Blocks.DOUBLE_PLANT, 1, META_THREE), new ItemStack(Blocks.TALLGRASS, 1, META_TWO), new ItemStack(Blocks.TALLGRASS, 1, META_TWO));
     }
 
     private static void addHutRecipe(@NotNull final ItemStack hutItemStack, @NotNull final Item item)
