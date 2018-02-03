@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.CITIZENINFO;
 
@@ -57,15 +58,20 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
     public void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
     {
         final CitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
-        final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
         sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION,
           citizenData.getId(),
           citizenData.getName())));
-        if (entityCitizen == null)
+
+        final Optional<EntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
+
+        if (!optionalEntityCitizen.isPresent())
         {
             sender.sendMessage(new TextComponentTranslation(CITIZEN_NOT_LOADED));
             return;
         }
+
+
+        final EntityCitizen entityCitizen = optionalEntityCitizen.get();
 
         final BlockPos citizenPosition = entityCitizen.getPosition();
         sender.sendMessage(new TextComponentString(String.format(CITIZEN_POSITION,

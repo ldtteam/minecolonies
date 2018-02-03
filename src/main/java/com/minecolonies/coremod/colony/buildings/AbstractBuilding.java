@@ -36,6 +36,7 @@ import com.minecolonies.coremod.util.StructureWrapper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
@@ -1075,6 +1076,18 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     public boolean isMirrored()
     {
         return isBuildingMirrored;
+    }
+
+    /**
+     * Register a blockState and position.
+     * We suppress this warning since this parameter will be used in child classes which override this method.
+     *
+     * @param blockState to be registered
+     * @param pos   of the blockState
+     */
+    public void registerBlockPosition(@NotNull final IBlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
+    {
+        registerBlockPosition(blockState.getBlock(), pos, world);
     }
 
     /**

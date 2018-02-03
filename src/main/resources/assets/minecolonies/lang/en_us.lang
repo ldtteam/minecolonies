@@ -400,6 +400,7 @@ achievement.farmer.wheatHarvested.1000.desc=Your farmers harvested 1000 wheat.
 
 com.minecolonies.coremod.permission.no=You have no permission to do this in this colony!
 com.minecolonies.coremod.gui.townHall.freeBlocks=Free for interaction
+com.minecolonies.coremod.gui.townHall.add=Add
 
 com.minecolonies.coremod.permission.access_huts=Access GUIs
 com.minecolonies.coremod.permission.guards_attack=Fight guards
@@ -423,6 +424,7 @@ com.minecolonies.coremod.permission.shoot_arrow=Shoot arrows
 com.minecolonies.coremod.permission.attack_citizen=Attack citizens
 com.minecolonies.coremod.permission.attack_entity=Attack entities
 com.minecolonies.coremod.permission.access_free_blocks=Access free-blocks
+com.minecolonies.coremod.permission.explode=Explode
 
 item.supplyCampDeployer.invalid=Requiring a flat ground of at least 16*17.
 com.minecolonies.coremod.gui.townHall.currentHappiness=Overall happiness:
@@ -572,3 +574,4 @@ com.minecolonies.coremod.gui.townHall.tp=Do you really want to teleport to: %s [
 com.minecolonies.coremod.gui.workerHuts.switchStyle=Switch Style
 com.minecolonies.coremod.gui.townHall.tooLow=TH too low
 com.minecolonies.coremod.gui.recipe.full=Max reached for level
+com.minecolonies.coremod.cook.full=Can't bring food to worker since his inventory is full.

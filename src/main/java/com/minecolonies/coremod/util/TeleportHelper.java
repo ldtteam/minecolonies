@@ -33,6 +33,11 @@ public final class TeleportHelper
             return false;
         }
 
+        if(citizen.isAsleep())
+        {
+            citizen.onWakeUp();
+        }
+
         citizen.dismountRidingEntity();
 
         citizen.setLocationAndAngles(

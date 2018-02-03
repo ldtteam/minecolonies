@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.render;
 import com.minecolonies.coremod.client.model.*;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
@@ -22,6 +23,8 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     private static final Map<Model, ModelBiped> idToMaleModelMap   = new EnumMap<>(Model.class);
     private static final Map<Model, ModelBiped> idToFemaleModelMap = new EnumMap<>(Model.class);
     private static final double                 SHADOW_SIZE        = 0.5F;
+    private static final int THREE_QUARTERS = 270;
+
     static
     {
         idToMaleModelMap.put(Model.DELIVERYMAN, new ModelEntityDeliverymanMale());
@@ -67,6 +70,34 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         }
 
         super.doRender(citizen, d, d1, d2, f, f1);
+    }
+
+    @Override
+    protected void renderLivingAt(final EntityCitizen entityLivingBaseIn, final double x, final double y, final double z)
+    {
+        if (entityLivingBaseIn.isEntityAlive() && entityLivingBaseIn.isAsleep())
+        {
+            super.renderLivingAt(entityLivingBaseIn, x + (double)entityLivingBaseIn.getRenderOffsetX(), y, z + (double)entityLivingBaseIn.getRenderOffsetZ());
+        }
+        else
+        {
+            super.renderLivingAt(entityLivingBaseIn, x, y, z);
+        }
+    }
+
+    @Override
+    protected void applyRotations(final EntityCitizen entityLiving, final float p_77043_2_, final float rotationYaw, final float partialTicks)
+    {
+        if (entityLiving.isEntityAlive() && entityLiving.isAsleep())
+        {
+            GlStateManager.rotate(entityLiving.getBedOrientationInDegrees(), 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotate(this.getDeathMaxRotation(entityLiving), 0.0F, 0.0F, 1.0F);
+            GlStateManager.rotate(THREE_QUARTERS, 0.0F, 1.0F, 0.0F);
+        }
+        else
+        {
+            super.applyRotations(entityLiving, p_77043_2_, rotationYaw, partialTicks);
+        }
     }
 
     @Override

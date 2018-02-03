@@ -2,6 +2,7 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.coremod.blocks.TimberFrameType;
 import com.minecolonies.coremod.items.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -10,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class RecipeHandler
 {
+
     /**
      * Wooden stick string description.
      */
@@ -41,6 +44,23 @@ public final class RecipeHandler
     private static final int EIGHT_BLOCKS = 8;
 
     private static final int ONE_FORTH_OF_A_STACK = 16;
+
+    /**
+     * Wood types and timber frame types constants
+     */
+    private static final int META_TWO = 2;
+
+    private static final int META_THREE          = 3;
+
+    /**
+     * Number of paperwall recipes.
+     */
+    private static final int AMOUNT_OF_PAPERWALL = 4;
+
+    /**
+     * Number of shingle recipes.
+     */
+    private static final int AMOUNT_OF_SHINGLES = 6;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -88,7 +108,7 @@ public final class RecipeHandler
         addHutRecipe(new ItemStack(ModBlocks.blockHutSwineHerder, 1), Items.PORKCHOP);
         addHutRecipe(new ItemStack(ModBlocks.blockHutChickenHerder, 1), Items.EGG);
 
-        //Register Scepters
+        //Mod Items
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.scanTool, 1), "  I", " S ", "S  ", 'I', Items.IRON_INGOT, 'S', WOODEN_STICK));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.buildTool, 1), "  C", " S ", "S  ", 'C', "cobblestone", 'S', WOODEN_STICK));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.permTool, 1), "D", 'D', ModItems.scanTool));
@@ -101,58 +121,52 @@ public final class RecipeHandler
                                                     "XXX", "X#X", "XXX", 'X', "logWood", '#', ModItems.scanTool));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockWayPoint, ONE_FORTH_OF_A_STACK),
                                                     "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', ModItems.buildTool));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockTimberFrame, FOUR_BLOCKS), " W ", " W ", " WB", 'W', PLANK_WOOD, 'B', ModItems.buildTool));
         GameRegistry.addShapelessRecipe(new ItemStack(ModItems.clipboard, 1), new ItemStack(Items.STICK, 1), new ItemStack(Items.MAP, 1), new ItemStack(Items.DYE));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.clipboard), "WBW", "WLW", "WWW", 'L', Items.LEATHER, 'W', WOODEN_STICK, 'B', ModItems.buildTool));
 
         //Block Rack
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockRack, 1),
                                                     "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Blocks.IRON_BARS));
 
         //Building blocks
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockTimberFrame, FOUR_BLOCKS), " W ", " W ", " WB", 'W', PLANK_WOOD, 'B', ModItems.buildTool));
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(ModBlocks.blockPaperWall, EIGHT_BLOCKS, 0), "WWW", "PPP", "WWW", 'P', PAPER, 'W', new ItemStack(Blocks.PLANKS, 1, 0)));
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(ModBlocks.blockPaperWall, EIGHT_BLOCKS, 1), "WWW", "PPP", "WWW", 'P', PAPER, 'W', new ItemStack(Blocks.PLANKS, 1, 1)));
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(ModBlocks.blockPaperWall, EIGHT_BLOCKS, 2), "WWW", "PPP", "WWW", 'P', PAPER, 'W', new ItemStack(Blocks.PLANKS, 1, 2)));
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(ModBlocks.blockPaperWall, EIGHT_BLOCKS, 3), "WWW", "PPP", "WWW", 'P', PAPER, 'W', new ItemStack(Blocks.PLANKS, 1, 3)));
+        for(int i = 0; i < AMOUNT_OF_PAPERWALL; i++)
+        {
+            GameRegistry.addRecipe(new ShapedOreRecipe(
+                    new ItemStack(ModBlocks.blockPaperWall, EIGHT_BLOCKS, i), "WWW", "PPP", "WWW", 'P', PAPER, 'W', new ItemStack(Blocks.PLANKS, 1, i)));
+        }
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(ModBlocks.blockShingleOak, EIGHT_BLOCKS, 0), "B  ", "SB ", "PSB", 'B', Items.BRICK, 'P',
-                new ItemStack(Blocks.PLANKS, 1, 0), 'S', WOODEN_STICK));
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(ModBlocks.blockShingleSpruce, EIGHT_BLOCKS, 0), "B  ", "SB ", "PSB", 'B', Items.BRICK, 'P',
-                new ItemStack(Blocks.PLANKS, 1, 1), 'S', WOODEN_STICK));
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(ModBlocks.blockShingleBirch, EIGHT_BLOCKS, 0), "B  ", "SB ", "PSB", 'B', Items.BRICK, 'P',
-                new ItemStack(Blocks.PLANKS, 1, 2), 'S', WOODEN_STICK));
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(ModBlocks.blockShingleJungle, EIGHT_BLOCKS, 0), "B  ", "SB ", "PSB", 'B', Items.BRICK, 'P',
-                new ItemStack(Blocks.PLANKS, 1, 3), 'S', WOODEN_STICK));
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(ModBlocks.blockShingleAcacia, EIGHT_BLOCKS, 0), "B  ", "SB ", "PSB", 'B', Items.BRICK, 'P',
-                new ItemStack(Blocks.PLANKS, 1, 4), 'S', WOODEN_STICK));
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(ModBlocks.blockShingleDarkOak, EIGHT_BLOCKS, 0), "B  ", "SB ", "PSB", 'B', Items.BRICK, 'P',
-                new ItemStack(Blocks.PLANKS, 1, 5), 'S', WOODEN_STICK));
+        for(int i = 0; i < AMOUNT_OF_SHINGLES; i++)
+        {
+            GameRegistry.addRecipe(new ShapedOreRecipe(
+                    new ItemStack(ModBlocks.blockShingleOak, EIGHT_BLOCKS, 0), "B  ", "SB ", "PSB", 'B', Items.BRICK, 'P',
+                    new ItemStack(Blocks.PLANKS, 1, i), 'S', WOODEN_STICK));
+        }
 
         GameRegistry.addRecipe(new ShapedOreRecipe(
                 new ItemStack(ModBlocks.blockShingleSlab, EIGHT_BLOCKS, 0), "   ", "BBB", "SSS", 'B', Items.BRICK, 'S', WOODEN_STICK));
-        
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.clipboard), "WBW", "WLW", "WWW", 'L', Items.LEATHER, 'W', WOODEN_STICK, 'B', ModItems.buildTool));
 
+        for(int i = 0; i < ModBlocks.timberFrames.size(); i++)
+        {
+            GameRegistry.addRecipe(new ShapedOreRecipe(
+                    new ItemStack(ModBlocks.timberFrames.get(i), FOUR_BLOCKS, 0), " P ", " P ", " B ", 'P',
+                    new ItemStack(Blocks.PLANKS, 1, i), 'B', ModItems.buildTool));
+
+            for(int j = 1; j < TimberFrameType.values().length; j++)
+            {
+                GameRegistry.addRecipe(new ShapelessOreRecipe(
+                        new ItemStack(ModBlocks.timberFrames.get(i), FOUR_BLOCKS, j),
+                        new ItemStack(ModBlocks.timberFrames.get(i), FOUR_BLOCKS, j-1), new ItemStack(ModItems.buildTool)));
+            }
+        }
 
         //Field
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutField, 1),
                                                     " Y ", "X#X", " X ", 'X', WOODEN_STICK, '#', Items.LEATHER, 'Y', Blocks.HAY_BLOCK));
         //Double Fern
-        GameRegistry.addShapelessRecipe(new ItemStack(Blocks.DOUBLE_PLANT, 1, 3), new ItemStack(Blocks.TALLGRASS, 1, 2), new ItemStack(Blocks.TALLGRASS, 1, 2));
-
-
-        //enableInDevelopmentFeatures(enableInDevelopmentFeatures);
-        addSupplyChestRecipes(supplyChests);
+        GameRegistry.addShapelessRecipe(new ItemStack(Blocks.DOUBLE_PLANT, 1, META_THREE),
+                new ItemStack(Blocks.TALLGRASS, 1, META_TWO),
+                new ItemStack(Blocks.TALLGRASS, 1, META_TWO));
     }
 
     private static void addHutRecipe(@NotNull final ItemStack hutItemStack, @NotNull final Item item)
@@ -168,32 +182,5 @@ public final class RecipeHandler
     private static void addHutRecipe(@NotNull final ItemStack hutItemStack, @NotNull final Block block)
     {
         GameRegistry.addRecipe(new ShapedOreRecipe(hutItemStack, "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', block));
-    }
-
-    private static void addSupplyChestRecipes(final boolean enable)
-    {
-        if (enable)
-        {
-            GameRegistry.addRecipe(new ItemStack(ModItems.supplyChest, 1), "B B", "BBB", 'B', Items.BOAT);
-            GameRegistry.addRecipe(new ItemStack(ModItems.supplyChest, 1), "B B", "BBB", 'B', Items.ACACIA_BOAT);
-            GameRegistry.addRecipe(new ItemStack(ModItems.supplyChest, 1), "B B", "BBB", 'B', Items.BIRCH_BOAT);
-            GameRegistry.addRecipe(new ItemStack(ModItems.supplyChest, 1), "B B", "BBB", 'B', Items.DARK_OAK_BOAT);
-            GameRegistry.addRecipe(new ItemStack(ModItems.supplyChest, 1), "B B", "BBB", 'B', Items.JUNGLE_BOAT);
-            GameRegistry.addRecipe(new ItemStack(ModItems.supplyChest, 1), "B B", "BBB", 'B', Items.SPRUCE_BOAT);
-            GameRegistry.addRecipe(new ItemStack(ModItems.supplyCamp, 1), "B B", "BBB", 'B', Blocks.CHEST);
-        }
-        else
-        {
-            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutTownHall, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.BOAT));
-        }
-    }
-
-    private static void enableInDevelopmentFeatures(final boolean enable)
-    {
-        if (enable)
-        {
-            addHutRecipe(new ItemStack(ModBlocks.blockHutBlacksmith, 1), "ingotIron");
-            addHutRecipe(new ItemStack(ModBlocks.blockHutStonemason, 1), Blocks.STONEBRICK);
-        }
     }
 }

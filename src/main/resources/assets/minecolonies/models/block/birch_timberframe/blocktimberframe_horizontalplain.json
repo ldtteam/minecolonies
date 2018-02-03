@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "particle": "minecolonies:blocks/timberframe/birch/blockhorizontalplain",
+    "down": "minecolonies:blocks/timberframe/birch/blockframedside",
+    "up": "minecolonies:blocks/timberframe/birch/blockframedside",
+    "north": "minecolonies:blocks/timberframe/birch/blockhorizontalplain",
+    "east": "minecolonies:blocks/timberframe/birch/blockhorizontalplain",
+    "south": "minecolonies:blocks/timberframe/birch/blockhorizontalplain",
+    "west": "minecolonies:blocks/timberframe/birch/blockhorizontalplain"
+  }
+}

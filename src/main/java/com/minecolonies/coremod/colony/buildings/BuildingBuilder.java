@@ -246,45 +246,44 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     private void updateAvailableResources()
     {
-        final EntityCitizen builder = getMainWorkerEntity();
-
-        InventoryCitizen builderInventory = null;
-        if (builder != null && builder.getCitizenData() != null)
-        {
-            builderInventory = builder.getInventoryCitizen();
-        }
-
-
-        for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
-        {
-            final BuildingBuilderResource resource = entry.getValue();
-
-            resource.setAvailable(0);
-
-            if (builderInventory != null)
+        getMainWorkerEntity().ifPresent(builder -> {
+            final InventoryCitizen builderInventory = getMainWorker().getInventory();
+            if (builderInventory == null)
             {
-                resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory), resource.getItem(), resource.getDamageValue()));
+                return;
             }
 
-            final TileEntity chestInventory = this.getTileEntity();
-            if (chestInventory != null)
+            for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
             {
-                resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory, resource.getItem(), resource.getDamageValue()));
-            }
+                final BuildingBuilderResource resource = entry.getValue();
 
-            //Count in the additional chests as well
-            if (builder != null)
-            {
-                for (final BlockPos pos : getAdditionalCountainers())
+                resource.setAvailable(0);
+
+                if (builderInventory != null)
                 {
-                    final TileEntity entity = CompatibilityUtils.getWorld(builder).getTileEntity(pos);
-                    if (entity instanceof TileEntityChest)
+                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory), resource.getItem(), resource.getDamageValue()));
+                }
+
+                final TileEntity chestInventory = this.getTileEntity();
+                if (chestInventory != null)
+                {
+                    resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory, resource.getItem(), resource.getDamageValue()));
+                }
+
+                //Count in the additional chests as well
+                if (builder != null)
+                {
+                    for (final BlockPos pos : getAdditionalCountainers())
                     {
-                        resource.addAvailable(InventoryUtils.getItemCountInProvider(entity, resource.getItem(), resource.getDamageValue()));
+                        final TileEntity entity = CompatibilityUtils.getWorld(builder).getTileEntity(pos);
+                        if (entity instanceof TileEntityChest)
+                        {
+                            resource.addAvailable(InventoryUtils.getItemCountInProvider(entity, resource.getItem(), resource.getDamageValue()));
+                        }
                     }
                 }
             }
-        }
+        });
     }
 
     /**

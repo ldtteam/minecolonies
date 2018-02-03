@@ -5,6 +5,9 @@ import net.minecraft.block.BlockPlanks;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Class to create the modBlocks.
  * References to the blocks can be made here
@@ -12,12 +15,15 @@ import net.minecraftforge.fml.common.registry.IForgeRegistry;
  * We disabled the following finals since we are neither able to mark the items as final, nor do we want to provide public accessors.
  */
 @SuppressWarnings({"squid:ClassVariableVisibilityCheck", "squid:S2444", "squid:S1444", "squid:S1820",})
+
 public final class ModBlocks
 {
     /*
      * Creating objects for all blocks in the mod.
      * References can be made to here.
      */
+
+    public static List<BlockTimberFrame> timberFrames = new ArrayList<>();
     public static BlockHutTownHall            blockHutTownHall;
     public static BlockHutCitizen             blockHutCitizen;
     public static BlockHutMiner               blockHutMiner;
@@ -48,7 +54,6 @@ public final class ModBlocks
      */
     public static BlockConstructionTape       blockConstructionTape;
     public static BlockMinecoloniesRack       blockRack;
-    public static BlockTimberFrame            blockTimberFrame;
     public static BlockWaypoint               blockWayPoint;
     public static BlockInfoPoster             blockInfoPoster;
     public static BlockPaperwall              blockPaperWall;
@@ -99,7 +104,6 @@ public final class ModBlocks
         blockSolidSubstitution = new BlockSolidSubstitution().registerBlock(registry);
         blockSubstitution = new BlockSubstitution().registerBlock(registry);
         blockRack = new BlockMinecoloniesRack().registerBlock(registry);
-        blockTimberFrame = new BlockTimberFrame().registerBlock(registry);
         blockWayPoint = new BlockWaypoint().registerBlock(registry);
         blockHutBarracks = new BlockHutBarracks().registerBlock(registry);
         blockHutBarracksTower = new BlockHutBarracksTower().registerBlock(registry);
@@ -122,7 +126,13 @@ public final class ModBlocks
                 BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.ACACIA.getName()).registerBlock(registry);
         blockShingleSlab = new BlockShingleSlab().registerBlock(registry);
 
+        for (final BlockPlanks.EnumType type: BlockPlanks.EnumType.values())
+        {
+            timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + type.getName()).registerBlock(registry));
+        }
     }
+
+
 
     public static void registerItemBlock(final IForgeRegistry<Item> registry)
     {
@@ -148,7 +158,6 @@ public final class ModBlocks
         blockSolidSubstitution.registerItemBlock(registry);
         blockSubstitution.registerItemBlock(registry);
         blockRack.registerItemBlock(registry);
-        blockTimberFrame.registerItemBlock(registry);
         blockWayPoint.registerItemBlock(registry);
         blockHutBarracksTower.registerItemBlock(registry);
         blockHutBarracks.registerItemBlock(registry);
@@ -163,5 +172,10 @@ public final class ModBlocks
         blockShingleAcacia.registerItemBlock(registry);
         blockShingleSlab.registerItemBlock(registry);
         blockHutSmeltery.registerItemBlock(registry);
+
+        for (final BlockTimberFrame frame: timberFrames)
+        {
+            frame.registerItemBlock(registry);
+        }
     }
 }

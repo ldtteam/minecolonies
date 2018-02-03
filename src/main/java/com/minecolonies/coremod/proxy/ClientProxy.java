@@ -183,7 +183,6 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutSmeltery);
 
         createCustomModel(ModBlocks.blockSolidSubstitution);
-        createCustomModel(ModBlocks.blockTimberFrame);
         createCustomModel(ModBlocks.blockConstructionTape);
         createCustomModel(ModBlocks.blockRack);
         createCustomModel(ModBlocks.blockWayPoint);
@@ -236,6 +235,15 @@ public class ClientProxy extends CommonProxy
         {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockPaperWall), type.getMetadata(),
               new ModelResourceLocation(ModBlocks.blockPaperWall.getRegistryName() + "_" + type.getName(), INVENTORY));
+        }
+
+        for (final BlockTimberFrame frame : ModBlocks.timberFrames)
+        {
+            for (final TimberFrameType type : TimberFrameType.values())
+            {
+                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(frame), type.getMetadata(),
+                        new ModelResourceLocation(frame.getRegistryName() + "_" + type.getName(), INVENTORY));
+            }
         }
     }
 
