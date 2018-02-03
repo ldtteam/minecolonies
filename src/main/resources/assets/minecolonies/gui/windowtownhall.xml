@@ -102,15 +102,24 @@
 
         </view>
         <view id="pageInfo">
-            <group size="100% 22" pos="70 40">
-                <label size="100% 11"
+                <label size="100% 11" pos="70 40"
                        label="$(com.minecolonies.coremod.gui.townHall.currentHappiness)" color="black"
                        textalign="MIDDLE"/>
-                <label id="happiness" size="100% 11"
+                <label id="happiness" size="100% 11" pos="70 50"
                        color="black" textalign="MIDDLE"/>
-            </group>
+            <label size="80 12" label="Events:" pos="240 70" color="black"/>
+            <!-- label size="25 12" pos="110 7" textalign="MIDDLE_LEFT" color="black" label="§n§4JOB"/ -->
 
-            <group id="citizen-stats" align="TOP_MIDDLE" size="80% 100%" pos="0 60">
+            <list id="permeventslist" size="150 140" pos="200 80">
+                <box size="100% 36" linewidth="2">
+                    <label id="action" size="100 12" pos="1 1" color="black"/>
+                    <label id="name" size="100 12" pos="1 12" color="blue"/>
+                    <label id="pos" size="70 12" pos="1 24" color="black"/>
+                    <button id="addfakeplayer" size="35 12" label="$(com.minecolonies.coremod.gui.townHall.add)" pos="105 12"/>
+                </box>
+            </list>
+
+            <group id="citizen-stats" align="TOP_LEFT" size="140 150" pos="30 60">
                 <label id="totalCitizens" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
                 <label size="100% 11"/>
             </group>
