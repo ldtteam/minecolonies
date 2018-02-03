@@ -17,6 +17,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 /**
  * Used to handle citizen recalls to the townhall.
  */
@@ -74,16 +76,15 @@ public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage
                 final World world = colony.getWorld();
                 for (final CitizenData citizenData : colony.getCitizenManager().getCitizens())
                 {
-                    EntityCitizen citizen = citizenData.getCitizenEntity();
-                    if (citizen == null)
+                    Optional<EntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
+                    if (!optionalEntityCitizen.isPresent())
                     {
-
                         Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
-                        colony.getCitizenManager().spawnCitizen(citizenData, colony.getWorld());
-                        citizen = citizenData.getCitizenEntity();
+                        citizenData.updateCitizenEntityIfNecessary();
+                        optionalEntityCitizen = citizenData.getCitizenEntity();
                     }
 
-                    if (!TeleportHelper.teleportCitizen(citizen, world, location))
+                    if (optionalEntityCitizen.isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), world, location))
                     {
                         LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.workerHuts.recallFail");
                     }

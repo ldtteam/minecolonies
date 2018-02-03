@@ -215,14 +215,13 @@ public final class ColonyManager
             for (final CitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
             {
                 Log.getLogger().info("Kill Citizen " + citizenData.getName());
-                final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
-                if (entityCitizen != null)
-                {
+                citizenData.getCitizenEntity().ifPresent(entityCitizen -> {
                     final World world = entityCitizen.getEntityWorld();
-                    citizenData.getCitizenEntity().onDeath(CONSOLE_DAMAGE_SOURCE);
+                    entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE);
                     colonyWorlds.add(world);
-                }
+                });
             }
+
             if (canDestroy)
             {
                 Log.getLogger().info("Removing buildings for " + id);
