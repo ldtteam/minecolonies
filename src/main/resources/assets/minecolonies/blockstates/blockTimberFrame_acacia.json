@@ -1,0 +1,27 @@
+{
+    "forge_marker": 1,
+    "variants": {
+        "type": {
+            "plain": {
+                "model": "minecolonies:acacia_timberframe/blocktimberframe_plain"},
+            "sideframed": {
+                "model": "minecolonies:acacia_timberframe/blocktimberframe_sideframed"},
+            "downgated": {
+                "model": "minecolonies:acacia_timberframe/blocktimberframe_downgated"},
+            "doublecrossed": {
+                "model": "minecolonies:acacia_timberframe/blocktimberframe_doublecrossed"},
+            "framed": {
+                "model": "minecolonies:acacia_timberframe/blocktimberframe_framed"},
+            "gateframed": {
+                "model": "minecolonies:acacia_timberframe/blocktimberframe_gateframed"},
+            "horizontalnocap": {
+                "model": "minecolonies:acacia_timberframe/blocktimberframe_horizontalnocap"},
+            "horizontalplain": {
+                "model": "minecolonies:acacia_timberframe/blocktimberframe_horizontalplain"},
+            "onecrossedlr": {
+                "model": "minecolonies:acacia_timberframe/blocktimberframe_onecrossedlr"},
+            "onecrossedrl": {
+                "model": "minecolonies:acacia_timberframe/blocktimberframe_onecrossedrl"}
+        }
+    }
+}

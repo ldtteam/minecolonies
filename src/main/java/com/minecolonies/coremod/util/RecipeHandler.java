@@ -5,6 +5,7 @@ package com.minecolonies.coremod.util;
  */
 public final class RecipeHandler
 {
+
     /**
      * Private constructor to hide the implicit public one.
      */
