@@ -11,6 +11,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemColored;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -103,13 +104,14 @@ public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame
     }
 
     @Override
-    public void getSubBlocks(@NotNull final Item itemIn, @NotNull final CreativeTabs tab, @NotNull final List<ItemStack> list)
+    public void getSubBlocks(final Item itemIn, final CreativeTabs tab, final NonNullList<ItemStack> list)
     {
         for (final TimberFrameType type : TimberFrameType.values())
         {
             list.add(new ItemStack(itemIn, 1, type.getMetadata()));
         }
     }
+
     /**
      * Convert the BlockState into the correct metadata value
      */
