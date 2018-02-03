@@ -82,7 +82,7 @@ public class BuildingTownHall extends BuildingHome
      */
     public void addPermissionEvent(final PermissionEvent event)
     {
-        if(getBuildingLevel() >= 1)
+        if(getBuildingLevel() >= 1 && !permissionEvents.contains(event))
         {
             if (permissionEvents.size() >= MAX_PERMISSION_EVENTS)
             {
