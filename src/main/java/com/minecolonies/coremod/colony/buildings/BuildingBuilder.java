@@ -247,9 +247,11 @@ public class BuildingBuilder extends AbstractBuildingWorker
     private void updateAvailableResources()
     {
         getMainWorkerEntity().ifPresent(builder -> {
-            InventoryCitizen builderInventory = getMainWorker().getInventory();
+            final InventoryCitizen builderInventory = getMainWorker().getInventory();
             if (builderInventory == null)
+            {
                 return;
+            }
 
             for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
             {

@@ -111,7 +111,6 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
             return;
         }
 
-        final EntityCitizen citizen = optionalEntityCitizen.get();
         final boolean isCreative = player.capabilities.isCreativeMode;
         if (message.quantity <= 0 && !isCreative)
         {
@@ -132,7 +131,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
 
         final ItemStack itemStackToTake = message.itemStack.copy();
         ItemStackUtils.setSize(itemStackToTake, message.quantity);
-
+        final EntityCitizen citizen = optionalEntityCitizen.get();
         final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(citizen.getInventoryCitizen()), itemStackToTake);
         if (!isCreative)
         {

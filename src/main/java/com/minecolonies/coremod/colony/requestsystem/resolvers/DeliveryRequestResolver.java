@@ -57,12 +57,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
                                               .findFirst()
                                               .orElse(null);
 
-        if (freeDeliveryMan == null)
-        {
-            return false;
-        }
-
-        return true;
+        return freeDeliveryMan != null;
     }
 
     @Nullable
