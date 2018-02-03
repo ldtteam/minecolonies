@@ -56,12 +56,13 @@ public class KillCitizenCommand extends AbstractCitizensCommands
     public void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
     {
         final CitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
-        final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
-        sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
-        final BlockPos position = entityCitizen.getPosition();
-        sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
-        sender.sendMessage(new TextComponentString(REMOVED_MESSAGE));
-        server.addScheduledTask(() -> entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE));
+        citizenData.getCitizenEntity().ifPresent(entityCitizen -> {
+            sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
+            final BlockPos position = entityCitizen.getPosition();
+            sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
+            sender.sendMessage(new TextComponentString(REMOVED_MESSAGE));
+            server.addScheduledTask(() -> entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE));
+        });
     }
 
     @NotNull

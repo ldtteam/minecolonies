@@ -774,7 +774,14 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(event.getName() + (event.getId() == null ? " <fake>" : ""));
                 rowPane.findPaneOfTypeByID(POS_LABEL, Label.class).setLabelText(event.getPosition().getX() + " " + event.getPosition().getY() + " " + event.getPosition().getZ());
+
+                if(event.getId() == null)
+                {
+                    rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).hide();
+                }
+
                 final String name = LanguageHandler.format(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US));
+
                 if (name.contains(KEY_TO_PERMISSIONS))
                 {
                     Log.getLogger().warn("Didn't work for:" + name);

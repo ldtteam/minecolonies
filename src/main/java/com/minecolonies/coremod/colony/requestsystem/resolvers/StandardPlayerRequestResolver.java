@@ -104,7 +104,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                     final ItemStack resolveStack = resolvablestacks.get(0);
                     resolveStack.setCount(Math.min(((IDeliverable) request.getRequest()).getCount(), resolveStack.getMaxStackSize()));
                     final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(
-                            new InvWrapper(citizenDataOptional.get().getCitizenEntity().getInventoryCitizen()),
+                            new InvWrapper(citizenDataOptional.get().getInventory()),
                             resolveStack);
 
                     if (ItemStackUtils.isEmpty(remainingItemStack))
