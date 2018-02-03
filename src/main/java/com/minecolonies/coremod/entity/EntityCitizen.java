@@ -2097,21 +2097,29 @@ public class EntityCitizen extends EntityAgeable implements INpc
             homeBuilding.onWakeUp();
         }
 
-        final BlockPos spawn = Utils.scanForBlockNearPoint(
-          world,
-          getBedLocation(),
-          4,
-          2,
-          4,
-          PLAYER_HEIGHT,
-          Blocks.AIR,
-          Blocks.SNOW_LAYER,
-          Blocks.TALLGRASS,
-          Blocks.RED_FLOWER,
-          Blocks.YELLOW_FLOWER,
-          Blocks.CARPET);
+        BlockPos spawn;
+        if (getBedLocation() != BlockPos.ORIGIN)
+        {
+            spawn = Utils.scanForBlockNearPoint(
+              world,
+              getBedLocation(),
+              4,
+              2,
+              4,
+              PLAYER_HEIGHT,
+              Blocks.AIR,
+              Blocks.SNOW_LAYER,
+              Blocks.TALLGRASS,
+              Blocks.RED_FLOWER,
+              Blocks.YELLOW_FLOWER,
+              Blocks.CARPET);
+        }
+        else
+        {
+            spawn = getPosition();
+        }
 
-        if (spawn != null)
+        if (spawn != null && spawn != BlockPos.ORIGIN)
         {
             setPosition(spawn.getX(), spawn.getY(), spawn.getZ());
         }
