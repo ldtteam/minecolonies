@@ -17,6 +17,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
+
 /**
  * Transfer some items from the player inventory to the Workers's Inventory.
  */
@@ -102,8 +104,8 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
             return;
         }
 
-        final EntityCitizen citizen = citizenData.getCitizenEntity();
-        if (citizen == null)
+        final Optional<EntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
+        if (!optionalEntityCitizen.isPresent())
         {
             Log.getLogger().warn("TransferItemsRequestMessage entity citizen is null");
             return;
@@ -129,7 +131,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
 
         final ItemStack itemStackToTake = message.itemStack.copy();
         ItemStackUtils.setSize(itemStackToTake, message.quantity);
-
+        final EntityCitizen citizen = optionalEntityCitizen.get();
         final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(citizen.getInventoryCitizen()), itemStackToTake);
         if (!isCreative)
         {

@@ -122,11 +122,10 @@ public class ListCitizensCommand extends AbstractSingleCommand
               citizen.getName())).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                                                                      String.format(COMMAND_CITIZEN_INFO, citizen.getColony().getID(), citizen.getId())))));
 
-            if (citizen.getCitizenEntity() != null)
-            {
-                final BlockPos position = citizen.getCitizenEntity().getPosition();
+            citizen.getCitizenEntity().ifPresent(entityCitizen -> {
+                final BlockPos position = entityCitizen.getPosition();
                 sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
-            }
+            });
         }
         drawPageSwitcher(sender, page, citizenCount, halfPage, colonyId);
     }

@@ -34,9 +34,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
@@ -249,9 +247,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         }
 
         final List<IItemHandler> handlers = new ArrayList<>();
-        for(final EntityCitizen workerEntity: this.getWorkerEntities())
+        for(final CitizenData workerEntity: this.getWorker())
         {
-            handlers.add(new InvWrapper(workerEntity.getInventoryCitizen()));
+            handlers.add(new InvWrapper(workerEntity.getInventory()));
         }
         handlers.add(new InvWrapper(getTileEntity()));
 
@@ -287,15 +285,14 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         // If we set a worker, inform it of such
         if (citizen != null)
         {
-            final EntityCitizen tempCitizen = citizen.getCitizenEntity();
-            if (tempCitizen != null)
-            {
+            citizen.getCitizenEntity().ifPresent(tempCitizen -> {
                 if(!tempCitizen.getLastJob().isEmpty() && !tempCitizen.getLastJob().equals(getJobName()))
                 {
                     citizen.resetExperienceAndLevel();
                 }
                 tempCitizen.setLastJob(getJobName());
-            }
+            });
+
             workers.add(citizen);
             citizen.setWorkBuilding(this);
         }
@@ -309,18 +306,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      * @return {@link net.minecraft.entity.Entity} of the worker
      */
     @Nullable
-    public List<EntityCitizen> getWorkerEntities()
+    public List<Optional<EntityCitizen>> getWorkerEntities()
     {
-        final List<EntityCitizen> entities = new ArrayList<>();
-        for (final CitizenData data : workers)
-        {
-            if (data != null && data.getCitizenEntity() != null)
-            {
-                entities.add(data.getCitizenEntity());
-            }
-        }
-
-        return entities;
+        return workers.stream().filter(Objects::nonNull).map(CitizenData::getCitizenEntity).collect(Collectors.toList());
     }
 
     @Override
@@ -508,14 +496,24 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             buf.writeInt(data == null ? 0 : data.getId());
         }
 
-        buf.writeInt(recipes.size());
+        final List<IRecipeStorage> storages = new ArrayList<>();
         for(final IToken token: new ArrayList<>(recipes))
         {
-            if(ColonyManager.getRecipeManager().getRecipes().get(token) == null)
+            final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
+            if(storage == null)
             {
                 removeRecipe(token);
             }
-            ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(token));
+            else
+            {
+                storages.add(storage);
+            }
+        }
+
+        buf.writeInt(storages.size());
+        for(final IRecipeStorage storage: storages)
+        {
+            ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(storage));
         }
     }
 
@@ -524,11 +522,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      *
      * @return the EntityCitizen of that worker.
      */
-    public EntityCitizen getMainWorkerEntity()
+    public Optional<EntityCitizen> getMainWorkerEntity()
     {
         if (workers.isEmpty())
         {
-            return null;
+            return Optional.empty();
         }
         return workers.get(0).getCitizenEntity();
     }
@@ -637,10 +635,10 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             final int recipesSize = buf.readInt();
             for(int i = 0; i < recipesSize; i++)
             {
-                final IToken token = StandardFactoryController.getInstance().deserialize(ByteBufUtils.readTag(buf));
-                final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
+                final IRecipeStorage storage = StandardFactoryController.getInstance().deserialize(ByteBufUtils.readTag(buf));
                 if(storage != null)
                 {
+                    ColonyManager.getRecipeManager().addRecipe(storage);
                     recipes.add(storage);
                 }
             }

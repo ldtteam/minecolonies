@@ -271,15 +271,15 @@ public final class PlacementHandlers
             final EnumFacing facing = blockState.getValue(BlockBed.FACING);
 
             //Set other part of the bed, to the opposite PartType
-            if (blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT)
+            if (blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.HEAD)
             {
                 if (placer != null)
                 {
                     placer.handleBuildingOverBlock(pos);
                 }
                 //pos.offset(facing) will get the other part of the bed
-                world.setBlockState(pos.offset(facing), blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD), UPDATE_FLAG);
-                world.setBlockState(pos, blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT), UPDATE_FLAG);
+                world.setBlockState(pos.offset(facing.getOpposite()), blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT), UPDATE_FLAG);
+                world.setBlockState(pos, blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD), UPDATE_FLAG);
                 return blockState;
             }
             return ActionProcessingResult.ACCEPT;

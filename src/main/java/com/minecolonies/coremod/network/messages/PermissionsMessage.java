@@ -240,6 +240,70 @@ public class PermissionsMessage
     }
 
     /**
+     * Message class for adding a player or fakePlayer to a permission set.
+     */
+    public static class AddPlayerOrFakePlayer extends AbstractMessage<AddPlayerOrFakePlayer, IMessage>
+    {
+        private int    colonyID;
+        private String playerName;
+        private UUID   id;
+
+        /**
+         * Empty public constructor.
+         */
+        public AddPlayerOrFakePlayer()
+        {
+            super();
+        }
+
+        /**
+         * Constructor for adding player to permission message.
+         *
+         * @param colony Colony the permission is set in.
+         * @param playerName New player name to be added.
+         * @param id the id of the player or fakeplayer.
+         */
+        public AddPlayerOrFakePlayer(@NotNull final ColonyView colony, final String playerName, final UUID id)
+        {
+            super();
+            this.colonyID = colony.getID();
+            this.playerName = playerName;
+            this.id = id;
+        }
+
+        @Override
+        public void toBytes(@NotNull final ByteBuf buf)
+        {
+            buf.writeInt(colonyID);
+            ByteBufUtils.writeUTF8String(buf, playerName);
+            PacketUtils.writeUUID(buf, id);
+        }
+
+        @Override
+        public void fromBytes(@NotNull final ByteBuf buf)
+        {
+            colonyID = buf.readInt();
+            playerName = ByteBufUtils.readUTF8String(buf);
+            id = PacketUtils.readUUID(buf);
+        }
+
+        @Override
+        public void messageOnServerThread(final AddPlayerOrFakePlayer message, final EntityPlayerMP player)
+        {
+            final Colony colony = ColonyManager.getColony(message.colonyID);
+
+            if (colony != null && colony.getPermissions().hasPermission(player, Action.CAN_PROMOTE) && colony.getWorld() != null)
+            {
+                colony.getPermissions().addPlayer(message.id, message.playerName, Rank.NEUTRAL);
+            }
+            else
+            {
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+            }
+        }
+    }
+
+    /**
      * Message class for setting a player rank in the permissions.
      */
     public static class ChangePlayerRank extends AbstractMessage<ChangePlayerRank, IMessage>
