@@ -22,6 +22,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.WorkOrderView;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.permissions.PermissionEvent;
 import com.minecolonies.coremod.network.messages.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -104,6 +105,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * The ScrollingList of the users.
      */
+    private ScrollingList permEventList;
+
+    /**
+     * The ScrollingList of the users.
+     */
     private ScrollingList userList;
 
     /**
@@ -172,18 +178,22 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_MANAGE_FRIEND, this::editFriend);
         registerButton(BUTTON_MANAGE_NEUTRAL, this::editNeutral);
         registerButton(BUTTON_MANAGE_HOSTILE, this::editHostile);
-
+        registerButton(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, this::addPlayerToColonyClicked);
         registerButton(BUTTON_TP, this::teleportToColony);
         registerButton(BUTTON_UP, this::updatePriority);
         registerButton(BUTTON_DOWN, this::updatePriority);
         registerButton(BUTTON_DELETE, this::deleteWorkOrder);
 
-        findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setVisible(false);
-        findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(false);
-
         registerButton(BUTTON_TRIGGER, this::trigger);
         registerButton(BUTTON_ADD_BLOCK, this::addBlock);
         registerButton(BUTTON_REMOVE_BLOCK, this::removeBlock);
+
+        if(findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class) == null)
+        {
+            return;
+        }
+        findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setVisible(false);
+        findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(false);
     }
 
     /**
@@ -649,6 +659,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         fillWorkOrderList();
         fillFreeBlockList();
         fillAlliesAndFeudsList();
+        fillPermEventsList();
 
         if (townHall.getColony().isManualHiring())
         {
@@ -741,6 +752,35 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase(Locale.ENGLISH).substring(1);
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(player.getName());
                 rowPane.findPaneOfTypeByID("rank", Label.class).setLabelText(rank);
+            }
+        });
+    }
+
+    private void fillPermEventsList()
+    {
+        permEventList = findPaneOfTypeByID(LIST_PERM_EVENT, ScrollingList.class);
+        permEventList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return building.getPermissionEvents().size();
+            }
+
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                final PermissionEvent event = building.getPermissionEvents().get(index);
+
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(event.getName() + (event.getId() == null ? " <fake>" : ""));
+                rowPane.findPaneOfTypeByID(POS_LABEL, Label.class).setLabelText(event.getPosition().getX() + " " + event.getPosition().getY() + " " + event.getPosition().getZ());
+                final String name = LanguageHandler.format(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US));
+                if (name.contains(KEY_TO_PERMISSIONS))
+                {
+                    Log.getLogger().warn("Didn't work for:" + name);
+                    return;
+                }
+                rowPane.findPaneOfTypeByID(ACTION_LABEL, Label.class).setLabelText(name);
             }
         });
     }
@@ -960,6 +1000,21 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             {
                 MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townHall.getColony(), user.getID()));
             }
+        }
+    }
+
+    /**
+     * Action performed when remove player button is clicked.
+     *
+     * @param button Button that holds the user clicked on.
+     */
+    private void addPlayerToColonyClicked(@NotNull final Button button)
+    {
+        final int row = permEventList.getListElementIndexByPane(button);
+        if (row >= 0 && row < building.getPermissionEvents().size())
+        {
+            final PermissionEvent user = building.getPermissionEvents().get(row);
+            MineColonies.getNetwork().sendToServer(new PermissionsMessage.AddPlayerOrFakePlayer(townHall.getColony(), user.getName(), user.getId()));
         }
     }
 
