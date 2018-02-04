@@ -28,6 +28,7 @@ import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -1321,13 +1322,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return;
         }
 
-        @Nullable final EntityCitizen existingCitizen = data.getCitizenEntity();
-        if (existingCitizen != null && !existingCitizen.getPosition().equals(this.getPosition()))
-        {
-            // This Citizen already has a different Entity registered to it
-            handleExistingCitizen(data, existingCitizen);
-            return;
-        }
+        final Optional<EntityCitizen> entityCitizenOptional = data.getCitizenEntity();
+        entityCitizenOptional.filter(entityCitizen -> !this.getUniqueID().equals(entityCitizen.getUniqueID()))
+          .ifPresent(entityCitizen -> handleExistingCitizen(data, entityCitizen));
 
         setColony(c, data);
     }
@@ -2097,29 +2094,17 @@ public class EntityCitizen extends EntityAgeable implements INpc
             homeBuilding.onWakeUp();
         }
 
-        BlockPos spawn;
-        if (getBedLocation() != BlockPos.ORIGIN)
+        final BlockPos spawn;
+        if (!getBedLocation().equals(BlockPos.ORIGIN))
         {
-            spawn = Utils.scanForBlockNearPoint(
-              world,
-              getBedLocation(),
-              4,
-              2,
-              4,
-              PLAYER_HEIGHT,
-              Blocks.AIR,
-              Blocks.SNOW_LAYER,
-              Blocks.TALLGRASS,
-              Blocks.RED_FLOWER,
-              Blocks.YELLOW_FLOWER,
-              Blocks.CARPET);
+            spawn = BlockBed.getSafeExitLocation(world, getBedLocation(), 0);
         }
         else
         {
             spawn = getPosition();
         }
 
-        if (spawn != null && spawn != BlockPos.ORIGIN)
+        if (spawn != null && !spawn.equals(BlockPos.ORIGIN))
         {
             setPosition(spawn.getX(), spawn.getY(), spawn.getZ());
         }

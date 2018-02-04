@@ -1,10 +1,13 @@
 package com.minecolonies.coremod.entity.ai.util;
 
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.test.AbstractMockStaticsTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+
+import java.util.Optional;
 
 import static com.minecolonies.coremod.entity.ai.util.ChatSpamFilter.BASE_TIMEOUT;
 import static com.minecolonies.coremod.entity.ai.util.ChatSpamFilter.MAX_TIMEOUT;
@@ -17,13 +20,19 @@ public class ChatSpamFilterTest extends AbstractMockStaticsTest
     private static final String MESSAGE_2 = "Whatever2";
     @Mock
     private EntityCitizen  citizen;
+    @Mock
+    private CitizenData data;
+
     private ChatSpamFilter filter;
 
     @Before
     public void setUp()
     {
-        filter = new ChatSpamFilter(citizen);
+        when(citizen.getCitizenData()).thenReturn(data);
+        when(data.getCitizenEntity()).thenReturn(Optional.of(citizen));
         when(citizen.getOffsetTicks()).thenReturn(0);
+
+        filter = new ChatSpamFilter(citizen.getCitizenData());
     }
 
     @Test
