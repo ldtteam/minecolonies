@@ -18,7 +18,7 @@ public class PlacementError {
     private PlacementErrorType type;
     private BlockPos pos;
     
-    public PlacementError(PlacementErrorType type, BlockPos pos)
+    public PlacementError(final PlacementErrorType type, final BlockPos pos)
     {
         super();
         this.type = type;
@@ -30,7 +30,7 @@ public class PlacementError {
         return type;
     }
 
-    public void setType(PlacementErrorType type)
+    public void setType(final PlacementErrorType type)
     {
         this.type = type;
     }
@@ -40,12 +40,12 @@ public class PlacementError {
         return pos;
     }
 
-    public void setPos(BlockPos pos)
+    public void setPos(final BlockPos pos)
     {
         this.pos = pos;
     }
 
-    public static String blockListToCommaSeparatedString(List<BlockPos> blocksToReportList)
+    public static String blockListToCommaSeparatedString(final List<BlockPos> blocksToReportList)
     {
         final StringBuilder outputListStringBuilder = new StringBuilder();
         boolean firstItem = true;
@@ -57,8 +57,7 @@ public class PlacementError {
             }
             else
             {
-                outputListStringBuilder.append(',');
-                outputListStringBuilder.append(' ');
+                outputListStringBuilder.append(", ");
             }
             outputListStringBuilder.append('(');
             outputListStringBuilder.append(blockPos.getX());
