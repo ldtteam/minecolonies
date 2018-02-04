@@ -4,6 +4,7 @@ import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.views.DropDownList;
 import com.minecolonies.coremod.MineColonies;
@@ -52,11 +53,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         SUPPLYSHIP,
         SUPPLYCAMP
     }
-
-    private static final String SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY = "item.supplyCampDeployer.invalid.solid_block_needed";
-    private static final String SUPPLY_CAMP_INVALID_NEEDS_AIR_ABOVE_MESSAGE_KEY = "item.supplyCampDeployer.invalid.air_block_needed";
-    private static final String SUPPLY_CAMP_INVALID_INSIDE_COLONY_MESSAGE_KEY = "item.supplyCampDeployer.invalid.inside_existing_colony";
-    private static final String SUPPLY_CAMP_INVALID = "item.supplyCampDeployer.invalid";
 
     /**
      * All possible rotations.
@@ -946,19 +942,19 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                     switch(placementErrorType)
                     {
                         case NOT_SOLID:
-                            errorMessage = String.format(SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY, outputList);
+                            errorMessage = String.format(TranslationConstants.SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY, outputList);
                             LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage, outputList);
                             break;
                         case NEEDS_AIR_ABOVE:
-                            errorMessage = String.format(SUPPLY_CAMP_INVALID_NEEDS_AIR_ABOVE_MESSAGE_KEY, outputList);
+                            errorMessage = String.format(TranslationConstants.SUPPLY_CAMP_INVALID_NEEDS_AIR_ABOVE_MESSAGE_KEY, outputList);
                             LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage, outputList);
                             break;
                         case INSIDE_COLONY:
-                            errorMessage = SUPPLY_CAMP_INVALID_INSIDE_COLONY_MESSAGE_KEY;
+                            errorMessage = TranslationConstants.SUPPLY_CAMP_INVALID_INSIDE_COLONY_MESSAGE_KEY;
                             LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage);
                             break;
                         default:
-                            errorMessage = SUPPLY_CAMP_INVALID;
+                            errorMessage = TranslationConstants.SUPPLY_CAMP_INVALID;
                             LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage);
                             break;
                     }
