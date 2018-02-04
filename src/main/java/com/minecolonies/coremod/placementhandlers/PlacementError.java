@@ -9,9 +9,11 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.util.math.BlockPos;
 
-public class PlacementError {
+public class PlacementError
+{
 
-    public enum PlacementErrorType {
+    public enum PlacementErrorType
+    {
         NOT_SOLID,
         INSIDE_COLONY,
         NEEDS_AIR_ABOVE
