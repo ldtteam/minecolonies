@@ -920,7 +920,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
         else if (FreeMode.SUPPLYCAMP == Settings.instance.getFreeMode())
         {
-            final List<PlacementError> placementErrorList = new ArrayList<PlacementError>();
+            final List<PlacementError> placementErrorList = new ArrayList<>();
             if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
                     Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation())), placementErrorList))
             {
@@ -930,18 +930,21 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             {
                 final Map<PlacementErrorType, List<BlockPos>> blockPosListByErrorTypeMap = PlacementError.partitionPlacementErrorsByErrorType(
                         placementErrorList);
-                for (final Map.Entry<PlacementErrorType, List<BlockPos>> entry : blockPosListByErrorTypeMap.entrySet()) {
+                for (final Map.Entry<PlacementErrorType, List<BlockPos>> entry : blockPosListByErrorTypeMap.entrySet())
+                {
                     final PlacementErrorType placementErrorType = entry.getKey();
                     final List<BlockPos> blockPosList = entry.getValue();
 
                     final int numberOfBlocksTOReport = blockPosList.size() > 5 ? 5 : blockPosList.size();
                     final List<BlockPos> blocksToReportList = blockPosList.subList(0, numberOfBlocksTOReport);
                     String outputList = PlacementError.blockListToCommaSeparatedString(blocksToReportList);
-                    if (blockPosList.size() > numberOfBlocksTOReport) {
+                    if (blockPosList.size() > numberOfBlocksTOReport)
+                    {
                         outputList += "...";
                     }
                     String errorMessage;
-                    switch(placementErrorType) {
+                    switch(placementErrorType)
+                    {
                         case NOT_SOLID:
                             errorMessage = String.format(SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY, outputList);
                             LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage, outputList);

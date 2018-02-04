@@ -1,9 +1,11 @@
 package com.minecolonies.coremod.placementhandlers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.Lists;
 
 import net.minecraft.util.math.BlockPos;
 
@@ -73,15 +75,16 @@ public class PlacementError {
     public static Map<PlacementErrorType, List<BlockPos>> partitionPlacementErrorsByErrorType(
             List<PlacementError> placementErrorList)
     {
-        final Map<PlacementErrorType, List<BlockPos>> blockPosListByErrorTypeMap = new HashMap<PlacementErrorType, List<BlockPos>>();
+        final Map<PlacementErrorType, List<BlockPos>> blockPosListByErrorTypeMap = new EnumMap<>(PlacementErrorType.class);
         for (final PlacementError placementError : placementErrorList)
         {
             final PlacementErrorType key = placementError.getType();
             final BlockPos blockPos = placementError.getPos();
-            List<BlockPos> blockPosList = blockPosListByErrorTypeMap.get(key);
+            List<BlockPos> blockPosList = blockPosListByErrorTypeMap.computeIfAbsent(key, k -> Lists.newArrayList());
+
             if (null == blockPosList)
             {
-                blockPosList = new ArrayList<BlockPos>();
+                blockPosList = new ArrayList<>();
                 blockPosListByErrorTypeMap.put(key, blockPosList);
             }
             blockPosList.add(blockPos);
