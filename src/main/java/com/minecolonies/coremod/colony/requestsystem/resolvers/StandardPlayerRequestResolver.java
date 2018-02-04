@@ -72,7 +72,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 
     @Nullable
     @Override
-    public List<IToken> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest request)
+    public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest request)
     {
         if (canResolve(manager, request))
         {
