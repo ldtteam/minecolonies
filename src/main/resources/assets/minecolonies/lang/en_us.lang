@@ -518,7 +518,7 @@ com.minecolonies.coremod.request.tool.pretype=Tool of class:
 com.minecolonies.coremod.request.tool.preminlevel=with minimal level:
 com.minecolonies.coremod.request.tool.premaxlevel=with maximal level:
 
-com.minecolonies.coremod.general.and= and
+com.minecolonies.coremod.general.and=and
 
 com.minecolonies.coremod.tooltype.none=Unknown
 com.minecolonies.coremod.tooltype.pickaxe=Pickaxe

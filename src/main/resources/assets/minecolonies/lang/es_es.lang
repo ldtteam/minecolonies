@@ -433,3 +433,4 @@ com.minecolonies.coremod.status.retrieving=Trayendo
 com.minecolonies.coremod.status.idling=Desocupado
 com.minecolonies.coremod.status.mining=Minando
 item.minecolonies.scepterPermission.name=CetrodePermiso
+com.minecolonies.coremod.general.and=y
