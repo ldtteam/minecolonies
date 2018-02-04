@@ -110,19 +110,9 @@
                        color="black" textalign="MIDDLE"/>
             </group>
 
-            <group align="TOP_MIDDLE" size="80% 100%" pos="0 60">
+            <group id="citizen-stats" align="TOP_MIDDLE" size="80% 100%" pos="0 60">
                 <label id="totalCitizens" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
                 <label size="100% 11"/>
-                <label id="unemployedCitizens" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
-                <label id="builders" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
-                <label id="deliverymen" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
-                <label id="miners" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
-                <label id="fishermen" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
-                <label id="lumberjacks" label="Unkown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
-                <label id="farmers" label="Unkown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
-                <label id="bakers" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
-                <label id="cooks" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
-                <label id="Guards" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
             </group>
         </view>
         <view id="pagePermissions">

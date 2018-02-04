@@ -66,6 +66,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     private static final int ACTIONS_FOR_DUMP = 10;
 
     /**
+     * Area the worker targets.
+     */
+    private AxisAlignedBB targetArea = null;
+
+    /**
      * Creates the abstract part of the AI.
      * Always use this constructor!
      *
@@ -120,7 +125,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_DECIDING));
 
-        final int numOfBreedableAnimals = ((int) animals.stream().filter(animal -> animal.getGrowingAge() == 0).count());
+        final int numOfBreedableAnimals = (int) animals.stream().filter(animal -> animal.getGrowingAge() == 0).count();
 
         final boolean hasBreedingItem =
           InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
@@ -300,10 +305,10 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         if (this.getTargetableArea() != null)
         {
-            return new ArrayList<>((world.getEntitiesWithinAABB(
+            return new ArrayList<>(world.getEntitiesWithinAABB(
               getAnimalClass(),
               this.getTargetableArea()
-            )));
+            ));
         }
         return new ArrayList<>();
     }
@@ -322,10 +327,10 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     {
         if (this.getTargetableArea() != null)
         {
-            return new ArrayList<>((world.getEntitiesWithinAABB(
+            return new ArrayList<>(world.getEntitiesWithinAABB(
               EntityItem.class,
               this.getTargetableArea()
-            )));
+            ));
         }
         return new ArrayList<>();
     }
@@ -347,7 +352,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             return null;
         }
 
-        return getOwnBuilding().getTargetableArea(world);
+        if(targetArea == null)
+        {
+            targetArea = getOwnBuilding().getTargetableArea(world);
+        }
+        return targetArea;
     }
 
     /**
@@ -486,7 +495,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING));
 
-        if (!walkingToAnimal(animal) && worker.getHeldItemMainhand() != null && animal != null)
+        if (!walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getHeldItemMainhand()) && animal != null)
         {
             new DamageSource(worker.getName());
 

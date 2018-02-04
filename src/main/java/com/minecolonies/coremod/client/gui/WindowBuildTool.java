@@ -20,6 +20,7 @@ import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Rotation;
@@ -897,8 +898,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                         Settings.instance.getMirror()));
             }
 
-            Settings.instance.reset();
-            close();
+            if(!GuiScreen.isShiftKeyDown())
+            {
+                cancelClicked();
+            }
         }
     }
 
@@ -929,8 +932,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             }
         }
 
-        Settings.instance.reset();
-        close();
+        if(!GuiScreen.isShiftKeyDown())
+        {
+            cancelClicked();
+        }
     }
 
     /**
