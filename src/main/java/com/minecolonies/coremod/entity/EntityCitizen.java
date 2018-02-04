@@ -2094,8 +2094,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
             homeBuilding.onWakeUp();
         }
 
-        BlockPos spawn;
-        if (getBedLocation() != BlockPos.ORIGIN)
+        final BlockPos spawn;
+        if (!getBedLocation().equals(BlockPos.ORIGIN))
         {
             spawn = Utils.scanForBlockNearPoint(
               world,
@@ -2116,7 +2116,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             spawn = getPosition();
         }
 
-        if (spawn != null && spawn != BlockPos.ORIGIN)
+        if (spawn != null && !spawn.equals(BlockPos.ORIGIN))
         {
             setPosition(spawn.getX(), spawn.getY(), spawn.getZ());
         }
