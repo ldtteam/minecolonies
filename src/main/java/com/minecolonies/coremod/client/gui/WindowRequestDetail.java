@@ -145,14 +145,21 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         final String[] labels = new String[] {request.getLongDisplayString().getFormattedText()};
         final Box box = findPaneOfTypeByID(BOX_ID_REQUEST, Box.class);
         int y = Y_OFFSET_EACH_TEXTFIELD;
+        final int availableLabelWidth = box.getInteriorWidth() - 1 - box.getX();
         for (final String s : labels)
         {
-            final Label descriptionLabel = new Label();
-            descriptionLabel.setColor(BLACK, BLACK);
-            descriptionLabel.setLabelText("§r§0" + s);
-            box.addChild(descriptionLabel);
-            descriptionLabel.setPosition(1, y);
-            y += Y_OFFSET_EACH_TEXTFIELD;
+            final String labelText = "§r§0" + s;
+            // Temporary workaround until Labels support multi-line rendering
+            final List<String> multilineLabelStrings = mc.fontRenderer.listFormattedStringToWidth(labelText, availableLabelWidth);
+            for (final String splitLabelText : multilineLabelStrings)
+            {
+                final Label descriptionLabel = new Label();
+                descriptionLabel.setColor(BLACK, BLACK);
+                descriptionLabel.setLabelText(splitLabelText);
+                box.addChild(descriptionLabel);
+                descriptionLabel.setPosition(1, y);
+                y += Y_OFFSET_EACH_TEXTFIELD;
+            }
         }
 
         final ItemIcon exampleStackDisplay = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
