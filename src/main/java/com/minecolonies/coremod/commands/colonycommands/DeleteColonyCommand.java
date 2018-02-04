@@ -108,7 +108,8 @@ public class DeleteColonyCommand extends AbstractSingleCommand
         final Colony colony = ColonyManager.getColony(colonyId);
         if (colony == null)
         {
-            sender.sendMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE_ID));
+            final String noColonyFoundMessage = String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId);
+            sender.sendMessage(new TextComponentString(noColonyFoundMessage));
             return;
         }
 
