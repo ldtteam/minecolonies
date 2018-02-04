@@ -183,6 +183,14 @@ public final class TranslationConstants
     public static final String TH_TOO_LOW                                                          = "com.minecolonies.coremod.gui.townHall.tooLow";
     @NonNls
     public static final String HUNGRY_INV_FULL                                                     = "com.minecolonies.coremod.cook.full";
+    @NonNls
+    public static final String SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY                           = "item.supplyCampDeployer.invalid.solid_block_needed";
+    @NonNls
+    public static final String SUPPLY_CAMP_INVALID_NEEDS_AIR_ABOVE_MESSAGE_KEY                     = "item.supplyCampDeployer.invalid.air_block_needed";
+    @NonNls
+    public static final String SUPPLY_CAMP_INVALID_INSIDE_COLONY_MESSAGE_KEY                       = "item.supplyCampDeployer.invalid.inside_existing_colony";
+    @NonNls
+    public static final String SUPPLY_CAMP_INVALID                                                 = "item.supplyCampDeployer.invalid";
 
     private TranslationConstants()
     {
