@@ -367,6 +367,7 @@ com.minecolonies.coremod.saturation.0=Je meurs de faim. Je ne peux plus travaill
 com.minecolonies.coremod.saturation.3=J'ai très faim, je me sens faible.
 com.minecolonies.coremod.saturation.5=J'ai faim, je ne suis plus aussi productif qu'avant.
 com.minecolonies.coremod.saturation.7=Je n'ai plus faim, mais je vais bientôt devoir manger.
+com.minecolonies.coremod.general.and=et
 #tile.blockHut.warehouse.limit=
 #com.minecolonies.coremod.item.permissionscepter.setmode=
 #com.minecolonies.coremod.item.permissionscepter.permission.deny=
