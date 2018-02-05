@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -11,11 +12,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * gives ability to change the colony owner.
@@ -50,7 +53,6 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-
         if (args.length < 2)
         {
             sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
@@ -113,11 +115,18 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
             return;
         }
 
-        final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
+        EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
         if (player == null)
         {
-            sender.sendMessage(new TextComponentString(NO_PLAYER));
-            return;
+            if("[abandoned]".equals(playerName))
+            {
+                player = new FakePlayer(server.getWorld(0), new GameProfile(UUID.randomUUID(), "[abandoned]"));
+            }
+            else
+            {
+                sender.sendMessage(new TextComponentString(NO_PLAYER));
+                return;
+            }
         }
 
         if (ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player) != null)
