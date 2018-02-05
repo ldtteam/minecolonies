@@ -8,7 +8,6 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
-import com.minecolonies.coremod.util.RenderUtils;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.client.Minecraft;
@@ -67,11 +66,13 @@ public class ClientEventHandler
             final BlockPos position = Settings.instance.getPosition();
             if (Settings.instance.getStructureName().contains(AbstractEntityAIStructure.WAYPOINT_STRING))
             {
-                RenderUtils.renderWayPoints(position, world, event.getPartialTicks());
+                //TODO: Implement waypoint rendering.
+                //RenderUtils.renderWayPoints(position, world, event.getPartialTicks());
             }
             else
             {
-                RenderUtils.renderColonyBorder(position, world, event.getPartialTicks(), player, colonyBorder);
+                //TODO: Implement rendering of the colony border.
+                //RenderUtils.renderColonyBorder(position, world, event.getPartialTicks(), player, colonyBorder);
             }
             return;
         }
@@ -82,8 +83,9 @@ public class ClientEventHandler
                 final Entity entityCitizen = world.getEntityByID(citizen.getEntityId());
                 if (entityCitizen instanceof EntityCitizen)
                 {
-                    RenderUtils.renderSigns(world, event.getPartialTicks(), citizen, player,
-                      entityCitizen.getPosition());
+                    //TODO: Reimplement status rendering.
+                    //RenderUtils.renderSigns(world, event.getPartialTicks(), citizen, player,
+                    //  entityCitizen.getPosition());
                     ticksPassed += event.getPartialTicks();
                     if (ticksPassed > Constants.TICKS_SECOND * SECONDS_TO_SHOW)
                     {
@@ -108,7 +110,8 @@ public class ClientEventHandler
                     final Entity entityCitizen = world.getEntityByID(citizenDataView.getEntityId());
                     if (entityCitizen instanceof EntityCitizen && entityCitizen.getPosition().distanceSq(player.getPosition()) <= 2)
                     {
-                        RenderUtils.renderSigns(world, event.getPartialTicks(), citizenDataView, player, entityCitizen.getPosition());
+                        //TODO: Reimplement sign rendering.
+                        //RenderUtils.renderSigns(world, event.getPartialTicks(), citizenDataView, player, entityCitizen.getPosition());
                         citizen = citizenDataView;
                         return;
                     }
