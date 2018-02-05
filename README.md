@@ -91,7 +91,8 @@ This section assumes that you're using the command-line version of Git.
     * If you see `BUILD FAILED`, check the error output (it should be right around `BUILD FAILED`), fix everything (if possible), and try again.
 3. Go to `basefolder\MineColonies\build\libs`.
     *  You should see a `.jar` file named `MineColonies-universal--0.0.#.jar`, where # is the `build_number` value in `build.properties`.
-4. Copy the jar into your Minecraft mods folder, and you are done!
+4. Copy the jar into your Minecraft mods folder, and you are done! (~/.minecraft/mods on Linux)
+5. Alternatively, you can also run `./gradlew runClient` to start Minecraft with this jar.
 
 #### Updating Your Repository
 In order to get the most up-to-date builds, you'll have to periodically update your local repository.
