@@ -1,8 +1,10 @@
 package com.minecolonies.structures.event;
 
 import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.structures.client.StructureClientHandler;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
+import com.sun.jna.StructureReadContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
@@ -24,6 +26,7 @@ public class RenderEventHandler
     public void onRenderWorldLast(final RenderWorldLastEvent event)
     {
         final Structure structure = Settings.instance.getActiveStructure();
+
         if (structure != null)
         {
             BlockPos size = structure.getSize(BlockUtils.getRotation(Settings.instance.getRotation()));
@@ -57,7 +60,9 @@ public class RenderEventHandler
             {
                 position = position.subtract(offset);
             }
-            structure.renderStructure(position, Minecraft.getMinecraft().world, Minecraft.getMinecraft().player, event.getPartialTicks());
+
+            StructureClientHandler.renderStructure(Minecraft.getMinecraft().world, structure);
+            //structure.renderStructure(position, Minecraft.getMinecraft().world, Minecraft.getMinecraft().player, event.getPartialTicks());
         }
     }
 }

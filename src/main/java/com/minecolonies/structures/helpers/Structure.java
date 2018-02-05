@@ -1,32 +1,25 @@
 package com.minecolonies.structures.helpers;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.structures.fake.FakeWorld;
-import com.minecolonies.structures.lib.ModelHolder;
-import net.minecraft.block.Block;
+import net.minecraft.block.BlockIce;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.Mirror;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.datafix.DataFixer;
 import net.minecraft.util.datafix.DataFixesManager;
 import net.minecraft.util.datafix.FixTypes;
@@ -35,20 +28,15 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -91,11 +79,6 @@ public class Structure
     private final DataFixer fixer;
 
     /**
-     * List of models.
-     */
-    private final List<ModelHolder> modelList = new ArrayList<>();
-
-    /**
      * The last starting position.
      */
     private BlockPos lastStartingPos = BlockPos.ORIGIN;
@@ -107,8 +90,6 @@ public class Structure
     private Minecraft         mc;
     private PlacementSettings settings;
     private String            md5;
-
-    private static final BlockRendererDispatcher blockRenderDispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
 
     /**
      * Constuctor of Structure, tries to create a new structure.
@@ -529,37 +510,23 @@ public class Structure
     }
 
     /**
-     * Renders the structure.
-     *
-     * @param startingPos  the start pos to render.
-     * @param clientWorld  the world of the client.
-     * @param player       the player object.
-     * @param partialTicks the partial ticks.
-     */
-    public void renderStructure(@NotNull final BlockPos startingPos, @NotNull final World clientWorld, @NotNull final EntityPlayer player, final float partialTicks)
-    {
-
-    }
-
-    /**
      * Get blockInfo of structure with a specific setting.
      *
      * @param settings the setting.
      * @return the block info array.
      */
-    public Template.BlockInfo[] getBlockInfoWithSettings(final PlacementSettings settings)
+    public ImmutableList<Template.BlockInfo> getBlockInfoWithSettings(final PlacementSettings settings)
     {
-        Template.BlockInfo[] blockList = new Template.BlockInfo[template.blocks.size()];
-        blockList = template.blocks.toArray(blockList);
+        ImmutableList.Builder<Template.BlockInfo> builder = ImmutableList.builder();
 
-        for (int i = 0; i < blockList.length; i++)
-        {
-            final IBlockState finalState = blockList[i].blockState.withMirror(settings.getMirror()).withRotation(settings.getRotation());
-            final BlockPos finalPos = Template.transformedBlockPos(settings, blockList[i].pos);
-            final Template.BlockInfo finalInfo = new Template.BlockInfo(finalPos, finalState, blockList[i].tileentityData);
-            blockList[i] = finalInfo;
-        }
-        return blockList;
+        template.blocks.forEach(blockInfo -> {
+            final IBlockState finalState = blockInfo.blockState.withMirror(settings.getMirror()).withRotation(settings.getRotation());
+            final BlockPos finalPos = Template.transformedBlockPos(settings, blockInfo.pos);
+            final Template.BlockInfo finalInfo = new Template.BlockInfo(finalPos, finalState, blockInfo.tileentityData);
+            builder.add(finalInfo);
+        });
+
+        return builder.build();
     }
 
     /**
