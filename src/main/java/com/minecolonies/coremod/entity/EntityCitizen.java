@@ -2095,7 +2095,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
 
         //Only do this if he really sleeps
-        if(isAsleep())
+        if (!isAsleep())
+        {
+            return;
+        }
+
+        final BlockPos spawn;
+        if (!getBedLocation().equals(BlockPos.ORIGIN))
         {
             final BlockPos spawn;
             if (!getBedLocation().equals(BlockPos.ORIGIN))
