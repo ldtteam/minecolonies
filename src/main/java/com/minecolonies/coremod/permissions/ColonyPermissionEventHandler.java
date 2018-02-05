@@ -26,7 +26,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.event.entity.player.*;
+import net.minecraftforge.event.entity.player.ArrowLooseEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import net.minecraftforge.event.entity.player.FillBucketEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -44,6 +48,9 @@ import java.util.stream.Collectors;
 public class ColonyPermissionEventHandler
 {
 
+    /**
+     * The colony involved in this permission-check event
+     */
     private final Colony colony;
 
     /**
@@ -78,6 +85,7 @@ public class ColonyPermissionEventHandler
      * @param posIn      the block to check
      * @param playerIn   the player who tries
      * @param blockState the state that block is in
+     * @param action     the action that was performed on the position
      * @return true if canceled
      */
     private boolean checkBlockEventDenied(
@@ -114,6 +122,14 @@ public class ColonyPermissionEventHandler
         return false;
     }
 
+    /**
+     * Cancel an event and record the denial details in the colony's town hall.
+     * @param event the event to cancel
+     * @param player the player whose action was denied
+     * @param colony the colony where the event took place
+     * @param action the action which was denied
+     * @param pos the location of the action which was denied
+     */
     private static void cancelEvent(final Event event, @Nullable final EntityPlayer player, final Colony colony, final Action action, final BlockPos pos)
     {
         event.setResult(Event.Result.DENY);
@@ -122,19 +138,19 @@ public class ColonyPermissionEventHandler
             event.setCanceled(true);
             if (player == null)
             {
-                if(colony.hasTownHall())
+                if (colony.hasTownHall())
                 {
                     colony.getBuildingManager().getTownHall().addPermissionEvent(new PermissionEvent(null, "-", action, pos));
                 }
                 return;
             }
-            if(colony.hasTownHall())
+            if (colony.hasTownHall())
             {
                 colony.getBuildingManager().getTownHall().addPermissionEvent(new PermissionEvent(player.getUniqueID(), player.getName(), action, pos));
             }
 
 
-            if(player instanceof FakePlayer)
+            if (player instanceof FakePlayer)
             {
                 return;
             }
@@ -286,6 +302,7 @@ public class ColonyPermissionEventHandler
      * Check in the config if that block can be interacted with freely.
      *
      * @param block the block to check.
+     * @param pos   the position of the interaction
      * @return true if so.
      */
     private boolean isFreeToInteractWith(@Nullable final Block block, final BlockPos pos)
@@ -318,21 +335,28 @@ public class ColonyPermissionEventHandler
     /**
      * Check if the event should be canceled for a given player and minimum rank.
      *
+     * @param action   the action that was performed on the position
      * @param playerIn the player.
      * @param world    the world.
      * @param event    the event.
-     * @param pos      the position.
+     * @param pos      the position.  Can be null if no target was provided to the event.
      * @return true if canceled.
      */
-    private boolean checkEventCancelation(final Action action, @NotNull final EntityPlayer playerIn, @NotNull final World world, @NotNull final Event event, final BlockPos pos)
+    private boolean checkEventCancelation(final Action action, @NotNull final EntityPlayer playerIn, @NotNull final World world, @NotNull final Event event,
+            @Nullable final BlockPos pos)
     {
         @NotNull final EntityPlayer player = EntityUtils.getPlayerOfFakePlayer(playerIn, world);
 
+        BlockPos positionToCheck = pos;
+        if (null == positionToCheck)
+        {
+            positionToCheck = player.getPosition();
+        }
         if (Configurations.gameplay.enableColonyProtection
-              && colony.isCoordInColony(player.getEntityWorld(), player.getPosition())
+              && colony.isCoordInColony(player.getEntityWorld(), positionToCheck)
               && !colony.getPermissions().hasPermission(player, action))
         {
-            cancelEvent(event, player, colony, action, pos);
+            cancelEvent(event, player, colony, action, positionToCheck);
             return true;
         }
         return false;
@@ -407,7 +431,12 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final FillBucketEvent event)
     {
-        checkEventCancelation(Action.FILL_BUCKET, event.getEntityPlayer(), event.getEntityPlayer().getEntityWorld(), event, event.getTarget().getBlockPos());
+        @Nullable BlockPos targetBlockPos = null;
+        if (null != event.getTarget())
+        {
+            targetBlockPos = event.getTarget().getBlockPos();
+        }
+        checkEventCancelation(Action.FILL_BUCKET, event.getEntityPlayer(), event.getEntityPlayer().getEntityWorld(), event, targetBlockPos);
     }
 
     /**
