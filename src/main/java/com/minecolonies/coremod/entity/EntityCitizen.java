@@ -2094,6 +2094,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             homeBuilding.onWakeUp();
         }
 
+        //Only do this if he really sleeps
         if (!isAsleep())
         {
             return;
@@ -2102,18 +2103,21 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final BlockPos spawn;
         if (!getBedLocation().equals(BlockPos.ORIGIN))
         {
-            spawn = BlockBed.getSafeExitLocation(world, getBedLocation(), 0);
-        }
-        else
-        {
-            spawn = getPosition();
-        }
+            final BlockPos spawn;
+            if (!getBedLocation().equals(BlockPos.ORIGIN))
+            {
+                spawn = BlockBed.getSafeExitLocation(world, getBedLocation(), 0);
+            }
+            else
+            {
+                spawn = getPosition();
+            }
 
-        if (spawn != null && !spawn.equals(BlockPos.ORIGIN))
-        {
-            setPosition(spawn.getX(), spawn.getY(), spawn.getZ());
+            if (spawn != null && !spawn.equals(BlockPos.ORIGIN))
+            {
+                setPosition(spawn.getX(), spawn.getY(), spawn.getZ());
+            }
         }
-
         setIsAsleep(false);
         dataManager.set(DATA_BED_POS, new BlockPos(0, 0, 0));
     }

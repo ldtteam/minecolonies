@@ -181,6 +181,15 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
     }
 
     /**
+     * Get the top colony id.
+     * @return the top id.
+     */
+    public int getTopID()
+    {
+        return topID;
+    }
+
+    /**
      * Return the number of Colonies in the list.
      *
      * @return number of Colonies in the list.
