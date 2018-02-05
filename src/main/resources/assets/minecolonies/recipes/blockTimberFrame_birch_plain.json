@@ -3,12 +3,15 @@
   "pattern": [
     " X ",
     " X ",
-    " X "
+    " B "
   ],
   "key": {
     "X": {
       "item": "minecraft:planks",
       "data": 2
+    },
+    "B": {
+      "item": "minecolonies:sceptergold"
     }
   },
   "result": {
