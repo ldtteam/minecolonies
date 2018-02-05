@@ -324,15 +324,20 @@ public class ColonyPermissionEventHandler
      * @param pos      the position.
      * @return true if canceled.
      */
-    private boolean checkEventCancelation(final Action action, @NotNull final EntityPlayer playerIn, @NotNull final World world, @NotNull final Event event, final BlockPos pos)
+    private boolean checkEventCancelation(final Action action, @NotNull final EntityPlayer playerIn, @NotNull final World world, @NotNull final Event event, @Nullable final BlockPos pos)
     {
         @NotNull final EntityPlayer player = EntityUtils.getPlayerOfFakePlayer(playerIn, world);
 
+        BlockPos positionToCheck = pos;
+        if (null == positionToCheck)
+        {
+            positionToCheck = player.getPosition();
+        }
         if (Configurations.gameplay.enableColonyProtection
-              && colony.isCoordInColony(player.getEntityWorld(), player.getPosition())
+              && colony.isCoordInColony(player.getEntityWorld(), positionToCheck)
               && !colony.getPermissions().hasPermission(player, action))
         {
-            cancelEvent(event, player, colony, action, pos);
+            cancelEvent(event, player, colony, action, positionToCheck);
             return true;
         }
         return false;
@@ -407,7 +412,12 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final FillBucketEvent event)
     {
-        checkEventCancelation(Action.FILL_BUCKET, event.getEntityPlayer(), event.getEntityPlayer().getEntityWorld(), event, event.getTarget().getBlockPos());
+        @Nullable BlockPos targetBlockPos = null;
+        if (null != event.getTarget())
+        {
+            targetBlockPos = event.getTarget().getBlockPos();
+        }
+        checkEventCancelation(Action.FILL_BUCKET, event.getEntityPlayer(), event.getEntityPlayer().getEntityWorld(), event, targetBlockPos);
     }
 
     /**
