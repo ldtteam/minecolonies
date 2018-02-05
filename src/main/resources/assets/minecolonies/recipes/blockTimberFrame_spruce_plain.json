@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " X ",
+    " X ",
+    " X "
+  ],
+  "key": {
+    "X": {
+      "item": "minecraft:planks",
+      "data": 1
+    }
+  },
+  "result": {
+    "item": "minecolonies:blocktimberframe_spruce",
+    "data": 0,
+    "count": 4
+  }
+}

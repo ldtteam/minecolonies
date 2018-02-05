@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " X ",
+    " X ",
+    " X "
+  ],
+  "key": {
+    "X": {
+      "item": "minecraft:planks",
+      "data": 5
+    }
+  },
+  "result": {
+    "item": "minecolonies:blocktimberframe_dark_oak",
+    "data": 0,
+    "count": 4
+  }
+}
