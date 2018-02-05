@@ -2094,6 +2094,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
             homeBuilding.onWakeUp();
         }
 
+        if (!isAsleep())
+        {
+            return;
+        }
+
         final BlockPos spawn;
         if (!getBedLocation().equals(BlockPos.ORIGIN))
         {
