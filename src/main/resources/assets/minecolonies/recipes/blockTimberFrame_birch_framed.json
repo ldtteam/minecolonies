@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecolonies:blocktimberframe_birch",
+      "data": 1
+    }
+  ],
+  "result": {
+    "item": "minecolonies:blocktimberframe_birch",
+    "data": 2,
+    "count": 1
+  }
+}
