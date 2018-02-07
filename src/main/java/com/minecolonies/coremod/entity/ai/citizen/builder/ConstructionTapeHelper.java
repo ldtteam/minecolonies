@@ -14,6 +14,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -144,29 +145,20 @@ public final class ConstructionTapeHelper
 
     public static int checkIfPlaceable(@NotNull final int x, @NotNull final int y, @NotNull final int z, @NotNull final World world)
     {
-        int newY = y;
-        boolean working = true;
-        while (working)
+        BlockPos target = new BlockPos(x,y,z);
+        final Chunk chunk = world.getChunkFromBlockCoords(target);
+
+        target = new BlockPos(x, chunk.getTopFilledSegment() + 16, z);
+        while(world.getBlockState(target).getMaterial().isReplaceable())
         {
-            final BlockPos block = new BlockPos(x, newY, z);
-            final BlockPos blockMin1 = new BlockPos(x, newY - 1, z);
-            if (world.getBlockState(block).getMaterial().isReplaceable())
+            target = target.down();
+            if (target.getY() == 0)
             {
-                if (world.getBlockState(blockMin1).getMaterial().isReplaceable() && newY >= 1)
-                {
-                    newY = newY - 1;
-                }
-                else
-                {
-                    working = false;
-                }
-            }
-            else
-            {
-                newY = newY + 1;
+                break;
             }
         }
-        return newY > 0 ? newY : y;
+
+        return target.getY() + 1;
     }
 
     /**
