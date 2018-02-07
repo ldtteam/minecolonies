@@ -120,7 +120,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
         {
             if("[abandoned]".equals(playerName))
             {
-                player = new FakePlayer(server.getWorld(0), new GameProfile(UUID.randomUUID(), "[abandoned]"));
+                player = new FakePlayer(server.worldServerForDimension(0), new GameProfile(UUID.randomUUID(), "[abandoned]"));
             }
             else
             {
