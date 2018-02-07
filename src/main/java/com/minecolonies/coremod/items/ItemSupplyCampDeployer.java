@@ -5,6 +5,9 @@ import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
+import com.minecolonies.coremod.placementhandlers.PlacementError;
+import com.minecolonies.coremod.placementhandlers.PlacementError.PlacementErrorType;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -17,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.Constants.*;
+
+import java.util.List;
 
 /**
  * Class to handle the placement of the supplychest and with it the supplycamp.
@@ -128,16 +133,13 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      * @return true if so.
      */
     @NotNull
-    public static boolean canCampBePlaced(@NotNull final World world, @NotNull final BlockPos pos, final BlockPos size)
+    public static boolean canCampBePlaced(@NotNull final World world, @NotNull final BlockPos pos, final BlockPos size, @NotNull final List<PlacementError> placementErrorList)
     {
         for(int z = pos.getZ() - size.getZ() / 2 + 1; z < pos.getZ() + size.getZ() / 2 + 1; z++)
         {
             for(int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
             {
-                if(!checkIfSolidAndNotInColony(world, new BlockPos(x, pos.getY(), z)))
-                {
-                    return false;
-                }
+                checkIfSolidAndNotInColony(world, new BlockPos(x, pos.getY(), z), placementErrorList);
             }
         }
 
@@ -147,11 +149,13 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
             {
                 if(!world.isAirBlock(new BlockPos(x, pos.getY()+1, z)))
                 {
-                    return false;
+                    final PlacementError placementError = new PlacementError(PlacementErrorType.NEEDS_AIR_ABOVE, pos);
+                    placementErrorList.add(placementError);
                 }
             }
         }
-        return true;
+
+        return placementErrorList.isEmpty();
     }
 
     /**
@@ -161,9 +165,21 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      * @param pos  the position.
      * @return true if is water
      */
-    private static boolean checkIfSolidAndNotInColony(final World world, final BlockPos pos)
+    private static boolean checkIfSolidAndNotInColony(final World world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList)
     {
-        return world.getBlockState(pos).getMaterial().isSolid() && notInAnyColony(world, pos);
+        final boolean isSolid = world.getBlockState(pos).getMaterial().isSolid();
+        final boolean notInAnyColony = notInAnyColony(world, pos);
+        if (!isSolid)
+        {
+            final PlacementError placementError = new PlacementError(PlacementErrorType.NOT_SOLID, pos);
+            placementErrorList.add(placementError);
+        }
+        if (!notInAnyColony)
+        {
+            final PlacementError placementError = new PlacementError(PlacementErrorType.INSIDE_COLONY, pos);
+            placementErrorList.add(placementError);
+        }
+        return isSolid && notInAnyColony;
     }
 
     /**

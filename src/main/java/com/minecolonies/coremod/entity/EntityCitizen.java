@@ -28,6 +28,7 @@ import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -2094,31 +2095,25 @@ public class EntityCitizen extends EntityAgeable implements INpc
             homeBuilding.onWakeUp();
         }
 
-        BlockPos spawn;
-        if (getBedLocation() != BlockPos.ORIGIN)
+        //Only do this if he really sleeps
+        if (!isAsleep())
         {
-            spawn = Utils.scanForBlockNearPoint(
-              world,
-              getBedLocation(),
-              4,
-              2,
-              4,
-              PLAYER_HEIGHT,
-              Blocks.AIR,
-              Blocks.SNOW_LAYER,
-              Blocks.TALLGRASS,
-              Blocks.RED_FLOWER,
-              Blocks.YELLOW_FLOWER,
-              Blocks.CARPET);
+            return;
+        }
+        
+        final BlockPos spawn;
+        if (!getBedLocation().equals(BlockPos.ORIGIN))
+        {
+            spawn = BlockBed.getSafeExitLocation(world, getBedLocation(), 0);
         }
         else
         {
             spawn = getPosition();
         }
 
-        if (spawn != null && spawn != BlockPos.ORIGIN)
+        if (spawn != null && !spawn.equals(BlockPos.ORIGIN))
         {
-            setPosition(spawn.getX(), spawn.getY(), spawn.getZ());
+            setPosition(spawn.getX() + Constants.HALF_BLOCK, spawn.getY() + Constants.HALF_BLOCK, spawn.getZ() + Constants.HALF_BLOCK);
         }
 
         setIsAsleep(false);
