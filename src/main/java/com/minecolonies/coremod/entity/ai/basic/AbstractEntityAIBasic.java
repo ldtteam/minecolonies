@@ -874,10 +874,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST);
         }
-        if (isBuildingChestFull())
-        {
-            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST);
-        }
         //collect items that are nice to have if they are available
         this.itemsNiceToHave().forEach(this::isInHut);
         // we dumped the inventory, reset actions done
@@ -913,19 +909,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean isInventoryAndChestFull()
     {
-        return InventoryUtils.isProviderFull(worker) && isBuildingChestFull();
-    }
-
-    /**
-     * Checks if the worker building chest is full.
-     *
-     * @return true if full
-     */
-    private boolean isBuildingChestFull()
-    {
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
-        return buildingWorker != null
-               && InventoryUtils.isProviderFull(buildingWorker.getTileEntity());
+        return InventoryUtils.isProviderFull(worker)
+                 && (buildingWorker != null
+                       && InventoryUtils.isProviderFull(buildingWorker.getTileEntity()));
     }
 
     /**
