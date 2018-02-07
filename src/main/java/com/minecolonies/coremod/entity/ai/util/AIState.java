@@ -314,11 +314,6 @@ public enum AIState
     ###Smelter###
      */
     /**
-     * Get some burnable material for the furnace.
-     */
-    SMELTER_GET_FIREWOOD,
-
-    /**
      * smelter smelts ore until its a bar.
      */
     SMELTER_SMELT_ORE,

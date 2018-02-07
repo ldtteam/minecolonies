@@ -34,7 +34,7 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
  */
 public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
 {
-    //todo add status for sign over their head
+    //TODO: add status for sign over their head
     /**
      * How often should strength factor into the smelter's skill modifier.
      */
@@ -53,7 +53,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
     /**
      * Wait this amount of ticks after requesting a burnable material.
      */
-    private static final int WAIT_AFTER_REQUEST = 400;
+    private static final int WAIT_AFTER_REQUEST = 50;
 
     /**
      * Time the worker delays until the next hit.
@@ -109,14 +109,14 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
     private BlockPos walkTo = null;
 
     /**
-     * What he currently might be needing.
-     */
-    private Predicate<ItemStack> needsCurrently = null;
-
-    /**
      * Progress in hitting the product.
      */
     private int progress = 0;
+
+    /**
+     * What he currently might be needing.
+     */
+    private Predicate<ItemStack> needsCurrently = null;
 
     /**
      * Constructor for the Smelter.
@@ -130,10 +130,9 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
         super.registerTargets(
                 new AITarget(IDLE, START_WORKING),
                 new AITarget(START_WORKING, this::startWorking),
-                new AITarget(SMELTER_GATHERING, this::gatherOreFromBuilding),
+                new AITarget(SMELTER_GATHERING, this::getNeededItem),
                 new AITarget(SMELTER_SMELT_ORE, this::smeltOre),
                 new AITarget(SMELTER_RETRIEVE_ORE, this::retrieve),
-                new AITarget(SMELTER_GET_FIREWOOD, this::getBurnableMaterial),
                 new AITarget(SMELTER_SMELT_STUFF, this::smeltStuff)
         );
         worker.setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
@@ -141,6 +140,10 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
         worker.setCanPickUpLoot(true);
     }
 
+    /**
+     * He will smelt down armor, weapons and tools to smaller pieces here.
+     * @return the next state to go to.
+     */
     private AIState smeltStuff()
     {
         if (walkToBuilding())
@@ -253,28 +256,30 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
         return new Tuple<>(material, amount);
     }
 
-    private AIState getBurnableMaterial()
+    /**
+     * Retrieve burnable material from the building to get to start smelting.
+     * @return the next state to transfer to.
+     */
+    private AIState getNeededItem()
     {
         if (walkTo == null && walkToBuilding())
         {
             return getState();
         }
 
-        if (InventoryUtils.hasItemInProvider(getOwnBuilding(), TileEntityFurnace::isItemFuel))
+        if (needsCurrently == null || !InventoryUtils.hasItemInProvider(getOwnBuilding(), needsCurrently))
         {
-            if (!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Burnable.class)))
-            {
-                worker.getCitizenData().createRequestAsync(new Burnable(STACKSIZE));
-            }
-            setDelay(WAIT_AFTER_REQUEST);
+            setDelay(STANDARD_DELAY);
+            return START_WORKING;
         }
         else
         {
             if (walkTo == null)
             {
-                final BlockPos pos = getOwnBuilding().getTileEntity().getPositionOfChestWithItemStack(TileEntityFurnace::isItemFuel);
+                final BlockPos pos = getOwnBuilding().getTileEntity().getPositionOfChestWithItemStack(needsCurrently);
                 if (pos == null)
                 {
+                    setDelay(STANDARD_DELAY);
                     return START_WORKING;
                 }
                 walkTo = pos;
@@ -282,10 +287,11 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
 
             if (walkToBlock(walkTo))
             {
+                setDelay(2);
                 return getState();
             }
 
-            final boolean transfered = tryTransferFromPosToWorker(walkTo, TileEntityFurnace::isItemFuel);
+            final boolean transfered = tryTransferFromPosToWorker(walkTo, needsCurrently);
             if (!transfered)
             {
                 walkTo = null;
@@ -294,9 +300,14 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
             walkTo = null;
         }
 
-        return SMELTER_SMELT_ORE;
+        setDelay(STANDARD_DELAY);
+        return START_WORKING;
     }
 
+    /**
+     * Retrieve ready bars from the furnaces.
+     * @return the next state to go to.
+     */
     private AIState retrieve()
     {
         if (walkTo == null)
@@ -306,42 +317,32 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
 
         if (walkToBlock(walkTo))
         {
+            setDelay(2);
             return getState();
         }
 
         final TileEntity entity = world.getTileEntity(walkTo);
         if (!(entity instanceof TileEntityFurnace)
                 || ((TileEntityFurnace) entity).isBurning()
-                || (ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(RESULT_SLOT))
-                && ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(ORE_SLOT))))
+                || (ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(RESULT_SLOT))))
         {
             walkTo = null;
             return START_WORKING;
         }
+
         walkTo = null;
 
-        gatherOreFromFurnaceWithChance((TileEntityFurnace) entity);
-
-        if (!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(ORE_SLOT)))
-        {
-            if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel))
-            {
-                walkTo = null;
-                return SMELTER_GET_FIREWOOD;
-            }
-
-            InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(
-                    new InvWrapper(worker.getInventoryCitizen()),
-                    InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel),
-                    new InvWrapper((TileEntityFurnace) entity));
-        }
-
+        gatherBarsFromFurnaceWithChance((TileEntityFurnace) entity);
         incrementActionsDone();
         setDelay(STANDARD_DELAY);
         return START_WORKING;
     }
 
-    private void gatherOreFromFurnaceWithChance(final TileEntityFurnace furnace)
+    /**
+     * Gather bars from the furnace and double or triple them by chance.
+     * @param furnace the furnace to retrieve from.
+     */
+    private void gatherBarsFromFurnaceWithChance(final TileEntityFurnace furnace)
     {
         final ItemStack ingots = new InvWrapper(furnace).extractItem(RESULT_SLOT, STACKSIZE, false);
         final int multiplier = ((BuildingSmeltery) getOwnBuilding()).ingotMultiplier(worker.getCitizenData().getLevel(), worker.getRandom());
@@ -371,65 +372,23 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
         }
     }
 
-    private AIState gatherOreFromBuilding()
-    {
-        if (needsCurrently == null)
-        {
-            needsCurrently = EntityAIWorkSmelter::isSmeltableOre;
-        }
-
-        if(getOwnBuilding() == null || getOwnBuilding().getTileEntity() == null)
-        {
-            return START_WORKING;
-        }
-
-        final BlockPos pos = getOwnBuilding().getTileEntity().getPositionOfChestWithItemStack(needsCurrently);
-        if (pos == null)
-        {
-            return START_WORKING;
-        }
-
-        if (walkToBlock(pos))
-        {
-            return getState();
-        }
-
-        tryTransferFromPosToWorker(pos, needsCurrently);
-        setDelay(STANDARD_DELAY);
-        return START_WORKING;
-    }
-
+    /**
+     * Smelt the ore after the required items are in the inv.
+     * @return the next state to go to.
+     */
     private AIState smeltOre()
     {
         if (((BuildingSmeltery) getOwnBuilding()).getFurnaces().isEmpty())
         {
             chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_BAKER_NO_FURNACES);
+            setDelay(STANDARD_DELAY);
             return START_WORKING;
         }
 
-        if (!InventoryUtils.hasItemInItemHandler(
-                new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableOre)
-                && (walkTo == null || world.getBlockState(walkTo).getBlock() != Blocks.FURNACE))
+        if (walkTo == null || world.getBlockState(walkTo).getBlock() != Blocks.FURNACE)
         {
             walkTo = null;
-            needsCurrently = EntityAIWorkSmelter::isSmeltableOre;
-            return SMELTER_GATHERING;
-        }
-
-        if (walkTo == null)
-        {
-            for (final BlockPos pos : ((BuildingSmeltery) getOwnBuilding()).getFurnaces())
-            {
-                final TileEntity entity = world.getTileEntity(pos);
-                if (ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(ORE_SLOT)))
-                {
-                    walkTo = pos;
-                }
-            }
-        }
-
-        if (walkTo == null)
-        {
+            setDelay(STANDARD_DELAY);
             return START_WORKING;
         }
 
@@ -442,40 +401,41 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
         final TileEntity entity = world.getTileEntity(walkTo);
         if (entity instanceof TileEntityFurnace)
         {
-            InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                    new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableOre, STACKSIZE,
-                    new InvWrapper((TileEntityFurnace) entity), ORE_SLOT);
+            final TileEntityFurnace furnace = (TileEntityFurnace) entity;
 
-            if (ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(FUEL_SLOT)))
+            if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableOre)
+                    && (hasFuelInFurnaceAndNoOre(furnace) || hasNeitherFuelNorOre(furnace)))
             {
-                if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel))
-                {
-                    walkTo = null;
-                    return SMELTER_GET_FIREWOOD;
-                }
-
                 InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                        new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel, STACKSIZE,
-                        new InvWrapper((TileEntityFurnace) entity), FUEL_SLOT);
+                        new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableOre, STACKSIZE,
+                        new InvWrapper(furnace), ORE_SLOT);
             }
 
-            walkTo = null;
-            return START_WORKING;
+            if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel)
+                    && (hasOreInFurnaceAndNoFuel(furnace) || hasNeitherFuelNorOre(furnace)))
+            {
+                InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
+                        new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel, STACKSIZE,
+                        new InvWrapper(furnace), FUEL_SLOT);
+            }
         }
         walkTo = null;
         setDelay(STANDARD_DELAY);
-        return SMELTER_SMELT_ORE;
+        return START_WORKING;
     }
 
+    /**
+     * Get the furnace which has finished ores.
+     * @return the position of the furnace.
+     */
     private BlockPos getPositionOfOvenToRetrieveFrom()
     {
         for (final BlockPos pos : ((BuildingSmeltery) getOwnBuilding()).getFurnaces())
         {
             final TileEntity entity = world.getTileEntity(pos);
             if (entity instanceof TileEntityFurnace && !((TileEntityFurnace) entity).isBurning()
-                    && (!ItemStackUtils.isEmpty(((TileEntityFurnace) entity)
-                    .getStackInSlot(RESULT_SLOT))
-                    || !ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(ORE_SLOT))))
+                    && !ItemStackUtils.isEmpty(((TileEntityFurnace) entity)
+                    .getStackInSlot(RESULT_SLOT)))
             {
                 worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.retrieving"));
                 return pos;
@@ -490,36 +450,56 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
         return 1;
     }
 
+    /**
+     * Central method of the smelter, he decides about what to do next from here.
+     * @return the next state to go to.
+     */
     private AIState startWorking()
     {
         final BlockPos posOfOven = getPositionOfOvenToRetrieveFrom();
         if (posOfOven != null)
         {
             walkTo = posOfOven;
+            worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.retrieving"));
             return SMELTER_RETRIEVE_ORE;
         }
 
-        final int amountOfOre = InventoryUtils.getItemCountInProvider(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableOre)
-                + InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableOre);
+        final int amountOfOreInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableOre);
+        final int amountOfOreInInv = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableOre);
 
-        if (amountOfOre <= 0)
+        final int amountOfFuelInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), TileEntityFurnace::isItemFuel);
+        final int amountOfFuelInInv = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel);
+
+        if (amountOfOreInBuilding + amountOfOreInInv <= 0 && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(SmeltableOre.class)))
         {
-            worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.gathering"));
-            if (!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(SmeltableOre.class)))
-            {
-                worker.getCitizenData().createRequestAsync(new SmeltableOre(STACKSIZE));
-            }
+            worker.getCitizenData().createRequestAsync(new SmeltableOre(STACKSIZE));
+        }
+        else if (amountOfFuelInBuilding + amountOfFuelInInv <= 0 && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Burnable.class)))
+        {
+            worker.getCitizenData().createRequestAsync(new Burnable(STACKSIZE));
         }
 
-        return checkForAdditionalJobs(amountOfOre);
+        if(amountOfOreInBuilding > 0 && amountOfFuelInInv == 0)
+        {
+            needsCurrently = TileEntityFurnace::isItemFuel;
+            return SMELTER_GATHERING;
+        }
+        else if(amountOfFuelInBuilding > 0 && amountOfFuelInInv == 0)
+        {
+            needsCurrently = EntityAIWorkSmelter::isSmeltableOre;
+            return SMELTER_GATHERING;
+        }
+
+        return checkForAdditionalJobs(amountOfOreInInv, amountOfFuelInInv);
     }
 
     /**
      * If no clear tasks are given, check if something else is to do.
      * @param amountOfOre the amount of ore.
+     * @param amountOfFuel the amoutn of fuel.
      * @return the next AIState to traverse to.
      */
-    private AIState checkForAdditionalJobs(final int amountOfOre)
+    private AIState checkForAdditionalJobs(final int amountOfOre, final int amountOfFuel)
     {
         final int amountOfTools = InventoryUtils.getItemCountInProvider(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableToolOrWeapon)
                 + InventoryUtils.getItemCountInItemHandler(
@@ -528,26 +508,16 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
         for (final BlockPos pos : ((BuildingSmeltery) getOwnBuilding()).getFurnaces())
         {
             final TileEntity entity = world.getTileEntity(pos);
-            if (entity instanceof TileEntityFurnace && !((TileEntityFurnace) entity).isBurning())
+
+            if(entity instanceof TileEntityFurnace && !((TileEntityFurnace) entity).isBurning())
             {
-                if (!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(RESULT_SLOT)))
+                final TileEntityFurnace furnace = (TileEntityFurnace) entity;
+                if ((amountOfOre > 0 && hasOreInFurnaceAndNoFuel(furnace))
+                        || (amountOfFuel > 0 && hasFuelInFurnaceAndNoOre(furnace))
+                        || (amountOfFuel > 0 && amountOfOre > 0 && hasNeitherFuelNorOre(furnace)))
                 {
                     walkTo = pos;
-                    worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.retrieving"));
-                    return SMELTER_RETRIEVE_ORE;
-                }
-                else if (!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(ORE_SLOT))
-                        || !ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(FUEL_SLOT)))
-                {
-                    worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.cooking"));
                     return SMELTER_SMELT_ORE;
-                }
-            }
-            else
-            {
-                if(amountOfTools > 0)
-                {
-                    return SMELTER_SMELT_STUFF;
                 }
             }
         }
@@ -557,8 +527,42 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
             return SMELTER_SMELT_STUFF;
         }
         worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.idling"));
-        setDelay(STANDARD_DELAY);
-        return SMELTER_SMELT_ORE;
+        setDelay(WAIT_AFTER_REQUEST);
+        walkToBuilding();
+        return START_WORKING;
+    }
+
+    /**
+     * Check if the furnace has ore in it and fuel empty.
+     * @param entity the furnace.
+     * @return true if so.
+     */
+    private static boolean hasOreInFurnaceAndNoFuel(final TileEntityFurnace entity)
+    {
+        return !ItemStackUtils.isEmpty(entity.getStackInSlot(ORE_SLOT))
+                && ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
+    }
+
+    /**
+     * Check if the furnace has ore in it and fuel empty.
+     * @param entity the furnace.
+     * @return true if so.
+     */
+    private static boolean hasNeitherFuelNorOre(final TileEntityFurnace entity)
+    {
+        return ItemStackUtils.isEmpty(entity.getStackInSlot(ORE_SLOT))
+                && ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
+    }
+
+    /**
+     * Check if the furnace has fuel in it and ore empty.
+     * @param entity the furnace.
+     * @return true if so.
+     */
+    private static boolean hasFuelInFurnaceAndNoOre(final TileEntityFurnace entity)
+    {
+        return ItemStackUtils.isEmpty(entity.getStackInSlot(ORE_SLOT))
+                && !ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
     }
 
     /**
