@@ -151,6 +151,7 @@ public final class StandardRequests
 
             if (getRequest().getMinLevel() > ToolLevelConstants.TOOL_LEVEL_HAND)
             {
+                preType.appendText(" ");
                 preType.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMINLEVEL));
                 preType.appendText(ItemStackUtils.swapToolGrade(getRequest().getMinLevel()));
             }
@@ -159,9 +160,11 @@ public final class StandardRequests
             {
                 if (getRequest().getMinLevel() > ToolLevelConstants.TOOL_LEVEL_HAND)
                 {
+                    preType.appendText(" ");
                     preType.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_GENERAL_AND));
                 }
 
+                preType.appendText(" ");
                 preType.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMAXLEVEL));
                 preType.appendText(ItemStackUtils.swapToolGrade(getRequest().getMaxLevel()));
             }
