@@ -2113,7 +2113,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (spawn != null && !spawn.equals(BlockPos.ORIGIN))
         {
-            setPosition(spawn.getX(), spawn.getY(), spawn.getZ());
+            setPosition(spawn.getX() + Constants.HALF_BLOCK, spawn.getY() + Constants.HALF_BLOCK, spawn.getZ() + Constants.HALF_BLOCK);
         }
 
         setIsAsleep(false);
