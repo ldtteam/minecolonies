@@ -282,20 +282,20 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
                                      final float hitY,
                                      final float hitZ)
     {
-        /*
-        If the world is client, open the gui of the building
-         */
-        if (!worldIn.isRemote)
-        {
-            final Colony colony = ColonyManager.getColony(worldIn, pos);
-            final TileEntity tileEntity = worldIn.getTileEntity(pos);
+        final Colony colony = ColonyManager.getColony(worldIn, pos);
+        final TileEntity tileEntity = worldIn.getTileEntity(pos);
 
-            if ((colony == null || colony.getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS))
-                  && tileEntity instanceof TileEntityRack)
+        if ((colony == null || colony.getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS))
+              && tileEntity instanceof TileEntityRack)
+        {
+            /*
+            If the world is client, open the gui of the building
+             */
+            if (worldIn.isRemote)
             {
                 playerIn.openGui(MineColonies.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
-                return true;
             }
+            return true;
         }
         return false;
     }
