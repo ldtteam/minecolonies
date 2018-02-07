@@ -153,7 +153,9 @@ public final class ConstructionTapeHelper
         {
             target = target.down();
             if (target.getY() == 0)
+            {
                 break;
+            }
         }
 
         return target.getY() + 1;
