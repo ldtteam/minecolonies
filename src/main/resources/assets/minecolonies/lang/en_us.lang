@@ -427,6 +427,12 @@ com.minecolonies.coremod.permission.access_free_blocks=Access free-blocks
 com.minecolonies.coremod.permission.explode=Explode
 
 item.supplyCampDeployer.invalid=Requiring a flat ground of at least 16*17.
+item.supplyCampDeployer.invalid.solid_block_needed=Placing a supply camp requires flat ground of at least 16*17.  These blocks must be solid: %s.
+item.supplyCampDeployer.invalid.air_block_needed=Placing a supply camp requires flat ground of at least 16*17.  These blocks must be air: %s.
+item.supplyCampDeployer.invalid.inside_existing_colony=You cannot place your supply camp near an existing colony.
+item.minecolonies.supplyChestDeployer.name=SupplyShip Chest
+item.minecolonies.supplyCampDeployer.name=SupplyCamp Chest
+com.minecolonies.coremod.error.supplyChestAlreadyPlaced=You have already placed a supply ship or supply camp!
 com.minecolonies.coremod.gui.townHall.currentHappiness=Overall happiness:
 com.minecolonies.coremod.job.guard.toolClickGuardTooFar=Too far away from guard tower, please upgrade your guardtower.
 com.minecolonies.coremod.saturation.0=I'm starving, I can't work anymore
