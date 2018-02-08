@@ -288,10 +288,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
         if ((colony == null || colony.getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS))
               && tileEntity instanceof TileEntityRack)
         {
-            /*
-            If the world is client, open the gui of the building
-             */
-            if (worldIn.isRemote)
+            if (!worldIn.isRemote)
             {
                 playerIn.openGui(MineColonies.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
             }
