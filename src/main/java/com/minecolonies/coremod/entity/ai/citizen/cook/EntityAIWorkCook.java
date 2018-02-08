@@ -150,7 +150,9 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
      */
     private AIState gatherFuel()
     {
-        // TODO: set status to getting fuel
+        worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING),
+            new TextComponentTranslation(":"),
+            new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_BURNABLE));
 
         // TODO: check if we already have the fuel in our inventory. If so, transition to COOK_FOOD immediately.
 
@@ -161,6 +163,8 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
         if (!InventoryUtils.hasItemInProvider(getOwnBuilding(), TileEntityFurnace::isItemFuel))
         {
+            worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_WAITING_FOR),
+                    new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_BURNABLE));
             if (!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Burnable.class)))
             {
                 worker.getCitizenData().createRequestAsync(new Burnable(Constants.STACKSIZE));
@@ -211,7 +215,10 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
      */
     private AIState gatherCookedFoodFromFurnace()
     {
-        // TODO: set status to retrieve food from furnace
+        // TODO: finding a furnace to walk to should either be in here or in a separate AIState rather than in START_WORKING and other places
+        worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING),
+                new TextComponentTranslation(":"),
+                new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_COOKED_FOOD));
 
         if (walkTo == null)
         {
@@ -270,7 +277,10 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
      */
     private AIState gatherFoodFromBuilding()
     {
-        // TODO: set status to retrieve food from storage to serve it
+        worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING),
+                new TextComponentTranslation(":"),
+                new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_FOOD));
+
 
         if (needsCurrently == null)
         {
@@ -318,7 +328,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
      */
     private AIState serveFoodToCitizen()
     {
-        // TODO: set status to server food
+        worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SERVING));
 
         if (citizenToServe.isEmpty())
         {
@@ -366,7 +376,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
      */
     private AIState cookFood()
     {
-        // TODO: set status to cook food
+        worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COOKING));
 
         if (((BuildingCook) getOwnBuilding()).getFurnaces().isEmpty())
         {
@@ -483,8 +493,6 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
                     .getStackInSlot(RESULT_SLOT))
                     || !ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(COOK_SLOT))))
             {
-                // TODO: side effect: worker status should be set in caller, not here.
-                worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
                 return pos;
             }
         }
@@ -506,28 +514,27 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
      * Execute tasks in this order: Retrieve food or cook food in furnaces, request food, serve food, cook food, other tasks.
      *
      * If any furnace has food waiting to be cooked, Find the first furnace in the building which is not cooking and either has a cooked result or has an uncooked input
-     * and set the worker's status to "Retrieving" and walk to that furnace's position by transitioning to COOK_RETRIEVE_FOOD.
+     * and walk to that furnace's position by transitioning to COOK_RETRIEVE_FOOD.
      * If any furnace has food waiting to be cooked, and if no such furnace, then COOK_COOK_FOOD.
-     * If no food in the building nor inventory, set status to "Gathering" and request food if we haven't already done so. In any case, repeat this state.
+     * If no food in the building nor inventory, set status to "Waiting For Food" and request food if we haven't already done so. In any case, repeat this state.
      * If we have food in building or inventory, find all citizens nearby that are not cooks and have a zero or negative saturation.
-     * If there is a hungry citizen, then set status to "Serving"
      * If there is a hungry citizen and we have food in inventory, then COOK_SERVE
      * If there is a hungry citizen and we have no food in inventory, then COOK_GATHER_FOOD_FROM_BUILDING
      * if no hungry citizens and we have less than 64 * building-level food stores, request food if we haven't already done so.
-     * If there is uncooked food in building or inventory, then set status to "Cooking", then COOK_COOK_FOOD.
-     * If any furnace is idle and has cooked food, set status to "Retrieving" then COOK_RETRIEVE_FOOD.
-     * If any furnace is idle and has uncooked food, set status to "Cooking" then COOK_COOK_FOOD.
+     * If there is uncooked food in building or inventory, then COOK_COOK_FOOD.
+     * If any furnace is idle and has cooked food, then COOK_RETRIEVE_FOOD.
+     * If any furnace is idle and has uncooked food, then COOK_COOK_FOOD.
      * Otherwise, set status to "Idling", then delay and START_WORKING
      *
      * @return next AIState
      */
     private AIState startWorking()
     {
+        worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
+
         // TODO: Doesn't seem like checking the ovens should be our first order of business.
         // TODO: seems like we should try to serve food if we can, then cook if we can, then request food if no other options.
         // TODO: If we have hungry customers, we might want to request food even if we could possibly cook it as well.
-
-        // TODO: set statuses at top of other Ai states since START_WORKING will not be the only caller.
 
         if (isSomethingInOven())
         {
@@ -550,7 +557,8 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
         if (amountOfFood <= 0)
         {
-            worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_GATHERING));
+            worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_WAITING_FOR),
+                    new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_FOOD));
             if (!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Food.class)))
             {
                 // TODO: in my play-throughs, why doesn't the cook ask for food from the warehouse, but only from the player?
@@ -570,7 +578,6 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         if (!citizenList.isEmpty())
         {
             citizenToServe.addAll(citizenList);
-            worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SERVING));
             if (InventoryUtils.hasItemInItemHandler(
                     new InvWrapper(worker.getInventoryCitizen()), ItemStackUtils.ISFOOD))
             {
@@ -588,7 +595,6 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         if (InventoryUtils.hasItemInProvider(getOwnBuilding(), ItemStackUtils.ISCOOKABLE)
                 || InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), ItemStackUtils.ISCOOKABLE) >= 1)
         {
-            worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COOKING));
             return COOK_COOK_FOOD;
         }
 
@@ -602,12 +608,10 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
                 walkTo = pos;
                 if (!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(RESULT_SLOT)))
                 {
-                    worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
                     return COOK_GATHER_COOKED_FOOD_FROM_FURNACE;
                 }
                 else if (!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(COOK_SLOT)))
                 {
-                    worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COOKING));
                     return COOK_COOK_FOOD;
                 }
             }
