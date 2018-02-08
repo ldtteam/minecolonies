@@ -288,7 +288,7 @@ public enum AIState
     /**
      * Get some burnable material for the furnace.
      */
-    COOK_GET_FIREWOOD,
+    COOK_GATHER_FUEL,
 
     /**
      * Cook cooks food until its cooked.
@@ -298,17 +298,17 @@ public enum AIState
     /**
      * Gathering food from his building.
      */
-    COOK_GATHERING,
+    COOK_GATHER_FOOD_FROM_BUILDING,
 
     /**
      * Retrieve the food from the furnace.
      */
-    COOK_RETRIEVE_FOOD,
+    COOK_GATHER_COOKED_FOOD_FROM_FURNACE,
 
     /**
      * Serve food to the citizen inside the building.
      */
-    COOK_SERVE,
+    COOK_SERVE_FOOD_TO_CITIZEN,
 
     /*
     ###Smelter###
