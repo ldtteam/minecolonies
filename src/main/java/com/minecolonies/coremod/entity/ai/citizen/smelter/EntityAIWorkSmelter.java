@@ -512,8 +512,8 @@ public class EntityAIWorkSmelter extends AbstractEntityAISkill<JobSmelter>
             if(entity instanceof TileEntityFurnace && !((TileEntityFurnace) entity).isBurning())
             {
                 final TileEntityFurnace furnace = (TileEntityFurnace) entity;
-                if ((amountOfOre > 0 && hasOreInFurnaceAndNoFuel(furnace))
-                        || (amountOfFuel > 0 && hasFuelInFurnaceAndNoOre(furnace))
+                if ((amountOfFuel > 0 && hasOreInFurnaceAndNoFuel(furnace))
+                        || (amountOfOre > 0 && hasFuelInFurnaceAndNoOre(furnace))
                         || (amountOfFuel > 0 && amountOfOre > 0 && hasNeitherFuelNorOre(furnace)))
                 {
                     walkTo = pos;
