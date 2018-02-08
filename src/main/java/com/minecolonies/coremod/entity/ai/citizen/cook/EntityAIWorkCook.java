@@ -443,6 +443,25 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
     }
 
     /**
+     * Check if something is waiting to be cooked in at least one oven.
+     *
+     * @return true if so.
+     */
+    // TODO: doesn't seem to be consistent to have this, and only this, AI-called method in the building.
+    private boolean isSomethingInOven()
+    {
+        for (final BlockPos pos : ((BuildingCook) getOwnBuilding()).getFurnaces())
+        {
+            final TileEntity entity = world.getTileEntity(pos);
+            if (entity instanceof TileEntityFurnace && !((TileEntityFurnace) entity).isBurning()
+                && !ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(COOK_SLOT)))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
      * getPositionOfOvenToRetrieveFrom
      *
      * Find the first furnace in the building which is not cooking and either has a cooked result or has an uncooked input
@@ -510,7 +529,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
         // TODO: set statuses at top of other Ai states since START_WORKING will not be the only caller.
 
-        if (((BuildingCook) getOwnBuilding()).isSomethingInOven(world))
+        if (isSomethingInOven())
         {
             final BlockPos posOfOven = getPositionOfOvenToRetrieveFrom();
             final AIState nextState;

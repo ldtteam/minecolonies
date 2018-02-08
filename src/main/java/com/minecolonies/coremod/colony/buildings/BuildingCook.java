@@ -13,7 +13,6 @@ import net.minecraft.block.BlockFurnace;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -24,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
-import static com.minecolonies.coremod.entity.ai.citizen.cook.EntityAIWorkCook.COOK_SLOT;
 
 /**
  * Class of the cook building.
@@ -155,27 +153,6 @@ public class BuildingCook extends AbstractBuildingWorker
             furnaces.add(pos);
         }
         markDirty();
-    }
-
-    /**
-     * Check if something is waiting to be cooked in at least one oven.
-     *
-     * @param world needed for finding tile entities
-     * @return true if so.
-     */
-    // TODO: doesn't seem to be consistent to have this, and only this, AI-called method in the building.
-    public boolean isSomethingInOven(final World world)
-    {
-        for (final BlockPos pos : getFurnaces())
-        {
-            final TileEntity entity = world.getTileEntity(pos);
-            if (entity instanceof TileEntityFurnace && !((TileEntityFurnace) entity).isBurning()
-                && !ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(COOK_SLOT)))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
