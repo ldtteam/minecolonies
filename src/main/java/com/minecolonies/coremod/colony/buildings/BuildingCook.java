@@ -51,20 +51,9 @@ public class BuildingCook extends AbstractBuildingWorker
     private static final String TAG_FURNACES = "furnaces";
 
     /**
-     * Tag to store status of ovens to NBT.
-     */
-    private static final String TAG_COOKING = "cooking";
-
-    /**
      * List of registered furnaces.
      */
     private final List<BlockPos> furnaces = new ArrayList<>();
-
-    /**
-     * Is true when the Cook put something in the oven.
-     */
-    // TODO: this field is never used outside of load/save.  Should be removed.
-    private boolean isOvenFull = true;
 
     /**
      * Instantiates a new cook building.
@@ -129,7 +118,6 @@ public class BuildingCook extends AbstractBuildingWorker
             furnacesTagList.appendTag(furnaceCompound);
         }
         compound.setTag(TAG_FURNACES, furnacesTagList);
-        compound.setBoolean(TAG_COOKING, isOvenFull);
     }
 
     @Override
@@ -141,7 +129,6 @@ public class BuildingCook extends AbstractBuildingWorker
         {
             furnaces.add(NBTUtil.getPosFromTag(furnaceTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
         }
-        isOvenFull = compound.getBoolean(TAG_COOKING);
     }
 
     @Override
