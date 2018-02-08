@@ -65,6 +65,7 @@ public class BuildingCook extends AbstractBuildingWorker
     /**
      * Is true when the Cook put something in the oven.
      */
+    // TODO: this field is never used outside of load/save.  Should be removed.
     private boolean isOvenFull = true;
 
     /**
@@ -157,10 +158,12 @@ public class BuildingCook extends AbstractBuildingWorker
     }
 
     /**
-     * Check if something is in the oven of th ecook.
+     * Check if something is waiting to be cooked in at least one oven.
      *
+     * @param world needed for finding tile entities
      * @return true if so.
      */
+    // TODO: doesn't seem to be consistent to have this, and only this, AI-called method in the building.
     public boolean isSomethingInOven(final World world)
     {
         for (final BlockPos pos : getFurnaces())
