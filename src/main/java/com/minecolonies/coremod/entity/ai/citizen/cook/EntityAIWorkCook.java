@@ -457,7 +457,6 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
      *
      * @return true if so.
      */
-    // TODO: doesn't seem to be consistent to have this, and only this, AI-called method in the building.
     private boolean isSomethingInOven()
     {
         for (final BlockPos pos : ((BuildingCook) getOwnBuilding()).getFurnaces())
