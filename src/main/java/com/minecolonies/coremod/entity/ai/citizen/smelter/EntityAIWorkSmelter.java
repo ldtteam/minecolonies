@@ -1,10 +1,12 @@
 package com.minecolonies.coremod.entity.ai.citizen.smelter;
 
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.BuildingSmeltery;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
+import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -16,6 +18,8 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.Type;
 
 import static com.minecolonies.api.util.constant.Constants.RESULT_SLOT;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
@@ -85,7 +89,6 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     {
         super(job);
         super.registerTargets(
-                new AITarget(IDLE, START_WORKING),
                 new AITarget(SMELTER_SMELTING_ITEMS, this::smeltStuff)
         );
         worker.setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
@@ -263,6 +266,12 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
         setDelay(WAIT_AFTER_REQUEST);
         walkToBuilding();
         return START_WORKING;
+    }
+
+    @Override
+    protected IRequestable getSmeltAbleClass()
+    {
+        return new SmeltableOre(STACKSIZE);
     }
 
     /**
