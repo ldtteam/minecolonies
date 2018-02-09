@@ -13,7 +13,6 @@ import net.minecraft.block.BlockFurnace;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -24,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
-import static com.minecolonies.coremod.entity.ai.citizen.cook.EntityAIWorkCook.COOK_SLOT;
 
 /**
  * Class of the cook building.
@@ -53,19 +51,9 @@ public class BuildingCook extends AbstractBuildingWorker
     private static final String TAG_FURNACES = "furnaces";
 
     /**
-     * Tag to store status of ovens to NBT.
-     */
-    private static final String TAG_COOKING = "cooking";
-
-    /**
      * List of registered furnaces.
      */
     private final List<BlockPos> furnaces = new ArrayList<>();
-
-    /**
-     * Is true when the Cook put something in the oven.
-     */
-    private boolean isOvenFull = true;
 
     /**
      * Instantiates a new cook building.
@@ -130,7 +118,6 @@ public class BuildingCook extends AbstractBuildingWorker
             furnacesTagList.appendTag(furnaceCompound);
         }
         compound.setTag(TAG_FURNACES, furnacesTagList);
-        compound.setBoolean(TAG_COOKING, isOvenFull);
     }
 
     @Override
@@ -142,7 +129,6 @@ public class BuildingCook extends AbstractBuildingWorker
         {
             furnaces.add(NBTUtil.getPosFromTag(furnaceTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
         }
-        isOvenFull = compound.getBoolean(TAG_COOKING);
     }
 
     @Override
@@ -154,25 +140,6 @@ public class BuildingCook extends AbstractBuildingWorker
             furnaces.add(pos);
         }
         markDirty();
-    }
-
-    /**
-     * Check if something is in the oven of th ecook.
-     *
-     * @return true if so.
-     */
-    public boolean isSomethingInOven(final World world)
-    {
-        for (final BlockPos pos : getFurnaces())
-        {
-            final TileEntity entity = world.getTileEntity(pos);
-            if (entity instanceof TileEntityFurnace && !((TileEntityFurnace) entity).isBurning()
-                && !ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(COOK_SLOT)))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

@@ -110,6 +110,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_DELIVERY                                  = "com.minecolonies.coremod.request.delivery";
     @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_COOKED_FOOD                               = "com.minecolonies.coremod.request.cookedFood";
+    @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_FOOD                                      = "com.minecolonies.coremod.request.food";
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_BURNABLE                                  = "com.minecolonies.coremod.request.burnable";
@@ -156,7 +158,19 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME                     = "com.minecolonies.coremod.resolvers.crafter.private";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_DECIDING                     = "com.minecolonies.coremod.status.herder.deciding";
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_COOKING                             = "com.minecolonies.coremod.status.cooking";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_DECIDING                            = "com.minecolonies.coremod.status.deciding";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_GATHERING                           = "com.minecolonies.coremod.status.gathering";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_IDLING                              = "com.minecolonies.coremod.status.idling";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING                          = "com.minecolonies.coremod.status.retrieving";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_SERVING                             = "com.minecolonies.coremod.status.serving";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_WAITING_FOR                         = "com.minecolonies.coremod.status.waiting";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOHUT                   = "com.minecolonies.coremod.status.herder.goingToHut";
     @NonNls
