@@ -205,6 +205,8 @@ public final class TranslationConstants
     public static final String SUPPLY_CAMP_INVALID_INSIDE_COLONY_MESSAGE_KEY                       = "item.supplyCampDeployer.invalid.inside_existing_colony";
     @NonNls
     public static final String SUPPLY_CAMP_INVALID                                                 = "item.supplyCampDeployer.invalid";
+    @NonNls
+    public static final String SMELTING_DOWN                                                       = "com.minecolonies.coremod.status.smeltingdown";
 
     private TranslationConstants()
     {
