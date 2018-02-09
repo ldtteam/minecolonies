@@ -1,27 +1,43 @@
 {
-    "forge_marker": 1,
-    "variants": {
-        "type": {
-            "plain": {
-                "model": "minecolonies:jungle_timberframe/blocktimberframe_plain"},
-            "sideframed": {
-                "model": "minecolonies:jungle_timberframe/blocktimberframe_sideframed"},
-            "downgated": {
-                "model": "minecolonies:jungle_timberframe/blocktimberframe_downgated"},
-            "doublecrossed": {
-                "model": "minecolonies:jungle_timberframe/blocktimberframe_doublecrossed"},
-            "framed": {
-                "model": "minecolonies:jungle_timberframe/blocktimberframe_framed"},
-            "gateframed": {
-                "model": "minecolonies:jungle_timberframe/blocktimberframe_gateframed"},
-            "horizontalnocap": {
-                "model": "minecolonies:jungle_timberframe/blocktimberframe_horizontalnocap"},
-            "horizontalplain": {
-                "model": "minecolonies:jungle_timberframe/blocktimberframe_horizontalplain"},
-            "onecrossedlr": {
-                "model": "minecolonies:jungle_timberframe/blocktimberframe_onecrossedlr"},
-            "onecrossedrl": {
-                "model": "minecolonies:jungle_timberframe/blocktimberframe_onecrossedrl"}
+  "forge_marker": 1,
+  "variants": {
+    "axis": {
+      "y": {},
+      "z": {"x": 90},
+      "x": {"x": 90, "y": 90},
+      "none": {}
+    },
+      "type": {
+        "plain": {
+          "model": "minecolonies:jungle_timberframe/blocktimberframe_plain"
+        },
+        "sideframed": {
+          "model": "minecolonies:jungle_timberframe/blocktimberframe_sideframed"
+        },
+        "downgated": {
+          "model": "minecolonies:jungle_timberframe/blocktimberframe_downgated"
+        },
+        "doublecrossed": {
+          "model": "minecolonies:jungle_timberframe/blocktimberframe_doublecrossed"
+        },
+        "framed": {
+          "model": "minecolonies:jungle_timberframe/blocktimberframe_framed"
+        },
+        "gateframed": {
+          "model": "minecolonies:jungle_timberframe/blocktimberframe_gateframed"
+        },
+        "horizontalnocap": {
+          "model": "minecolonies:jungle_timberframe/blocktimberframe_horizontalnocap"
+        },
+        "horizontalplain": {
+          "model": "minecolonies:jungle_timberframe/blocktimberframe_horizontalplain"
+        },
+        "onecrossedlr": {
+          "model": "minecolonies:jungle_timberframe/blocktimberframe_onecrossedlr"
+        },
+        "onecrossedrl": {
+          "model": "minecolonies:jungle_timberframe/blocktimberframe_onecrossedrl"
         }
-    }
+      }
+  }
 }
