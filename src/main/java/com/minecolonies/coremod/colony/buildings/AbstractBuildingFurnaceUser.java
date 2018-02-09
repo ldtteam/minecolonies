@@ -19,7 +19,7 @@ import static com.minecolonies.api.util.constant.Suppression.MAGIC_NUMBERS_SHOUL
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
 
 /**
- * Class of the smeltery building.
+ * Abstract Class for all furnace users.
  */
 @SuppressWarnings(OVERRIDE_EQUALS)
 public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
