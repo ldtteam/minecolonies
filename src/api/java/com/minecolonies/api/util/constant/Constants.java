@@ -50,6 +50,21 @@ public final class Constants
     public static final int    TRIPLE                           = 3;
 
     /**
+     * Slot with the result of the furnace.
+     */
+    public static final int RESULT_SLOT = 2;
+
+    /**
+     * Slot where ores should be put in the furnace.
+     */
+    public static final int SMELTABLE_SLOT = 0;
+
+    /**
+     * Slot where the fuel should be put in the furnace.
+     */
+    public static final int FUEL_SLOT = 1;
+
+    /**
      * Private constructor to hide implicit public one.
      */
     private Constants()
