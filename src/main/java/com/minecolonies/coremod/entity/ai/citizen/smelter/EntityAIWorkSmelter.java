@@ -248,6 +248,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
      * If no clear tasks are given, check if something else is to do.
      * @return the next AIState to traverse to.
      */
+    @Override
     protected AIState checkForAdditionalJobs()
     {
         final int amountOfTools = InventoryUtils.getItemCountInProvider(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableToolOrWeapon)

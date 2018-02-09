@@ -24,7 +24,6 @@ import java.util.function.Predicate;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
-import static com.minecolonies.coremod.entity.ai.util.AIState.START_WORKING;
 
 /**
  * AI class for all workers which use a furnace and require fuel and a block to smelt in it.
@@ -124,7 +123,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
      */
     private AIState startWorking()
     {
-        worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
+        worker.setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
 
         final AIState nextState = checkForImportantJobs();
         if(nextState != START_WORKING)
