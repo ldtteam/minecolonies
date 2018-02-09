@@ -150,6 +150,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
      * If food in inventory switch to serve job.
      * @return the next AIState to transfer to.
      */
+    @Override
     protected AIState checkForImportantJobs()
     {
         if (range == null)
