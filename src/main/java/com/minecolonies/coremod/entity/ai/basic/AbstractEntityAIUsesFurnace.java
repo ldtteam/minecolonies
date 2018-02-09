@@ -4,7 +4,6 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.requestable.Burnable;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.BuildingSmeltery;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
