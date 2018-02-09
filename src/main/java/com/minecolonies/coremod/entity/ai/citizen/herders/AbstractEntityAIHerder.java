@@ -128,7 +128,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             return HERDER_DECIDE;
         }
 
-        worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_DECIDING));
+        worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
 
         final int numOfBreedableAnimals = (int) animals.stream().filter(animal -> animal.getGrowingAge() == 0).count();
 
