@@ -20,7 +20,7 @@ import java.io.IOException;
 /**
  * Handles sendScanMessages.
  */
-public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessage, IMessage>
+public class SaveScanMessage extends AbstractMessage<SaveScanMessage, IMessage>
 {
     private NBTTagCompound nbttagcompound;
     private long           currentMillis;
@@ -77,14 +77,12 @@ public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessag
         buf.writeLong(currentMillis);
     }
 
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull final SaveScanMessage message, final MessageContext ctx)
+    protected void messageOnClientThread(final SaveScanMessage message, final MessageContext ctx)
     {
         if (message.nbttagcompound != null)
         {
             ClientStructureWrapper.handleSaveScanMessage(message.nbttagcompound, message.currentMillis);
         }
-        return null;
     }
 }

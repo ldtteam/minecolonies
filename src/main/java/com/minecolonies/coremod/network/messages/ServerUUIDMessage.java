@@ -14,7 +14,7 @@ import java.util.UUID;
 /**
  * Class handling the Server UUID Message.
  */
-public class ServerUUIDMessage implements IMessage, IMessageHandler<ServerUUIDMessage, IMessage>
+public class ServerUUIDMessage extends AbstractMessage<ServerUUIDMessage, IMessage>
 {
     private UUID serverUUID;
 
@@ -47,11 +47,9 @@ public class ServerUUIDMessage implements IMessage, IMessageHandler<ServerUUIDMe
      * @param ctx     Context
      * @return Null
      */
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull final ServerUUIDMessage message, final MessageContext ctx)
+    protected void messageOnClientThread(final ServerUUIDMessage message, final MessageContext ctx)
     {
         ColonyManager.setServerUUID(message.serverUUID);
-        return null;
     }
 }
