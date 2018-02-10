@@ -45,7 +45,7 @@ public class PermissionsMessage
     /**
      * Client side presentation of the message.
      */
-    public static class View implements IMessage, IMessageHandler<View, IMessage>
+    public static class View extends AbstractMessage<View, IMessage>
     {
         private int     colonyID;
         private ByteBuf data;
@@ -79,11 +79,10 @@ public class PermissionsMessage
             data = newBuf;
         }
 
-        @Nullable
         @Override
-        public IMessage onMessage(@NotNull final View message, final MessageContext ctx)
+        protected void messageOnClientThread(final View message, final MessageContext ctx)
         {
-            return ColonyManager.handlePermissionsViewMessage(message.colonyID, message.data);
+            ColonyManager.handlePermissionsViewMessage(message.colonyID, message.data);
         }
 
         @Override
