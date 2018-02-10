@@ -45,7 +45,6 @@ public class ServerUUIDMessage extends AbstractMessage<ServerUUIDMessage, IMessa
      *
      * @param message Message
      * @param ctx     Context
-     * @return Null
      */
     @Override
     protected void messageOnClientThread(final ServerUUIDMessage message, final MessageContext ctx)

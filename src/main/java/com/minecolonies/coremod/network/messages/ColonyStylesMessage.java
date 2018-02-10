@@ -76,7 +76,6 @@ public class ColonyStylesMessage extends AbstractMessage<ColonyStylesMessage, IM
      *
      * @param message Message
      * @param ctx     Context
-     * @return Null
      */
     @Override
     protected void messageOnClientThread(final ColonyStylesMessage message, final MessageContext ctx)
