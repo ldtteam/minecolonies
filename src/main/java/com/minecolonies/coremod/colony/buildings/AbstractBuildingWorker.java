@@ -346,7 +346,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
      */
     public void addRecipe(final IToken token)
     {
-        //todo recipes not getting stored accordingly!
         if(canRecipeBeAdded() && Math.pow(2, getBuildingLevel()) >= (recipes.size() + 1))
         {
             recipes.add(token);

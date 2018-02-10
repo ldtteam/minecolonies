@@ -136,11 +136,11 @@ public abstract class AbstractCraftingRequestResolver extends AbstractBuildingDe
             @NotNull final IRecipeStorage storage)
     {
         final int craftingCount = calculateMaxCraftingCount(requestStack, storage);
-        return storage.getInput().stream()
-                 .filter(s -> !ItemStackUtils.isEmpty(s))
+        return storage.getCleanedInput().stream()
+                 .filter(s -> !ItemStackUtils.isEmpty(s.getItemStack()))
                  .map(stack -> {
-                    final ItemStack craftingHelperStack = stack.copy();
-                    ItemStackUtils.setSize(craftingHelperStack, ItemStackUtils.getSize(craftingHelperStack) * craftingCount);
+                    final ItemStack craftingHelperStack = stack.getItemStack().copy();
+                    ItemStackUtils.setSize(craftingHelperStack, stack.getAmount() * craftingCount);
 
                     return createNewRequestForStack(manager, craftingHelperStack);
                 }).collect(Collectors.toList());
