@@ -2,13 +2,11 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecolonies:blocktimberframe_birch",
-      "data": 7
+      "item": "minecolonies:blocktimberframe_birch_downgated"
     }
   ],
   "result": {
-    "item": "minecolonies:blocktimberframe_birch",
-    "data": 8,
+    "item": "minecolonies:blocktimberframe_birch_horizontalplain",
     "count": 1
   }
 }

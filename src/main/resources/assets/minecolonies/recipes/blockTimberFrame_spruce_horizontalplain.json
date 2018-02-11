@@ -2,13 +2,11 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecolonies:blocktimberframe_spruce",
-      "data": 7
+      "item": "minecolonies:blocktimberframe_spruce_downgated"
     }
   ],
   "result": {
-    "item": "minecolonies:blocktimberframe_spruce",
-    "data": 8,
+    "item": "minecolonies:blocktimberframe_spruce_horizontalplain",
     "count": 1
   }
 }
