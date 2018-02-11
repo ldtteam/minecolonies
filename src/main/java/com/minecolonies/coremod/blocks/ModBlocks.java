@@ -130,7 +130,7 @@ public final class ModBlocks
         {
             for(final TimberFrameType frameType: TimberFrameType.values())
             {
-                timberFrames.add(new BlockTimberFrame(BlockTimberFrame.BLOCK_NAME+ "_" + type.getName() + "_" + frameType , frameType).registerBlock(registry));
+                timberFrames.add(new BlockTimberFrame(BlockTimberFrame.BLOCK_NAME+ "_" + type.getName() + "_" + frameType).registerBlock(registry));
             }
         }
     }
