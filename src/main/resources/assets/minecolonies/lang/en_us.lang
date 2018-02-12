@@ -129,6 +129,17 @@ item.minecolonies.scepterGuard.name=Guard-scepter
 
 com.minecolonies.configgui.title=MineColonies Config
 
+com.minecolonies.coremod.status.herder.goingToHut=Going to Hut
+com.minecolonies.coremod.status.herder.breeding=Breeding
+com.minecolonies.coremod.status.herder.searching=Searching
+com.minecolonies.coremod.status.herder.goingToAnimal=Going to Animal
+com.minecolonies.coremod.status.herder.butchering=Butchering
+com.minecolonies.coremod.status.cowboy.milking=Milking
+com.minecolonies.coremod.status.shepherd.shearing=Shearing
+com.minecolonies.coremod.gui.workerHuts.shepherdHut=Shepherd's Hut
+com.minecolonies.coremod.gui.workerHuts.swineHerderHut=SwineHerder's Hut
+com.minecolonies.coremod.gui.workerHuts.cowboyHut=Cowboy's Hut
+com.minecolonies.coremod.gui.workerHuts.chickenHerderHut=ChickenHerder's Hut
 com.minecolonies.coremod.gui.townHall.rename=Rename Colony
 com.minecolonies.coremod.gui.workerHuts.minerMineNode=Mine Level
 com.minecolonies.coremod.gui.workerHuts.buildType=Build Type:
@@ -460,6 +471,7 @@ tile.minecolonies.blockTimberFrame.name=Plain Timber Frame
 tile.minecolonies.blockMinecoloniesRack.name=Rack
 
 com.minecolonies.coremod.status.waitingForWork=Searching job
+com.minecolonies.coremod.status.deciding=Deciding
 com.minecolonies.coremod.status.sleeping=Let me sleep
 com.minecolonies.coremod.status.waiting=Waiting for:
 com.minecolonies.coremod.status.rainStop=the rain to stop
@@ -515,6 +527,7 @@ item.minecolonies.scepterPermission.name=PermissionScepter
 
 com.minecolonies.coremod.request.delivery=Delivery of:
 com.minecolonies.coremod.request.food=Food
+com.minecolonies.coremod.request.cookedFood=Cooked Food
 com.minecolonies.coremod.request.burnable=Fuel
 com.minecolonies.coremod.request.tool.pretype=Tool of class:
 com.minecolonies.coremod.request.tool.preminlevel=with minimal level:
