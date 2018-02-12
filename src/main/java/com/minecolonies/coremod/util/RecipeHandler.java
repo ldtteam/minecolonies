@@ -79,7 +79,7 @@ public final class RecipeHandler
     public static void init(final boolean enableInDevelopmentFeatures, final boolean supplyChests)
     {
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockConstructionTape, ONE_FORTH_OF_A_STACK), "SWS", "S S", "S S",
-          'S', Items.STICK, 'W', new ItemStack(Blocks.WOOL, 1, Constants.YELLOW));
+                'S', Items.STICK, 'W', new ItemStack(Blocks.WOOL, 1, Constants.YELLOW));
 
         // Register the hust
         addHutRecipe(new ItemStack(ModBlocks.blockHutMiner, 1), Items.WOODEN_PICKAXE);
@@ -116,18 +116,18 @@ public final class RecipeHandler
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.scanTool, 1), "P", 'P', ModItems.permTool));
 
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockSubstitution, ONE_FORTH_OF_A_STACK),
-                                                    "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', ModItems.scanTool));
+                "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', ModItems.scanTool));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockSolidSubstitution, ONE_FORTH_OF_A_STACK),
-                                                    "XXX", "X#X", "XXX", 'X', "logWood", '#', ModItems.scanTool));
+                "XXX", "X#X", "XXX", 'X', "logWood", '#', ModItems.scanTool));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockWayPoint, ONE_FORTH_OF_A_STACK),
-                                                    "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', ModItems.buildTool));
+                "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', ModItems.buildTool));
         GameRegistry.addShapelessRecipe(new ItemStack(ModItems.clipboard, 1), new ItemStack(Items.STICK, 1), new ItemStack(Items.MAP, 1), new ItemStack(Items.DYE));
 
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.clipboard), "WBW", "WLW", "WWW", 'L', Items.LEATHER, 'W', WOODEN_STICK, 'B', ModItems.buildTool));
 
         //Block Rack
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockRack, 1),
-                                                    "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Blocks.IRON_BARS));
+                "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Blocks.IRON_BARS));
 
         //Building blocks
         for(int i = 0; i < AMOUNT_OF_PAPERWALL; i++)
@@ -162,7 +162,17 @@ public final class RecipeHandler
 
         //Field
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutField, 1),
-                                                    " Y ", "X#X", " X ", 'X', WOODEN_STICK, '#', Items.LEATHER, 'Y', Blocks.HAY_BLOCK));
+                " Y ", "X#X", " X ", 'X', WOODEN_STICK, '#', Items.LEATHER, 'Y', Blocks.HAY_BLOCK));
+
+        //Supply Items
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.supplyCamp, 1), "   ", "C C", "CCC", 'C', Blocks.CHEST));;
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.supplyChest, 1), "   ", "B B", "BBB", 'B', Items.BOAT));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.supplyChest, 1), "   ", "B B", "BBB", 'B', Items.ACACIA_BOAT));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.supplyChest, 1), "   ", "B B", "BBB", 'B', Items.DARK_OAK_BOAT));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.supplyChest, 1), "   ", "B B", "BBB", 'B', Items.JUNGLE_BOAT));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.supplyChest, 1), "   ", "B B", "BBB", 'B', Items.BIRCH_BOAT));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.supplyChest, 1), "   ", "B B", "BBB", 'B', Items.SPRUCE_BOAT));
+
         //Double Fern
         GameRegistry.addShapelessRecipe(new ItemStack(Blocks.DOUBLE_PLANT, 1, META_THREE),
                 new ItemStack(Blocks.TALLGRASS, 1, META_TWO),
