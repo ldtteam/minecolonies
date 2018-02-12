@@ -282,28 +282,27 @@ public enum AIState
     BAKER_TAKE_OUT_OF_OVEN,
 
     /*
+###Furnace users###
+     */
+
+    /**
+     * smelter smelts ore until its a bar.
+     */
+    START_USING_FURNACE,
+
+    /**
+     * Gathering ore from his building.
+     */
+    GATHERING_REQUIRED_MATERIALS,
+
+    /**
+     * Retrieve the ore from the furnace.
+     */
+    RETRIEVING_END_PRODUCT_FROM_FURNACE,
+
+    /*
 ###Cook###
      */
-
-    /**
-     * Get some burnable material for the furnace.
-     */
-    COOK_GET_FIREWOOD,
-
-    /**
-     * Cook cooks food until its cooked.
-     */
-    COOK_COOK_FOOD,
-
-    /**
-     * Gathering food from his building.
-     */
-    COOK_GATHERING,
-
-    /**
-     * Retrieve the food from the furnace.
-     */
-    COOK_RETRIEVE_FOOD,
 
     /**
      * Serve food to the citizen inside the building.
@@ -314,29 +313,9 @@ public enum AIState
     ###Smelter###
      */
     /**
-     * Get some burnable material for the furnace.
-     */
-    SMELTER_GET_FIREWOOD,
-
-    /**
-     * smelter smelts ore until its a bar.
-     */
-    SMELTER_SMELT_ORE,
-
-    /**
-     * Gathering ore from his building.
-     */
-    SMELTER_GATHERING,
-
-    /**
-     * Retrieve the ore from the furnace.
-     */
-    SMELTER_RETRIEVE_ORE,
-
-    /**
      * Smelt stuff he finds in his hut to ingots.
      */
-    SMELTER_SMELT_STUFF,
+    SMELTER_SMELTING_ITEMS,
 
     /*
 ### Herders ###
