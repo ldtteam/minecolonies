@@ -1,14 +1,21 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.blockout.Log;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+
+import static com.minecolonies.api.util.MathUtils.NANO_TIME_DIVIDER;
 
 /**
  * Find and return a path to the nearest tree.
@@ -32,6 +39,11 @@ public class PathJobFindTree extends AbstractPathJob
     private final Map<ItemStorage, Boolean> treesToCut;
 
     /**
+     * The Colony the tree is in.
+     */
+    private final Colony colony;
+
+    /**
      * AbstractPathJob constructor.
      *
      * @param world      the world within which to path.
@@ -45,11 +57,13 @@ public class PathJobFindTree extends AbstractPathJob
                             @NotNull final BlockPos start,
                             final BlockPos home,
                             final int range,
-                            final Map<ItemStorage, Boolean> treesToCut)
+                            final Map<ItemStorage, Boolean> treesToCut,
+                            final Colony colony)
     {
         super(world, start, start, range, new TreePathResult());
         this.treesToCut = treesToCut;
-        hutLocation = home;
+        this.hutLocation = home;
+        this.colony = colony;
     }
 
     /**
@@ -103,7 +117,7 @@ public class PathJobFindTree extends AbstractPathJob
 
     private boolean isTree(final BlockPos pos)
     {
-        if (Tree.checkTree(world, pos, treesToCut))
+        if (Tree.checkTree(world, pos, treesToCut) && Tree.checkIfInColonyAndNotInBuilding(pos, colony))
         {
             getResult().treeLocation = pos;
             return true;
