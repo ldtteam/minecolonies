@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Class handling the colony styles messages.
  */
-public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStylesMessage, IMessage>
+public class ColonyStylesMessage extends AbstractMessage<ColonyStylesMessage, IMessage>
 {
     private boolean             allowPlayerSchematics;
     private Map<String, String> md5Map;
@@ -76,14 +76,11 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
      *
      * @param message Message
      * @param ctx     Context
-     * @return Null
      */
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull final ColonyStylesMessage message, final MessageContext ctx)
+    protected void messageOnClientThread(final ColonyStylesMessage message, final MessageContext ctx)
     {
         Structures.setAllowPlayerSchematics(message.allowPlayerSchematics);
         Structures.setMD5s(message.md5Map);
-        return null;
     }
 }

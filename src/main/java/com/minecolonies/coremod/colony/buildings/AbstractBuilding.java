@@ -94,7 +94,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     /**
      * Max priority of a building.
      */
-    private static final int MAX_PRIO = 10;
+    public static final int MAX_PRIO = 10;
 
     /**
      * Map to resolve names to class.

@@ -46,6 +46,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATIO
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
+import static com.minecolonies.coremod.colony.buildings.AbstractBuilding.MAX_PRIO;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -808,15 +809,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
 
         delay += DELAY_RECHECK;
-        if (walkToBuilding())
-        {
-            return true;
-        }
-        if (retrieveToolInHut(toolType, minimalLevel))
-        {
-            return false;
-        }
-        return true;
+        return walkToBuilding() || !retrieveToolInHut(toolType, minimalLevel);
     }
 
     /**
@@ -865,14 +858,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return INVENTORY_FULL;
         }
 
-        if (dumpOneMoreSlot())
+        if(InventoryUtils.isProviderFull(getOwnBuilding().getTileEntity()))
+        {
+            getOwnBuilding().alterPickUpPriority(MAX_PRIO);
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST);
+        }
+        else if (dumpOneMoreSlot())
         {
             delay += DELAY_RECHECK;
             return INVENTORY_FULL;
-        }
-        if (isInventoryAndChestFull())
-        {
-            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST);
         }
         //collect items that are nice to have if they are available
         this.itemsNiceToHave().forEach(this::isInHut);
@@ -900,19 +894,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(
               new InvWrapper(worker.getInventoryCitizen()), slot, new InvWrapper(buildingWorker.getTileEntity()))
         ));
-    }
-
-    /**
-     * Checks if the worker inventory and his building chest are full.
-     *
-     * @return true if both are full, else false
-     */
-    private boolean isInventoryAndChestFull()
-    {
-        @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
-        return InventoryUtils.isProviderFull(worker)
-                 && (buildingWorker != null
-                       && InventoryUtils.isProviderFull(buildingWorker.getTileEntity()));
     }
 
     /**
@@ -1147,7 +1128,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean checkIfRequestForItemExistOrCreate(@NotNull final Collection<ItemStack> stacks)
     {
-        return stacks.stream().allMatch(s -> checkIfRequestForItemExistOrCreate(s));
+        return stacks.stream().allMatch(this::checkIfRequestForItemExistOrCreate);
     }
 
     /**
@@ -1195,7 +1176,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final Collection<ItemStack> stacks)
     {
-        return stacks.stream().allMatch(s -> checkIfRequestForItemExistOrCreateAsynch(s));
+        return stacks.stream().allMatch(this::checkIfRequestForItemExistOrCreateAsynch);
     }
 
     /**

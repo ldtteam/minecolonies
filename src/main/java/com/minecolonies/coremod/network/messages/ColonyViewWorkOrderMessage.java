@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Add or Update a ColonyView on the client.
  */
-public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<ColonyViewWorkOrderMessage, IMessage>
+public class ColonyViewWorkOrderMessage extends AbstractMessage<ColonyViewWorkOrderMessage, IMessage>
 {
     private int     colonyId;
     private int     workOrderId;
@@ -58,11 +58,10 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
         buf.writeBytes(workOrderBuffer);
     }
 
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull final ColonyViewWorkOrderMessage message, final MessageContext ctx)
+    protected void messageOnClientThread(final ColonyViewWorkOrderMessage message, final MessageContext ctx)
     {
-        return ColonyManager.handleColonyViewWorkOrderMessage(message.colonyId, message.workOrderBuffer);
+        ColonyManager.handleColonyViewWorkOrderMessage(message.colonyId, message.workOrderBuffer);
     }
 }
 
