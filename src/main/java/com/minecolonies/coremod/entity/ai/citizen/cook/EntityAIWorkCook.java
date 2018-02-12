@@ -1,3 +1,4 @@
+
 package com.minecolonies.coremod.entity.ai.citizen.cook;
 
 import com.minecolonies.api.colony.requestsystem.requestable.Food;
@@ -95,8 +96,24 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
         return ItemStackUtils.ISCOOKABLE.test(stack);
     }
 
-    private AIState serveFood()
+    /**
+     * Serve food to customer
+     *
+     * If no customer, transition to START_WORKING.
+     * If we need to walk to the customer, repeat this state with tiny delay.
+     * If the customer has a full inventory, report and remove customer, delay and repeat this state.
+     * If we have food, then COOK_SERVE.
+     * If no food in the building, transition to START_WORKING.
+     * If we were able to get the stored food, then COOK_SERVE.
+     * If food is no longer available, delay and transition to START_WORKING.
+     * Otherwise, give the customer some food, then delay and repeat this state.
+     *
+     * @return next AIState
+     */
+    private AIState serveFoodToCitizen()
     {
+        worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SERVING));
+
         if (citizenToServe.isEmpty())
         {
             return START_WORKING;
@@ -119,7 +136,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
                 new InvWrapper(worker.getInventoryCitizen()),
                 ItemStackUtils.ISFOOD,
                 AMOUNT_OF_FOOD_TO_SERVE, new InvWrapper(citizenToServe.get(0).getInventoryCitizen())
-                );
+        );
 
         citizenToServe.remove(0);
         setDelay(SERVE_DELAY);
@@ -149,11 +166,10 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
         if (!citizenList.isEmpty())
         {
             citizenToServe.addAll(citizenList);
-            worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.serving"));
-            if(InventoryUtils.hasItemInItemHandler(
+            if (InventoryUtils.hasItemInItemHandler(
                     new InvWrapper(worker.getInventoryCitizen()), ItemStackUtils.ISFOOD))
             {
-                return COOK_SERVE;
+                return COOK_SERVE_FOOD_TO_CITIZEN;
             }
 
             needsCurrently = ItemStackUtils.ISFOOD;

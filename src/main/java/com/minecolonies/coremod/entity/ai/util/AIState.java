@@ -307,7 +307,7 @@ public enum AIState
     /**
      * Serve food to the citizen inside the building.
      */
-    COOK_SERVE,
+    COOK_SERVE_FOOD_TO_CITIZEN,
 
     /*
     ###Smelter###

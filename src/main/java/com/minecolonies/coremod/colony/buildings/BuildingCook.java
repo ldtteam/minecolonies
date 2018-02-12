@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
-import static com.minecolonies.coremod.entity.ai.citizen.cook.EntityAIWorkCook.COOK_SLOT;
 
 /**
  * Class of the cook building.
