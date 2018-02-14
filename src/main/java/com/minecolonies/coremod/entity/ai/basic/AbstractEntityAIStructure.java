@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.basic;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.coremod.colony.WorkManager;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -606,9 +607,28 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 ((AbstractJobStructure) job).setStructure(null);
             }
 
-            ((AbstractJobStructure) job).getStructure().rotate(rotateTimes, world, position, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
-            ((AbstractJobStructure) job).getStructure().setPosition(position);
+            try
+            {
+                ((AbstractJobStructure) job).getStructure().rotate(rotateTimes, world, position, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
+                ((AbstractJobStructure) job).getStructure().setPosition(position);
+            }
+            catch(final NullPointerException ex)
+            {
+                handleSpecificCancelActions();
+                ((AbstractJobStructure) job).setStructure(null);
+                Log.getLogger().warn("Structure couldn't be found which caused an NPE, removed workOrder, more details in log", ex);
+            }
         }
+    }
+
+    /**
+     * Specific actions to handle a cancelation of a structure.
+     */
+    public void handleSpecificCancelActions()
+    {
+        /**
+         * Child classes have to override this.
+         */
     }
 
     /**
