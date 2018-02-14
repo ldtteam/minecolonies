@@ -841,7 +841,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             }
         }
 
-        colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
+        colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level), false);
         LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
         markDirty();
     }
@@ -1720,16 +1720,12 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         }
 
         final IRequest<?> requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
-        if (requestThatCompleted != null)
+        if (requestThatCompleted != null && getOpenRequestsByRequestableType().containsKey(TypeToken.of(requestThatCompleted.getRequest().getClass())))
         {
-            if (getOpenRequestsByRequestableType().containsKey(TypeToken.of(requestThatCompleted.getRequest().getClass())))
+            getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).remove(token);
+            if (getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).isEmpty())
             {
-                getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).remove(token);
-
-                if (getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).isEmpty())
-                {
                     getOpenRequestsByRequestableType().remove(TypeToken.of(requestThatCompleted.getRequest().getClass()));
-                }
             }
         }
 
