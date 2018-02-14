@@ -344,8 +344,9 @@ public abstract class AbstractWorkOrder
      * Override this when something need to be done when the work order is added
      *
      * @param colony in which the work order exist
+     * @param readingFromNbt if being read from NBT.
      */
-    public void onAdded(final Colony colony)
+    public void onAdded(final Colony colony, final boolean readingFromNbt)
     {
     }
 

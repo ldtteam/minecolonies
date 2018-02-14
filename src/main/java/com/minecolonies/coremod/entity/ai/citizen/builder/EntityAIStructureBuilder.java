@@ -510,4 +510,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         return ACTIONS_UNTIL_DUMP;
     }
+
+    @Override
+    public void handleSpecificCancelActions()
+    {
+        getOwnBuilding().getColony().getWorkManager().removeWorkOrder(job.getWorkOrderId());
+        job.setWorkOrder(null);
+    }
 }

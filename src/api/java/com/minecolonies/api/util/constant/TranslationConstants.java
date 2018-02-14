@@ -207,6 +207,8 @@ public final class TranslationConstants
     public static final String SUPPLY_CAMP_INVALID                                                 = "item.supplyCampDeployer.invalid";
     @NonNls
     public static final String SMELTING_DOWN                                                       = "com.minecolonies.coremod.status.smeltingdown";
+    @NonNls
+    public static final String BUILDING_LEVEL_TOO_LOW                                              = "com.minecolonies.coremod.request.toolow";
 
     private TranslationConstants()
     {

@@ -435,7 +435,7 @@ public final class PlacementHandlers
 
             if (placer != null && !infiniteResources)
             {
-                if (!placer.holdEfficientTool(blockState.getBlock()))
+                if (!placer.holdEfficientTool(blockState.getBlock(), pos))
                 {
                     return ActionProcessingResult.DENY;
                 }
