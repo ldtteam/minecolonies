@@ -187,7 +187,7 @@ public class WorkManager
             @Nullable final AbstractWorkOrder o = AbstractWorkOrder.createFromNBT(orderCompound);
             if (o != null)
             {
-                addWorkOrder(o);
+                addWorkOrder(o, true);
 
                 //  If this Work Order is claimed, and the Citizen who claimed it no longer exists
                 //  then clear the Claimed status
@@ -206,8 +206,9 @@ public class WorkManager
      * Adds work order to the work manager.
      *
      * @param order Order to add.
+     * @param readingFromNbt if being read from NBT.
      */
-    public void addWorkOrder(@NotNull final AbstractWorkOrder order)
+    public void addWorkOrder(@NotNull final AbstractWorkOrder order, final boolean readingFromNbt)
     {
         dirty = true;
 
@@ -218,7 +219,7 @@ public class WorkManager
         }
 
         workOrders.put(order.getID(), order);
-        order.onAdded(colony);
+        order.onAdded(colony, readingFromNbt);
     }
 
     /**
