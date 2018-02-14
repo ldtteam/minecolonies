@@ -9,22 +9,13 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockFurnace;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -34,7 +25,7 @@ import static com.minecolonies.api.util.constant.Suppression.*;
  * Class of the smeltery building.
  */
 @SuppressWarnings(OVERRIDE_EQUALS)
-public class BuildingSmeltery extends AbstractBuildingWorker
+public class BuildingSmeltery extends AbstractBuildingFurnaceUser
 {
     /**
      * The cook string.
@@ -50,21 +41,6 @@ public class BuildingSmeltery extends AbstractBuildingWorker
      * Amount of swords and armor to keep at the worker.
      */
     private static final int STUFF_TO_KEEP = 10;
-
-    /**
-     * Tag to store the furnace position.
-     */
-    private static final String TAG_POS = "pos";
-
-    /**
-     * Tag to store the furnace list.
-     */
-    private static final String TAG_FURNACES = "furnaces";
-
-    /**
-     * List of registered furnaces.
-     */
-    private final List<BlockPos> furnaces = new ArrayList<>();
 
     /**
      * Instantiates a new cook building.
@@ -107,52 +83,6 @@ public class BuildingSmeltery extends AbstractBuildingWorker
     public String getJobName()
     {
         return SMELTERY_DESC;
-    }
-
-    /**
-     * Return a list of furnaces assigned to this hut.
-     *
-     * @return copy of the list
-     */
-    public List<BlockPos> getFurnaces()
-    {
-        return new ArrayList<>(furnaces);
-    }
-
-    @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
-        @NotNull final NBTTagList furnacesTagList = new NBTTagList();
-        for (@NotNull final BlockPos entry : furnaces)
-        {
-            @NotNull final NBTTagCompound furnaceCompound = new NBTTagCompound();
-            furnaceCompound.setTag(TAG_POS, NBTUtil.createPosTag(entry));
-            furnacesTagList.appendTag(furnaceCompound);
-        }
-        compound.setTag(TAG_FURNACES, furnacesTagList);
-    }
-
-    @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-        final NBTTagList furnaceTagList = compound.getTagList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < furnaceTagList.tagCount(); ++i)
-        {
-            furnaces.add(NBTUtil.getPosFromTag(furnaceTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
-        }
-    }
-
-    @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
-    {
-        super.registerBlockPosition(block, pos, world);
-        if (block instanceof BlockFurnace && !furnaces.contains(pos))
-        {
-            furnaces.add(pos);
-        }
-        markDirty();
     }
 
     @SuppressWarnings(MAGIC_NUMBERS_SHOULD_NOT_BE_USED)

@@ -1,0 +1,33 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
+        lightbox="false"
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+
+    <layout source="minecolonies:gui/layoutbuildingdefault.xml"/>
+    <label size="100% 11" pos="0 32"
+           label="$(com.minecolonies.coremod.gui.workerHuts.workerAssigned)"
+           textalign="MIDDLE" color="black"/>
+    <label id="workerName" size="100% 11" pos="0 42"
+           textalign="MIDDLE" color="black"/>
+    <label id="workerLevel" size="100% 11" pos="0 58"
+           textalign="MIDDLE" color="black"/>
+
+    <label size="100% 11" pos="0 149"
+           label="$(com.minecolonies.coremod.gui.workerHuts.buildPrio)"
+           textalign="MIDDLE" color="black"/>
+    <label id="type" size="100% 11" pos="0 162"
+           textalign="MIDDLE" color="black"/>
+
+    <buttonimage id="hire" align="TOP_MIDDLE" size="129 17" pos="0 74"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(com.minecolonies.coremod.gui.workerHuts.hire)" textcolor="black"/>
+    <buttonimage id="recall" align="TOP_MIDDLE" size="129 17" pos="0 92"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(com.minecolonies.coremod.gui.workerHuts.recall)" textcolor="black"/>
+
+    <buttonimage id="recipelist" align="TOP_MIDDLE" size="129 17" pos="0 174"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(com.minecolonies.coremod.gui.workerHuts.listRecipes)" textcolor="black"/>
+    <buttonimage id="crafting" align="TOP_MIDDLE" size="129 17" pos="0 192"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(com.minecolonies.coremod.gui.workerHuts.crafting)" textcolor="black"/>
+</window>

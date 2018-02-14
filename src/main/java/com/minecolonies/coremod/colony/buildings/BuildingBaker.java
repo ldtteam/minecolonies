@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.views.Window;
@@ -12,7 +13,6 @@ import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
 import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
-import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.state.IBlockState;
@@ -98,7 +98,7 @@ public class BuildingBaker extends AbstractBuildingWorker
     public BuildingBaker(final Colony c, final BlockPos l)
     {
         super(c, l);
-        for (final RecipeStorage storage : BakerRecipes.getRecipes())
+        for (final IRecipeStorage storage : BakerRecipes.getRecipes())
         {
             for (final ItemStack stack : storage.getInput())
             {

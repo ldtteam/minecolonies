@@ -27,9 +27,12 @@ import com.minecolonies.structures.helpers.Settings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -182,7 +185,6 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutSmeltery);
 
         createCustomModel(ModBlocks.blockSolidSubstitution);
-        createCustomModel(ModBlocks.blockTimberFrame);
         createCustomModel(ModBlocks.blockConstructionTape);
         createCustomModel(ModBlocks.blockRack);
         createCustomModel(ModBlocks.blockWayPoint);
@@ -235,6 +237,15 @@ public class ClientProxy extends CommonProxy
         {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockPaperWall), type.getMetadata(),
               new ModelResourceLocation(ModBlocks.blockPaperWall.getRegistryName() + "_" + type.getName(), INVENTORY));
+        }
+
+        for (final BlockTimberFrame frame : ModBlocks.timberFrames)
+        {
+            for (final TimberFrameType type : TimberFrameType.values())
+            {
+                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(frame), type.getMetadata(),
+                        new ModelResourceLocation(frame.getRegistryName() + "_" + type.getName(), INVENTORY));
+            }
         }
     }
 
@@ -290,5 +301,17 @@ public class ClientProxy extends CommonProxy
             return super.getWorld(dimension);
         }
         return Minecraft.getMinecraft().world;
+    }
+
+    @NotNull
+    @Override
+    public RecipeBook getRecipeBookFromPlayer(@NotNull final EntityPlayer player)
+    {
+        if (player instanceof EntityPlayerSP)
+        {
+            return ((EntityPlayerSP) player).getRecipeBook();
+        }
+
+        return super.getRecipeBookFromPlayer(player);
     }
 }

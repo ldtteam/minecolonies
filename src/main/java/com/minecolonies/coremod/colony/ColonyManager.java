@@ -9,11 +9,13 @@ import com.minecolonies.api.compatibility.CompatabilityManager;
 import com.minecolonies.api.compatibility.ICompatabilityManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRecipeManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
 import com.minecolonies.coremod.util.AchievementUtils;
@@ -47,6 +49,7 @@ import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.Constants.HALF_A_CIRCLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COMPATABILITY_MANAGER;
 
 /**
  * Singleton class that links colonies to minecraft.
@@ -79,6 +82,21 @@ public final class ColonyManager
     private static final String FILENAME_MINECOLONIES_BACKUP = "colonies-%s.zip";
 
     /**
+     * The tag of the colonies.
+     */
+    private static final String TAG_COLONIES = "colonies";
+
+    /**
+     * Compound tag key for the recipe manager.
+     */
+    private static final String RECIPE_MANAGER_TAG = "recipeManager";
+
+    /**
+     * The tag of the pseudo unique identifier
+     */
+    private static final String TAG_UUID     = "uuid";
+
+    /**
      * Colony filename.
      */
     public static final String FILENAME_COLONY = "colony%d.dat";
@@ -97,13 +115,13 @@ public final class ColonyManager
      * The list of all colonies.
      */
     @NotNull
-    private static final ColonyList<Colony>         colonies              = new ColonyList<>();
+    private static final ColonyList<Colony>         colonies        = new ColonyList<>();
 
     /**
      * The list of all colonies by world.
      */
     @NotNull
-    private static final Map<Integer, List<Colony>> coloniesByWorld       = new HashMap<>();
+    private static final Map<Integer, List<Colony>> coloniesByWorld = new HashMap<>();
 
     /**
      * The list of colony views.
@@ -119,12 +137,12 @@ public final class ColonyManager
     /**
      * Buffer for which colonies to move to the save file.
      */
-    private static final int BUFFER = 10;
+    private static final int BUFFER    = 10;
 
     /**
      * Amount of worlds loaded.
      */
-    private static int     numWorldsLoaded;
+    private static int numWorldsLoaded;
 
     /**
      * Whether the colonyManager should persist data.
@@ -136,6 +154,12 @@ public final class ColonyManager
      * Client only
      */
     private static          boolean schematicDownloaded = false;
+
+    /**
+     * Recipemanager of this server.
+     */
+    private static final IRecipeManager recipeManager = new StandardRecipeManager();
+
     /**
      * Pseudo unique id for the server
      */
@@ -371,14 +395,13 @@ public final class ColonyManager
             for (final CitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
             {
                 Log.getLogger().info("Kill Citizen " + citizenData.getName());
-                final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
-                if (entityCitizen != null)
-                {
+                citizenData.getCitizenEntity().ifPresent(entityCitizen -> {
                     final World world = entityCitizen.getEntityWorld();
-                    citizenData.getCitizenEntity().onDeath(CONSOLE_DAMAGE_SOURCE);
+                    entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE);
                     colonyWorlds.add(world);
-                }
+                });
             }
+
             if (canDestroy)
             {
                 Log.getLogger().info("Removing buildings for " + id);
@@ -626,8 +649,13 @@ public final class ColonyManager
      * @return View of the closest colony.
      */
     @Nullable
-    public static ColonyView getClosestColonyView(@NotNull final World w, @NotNull final BlockPos pos)
+    public static ColonyView getClosestColonyView(@Nullable final World w, @Nullable final BlockPos pos)
     {
+        if (w == null || pos == null)
+        {
+            return null;
+        }
+
         final Chunk chunk = w.getChunkFromBlockCoords(pos);
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
         if(cap.getOwningColony() != 0)
@@ -883,6 +911,11 @@ public final class ColonyManager
 
         compound.setBoolean(TAG_DISTANCE, true);
         compound.setInteger(TAG_NEW_COLONIES, colonies.getSize());
+
+        final NBTTagCompound recipeCompound = new NBTTagCompound();
+        recipeManager.writeToNBT(recipeCompound);
+        compound.setTag(RECIPE_MANAGER_TAG, recipeCompound);
+        compound.setInteger(TAG_NEW_COLONIES, colonies.getTopID());
     }
 
     /**
@@ -1027,7 +1060,7 @@ public final class ColonyManager
             @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
             final ZipOutputStream zos = new ZipOutputStream(fos);
 
-            for (int i = 0; i < colonies.getSize() + BUFFER; i++)
+            for (int i = 1; i < colonies.getTopID(); i++)
             {
                 @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i));
                 if (file.exists())
@@ -1142,6 +1175,10 @@ public final class ColonyManager
             compatabilityManager.readFromNBT(compound.getCompoundTag(TAG_COMPATABILITY_MANAGER));
         }
         compatabilityManager.discover(world);
+
+        final NBTTagCompound recipeCompound = compound.getCompoundTag(RECIPE_MANAGER_TAG);
+        recipeManager.readFromNBT(recipeCompound);
+
         Log.getLogger().info(String.format("Loaded %d colonies", colonies.getSize()));
     }
 
@@ -1439,5 +1476,14 @@ public final class ColonyManager
     public static ICompatabilityManager getCompatabilityManager()
     {
         return compatabilityManager;
+    }
+
+    /**
+     * Getter for the recipeManager.
+     * @return an IRecipeManager.
+     */
+    public static IRecipeManager getRecipeManager()
+    {
+        return recipeManager;
     }
 }

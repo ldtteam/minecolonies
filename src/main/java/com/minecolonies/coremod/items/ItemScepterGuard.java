@@ -52,13 +52,12 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
                                        final float hitY,
                                        final float hitZ)
     {
-        final ItemStack scepter = playerIn.getHeldItem(hand);
         // if server world, do nothing
         if (worldIn.isRemote)
         {
             return EnumActionResult.FAIL;
         }
-
+        final ItemStack scepter = playerIn.getHeldItem(hand);
         if (!scepter.hasTagCompound())
         {
             scepter.setTagCompound(new NBTTagCompound());

@@ -27,7 +27,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT_FIRST;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -197,20 +199,22 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         }
         task = Task.GUARD;
         return this.getLocation();
-    }    @Override
+    }
+
+    @Override
     public void onUpgradeComplete(final int newLevel)
     {
-        for (final EntityCitizen citizen : getWorkerEntities())
+        if (newLevel > MAX_VISION_BONUS_MULTIPLIER)
         {
-            if (newLevel > MAX_VISION_BONUS_MULTIPLIER)
-            {
-                citizen.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(SharedMonsterAttributes.MAX_HEALTH.getDefaultValue() + getBonusHealth());
-            }
+            getWorkerEntities().stream()
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+              .forEach(entityCitizen -> entityCitizen.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(SharedMonsterAttributes.MAX_HEALTH.getDefaultValue() + getBonusHealth()));
         }
 
         super.onUpgradeComplete(newLevel);
 
-        if (newLevel == 1)
+        if (newLevel == NUM_ACHIEVEMENT_FIRST)
         {
             this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingGuard);
         }
@@ -353,11 +357,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     @Override
     public void setWorker(final CitizenData citizen)
     {
-        if (citizen != null && citizen.getCitizenEntity() != null)
-        {
-            citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(SharedMonsterAttributes.MAX_HEALTH.getDefaultValue() + getBonusHealth());
-            citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue() + getDefenceBonus());
-        }
+        citizen.getCitizenEntity().ifPresent(entityCitizen -> {
+            entityCitizen.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(SharedMonsterAttributes.MAX_HEALTH.getDefaultValue() + getBonusHealth());
+            entityCitizen.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue() + getDefenceBonus());
+        });
+
         super.setWorker(citizen);
     }
 
@@ -429,11 +433,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     @Override
     public void removeCitizen(final CitizenData citizen)
     {
-        if (citizen != null && citizen.getCitizenEntity() != null)
-        {
-            citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(SharedMonsterAttributes.MAX_HEALTH.getDefaultValue());
-            citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue());
-        }
+        citizen.getCitizenEntity().ifPresent(entityCitizen -> {
+            entityCitizen.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(SharedMonsterAttributes.MAX_HEALTH.getDefaultValue());
+            entityCitizen.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue());
+        });
+
         super.removeCitizen(citizen);
     }
 

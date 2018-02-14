@@ -141,6 +141,8 @@ public abstract class AbstractSingleCommand implements ISubCommand
                 return Configurations.gameplay.canPlayerUseRefreshColonyCommand;
             case MC_BACKUP:
                 return Configurations.gameplay.canPlayerUseBackupCommand;
+            case RSRESET:
+                return Configurations.requestSystem.canPlayerUseResetCommand;
             default:
                 return false;
         }
@@ -173,6 +175,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
         CHANGE_COLONY_OWNER,
         REFRESH_COLONY,
         HOMETP,
-        MC_BACKUP
+        MC_BACKUP,
+        RSRESET
     }
 }

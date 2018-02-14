@@ -30,6 +30,16 @@ import org.jetbrains.annotations.Nullable;
 public class ItemScanTool extends AbstractItemMinecolonies
 {
     /**
+     * Var for first pos string.
+     */
+    private static final String FIRST_POS_STRING = "pos1";
+
+    /**
+     * Var for second pos string.
+     */
+    private static final String SECOND_POS_STRING = "pos2";
+
+    /**
      * Creates instance of item.
      */
     public ItemScanTool()
@@ -59,22 +69,22 @@ public class ItemScanTool extends AbstractItemMinecolonies
         }
         final NBTTagCompound compound = stack.getTagCompound();
 
-        if (!compound.hasKey("pos1"))
+        if (!compound.hasKey(FIRST_POS_STRING))
         {
-            BlockPosUtil.writeToNBT(compound, "pos1", pos);
+            BlockPosUtil.writeToNBT(compound, FIRST_POS_STRING, pos);
             if (worldIn.isRemote)
             {
                 LanguageHandler.sendPlayerMessage(playerIn, "item.scepterSteel.point");
             }
             return EnumActionResult.SUCCESS;
         }
-        else if (!compound.hasKey("pos2"))
+        else if (!compound.hasKey(SECOND_POS_STRING))
         {
-            @NotNull final BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
+            @NotNull final BlockPos pos1 = BlockPosUtil.readFromNBT(compound, FIRST_POS_STRING);
             @NotNull final BlockPos pos2 = pos;
             if (pos2.distanceSq(pos1) > 0)
             {
-                BlockPosUtil.writeToNBT(compound, "pos2", pos2);
+                BlockPosUtil.writeToNBT(compound, SECOND_POS_STRING, pos2);
                 if (worldIn.isRemote)
                 {
                     LanguageHandler.sendPlayerMessage(playerIn, "item.scepterSteel.point2");
@@ -89,16 +99,16 @@ public class ItemScanTool extends AbstractItemMinecolonies
         }
         else
         {
-            @NotNull final BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
-            @NotNull final BlockPos pos2 = BlockPosUtil.readFromNBT(compound, "pos2");
+            @NotNull final BlockPos pos1 = BlockPosUtil.readFromNBT(compound, FIRST_POS_STRING);
+            @NotNull final BlockPos pos2 = BlockPosUtil.readFromNBT(compound, SECOND_POS_STRING);
 
             //todo if on client (ssp) -> no need to send message, we can execute it in worldIn.isRemote without a message.
             if (!worldIn.isRemote)
             {
                 saveStructure(worldIn, pos1, pos2, playerIn);
             }
-            compound.removeTag("pos1");
-            compound.removeTag("pos2");
+            compound.removeTag(FIRST_POS_STRING);
+            compound.removeTag(SECOND_POS_STRING);
             return EnumActionResult.SUCCESS;
         }
     }

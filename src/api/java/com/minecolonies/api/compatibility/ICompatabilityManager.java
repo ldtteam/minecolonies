@@ -1,7 +1,6 @@
 package com.minecolonies.api.compatibility;
 
 import com.minecolonies.api.crafting.ItemStorage;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

@@ -498,30 +498,30 @@ public class TextField extends Pane
         final int insertEnd = Math.max(cursorPosition, selectionEnd);
         final int availableChars = (maxTextLength - text.length()) + (insertEnd - insertAt);
 
-        @NotNull String result = "";
+        @NotNull final StringBuilder resultBuffer = new StringBuilder();
         if (text.length() > 0 && insertAt > 0)
         {
-            result = text.substring(0, insertAt);
+            resultBuffer.append(text.substring(0, insertAt));
         }
 
         final int insertedLength;
         if (availableChars < filteredStr.length())
         {
-            result = result + filteredStr.substring(0, availableChars);
+            resultBuffer.append(filteredStr.substring(0, availableChars));
             insertedLength = availableChars;
         }
         else
         {
-            result = result + filteredStr;
+            resultBuffer.append(filteredStr);
             insertedLength = filteredStr.length();
         }
 
         if (text.length() > 0 && insertEnd < text.length())
         {
-            result = result + text.substring(insertEnd);
+            resultBuffer.append(text.substring(insertEnd));
         }
 
-        text = result;
+        text = resultBuffer.toString();
         moveCursorBy((insertAt - selectionEnd) + insertedLength);
     }
 

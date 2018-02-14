@@ -29,7 +29,8 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZENS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MAX_CITIZENS;
 
 public class CitizenManager implements ICitizenManager
 {
@@ -116,12 +117,12 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void spawnCitizenIfNull(@Nullable final CitizenData data, @NotNull final World world)
+    public void spawnCitizenIfNull(@NotNull final CitizenData data, @NotNull final World world)
     {
-        if (data.getCitizenEntity() == null)
+        if (!data.getCitizenEntity().isPresent())
         {
-            Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), data.getId()));
-            spawnCitizen(data, world);
+            Log.getLogger().warn("Citizen went AWOL: Citizen: " + data.getId() + " colony: " + colony.getID());
+            data.updateCitizenEntityIfNecessary();
         }
     }
 
@@ -173,6 +174,11 @@ public class CitizenManager implements ICitizenManager
                             colony.getName());
                 }
             }
+            else
+            {
+                citizenData.setCitizenEntity(entity);
+            }
+
             entity.setColony(colony, citizenData);
 
             entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
@@ -374,7 +380,7 @@ public class CitizenManager implements ICitizenManager
         getCitizens()
                 .stream()
                 .filter(ColonyUtils::isCitizenMissingFromWorld)
-                .forEach(CitizenData::updateCitizenEntityIfNeccessary);
+                .forEach(CitizenData::updateCitizenEntityIfNecessary);
 
         //  Cleanup disappeared citizens
         //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
@@ -383,7 +389,7 @@ public class CitizenManager implements ICitizenManager
         {
             //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
             //  If we don't have any references to them, destroy the citizen
-            getCitizens().forEach(citizenData -> spawnCitizenIfNull(citizenData, colony.getWorld()));
+            getCitizens().stream().filter(Objects::nonNull).forEach(citizenData -> spawnCitizenIfNull(citizenData, colony.getWorld()));
         }
 
         //  Spawn Citizens

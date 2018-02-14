@@ -19,11 +19,6 @@ public class DistanceSquaredTest
     private static final int MAX_POSITION = 30_000_000;
 
     /**
-     * Max y position in vanilla minecraft.
-     */
-    private static final int MAX_HEIGHT = 500;
-
-    /**
      * String decribing test.
      */
     private static final String DIM_STRING = "%d Dim distance between %s and %s";

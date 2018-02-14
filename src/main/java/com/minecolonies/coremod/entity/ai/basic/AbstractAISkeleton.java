@@ -51,12 +51,18 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     protected AbstractAISkeleton(@NotNull final J job)
     {
         super();
+
+        if (!job.getCitizen().getCitizenEntity().isPresent())
+        {
+            throw new IllegalArgumentException("Cannot instantiate a AI from a Job that is attached to a Citizen without entity.");
+        }
+
         this.targetList = new ArrayList<>();
         setMutexBits(MUTEX_MASK);
         this.job = job;
-        this.worker = this.job.getCitizen().getCitizenEntity();
+        this.worker = this.job.getCitizen().getCitizenEntity().get();
         this.world = CompatibilityUtils.getWorld(this.worker);
-        this.chatSpamFilter = new ChatSpamFilter(worker);
+        this.chatSpamFilter = new ChatSpamFilter(job.getCitizen());
         this.state = AIState.INIT;
     }
 

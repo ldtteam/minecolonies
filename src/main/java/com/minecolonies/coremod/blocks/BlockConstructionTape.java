@@ -79,21 +79,21 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     /**
      * Start of the collision box at z facing South/North.
      */
-    private static final double SN_START_COLLISION_Z = 0.4375;
+    private static final double SN_START_COLLISION_Z = 0.3375;
 
     /**
      * End of the collision box facing South/North.
      */
-    private static final double SN_END_COLLISION_Z   = 0.5625;
+    private static final double SN_END_COLLISION_Z   = 0.6375;
     /**
      * Start of the collision box at x facing South/North.
      */
-    private static final double WE_START_COLLISION_X = 0.4375;
+    private static final double WE_START_COLLISION_X = 0.3375;
 
     /**
      * End of the collision box facing South/North.
      */
-    private static final double WE_END_COLLISION_X = 0.5625;
+    private static final double WE_END_COLLISION_X = 0.6375;
 
     /**
      * Start of the collision box at z facing South/North.
@@ -118,7 +118,7 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     /**
      * End of the collision box facing North.
      */
-    private static final double N_END_COLLISION_X = 0.5625;
+    private static final double N_END_COLLISION_X = 0.6375;
 
     /**
      * Start of the collision box at z facing North.
@@ -128,7 +128,7 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     /**
      * End of the collision box facing North.
      */
-    private static final double N_END_COLLISION_Z = 0.5625;
+    private static final double N_END_COLLISION_Z = 0.6375;
 
     /**
      * Start of the collision box at x facing West.
@@ -138,7 +138,7 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     /**
      * Start of the collision box at z facing West.
      */
-    private static final double W_START_COLLISION_Z = 0.4375;
+    private static final double W_START_COLLISION_Z = 0.3375;
 
     /**
      * End of the collision box facing West.
@@ -148,7 +148,7 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     /**
      * Start of the collision box at x facing South.
      */
-    private static final double S_START_COLLISION_X = 0.4375;
+    private static final double S_START_COLLISION_X = 0.3375;
 
     /**
      * End of the collision box facing South.
@@ -158,7 +158,7 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     /**
      * Start of the collision box at z facing South.
      */
-    private static final double S_START_COLLISION_Z = 0.4375;
+    private static final double S_START_COLLISION_Z = 0.3375;
 
     /**
      * End of the collision box facing South.
@@ -168,7 +168,7 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     /**
      * Start of the collision box at x facing East.
      */
-    private static final double E_START_COLLISION_X = 0.4375;
+    private static final double E_START_COLLISION_X = 0.3375;
 
     /**
      * End of the collision box facing East.
@@ -183,12 +183,12 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     /**
      * End of the collision box facing West.
      */
-    private static final double W_END_COLLISION_X = 0.5625;
+    private static final double W_END_COLLISION_X = 0.6375;
 
     /**
      * End of the collision box facing East.
      */
-    private static final double E_END_COLLISION_Z = 0.5625;
+    private static final double E_END_COLLISION_Z = 0.6375;
 
     /**
      * How much light goes through the block.
@@ -214,7 +214,7 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
         setRegistryName(BLOCK_NAME);
         setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, NORTH));
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
         setLightOpacity(LIGHT_OPACITY);
@@ -231,11 +231,11 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     @Deprecated
     public IBlockState getStateFromMeta(final int meta)
     {
-        EnumFacing enumfacing = EnumFacing.getFront(meta);
+        EnumFacing enumfacing = getFront(meta);
 
         if (enumfacing.getAxis() == EnumFacing.Axis.Y)
         {
-            enumfacing = EnumFacing.NORTH;
+            enumfacing = NORTH;
         }
 
         return this.getDefaultState().withProperty(FACING, enumfacing);
@@ -431,7 +431,7 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
                                              final int meta,
                                              final EntityLivingBase placer)
     {
-        @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
+        @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 

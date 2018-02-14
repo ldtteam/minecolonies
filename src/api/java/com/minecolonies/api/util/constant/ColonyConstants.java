@@ -54,10 +54,35 @@ public final class ColonyConstants
      */
     public static final double MIN_OVERALL_HAPPINESS = 1;
 
+    /**
+     * Amount of ticks to wait until checking if a waypoint is still valid.
+     */
     public static final int    CHECK_WAYPOINT_EVERY              = 100;
 
+    /**
+     * Distance of when to add new subscribers.
+     */
+    public static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(Configurations.gameplay.workingRangeTownHall + 16D);
+
+    /**
+     * Distance of when to remove old subscribers.
+     */
+    public static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(Configurations.gameplay.workingRangeTownHall * 2D);
+
+    /**
+     * Size of a chunk.
+     */
     public static final int CONST_CHUNKSIZE = 16;
+
+    /**
+     * Overall hapiness when the colony is started.
+     */
     public static final int DEFAULT_OVERALL_HAPPYNESS = 5;
+
+    /**
+     * Max amount of permission events to store in the colony.
+     */
+    public static final int MAX_PERMISSION_EVENTS = 100;
 
     /**
      * Private constructor to hide the implicit one.

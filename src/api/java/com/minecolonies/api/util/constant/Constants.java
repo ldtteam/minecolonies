@@ -38,6 +38,8 @@ public final class Constants
     public static final double HALF_A_CIRCLE                    = 180;
     public static final int    UPDATE_FLAG                      = 0x03;
     public static final int    TICKS_HOUR                       = TICKS_SECOND * SECONDS_A_MINUTE * SECONDS_A_MINUTE;
+    public static final int MAX_PARAMS_IRECIPESTORAGE = 4;
+    public static final int MIN_PARAMS_IRECIPESTORAGE = 3;
     public static final String DEFAULT_STYLE                    = "wooden";
     public static final String SAPLINGS                         = "treeSapling";
     public static final String ORES                             = "ores";
@@ -47,6 +49,21 @@ public final class Constants
     public static final int    DOUBLE                           = 2;
     public static final int    TRIPLE                           = 3;
     public static final int    BLOCKS_PER_CHUNK                 = 16;
+    /**
+     * Slot with the result of the furnace.
+     */
+    public static final int RESULT_SLOT = 2;
+
+    /**
+     * Slot where ores should be put in the furnace.
+     */
+    public static final int SMELTABLE_SLOT = 0;
+
+    /**
+     * Slot where the fuel should be put in the furnace.
+     */
+    public static final int FUEL_SLOT = 1;
+
     /**
      * Private constructor to hide implicit public one.
      */

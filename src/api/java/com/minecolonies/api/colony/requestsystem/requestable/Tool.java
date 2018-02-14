@@ -35,7 +35,7 @@ public class Tool implements IDeliverable
     private final Integer maxLevel;
 
     @NotNull
-    private ItemStack result;
+    private ItemStack result = ItemStackUtils.EMPTY;
 
     public Tool(@NotNull final IToolType toolClass, @NotNull final Integer minLevel, @NotNull final Integer maxLevel)
     {
@@ -190,11 +190,48 @@ public class Tool implements IDeliverable
         return 1;
     }
 
-
-
     @Override
     public void setResult(@NotNull final ItemStack result)
     {
         this.result = result;
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof Tool))
+        {
+            return false;
+        }
+
+        final Tool tool = (Tool) o;
+
+        if (!getToolClass().equals(tool.getToolClass()))
+        {
+            return false;
+        }
+        if (!getMinLevel().equals(tool.getMinLevel()))
+        {
+            return false;
+        }
+        if (!getMaxLevel().equals(tool.getMaxLevel()))
+        {
+            return false;
+        }
+        return ItemStackUtils.compareItemStacksIgnoreStackSize(getResult(), tool.getResult());
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result1 = getToolClass().hashCode();
+        result1 = 31 * result1 + getMinLevel().hashCode();
+        result1 = 31 * result1 + getMaxLevel().hashCode();
+        result1 = 31 * result1 + getResult().hashCode();
+        return result1;
     }
 }

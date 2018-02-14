@@ -4,6 +4,7 @@ import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.views.DropDownList;
 import com.minecolonies.coremod.MineColonies;
@@ -16,10 +17,13 @@ import com.minecolonies.coremod.network.messages.BuildToolPasteMessage;
 import com.minecolonies.coremod.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.coremod.network.messages.SchematicRequestMessage;
 import com.minecolonies.coremod.network.messages.SchematicSaveMessage;
+import com.minecolonies.coremod.placementhandlers.PlacementError;
+import com.minecolonies.coremod.placementhandlers.PlacementError.PlacementErrorType;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Rotation;
@@ -32,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -139,11 +144,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private       DialogDoneCancel confirmDeleteDialog;
 
     /**
-     * Check if the tool is in the static schematic mode.
-     */
-    private boolean staticSchematicMode = false;
-
-    /**
      * Name of the static schematic if existent.
      */
     private String staticSchematicName = "";
@@ -167,7 +167,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             this.rotation = rotation;
         }
 
-        staticSchematicMode = true;
         renameButton = findPaneOfTypeByID(BUTTON_RENAME, Button.class);
         deleteButton = findPaneOfTypeByID(BUTTON_DELETE, Button.class);
     }
@@ -186,7 +185,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         this.init(pos);
         renameButton = findPaneOfTypeByID(BUTTON_RENAME, Button.class);
         deleteButton = findPaneOfTypeByID(BUTTON_DELETE, Button.class);
-        this.staticSchematicMode = false;
     }
 
     private void init(final BlockPos pos)
@@ -895,8 +893,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                         Settings.instance.getMirror()));
             }
 
-            Settings.instance.reset();
-            close();
+            if(!GuiScreen.isShiftKeyDown())
+            {
+                cancelClicked();
+            }
         }
     }
 
@@ -916,19 +916,56 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
         else if (FreeMode.SUPPLYCAMP == Settings.instance.getFreeMode())
         {
+            final List<PlacementError> placementErrorList = new ArrayList<>();
             if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
-                    Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()))))
+                    Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation())), placementErrorList))
             {
                 pasteNice();
             }
             else
             {
-                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyCampDeployer.invalid");
+                final Map<PlacementErrorType, List<BlockPos>> blockPosListByErrorTypeMap = PlacementError.partitionPlacementErrorsByErrorType(
+                        placementErrorList);
+                for (final Map.Entry<PlacementErrorType, List<BlockPos>> entry : blockPosListByErrorTypeMap.entrySet())
+                {
+                    final PlacementErrorType placementErrorType = entry.getKey();
+                    final List<BlockPos> blockPosList = entry.getValue();
+
+                    final int numberOfBlocksTOReport = blockPosList.size() > 5 ? 5 : blockPosList.size();
+                    final List<BlockPos> blocksToReportList = blockPosList.subList(0, numberOfBlocksTOReport);
+                    String outputList = PlacementError.blockListToCommaSeparatedString(blocksToReportList);
+                    if (blockPosList.size() > numberOfBlocksTOReport)
+                    {
+                        outputList += "...";
+                    }
+                    String errorMessage;
+                    switch(placementErrorType)
+                    {
+                        case NOT_SOLID:
+                            errorMessage = String.format(TranslationConstants.SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY, outputList);
+                            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage, outputList);
+                            break;
+                        case NEEDS_AIR_ABOVE:
+                            errorMessage = String.format(TranslationConstants.SUPPLY_CAMP_INVALID_NEEDS_AIR_ABOVE_MESSAGE_KEY, outputList);
+                            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage, outputList);
+                            break;
+                        case INSIDE_COLONY:
+                            errorMessage = TranslationConstants.SUPPLY_CAMP_INVALID_INSIDE_COLONY_MESSAGE_KEY;
+                            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage);
+                            break;
+                        default:
+                            errorMessage = TranslationConstants.SUPPLY_CAMP_INVALID;
+                            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage);
+                            break;
+                    }
+                }
             }
         }
 
-        Settings.instance.reset();
-        close();
+        if(!GuiScreen.isShiftKeyDown())
+        {
+            cancelClicked();
+        }
     }
 
     /**

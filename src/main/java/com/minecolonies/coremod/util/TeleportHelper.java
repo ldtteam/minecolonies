@@ -33,6 +33,11 @@ public final class TeleportHelper
             return false;
         }
 
+        if(citizen.isAsleep())
+        {
+            citizen.onWakeUp();
+        }
+
         citizen.dismountRidingEntity();
 
         citizen.setLocationAndAngles(
@@ -46,6 +51,10 @@ public final class TeleportHelper
             citizen.getProxy().reset();
         }
         citizen.getNavigator().clearPath();
+        if(citizen.getProxy() != null)
+        {
+            citizen.getProxy().reset();
+        }
 
         return true;
     }

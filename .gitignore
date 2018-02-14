@@ -30,6 +30,7 @@ README.txt
 /.settings/
 /.project
 /.classpath
+/.checkstyle
 /MineColonies_Client.launch
 /MineColonies_Server.launch
 

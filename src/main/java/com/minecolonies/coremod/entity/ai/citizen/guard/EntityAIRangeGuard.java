@@ -173,7 +173,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     {
         if (checkForToolOrWeapon(ToolType.BOW))
         {
-            return AIState.GUARD_SEARCH_TARGET;
+            return GUARD_SEARCH_TARGET;
         }
         InventoryFunctions.matchFirstInProviderWithSimpleAction(worker,
           stack -> !ItemStackUtils.isEmpty(stack)
@@ -191,7 +191,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     {
         if (worker.getColony() == null)
         {
-            return AIState.GUARD_GATHERING;
+            return GUARD_GATHERING;
         }
 
         if (huntDownlastAttacker())
@@ -201,7 +201,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
 
         if (targetEntity == null)
         {
-            return AIState.GUARD_SEARCH_TARGET;
+            return GUARD_SEARCH_TARGET;
         }
 
         if (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.BOW))
@@ -210,7 +210,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
             worker.addExperience(EXP_PER_MOD_DEATH);
             worker.setAIMoveSpeed((float) 1.0D);
             this.onKilledEntity(targetEntity);
-            return AIState.GUARD_GATHERING;
+            return GUARD_GATHERING;
         }
 
         if (worker.getEntitySenses().canSee(targetEntity) && worker.getDistance(targetEntity) <= MAX_ATTACK_DISTANCE)
@@ -224,21 +224,21 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
 
             if (attacksExecuted >= getMaxAttacksUntilRestock())
             {
-                return AIState.GUARD_RESTOCK;
+                return GUARD_RESTOCK;
             }
 
-            return AIState.GUARD_HUNT_DOWN_TARGET;
+            return GUARD_HUNT_DOWN_TARGET;
         }
 
         if (shouldReturnToTarget(targetEntity.getPosition(), FOLLOW_RANGE + MAX_ATTACK_DISTANCE))
         {
-            return AIState.GUARD_PATROL;
+            return GUARD_PATROL;
         }
 
         worker.setAIMoveSpeed((float) (BASE_FOLLOW_SPEED + BASE_FOLLOW_SPEED_MULTIPLIER * worker.getCitizenData().getLevel()));
         worker.isWorkerAtSiteWithMove(targetEntity.getPosition(), MOVE_CLOSE);
 
-        return AIState.GUARD_SEARCH_TARGET;
+        return GUARD_SEARCH_TARGET;
     }
 
     @Override
@@ -301,8 +301,6 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     {
         final int powerEntchantment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.POWER, worker);
         final int punchEntchantment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.PUNCH, worker);
-
-        final DifficultyInstance difficulty = CompatibilityUtils.getWorld(worker).getDifficultyForLocation(new BlockPos(worker));
         arrowEntity.setDamage((baseDamage * BASE_DAMAGE_MULTIPLIER)
                                 + worker.getRandom().nextGaussian() * RANDOM_DAMAGE_MULTPLIER
                                 + CompatibilityUtils.getWorld(worker).getDifficulty().getDifficultyId() * DIFFICULTY_DAMAGE_INCREASE);

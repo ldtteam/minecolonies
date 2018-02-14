@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.mobs.util;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Colony;
@@ -42,7 +43,7 @@ public final class BarbarianSpawnUtils
     /**
      * Values used in Spawn() method
      */
-    private static final float WHOLE_CIRCLE = 360.0F;
+    private static final double WHOLE_CIRCLE = 360.0;
 
     /**
      * Values used for AI Task's Priorities.
@@ -165,7 +166,7 @@ public final class BarbarianSpawnUtils
         {
 
             final int x = spawnLocation.getX();
-            final int y = spawnLocation.getY();
+            final int y = BlockPosUtil.getFloor(spawnLocation, world).getY();
             final int z = spawnLocation.getZ();
 
             IntStream.range(0, numberOfSpawns).forEach(theInteger ->
@@ -175,7 +176,8 @@ public final class BarbarianSpawnUtils
                 if (entity != null)
                 {
                     setBarbarianEquipment(entity);
-                    entity.setLocationAndAngles(x, y, z, MathHelper.wrapDegrees(world.rand.nextFloat() * WHOLE_CIRCLE), 0.0F);
+                    entity.setPositionAndRotation(x, y + 1.0, z, (float) MathHelper.wrapDegrees(world.rand.nextDouble() * WHOLE_CIRCLE), 0.0F);
+                    entity.applyInternalEntityAttributes();
                     CompatibilityUtils.spawnEntity(world, entity);
                 }
             });

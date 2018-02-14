@@ -12,6 +12,7 @@ import com.minecolonies.coremod.network.messages.ColonyViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewWorkOrderMessage;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.util.ColonyUtils;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +21,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.minecolonies.api.util.constant.ColonyConstants.MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE;
+import static com.minecolonies.api.util.constant.ColonyConstants.MAX_SQ_DIST_SUBSCRIBER_UPDATE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_HOUR;
 
 public class ColonyPackageManager implements IColonyPackageManager
@@ -106,6 +109,29 @@ public class ColonyPackageManager implements IColonyPackageManager
                 .filter(colony.getPermissions()::isSubscriber)
                 .forEach(subscribers::add);
 
+        //  Add nearby players
+        for (final EntityPlayer o : world.playerEntities)
+        {
+            if (o instanceof EntityPlayerMP)
+            {
+                @NotNull final EntityPlayerMP player = (EntityPlayerMP) o;
+
+                if (player.connection.networkTickCount < 5)
+                {
+                    continue;
+                }
+
+                final double distance = player.getDistanceSq(colony.getCenter());
+                if (distance < MAX_SQ_DIST_SUBSCRIBER_UPDATE
+                        || (oldSubscribers.contains(player) && distance < MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE))
+                {
+                    // Players become subscribers if they come within 16 blocks of the edge of the colony
+                    // Players remain subscribers while they remain within double the colony's radius
+                    subscribers.add(player);
+                }
+            }
+        }
+
         if (subscribers.isEmpty())
         {
             if (ticksPassed >= TICKS_HOUR)
@@ -126,6 +152,7 @@ public class ColonyPackageManager implements IColonyPackageManager
         final boolean hasNewSubscribers = ColonyUtils.hasNewSubscribers(oldSubscribers, subscribers);
         updateColonyViews(hasNewSubscribers);
     }
+
 
     /**
      * Update the subscribers of the colony.
