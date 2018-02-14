@@ -174,9 +174,9 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     }
 
     @Override
-    public void onAdded(final Colony colony)
+    public void onAdded(final Colony colony, final boolean readingFromNbt)
     {
-        if (colony != null && colony.getWorld() != null)
+        if (!readingFromNbt && colony != null && colony.getWorld() != null)
         {
             final AbstractBuilding building = colony.getBuildingManager().getBuilding(this.getBuildingLocation());
             if (building != null)

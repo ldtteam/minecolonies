@@ -129,6 +129,17 @@ item.minecolonies.scepterGuard.name=Guard-scepter
 
 com.minecolonies.configgui.title=MineColonies Config
 
+com.minecolonies.coremod.status.herder.goingToHut=Going to Hut
+com.minecolonies.coremod.status.herder.breeding=Breeding
+com.minecolonies.coremod.status.herder.searching=Searching
+com.minecolonies.coremod.status.herder.goingToAnimal=Going to Animal
+com.minecolonies.coremod.status.herder.butchering=Butchering
+com.minecolonies.coremod.status.cowboy.milking=Milking
+com.minecolonies.coremod.status.shepherd.shearing=Shearing
+com.minecolonies.coremod.gui.workerHuts.shepherdHut=Shepherd's Hut
+com.minecolonies.coremod.gui.workerHuts.swineHerderHut=SwineHerder's Hut
+com.minecolonies.coremod.gui.workerHuts.cowboyHut=Cowboy's Hut
+com.minecolonies.coremod.gui.workerHuts.chickenHerderHut=ChickenHerder's Hut
 com.minecolonies.coremod.gui.townHall.rename=Rename Colony
 com.minecolonies.coremod.gui.workerHuts.minerMineNode=Mine Level
 com.minecolonies.coremod.gui.workerHuts.buildType=Build Type:
@@ -460,6 +471,7 @@ tile.minecolonies.blockTimberFrame.name=Plain Timber Frame
 tile.minecolonies.blockMinecoloniesRack.name=Rack
 
 com.minecolonies.coremod.status.waitingForWork=Searching job
+com.minecolonies.coremod.status.deciding=Deciding
 com.minecolonies.coremod.status.sleeping=Let me sleep
 com.minecolonies.coremod.status.waiting=Waiting for:
 com.minecolonies.coremod.status.rainStop=the rain to stop
@@ -509,11 +521,13 @@ com.minecolonies.coremod.status.serving=Serving
 com.minecolonies.coremod.status.retrieving=Retrieving
 com.minecolonies.coremod.status.idling=Idling
 com.minecolonies.coremod.status.mining=Mining
+com.minecolonies.coremod.status.smeltingdown=Smelting down
 
 item.minecolonies.scepterPermission.name=PermissionScepter
 
 com.minecolonies.coremod.request.delivery=Delivery of:
 com.minecolonies.coremod.request.food=Food
+com.minecolonies.coremod.request.cookedFood=Cooked Food
 com.minecolonies.coremod.request.burnable=Fuel
 com.minecolonies.coremod.request.tool.pretype=Tool of class:
 com.minecolonies.coremod.request.tool.preminlevel=with minimal level:
@@ -581,3 +595,11 @@ com.minecolonies.coremod.gui.workerHuts.switchStyle=Switch Style
 com.minecolonies.coremod.gui.townHall.tooLow=TH too low
 com.minecolonies.coremod.gui.recipe.full=Max reached for level
 com.minecolonies.coremod.cook.full=Can't bring food to worker since his inventory is full.
+
+tile.minecolonies.blockTimberFrame_oak.name=Oak Timber Frame
+tile.minecolonies.blockTimberFrame_spruce.name= Spruce Timber Frame
+tile.minecolonies.blockTimberFrame_birch.name=Birch Timber Frame
+tile.minecolonies.blockTimberFrame_jungle.name=Jungle Timber Frame
+tile.minecolonies.blockTimberFrame_acacia.name=Acacia Timber Frame
+tile.minecolonies.blockTimberFrame_dark_oak.name=Dark Oak Timber Frame
+com.minecolonies.coremod.request.toolow=Can't mine block %s at %s. Need to upgrade the building to use a tool with hihgher mining level.

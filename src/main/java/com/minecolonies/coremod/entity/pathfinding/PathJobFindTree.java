@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -32,6 +33,11 @@ public class PathJobFindTree extends AbstractPathJob
     private final Map<ItemStorage, Boolean> treesToCut;
 
     /**
+     * The Colony the tree is in.
+     */
+    private final Colony colony;
+
+    /**
      * AbstractPathJob constructor.
      *
      * @param world      the world within which to path.
@@ -45,11 +51,13 @@ public class PathJobFindTree extends AbstractPathJob
                             @NotNull final BlockPos start,
                             final BlockPos home,
                             final int range,
-                            final Map<ItemStorage, Boolean> treesToCut)
+                            final Map<ItemStorage, Boolean> treesToCut,
+                            final Colony colony)
     {
         super(world, start, start, range, new TreePathResult());
         this.treesToCut = treesToCut;
-        hutLocation = home;
+        this.hutLocation = home;
+        this.colony = colony;
     }
 
     /**
@@ -103,7 +111,7 @@ public class PathJobFindTree extends AbstractPathJob
 
     private boolean isTree(final BlockPos pos)
     {
-        if (Tree.checkTree(world, pos, treesToCut))
+        if (Tree.checkTree(world, pos, treesToCut) && Tree.checkIfInColonyAndNotInBuilding(pos, colony))
         {
             getResult().treeLocation = pos;
             return true;

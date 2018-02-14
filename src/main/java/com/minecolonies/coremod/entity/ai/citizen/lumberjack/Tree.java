@@ -1,10 +1,13 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.material.Material;
@@ -706,5 +709,36 @@ public class Tree
     public ItemStack getSapling()
     {
         return saplingToUse;
+    }
+
+    /**
+     * Calculates with a colony if the position is inside the colony and if it is inside a building.
+     * @param pos the position.
+     * @param colony the colony.
+     * @return return false if not inside the colony or if inside a building.
+     */
+    public static boolean checkIfInColonyAndNotInBuilding(final BlockPos pos, final Colony colony)
+    {
+        if(colony.getDistanceSquared(pos) > (Configurations.gameplay.workingRangeTownHall * Configurations.gameplay.workingRangeTownHall))
+        {
+            return false;
+        }
+
+        for (final AbstractBuilding building: colony.getBuildingManager().getBuildings().values())
+        {
+            final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = building.getCorners();
+            final int x1 = corners.getFirst().getFirst();
+            final int x2 = corners.getFirst().getSecond();
+            final int z1 = corners.getSecond().getFirst();
+            final int z2 = corners.getSecond().getSecond();
+
+            final int x = pos.getX();
+            final int z = pos.getZ();
+            if(x > x1 && x < x2 && z > z1 && z < z2)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }

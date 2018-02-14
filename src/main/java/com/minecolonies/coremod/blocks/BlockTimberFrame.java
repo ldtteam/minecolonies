@@ -12,6 +12,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemColored;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,6 +62,43 @@ public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
+    }
+
+    @Override
+    public IBlockState getActualState(final IBlockState state, final IBlockAccess world, final BlockPos pos)
+    {
+        final IBlockState upState = world.getBlockState(pos.up());
+        final IBlockState downState = world.getBlockState(pos.down());
+        final boolean up = isConnectable(upState);
+        final boolean down = isConnectable(downState);
+
+        if(!isConnectable(state) || state.getValue(TYPE) == TimberFrameType.HORIZONTALNOCAP || (!up && !down))
+        {
+            return super.getActualState(state, world, pos);
+        }
+        else
+        {
+            if(up && down)
+            {
+                return state.withProperty(TYPE, TimberFrameType.SIDEFRAMED);
+            }
+            else if(down)
+            {
+                return state.withProperty(TYPE, TimberFrameType.GATEFRAMED);
+            }
+            else
+            {
+                return state.withProperty(TYPE, TimberFrameType.DOWNGATED);
+            }
+        }
+    }
+
+    private static boolean isConnectable(final IBlockState state)
+    {
+        return state.getBlock() instanceof BlockTimberFrame && (state.getValue(TYPE) == TimberFrameType.SIDEFRAMED
+                || state.getValue(TYPE) == TimberFrameType.GATEFRAMED
+                || state.getValue(TYPE) == TimberFrameType.DOWNGATED
+                || state.getValue(TYPE) == TimberFrameType.HORIZONTALNOCAP);
     }
 
     /**
