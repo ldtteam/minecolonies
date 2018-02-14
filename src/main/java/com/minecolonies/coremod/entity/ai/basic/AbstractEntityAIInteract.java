@@ -191,7 +191,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     {
         final Block curBlock = world.getBlockState(blockToMine).getBlock();
 
-        if (!holdEfficientTool(curBlock))
+        if (!holdEfficientTool(curBlock, blockToMine))
         {
             //We are missing a tool to harvest this block...
             return true;
@@ -276,7 +276,9 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      */
     public void fillItemsList()
     {
-        searchForItems(worker.getEntityBoundingBox().expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP).expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
+        searchForItems(worker.getEntityBoundingBox()
+                .expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
+                .expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
     }
 
     /**

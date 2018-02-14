@@ -5,6 +5,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -398,11 +399,11 @@ public class PathNavigate extends PathNavigateGround
      * @param treesToCut the trees which should be cut.
      * @return the result of the search.
      */
-    public PathJobFindTree.TreePathResult moveToTree(final int range, final double speed, final Map<ItemStorage, Boolean> treesToCut)
+    public PathJobFindTree.TreePathResult moveToTree(final int range, final double speed, final Map<ItemStorage, Boolean> treesToCut, final Colony colony)
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(entity);
         return (PathJobFindTree.TreePathResult) setPathJob(
-          new PathJobFindTree(CompatibilityUtils.getWorld(entity), start, ((EntityCitizen) entity).getWorkBuilding().getLocation(), range, treesToCut), null, speed);
+          new PathJobFindTree(CompatibilityUtils.getWorld(entity), start, ((EntityCitizen) entity).getWorkBuilding().getLocation(), range, treesToCut, colony), null, speed);
     }
 
     /**

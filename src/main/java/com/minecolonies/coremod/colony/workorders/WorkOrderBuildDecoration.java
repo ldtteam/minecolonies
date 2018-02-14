@@ -265,10 +265,10 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     }
 
     @Override
-    public void onAdded(final Colony colony)
+    public void onAdded(final Colony colony, final boolean readingFromNbt)
     {
-        super.onAdded(colony);
-        if (colony != null && colony.getWorld() != null)
+        super.onAdded(colony, readingFromNbt);
+        if (!readingFromNbt && colony != null && colony.getWorld() != null)
         {
             ConstructionTapeHelper.placeConstructionTape(this, colony.getWorld());
         }
