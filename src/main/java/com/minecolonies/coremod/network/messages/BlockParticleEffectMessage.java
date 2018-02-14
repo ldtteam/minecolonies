@@ -5,7 +5,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -74,13 +73,13 @@ public class BlockParticleEffectMessage extends AbstractMessage<BlockParticleEff
     @Override
     protected void messageOnClientThread(final BlockParticleEffectMessage message, final MessageContext ctx)
     {
-        Minecraft.getMinecraft().effectRenderer.addBlockDestroyEffects(message.pos, message.block.getDefaultState());
-    }
-
-    @Nullable
-    @Override
-    public void messageOnServerThread(final BlockParticleEffectMessage message, final EntityPlayerMP player)
-    {
-        FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(message.pos, EnumFacing.getFront(message.side));
+        if (message.side == BREAK_BLOCK)
+        {
+            Minecraft.getMinecraft().effectRenderer.addBlockDestroyEffects(message.pos, message.block.getDefaultState());
+        }
+        else
+        {
+            FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(message.pos, EnumFacing.getFront(message.side));
+        }
     }
 }

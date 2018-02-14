@@ -45,6 +45,7 @@ import java.util.function.Predicate;
 import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATION;
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.TranslationConstants.BUILDING_LEVEL_TOO_LOW;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
 import static com.minecolonies.coremod.colony.buildings.AbstractBuilding.MAX_PRIO;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -935,9 +936,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * If we have no tool for the job, we will request on, return immediately.
      *
      * @param target the block to mine
+     * @param pos the pos to mine
      * @return true if we have a tool for the job
      */
-    public final boolean holdEfficientTool(@NotNull final Block target)
+    public final boolean holdEfficientTool(@NotNull final Block target, final BlockPos pos)
     {
         final int bestSlot = getMostEfficientTool(target);
         if (bestSlot >= 0)
@@ -945,7 +947,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             worker.setHeldItem(bestSlot);
             return true;
         }
-        requestTool(target);
+        requestTool(target, pos);
         return false;
     }
 
@@ -953,11 +955,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Request the appropriate tool for this block.
      *
      * @param target the block to mine
+     * @param pos the pos to mine
      */
-    private void requestTool(@NotNull final Block target)
+    private void requestTool(@NotNull final Block target, final BlockPos pos)
     {
         final IToolType toolType = WorkerUtil.getBestToolForBlock(target);
         final int required = WorkerUtil.getCorrectHavestLevelForBlock(target);
+        if (getOwnBuilding().getMaxToolLevel() < required)
+        {
+            chatSpamFilter.talkWithoutSpam(BUILDING_LEVEL_TOO_LOW,new ItemStack(target).getDisplayName(), pos.toString());
+        }
         updateToolFlag(toolType, required);
     }
 
