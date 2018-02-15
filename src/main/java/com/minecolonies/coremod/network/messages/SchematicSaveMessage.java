@@ -7,12 +7,11 @@ import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.util.ClientStructureWrapper;
 import com.minecolonies.structures.helpers.Structure;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Save Schematic Message.
@@ -78,15 +77,12 @@ public class SchematicSaveMessage extends AbstractMessage<SchematicSaveMessage, 
     }
 
     @Override
-    protected void messageOnClientThread(final SchematicSaveMessage message, final MessageContext ctx)
+    public void messageOnServerThread(final SchematicSaveMessage message, final EntityPlayerMP player)
     {
         if (!MineColonies.isClient() && !Configurations.gameplay.allowPlayerSchematics)
         {
             Log.getLogger().info("SchematicSaveMessage: custom schematic is not allowed on this server.");
-            if (ctx.side.isServer())
-            {
-                ctx.getServerHandler().player.sendMessage(new TextComponentString("The server does not allow custom schematic!"));
-            }
+            player.sendMessage(new TextComponentString("The server does not allow custom schematic!"));
         }
 
         final boolean schematicSent;
@@ -100,16 +96,32 @@ public class SchematicSaveMessage extends AbstractMessage<SchematicSaveMessage, 
             schematicSent = Structures.handleSaveSchematicMessage(message.data);
         }
 
-        if (ctx.side.isServer())
+
+        if (schematicSent)
         {
-            if (schematicSent)
-            {
-                ctx.getServerHandler().player.sendMessage(new TextComponentString("Schematic successfully sent!"));
-            }
-            else
-            {
-                ctx.getServerHandler().player.sendMessage(new TextComponentString("Failed to send the Schematic!"));
-            }
+            player.sendMessage(new TextComponentString("Schematic successfully sent!"));
+        }
+        else
+        {
+            player.sendMessage(new TextComponentString("Failed to send the Schematic!"));
+        }
+    }
+
+    @Override
+    protected void messageOnClientThread(final SchematicSaveMessage message, final MessageContext ctx)
+    {
+        if (!MineColonies.isClient() && !Configurations.gameplay.allowPlayerSchematics)
+        {
+            Log.getLogger().info("SchematicSaveMessage: custom schematic is not allowed on this server.");
+        }
+
+        if (message.data == null)
+        {
+            Log.getLogger().error("Received empty schematic file");
+        }
+        else
+        {
+            Structures.handleSaveSchematicMessage(message.data);
         }
     }
 }
