@@ -145,7 +145,6 @@ public class CraftingGUIBuilding extends Container
             }
         }
 
-        final int extraOffset = 0;
         // Player inventory slots
         // Note: The slot numbers are within the player inventory and may be the same as the field inventory.
         int i;
