@@ -503,10 +503,9 @@ public class Colony implements IColony
     {
         buildingManager.tick(event);
 
-        getRequestManager().update();
-
         if (event.phase == TickEvent.Phase.END)
         {
+            getRequestManager().update();
             packageManager.updateSubscribers();
         }
     }

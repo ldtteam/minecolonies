@@ -17,6 +17,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 /**
  * Recalls the citizen to the hut.
  * Created: May 26, 2014
@@ -79,15 +81,15 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
             {
                 for (int i = 0; i < building.getWorkerEntities().size(); i++)
                 {
-                    EntityCitizen citizen = building.getWorkerEntities().get(i);
-                    if (citizen == null)
+                    Optional<EntityCitizen> optionalEntityCitizen = building.getWorkerEntities().get(i);
+                    if (!optionalEntityCitizen.isPresent())
                     {
                         final CitizenData citizenData = building.getWorker().get(i);
                         if (citizenData != null)
                         {
                             Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
-                            colony.getCitizenManager().spawnCitizen(citizenData, colony.getWorld());
-                            citizen = citizenData.getCitizenEntity();
+                            citizenData.updateCitizenEntityIfNecessary();
+                            optionalEntityCitizen = citizenData.getCitizenEntity();
                         }
                         else
                         {
@@ -96,7 +98,7 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                         }
                     }
                     final BlockPos loc = building.getLocation();
-                    if (!TeleportHelper.teleportCitizen(citizen, colony.getWorld(), loc))
+                    if (optionalEntityCitizen.isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), colony.getWorld(), loc))
                     {
                         LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.workerHuts.recallFail");
                     }

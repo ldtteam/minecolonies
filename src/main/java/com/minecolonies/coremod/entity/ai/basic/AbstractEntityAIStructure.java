@@ -365,6 +365,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             {
                 decrease = (IBlockState) result;
                 decreaseInventory(coords, decrease.getBlock(), decrease);
+                connectBlockToBuildingIfNecessary(decrease, coords);
                 worker.swingArm(worker.getActiveHand());
                 worker.addExperience(XP_EACH_BLOCK);
 
@@ -411,7 +412,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         @NotNull final Block blockToPlace = block;
-        connectBlockToBuildingIfNecessary(blockToPlace, pos);
 
         //It will crash at blocks like water which is actually free, we don't have to decrease the stacks we have.
         if (isBlockFree(blockToPlace, blockToPlace.getMetaFromState(stateToPlace)))
@@ -454,10 +454,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     /**
      * On placement of a Block execute this to store the location in the regarding building when needed.
      *
-     * @param block itself
+     * @param blockState itself
      * @param pos   the position of the block.
      */
-    public void connectBlockToBuildingIfNecessary(@NotNull final Block block, @NotNull final BlockPos pos)
+    public void connectBlockToBuildingIfNecessary(@NotNull final IBlockState blockState, @NotNull final BlockPos pos)
     {
         /**
          * Classes can overwrite this if necessary.
@@ -524,7 +524,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
             if (structureBlock.doesStructureBlockEqualWorldBlock())
             {
-                connectBlockToBuildingIfNecessary(structureBlock.block, structureBlock.blockPosition);
+                connectBlockToBuildingIfNecessary(structureBlock.metadata, structureBlock.blockPosition);
                 //findNextBlock count was reached and we can ignore this block
                 return true;
             }
@@ -606,9 +606,28 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 ((AbstractJobStructure) job).setStructure(null);
             }
 
-            ((AbstractJobStructure) job).getStructure().rotate(rotateTimes, world, position, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
-            ((AbstractJobStructure) job).getStructure().setPosition(position);
+            try
+            {
+                ((AbstractJobStructure) job).getStructure().rotate(rotateTimes, world, position, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
+                ((AbstractJobStructure) job).getStructure().setPosition(position);
+            }
+            catch(final NullPointerException ex)
+            {
+                handleSpecificCancelActions();
+                ((AbstractJobStructure) job).setStructure(null);
+                Log.getLogger().warn("Structure couldn't be found which caused an NPE, removed workOrder, more details in log", ex);
+            }
         }
+    }
+
+    /**
+     * Specific actions to handle a cancelation of a structure.
+     */
+    public void handleSpecificCancelActions()
+    {
+        /**
+         * Child classes have to override this.
+         */
     }
 
     /**

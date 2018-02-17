@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecolonies:blocktimberframe_jungle",
+      "data": 4
+    }
+  ],
+  "result": {
+    "item": "minecolonies:blocktimberframe_jungle",
+    "data": 5,
+    "count": 1
+  }
+}

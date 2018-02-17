@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Save Schematic Message.
  */
-public class SchematicSaveMessage implements IMessage, IMessageHandler<SchematicSaveMessage, IMessage>
+public class SchematicSaveMessage extends AbstractMessage<SchematicSaveMessage, IMessage>
 {
     private static final int    MAX_TOTAL_SIZE = 32_767;
     private              byte[] data           = null;
@@ -77,9 +77,8 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
         }
     }
 
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull final SchematicSaveMessage message, final MessageContext ctx)
+    protected void messageOnClientThread(final SchematicSaveMessage message, final MessageContext ctx)
     {
         if (!MineColonies.isClient() && !Configurations.gameplay.allowPlayerSchematics)
         {
@@ -88,7 +87,6 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
             {
                 ctx.getServerHandler().player.sendMessage(new TextComponentString("The server does not allow custom schematic!"));
             }
-            return null;
         }
 
         final boolean schematicSent;
@@ -113,6 +111,5 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
                 ctx.getServerHandler().player.sendMessage(new TextComponentString("Failed to send the Schematic!"));
             }
         }
-        return null;
     }
 }

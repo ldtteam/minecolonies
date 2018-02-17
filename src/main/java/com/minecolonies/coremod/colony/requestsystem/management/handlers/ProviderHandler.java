@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.requestsystem.management.handlers;
 
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -9,7 +8,6 @@ import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequest
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * Class used to handle the inner workings of the request system with regards to providers.
@@ -66,10 +64,17 @@ public final class ProviderHandler
 
         //Get the resolvers that are being removed.
         final Collection<IToken<?>> assignedResolvers = getRegisteredResolvers(manager, token);
+
+        if(assignedResolvers == null)
+        {
+            return;
+        }
+
         for (final IToken<?> resolverToken : assignedResolvers)
         {
             //Skip if the resolver has no requests assigned.
-            if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolverToken) || manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken).isEmpty())
+            if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolverToken)
+                    || manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken).isEmpty())
             {
                 LogHandler.log("Removing resolver without assigned requests: " + resolverToken);
                 manager.getRequestResolverRequestAssignmentDataStore().getAssignments().remove(resolverToken);

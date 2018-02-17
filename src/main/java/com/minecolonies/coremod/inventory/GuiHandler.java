@@ -61,10 +61,10 @@ public class GuiHandler implements IGuiHandler
         {
             final Colony colony = ColonyManager.getColony(x);
             final CitizenData citizen = colony.getCitizenManager().getCitizen(y);
-            final AbstractBuilding building = citizen.getWorkBuilding() == null ? null : citizen.getWorkBuilding();
+            final AbstractBuilding building = citizen.getWorkBuilding();
 
             return new ContainerMinecoloniesCitizenInventory(player.inventory,
-                                                              citizen.getCitizenEntity().getInventoryCitizen(),
+                                                              citizen.getInventory(),
                                                               colony.getID(),
                                                               building == null ? null : building.getID(),
                                                               citizen.getId());

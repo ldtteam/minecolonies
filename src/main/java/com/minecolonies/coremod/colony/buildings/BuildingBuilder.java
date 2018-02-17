@@ -10,7 +10,6 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
@@ -186,7 +185,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
             final NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);
             final ItemStack stack = new ItemStack(neededRes);
             final BuildingBuilderResource resource = new BuildingBuilderResource(stack, ItemStackUtils.getSize(stack));
-            neededResources.put(stack.getUnlocalizedName(), resource);
+            neededResources.put(stack.getUnlocalizedName() + ":" + stack.getItemDamage(), resource);
         }
     }
 
@@ -230,9 +229,8 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
         updateAvailableResources();
         buf.writeInt(neededResources.size());
-        for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
+        for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
-            final BuildingBuilderResource resource = neededResources.get(entry.getKey());
             ByteBufUtils.writeItemStack(buf, resource.getItemStack());
             buf.writeInt(resource.getAvailable());
             buf.writeInt(resource.getAmount());
@@ -246,45 +244,44 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     private void updateAvailableResources()
     {
-        final EntityCitizen builder = getMainWorkerEntity();
-
-        InventoryCitizen builderInventory = null;
-        if (builder != null && builder.getCitizenData() != null)
-        {
-            builderInventory = builder.getInventoryCitizen();
-        }
-
-
-        for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
-        {
-            final BuildingBuilderResource resource = entry.getValue();
-
-            resource.setAvailable(0);
-
-            if (builderInventory != null)
+        getMainWorkerEntity().ifPresent(builder -> {
+            final InventoryCitizen builderInventory = getMainWorker().getInventory();
+            if (builderInventory == null)
             {
-                resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory), resource.getItem(), resource.getDamageValue()));
+                return;
             }
 
-            final TileEntity chestInventory = this.getTileEntity();
-            if (chestInventory != null)
+            for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
             {
-                resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory, resource.getItem(), resource.getDamageValue()));
-            }
+                final BuildingBuilderResource resource = entry.getValue();
 
-            //Count in the additional chests as well
-            if (builder != null)
-            {
-                for (final BlockPos pos : getAdditionalCountainers())
+                resource.setAvailable(0);
+
+                if (builderInventory != null)
                 {
-                    final TileEntity entity = CompatibilityUtils.getWorld(builder).getTileEntity(pos);
-                    if (entity instanceof TileEntityChest)
+                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory), resource.getItem(), resource.getDamageValue()));
+                }
+
+                final TileEntity chestInventory = this.getTileEntity();
+                if (chestInventory != null)
+                {
+                    resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory, resource.getItem(), resource.getDamageValue()));
+                }
+
+                //Count in the additional chests as well
+                if (builder != null)
+                {
+                    for (final BlockPos pos : getAdditionalCountainers())
                     {
-                        resource.addAvailable(InventoryUtils.getItemCountInProvider(entity, resource.getItem(), resource.getDamageValue()));
+                        final TileEntity entity = CompatibilityUtils.getWorld(builder).getTileEntity(pos);
+                        if (entity instanceof TileEntityChest)
+                        {
+                            resource.addAvailable(InventoryUtils.getItemCountInProvider(entity, resource.getItem(), resource.getDamageValue()));
+                        }
                     }
                 }
             }
-        }
+        });
     }
 
     /**
@@ -309,7 +306,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             return;
         }
-        BuildingBuilderResource resource = this.neededResources.get(res.getUnlocalizedName());
+        BuildingBuilderResource resource = this.neededResources.get(res.getUnlocalizedName() + ":" + res.getItemDamage());
         if (resource == null)
         {
             resource = new BuildingBuilderResource(res, amount);
@@ -318,7 +315,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             resource.setAmount(resource.getAmount() + amount);
         }
-        this.neededResources.put(res.getUnlocalizedName(), resource);
+        this.neededResources.put(res.getUnlocalizedName() + ":" + res.getItemDamage(), resource);
         this.markDirty();
     }
 
@@ -331,18 +328,19 @@ public class BuildingBuilder extends AbstractBuildingWorker
     public void reduceNeededResource(final ItemStack res, final int amount)
     {
         int preAmount = 0;
-        if (this.neededResources.containsKey(res.getUnlocalizedName()))
+        final String name = res.getUnlocalizedName() + ":" + res.getItemDamage();
+        if (this.neededResources.containsKey(name))
         {
-            preAmount = this.neededResources.get(res.getUnlocalizedName()).getAmount();
+            preAmount = this.neededResources.get(name).getAmount();
         }
 
         if (preAmount - amount <= 0)
         {
-            this.neededResources.remove(res.getUnlocalizedName());
+            this.neededResources.remove(name);
         }
         else
         {
-            this.neededResources.get(res.getUnlocalizedName()).setAmount(preAmount - amount);
+            this.neededResources.get(name).setAmount(preAmount - amount);
         }
         this.markDirty();
     }
@@ -364,6 +362,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     public boolean requiresResourceForBuilding(final ItemStack stack)
     {
-        return neededResources.containsKey(stack.getUnlocalizedName());
+        return neededResources.containsKey(stack.getUnlocalizedName() + ":" + stack.getItemDamage());
     }
 }

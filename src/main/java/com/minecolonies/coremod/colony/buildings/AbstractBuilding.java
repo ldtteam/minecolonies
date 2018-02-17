@@ -17,7 +17,6 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvid
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
@@ -37,6 +36,7 @@ import com.minecolonies.coremod.util.StructureWrapper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
@@ -94,7 +94,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     /**
      * Max priority of a building.
      */
-    private static final int MAX_PRIO = 10;
+    public static final int MAX_PRIO = 10;
 
     /**
      * Map to resolve names to class.
@@ -841,7 +841,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             }
         }
 
-        colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
+        colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level), false);
         LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
         markDirty();
     }
@@ -1079,6 +1079,18 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     }
 
     /**
+     * Register a blockState and position.
+     * We suppress this warning since this parameter will be used in child classes which override this method.
+     *
+     * @param blockState to be registered
+     * @param pos   of the blockState
+     */
+    public void registerBlockPosition(@NotNull final IBlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
+    {
+        registerBlockPosition(blockState.getBlock(), pos, world);
+    }
+
+    /**
      * Register a block and position.
      * We suppress this warning since this parameter will be used in child classes which override this method.
      *
@@ -1269,7 +1281,15 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      */
     public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
     {
-        return keepX;
+        final Map<Predicate<ItemStack>, Integer> toKeep = new HashMap<>();
+        toKeep.putAll(keepX);
+        final IRequestManager manager = colony.getRequestManager();
+        toKeep.put(stack -> this.getOpenRequestsByCitizen().values().stream()
+                .anyMatch(list -> list.stream()
+                        .anyMatch(token -> manager.getRequestForToken(token).getRequest() instanceof IDeliverable
+                                && ((IDeliverable) manager.getRequestForToken(token).getRequest()).matches(stack))), Integer.MAX_VALUE);
+
+        return toKeep;
     }
 
     /**
@@ -1700,16 +1720,12 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         }
 
         final IRequest<?> requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
-        if (requestThatCompleted != null)
+        if (requestThatCompleted != null && getOpenRequestsByRequestableType().containsKey(TypeToken.of(requestThatCompleted.getRequest().getClass())))
         {
-            if (getOpenRequestsByRequestableType().containsKey(TypeToken.of(requestThatCompleted.getRequest().getClass())))
+            getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).remove(token);
+            if (getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).isEmpty())
             {
-                getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).remove(token);
-
-                if (getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).isEmpty())
-                {
-                    getOpenRequestsByRequestableType().remove(TypeToken.of(requestThatCompleted.getRequest().getClass()));
-                }
+                getOpenRequestsByRequestableType().remove(TypeToken.of(requestThatCompleted.getRequest().getClass()));
             }
         }
 

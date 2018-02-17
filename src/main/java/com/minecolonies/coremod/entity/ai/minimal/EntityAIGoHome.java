@@ -45,7 +45,7 @@ public class EntityAIGoHome extends EntityAIBase
     {
         super();
         this.citizen = citizen;
-        this.chatSpamFilter = new ChatSpamFilter(citizen);
+        this.chatSpamFilter = new ChatSpamFilter(citizen.getCitizenData());
     }
 
     /**

@@ -377,17 +377,17 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     }
 
     @Override
-    public void connectBlockToBuildingIfNecessary(@NotNull final Block block, @NotNull final BlockPos pos)
+    public void connectBlockToBuildingIfNecessary(@NotNull final IBlockState blockState, @NotNull final BlockPos pos)
     {
         final BlockPos buildingLocation = job.getWorkOrder().getBuildingLocation();
         final AbstractBuilding building = this.getOwnBuilding().getColony().getBuildingManager().getBuilding(buildingLocation);
 
         if (building != null)
         {
-            building.registerBlockPosition(block, pos, world);
+            building.registerBlockPosition(blockState, pos, world);
         }
 
-        if (block == ModBlocks.blockWayPoint)
+        if (blockState.getBlock() == ModBlocks.blockWayPoint)
         {
             worker.getColony().addWayPoint(pos, world.getBlockState(pos));
         }
@@ -509,5 +509,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     protected int getActionsDoneUntilDumping()
     {
         return ACTIONS_UNTIL_DUMP;
+    }
+
+    @Override
+    public void handleSpecificCancelActions()
+    {
+        getOwnBuilding().getColony().getWorkManager().removeWorkOrder(job.getWorkOrderId());
+        job.setWorkOrder(null);
     }
 }

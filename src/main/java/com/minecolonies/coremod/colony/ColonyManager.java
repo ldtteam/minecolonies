@@ -16,7 +16,6 @@ import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRecipeManager;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.AchievementUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -215,14 +214,13 @@ public final class ColonyManager
             for (final CitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
             {
                 Log.getLogger().info("Kill Citizen " + citizenData.getName());
-                final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
-                if (entityCitizen != null)
-                {
+                citizenData.getCitizenEntity().ifPresent(entityCitizen -> {
                     final World world = entityCitizen.getEntityWorld();
-                    citizenData.getCitizenEntity().onDeath(CONSOLE_DAMAGE_SOURCE);
+                    entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE);
                     colonyWorlds.add(world);
-                }
+                });
             }
+
             if (canDestroy)
             {
                 Log.getLogger().info("Removing buildings for " + id);
@@ -665,7 +663,7 @@ public final class ColonyManager
         final NBTTagCompound recipeCompound = new NBTTagCompound();
         recipeManager.writeToNBT(recipeCompound);
         compound.setTag(RECIPE_MANAGER_TAG, recipeCompound);
-        compound.setInteger(TAG_NEW_COLONIES, colonies.getSize());
+        compound.setInteger(TAG_NEW_COLONIES, colonies.getTopID());
     }
 
     /**
@@ -809,7 +807,7 @@ public final class ColonyManager
             @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
             final ZipOutputStream zos = new ZipOutputStream(fos);
 
-            for (int i = 0; i < colonies.getSize() + BUFFER; i++)
+            for (int i = 1; i < colonies.getTopID(); i++)
             {
                 @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i));
                 if (file.exists())

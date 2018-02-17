@@ -265,6 +265,7 @@ public class CraftingGUIBuilding extends Container
         {
             return ItemStack.EMPTY;
         }
+
         ItemStack itemstack = ItemStackUtils.EMPTY;
         final Slot slot = this.inventorySlots.get(index);
         if (slot != null && slot.getHasStack())

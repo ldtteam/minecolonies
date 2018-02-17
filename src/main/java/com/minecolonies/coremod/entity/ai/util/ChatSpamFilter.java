@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.util;
 
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.util.text.TextComponentBase;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +32,7 @@ public class ChatSpamFilter
     /**
      * The worker we send chats from.
      */
-    private final EntityCitizen worker;
+    private final CitizenData citizenData;
 
     /**
      * Ticks to wait till we let a new chat through.
@@ -52,11 +53,11 @@ public class ChatSpamFilter
     /**
      * Create a new ChatSpamFilter for the worker.
      *
-     * @param worker the worker who will sends chats through this filter.
+     * @param citizenData the worker who will sends chats through this filter.
      */
-    public ChatSpamFilter(final EntityCitizen worker)
+    public ChatSpamFilter(final CitizenData citizenData)
     {
-        this.worker = worker;
+        this.citizenData = citizenData;
     }
 
     /**
@@ -79,6 +80,13 @@ public class ChatSpamFilter
      */
     public void talkWithoutSpam(final String key, final Object... chat)
     {
+        if (!citizenData.getCitizenEntity().isPresent())
+        {
+            return;
+        }
+
+        final EntityCitizen worker = citizenData.getCitizenEntity().get();
+
         @NotNull final String curstring = key + getStringOfChat(chat);
         if (Objects.equals(speechDelayString, curstring))
         {

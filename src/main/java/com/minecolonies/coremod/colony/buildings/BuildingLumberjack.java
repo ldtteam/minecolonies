@@ -12,8 +12,6 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.api.crafting.ItemStorage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -86,40 +84,38 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Integer> tempKeep = super.getRequiredItemsAndAmount();
-        final EntityCitizen mainWorker = getMainWorkerEntity();
-        if(mainWorker == null)
+
+        if(getMainWorker() != null && getMainWorker().getInventory() != null)
         {
-            return tempKeep;
-        }
-
-        final int invSIze = mainWorker.getInventoryCitizen().getSizeInventory();
-        int keptStacks = 0;
-        for(int i = 0; i < invSIze; i++)
-        {
-            final ItemStack stack = mainWorker.getInventoryCitizen().getStackInSlot(i);
-
-            if(ItemStackUtils.isEmpty(stack) || stack.getItem() != SAPLING_STACK.getItem())
+            final int invSIze = getMainWorker().getInventory().getSizeInventory();
+            int keptStacks = 0;
+            for (int i = 0; i < invSIze; i++)
             {
-                continue;
-            }
+                final ItemStack stack = getMainWorker().getInventory().getStackInSlot(i);
 
-            boolean isAlreadyInList = false;
-            for(final Map.Entry<Predicate<ItemStack>, Integer> entry : tempKeep.entrySet())
-            {
-                if(entry.getKey().test(stack))
+                if (ItemStackUtils.isEmpty(stack) || stack.getItem() != SAPLING_STACK.getItem())
                 {
-                    isAlreadyInList = true;
+                    continue;
                 }
-            }
 
-            if(!isAlreadyInList)
-            {
-                tempKeep.put(stack::isItemEqual, com.minecolonies.api.util.constant.Constants.STACKSIZE);
-                keptStacks++;
-
-                if (keptStacks >= getMaxBuildingLevel() * 2)
+                boolean isAlreadyInList = false;
+                for (final Map.Entry<Predicate<ItemStack>, Integer> entry : tempKeep.entrySet())
                 {
-                    return tempKeep;
+                    if (entry.getKey().test(stack))
+                    {
+                        isAlreadyInList = true;
+                    }
+                }
+
+                if (!isAlreadyInList)
+                {
+                    tempKeep.put(stack::isItemEqual, com.minecolonies.api.util.constant.Constants.STACKSIZE);
+                    keptStacks++;
+
+                    if (keptStacks >= getMaxBuildingLevel() * 2)
+                    {
+                        return tempKeep;
+                    }
                 }
             }
         }

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Add or Update a ColonyView on the client.
  */
-public class ColonyViewRemoveCitizenMessage implements IMessage, IMessageHandler<ColonyViewRemoveCitizenMessage, IMessage>
+public class ColonyViewRemoveCitizenMessage extends AbstractMessage<ColonyViewRemoveCitizenMessage, IMessage>
 {
     private int colonyId;
     private int citizenId;
@@ -51,10 +51,9 @@ public class ColonyViewRemoveCitizenMessage implements IMessage, IMessageHandler
         buf.writeInt(citizenId);
     }
 
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull final ColonyViewRemoveCitizenMessage message, final MessageContext ctx)
+    protected void messageOnClientThread(final ColonyViewRemoveCitizenMessage message, final MessageContext ctx)
     {
-        return ColonyManager.handleColonyViewRemoveCitizenMessage(message.colonyId, message.citizenId);
+        ColonyManager.handleColonyViewRemoveCitizenMessage(message.colonyId, message.citizenId);
     }
 }
