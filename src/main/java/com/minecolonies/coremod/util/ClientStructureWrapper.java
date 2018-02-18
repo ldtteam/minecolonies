@@ -64,7 +64,7 @@ public final class ClientStructureWrapper
      *
      * @param directory the directory to check.
      */
-    private static void checkDirectory(@NotNull final File directory)
+    public static void checkDirectory(@NotNull final File directory)
     {
         if (!directory.exists() && !directory.mkdirs())
         {

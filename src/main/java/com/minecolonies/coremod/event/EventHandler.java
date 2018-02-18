@@ -36,6 +36,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -108,6 +109,16 @@ public class EventHandler
     }
 
     /**
+     * Called when a chunk gets loaded for some reason.
+     *
+     */
+    @SubscribeEvent
+    public void onChunkLoad(@NotNull final ChunkEvent.Load event)
+    {
+        ColonyManager.loadChunk(event.getChunk(), event.getWorld());
+    }
+
+    /**
      * Event called when the player enters a new chunk.
      * @param event the event.
      */
@@ -119,10 +130,9 @@ public class EventHandler
         //  Add nearby players
         if (entity instanceof EntityPlayerMP && entity.dimension == 0)
         {
-            ColonyManager.loadChunk(entity.world, event.getNewChunkX(), event.getNewChunkZ(), entity.dimension);
-            
             final World world = entity.getEntityWorld();
             final Chunk newChunk = world.getChunkFromChunkCoords(event.getNewChunkX(), event.getNewChunkZ());
+            ColonyManager.loadChunk(newChunk, entity.world);
 
             final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null);
 

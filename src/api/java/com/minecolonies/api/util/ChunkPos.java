@@ -101,7 +101,6 @@ public class ChunkPos
     @Override
     public int hashCode()
     {
-
         return Objects.hash(x, z, dim);
     }
 }

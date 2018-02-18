@@ -200,6 +200,11 @@ public final class NbtTagConstants
 
     public static final String TAG_CITIZEN_BY_OPEN_REQUEST = "CitizenByOpenRequest";
 
+    /**
+     * Missing chunks to be loaded.
+     */
+    public static final String TAG_MISSING_CHUNKS = "missingChunks";
+
 
     /**
      * Private constructor to hide the implicit one.
