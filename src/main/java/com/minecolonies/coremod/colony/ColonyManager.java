@@ -18,7 +18,6 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRecipeManager;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
 import com.minecolonies.coremod.util.AchievementUtils;
-import com.minecolonies.coremod.util.ClientStructureWrapper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -239,7 +238,7 @@ public final class ColonyManager
 
         final int maxRange = range * 2 + buffer;
         @NotNull final File chunkDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), CHUNK_INFO_PATH);
-        ClientStructureWrapper.checkDirectory(chunkDir);
+        Utils.checkDirectory(chunkDir);
 
         for(int i = chunkX - maxRange; i <= chunkX + maxRange; i++)
         {
