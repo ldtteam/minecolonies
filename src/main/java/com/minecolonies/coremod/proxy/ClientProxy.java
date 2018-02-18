@@ -289,7 +289,7 @@ public class ClientProxy extends CommonProxy
     @Override
     public World getWorldFromMessage(@NotNull final MessageContext context)
     {
-        return context.getClientHandler().clientWorldController;
+        return context.getClientHandler().world;
     }
 
     @Nullable
