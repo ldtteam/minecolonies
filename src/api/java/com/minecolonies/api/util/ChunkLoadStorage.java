@@ -25,9 +25,9 @@ public class ChunkLoadStorage
     private final int      colonyId;
 
     /**
-     * The position of the chunk.
+     * Hash of the position.
      */
-    private final BlockPos pos;
+    private final int pos;
 
     /**
      * If add or remove.
@@ -46,7 +46,7 @@ public class ChunkLoadStorage
     public ChunkLoadStorage(final NBTTagCompound compound)
     {
         this.colonyId = compound.getInteger(TAG_ID);
-        this.pos = BlockPosUtil.readFromNBT(compound, TAG_POS);
+        this.pos = compound.getInteger(TAG_POS);
         this.add = compound.getBoolean(TAG_ADD);
         this.dimension = compound.getInteger(TAG_DIMENSION);
     }
@@ -58,7 +58,7 @@ public class ChunkLoadStorage
      * @param add the operation type.
      * @param dimension the dimension.
      */
-    public ChunkLoadStorage(final int colonyId, final BlockPos pos, final boolean add, final int dimension)
+    public ChunkLoadStorage(final int colonyId, final int pos, final boolean add, final int dimension)
     {
         this.colonyId = colonyId;
         this.pos = pos;
@@ -74,7 +74,7 @@ public class ChunkLoadStorage
     {
         final NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger(TAG_ID, colonyId);
-        BlockPosUtil.writeToNBT(compound, TAG_POS, pos);
+        compound.setInteger(TAG_POS, pos);
         compound.setBoolean(TAG_ADD, add);
         compound.setInteger(TAG_DIMENSION, dimension);
         return compound;
@@ -87,15 +87,6 @@ public class ChunkLoadStorage
     public int getColonyId()
     {
         return colonyId;
-    }
-
-    /**
-     * Getter for the position.
-     * @return the position.
-     */
-    public BlockPos getPos()
-    {
-        return pos;
     }
 
     /**
@@ -131,7 +122,7 @@ public class ChunkLoadStorage
         return colonyId == storage.colonyId &&
                 add == storage.add &&
                 dimension == storage.dimension &&
-                Objects.equals(pos, storage.pos);
+                pos == storage.pos;
     }
 
     @Override

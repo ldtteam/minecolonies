@@ -244,10 +244,9 @@ public final class ColonyManager
         {
             for(int j = chunkZ - maxRange; j <= chunkZ + maxRange; j++)
             {
-                final BlockPos pos = new BlockPos(i, 0, j);
                 if(i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range)
                 {
-                    saveNBTToPath(new File(chunkDir, String.format(FILENAME_CHUNK, i, j, dimension)), new ChunkLoadStorage(id, pos, add, dimension).toNBT());
+                    saveNBTToPath(new File(chunkDir, String.format(FILENAME_CHUNK, i, j, dimension)), new ChunkLoadStorage(id, Objects.hash(i, j), add, dimension).toNBT());
                 }
             }
         }
