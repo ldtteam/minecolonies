@@ -278,10 +278,8 @@ public final class ColonyManager
 
     /**
      * Load the colony info for a certain chunk.
+     * @param chunk the chunk.
      * @param world the world.
-     * @param x the x pos.
-     * @param z the z pos.
-     * @param dim the dimension.
      */
     public static void loadChunk(final Chunk chunk, final World world)
     {
