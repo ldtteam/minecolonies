@@ -1,7 +1,6 @@
 package com.minecolonies.api.util;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
 
 import java.util.Objects;
 
@@ -22,12 +21,12 @@ public class ChunkLoadStorage
     /**
      * The colony id.
      */
-    private final int      colonyId;
+    private final int colonyId;
 
     /**
-     * Hash of the position.
+     * XZ pos as long.
      */
-    private final int pos;
+    private final long xz;
 
     /**
      * If add or remove.
@@ -46,7 +45,7 @@ public class ChunkLoadStorage
     public ChunkLoadStorage(final NBTTagCompound compound)
     {
         this.colonyId = compound.getInteger(TAG_ID);
-        this.pos = compound.getInteger(TAG_POS);
+        this.xz = compound.getLong(TAG_POS);
         this.add = compound.getBoolean(TAG_ADD);
         this.dimension = compound.getInteger(TAG_DIMENSION);
     }
@@ -54,14 +53,14 @@ public class ChunkLoadStorage
     /**
      * Create a new chunkload storage.
      * @param colonyId the id of the colony.
-     * @param pos the chunk pos.
+     * @param xz the chunk xz.
      * @param add the operation type.
      * @param dimension the dimension.
      */
-    public ChunkLoadStorage(final int colonyId, final int pos, final boolean add, final int dimension)
+    public ChunkLoadStorage(final int colonyId, final long xz, final boolean add, final int dimension)
     {
         this.colonyId = colonyId;
-        this.pos = pos;
+        this.xz = xz;
         this.add = add;
         this.dimension = dimension;
     }
@@ -74,7 +73,7 @@ public class ChunkLoadStorage
     {
         final NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger(TAG_ID, colonyId);
-        compound.setInteger(TAG_POS, pos);
+        compound.setLong(TAG_POS, xz);
         compound.setBoolean(TAG_ADD, add);
         compound.setInteger(TAG_DIMENSION, dimension);
         return compound;
@@ -122,12 +121,12 @@ public class ChunkLoadStorage
         return colonyId == storage.colonyId &&
                 add == storage.add &&
                 dimension == storage.dimension &&
-                pos == storage.pos;
+                xz == storage.xz;
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(colonyId, pos, add, dimension);
+        return Objects.hash(colonyId, xz, add, dimension);
     }
 }

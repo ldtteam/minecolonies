@@ -27,6 +27,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.chunk.Chunk;
@@ -246,7 +247,7 @@ public final class ColonyManager
             {
                 if(i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range)
                 {
-                    saveNBTToPath(new File(chunkDir, String.format(FILENAME_CHUNK, i, j, dimension)), new ChunkLoadStorage(id, Objects.hash(i, j), add, dimension).toNBT());
+                    saveNBTToPath(new File(chunkDir, String.format(FILENAME_CHUNK, i, j, dimension)), new ChunkLoadStorage(id, ChunkPos.asLong(i,j), add, dimension).toNBT());
                 }
             }
         }
