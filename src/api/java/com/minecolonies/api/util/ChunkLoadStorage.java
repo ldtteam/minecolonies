@@ -212,27 +212,30 @@ public class ChunkLoadStorage
     {
         for(final int tempColonyId: newStorage.coloniesToAdd)
         {
-            if(!coloniesToAdd.contains(tempColonyId))
+            if(this.coloniesToRemove.contains(tempColonyId))
             {
-                coloniesToAdd.add(tempColonyId);
+                this.coloniesToRemove.remove(new Integer(tempColonyId));
             }
-
-            if(coloniesToRemove.contains(tempColonyId))
+            else if(!this.coloniesToAdd.contains(tempColonyId))
             {
-                coloniesToRemove.remove(new Integer(tempColonyId));
+                this.coloniesToAdd.add(tempColonyId);
             }
         }
 
         for(final int tempColonyId: newStorage.coloniesToRemove)
         {
-            if(!coloniesToRemove.contains(tempColonyId))
+            if(this.colonyId == tempColonyId)
             {
-                coloniesToRemove.add(tempColonyId);
+                this.colonyId = 0;
             }
 
-            if(coloniesToAdd.contains(tempColonyId))
+            if(this.coloniesToAdd.contains(tempColonyId))
             {
-                coloniesToAdd.remove(new Integer(tempColonyId));
+                this.coloniesToAdd.remove(new Integer(tempColonyId));
+            }
+            else if(!this.coloniesToRemove.contains(tempColonyId))
+            {
+                this.coloniesToRemove.add(tempColonyId);
             }
         }
 
