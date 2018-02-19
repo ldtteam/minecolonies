@@ -953,7 +953,7 @@ public final class ColonyManager
                             {
                                 @NotNull final Colony colony = Colony.loadColony(colonyData, world);
                                 colonies.add(colony);
-
+                                ColonyManager.notifyChunksInRange(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
                                 addColonyByWorld(colony);
                             }
                         }
