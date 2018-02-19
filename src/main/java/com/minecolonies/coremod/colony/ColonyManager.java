@@ -246,7 +246,27 @@ public final class ColonyManager
             {
                 if(i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range)
                 {
-                    saveNBTToPath(new File(chunkDir, String.format(FILENAME_CHUNK, i, j, dimension)), new ChunkLoadStorage(id, ChunkPos.asLong(i,j), add, dimension).toNBT());
+                    @NotNull final File file = new File(chunkDir, String.format(FILENAME_CHUNK, i, j, dimension));
+                    @NotNull final ChunkLoadStorage newStorage = new ChunkLoadStorage(id, ChunkPos.asLong(i,j), add, dimension);
+                    if (file.exists())
+                    {
+                        @Nullable final NBTTagCompound chunkData = loadNBTFromPath(file);
+                        final ChunkLoadStorage storage = new ChunkLoadStorage(chunkData);
+                        storage.merge(newStorage);
+
+                        if(storage.isEmpty())
+                        {
+                            file.delete();
+                        }
+                        else
+                        {
+                            saveNBTToPath(file, newStorage.toNBT());
+                        }
+                    }
+                    else
+                    {
+                        saveNBTToPath(file, newStorage.toNBT());
+                    }
                 }
             }
         }
@@ -260,17 +280,8 @@ public final class ColonyManager
      */
     public static void addStorageToChunk(final Chunk chunk, final ChunkLoadStorage storage)
     {
-        final int id = storage.getColonyId();
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
-        if(storage.isAdd())
-        {
-            cap.setOwningColony(id);
-            cap.addColony(id);
-        }
-        else
-        {
-            cap.removeColony(id);
-        }
+        storage.applyToCap(cap);
         Log.getLogger().warn("Loading Chunk: " + chunk.x + " " + chunk.z);
         chunk.markDirty();
         MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
@@ -279,7 +290,7 @@ public final class ColonyManager
     /**
      * Load the colony info for a certain chunk.
      * @param chunk the chunk.
-     * @param world the world.
+     * @param world the worldg to.
      */
     public static void loadChunk(final Chunk chunk, final World world)
     {
@@ -291,11 +302,6 @@ public final class ColonyManager
             {
                 @Nullable final NBTTagCompound chunkData = loadNBTFromPath(file);
                 final ChunkLoadStorage storage = new ChunkLoadStorage(chunkData);
-                if (world.provider.getDimension() != storage.getDimension())
-                {
-                    return;
-                }
-
                 addStorageToChunk(chunk, storage);
                 file.delete();
                 missingChunksToLoad--;

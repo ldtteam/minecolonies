@@ -1,12 +1,16 @@
 package com.minecolonies.api.util;
 
+import com.minecolonies.api.colony.IColonyTagCapability;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.Constants;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DIMENSION;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WAYPOINT;
 
 /**
  * The chunkload storage used to load chunks with colony information.
@@ -14,24 +18,34 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 public class ChunkLoadStorage
 {
     /**
-     * Compound tag used to store the add boolean to NBT.
+     * NBT tag for colonies to add.
      */
-    private static final String TAG_ADD = "add";
+    private static final String TAG_COLONIES_TO_ADD = "coloniesToAdd";
+
+    /**
+     * NBT tag for colonies to remove.
+     */
+    private static final String TAG_COLONIES_TO_REMOVE = "coloniesToRemove";
 
     /**
      * The colony id.
      */
-    private final int colonyId;
+    private int colonyId;
+
+    /**
+     * The list of colonies to be added to this loc.
+     */
+    private final List<Integer> coloniesToRemove = new ArrayList<>();
+
+    /**
+     * The list of colonies to be removed from this loc.
+     */
+    private final List<Integer> coloniesToAdd = new ArrayList<>();
 
     /**
      * XZ pos as long.
      */
     private final long xz;
-
-    /**
-     * If add or remove.
-     */
-    private final boolean add;
 
     /**
      * The dimension of the chunk.
@@ -46,8 +60,13 @@ public class ChunkLoadStorage
     {
         this.colonyId = compound.getInteger(TAG_ID);
         this.xz = compound.getLong(TAG_POS);
-        this.add = compound.getBoolean(TAG_ADD);
         this.dimension = compound.getInteger(TAG_DIMENSION);
+
+        coloniesToAdd.clear();
+        coloniesToAdd.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_COLONIES_TO_ADD, Constants.NBT.TAG_COMPOUND))
+                .map(tempComound -> tempComound.getInteger(TAG_COLONY_ID)).collect(Collectors.toList()));
+        coloniesToRemove.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_COLONIES_TO_REMOVE, Constants.NBT.TAG_COMPOUND))
+                .map(tempComound -> tempComound.getInteger(TAG_COLONY_ID)).collect(Collectors.toList()));
     }
 
     /**
@@ -61,8 +80,15 @@ public class ChunkLoadStorage
     {
         this.colonyId = colonyId;
         this.xz = xz;
-        this.add = add;
         this.dimension = dimension;
+        if(add)
+        {
+            coloniesToAdd.add(colonyId);
+        }
+        else
+        {
+            coloniesToRemove.add(colonyId);
+        }
     }
 
     /**
@@ -74,9 +100,36 @@ public class ChunkLoadStorage
         final NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger(TAG_ID, colonyId);
         compound.setLong(TAG_POS, xz);
-        compound.setBoolean(TAG_ADD, add);
         compound.setInteger(TAG_DIMENSION, dimension);
+
+        compound.setTag(TAG_COLONIES_TO_ADD, coloniesToAdd.stream().map(ChunkLoadStorage::getCompoundOfColonyId).collect(NBTUtils.toNBTTagList()));
+        compound.setTag(TAG_COLONIES_TO_REMOVE, coloniesToRemove.stream().map(ChunkLoadStorage::getCompoundOfColonyId).collect(NBTUtils.toNBTTagList()));
         return compound;
+    }
+
+    private static NBTTagCompound getCompoundOfColonyId(final int id)
+    {
+        final NBTTagCompound compound = new NBTTagCompound();
+        compound.setInteger(TAG_COLONY_ID, id);
+        return compound;
+    }
+
+    /**
+     * Getter for the list of colonies to add.
+     * @return a copy of the list.
+     */
+    public List<Integer> getColoniesToAdd()
+    {
+        return new ArrayList<>(coloniesToAdd);
+    }
+
+    /**
+     * Getter for the list of colonies to remove.
+     * @return a copy of the list.
+     */
+    public List<Integer> getColoniesToRemove()
+    {
+        return new ArrayList<>(coloniesToRemove);
     }
 
     /**
@@ -86,15 +139,6 @@ public class ChunkLoadStorage
     public int getColonyId()
     {
         return colonyId;
-    }
-
-    /**
-     * Check if add operation.
-     * @return true if so.
-     */
-    public boolean isAdd()
-    {
-        return add;
     }
 
     /**
@@ -119,14 +163,79 @@ public class ChunkLoadStorage
         }
         final ChunkLoadStorage storage = (ChunkLoadStorage) o;
         return colonyId == storage.colonyId &&
-                add == storage.add &&
+                xz == storage.xz &&
                 dimension == storage.dimension &&
-                xz == storage.xz;
+                Objects.equals(coloniesToRemove, storage.coloniesToRemove) &&
+                Objects.equals(coloniesToAdd, storage.coloniesToAdd);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(colonyId, xz, add, dimension);
+        return Objects.hash(colonyId, coloniesToRemove, coloniesToAdd, xz, dimension);
+    }
+
+    /**
+     * Apply this ChunkLoadStorage to a capability.
+     * @param cap the capability to apply it to.
+     */
+    public void applyToCap(final IColonyTagCapability cap)
+    {
+        cap.setOwningColony(this.colonyId);
+
+        for(final int tempColonyId: coloniesToAdd)
+        {
+            cap.addColony(tempColonyId);
+        }
+
+        for(final int tempColonyId: coloniesToRemove)
+        {
+            cap.removeColony(tempColonyId);
+        }
+    }
+
+    /**
+     * Check if the chunkloadstorage is empty.
+     * @return true if so.
+     */
+    public boolean isEmpty()
+    {
+        return coloniesToAdd.isEmpty() && coloniesToRemove.isEmpty();
+    }
+
+    /**
+     * Merge the two Chunkstorages into one.
+     * The newer one is considered to be the "more up to date" version.
+     * @param newStorage the new version to add.
+     */
+    public void merge(final ChunkLoadStorage newStorage)
+    {
+        for(final int tempColonyId: newStorage.coloniesToAdd)
+        {
+            if(!coloniesToAdd.contains(tempColonyId))
+            {
+                coloniesToAdd.add(tempColonyId);
+            }
+
+            if(coloniesToRemove.contains(tempColonyId))
+            {
+                coloniesToRemove.remove(new Integer(tempColonyId));
+            }
+        }
+
+        for(final int tempColonyId: newStorage.coloniesToRemove)
+        {
+            if(!coloniesToRemove.contains(tempColonyId))
+            {
+                coloniesToRemove.add(tempColonyId);
+            }
+
+            if(coloniesToAdd.contains(tempColonyId))
+            {
+                coloniesToAdd.remove(new Integer(tempColonyId));
+            }
+        }
+
+        this.colonyId = newStorage.getColonyId();
     }
 }
