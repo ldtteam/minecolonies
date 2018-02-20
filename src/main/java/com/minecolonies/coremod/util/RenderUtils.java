@@ -22,6 +22,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.chunk.Chunk;
 
 import java.util.List;
 import java.util.Set;
@@ -172,17 +173,24 @@ public final class RenderUtils
         {
             return;
         }
-        final int distance = (BLOCKS_PER_CHUNK / 2) + (BLOCKS_PER_CHUNK * Configurations.gameplay.workingRangeTownHallChunks);
+        final int distance = BLOCKS_PER_CHUNK * Configurations.gameplay.workingRangeTownHallChunks;
         final BlockPos center = colonyView.getCenter();
-        final int edgeX = center.getX() - distance;
-        final int edgeZ = center.getZ() - distance;
+        final Chunk chunk = theWorld.getChunkFromBlockCoords(center);
+        int x = chunk.x;
+        int z = chunk.z;
+
+        int lowerEndX = x * BLOCKS_PER_CHUNK;
+        int lowerEndZ = z * BLOCKS_PER_CHUNK;
+
+        final int edgeX = lowerEndX - distance;
+        final int edgeZ = lowerEndZ - distance;
 
         for(int i = 0; i <= distance * 2; i++)
         {
-            colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(edgeX + i, center.getY(), center.getZ() + distance), theWorld).up());
-            colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(edgeX + i, center.getY(), center.getZ() - distance), theWorld).up());
-            colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(center.getX() - distance, center.getY(), edgeZ + i), theWorld).up());
-            colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(center.getX() + distance, center.getY(), edgeZ + i), theWorld).up());
+            colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(edgeX + i, center.getY(), lowerEndZ + BLOCKS_PER_CHUNK + distance), theWorld).up());
+            colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(edgeX + i, center.getY(), lowerEndZ - distance), theWorld).up());
+            colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(lowerEndX - distance, center.getY(), edgeZ + i), theWorld).up());
+            colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(lowerEndX + BLOCKS_PER_CHUNK + distance, center.getY(), edgeZ + i), theWorld).up());
         }
     }
 }

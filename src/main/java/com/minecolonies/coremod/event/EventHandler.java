@@ -28,6 +28,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -115,7 +116,10 @@ public class EventHandler
     @SubscribeEvent
     public void onChunkLoad(@NotNull final ChunkEvent.Load event)
     {
-        ColonyManager.loadChunk(event.getChunk(), event.getWorld());
+        if (event.getWorld() instanceof WorldServer)
+        {
+            ColonyManager.loadChunk(event.getChunk(), event.getWorld());
+        }
     }
 
     /**

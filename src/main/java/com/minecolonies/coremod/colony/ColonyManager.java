@@ -244,17 +244,15 @@ public final class ColonyManager
         {
             for (int j = chunkZ - maxRange; j <= chunkZ + maxRange; j++)
             {
-                @NotNull final ChunkLoadStorage newStorage;
                 final boolean owning = i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range;
-                newStorage = new ChunkLoadStorage(id, ChunkPos.asLong(i, j), add, dimension, owning);
-
+                @NotNull final ChunkLoadStorage newStorage = new ChunkLoadStorage(id, ChunkPos.asLong(i, j), add, dimension, owning);
                 @NotNull final File file = new File(chunkDir, String.format(FILENAME_CHUNK, i, j, dimension));
                 if (file.exists())
                 {
                     @Nullable final NBTTagCompound chunkData = loadNBTFromPath(file);
                     final ChunkLoadStorage storage = new ChunkLoadStorage(chunkData);
                     storage.merge(newStorage);
-
+                    Log.getLogger().warn("Merging");
                     if (storage.isEmpty())
                     {
                         file.delete();
@@ -262,15 +260,16 @@ public final class ColonyManager
                     else
                     {
                         saveNBTToPath(file, newStorage.toNBT());
+                        missingChunksToLoad++;
                     }
                 }
                 else
                 {
                     saveNBTToPath(file, newStorage.toNBT());
+                    missingChunksToLoad++;
                 }
             }
         }
-        missingChunksToLoad+= maxRange * maxRange;
     }
 
     /**
