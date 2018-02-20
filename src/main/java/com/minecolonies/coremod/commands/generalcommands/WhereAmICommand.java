@@ -1,10 +1,8 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import net.minecraft.command.CommandException;
@@ -74,7 +72,7 @@ public class WhereAmICommand extends AbstractSingleCommand
         final BlockPos center = colony.getCenter();
         final double distance = BlockPosUtil.getDistanceSquared(center, new BlockPos(playerPos.getX(), center.getY(), playerPos.getZ()));
 
-        if (distance >= MathUtils.square(Configurations.gameplay.workingRangeTownHall + (double) Configurations.gameplay.townHallPadding))
+        if (!ColonyManager.isTooCloseToColony(sender.getEntityWorld(), playerPos))
         {
             sender.sendMessage(new TextComponentString(String.format(NONE_CLOSE, Math.sqrt(distance))));
             return;

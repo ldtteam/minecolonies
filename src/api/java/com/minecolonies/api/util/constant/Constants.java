@@ -48,7 +48,7 @@ public final class Constants
     public static final int    ONE_HUNDRED_PERCENT              = 100;
     public static final int    DOUBLE                           = 2;
     public static final int    TRIPLE                           = 3;
-
+    public static final int    BLOCKS_PER_CHUNK                 = 16;
     /**
      * Slot with the result of the furnace.
      */

@@ -3,6 +3,7 @@ package com.minecolonies.api.colony;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -139,4 +140,18 @@ public interface IColony
      */
     @Nullable
     IRequester getRequesterBuildingForPosition(@NotNull final BlockPos pos);
+
+    /**
+     * Remove a visiting player.
+     * @param player the player.
+     */
+    void removeVisitingPlayer(final EntityPlayer player);
+
+    /**
+     * Add a visiting player.
+     * @param player the player.
+     */
+    void addVisitingPlayer(final EntityPlayer player);
+
+
 }

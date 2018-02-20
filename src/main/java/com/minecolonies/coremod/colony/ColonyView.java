@@ -1,14 +1,13 @@
 package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
@@ -21,14 +20,18 @@ import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+
+import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
  * Client side representation of the Colony.
@@ -663,9 +666,9 @@ public final class ColonyView implements IColony
     @Override
     public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        //  Perform a 2D distance calculation, so pass center.posY as the Y
-        return w.provider.getDimension() == dimensionId
-                 && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.gameplay.workingRangeTownHall);
+        final Chunk chunk = w.getChunkFromBlockCoords(pos);
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+        return cap.getOwningColony() == this.getID();
     }
 
     @Override
@@ -755,6 +758,22 @@ public final class ColonyView implements IColony
     public IRequester getRequesterBuildingForPosition(@NotNull final BlockPos pos)
     {
         return getBuilding(pos);
+    }
+
+    @Override
+    public void removeVisitingPlayer(final EntityPlayer player)
+    {
+        /**
+         * Intentionally left empty.
+         */
+    }
+
+    @Override
+    public void addVisitingPlayer(final EntityPlayer player)
+    {
+        /**
+         * Intentionally left empty.
+         */
     }
 
     /**

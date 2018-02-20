@@ -1,10 +1,14 @@
 package com.minecolonies.coremod.colony;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
@@ -43,6 +47,7 @@ import static com.minecolonies.api.util.constant.ColonyConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 import static com.minecolonies.coremod.colony.ColonyManager.FILENAME_COLONY;
 import static com.minecolonies.coremod.colony.ColonyManager.FILENAME_MINECOLONIES_PATH;
 
@@ -181,6 +186,11 @@ public class Colony implements IColony
     private boolean isDirty = false;
 
     /**
+     * List of players visiting the colony.
+     */
+    private final List<EntityPlayer> visitingPlayers = new ArrayList<>();
+
+    /**
      * Constructor for a newly created Colony.
      *
      * @param id The id of the colony to create.
@@ -249,6 +259,8 @@ public class Colony implements IColony
         c.readFromNBT(compound);
         return c;
     }
+
+
 
     /**
      * Sets the request manager on colony load.
@@ -508,6 +520,16 @@ public class Colony implements IColony
             getRequestManager().update();
             packageManager.updateSubscribers();
         }
+
+        final List<EntityPlayer> visitors = new ArrayList<>(visitingPlayers);
+        //Clean up visiting player.
+        for(final EntityPlayer player: visitors)
+        {
+            if(!packageManager.getSubscribers().contains(player))
+            {
+                visitingPlayers.remove(player);
+            }
+        }
     }
 
     /**
@@ -605,6 +627,7 @@ public class Colony implements IColony
 
         if (event.phase == TickEvent.Phase.START)
         {
+
             //  Cleanup Buildings whose Blocks have gone AWOL
             buildingManager.cleanUpBuildings(event);
 
@@ -660,7 +683,7 @@ public class Colony implements IColony
 
     public boolean areAllColonyChunksLoaded(@NotNull final TickEvent.WorldTickEvent event)
     {
-        final int distanceFromCenter = Configurations.gameplay.workingRangeTownHall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
+        final int distanceFromCenter = Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK + 48 /* 3 chunks */ + BLOCKS_PER_CHUNK - 1 /* round up a chunk */;
         for (int x = -distanceFromCenter; x <= distanceFromCenter; x += CONST_CHUNKSIZE)
         {
             for (int z = -distanceFromCenter; z <= distanceFromCenter; z += CONST_CHUNKSIZE)
@@ -738,9 +761,9 @@ public class Colony implements IColony
     @Override
     public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        //  Perform a 2D distance calculation, so pass center.posY as the Y
-        return w.equals(getWorld())
-                 && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.gameplay.workingRangeTownHall);
+        final Chunk chunk = w.getChunkFromBlockCoords(pos);
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+        return cap.getOwningColony() == this.getID();
     }
 
     @Override
@@ -1073,6 +1096,38 @@ public class Colony implements IColony
     public IColonyPackageManager getPackageManager()
     {
         return packageManager;
+    }
+
+    /**
+     * Get all visiting players.
+     * @return the list.
+     */
+    public ImmutableList<EntityPlayer> getVisitingPlayers()
+    {
+        return ImmutableList.copyOf(visitingPlayers);
+    }
+
+    @Override
+    public void addVisitingPlayer(final EntityPlayer player)
+    {
+        final Rank rank = getPermissions().getRank(player);
+        if(rank != Rank.OWNER && rank != Rank.OFFICER && !visitingPlayers.contains(player))
+        {
+            visitingPlayers.add(player);
+            LanguageHandler.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
+            LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName());
+        }
+    }
+
+    @Override
+    public void removeVisitingPlayer(final EntityPlayer player)
+    {
+        if(!getMessageEntityPlayers().contains(player))
+        {
+            visitingPlayers.remove(player);
+            LanguageHandler.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
+            LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName());
+        }
     }
 
     /**
