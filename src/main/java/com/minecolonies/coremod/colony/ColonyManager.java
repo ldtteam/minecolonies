@@ -245,14 +245,8 @@ public final class ColonyManager
             for (int j = chunkZ - maxRange; j <= chunkZ + maxRange; j++)
             {
                 @NotNull final ChunkLoadStorage newStorage;
-                if (i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range)
-                {
-                    newStorage = new ChunkLoadStorage(id, ChunkPos.asLong(i, j), add, dimension);
-                }
-                else
-                {
-                    newStorage = new ChunkLoadStorage(0, ChunkPos.asLong(i, j), add, dimension);
-                }
+                final boolean owning = i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range;
+                newStorage = new ChunkLoadStorage(id, ChunkPos.asLong(i, j), add, dimension, owning);
 
                 @NotNull final File file = new File(chunkDir, String.format(FILENAME_CHUNK, i, j, dimension));
                 if (file.exists())

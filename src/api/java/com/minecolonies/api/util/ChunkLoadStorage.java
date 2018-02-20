@@ -75,10 +75,11 @@ public class ChunkLoadStorage
      * @param xz the chunk xz.
      * @param add the operation type.
      * @param dimension the dimension.
+     * @param owning if the colony should own the chunk.
      */
-    public ChunkLoadStorage(final int colonyId, final long xz, final boolean add, final int dimension)
+    public ChunkLoadStorage(final int colonyId, final long xz, final boolean add, final int dimension, final boolean owning)
     {
-        this.colonyId = colonyId;
+        this.colonyId = owning ? colonyId : 0;
         this.xz = xz;
         this.dimension = dimension;
         if(add)
