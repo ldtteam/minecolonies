@@ -242,31 +242,37 @@ public final class ColonyManager
 
         for(int i = chunkX - maxRange; i <= chunkX + maxRange; i++)
         {
-            for(int j = chunkZ - maxRange; j <= chunkZ + maxRange; j++)
+            for (int j = chunkZ - maxRange; j <= chunkZ + maxRange; j++)
             {
-                if(i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range)
+                @NotNull final ChunkLoadStorage newStorage;
+                if (i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range)
                 {
-                    @NotNull final File file = new File(chunkDir, String.format(FILENAME_CHUNK, i, j, dimension));
-                    @NotNull final ChunkLoadStorage newStorage = new ChunkLoadStorage(id, ChunkPos.asLong(i,j), add, dimension);
-                    if (file.exists())
-                    {
-                        @Nullable final NBTTagCompound chunkData = loadNBTFromPath(file);
-                        final ChunkLoadStorage storage = new ChunkLoadStorage(chunkData);
-                        storage.merge(newStorage);
+                    newStorage = new ChunkLoadStorage(id, ChunkPos.asLong(i, j), add, dimension);
+                }
+                else
+                {
+                    newStorage = new ChunkLoadStorage(0, ChunkPos.asLong(i, j), add, dimension);
+                }
 
-                        if(storage.isEmpty())
-                        {
-                            file.delete();
-                        }
-                        else
-                        {
-                            saveNBTToPath(file, newStorage.toNBT());
-                        }
+                @NotNull final File file = new File(chunkDir, String.format(FILENAME_CHUNK, i, j, dimension));
+                if (file.exists())
+                {
+                    @Nullable final NBTTagCompound chunkData = loadNBTFromPath(file);
+                    final ChunkLoadStorage storage = new ChunkLoadStorage(chunkData);
+                    storage.merge(newStorage);
+
+                    if (storage.isEmpty())
+                    {
+                        file.delete();
                     }
                     else
                     {
                         saveNBTToPath(file, newStorage.toNBT());
                     }
+                }
+                else
+                {
+                    saveNBTToPath(file, newStorage.toNBT());
                 }
             }
         }
