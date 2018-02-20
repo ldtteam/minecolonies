@@ -2,13 +2,11 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecolonies:blocktimberframe_jungle",
-      "data": 2
+      "item": "minecolonies:blocktimberframe_jungle_framed"
     }
   ],
   "result": {
-    "item": "minecolonies:blocktimberframe_jungle",
-    "data": 3,
+    "item": "minecolonies:blocktimberframe_jungle_sideframed",
     "count": 1
   }
 }

@@ -1,0 +1,20 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "minecolonies:oak_timberframe/blocktimberframe_framed"
+  },
+  "variants": {
+    "axis": {
+      "y": {},
+      "z": {
+        "x": 90
+      },
+      "x": {
+        "x": 90,
+        "y": 90
+      },
+      "none": {}
+    }
+  }
+}
+

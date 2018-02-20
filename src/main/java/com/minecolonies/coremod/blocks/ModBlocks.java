@@ -128,11 +128,12 @@ public final class ModBlocks
 
         for (final BlockPlanks.EnumType type: BlockPlanks.EnumType.values())
         {
-            timberFrames.add(new BlockTimberFrame (BlockTimberFrame.BLOCK_NAME + "_" + type.getName()).registerBlock(registry));
+            for(final TimberFrameType frameType: TimberFrameType.values())
+            {
+                timberFrames.add(new BlockTimberFrame(BlockTimberFrame.BLOCK_NAME+ "_" + type.getName() + "_" + frameType).registerBlock(registry));
+            }
         }
     }
-
-
 
     public static void registerItemBlock(final IForgeRegistry<Item> registry)
     {
