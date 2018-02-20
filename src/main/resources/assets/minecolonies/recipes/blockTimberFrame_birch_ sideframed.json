@@ -2,13 +2,11 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecolonies:blocktimberframe_birch",
-      "data": 2
+      "item": "minecolonies:blocktimberframe_birch_framed"
     }
   ],
   "result": {
-    "item": "minecolonies:blocktimberframe_birch",
-    "data": 3,
+    "item": "minecolonies:blocktimberframe_birch_sideframed",
     "count": 1
   }
 }

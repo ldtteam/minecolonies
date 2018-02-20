@@ -2,13 +2,11 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecolonies:blocktimberframe_dark_oak",
-      "data": 7
+      "item": "minecolonies:blocktimberframe_dark_oak_downgated"
     }
   ],
   "result": {
-    "item": "minecolonies:blocktimberframe_dark_oak",
-    "data": 8,
+    "item": "minecolonies:blocktimberframe_dark_oak_horizontalplain",
     "count": 1
   }
 }

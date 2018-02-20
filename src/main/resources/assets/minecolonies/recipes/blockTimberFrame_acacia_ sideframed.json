@@ -2,13 +2,11 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecolonies:blocktimberframe_acacia",
-      "data": 2
+      "item": "minecolonies:blocktimberframe_acacia_framed"
     }
   ],
   "result": {
-    "item": "minecolonies:blocktimberframe_acacia",
-    "data": 3,
+    "item": "minecolonies:blocktimberframe_acacia_sideframed",
     "count": 1
   }
 }
