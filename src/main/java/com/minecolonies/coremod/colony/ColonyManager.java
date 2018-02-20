@@ -252,7 +252,6 @@ public final class ColonyManager
                     @Nullable final NBTTagCompound chunkData = loadNBTFromPath(file);
                     final ChunkLoadStorage storage = new ChunkLoadStorage(chunkData);
                     storage.merge(newStorage);
-                    Log.getLogger().warn("Merging");
                     if (storage.isEmpty())
                     {
                         file.delete();
