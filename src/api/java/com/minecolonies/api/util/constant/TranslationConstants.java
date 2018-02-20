@@ -170,6 +170,14 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_SERVING                             = "com.minecolonies.coremod.status.serving";
     @NonNls
+    public static final String ENTERING_COLONY_MESSAGE                                             = "com.minecolonies.coremod.enteringColony";
+    @NonNls
+    public static final String LEAVING_COLONY_MESSAGE                                              = "com.minecolonies.coremod.leavingColony";
+    @NonNls
+    public static final String ENTERING_COLONY_MESSAGE_NOTIFY                                      = "com.minecolonies.coremod.enteringColonyNotify";
+    @NonNls
+    public static final String LEAVING_COLONY_MESSAGE_NOTIFY                                       = "com.minecolonies.coremod.leavingColonyNotify";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_WAITING_FOR                         = "com.minecolonies.coremod.status.waiting";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOHUT                   = "com.minecolonies.coremod.status.herder.goingToHut";
@@ -186,9 +194,9 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_SHEPHERD_SHEARING                   = "com.minecolonies.coremod.status.shepherd.shearing";
     @NonNls
-    public static final String TOGGLE_ALL_OPTIONS_ON                                               = "com.minecolonies.coremod.gui.workerHuts.toggleAllOn";
-    @NonNls
     public static final String TOGGLE_ALL_OPTIONS_OFF                                              = "com.minecolonies.coremod.gui.workerHuts.toggleAllOff";
+    @NonNls
+    public static final String TOGGLE_ALL_OPTIONS_ON                                               = "com.minecolonies.coremod.gui.workerHuts.toggleAllOn";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_COMPAT_JEI_CRAFTIN_TEACHING_UNKNOWN_RECIPE = "com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe";
     @NonNls

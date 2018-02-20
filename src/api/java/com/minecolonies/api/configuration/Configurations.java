@@ -24,11 +24,17 @@ public class Configurations
         @Config.Comment("Should builder place construction tape?")
         public boolean builderPlaceConstructionTape = true;
 
-        @Config.Comment("Colony size (radius)")
-        public int workingRangeTownHall = 100;
+        @Config.Comment("Colony size (radius) - deprecated, don't use")
+        public int workingRangeTownHall = 200;
 
-        @Config.Comment("Padding between colonies")
+        @Config.Comment("Colony size (radius in chunks around central colony chunk)")
+        public int workingRangeTownHallChunks = 8;
+
+        @Config.Comment("Padding between colonies  - deprecated, don't use")
         public int townHallPadding = 20;
+
+        @Config.Comment("Padding between colonies in chunks")
+        public int townHallPaddingChunk = 1;
 
         @Config.Comment("Should supply chests be craftable on this server?")
         public boolean supplyChests = true;

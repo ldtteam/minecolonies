@@ -286,7 +286,7 @@ public class ClientProxy extends CommonProxy
     @Override
     public World getWorldFromMessage(@NotNull final MessageContext context)
     {
-        return Minecraft.getMinecraft().world;
+        return context.getClientHandler().world;
     }
 
     @Nullable
