@@ -808,7 +808,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * @param complete if pasted, should it be complete.
      * @param structureName of the scan to be built.
      */
-    private void requestScannedSchematic(@NotNull final StructureName structureName, final boolean paste, final boolean complete)
+    private static void requestScannedSchematic(@NotNull final StructureName structureName, final boolean paste, final boolean complete)
     {
         if (!Structures.isPlayerSchematicsAllowed())
         {
@@ -938,7 +938,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                     {
                         outputList += "...";
                     }
-                    String errorMessage;
+                    final String errorMessage;
                     switch(placementErrorType)
                     {
                         case NOT_SOLID:
