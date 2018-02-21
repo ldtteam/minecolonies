@@ -107,7 +107,7 @@ public final class ColonyManager
     /**
      * chunk filename.
      */
-    private static final String FILENAME_CHUNK = "chunk-%d:%d-%d";
+    private static final String FILENAME_CHUNK = "chunk-%d:%d_%d";
 
     /**
      * The damage source used to kill citizens.
