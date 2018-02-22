@@ -1385,7 +1385,7 @@ public final class ColonyManager
     public static boolean isCoordinateInAnyColony(@NotNull final World world, final BlockPos pos)
     {
         final Chunk centralChunk = world.getChunkFromBlockCoords(pos);
-        return centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() == 0;
+        return centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() != 0;
     }
 
     /**
