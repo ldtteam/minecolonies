@@ -21,7 +21,7 @@ public class MakeNotAutoDeletable extends AbstractSingleCommand
 {
     public static final  String DESC                       = "deletable";
     private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
-    private static final String MARKED                     = "Marking succesful!";
+    private static final String MARKED                     = "Marking successful!";
     private static final String NOT_ENOUGH_ARGUMENTS       = "You must have 2 Arguments: <ColonyId> <true|false> ";
 
     private static final int NUMBER_OR_ARGS_REQUIRED = 2;

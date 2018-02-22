@@ -177,7 +177,7 @@ com.minecolonies.coremod.gui.buildtool.hut=Huts
 com.minecolonies.coremod.gui.townHall.addPlayer=Add Player:
 com.minecolonies.coremod.gui.townHall.addBlock=Add Block/Position:
 
-com.minecolonies.coremod.gui.warehouse.visitCitizenChests=Visit Citizenchests:
+com.minecolonies.coremod.gui.warehouse.visitCitizenChests=Visit Citizen Chests:
 com.minecolonies.coremod.gui.townHall.population.unemployed=Unemployed: %d
 com.minecolonies.coremod.gui.workerHuts.minerNode=Node
 com.minecolonies.coremod.gui.hiring.off=Automatic
@@ -396,7 +396,7 @@ achievement.farmer.wheatHarvested.100.desc=Your farmers harvested 100 wheat.
 achievement.farmer.wheatHarvested.500.desc=Your farmers harvested 500 wheat.
 achievement.farmer.wheatHarvested.1000.desc=Your farmers harvested 1000 wheat.
 
-com.minecolonies.coremod.permission.no=You have no permission to do this in this colony!
+com.minecolonies.coremod.permission.no=You do not have permission to do this in this colony!
 com.minecolonies.coremod.gui.townHall.freeBlocks=Free for interaction
 com.minecolonies.coremod.gui.townHall.add=Add
 
@@ -432,7 +432,7 @@ item.minecolonies.supplyChestDeployer.name=SupplyShip Chest
 item.minecolonies.supplyCampDeployer.name=SupplyCamp Chest
 com.minecolonies.coremod.error.supplyChestAlreadyPlaced=You have already placed a supply ship or supply camp!
 com.minecolonies.coremod.gui.townHall.currentHappiness=Overall happiness:
-com.minecolonies.coremod.job.guard.toolClickGuardTooFar=Too far away from guard tower, please upgrade your guardtower.
+com.minecolonies.coremod.job.guard.toolClickGuardTooFar=Too far away from guard tower, please upgrade your guard tower.
 com.minecolonies.coremod.saturation.0=I'm starving, I can't work anymore
 com.minecolonies.coremod.saturation.3=I'm quite hungry, I feel very unproductive
 com.minecolonies.coremod.saturation.5=I'm hungry, I'm not that productive anymore
@@ -590,7 +590,7 @@ com.minecolonies.coremod.gui.workerHuts.toggleAllOn=Toggle all (on)
 com.minecolonies.coremod.gui.workerHuts.toggleAllOff=Toggle all (off)
 com.minecolonies.coremod.gui.recipe.remove=Remove
 com.minecolonies.coremod.gui.workerHuts.crafting=Teach recipe
-com.minecolonies.coremod.gui.recipe.done=Succesfully saved recipe!
+com.minecolonies.coremod.gui.recipe.done=Successfully saved recipe!
 com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
 com.minecolonies.coremod.resolvers.crafter.private=Crafting
 
@@ -665,4 +665,4 @@ tile.minecolonies.blockTimberFrame_dark_oak_downgated.name= Dark Oak Framed Timb
 tile.minecolonies.blockTimberFrame_dark_oak_horizontalplain.name= Dark Oak Horizontal Timber Frame
 tile.minecolonies.blockTimberFrame_dark_oak_horizontalnocap.name= Dark Oak Horizontal Timber Frame
 
-com.minecolonies.coremod.request.toolow=Can't mine block %s at %s. Need to upgrade the building to use a tool with hihgher mining level.
+com.minecolonies.coremod.request.toolow=Can't mine block %s at %s. Need to upgrade the building to use a tool with higher mining level.

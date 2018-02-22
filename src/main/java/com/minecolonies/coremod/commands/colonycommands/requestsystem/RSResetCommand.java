@@ -23,7 +23,7 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.R
 public class RSResetCommand extends AbstractSingleCommand
 {
     public static final  String DESC            = "reset";
-    private static final String SUCCESS_MESSAGE = "After 1.618 Seconds it reinstantiated completely new.";
+    private static final String SUCCESS_MESSAGE = "After 1.618 seconds the colony was re-instantiated completely new.";
     private static final String COLONY_NULL     = "Couldn't find colony %d.";
     private static final String NO_ARGUMENTS    = "Please define a colony";
 
