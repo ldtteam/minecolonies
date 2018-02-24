@@ -184,6 +184,8 @@ public class Configurations
                                                    "block:dirt",
                                                    "0 0 0"
                                                  };
+        @Config.Comment("Should colonies in other dimensions be allowed (Default = false)?")
+        public boolean allowOtherDimColonies = false;
     }
 
     public static class Pathfinding
