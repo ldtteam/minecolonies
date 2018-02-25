@@ -217,6 +217,8 @@ public final class TranslationConstants
     public static final String SMELTING_DOWN                                                       = "com.minecolonies.coremod.status.smeltingdown";
     @NonNls
     public static final String BUILDING_LEVEL_TOO_LOW                                              = "com.minecolonies.coremod.request.toolow";
+    @NonNls
+    public static final String CANT_PLACE_COLONY_IN_OTHER_DIM                                      = "com.minecolonies.coremod.dimension.no";
 
     private TranslationConstants()
     {
