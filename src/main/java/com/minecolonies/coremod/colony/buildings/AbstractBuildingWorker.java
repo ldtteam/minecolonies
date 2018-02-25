@@ -634,7 +634,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
                 workerIDs.add(buf.readInt());
             }
 
-
             recipes.clear();
 
             final int recipesSize = buf.readInt();
@@ -643,7 +642,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
                 final IRecipeStorage storage = StandardFactoryController.getInstance().deserialize(ByteBufUtils.readTag(buf));
                 if(storage != null)
                 {
-                    ColonyManager.getRecipeManager().addRecipe(storage);
                     recipes.add(storage);
                 }
             }
