@@ -47,6 +47,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
+import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
@@ -305,6 +306,12 @@ public class EventHandler
      */
     public static boolean onBlockHutPlaced(@NotNull final World world, @NotNull final EntityPlayer player, final Block block, final BlockPos pos)
     {
+        if(!Configurations.gameplay.allowOtherDimColonies && world.provider.getDimension() != 0)
+        {
+            LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_IN_OTHER_DIM);
+            return false;
+        }
+
         if (block instanceof BlockHutTownHall)
         {
             return onTownHallPlaced(world, player, pos);

@@ -25,6 +25,7 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -252,10 +253,14 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             handlers.add(new InvWrapper(workerEntity.getInventory()));
         }
         handlers.add(new InvWrapper(getTileEntity()));
-
+        
         for (final BlockPos pos : getAdditionalCountainers())
         {
-            handlers.addAll(InventoryUtils.getItemHandlersFromProvider(colony.getWorld().getTileEntity(pos)));
+            final TileEntity entity = colony.getWorld().getTileEntity(pos);
+            if(entity != null)
+            {
+                handlers.addAll(InventoryUtils.getItemHandlersFromProvider(entity));
+            }
         }
         return handlers;
     }
