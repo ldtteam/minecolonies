@@ -14,10 +14,10 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.coremod.util.SoundUtils.PITCH;
 import static com.minecolonies.coremod.util.SoundUtils.VOLUME;
-import static net.minecraft.realms.RealmsSharedConstants.TICKS_PER_SECOND;
 
 public class TileEntityMultiBlock extends TileEntity implements ITickable
 {
@@ -106,7 +106,7 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
 
         if(progress < range)
         {
-            if (ticksPassed % TICKS_PER_SECOND == 0)
+            if (ticksPassed % TICKS_SECOND == 0)
             {
                 handleTick();
                 ticksPassed = 1;
