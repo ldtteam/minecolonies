@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.tileentities;
 
+import net.minecraft.block.material.EnumPushReaction;
+import net.minecraft.block.state.BlockPistonStructureHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -123,7 +125,12 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
         if(progress < range)
         {
             final IBlockState blockToMove = world.getBlockState(pos.offset(currentDirection, 1));
-            if (blockToMove.getBlock() == Blocks.AIR)
+            if (blockToMove.getBlock() == Blocks.AIR
+                    || blockToMove.getMobilityFlag() == EnumPushReaction.IGNORE
+                    || blockToMove.getMobilityFlag() == EnumPushReaction.DESTROY
+                    || blockToMove.getMobilityFlag() == EnumPushReaction.BLOCK
+                    || blockToMove.getBlock().hasTileEntity(blockToMove)
+                    || blockToMove.getBlock() == Blocks.BEDROCK)
             {
                 progress++;
                 return;
