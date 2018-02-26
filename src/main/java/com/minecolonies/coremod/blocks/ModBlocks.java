@@ -64,6 +64,7 @@ public final class ModBlocks
     public static BlockShingle                blockShingleDarkOak;
     public static BlockShingle                blockShingleAcacia;
     public static BlockShingleSlab            blockShingleSlab;
+    public static MultiBlock                  multiBlock;
 
 
 
@@ -125,6 +126,7 @@ public final class ModBlocks
         blockShingleAcacia = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.ACACIA),
                 BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.ACACIA.getName()).registerBlock(registry);
         blockShingleSlab = new BlockShingleSlab().registerBlock(registry);
+        multiBlock = new MultiBlock().registerBlock(registry);
 
         for (final BlockPlanks.EnumType type: BlockPlanks.EnumType.values())
         {
@@ -173,6 +175,7 @@ public final class ModBlocks
         blockShingleAcacia.registerItemBlock(registry);
         blockShingleSlab.registerItemBlock(registry);
         blockHutSmeltery.registerItemBlock(registry);
+        multiBlock.registerItemBlock(registry);
 
         for (final BlockTimberFrame frame: timberFrames)
         {

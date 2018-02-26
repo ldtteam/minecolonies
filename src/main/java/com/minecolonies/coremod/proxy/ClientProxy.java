@@ -6,6 +6,7 @@ import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.client.gui.WindowCitizen;
 import com.minecolonies.coremod.client.gui.WindowClipBoard;
+import com.minecolonies.coremod.client.gui.WindowMultiBlock;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
@@ -21,6 +22,7 @@ import com.minecolonies.coremod.event.ClientEventHandler;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.tileentities.TileEntityMultiBlock;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import com.minecolonies.structures.event.RenderEventHandler;
 import com.minecolonies.structures.helpers.Settings;
@@ -39,7 +41,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -112,6 +113,13 @@ public class ClientProxy extends CommonProxy
         }
 
         @Nullable final WindowBuildTool window = new WindowBuildTool(pos);
+        window.open();
+    }
+
+    @Override
+    public void openMultiBlockWindow(@Nullable final BlockPos pos)
+    {
+        @Nullable final WindowMultiBlock window = new WindowMultiBlock(pos);
         window.open();
     }
 
@@ -206,6 +214,7 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModItems.itemAchievementProxyCity);
         createCustomModel(ModItems.itemAchievementProxyMetropolis);
         createCustomModel(ModBlocks.blockShingleSlab);
+        createCustomModel(ModBlocks.multiBlock);
 
         ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());
 

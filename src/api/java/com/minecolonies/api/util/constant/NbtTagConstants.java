@@ -205,7 +205,14 @@ public final class NbtTagConstants
      */
     public static final String TAG_MISSING_CHUNKS = "missingChunks";
 
-
+    /**
+     * NBT tag constants for MultiBlock tileEntities.
+     */
+    public static final String TAG_INPUT = "input";
+    public static final String TAG_RANGE = "range";
+    public static final String TAG_DIRECTION = "direction";
+    public static final String TAG_LENGTH = "length";
+    public static final String TAG_PROGRESS = "progress";
     /**
      * Private constructor to hide the implicit one.
      */

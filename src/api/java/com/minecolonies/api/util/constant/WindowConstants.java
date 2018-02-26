@@ -477,6 +477,16 @@ public final class WindowConstants
     public static final String BUTTON_NEXTPAGE     = "nextPage";
 
     /**
+     * Name of the input range field.
+     */
+    public static final String INPUT_RANGE_NAME = "range";
+
+    /**
+     * Resource suffix of the multiblock GUI.
+     */
+    public static final String MULTI_BLOCK_RESOURCE_SUFFIX = ":gui/windowmultiblock.xml";
+
+    /**
      * public constructor to hide implicit public one.
      */
     private WindowConstants()
