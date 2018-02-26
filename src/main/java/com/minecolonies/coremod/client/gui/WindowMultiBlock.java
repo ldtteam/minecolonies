@@ -44,11 +44,8 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
     private final TextField input;
 
     /**
-     * Creates a window build tool for a specific structure.
-     * @param pos the position.
-     * @param structureName the structure name.
-     * @param rotation the rotation.
-     * @param mode the mode.
+     * The constructor called before opening this window.
+     * @param pos the position of the TileEntity which this window belogs to.
      */
     public WindowMultiBlock(@Nullable final BlockPos pos)
     {
