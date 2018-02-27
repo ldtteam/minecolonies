@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
@@ -12,9 +14,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -155,6 +160,7 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
                     final IBlockState tempState = world.getBlockState(posToGoFrom);
                     if (blockToMove.getBlock() == tempState.getBlock() && world.isBlockLoaded(posToGoFrom) && world.isBlockLoaded(posToGo))
                     {
+                        pushEntitiesIfNecessary(posToGo, pos);
                         world.setBlockState(posToGo, tempState);
                         world.setBlockToAir(posToGoFrom);
                     }
@@ -167,6 +173,16 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
                     (float) VOLUME,
                     (float) PITCH);
             progress++;
+        }
+    }
+
+    private void pushEntitiesIfNecessary(final BlockPos posToGo, final BlockPos pos)
+    {
+        final List<Entity> entities = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(posToGo));
+        final BlockPos posTo = posToGo.offset(BlockPosUtil.getFacing(pos, posToGo));
+        for(final Entity entity : entities)
+        {
+            entity.setPositionAndUpdate(posTo.getX(), posTo.getY(), posTo.getZ());
         }
     }
 
