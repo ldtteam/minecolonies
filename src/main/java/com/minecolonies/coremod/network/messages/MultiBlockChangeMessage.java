@@ -25,6 +25,11 @@ public class MultiBlockChangeMessage extends AbstractMessage<MultiBlockChangeMes
     private EnumFacing direction;
 
     /**
+     * The direction it should push or pull rom.
+     */
+    private EnumFacing output;
+
+    /**
      * The range it should pull to.
      */
     private int range;
@@ -46,14 +51,16 @@ public class MultiBlockChangeMessage extends AbstractMessage<MultiBlockChangeMes
      * Constructor to create the message.
      * @param pos the position of the block.
      * @param facing the way it should be facing.
+     * @param output the way it will output to.
      * @param range the range it should work.
      */
-    public MultiBlockChangeMessage(final BlockPos pos, final EnumFacing facing, final int range)
+    public MultiBlockChangeMessage(final BlockPos pos, final EnumFacing facing, final EnumFacing output, final int range)
     {
         super();
         this.pos = pos;
         this.direction = facing;
         this.range = range;
+        this.output = output;
     }
 
     /**
@@ -66,6 +73,7 @@ public class MultiBlockChangeMessage extends AbstractMessage<MultiBlockChangeMes
     {
         pos = BlockPosUtil.readFromByteBuf(buf);
         direction = EnumFacing.values()[buf.readInt()];
+        output = EnumFacing.values()[buf.readInt()];
         range = buf.readInt();
     }
 
@@ -79,6 +87,7 @@ public class MultiBlockChangeMessage extends AbstractMessage<MultiBlockChangeMes
     {
         BlockPosUtil.writeToByteBuf(buf, pos);
         buf.writeInt(direction.ordinal());
+        buf.writeInt(output.ordinal());
         buf.writeInt(range);
     }
 
@@ -97,6 +106,7 @@ public class MultiBlockChangeMessage extends AbstractMessage<MultiBlockChangeMes
         if (entity instanceof TileEntityMultiBlock && (colony == null || colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)))
         {
             ((TileEntityMultiBlock) entity).setDirection(message.direction);
+            ((TileEntityMultiBlock) entity).setOutput(message.output);
             ((TileEntityMultiBlock) entity).setRange(message.range);
             final IBlockState state = player.getServerWorld().getBlockState(message.pos);
             player.getServerWorld().notifyBlockUpdate(message.pos, state, state, 0x3);

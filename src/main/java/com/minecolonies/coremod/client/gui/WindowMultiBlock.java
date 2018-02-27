@@ -2,9 +2,13 @@ package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Log;
+import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Button;
+import com.minecolonies.blockout.controls.ButtonImage;
 import com.minecolonies.blockout.controls.TextField;
+import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.MultiBlockChangeMessage;
 import com.minecolonies.coremod.tileentities.TileEntityMultiBlock;
 import net.minecraft.client.Minecraft;
@@ -32,6 +36,11 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
      * The direction it is facing.
      */
     private EnumFacing facing = UP;
+
+    /**
+     * The output direction.
+     */
+    private EnumFacing output = DOWN;
 
     /**
      * The player which opened the GUI.
@@ -194,8 +203,43 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
         {
             Log.getLogger().warn("Unable to parse number for MultiBlock range, considering default range!", e);
         }
-        MineColonies.getNetwork().sendToServer(new MultiBlockChangeMessage(pos, facing, range));
+        MineColonies.getNetwork().sendToServer(new MultiBlockChangeMessage(pos, facing, output, range));
         close();
+    }
+
+    @Override
+    public void rightClick(final int mx, final int my)
+    {
+        Pane pane = this.findPaneForClick(mx, my);
+        if(pane instanceof View)
+        {
+            pane = ((View) pane).findPaneForClick(mx - pane.getX(), my - pane.getY());
+        }
+        if(pane instanceof ButtonImage && pane.isEnabled())
+        {
+            switch(pane.getID())
+            {
+                case BUTTON_UP:
+                    output = UP;
+                    break;
+                case BUTTON_DOWN:
+                    output = DOWN;
+                    break;
+                case BUTTON_FORWARD:
+                    output = NORTH;
+                    break;
+                case BUTTON_BACKWARD:
+                    output = SOUTH;
+                    break;
+                case BUTTON_RIGHT:
+                    output = EAST;
+                    break;
+                case BUTTON_LEFT:
+                    output = WEST;
+                    break;
+            }
+            pane.disable();
+        }
     }
 
     /**

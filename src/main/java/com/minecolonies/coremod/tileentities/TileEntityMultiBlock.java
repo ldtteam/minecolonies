@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.tileentities;
 
 import net.minecraft.block.material.EnumPushReaction;
-import net.minecraft.block.state.BlockPistonStructureHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -13,13 +12,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.coremod.util.SoundUtils.PITCH;
-import static com.minecolonies.coremod.util.SoundUtils.VOLUME;
+import static com.minecolonies.coremod.util.SoundUtils.*;
+import static net.minecraft.util.EnumFacing.*;
 
 public class TileEntityMultiBlock extends TileEntity implements ITickable
 {
@@ -31,7 +31,7 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
     /**
      * Default gate and bridge range.
      */
-    public static final int DEFAULT_RANGE = 3;
+    public static final int DEFAULT_RANGE         = 3;
 
     /**
      * The last redstone state which got in.
@@ -41,7 +41,12 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
     /**
      * The direction it should push or pull rom.
      */
-    private EnumFacing direction = EnumFacing.UP;
+    private EnumFacing direction = UP;
+
+    /**
+     * The output direction.
+     */
+    private EnumFacing output = DOWN;
 
     /**
      * The range it should pull to.
@@ -83,11 +88,11 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
             on = signal;
             if (signal)
             {
-                currentDirection = direction;
+                currentDirection = output;
             }
             else
             {
-                currentDirection = direction.getOpposite();
+                currentDirection = direction;
             }
             progress = 0;
         }
@@ -122,6 +127,9 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
      */
     public void handleTick()
     {
+        boolean invert = currentDirection == direction;
+        final EnumFacing currentOutPutDirection = invert ? output : direction;
+
         if(progress < range)
         {
             final IBlockState blockToMove = world.getBlockState(pos.offset(currentDirection, 1));
@@ -141,13 +149,15 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
                 final int blockToGoTo = i - 1 - progress + (i - 1 - progress >= 0 ? 1 : 0);
                 final int blockToGoFrom = i + 1 - progress - (i + 1 - progress <= 0 ? 1 : 0);
 
-                if (world.isAirBlock(pos.offset(currentDirection, blockToGoTo)))
+                final BlockPos posToGo = blockToGoTo > 0 ? pos.offset(currentDirection, blockToGoTo) : pos.offset(currentOutPutDirection, Math.abs(blockToGoTo));
+                final BlockPos posToGoFrom = blockToGoFrom > 0 ? pos.offset(currentDirection, blockToGoFrom) : pos.offset(currentOutPutDirection, Math.abs(blockToGoFrom));
+                if (world.isAirBlock(posToGo))
                 {
-                    final IBlockState tempState = world.getBlockState(pos.offset(currentDirection, blockToGoFrom));
+                    final IBlockState tempState = world.getBlockState(posToGoFrom);
                     if (blockToMove.getBlock() == tempState.getBlock())
                     {
-                        world.setBlockState(pos.offset(currentDirection, blockToGoTo), tempState);
-                        world.setBlockToAir(pos.offset(currentDirection, blockToGoFrom));
+                        world.setBlockState(posToGo, tempState);
+                        world.setBlockToAir(posToGoFrom);
                     }
                 }
             }
@@ -192,6 +202,16 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
     }
 
     /**
+     * Set the direction it should output to.
+     *
+     * @param output the direction.
+     */
+    public void setOutput(final EnumFacing output)
+    {
+        this.output = output;
+    }
+
+    /**
      * Get the range of blocks it should push.
      *
      * @return the range.
@@ -221,6 +241,14 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
         this.progress = compound.getInteger(TAG_PROGRESS);
         direction = EnumFacing.values()[compound.getInteger(TAG_DIRECTION)];
         on = compound.getBoolean(TAG_INPUT);
+        if(compound.hasKey(TAG_OUTPUT_DIRECTION))
+        {
+            output = EnumFacing.values()[compound.getInteger(TAG_OUTPUT_DIRECTION)];
+        }
+        else
+        {
+            output = direction.getOpposite();
+        }
     }
 
     @Override
@@ -231,6 +259,10 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
         compound.setInteger(TAG_PROGRESS, progress);
         compound.setInteger(TAG_DIRECTION, direction.ordinal());
         compound.setBoolean(TAG_INPUT, on);
+        if(output != null)
+        {
+            compound.setInteger(TAG_OUTPUT_DIRECTION, output.ordinal());
+        }
         return compound;
     }
 

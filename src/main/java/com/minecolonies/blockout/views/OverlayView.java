@@ -48,6 +48,25 @@ public class OverlayView extends View
     }
 
     /**
+     * hide the view when click on.
+     */
+    @Override
+    public void rightClick(final int mx, final int my)
+    {
+        final int mxChild = mx - x - padding;
+        final int myChild = my - y - padding;
+        final Pane clickedPane = findPaneForClick(mxChild, myChild);
+        if (clickedPane != null)
+        {
+            clickedPane.rightClick(mxChild, myChild);
+        }
+        else
+        {
+            hide();
+        }
+    }
+
+    /**
      * Called when a key is pressed.
      * hide the view when ESC is pressed.
      *
