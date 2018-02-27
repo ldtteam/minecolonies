@@ -153,7 +153,7 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
                 if (world.isAirBlock(posToGo))
                 {
                     final IBlockState tempState = world.getBlockState(posToGoFrom);
-                    if (blockToMove.getBlock() == tempState.getBlock())
+                    if (blockToMove.getBlock() == tempState.getBlock() && world.isBlockLoaded(posToGoFrom) && world.isBlockLoaded(posToGo))
                     {
                         world.setBlockState(posToGo, tempState);
                         world.setBlockToAir(posToGoFrom);
