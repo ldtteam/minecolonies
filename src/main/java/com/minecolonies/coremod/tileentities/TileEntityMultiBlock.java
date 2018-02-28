@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.google.common.primitives.Ints;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.state.IBlockState;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.coremod.util.SoundUtils.*;
 import static net.minecraft.util.EnumFacing.*;
@@ -29,12 +30,27 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
     /**
      * Max block range.
      */
-    public static final int MAX_RANGE = 10;
+    private static final int MAX_RANGE = 10;
+
+    /**
+     * Max block speed.
+     */
+    private static final int MAX_SPEED = 3;
+
+    /**
+     * Min block speed.
+     */
+    private static final int MIN_SPEED = 1;
 
     /**
      * Default gate and bridge range.
      */
     public static final int DEFAULT_RANGE         = 3;
+
+    /**
+     * Default gate and bridge range.
+     */
+    public static final int DEFAULT_SPEED        = 2;
 
     /**
      * The last redstone state which got in.
@@ -72,6 +88,11 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
     private int ticksPassed = 0;
 
     /**
+     * Speed of the multiblock, max 3, min 1.
+     */
+    private int speed = 2;
+
+    /**
      * Public constructor to create the tileEntity.
      */
     public TileEntityMultiBlock()
@@ -86,6 +107,11 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
      */
     public void handleRedstone(final boolean signal)
     {
+        if(speed == 0)
+        {
+            speed = DEFAULT_SPEED;
+        }
+
         if (signal != on && progress == range)
         {
             on = signal;
@@ -116,7 +142,7 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
 
         if(progress < range)
         {
-            if (ticksPassed % TICKS_SECOND == 0)
+            if (ticksPassed % ( TICKS_SECOND / speed) == 0)
             {
                 handleTick();
                 ticksPassed = 1;
@@ -177,10 +203,12 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
     private void pushEntitiesIfNecessary(final BlockPos posToGo, final BlockPos pos)
     {
         final List<Entity> entities = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(posToGo));
-        final BlockPos posTo = posToGo.offset(BlockPosUtil.getFacing(pos, posToGo));
+        final BlockPos vector = posToGo.subtract(pos);
+        final BlockPos posTo = posToGo.offset(EnumFacing.getFacingFromVector(vector.getX(), vector.getY(), vector.getZ()));
         for(final Entity entity : entities)
         {
-            entity.setPositionAndUpdate(posTo.getX(), posTo.getY(), posTo.getZ());
+
+            entity.setPositionAndUpdate(posTo.getX() + HALF_BLOCK, posTo.getY() + HALF_BLOCK, posTo.getZ() + HALF_BLOCK);
         }
     }
 
@@ -286,6 +314,24 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
         this.progress = range;
     }
 
+    /**
+     * Get the speed of the block.
+     * @return the speed (min 1 max 3).
+     */
+    public int getSpeed()
+    {
+        return speed;
+    }
+
+    /**
+     * Setter for speed.
+     * @param speed the speed to set.
+     */
+    public void setSpeed(final int speed)
+    {
+        this.speed = Ints.constrainToRange(speed, MIN_SPEED, MAX_SPEED);
+    }
+
     @Override
     public void readFromNBT(final NBTTagCompound compound)
     {
@@ -303,6 +349,7 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
         {
             output = direction.getOpposite();
         }
+        speed = compound.getInteger(TAG_SPEED);
     }
 
     @Override
@@ -317,6 +364,7 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
         {
             compound.setInteger(TAG_OUTPUT_DIRECTION, output.ordinal());
         }
+        compound.setInteger(TAG_SPEED, speed);
         return compound;
     }
 

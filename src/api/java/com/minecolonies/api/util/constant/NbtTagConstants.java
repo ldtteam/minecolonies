@@ -214,7 +214,7 @@ public final class NbtTagConstants
     public static final String TAG_LENGTH = "length";
     public static final String TAG_PROGRESS = "progress";
     public static final String TAG_OUTPUT_DIRECTION = "outputDirection";
-
+    public static final String TAG_SPEED = "speed";
     /**
      * Private constructor to hide the implicit one.
      */

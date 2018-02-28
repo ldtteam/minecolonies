@@ -35,6 +35,11 @@ public class MultiBlockChangeMessage extends AbstractMessage<MultiBlockChangeMes
     private int range;
 
     /**
+     * The speed it should have.
+     */
+    private int speed;
+
+    /**
      * The position of the tileEntity.
      */
     private BlockPos pos;
@@ -53,14 +58,16 @@ public class MultiBlockChangeMessage extends AbstractMessage<MultiBlockChangeMes
      * @param facing the way it should be facing.
      * @param output the way it will output to.
      * @param range the range it should work.
+     * @param speed the speed it should have.
      */
-    public MultiBlockChangeMessage(final BlockPos pos, final EnumFacing facing, final EnumFacing output, final int range)
+    public MultiBlockChangeMessage(final BlockPos pos, final EnumFacing facing, final EnumFacing output, final int range, final int speed)
     {
         super();
         this.pos = pos;
         this.direction = facing;
         this.range = range;
         this.output = output;
+        this.speed = speed;
     }
 
     /**
@@ -75,6 +82,7 @@ public class MultiBlockChangeMessage extends AbstractMessage<MultiBlockChangeMes
         direction = EnumFacing.values()[buf.readInt()];
         output = EnumFacing.values()[buf.readInt()];
         range = buf.readInt();
+        speed = buf.readInt();
     }
 
     /**
@@ -89,6 +97,7 @@ public class MultiBlockChangeMessage extends AbstractMessage<MultiBlockChangeMes
         buf.writeInt(direction.ordinal());
         buf.writeInt(output.ordinal());
         buf.writeInt(range);
+        buf.writeInt(speed);
     }
 
     /**
@@ -108,6 +117,7 @@ public class MultiBlockChangeMessage extends AbstractMessage<MultiBlockChangeMes
             ((TileEntityMultiBlock) entity).setDirection(message.direction);
             ((TileEntityMultiBlock) entity).setOutput(message.output);
             ((TileEntityMultiBlock) entity).setRange(message.range);
+            ((TileEntityMultiBlock) entity).setSpeed(message.speed);
             final IBlockState state = player.getServerWorld().getBlockState(message.pos);
             player.getServerWorld().notifyBlockUpdate(message.pos, state, state, 0x3);
         }

@@ -3,7 +3,6 @@ package com.minecolonies.coremod.client.gui;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.Pane;
-import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.ButtonImage;
 import com.minecolonies.blockout.controls.TextField;
 import com.minecolonies.blockout.views.View;
@@ -65,7 +64,12 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
     /**
      * The input field with the range.
      */
-    private final TextField input;
+    private final TextField inputRange;
+
+    /**
+     * The input field with the range.
+     */
+    private final TextField inputSpeed;
 
     /**
      * The constructor called before opening this window.
@@ -75,7 +79,8 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
     {
         super(Constants.MOD_ID + MULTI_BLOCK_RESOURCE_SUFFIX);
         this.pos = pos;
-        input = findPaneOfTypeByID(INPUT_RANGE_NAME, TextField.class);
+        inputRange = findPaneOfTypeByID(INPUT_RANGE_NAME, TextField.class);
+        inputSpeed = findPaneOfTypeByID(INPUT_SPEED, TextField.class);
         this.init();
     }
 
@@ -102,7 +107,8 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
         final TileEntity block = Minecraft.getMinecraft().world.getTileEntity(pos);
         if (block instanceof TileEntityMultiBlock)
         {
-            input.setText(Integer.toString(((TileEntityMultiBlock) block).getRange()));
+            inputRange.setText(Integer.toString(((TileEntityMultiBlock) block).getRange()));
+            inputSpeed.setText(Integer.toString(((TileEntityMultiBlock) block).getSpeed()));
             final EnumFacing dir = ((TileEntityMultiBlock) block).getDirection();
             final EnumFacing out = ((TileEntityMultiBlock) block).getOutput();
             enable(dir, dir, false);
@@ -226,17 +232,18 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
-        final String inputText = input.getText();
         int range = DEFAULT_RANGE;
+        int speed = DEFAULT_SPEED;
         try
         {
-            range = Integer.valueOf(inputText);
+            range = Integer.valueOf(inputRange.getText());
+            speed = Integer.valueOf(inputSpeed.getText());
         }
         catch(final NumberFormatException e)
         {
-            Log.getLogger().warn("Unable to parse number for MultiBlock range, considering default range!", e);
+            Log.getLogger().warn("Unable to parse number for MultiBlock range or speed, considering default range/speed!", e);
         }
-        MineColonies.getNetwork().sendToServer(new MultiBlockChangeMessage(pos, facing, output, range));
+        MineColonies.getNetwork().sendToServer(new MultiBlockChangeMessage(pos, facing, output, range, speed));
         close();
     }
 

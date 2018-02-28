@@ -492,6 +492,11 @@ public final class WindowConstants
     public static final String BUTTON_REMOVE = "remove";
 
     /**
+     * Id of the speed input field.
+     */
+    public static final String INPUT_SPEED     = "speed";
+
+    /**
      * public constructor to hide implicit public one.
      */
     private WindowConstants()
