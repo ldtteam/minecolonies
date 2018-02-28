@@ -11,9 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -184,6 +182,37 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
         {
             entity.setPositionAndUpdate(posTo.getX(), posTo.getY(), posTo.getZ());
         }
+    }
+
+    @Override
+    public void rotate(final Rotation rotationIn)
+    {
+        if(output != UP && output != DOWN)
+        {
+            output = rotationIn.rotate(output);
+        }
+
+        if(direction != UP && direction != DOWN)
+        {
+            direction = rotationIn.rotate(direction);
+        }
+        super.rotate(rotationIn);
+    }
+
+    @Override
+    public void mirror(final Mirror mirrorIn)
+    {
+        if(output != UP && output != DOWN)
+        {
+            output = mirrorIn.mirror(output);
+        }
+
+        if(direction != UP && direction != DOWN)
+        {
+            direction = mirrorIn.mirror(direction);
+        }
+
+        super.mirror(mirrorIn);
     }
 
     /**

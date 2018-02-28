@@ -3,6 +3,8 @@ package com.minecolonies.structures.helpers;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
@@ -285,6 +287,14 @@ public class StructureProxy
             {
                 foundHut = true;
                 offset = info.pos.add(minX, minY, minZ);
+            }
+
+            if(info.tileentityData != null)
+            {
+                final TileEntity entity = TileEntity.create(world, info.tileentityData);
+                entity.rotate(rotation);
+                entity.mirror(mirror);
+                this.blocks[x][y][z] = new Template.BlockInfo(info.pos, info.blockState, entity.writeToNBT(new NBTTagCompound()));
             }
         }
 
