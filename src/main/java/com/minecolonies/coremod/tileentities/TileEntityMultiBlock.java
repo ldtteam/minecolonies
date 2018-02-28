@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.google.common.primitives.Ints;
-import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -25,6 +24,9 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.coremod.util.SoundUtils.*;
 import static net.minecraft.util.EnumFacing.*;
 
+/**
+ * This Class is about the MultiBlock TileEntity which takes care of pushing others around (In a non mean way).
+ */
 public class TileEntityMultiBlock extends TileEntity implements ITickable
 {
     /**

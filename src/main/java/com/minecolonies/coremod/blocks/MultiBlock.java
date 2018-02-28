@@ -20,9 +20,7 @@ import java.util.Locale;
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
 /**
- * This block is used as a substitution block for the Builder.
- * Every solid block can be substituted by this block in schematics.
- * This helps make schematics independent from location and ground.
+ * This Class is about the MultiBlock which takes care of pushing others around (In a non mean way).
  */
 public class MultiBlock extends AbstractBlockMinecolonies<MultiBlock>
 {
