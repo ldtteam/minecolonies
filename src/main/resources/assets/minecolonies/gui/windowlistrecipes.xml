@@ -14,8 +14,8 @@
                 <itemicon id="resource3" size="16 16" pos="34 14"/>
                 <itemicon id="resource4" size="16 16" pos="34 1"/>
             </box>
-            <button id="up" size="15 15" label="↥" pos="0 0"/>
-            <button id="down" size="15 15" label="↧" pos="0 15"/>
+            <button id="plus" size="15 15" label="↥" pos="0 0"/>
+            <button id="minus" size="15 15" label="↧" pos="0 15"/>
             <button id="remove" size="45 15" pos="125 3" label="$(com.minecolonies.coremod.gui.recipe.remove)"/>
         </view>
     </list>

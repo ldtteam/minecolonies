@@ -8,13 +8,13 @@ import com.minecolonies.blockout.controls.ButtonImage;
 import com.minecolonies.blockout.controls.TextField;
 import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.MultiBlockChangeMessage;
 import com.minecolonies.coremod.tileentities.TileEntityMultiBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +27,21 @@ import static net.minecraft.util.EnumFacing.*;
  */
 public class WindowMultiBlock extends AbstractWindowSkeleton
 {
+    /**
+     * Pre resource string.
+     */
+    private static final String RES_STRING = "textures/gui/buildtool/%s.png";
+
+    /**
+     * Green String for selected left click.
+     */
+    private static final String GREEN_POS = "_green";
+
+    /**
+     * Red String for selected right click.
+     */
+    private static final String RED_POS = "_red";
+
     /**
      * Position of the multiblock.
      */
@@ -88,55 +103,82 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
         if (block instanceof TileEntityMultiBlock)
         {
             input.setText(Integer.toString(((TileEntityMultiBlock) block).getRange()));
-
-            switch (((TileEntityMultiBlock) block).getDirection())
-            {
-                case UP:
-                    moveUpClicked();
-                    break;
-                case DOWN:
-                    moveDownClicked();
-                    break;
-                case NORTH:
-                    moveForwardClicked();
-                    break;
-                case SOUTH:
-                    moveBackClicked();
-                    break;
-                case EAST:
-                    moveRightClicked();
-                    break;
-                case WEST:
-                    moveLeftClicked();
-                    break;
-            }
+            final EnumFacing dir = ((TileEntityMultiBlock) block).getDirection();
+            final EnumFacing out = ((TileEntityMultiBlock) block).getOutput();
+            enable(dir, dir, false);
+            enable(out, out, true);
             return;
         }
         close();
+    }
+
+    private void enable(final EnumFacing oldFacing, final EnumFacing newFacing, final boolean rightClick)
+    {
+        switch (oldFacing)
+        {
+            case UP:
+                findPaneOfTypeByID(BUTTON_UP, ButtonImage.class).setImage(new ResourceLocation(Constants.MOD_ID, String.format(RES_STRING, BUTTON_UP)));
+                break;
+            case DOWN:
+                findPaneOfTypeByID(BUTTON_DOWN, ButtonImage.class).setImage(new ResourceLocation(Constants.MOD_ID, String.format(RES_STRING, BUTTON_DOWN)));
+                break;
+            case NORTH:
+                findPaneOfTypeByID(BUTTON_FORWARD, ButtonImage.class).setImage(new ResourceLocation(Constants.MOD_ID, String.format(RES_STRING, BUTTON_FORWARD)));
+                break;
+            case SOUTH:
+                findPaneOfTypeByID(BUTTON_BACKWARD, ButtonImage.class).setImage(new ResourceLocation(Constants.MOD_ID, String.format(RES_STRING, BUTTON_BACKWARD)));
+                break;
+            case EAST:
+                findPaneOfTypeByID(BUTTON_RIGHT, ButtonImage.class).setImage(new ResourceLocation(Constants.MOD_ID, String.format(RES_STRING, BUTTON_RIGHT)));
+                break;
+            case WEST:
+                findPaneOfTypeByID(BUTTON_LEFT, ButtonImage.class).setImage(new ResourceLocation(Constants.MOD_ID, String.format(RES_STRING, BUTTON_LEFT)));
+                break;
+        }
+
+        final String color = rightClick ? RED_POS : GREEN_POS;
+        switch (newFacing)
+        {
+            case UP:
+                findPaneOfTypeByID(BUTTON_UP, ButtonImage.class).setImage(new ResourceLocation(Constants.MOD_ID, String.format(RES_STRING, BUTTON_UP + color)));
+                break;
+            case DOWN:
+                findPaneOfTypeByID(BUTTON_DOWN, ButtonImage.class).setImage(new ResourceLocation(Constants.MOD_ID, String.format(RES_STRING, BUTTON_DOWN + color)));
+                break;
+            case NORTH:
+                findPaneOfTypeByID(BUTTON_FORWARD, ButtonImage.class).setImage(new ResourceLocation(Constants.MOD_ID, String.format(RES_STRING, BUTTON_FORWARD + color)));
+                break;
+            case SOUTH:
+                findPaneOfTypeByID(BUTTON_BACKWARD, ButtonImage.class).setImage(new ResourceLocation(Constants.MOD_ID, String.format(RES_STRING, BUTTON_BACKWARD + color)));
+                break;
+            case EAST:
+                findPaneOfTypeByID(BUTTON_RIGHT, ButtonImage.class).setImage(new ResourceLocation(Constants.MOD_ID, String.format(RES_STRING, BUTTON_RIGHT + color)));
+                break;
+            case WEST:
+                findPaneOfTypeByID(BUTTON_LEFT, ButtonImage.class).setImage(new ResourceLocation(Constants.MOD_ID, String.format(RES_STRING, BUTTON_LEFT + color)));
+                break;
+        }
+
+        if(rightClick)
+        {
+            output = newFacing;
+        }
+        else
+        {
+            facing = newFacing;
+        }
     }
 
     /*
      * ---------------- Button Handling -----------------
      */
 
-    private void enableAll()
-    {
-        findPaneOfTypeByID(BUTTON_UP, Button.class).enable();
-        findPaneOfTypeByID(BUTTON_DOWN, Button.class).enable();
-        findPaneOfTypeByID(BUTTON_LEFT, Button.class).enable();
-        findPaneOfTypeByID(BUTTON_FORWARD, Button.class).enable();
-        findPaneOfTypeByID(BUTTON_BACKWARD, Button.class).enable();
-        findPaneOfTypeByID(BUTTON_RIGHT, Button.class).enable();
-    }
-
     /**
      * Move the schematic up.
      */
     private void moveUpClicked()
     {
-        facing = UP;
-        enableAll();
-        findPaneOfTypeByID(BUTTON_UP, Button.class).disable();
+        enable(facing, UP, false);
     }
 
     /**
@@ -144,9 +186,7 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
      */
     private void moveDownClicked()
     {
-        facing = DOWN;
-        enableAll();
-        findPaneOfTypeByID(BUTTON_DOWN, Button.class).disable();
+        enable(facing, DOWN, false);
     }
 
     /**
@@ -154,18 +194,15 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
      */
     private void moveLeftClicked()
     {
-        facing = WEST;
-        enableAll();
-        findPaneOfTypeByID(BUTTON_LEFT, Button.class).disable();
+        enable(facing, WEST, false);
+
     }
     /**
      * Move the structure forward.
      */
     private void moveForwardClicked()
     {
-        facing = NORTH;
-        enableAll();
-        findPaneOfTypeByID(BUTTON_FORWARD, Button.class).disable();
+        enable(facing, NORTH, false);
     }
 
     /**
@@ -173,9 +210,7 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
      */
     private void moveBackClicked()
     {
-        facing = SOUTH;
-        enableAll();
-        findPaneOfTypeByID(BUTTON_BACKWARD, Button.class).disable();
+        enable(facing, SOUTH, false);
     }
 
     /**
@@ -183,9 +218,7 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
      */
     private void moveRightClicked()
     {
-        facing = EAST;
-        enableAll();
-        findPaneOfTypeByID(BUTTON_RIGHT, Button.class).disable();
+        enable(facing, EAST, false);
     }
 
     /**
@@ -217,28 +250,31 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
         }
         if(pane instanceof ButtonImage && pane.isEnabled())
         {
+            final EnumFacing newFacing;
             switch(pane.getID())
             {
                 case BUTTON_UP:
-                    output = UP;
+                    newFacing = UP;
                     break;
                 case BUTTON_DOWN:
-                    output = DOWN;
+                    newFacing = DOWN;
                     break;
                 case BUTTON_FORWARD:
-                    output = NORTH;
+                    newFacing = NORTH;
                     break;
                 case BUTTON_BACKWARD:
-                    output = SOUTH;
+                    newFacing = SOUTH;
                     break;
                 case BUTTON_RIGHT:
-                    output = EAST;
+                    newFacing = EAST;
                     break;
                 case BUTTON_LEFT:
-                    output = WEST;
+                    newFacing = WEST;
                     break;
+                default:
+                    newFacing = UP;
             }
-            pane.disable();
+            enable(output, newFacing, true);
         }
     }
 

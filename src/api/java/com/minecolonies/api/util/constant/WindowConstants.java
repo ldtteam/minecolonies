@@ -83,7 +83,7 @@ public final class WindowConstants
     /**
      * Id of the up button in the GUI.
      */
-    public static final String BUTTON_UP = "up";
+    public static final String BUTTON_UP = "plus";
 
     /**
      * Id of the teleport to colony button in the GUI.
@@ -93,7 +93,7 @@ public final class WindowConstants
     /**
      * Id of the up button in the GUI.
      */
-    public static final String BUTTON_DOWN = "down";
+    public static final String BUTTON_DOWN = "minus";
 
     /**
      * The id of the delete button in the GUI.
@@ -418,12 +418,12 @@ public final class WindowConstants
     /**
      * Move the structure preview forward.
      */
-    public static final String BUTTON_FORWARD = "forward";
+    public static final String BUTTON_FORWARD = "up";
 
     /**
      * Move the structure preview back.
      */
-    public static final String BUTTON_BACKWARD = "backward";
+    public static final String BUTTON_BACKWARD = "down";
 
     /**
      * Move the structure preview left.
@@ -485,6 +485,11 @@ public final class WindowConstants
      * Resource suffix of the multiblock GUI.
      */
     public static final String MULTI_BLOCK_RESOURCE_SUFFIX = ":gui/windowmultiblock.xml";
+
+    /**
+     * Id of the done button in the GUI.
+     */
+    public static final String BUTTON_REMOVE = "remove";
 
     /**
      * public constructor to hide implicit public one.

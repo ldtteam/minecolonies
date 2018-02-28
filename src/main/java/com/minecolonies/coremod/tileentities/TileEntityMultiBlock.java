@@ -127,8 +127,7 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
      */
     public void handleTick()
     {
-        boolean invert = currentDirection == direction;
-        final EnumFacing currentOutPutDirection = invert ? output : direction;
+        final EnumFacing currentOutPutDirection = currentDirection == direction ? output : direction;
 
         if(progress < range)
         {
@@ -189,6 +188,16 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
     public EnumFacing getDirection()
     {
         return direction;
+    }
+
+    /**
+     * Get the output direction the block is facing.
+     *
+     * @return the EnumFacing.
+     */
+    public EnumFacing getOutput()
+    {
+        return output;
     }
 
     /**
