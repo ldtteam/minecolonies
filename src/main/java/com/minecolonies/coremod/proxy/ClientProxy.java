@@ -22,7 +22,6 @@ import com.minecolonies.coremod.event.ClientEventHandler;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.tileentities.TileEntityMultiBlock;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import com.minecolonies.structures.event.RenderEventHandler;
 import com.minecolonies.structures.helpers.Settings;

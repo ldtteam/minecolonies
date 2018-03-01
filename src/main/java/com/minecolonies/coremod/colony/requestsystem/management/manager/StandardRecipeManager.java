@@ -56,7 +56,7 @@ public class StandardRecipeManager implements IRecipeManager
     @Override
     public IToken getRecipeId(final IRecipeStorage storage)
     {
-        for(final Map.Entry<IToken, IRecipeStorage> tempStorage: new ArrayList<>(recipes.entrySet()))
+        for(final Map.Entry<IToken, IRecipeStorage> tempStorage: recipes.entrySet())
         {
             if(tempStorage.getValue().equals(storage))
             {

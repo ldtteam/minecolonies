@@ -95,14 +95,6 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
     private int speed = 2;
 
     /**
-     * Public constructor to create the tileEntity.
-     */
-    public TileEntityMultiBlock()
-    {
-        super();
-    }
-
-    /**
      * Handle redstone input.
      *
      * @param signal true if positive.
@@ -206,10 +198,9 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
     {
         final List<Entity> entities = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(posToGo));
         final BlockPos vector = posToGo.subtract(pos);
-        final BlockPos posTo = posToGo.offset(EnumFacing.getFacingFromVector(vector.getX(), vector.getY(), vector.getZ()));
+        final BlockPos posTo = posToGo.offset(getFacingFromVector(vector.getX(), vector.getY(), vector.getZ()));
         for(final Entity entity : entities)
         {
-
             entity.setPositionAndUpdate(posTo.getX() + HALF_BLOCK, posTo.getY() + HALF_BLOCK, posTo.getZ() + HALF_BLOCK);
         }
     }
@@ -341,11 +332,11 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
 
         range = compound.getInteger(TAG_RANGE);
         this.progress = compound.getInteger(TAG_PROGRESS);
-        direction = EnumFacing.values()[compound.getInteger(TAG_DIRECTION)];
+        direction = values()[compound.getInteger(TAG_DIRECTION)];
         on = compound.getBoolean(TAG_INPUT);
         if(compound.hasKey(TAG_OUTPUT_DIRECTION))
         {
-            output = EnumFacing.values()[compound.getInteger(TAG_OUTPUT_DIRECTION)];
+            output = values()[compound.getInteger(TAG_OUTPUT_DIRECTION)];
         }
         else
         {

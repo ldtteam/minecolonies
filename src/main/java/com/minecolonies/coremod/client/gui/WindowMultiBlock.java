@@ -57,11 +57,6 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
     private EnumFacing output = DOWN;
 
     /**
-     * The player which opened the GUI.
-     */
-    private final EntityPlayer player = Minecraft.getMinecraft().player;
-
-    /**
      * The input field with the range.
      */
     private final TextField inputRange;
@@ -73,6 +68,7 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
 
     /**
      * The constructor called before opening this window.
+     *
      * @param pos the position of the TileEntity which this window belogs to.
      */
     public WindowMultiBlock(@Nullable final BlockPos pos)
@@ -122,9 +118,6 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
     {
         switch (oldFacing)
         {
-            case UP:
-                findPaneOfTypeByID(BUTTON_UP, ButtonImage.class).setImage(new ResourceLocation(Constants.MOD_ID, String.format(RES_STRING, BUTTON_UP)));
-                break;
             case DOWN:
                 findPaneOfTypeByID(BUTTON_DOWN, ButtonImage.class).setImage(new ResourceLocation(Constants.MOD_ID, String.format(RES_STRING, BUTTON_DOWN)));
                 break;
@@ -140,14 +133,14 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
             case WEST:
                 findPaneOfTypeByID(BUTTON_LEFT, ButtonImage.class).setImage(new ResourceLocation(Constants.MOD_ID, String.format(RES_STRING, BUTTON_LEFT)));
                 break;
+            default:
+                findPaneOfTypeByID(BUTTON_UP, ButtonImage.class).setImage(new ResourceLocation(Constants.MOD_ID, String.format(RES_STRING, BUTTON_UP)));
+                break;
         }
 
         final String color = rightClick ? RED_POS : GREEN_POS;
         switch (newFacing)
         {
-            case UP:
-                findPaneOfTypeByID(BUTTON_UP, ButtonImage.class).setImage(new ResourceLocation(Constants.MOD_ID, String.format(RES_STRING, BUTTON_UP + color)));
-                break;
             case DOWN:
                 findPaneOfTypeByID(BUTTON_DOWN, ButtonImage.class).setImage(new ResourceLocation(Constants.MOD_ID, String.format(RES_STRING, BUTTON_DOWN + color)));
                 break;
@@ -163,9 +156,12 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
             case WEST:
                 findPaneOfTypeByID(BUTTON_LEFT, ButtonImage.class).setImage(new ResourceLocation(Constants.MOD_ID, String.format(RES_STRING, BUTTON_LEFT + color)));
                 break;
+            default:
+                findPaneOfTypeByID(BUTTON_UP, ButtonImage.class).setImage(new ResourceLocation(Constants.MOD_ID, String.format(RES_STRING, BUTTON_UP + color)));
+                break;
         }
 
-        if(rightClick)
+        if (rightClick)
         {
             output = newFacing;
         }
@@ -201,8 +197,8 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
     private void moveLeftClicked()
     {
         enable(facing, WEST, false);
-
     }
+
     /**
      * Move the structure forward.
      */
@@ -239,7 +235,7 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
             range = Integer.valueOf(inputRange.getText());
             speed = Integer.valueOf(inputSpeed.getText());
         }
-        catch(final NumberFormatException e)
+        catch (final NumberFormatException e)
         {
             Log.getLogger().warn("Unable to parse number for MultiBlock range or speed, considering default range/speed!", e);
         }
@@ -251,14 +247,14 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
     public void rightClick(final int mx, final int my)
     {
         Pane pane = this.findPaneForClick(mx, my);
-        if(pane instanceof View)
+        if (pane instanceof View)
         {
             pane = ((View) pane).findPaneForClick(mx - pane.getX(), my - pane.getY());
         }
-        if(pane instanceof ButtonImage && pane.isEnabled())
+        if (pane instanceof ButtonImage && pane.isEnabled())
         {
             final EnumFacing newFacing;
-            switch(pane.getID())
+            switch (pane.getID())
             {
                 case BUTTON_UP:
                     newFacing = UP;
@@ -280,6 +276,7 @@ public class WindowMultiBlock extends AbstractWindowSkeleton
                     break;
                 default:
                     newFacing = UP;
+                    break;
             }
             enable(output, newFacing, true);
         }
