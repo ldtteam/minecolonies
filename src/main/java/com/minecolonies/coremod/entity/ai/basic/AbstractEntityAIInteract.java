@@ -200,7 +200,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         final ItemStack tool = worker.getHeldItemMainhand();
 
         if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.BEDROCK
-              && curBlock.getHarvestTool(curBlock.getDefaultState()) != null)
+              && curBlock.getHarvestTool(world.getBlockState(blockToMine)) != null)
         {
             Log.getLogger().info(String.format(
               "ForgeHook not in sync with EfficientTool for %s and %s\n"

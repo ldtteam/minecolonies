@@ -76,6 +76,10 @@ public class Screen extends GuiScreen
             //  Adjust coordinate to origin of window
             window.click(mx - x, my - y);
         }
+        else if(code == 1)
+        {
+            window.rightClick(mx - x, my - y);
+        }
     }
 
     @Override

@@ -19,21 +19,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.WindowConstants.*;
+
 /**
  * Window for the hiring or firing of a worker.
  */
 public class WindowListRecipes extends Window implements ButtonHandler
 {
-    /**
-     * Id of the done button in the GUI.
-     */
-    private static final String BUTTON_REMOVE = "remove";
-
-    /**
-     * Id of the cancel button in the GUI.
-     */
-    private static final String BUTTON_CANCEL = "cancel";
-
     /**
      * Id of the citizen list in the GUI.
      */
@@ -43,16 +35,6 @@ public class WindowListRecipes extends Window implements ButtonHandler
      * Link to the xml file of the window.
      */
     private static final String BUILDING_NAME_RESOURCE_SUFFIX = ":gui/windowListRecipes.xml";
-
-    /**
-     * Button to change priority up in the gui.
-     */
-    private static final String BUTTON_UP = "up";
-
-    /**
-     * Button to change priority down in the gui.
-     */
-    private static final String BUTTON_DOWN = "down";
 
     /**
      * The output item icon.
