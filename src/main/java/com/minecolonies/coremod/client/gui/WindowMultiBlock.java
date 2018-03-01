@@ -10,7 +10,6 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.MultiBlockChangeMessage;
 import com.minecolonies.coremod.tileentities.TileEntityMultiBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
