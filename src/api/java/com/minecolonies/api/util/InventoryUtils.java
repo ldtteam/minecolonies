@@ -809,16 +809,22 @@ public class InventoryUtils
             else
             {
                 ItemStack resultStack = itemStack;
-                slot = itemHandler.getSlots() == 0 ? -1 : 0;
-                while (!ItemStackUtils.isEmpty(resultStack) && slot != -1 && slot != itemHandler.getSlots())
-                {
-                    resultStack = itemHandler.insertItem(slot, resultStack, false);
-                    if (!ItemStackUtils.isEmpty(resultStack))
+                ArrayList<Integer> emptySlots = new ArrayList<Integer>();
+                for(int i = 0; i < itemHandler.getSlots() && !ItemStackUtils.isEmpty(resultStack); i++) {
+                	ItemStack stackInSlot = itemHandler.getStackInSlot(i);
+                	if(ItemStackUtils.isEmpty(stackInSlot)) {
+                		emptySlots.add(i);
+                	}else if(ItemStackUtils.compareItemStacksIgnoreStackSize(stackInSlot, resultStack)) {
+                		resultStack = itemHandler.insertItem(i, resultStack, false);
+                	}
+                }
+                for(Integer s : emptySlots) {
+                	resultStack = itemHandler.insertItem(s, resultStack, false);
+                    if (ItemStackUtils.isEmpty(resultStack))
                     {
-                        slot++;
+                        return resultStack;
                     }
                 }
-
                 return resultStack;
             }
         }
