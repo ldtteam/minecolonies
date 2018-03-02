@@ -20,7 +20,7 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.R
 public class RSResetAllCommand extends AbstractSingleCommand
 {
     public static final  String DESC            = "rsResetAll";
-    private static final String SUCCESS_MESSAGE = "After 1.618 seconds all colonies were re-instantiated completely new.";
+    private static final String SUCCESS_MESSAGE = "After 1.618 Seconds it reinstantiated all colonies completely new.";
 
     /**
      * Initialize this SubCommand with it's parents.
