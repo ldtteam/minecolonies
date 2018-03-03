@@ -1,12 +1,12 @@
 {
 	"__comment": "Created by Imrielle for Minecolonies",
 	"textures": {
-		"0": "blocks/shingle/nether_shingle_red",
-		"1": "blocks/shingle/clay_shingle_2",
-		"2": "blocks/shingle/clay_shingle_3",
-		"3": "blocks/shingle/shingle_oak_support_1",
-		"4": "blocks/shingle/shingle_oak_support_2",
-		"particle": "blocks/shingle/clay_shingle_1",
+		"0": "minecolonies:blocks/shingle/nether_shingle_red",
+		"1": "minecolonies:blocks/shingle/clay_shingle_2",
+		"2": "minecolonies:blocks/shingle/clay_shingle_3",
+		"3": "minecolonies:blocks/shingle/shingle_oak_support_1",
+		"4": "minecolonies:blocks/shingle/shingle_oak_support_2",
+		"particle": "minecolonies:blocks/shingle/clay_shingle_1",
 		"missing": "blocks/e_texture"
 	},
 	"elements": [ 	 

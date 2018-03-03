@@ -1,10 +1,10 @@
 {
 	"__comment": "Created by Imrielle for Minecolonies",
 	"textures": {
-		"0": "blocks/shingle/sandstone_shingle",
-		"1": "blocks/shingle_slab/clay_shingle_2",
-		"2": "blocks/shingle_slab/clay_shingle_3",
-		"particle": "blocks/shingle/clay_shingle_1"
+		"0": "minecolonies:blocks/shingle/sandstone_shingle",
+		"1": "minecolonies:blocks/shingle_slab/clay_shingle_2",
+		"2": "minecolonies:blocks/shingle_slab/clay_shingle_3",
+		"particle": "minecolonies:blocks/shingle/clay_shingle_1"
 	},
 	"elements": [ 	 
 		{

@@ -212,7 +212,6 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModItems.itemAchievementProxyTown);
         createCustomModel(ModItems.itemAchievementProxyCity);
         createCustomModel(ModItems.itemAchievementProxyMetropolis);
-        createCustomModel(ModBlocks.blockShingleSlab);
         createCustomModel(ModBlocks.multiBlock);
 
         ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());
@@ -247,7 +246,7 @@ public class ClientProxy extends CommonProxy
 
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleStonebrick), 0,
                 new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
-                        BlockShingle.BLOCK_PREFIX + "stonebricks"), INVENTORY));
+                        BlockShingle.BLOCK_PREFIX + "_stonebrick"), INVENTORY));
 
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleNether), 0,
                 new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
@@ -256,6 +255,26 @@ public class ClientProxy extends CommonProxy
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleNetherRed), 0,
                 new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
                         BlockShingle.BLOCK_PREFIX + "_nether_red"), INVENTORY));
+
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleSlab), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
+                        BlockShingleSlab.BLOCK_NAME), INVENTORY));
+
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleSlabSandstone), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
+                        BlockShingleSlab.BLOCK_NAME + "_sandstone"), INVENTORY));
+
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleSlabStonebrick), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
+                        BlockShingleSlab.BLOCK_NAME + "_stonebrick"), INVENTORY));
+
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleSlabNether), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
+                        BlockShingleSlab.BLOCK_NAME + "_nether"), INVENTORY));
+
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleSlabNetherRed), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
+                        BlockShingleSlab.BLOCK_NAME + "_nether_red"), INVENTORY));
 
         for (final PaperwallType type : PaperwallType.values())
         {

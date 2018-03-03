@@ -145,8 +145,12 @@ public final class ModBlocks
         blockShingleNetherRed = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK),
                 BlockShingle.BLOCK_PREFIX + "_nether_red").registerBlock(registry);
 
+        blockShingleSlab = new BlockShingleSlab("").registerBlock(registry);
+        blockShingleSlabSandstone = new BlockShingleSlab("_sandstone").registerBlock(registry);
+        blockShingleSlabStonebrick = new BlockShingleSlab( "_stonebrick").registerBlock(registry);
+        blockShingleSlabNether = new BlockShingleSlab("_nether").registerBlock(registry);
+        blockShingleSlabNetherRed = new BlockShingleSlab("_nether_red").registerBlock(registry);
 
-        blockShingleSlab = new BlockShingleSlab().registerBlock(registry);
         multiBlock = new MultiBlock().registerBlock(registry);
 
         for (final BlockPlanks.EnumType type: BlockPlanks.EnumType.values())
@@ -194,7 +198,15 @@ public final class ModBlocks
         blockShingleSpruce.registerItemBlock(registry);
         blockShingleDarkOak.registerItemBlock(registry);
         blockShingleAcacia.registerItemBlock(registry);
+        blockShingleSandstone.registerItemBlock(registry);
+        blockShingleStonebrick.registerItemBlock(registry);
+        blockShingleNether.registerItemBlock(registry);
+        blockShingleNetherRed.registerItemBlock(registry);
         blockShingleSlab.registerItemBlock(registry);
+        blockShingleSlabSandstone.registerItemBlock(registry);
+        blockShingleSlabStonebrick.registerItemBlock(registry);
+        blockShingleSlabNether.registerItemBlock(registry);
+        blockShingleSlabNetherRed.registerItemBlock(registry);
         blockHutSmeltery.registerItemBlock(registry);
         multiBlock.registerItemBlock(registry);
 
