@@ -1,7 +1,25 @@
 package com.minecolonies.api.util;
 
+import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.IToolType;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
@@ -11,15 +29,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
  * Utility methods for the inventories.
@@ -548,9 +557,29 @@ public class InventoryUtils
      */
     public static int findFirstSlotInItemHandlerNotEmptyWith(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
+       return findFirstSlotInItemHandlerNotEmptyWith(itemHandler,0 , itemStackSelectionPredicate);
+    }
+    /**
+     * Returns the index of the first occurrence of an ItemStack that matches
+     * the given predicate in the {@link IItemHandler}.
+     * Also applies the not empty check.
+     *
+     * @param itemHandler                 ItemHandler to check
+     * @param firstSlot                   The first slot to check
+     * @param itemStackSelectionPredicate The predicate to match.
+     *
+     * @return Index of the first occurrence
+     */
+    public static int findFirstSlotInItemHandlerNotEmptyWith(@NotNull final IItemHandler itemHandler, int firstSlot,@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    {
         @NotNull final Predicate<ItemStack> firstWorthySlotPredicate = ItemStackUtils.NOT_EMPTY_PREDICATE.and(itemStackSelectionPredicate);
 
-        for (int slot = 0; slot < itemHandler.getSlots(); slot++)
+        if(firstSlot >= itemHandler.getSlots())
+        	return -1;
+        if(firstSlot < 0)
+        	firstSlot = 0;
+        
+        for (int slot = firstSlot; slot < itemHandler.getSlots(); slot++)
         {
             if (firstWorthySlotPredicate.test(itemHandler.getStackInSlot(slot)))
             {
@@ -808,24 +837,29 @@ public class InventoryUtils
             }
             else
             {
-                ItemStack resultStack = itemStack;
-                ArrayList<Integer> emptySlots = new ArrayList<Integer>();
-                for(int i = 0; i < itemHandler.getSlots() && !ItemStackUtils.isEmpty(resultStack); i++) {
-                	ItemStack stackInSlot = itemHandler.getStackInSlot(i);
-                	if(ItemStackUtils.isEmpty(stackInSlot)) {
-                		emptySlots.add(i);
-                	}else if(ItemStackUtils.compareItemStacksIgnoreStackSize(stackInSlot, resultStack)) {
-                		resultStack = itemHandler.insertItem(i, resultStack, false);
-                	}
-                }
-                for(Integer s : emptySlots) {
-                	resultStack = itemHandler.insertItem(s, resultStack, false);
-                    if (ItemStackUtils.isEmpty(resultStack))
-                    {
-                        return resultStack;
-                    }
-                }
-                return resultStack;
+            	//NOTE : isItemEqual does not check for NBT differences
+            	slot = findFirstSlotInItemHandlerNotEmptyWith(itemHandler, 0, itemStack::isItemEqual);
+            	ItemStack resultStack = itemStack;
+            	while(slot < itemHandler.getSlots() && slot > -1) {
+            		resultStack = itemHandler.insertItem(slot, resultStack, false);
+            		
+            		if(resultStack.isEmpty())
+            			return resultStack;
+            		
+            		slot = findFirstSlotInItemHandlerNotEmptyWith(itemHandler, slot, itemStack::isItemEqual);
+            	}
+            	
+            	 slot = getFirstOpenSlotFromItemHandler(itemHandler);
+
+                 if (slot >= 0)
+                 {
+                     itemHandler.insertItem(slot, resultStack, false);
+                     return ItemStackUtils.EMPTY;
+                 }
+                 else
+                 {
+                     return resultStack;
+                 }
             }
         }
         else
@@ -833,7 +867,7 @@ public class InventoryUtils
             return itemStack;
         }
     }
-
+    
     /**
      * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
      *
@@ -1808,5 +1842,5 @@ public class InventoryUtils
             entityitem.motionZ = random.nextGaussian() * MOTION_MULTIPLIER;
             worldIn.spawnEntity(entityitem);
         }
-    }
+    } 
 }
