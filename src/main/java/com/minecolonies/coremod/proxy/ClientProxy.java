@@ -241,6 +241,22 @@ public class ClientProxy extends CommonProxy
                 new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
                         BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.ACACIA.getName()), INVENTORY));
 
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleSandstone), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
+                        BlockShingle.BLOCK_PREFIX + "_sandstone"), INVENTORY));
+
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleStonebrick), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
+                        BlockShingle.BLOCK_PREFIX + "stonebricks"), INVENTORY));
+
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleNether), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
+                        BlockShingle.BLOCK_PREFIX + "_nether"), INVENTORY));
+
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleNetherRed), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
+                        BlockShingle.BLOCK_PREFIX + "_nether_red"), INVENTORY));
+
         for (final PaperwallType type : PaperwallType.values())
         {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockPaperWall), type.getMetadata(),

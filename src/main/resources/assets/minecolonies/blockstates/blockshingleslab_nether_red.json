@@ -1,0 +1,19 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "facing": {
+      "north": {},
+      "east": {"y": 90},
+      "south": {"y": 180},
+      "west": {"y": 270}
+    },
+    "variant": {
+      "top":  { "model": "minecolonies:shingle_slab/nether_shingle_slab_6_red" },
+      "oneway":  { "model": "minecolonies:shingle_slab/nether_shingle_slab_5_red" },
+      "twoway":  { "model": "minecolonies:shingle_slab/nether_shingle_slab_3_red" },
+      "threeway":  { "model": "minecolonies:shingle_slab/nether_shingle_slab_2_red" },
+      "fourway":  { "model": "minecolonies:shingle_slab/nether_shingle_slab_1_red" },
+      "curved":  { "model": "minecolonies:shingle_slab/nether_shingle_slab_4_red" }
+    }
+  }
+}

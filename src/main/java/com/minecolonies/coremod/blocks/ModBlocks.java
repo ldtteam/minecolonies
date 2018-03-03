@@ -23,7 +23,7 @@ public final class ModBlocks
      * References can be made to here.
      */
 
-    public static List<BlockTimberFrame> timberFrames = new ArrayList<>();
+    public static List<BlockTimberFrame>      timberFrames = new ArrayList<>();
     public static BlockHutTownHall            blockHutTownHall;
     public static BlockHutCitizen             blockHutCitizen;
     public static BlockHutMiner               blockHutMiner;
@@ -63,7 +63,17 @@ public final class ModBlocks
     public static BlockShingle                blockShingleSpruce;
     public static BlockShingle                blockShingleDarkOak;
     public static BlockShingle                blockShingleAcacia;
+
+    public static BlockShingle                blockShingleSandstone;
+    public static BlockShingle                blockShingleStonebrick;
+    public static BlockShingle                blockShingleNether;
+    public static BlockShingle                blockShingleNetherRed;
     public static BlockShingleSlab            blockShingleSlab;
+    public static BlockShingleSlab            blockShingleSlabSandstone;
+    public static BlockShingleSlab            blockShingleSlabStonebrick;
+    public static BlockShingleSlab            blockShingleSlabNether;
+    public static BlockShingleSlab            blockShingleSlabNetherRed;
+
     public static MultiBlock                  multiBlock;
 
 
@@ -125,6 +135,17 @@ public final class ModBlocks
                 BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.DARK_OAK.getName()).registerBlock(registry);
         blockShingleAcacia = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.ACACIA),
                 BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.ACACIA.getName()).registerBlock(registry);
+
+        blockShingleSandstone = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK),
+                BlockShingle.BLOCK_PREFIX + "_sandstone").registerBlock(registry);
+        blockShingleStonebrick = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK),
+                BlockShingle.BLOCK_PREFIX + "_stonebrick").registerBlock(registry);
+        blockShingleNether = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK),
+                BlockShingle.BLOCK_PREFIX + "_nether").registerBlock(registry);
+        blockShingleNetherRed = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK),
+                BlockShingle.BLOCK_PREFIX + "_nether_red").registerBlock(registry);
+
+
         blockShingleSlab = new BlockShingleSlab().registerBlock(registry);
         multiBlock = new MultiBlock().registerBlock(registry);
 
