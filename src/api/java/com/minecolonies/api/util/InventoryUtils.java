@@ -574,12 +574,17 @@ public class InventoryUtils
     {
         @NotNull final Predicate<ItemStack> firstWorthySlotPredicate = ItemStackUtils.NOT_EMPTY_PREDICATE.and(itemStackSelectionPredicate);
 
-        if(firstSlot >= itemHandler.getSlots())
+        if(firstSlot >= itemHandler.getSlots()) {
         	return -1;
-        if(firstSlot < 0)
-        	firstSlot = 0;
+        }
+        final int realFirstSlot;
+        if(firstSlot < 0) {
+        	realFirstSlot = 0;
+        }else {
+        	realFirstSlot = firstSlot;
+        }
         
-        for (int slot = firstSlot; slot < itemHandler.getSlots(); slot++)
+        for (int slot = realFirstSlot; slot < itemHandler.getSlots(); slot++)
         {
             if (firstWorthySlotPredicate.test(itemHandler.getStackInSlot(slot)))
             {
@@ -743,45 +748,7 @@ public class InventoryUtils
      */
     public static boolean addItemStackToItemHandler(@NotNull final IItemHandler itemHandler, @Nullable final ItemStack itemStack)
     {
-        if (!ItemStackUtils.isEmpty(itemStack))
-        {
-            int slot;
-
-            if (itemStack.isItemDamaged())
-            {
-                slot = getFirstOpenSlotFromItemHandler(itemHandler);
-
-                if (slot >= 0)
-                {
-                    itemHandler.insertItem(slot, itemStack, false);
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                ItemStack resultStack = itemStack;
-                slot = itemHandler.getSlots() == 0 ? -1 : 0;
-                while (!ItemStackUtils.isEmpty(resultStack) && slot != -1 && slot != itemHandler.getSlots())
-                {
-                    resultStack = itemHandler.insertItem(slot, resultStack, false);
-                    if (!ItemStackUtils.isEmpty(resultStack))
-                    {
-                        slot++;
-                    }
-                }
-
-
-                return ItemStackUtils.isEmpty(resultStack);
-            }
-        }
-        else
-        {
-            return false;
-        }
+        return addItemStackToItemHandlerWithResult(itemHandler, itemStack).isEmpty();
     }
 
     /**
@@ -843,10 +810,11 @@ public class InventoryUtils
             	while(slot < itemHandler.getSlots() && slot > -1) {
             		resultStack = itemHandler.insertItem(slot, resultStack, false);
             		
-            		if(resultStack.isEmpty())
+            		if(resultStack.isEmpty()) {
             			return resultStack;
+            		}
             		
-            		slot = findFirstSlotInItemHandlerNotEmptyWith(itemHandler, slot, itemStack::isItemEqual);
+            		slot = findFirstSlotInItemHandlerNotEmptyWith(itemHandler, slot+1, itemStack::isItemEqual);
             	}
             	
             	 slot = getFirstOpenSlotFromItemHandler(itemHandler);
