@@ -2,10 +2,12 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.structures.helpers.Structure;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -18,6 +20,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.Suppression.EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS;
 
 /**
@@ -58,7 +61,7 @@ public final class Structures
     /**
      * Hashmap of schematic pieces by UUID.
      */
-    private static final Map<UUID, Map<Integer, byte[]>> schematicPieces = new HashMap<>();
+    private static final Map<UUID, Tuple<Long, Map<Integer, byte[]>>> schematicPieces = new HashMap<>();
 
     /**
      * Hut/Decoration, Styles, Levels.
@@ -604,6 +607,15 @@ public final class Structures
      */
     public static boolean handleSaveSchematicMessage(final byte[] bytes, final UUID id, final int pieces, final int piece)
     {
+        for(final Map.Entry<UUID, Tuple<Long, Map<Integer, byte[]>>> entry: new HashSet<>(schematicPieces.entrySet()))
+        {
+            if(MathUtils.nanoSecondsToSeconds(System.nanoTime() - entry.getValue().getFirst()) > SECONDS_A_MINUTE)
+            {
+                schematicPieces.remove(entry.getKey());
+                Log.getLogger().warn("Waiting too long for piece of structure, discarding it");
+            }
+        }
+        
         if(pieces == 1)
         {
             return Structures.handleSaveSchematicMessage(bytes);
@@ -619,7 +631,15 @@ public final class Structures
             final Map<Integer, byte[]> schemPieces;
             if(schematicPieces.containsKey(id))
             {
-                schemPieces = schematicPieces.remove(id);
+                final Tuple<Long, Map<Integer, byte[]>> schemTuple = schematicPieces.remove(id);
+                schemPieces = schemTuple.getSecond();
+
+                if(MathUtils.nanoSecondsToSeconds(System.nanoTime() - schemTuple.getFirst()) > 60)
+                {
+                    Log.getLogger().warn("Waiting too long for piece: " + piece);
+                    return false;
+                }
+
                 if(schemPieces.containsKey(piece))
                 {
                     Log.getLogger().warn("Already had piece: " + piece);
@@ -658,7 +678,7 @@ public final class Structures
                 schemPieces = new HashMap<>();
                 schemPieces.put(piece, bytes);
             }
-            schematicPieces.put(id, schemPieces);
+            schematicPieces.put(id, new Tuple<>(System.nanoTime(), schemPieces));
             return true;
         }
     }
