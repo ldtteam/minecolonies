@@ -14,7 +14,8 @@
       "item": "minecraft:stick"
     },
     "B": {
-      "item": "minecraft:stonebrick"
+      "item": "minecraft:stonebrick",
+      "data": 0
     }
   },
   "result": {

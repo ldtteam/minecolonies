@@ -14,7 +14,8 @@
       "item": "minecraft:stick"
     },
     "B": {
-      "item": "minecraft:sandstone"
+      "item": "minecraft:sandstone",
+      "data": 0
     }
   },
   "result": {
