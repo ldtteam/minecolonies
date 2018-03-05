@@ -24,6 +24,9 @@ import net.minecraft.world.gen.structure.template.TemplateManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.util.constant.Constants.MAX_SCHEMATIC_SIZE;
+import static com.minecolonies.api.util.constant.TranslationConstants.MAX_SCHEMATIC_SIZE_REACHED;
+
 /**
  * Item used to scan structures.
  */
@@ -134,7 +137,11 @@ public class ItemScanTool extends AbstractItemMinecolonies
         final BlockPos blockpos1 =
           new BlockPos(Math.max(from.getX(), to.getX()), Math.max(from.getY(), to.getY()), Math.max(from.getZ(), to.getZ()));
         final BlockPos size = blockpos1.subtract(blockpos).add(1, 1, 1);
-
+        if(size.getX() * size.getY() * size.getZ() > MAX_SCHEMATIC_SIZE)
+        {
+            LanguageHandler.sendPlayerMessage(player, MAX_SCHEMATIC_SIZE_REACHED, MAX_SCHEMATIC_SIZE);
+            return;
+        }
         final WorldServer worldserver = (WorldServer) world;
         final MinecraftServer minecraftserver = world.getMinecraftServer();
         final TemplateManager templatemanager = worldserver.getStructureTemplateManager();
@@ -146,7 +153,6 @@ public class ItemScanTool extends AbstractItemMinecolonies
         final Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation(fileName));
         template.takeBlocksFromWorld(world, blockpos, size, true, Blocks.STRUCTURE_VOID);
         template.setAuthor(Constants.MOD_ID);
-
         MineColonies.getNetwork().sendTo(new SaveScanMessage(template.writeToNBT(new NBTTagCompound()), currentMillis), (EntityPlayerMP) player);
     }
 }

@@ -32,12 +32,12 @@ import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import scala.Array;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import static com.minecolonies.api.util.constant.Constants.MAX_MESSAGE_SIZE;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -824,8 +824,27 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                 final InputStream stream = Structure.getStream(structureName.toString());
                 if (stream != null)
                 {
-                    Log.getLogger().info("BuilderTool: sending schematic " + structureName + "(md5:" + md5 + ") to the server");
-                    MineColonies.getNetwork().sendToServer(new SchematicSaveMessage(Structure.getStreamAsByteArray(stream)));
+                    //todo!!!!
+                    final UUID id = UUID.randomUUID();
+                    final byte[] structureAsByteArray = Structure.getStreamAsByteArray(stream);
+                    final int pieces = structureAsByteArray.length / MAX_MESSAGE_SIZE;
+                    Log.getLogger().info("BuilderTool: sending: " + pieces + " pieces with the schematic " + structureName + "(md5:" + md5 + ") to the server");
+                    for(int i = 1; i <= pieces; i++)
+                    {
+                        final int start = (i-1) * MAX_MESSAGE_SIZE;
+                        final int size;
+                        if(i == pieces)
+                        {
+                            size = structureAsByteArray.length - (start);
+                        }
+                        else
+                        {
+                            size = MAX_MESSAGE_SIZE;
+                        }
+                        final byte[] bytes = new byte[size];
+                        Array.copy(structureAsByteArray, start, bytes, 0, size);
+                        MineColonies.getNetwork().sendToServer(new SchematicSaveMessage(bytes, id, pieces, i));
+                    }
                 }
                 else
                 {

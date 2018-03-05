@@ -11,10 +11,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.*;
@@ -57,6 +54,11 @@ public final class Structures
      * Maximum size for a compressed schematic.
      */
     private static final int MAX_TOTAL_SIZE = 32_767;
+
+    /**
+     * Hashmap of schematic pieces by UUID.
+     */
+    private static final Map<UUID, Map<Integer, byte[]>> schematicPieces = new HashMap<>();
 
     /**
      * Hut/Decoration, Styles, Levels.
@@ -282,7 +284,7 @@ public final class Structures
         final byte[] data = Structure.getStreamAsByteArray(Structure.getStream(structureName));
         final byte[] compressed = Structure.compress(data);
 
-        if (compressed != null && compressed.length > maxSize)
+        if (compressed == null)
         {
             Log.getLogger().warn("Structure " + structureName + " is " + compressed.length + " bytes when compress, maximum allowed is " + maxSize + " bytes.");
             return false;
@@ -587,6 +589,77 @@ public final class Structures
                 md5Map.put(md5.getKey(), md5.getValue());
                 addSchematic(sn);
             }
+        }
+    }
+
+    /**
+     * Handle a schematic which has been cut into pieces.
+     * This method is valid on the server
+     * The schematic will be gathered until all pieces have been put together and then handled like on the client.
+     *
+     * @param bytes representing the schematic.
+     * @param id UUID.
+     * @param piece the piece.
+     * @param pieces the amount of pieces.
+     */
+    public static boolean handleSaveSchematicMessage(final byte[] bytes, final UUID id, final int pieces, final int piece)
+    {
+        if(pieces == 1)
+        {
+            return Structures.handleSaveSchematicMessage(bytes);
+        }
+        else
+        {
+            if (!canStoreNewSchematic())
+            {
+                Log.getLogger().warn("Could not store schematic in cache");
+                return false;
+            }
+            Log.getLogger().info("Recieved piece: " + piece + " of: " + pieces + " with the size: " + bytes.length + " and ID: " + id.toString());
+            final Map<Integer, byte[]> schemPieces;
+            if(schematicPieces.containsKey(id))
+            {
+                schemPieces = schematicPieces.remove(id);
+                if(schemPieces.containsKey(piece))
+                {
+                    Log.getLogger().warn("Already had piece: " + piece);
+                    return false;
+                }
+
+                schemPieces.put(piece, bytes);
+
+                if(schemPieces.size() == pieces)
+                {
+                    try(final ByteArrayOutputStream outputStream = new ByteArrayOutputStream())
+                    {
+                        schemPieces.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(entry ->
+                        {
+                            try
+                            {
+                                outputStream.write(entry.getValue());
+                            }
+                            catch (final IOException e)
+                            {
+                                Log.getLogger().error("Error combining byte arrays of schematic pieces.", e);
+                            }
+                        });
+
+                        return Structures.handleSaveSchematicMessage(outputStream.toByteArray());
+                    }
+                    catch(final IOException e)
+                    {
+                        Log.getLogger().error("Error combining byte arrays of schematic pieces.", e);
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                schemPieces = new HashMap<>();
+                schemPieces.put(piece, bytes);
+            }
+            schematicPieces.put(id, schemPieces);
+            return true;
         }
     }
 
