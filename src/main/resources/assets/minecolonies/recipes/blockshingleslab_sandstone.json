@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "   ",
+    "BBB",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "B": {
+      "item": "minecraft:sandstone"
+    }
+  },
+  "result": {
+    "item": "minecolonies:blockshingleslab_sandstone",
+    "count": 8
+  }
+}
