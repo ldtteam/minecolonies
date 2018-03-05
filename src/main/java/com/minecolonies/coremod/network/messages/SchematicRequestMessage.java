@@ -2,7 +2,6 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.util.StructureWrapper;
 import com.minecolonies.structures.helpers.Structure;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;

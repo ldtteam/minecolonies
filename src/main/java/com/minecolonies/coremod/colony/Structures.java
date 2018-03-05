@@ -289,7 +289,7 @@ public final class Structures
 
         if (compressed == null)
         {
-            Log.getLogger().warn("Structure " + structureName + " is " + compressed.length + " bytes when compress, maximum allowed is " + maxSize + " bytes.");
+            Log.getLogger().warn("Compressed structure returned null, please retry, this shouldn't happen, ever.");
             return false;
         }
         return true;
@@ -634,7 +634,7 @@ public final class Structures
                 final Tuple<Long, Map<Integer, byte[]>> schemTuple = schematicPieces.remove(id);
                 schemPieces = schemTuple.getSecond();
 
-                if(MathUtils.nanoSecondsToSeconds(System.nanoTime() - schemTuple.getFirst()) > 60)
+                if(MathUtils.nanoSecondsToSeconds(System.nanoTime() - schemTuple.getFirst()) > SECONDS_A_MINUTE)
                 {
                     Log.getLogger().warn("Waiting too long for piece: " + piece);
                     return false;

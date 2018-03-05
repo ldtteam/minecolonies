@@ -65,6 +65,7 @@ public class SchematicSaveMessage extends AbstractMessage<SchematicSaveMessage, 
      */
     public SchematicSaveMessage(final byte[] data, final UUID id, final int pieces, final int piece)
     {
+        super();
         this.data = data.clone();
         this.id = id;
         this.pieces = pieces;
