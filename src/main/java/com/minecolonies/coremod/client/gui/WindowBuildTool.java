@@ -824,26 +824,34 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                 final InputStream stream = Structure.getStream(structureName.toString());
                 if (stream != null)
                 {
-                    //todo!!!!
                     final UUID id = UUID.randomUUID();
                     final byte[] structureAsByteArray = Structure.getStreamAsByteArray(stream);
-                    final int pieces = structureAsByteArray.length / MAX_MESSAGE_SIZE;
-                    Log.getLogger().info("BuilderTool: sending: " + pieces + " pieces with the schematic " + structureName + "(md5:" + md5 + ") to the server");
-                    for(int i = 1; i <= pieces; i++)
+
+                    if(structureAsByteArray.length <= MAX_MESSAGE_SIZE)
                     {
-                        final int start = (i-1) * MAX_MESSAGE_SIZE;
-                        final int size;
-                        if(i == pieces)
+                        MineColonies.getNetwork().sendToServer(new SchematicSaveMessage(structureAsByteArray, id, 1, 1));
+                    }
+                    else
+                    {
+                        final int pieces = structureAsByteArray.length / MAX_MESSAGE_SIZE;
+
+                        Log.getLogger().info("BuilderTool: sending: " + pieces + " pieces with the schematic " + structureName + "(md5:" + md5 + ") to the server");
+                        for (int i = 1; i <= pieces; i++)
                         {
-                            size = structureAsByteArray.length - (start);
+                            final int start = (i - 1) * MAX_MESSAGE_SIZE;
+                            final int size;
+                            if (i == pieces)
+                            {
+                                size = structureAsByteArray.length - (start);
+                            }
+                            else
+                            {
+                                size = MAX_MESSAGE_SIZE;
+                            }
+                            final byte[] bytes = new byte[size];
+                            Array.copy(structureAsByteArray, start, bytes, 0, size);
+                            MineColonies.getNetwork().sendToServer(new SchematicSaveMessage(bytes, id, pieces, i));
                         }
-                        else
-                        {
-                            size = MAX_MESSAGE_SIZE;
-                        }
-                        final byte[] bytes = new byte[size];
-                        Array.copy(structureAsByteArray, start, bytes, 0, size);
-                        MineColonies.getNetwork().sendToServer(new SchematicSaveMessage(bytes, id, pieces, i));
                     }
                 }
                 else

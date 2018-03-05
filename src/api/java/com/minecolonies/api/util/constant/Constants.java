@@ -72,7 +72,7 @@ public final class Constants
     /**
      * Maximum amount of pieces from client to server (Leaving some extra space).
      */
-    public static final int MAX_AMOUNT_OF_PIECES = 10;
+    public static final int MAX_AMOUNT_OF_PIECES = 20;
 
     /**
      * Max schematic size to create.

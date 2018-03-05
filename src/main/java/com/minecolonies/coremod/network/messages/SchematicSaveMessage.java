@@ -105,12 +105,14 @@ public class SchematicSaveMessage extends AbstractMessage<SchematicSaveMessage, 
         {
             Log.getLogger().info("SchematicSaveMessage: custom schematic is not allowed on this server.");
             player.sendMessage(new TextComponentString("The server does not allow custom schematic!"));
+            return;
         }
 
         if(message.pieces > MAX_AMOUNT_OF_PIECES)
         {
             Log.getLogger().error("Schematic has more than 10 pieces, discarding.");
             player.sendMessage(new TextComponentString("Schematic has more than 10 pieces, that's too big!"));
+            return;
         }
 
         final boolean schematicSent;
