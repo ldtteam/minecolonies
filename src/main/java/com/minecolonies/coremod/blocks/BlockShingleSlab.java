@@ -2,6 +2,7 @@ package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
@@ -11,6 +12,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
@@ -38,7 +40,7 @@ public class BlockShingleSlab extends AbstractBlockMinecoloniesDirectional<Block
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME = "blockshingleslab";
+    public static final String BLOCK_NAME = "blockshingleslab";
 
     /**
      * The resistance this block has.
@@ -56,20 +58,21 @@ public class BlockShingleSlab extends AbstractBlockMinecoloniesDirectional<Block
     /**
      * Constructor for the TimberFrame
      */
-    public BlockShingleSlab()
+    public BlockShingleSlab(final String type)
     {
         super(Material.WOOD);
-        initBlock();
+        initBlock(type);
     }
 
     /**
-     * initialize the block
+     * Initialize the block
      * sets the creative tab, as well as the resistance and the hardness.
+     * @param type the type
      */
-    private void initBlock()
+    private void initBlock(final String type)
     {
-        setRegistryName(BLOCK_NAME);
-        setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME));
+        setRegistryName(BLOCK_NAME + type);
+        setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME + type));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);

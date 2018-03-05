@@ -1,0 +1,106 @@
+{
+	"__comment": "Created by Imrielle for Minecolonies",
+	"textures": {
+		"0": "minecolonies:blocks/shingle/nether_shingle",
+		"1": "minecolonies:blocks/shingle/clay_shingle_2",
+		"2": "minecolonies:blocks/shingle/clay_shingle_3",
+		"3": "minecolonies:blocks/shingle/shingle_oak_support_1",
+		"4": "minecolonies:blocks/shingle/shingle_oak_support_2",
+		"particle": "minecolonies:blocks/shingle/clay_shingle_1",
+		"missing": "blocks/e_texture"
+	},
+	"elements": [ 	 
+		{
+			"__comment": "Element",
+			"from": [ -0.09999999, 6, 12 ],
+			"to": [ 16.1, 8, 14 ],
+			"faces": {
+				"down": { "uv": [ 0, 14, 16, 16 ], "texture": "#0" },
+				"up": { "uv": [ 0, 14, 16, 16 ], "texture": "#0", "rotation": 180 },
+				"north": { "uv": [ 0, 11, 16, 13 ], "texture": "#0", "rotation": 180 },
+				"south": { "uv": [ 0, 0, 16, 16 ], "texture": "#0" },
+				"west": { "uv": [ 14, 0, 16, 2 ], "texture": "#0" },
+				"east": { "uv": [ 0, 0, 2, 2 ], "texture": "#0" }
+			}
+		},
+		{
+			"__comment": "Element",
+			"from": [ -0.09999999, 0, 5 ],
+			"to": [ 16.1, 2, 14 ],
+			"faces": {
+				"down": { "uv": [ 0, 2, 16, 11 ], "texture": "#4" },
+				"up": { "uv": [ 0, 2, 16, 11 ], "texture": "#4", "rotation": 180 },
+				"north": { "uv": [ 0, 11, 16, 13 ], "texture": "#4" },
+				"west": { "uv": [ 0, 0, 9, 2 ], "texture": "#3" },
+				"east": { "uv": [ 0, 0, 9, 2 ], "texture": "#3" }
+			}
+		},
+		{
+			"__comment": "Element",
+			"from": [ -0.09999999, 14, 14 ],
+			"to": [ 16.1, 16, 16 ],
+			"faces": {
+				"up": { "uv": [ 0, 14, 16, 16 ], "texture": "#0", "rotation": 180 },
+				"north": { "uv": [ 0, 11, 16, 13 ], "texture": "#0" },
+				"south": { "uv": [ 0, 8, 16, 10 ], "texture": "#0" },
+				"west": { "uv": [ 0, 9, 2, 11 ], "texture": "#0" },
+				"east": { "uv": [ 2, 9, 4, 11 ], "texture": "#0" }
+			}
+		},
+		{
+			"__comment": "Element",
+			"from": [ -0.09999999, 0, 14 ],
+			"to": [ 16.1, 14, 16 ],
+			"faces": {
+				"down": { "uv": [ 0, 0, 16, 2 ], "texture": "#4" },
+				"up": { "uv": [ 0, 0, 16, 1 ], "texture": "#0" },
+				"north": { "uv": [ 0, 2, 16, 16 ], "texture": "#3" },
+				"south": { "uv": [ 0, 2, 16, 16 ], "texture": "#3" },
+				"west": { "uv": [ 0, 2, 2, 16 ], "texture": "#3" },
+				"east": { "uv": [ 14, 2, 16, 16 ], "texture": "#3" }
+			}
+		},
+		{
+			"__comment": "Element",
+			"from": [ 0, 12.3, 7 ],
+			"to": [ 16, 15.3, 16 ],
+			"rotation": { "origin": [ 8, 12.3, 15 ], "axis": "x", "angle": -22.5 },
+			"faces": {
+				"down": { "uv": [ 0, 5, 16, 16 ], "texture": "#0" },
+				"up": { "uv": [ 0, 7, 16, 16 ], "texture": "#0", "rotation": 180 },
+				"north": { "uv": [ 0, 0, 16, 3 ], "texture": "#0" },
+				"south": { "uv": [ 0, 0, 16, 3 ], "texture": "#0" },
+				"west": { "uv": [ 0, 0, 9, 3 ], "texture": "#0" },
+				"east": { "uv": [ 0, 0, 9, 3 ], "texture": "#0" }
+			}
+		},
+		{
+			"__comment": "Element",
+			"from": [ 0, 6.8, 1.5 ],
+			"to": [ 16, 9.799999, 12.5 ],
+			"rotation": { "origin": [ 8, 6.8, 9.5 ], "axis": "x", "angle": -22.5 },
+			"faces": {
+				"down": { "uv": [ 0, 5, 16, 16 ], "texture": "#0" },
+				"up": { "uv": [ 0, 5, 16, 16 ], "texture": "#0", "rotation": 180 },
+				"north": { "uv": [ 0, 0, 16, 3 ], "texture": "#0" },
+				"south": { "uv": [ 0, 0, 16, 3 ], "texture": "#0" },
+				"west": { "uv": [ 0, 0, 11, 3 ], "texture": "#0" },
+				"east": { "uv": [ 0, 0, 11, 3 ], "texture": "#0" }
+			}
+		},
+		{
+			"__comment": "Element",
+			"from": [ 0, 1.4, -3.8 ],
+			"to": [ 16, 4.4, 7.2 ],
+			"rotation": { "origin": [ 8, 1.4, 4.2 ], "axis": "x", "angle": -22.5 },
+			"faces": {
+				"down": { "uv": [ 0, 5, 16, 16 ], "texture": "#0" },
+				"up": { "uv": [ 0, 5, 16, 16 ], "texture": "#0", "rotation": 180 },
+				"north": { "uv": [ 0, 0, 16, 3 ], "texture": "#0" },
+				"south": { "uv": [ 0, 0, 16, 3 ], "texture": "#0" },
+				"west": { "uv": [ 0, 0, 11, 3 ], "texture": "#0" },
+				"east": { "uv": [ 0, 0, 11, 3 ], "texture": "#0" }
+			}
+		}
+	]
+}
