@@ -4,16 +4,13 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.util.ClientStructureWrapper;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
 import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
@@ -22,6 +19,9 @@ import java.io.IOException;
  */
 public class SaveScanMessage extends AbstractMessage<SaveScanMessage, IMessage>
 {
+    private static final String TAG_MILLIS = "millies";
+    private static final String TAG_SCHEMATIC = "schematic";
+
     private NBTTagCompound nbttagcompound;
     private long           currentMillis;
 
@@ -49,32 +49,38 @@ public class SaveScanMessage extends AbstractMessage<SaveScanMessage, IMessage>
     public void fromBytes(@NotNull final ByteBuf buf)
     {
         final PacketBuffer buffer = new PacketBuffer(buf);
-        final int i = buffer.readerIndex();
-        final byte b0 = buffer.readByte();
-        if (b0 != 0)
+        try (ByteBufInputStream stream = new ByteBufInputStream(buffer))
         {
-            buffer.readerIndex(i);
-            try (ByteBufInputStream stream = new ByteBufInputStream(buffer))
-            {
-                nbttagcompound = CompressedStreamTools.read(stream, NBTSizeTracker.INFINITE);
-            }
-            catch (final RuntimeException e)
-            {
-                Log.getLogger().info("Structure too big to be processed", e);
-            }
-            catch (final IOException e)
-            {
-                Log.getLogger().info("Problem at retrieving structure on server.", e);
-            }
+            final NBTTagCompound wrapperCompound = CompressedStreamTools.readCompressed(stream);
+            nbttagcompound = wrapperCompound.getCompoundTag(TAG_SCHEMATIC);
+            currentMillis = wrapperCompound.getLong(TAG_MILLIS);
         }
-        currentMillis = buf.readLong();
+        catch (final RuntimeException e)
+        {
+            Log.getLogger().info("Structure too big to be processed", e);
+        }
+        catch (final IOException e)
+        {
+            Log.getLogger().info("Problem at retrieving structure on server.", e);
+        }
     }
 
     @Override
     public void toBytes(@NotNull final ByteBuf buf)
     {
-        ByteBufUtils.writeTag(buf, nbttagcompound);
-        buf.writeLong(currentMillis);
+        final NBTTagCompound wrapperCompound = new NBTTagCompound();
+        wrapperCompound.setLong(TAG_MILLIS, currentMillis);
+        wrapperCompound.setTag(TAG_SCHEMATIC, nbttagcompound);
+
+        final PacketBuffer buffer = new PacketBuffer(buf);
+        try (ByteBufOutputStream stream = new ByteBufOutputStream(buffer))
+        {
+            CompressedStreamTools.writeCompressed(wrapperCompound, stream);
+        }
+        catch (final IOException e)
+        {
+            Log.getLogger().info("Problem at retrieving structure on server.", e);
+        }
     }
 
     @Override
