@@ -667,14 +667,4 @@ tile.minecolonies.blockTimberFrame_dark_oak_horizontalnocap.name= Dark Oak Horiz
 
 com.minecolonies.coremod.request.toolow=Can't mine block %s at %s. Need to upgrade the building to use a tool with hihgher mining level.
 com.minecolonies.coremod.dimension.no=You are not allowed to place colonies in other dimensions (Triggered by config value)
-
-tile.minecolonies.blockshingleslab_sandstone.name=Sandstone Shingle Slab
-tile.minecolonies.blockshingleslab_stonebrick.name=Stonebrick Shingle Slab
-tile.minecolonies.blockshingleslab_nether.name=Nether Shingle Slab
-tile.minecolonies.blockshingleslab_nether_red.name=Red Nether Shingle Slab
-tile.minecolonies.blockshingle_sandstone.name=Sandstone Shingle
-tile.minecolonies.blockshingle_stonebrick.name=Stonebrick Shingle
-tile.minecolonies.blockshingle_nether.name=Nether Shingles
-tile.minecolonies.blockshingle_nether_red.name=Red Nether Shingle
-
 com.minecolonies.coremod.max.schematic.reached=Max schematic size of %d blocks reached.
