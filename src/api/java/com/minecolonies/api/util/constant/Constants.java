@@ -65,6 +65,21 @@ public final class Constants
     public static final int FUEL_SLOT = 1;
 
     /**
+     * Maximum message size from client to server (Leaving some extra space).
+     */
+    public static final int MAX_MESSAGE_SIZE = 30_000;
+
+    /**
+     * Maximum amount of pieces from client to server (Leaving some extra space).
+     */
+    public static final int MAX_AMOUNT_OF_PIECES = 20;
+
+    /**
+     * Max schematic size to create.
+     */
+    public static final int MAX_SCHEMATIC_SIZE = 100_000;
+
+    /**
      * Private constructor to hide implicit public one.
      */
     private Constants()

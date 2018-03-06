@@ -4,22 +4,44 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.coremod.util.ClientStructureWrapper;
 import com.minecolonies.structures.helpers.Structure;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
+
+import static com.minecolonies.api.util.constant.Constants.MAX_AMOUNT_OF_PIECES;
+import static com.minecolonies.api.util.constant.Constants.MAX_MESSAGE_SIZE;
 
 /**
  * Save Schematic Message.
  */
 public class SchematicSaveMessage extends AbstractMessage<SchematicSaveMessage, IMessage>
 {
-    private static final int    MAX_TOTAL_SIZE = 32_767;
+    /**
+     * The schematic data.
+     */
     private              byte[] data           = null;
+
+    /**
+     * The amount of pieces.
+     */
+    private int pieces;
+
+    /**
+     * The current piece.
+     */
+    private int piece;
+
+    /**
+     * The UUID.
+     */
+    private UUID id;
 
     /**
      * Public standard constructor.
@@ -34,9 +56,20 @@ public class SchematicSaveMessage extends AbstractMessage<SchematicSaveMessage, 
      *
      * @param data byte array of the schematic.
      */
-    public SchematicSaveMessage(final byte[] data)
+    /**
+     * Send a schematic between client and server or server and client.
+     * @param data the schematic.
+     * @param id the unique id.
+     * @param pieces the amount of pieces.
+     * @param piece the current piece.
+     */
+    public SchematicSaveMessage(final byte[] data, final UUID id, final int pieces, final int piece)
     {
+        super();
         this.data = data.clone();
+        this.id = id;
+        this.pieces = pieces;
+        this.piece = piece;
     }
 
     @Override
@@ -46,6 +79,9 @@ public class SchematicSaveMessage extends AbstractMessage<SchematicSaveMessage, 
         final byte[] compressedData = new byte[length];
         buf.readBytes(compressedData);
         data = Structure.uncompress(compressedData);
+        pieces = buf.readInt();
+        piece = buf.readInt();
+        id = UUID.fromString(ByteBufUtils.readUTF8String(buf));
     }
 
     @Override
@@ -55,24 +91,11 @@ public class SchematicSaveMessage extends AbstractMessage<SchematicSaveMessage, 
         if (compressedData != null)
         {
             buf.capacity(compressedData.length + buf.writerIndex());
-            final int maxSize = MAX_TOTAL_SIZE - Integer.SIZE / Byte.SIZE;
-            if (compressedData.length > maxSize)
-            {
-                buf.writeInt(0);
-                if (MineColonies.isClient())
-                {
-                    ClientStructureWrapper.sendMessageSchematicTooBig(maxSize);
-                }
-                else
-                {
-                    Log.getLogger().error("SchematicSaveMessage: schematic size too big, can not be bigger than " + maxSize + " bytes");
-                }
-            }
-            else
-            {
-                buf.writeInt(compressedData.length);
-                buf.writeBytes(compressedData);
-            }
+            buf.writeInt(compressedData.length);
+            buf.writeBytes(compressedData);
+            buf.writeInt(pieces);
+            buf.writeInt(piece);
+            ByteBufUtils.writeUTF8String(buf, id.toString());
         }
     }
 
@@ -83,6 +106,14 @@ public class SchematicSaveMessage extends AbstractMessage<SchematicSaveMessage, 
         {
             Log.getLogger().info("SchematicSaveMessage: custom schematic is not allowed on this server.");
             player.sendMessage(new TextComponentString("The server does not allow custom schematic!"));
+            return;
+        }
+
+        if(message.pieces > MAX_AMOUNT_OF_PIECES)
+        {
+            Log.getLogger().error("Schematic has more than 10 pieces, discarding.");
+            player.sendMessage(new TextComponentString("Schematic has more than 10 pieces, that's too big!"));
+            return;
         }
 
         final boolean schematicSent;
@@ -93,9 +124,8 @@ public class SchematicSaveMessage extends AbstractMessage<SchematicSaveMessage, 
         }
         else
         {
-            schematicSent = Structures.handleSaveSchematicMessage(message.data);
+            schematicSent = Structures.handleSaveSchematicMessage(message.data, message.id, message.pieces, message.piece);
         }
-
 
         if (schematicSent)
         {
