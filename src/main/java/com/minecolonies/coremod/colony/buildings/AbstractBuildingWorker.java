@@ -463,11 +463,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     {
         super.onWorldTick(event);
 
-        if (event.phase != TickEvent.Phase.END)
-        {
-            return;
-        }
-
         // If we have no active worker, grab one from the Colony
         // TODO Maybe the Colony should assign jobs out, instead?
         if (!hasEnoughWorkers()
