@@ -199,11 +199,6 @@ public class BuildingHome extends AbstractBuildingHut
     @Override
     public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
-        if (event.phase != TickEvent.Phase.END)
-        {
-            return;
-        }
-
         if (residents.size() < getMaxInhabitants() && getColony() != null && !getColony().isManualHousing())
         {
             // 'Capture' as many citizens into this house as possible
