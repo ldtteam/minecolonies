@@ -20,7 +20,20 @@ import java.util.Map;
  */
 public class BuildingBuilderView extends AbstractBuildingWorker.View
 {
+    /**
+     * The resources he has to keep.
+     */
     private final HashMap<String, BuildingBuilderResource> resources = new HashMap<>();
+
+    /**
+     * The building he is working on.
+     */
+    private String constructionName;
+
+    /**
+     * The building he is working on.
+     */
+    private String constructionPos;
 
     /**
      * Public constructor of the view, creates an instance of it.
@@ -61,6 +74,9 @@ public class BuildingBuilderView extends AbstractBuildingWorker.View
             final BuildingBuilderResource resource = new BuildingBuilderResource(itemStack, amountNeeded, amountAvailable);
             resources.put(itemStack.getDisplayName() + ":" + itemStack.getItemDamage(), resource);
         }
+
+        constructionName = ByteBufUtils.readUTF8String(buf);
+        constructionPos = ByteBufUtils.readUTF8String(buf);
     }
 
     @NotNull
@@ -75,6 +91,24 @@ public class BuildingBuilderView extends AbstractBuildingWorker.View
     public AbstractBuildingWorker.Skill getSecondarySkill()
     {
         return AbstractBuildingWorker.Skill.STRENGTH;
+    }
+
+    /**
+     * Get the construction name he is working at.
+     * @return a string describing it.
+     */
+    public String getConstructionName()
+    {
+        return constructionName;
+    }
+
+    /**
+     * Get the construction pos he is working at.
+     * @return a string describing the pos.
+     */
+    public String getConstructionPos()
+    {
+        return constructionPos;
     }
 
     /**

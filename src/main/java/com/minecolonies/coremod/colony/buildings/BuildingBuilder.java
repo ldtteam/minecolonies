@@ -10,6 +10,8 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
@@ -234,6 +236,31 @@ public class BuildingBuilder extends AbstractBuildingWorker
             ByteBufUtils.writeItemStack(buf, resource.getItemStack());
             buf.writeInt(resource.getAvailable());
             buf.writeInt(resource.getAmount());
+        }
+
+        final CitizenData data = this.getMainWorker();
+        if(data != null && data.getJob() instanceof JobBuilder)
+        {
+            final JobBuilder builderJob = (JobBuilder) data.getJob();
+            final WorkOrderBuildDecoration workOrderBuildDecoration = builderJob.getWorkOrder();
+            if(workOrderBuildDecoration != null)
+            {
+                final BlockPos pos = workOrderBuildDecoration.getBuildingLocation();
+                final String name =
+                        workOrderBuildDecoration instanceof WorkOrderBuild ? ((WorkOrderBuild) workOrderBuildDecoration).getUpgradeName() : workOrderBuildDecoration.getName();
+                ByteBufUtils.writeUTF8String(buf, name);
+                ByteBufUtils.writeUTF8String(buf, " at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
+            }
+            else
+            {
+                ByteBufUtils.writeUTF8String(buf, "-");
+                ByteBufUtils.writeUTF8String(buf, "");
+            }
+        }
+        else
+        {
+            ByteBufUtils.writeUTF8String(buf, "-");
+            ByteBufUtils.writeUTF8String(buf, "");
         }
     }
 

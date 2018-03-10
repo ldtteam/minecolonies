@@ -35,6 +35,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleChannelHandlerWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1187,7 +1188,6 @@ public final class ColonyManager
             view = ColonyView.createFromNetwork(colonyId);
             colonyViews.add(view);
         }
-
         return view.handleColonyViewMessage(colonyData, world, isNewSubscription);
     }
 
