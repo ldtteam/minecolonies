@@ -638,7 +638,7 @@ public class Colony implements IColony
         {
             MobEventsUtils.barbarianEvent(event.world, this);
         }
-        
+
         buildingManager.onWorldTick(event);
 
         if (isDay && !world.isDaytime())
