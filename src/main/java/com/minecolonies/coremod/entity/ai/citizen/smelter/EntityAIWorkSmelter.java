@@ -190,7 +190,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
         else if(stack.getItem() instanceof ItemArmor)
         {
             material = ((ItemArmor) stack.getItem()).getArmorMaterial().getRepairItemStack();
-            final EntityEquipmentSlot eq = ((ItemArmor) stack.getItem()).getEquipmentSlot();
+            final EntityEquipmentSlot eq = ((ItemArmor) stack.getItem()).armorType;
             if(eq == EntityEquipmentSlot.CHEST)
             {
                 amount = CHEST_MAT_AMOUNT;
