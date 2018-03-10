@@ -7,6 +7,7 @@ import com.minecolonies.coremod.colony.BarbarianSpawnEventHandler;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
+import com.minecolonies.coremod.commands.CommandEntryPointNew;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.event.FMLEventHandler;
 import com.minecolonies.coremod.network.messages.*;
@@ -215,5 +216,6 @@ public class MineColonies
     {
         // register server commands
         event.registerServerCommand(new CommandEntryPoint());
+        event.registerServerCommand(new CommandEntryPointNew());
     }
 }

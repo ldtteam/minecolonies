@@ -121,7 +121,7 @@ public class ItemScanTool extends AbstractItemMinecolonies
      * @param to     Second corner.
      * @param player causing this action.
      */
-    private static void saveStructure(@Nullable final World world, @Nullable final BlockPos from, @Nullable final BlockPos to, @NotNull final EntityPlayer player)
+    public static void saveStructure(@Nullable final World world, @Nullable final BlockPos from, @Nullable final BlockPos to, @NotNull final EntityPlayer player)
     {
         //todo if on clientSide check if isRemote and if it is -> don't seed message, execute right away.
         if (world == null || from == null || to == null)

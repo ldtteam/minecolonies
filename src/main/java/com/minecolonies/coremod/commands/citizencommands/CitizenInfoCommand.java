@@ -3,6 +3,7 @@ package com.minecolonies.coremod.commands.citizencommands;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
+
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -36,6 +37,10 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
     private static final String CITIZEN_WORK_POSITION_NULL = "§2Work position: §4No work position found!";
     private static final String CITIZEN_NO_ACTIVITY        = "§4No activity is being desired or executed!";
     private static final String CITIZEN_NOT_LOADED         = "Citizen entity not loaded!";
+
+    public CitizenInfoCommand()
+    {
+    }
 
     /**
      * Initialize this SubCommand with it's parents.

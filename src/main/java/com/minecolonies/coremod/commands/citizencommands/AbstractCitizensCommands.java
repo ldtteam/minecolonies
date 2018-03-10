@@ -1,9 +1,13 @@
 package com.minecolonies.coremod.commands.citizencommands;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.minecolonies.coremod.commands.ActionArgument;
+import com.minecolonies.coremod.commands.IActionCommand;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,11 +19,12 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Parent class for all citizen related commands, contains code which is the same for all commands relating citizens.
  */
-public abstract class AbstractCitizensCommands extends AbstractSingleCommand
+public abstract class AbstractCitizensCommands extends AbstractSingleCommand implements IActionCommand
 {
     private static final String NO_ARGUMENTS = "Please define a valid citizen and/or colony";
 
@@ -31,6 +36,38 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
     public AbstractCitizensCommands(@NotNull final String... parents)
     {
         super(parents);
+    }
+
+    @Override
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final List<ActionArgument> actionArgumentList,
+            @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
+    {
+        Colony colony = null;
+        CitizenData citizenData = null;
+        for (final ActionArgument actionArgument : actionArgumentList)
+        {
+            final Object object = argumentValueByActionArgumentNameMap.get(actionArgument.getName());
+            switch (actionArgument.getType())
+            {
+                case Colony:
+                    colony = (Colony) object;
+                    break;
+                case Citizen:
+                    citizenData = (CitizenData) object;
+                    break;
+                case CoordinateX:
+                case CoordinateY:
+                case CoordinateZ:
+                    break;
+                case Player:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        final int citizenId = (null != citizenData) ? citizenData.getId() : -1;
+        executeSpecializedCode(server, sender, colony, citizenId);
     }
 
     @NotNull
@@ -179,5 +216,5 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
      * @param colonyId  the id for the colony
      * @param citizenId the id for the citizen
      */
-    public abstract void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colonyId, final int citizenId);
+    public abstract void executeSpecializedCode(@NotNull MinecraftServer server, ICommandSender sender, Colony colonyId, int citizenId);
 }
