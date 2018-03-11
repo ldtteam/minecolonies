@@ -16,6 +16,7 @@ import com.minecolonies.coremod.commands.colonycommands.DoRaidNowCommand;
 import com.minecolonies.coremod.commands.colonycommands.DoRaidTonightCommand;
 import com.minecolonies.coremod.commands.colonycommands.HomeTeleportCommand;
 import com.minecolonies.coremod.commands.colonycommands.ListColoniesCommand;
+import com.minecolonies.coremod.commands.colonycommands.MakeNotAutoDeletableCommand;
 import com.minecolonies.coremod.commands.colonycommands.RefreshColonyCommand;
 import com.minecolonies.coremod.commands.colonycommands.ShowColonyInfoCommand;
 import com.minecolonies.coremod.commands.colonycommands.requestsystem.RSResetAllCommand;
@@ -199,7 +200,7 @@ public enum ActionMenuType implements MenuType
             "MakeNotAutoDeletable",
             "deletable",
             ForgePermissionNodes.MAKE_NOT_AUTO_DELETABLE,
-            com.minecolonies.coremod.commands.colonycommands.MakeNotAutoDeletable.class,
+            MakeNotAutoDeletableCommand.class,
             new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.REQUIRED),
             new ActionArgument("canBeDeleted", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.REQUIRED)
             )),

@@ -22,7 +22,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 
-public class MakeNotAutoDeletable extends AbstractSingleCommand implements IActionCommand
+public class MakeNotAutoDeletableCommand extends AbstractSingleCommand implements IActionCommand
 {
     public static final  String DESC                       = "deletable";
     private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
@@ -34,7 +34,7 @@ public class MakeNotAutoDeletable extends AbstractSingleCommand implements IActi
     /**
      * no-args constructor called by new CommandEntryPoint executer.
      */
-    public MakeNotAutoDeletable()
+    public MakeNotAutoDeletableCommand()
     {
         super();
     }
@@ -44,7 +44,7 @@ public class MakeNotAutoDeletable extends AbstractSingleCommand implements IActi
      *
      * @param parents an array of all the parents.
      */
-    public MakeNotAutoDeletable(@NotNull final String... parents)
+    public MakeNotAutoDeletableCommand(@NotNull final String... parents)
     {
         super(parents);
     }
