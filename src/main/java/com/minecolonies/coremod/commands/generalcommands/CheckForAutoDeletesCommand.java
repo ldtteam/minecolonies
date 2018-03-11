@@ -86,7 +86,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand implements
         executeShared(server, sender, confirmDelete);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, boolean confirmDelete) throws CommandException
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final boolean confirmDelete) throws CommandException
     {
         if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
         {
