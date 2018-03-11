@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE;
@@ -30,6 +31,12 @@ public class ColonyPackageManager implements IColonyPackageManager
      * 1 in x chance to update the permissions.
      */
     private static final int CHANCE_TO_UPDATE = 1000;
+
+    /**
+     * List of players subscribing to the colony already known for a long time.
+     */
+    @NotNull
+    private Set<EntityPlayerMP> oldSubscribers = new HashSet<>();
 
     /**
      * List of players subscribing to the colony.
@@ -81,7 +88,9 @@ public class ColonyPackageManager implements IColonyPackageManager
     @Override
     public Set<EntityPlayerMP> getSubscribers()
     {
-        return new HashSet<>(subscribers);
+        final Set<EntityPlayerMP> set = new HashSet<>(oldSubscribers);
+        set.addAll(subscribers);
+        return set;
     }
 
     @Override
@@ -94,33 +103,11 @@ public class ColonyPackageManager implements IColonyPackageManager
             return;
         }
 
-        //  Recompute subscribers every frame (for now)
-        //  Subscribers = Owners + Players within (double working town hall range)
-        @NotNull final Set<EntityPlayerMP> oldSubscribers = subscribers;
-        subscribers = new HashSet<>();
-
         // Add owners
         world.getMinecraftServer().getPlayerList().getPlayers()
                 .stream()
                 .filter(colony.getPermissions()::isSubscriber)
                 .forEach(subscribers::add);
-
-        if (subscribers.isEmpty())
-        {
-            if (ticksPassed >= TICKS_HOUR)
-            {
-                ticksPassed = 0;
-                lastContactInHours++;
-                colony.markDirty();
-            }
-            ticksPassed++;
-        }
-        else if (lastContactInHours != 0)
-        {
-            lastContactInHours = 0;
-            ticksPassed = 0;
-            colony.markDirty();
-        }
 
         //  Add nearby players
         for (final EntityPlayer o : world.playerEntities)
@@ -145,10 +132,37 @@ public class ColonyPackageManager implements IColonyPackageManager
             }
         }
 
+        if (subscribers.isEmpty())
+        {
+            if (ticksPassed >= TICKS_HOUR)
+            {
+                ticksPassed = 0;
+                lastContactInHours++;
+                colony.markDirty();
+            }
+            ticksPassed++;
+        }
+        else if (lastContactInHours != 0)
+        {
+            lastContactInHours = 0;
+            ticksPassed = 0;
+            colony.markDirty();
+        }
+
+        final boolean hasNewSubscribers = ColonyUtils.hasNewSubscribers(oldSubscribers, subscribers);
+        updateColonyViews(hasNewSubscribers);
+    }
+
+
+    /**
+     * Update the subscribers of the colony.
+     * @param hasNewSubscribers check if there are new ones.
+     */
+    public void updateColonyViews(final boolean hasNewSubscribers)
+    {
         if (!subscribers.isEmpty())
         {
             //  Determine if any new subscribers were added this pass
-            final boolean hasNewSubscribers = ColonyUtils.hasNewSubscribers(oldSubscribers, subscribers);
 
             //  Send each type of update packet as appropriate:
             //      - To Subscribers if the data changes
@@ -177,9 +191,10 @@ public class ColonyPackageManager implements IColonyPackageManager
 
         isDirty = false;
         colony.getPermissions().clearDirty();
-
         colony.getBuildingManager().clearDirty();
         colony.getCitizenManager().clearDirty();
+        oldSubscribers = new HashSet<>(subscribers);
+        subscribers = new HashSet<>();
     }
 
     @Override
@@ -244,5 +259,23 @@ public class ColonyPackageManager implements IColonyPackageManager
     public void setDirty()
     {
         this.isDirty = true;
+    }
+
+    @Override
+    public void addSubscribers(@NotNull final EntityPlayerMP subscriber)
+    {
+        if(!subscribers.contains(subscriber))
+        {
+            subscribers.add(subscriber);
+        }
+    }
+
+    @Override
+    public void removeSubscriber(@NotNull final EntityPlayerMP player)
+    {
+        if(!colony.getMessageEntityPlayers().contains(player))
+        {
+            subscribers.remove(player);
+        }
     }
 }

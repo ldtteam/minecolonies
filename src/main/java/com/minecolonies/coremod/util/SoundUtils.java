@@ -32,7 +32,7 @@ public final class SoundUtils
     /**
      * Standard pitch value.
      */
-    private static final double PITCH = 0.9D;
+    public static final double PITCH = 0.9D;
 
     /**
      * Random object.
@@ -42,7 +42,7 @@ public final class SoundUtils
     /**
      * Volume to play at.
      */
-    private static final double VOLUME = 0.5D;
+    public static final double VOLUME = 0.5D;
 
     /**
      * in average 1 minute to the next sound which are 20 ticks the second * 60

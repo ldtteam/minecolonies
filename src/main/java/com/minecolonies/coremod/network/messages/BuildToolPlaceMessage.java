@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
@@ -159,8 +158,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         if (tempColony != null
               && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
                     && !(block instanceof BlockHutTownHall
-                           && BlockPosUtil.getDistance2D(tempColony.getCenter(), buildPos) >=
-                                Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)))
+                           && !ColonyManager.isTooCloseToColony(world, buildPos))))
         {
             return;
         }
@@ -202,7 +200,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         @Nullable final Colony colony = ColonyManager.getColony(world, buildPos);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
         {
-            colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(sn.toString(), workOrderName, rotation, buildPos, mirror));
+            colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(sn.toString(), workOrderName, rotation, buildPos, mirror), false);
         }
         else
         {

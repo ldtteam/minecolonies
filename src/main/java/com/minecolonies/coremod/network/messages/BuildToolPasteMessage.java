@@ -268,7 +268,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
         if (tempColony != null
               && !tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
-              && BlockPosUtil.getDistance2D(tempColony.getCenter(), buildPos) >= Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)
+              && !ColonyManager.isTooCloseToColony(world, buildPos))
         {
             return;
         }

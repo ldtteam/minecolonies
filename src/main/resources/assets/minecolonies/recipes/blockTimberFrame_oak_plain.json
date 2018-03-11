@@ -15,8 +15,7 @@
     }
   },
   "result": {
-    "item": "minecolonies:blocktimberframe_oak",
-    "data": 0,
+    "item": "minecolonies:blocktimberframe_oak_plain",
     "count": 4
   }
 }

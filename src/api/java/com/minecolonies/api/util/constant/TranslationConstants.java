@@ -170,6 +170,14 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_SERVING                             = "com.minecolonies.coremod.status.serving";
     @NonNls
+    public static final String ENTERING_COLONY_MESSAGE                                             = "com.minecolonies.coremod.enteringColony";
+    @NonNls
+    public static final String LEAVING_COLONY_MESSAGE                                              = "com.minecolonies.coremod.leavingColony";
+    @NonNls
+    public static final String ENTERING_COLONY_MESSAGE_NOTIFY                                      = "com.minecolonies.coremod.enteringColonyNotify";
+    @NonNls
+    public static final String LEAVING_COLONY_MESSAGE_NOTIFY                                       = "com.minecolonies.coremod.leavingColonyNotify";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_WAITING_FOR                         = "com.minecolonies.coremod.status.waiting";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOHUT                   = "com.minecolonies.coremod.status.herder.goingToHut";
@@ -186,9 +194,9 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_SHEPHERD_SHEARING                   = "com.minecolonies.coremod.status.shepherd.shearing";
     @NonNls
-    public static final String TOGGLE_ALL_OPTIONS_ON                                               = "com.minecolonies.coremod.gui.workerHuts.toggleAllOn";
-    @NonNls
     public static final String TOGGLE_ALL_OPTIONS_OFF                                              = "com.minecolonies.coremod.gui.workerHuts.toggleAllOff";
+    @NonNls
+    public static final String TOGGLE_ALL_OPTIONS_ON                                               = "com.minecolonies.coremod.gui.workerHuts.toggleAllOn";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_COMPAT_JEI_CRAFTIN_TEACHING_UNKNOWN_RECIPE = "com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe";
     @NonNls
@@ -207,6 +215,12 @@ public final class TranslationConstants
     public static final String SUPPLY_CAMP_INVALID                                                 = "item.supplyCampDeployer.invalid";
     @NonNls
     public static final String SMELTING_DOWN                                                       = "com.minecolonies.coremod.status.smeltingdown";
+    @NonNls
+    public static final String BUILDING_LEVEL_TOO_LOW                                              = "com.minecolonies.coremod.request.toolow";
+    @NonNls
+    public static final String CANT_PLACE_COLONY_IN_OTHER_DIM                                      = "com.minecolonies.coremod.dimension.no";
+    @NonNls
+    public static final String MAX_SCHEMATIC_SIZE_REACHED                                          = "com.minecolonies.coremod.max.schematic.reached";
 
     private TranslationConstants()
     {

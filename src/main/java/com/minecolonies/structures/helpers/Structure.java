@@ -56,6 +56,7 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import static com.minecolonies.api.util.constant.Constants.MAX_SCHEMATIC_SIZE;
 import static com.minecolonies.api.util.constant.Suppression.RESOURCES_SHOULD_BE_CLOSED;
 
 /**
@@ -63,6 +64,11 @@ import static com.minecolonies.api.util.constant.Suppression.RESOURCES_SHOULD_BE
  */
 public class Structure
 {
+    /**
+     * Max amount of entities to render.
+     */
+    private static final int MAX_ENTITIES_TO_RENDER = 10;
+
     /**
      * Rotation by 90°.
      */
@@ -548,6 +554,7 @@ public class Structure
 
         if (modelList.isEmpty())
         {
+            int i = 0;
             lastStartingPos = startingPos;
             final Template.BlockInfo[] blockList = this.getBlockInfoWithSettings(this.settings);
 
@@ -555,6 +562,11 @@ public class Structure
 
             for (final Template.BlockInfo aBlockList : blockList)
             {
+                i++;
+                if(i > MAX_SCHEMATIC_SIZE)
+                {
+                    break;
+                }
                 final IBlockState iblockstate = aBlockList.blockState;
                 fakeWorld.setBlockState(aBlockList.pos, iblockstate);
                 final Block block = iblockstate.getBlock();
@@ -566,9 +578,16 @@ public class Structure
                 }
                 fakeWorld.setTileEntity(aBlockList.pos, tileentity);
             }
+            i = 0;
 
             for (final Template.BlockInfo aBlockList : blockList)
             {
+                i++;
+                if(i > MAX_SCHEMATIC_SIZE)
+                {
+                    break;
+                }
+
                 IBlockState iblockstate = aBlockList.blockState;
                 Block block = iblockstate.getBlock();
                 iblockstate = aBlockList.blockState.getBlock().getActualState(aBlockList.blockState, fakeWorld, aBlockList.pos);
@@ -599,8 +618,14 @@ public class Structure
             this.renderGhost(clientWorld, models, player, partialTicks, true);
         }
 
+        int i = 0;
         for (final Entity anEntityList : entityList)
         {
+            i++;
+            if(i > MAX_ENTITIES_TO_RENDER)
+            {
+                break;
+            }
             if (anEntityList != null)
             {
                 Minecraft.getMinecraft().getRenderManager().renderEntityStatic(anEntityList, 0.0F, true);

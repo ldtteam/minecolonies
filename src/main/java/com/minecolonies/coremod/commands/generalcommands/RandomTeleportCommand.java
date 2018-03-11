@@ -2,6 +2,7 @@ package com.minecolonies.coremod.commands.generalcommands;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionArgument;
@@ -96,7 +97,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
             return;
         }
 
-        if (!canCommandSenderUseCommand(RTP))
+        if (!canCommandSenderUseCommand(RTP) || sender.getEntityWorld().provider.getDimension() != 0)
         {
             sender.sendMessage(new TextComponentString("Not happenin bro!!, ask an OP to TP you."));
             return;
@@ -153,14 +154,17 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
                 continue;
             }
 
+            final BlockPos tpPos = new BlockPos(x, STARTING_Y, z);
+
+            final Colony colony = ColonyManager.getClosestColony(sender.getEntityWorld(), tpPos);
             /* Check for a close by colony*/
-            if (ColonyManager.getColony(sender.getEntityWorld(), new BlockPos(x, STARTING_Y, z)) != null)
+            if (BlockPosUtil.getDistance2D(colony.getCenter(), tpPos) < Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)
             {
                 continue;
             }
 
             /*Search for a ground position*/
-            final BlockPos groundPosition = BlockPosUtil.findLand(new BlockPos(x, STARTING_Y, z), sender.getEntityWorld());
+            final BlockPos groundPosition = BlockPosUtil.findLand(tpPos, sender.getEntityWorld());
 
             /*If no position found*/
             if (groundPosition == null)

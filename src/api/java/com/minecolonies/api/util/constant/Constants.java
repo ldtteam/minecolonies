@@ -48,7 +48,7 @@ public final class Constants
     public static final int    ONE_HUNDRED_PERCENT              = 100;
     public static final int    DOUBLE                           = 2;
     public static final int    TRIPLE                           = 3;
-
+    public static final int    BLOCKS_PER_CHUNK                 = 16;
     /**
      * Slot with the result of the furnace.
      */
@@ -63,6 +63,21 @@ public final class Constants
      * Slot where the fuel should be put in the furnace.
      */
     public static final int FUEL_SLOT = 1;
+
+    /**
+     * Maximum message size from client to server (Leaving some extra space).
+     */
+    public static final int MAX_MESSAGE_SIZE = 30_000;
+
+    /**
+     * Maximum amount of pieces from client to server (Leaving some extra space).
+     */
+    public static final int MAX_AMOUNT_OF_PIECES = 20;
+
+    /**
+     * Max schematic size to create.
+     */
+    public static final int MAX_SCHEMATIC_SIZE = 100_000;
 
     /**
      * Private constructor to hide implicit public one.

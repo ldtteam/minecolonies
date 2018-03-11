@@ -15,8 +15,7 @@
     }
   },
   "result": {
-    "item": "minecolonies:blocktimberframe_jungle",
-    "data": 0,
+    "item": "minecolonies:blocktimberframe_jungle_plain",
     "count": 4
   }
 }
