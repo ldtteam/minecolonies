@@ -26,7 +26,7 @@ public class ActionMenu extends AbstractMenu
             )
     {
         super(menuItemName);
-        this.description = menuItemName;
+        this.description = description;
         this.forgePermissionNode = forgePermissionNode;
         this.actionCommandClass = actionCommandClass;
         this.actionArgumentList = Arrays.asList(actionArguments);
