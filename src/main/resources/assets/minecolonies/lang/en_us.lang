@@ -602,7 +602,7 @@ com.minecolonies.coremod.gui.townHall.tp=Do you really want to teleport to: %s [
 com.minecolonies.coremod.gui.workerHuts.switchStyle=Switch Style
 com.minecolonies.coremod.gui.townHall.tooLow=TH too low
 com.minecolonies.coremod.gui.recipe.full=Max reached for level
-com.minecolonies.coremod.cook.full=Can't bring food to worker since his inventory is full.
+com.minecolonies.coremod.cook.full=Can't bring food to worker since their inventory is full.
 
 tile.minecolonies.blockTimberFrame_oak_plain.name= Oak Plain Timber Frame
 tile.minecolonies.blockTimberFrame_oak_doublecrossed.name= Oak Crossed Timber Frame
@@ -666,4 +666,5 @@ tile.minecolonies.blockTimberFrame_dark_oak_horizontalplain.name= Dark Oak Horiz
 tile.minecolonies.blockTimberFrame_dark_oak_horizontalnocap.name= Dark Oak Horizontal Timber Frame
 
 com.minecolonies.coremod.request.toolow=Can't mine block %s at %s. Need to upgrade the building to use a tool with higher mining level.
-com.minecolonies.coremod.dimension.no=You are not allowed to place colonies in other dimensions (Triggered by config value)
+com.minecolonies.coremod.dimension.no=You are not allowed to place colonies in other dimensions. (Triggered by config value)
+com.minecolonies.coremod.max.schematic.reached=Max schematic size of %d blocks reached.
