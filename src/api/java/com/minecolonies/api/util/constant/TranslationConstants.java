@@ -221,6 +221,12 @@ public final class TranslationConstants
     public static final String CANT_PLACE_COLONY_IN_OTHER_DIM                                      = "com.minecolonies.coremod.dimension.no";
     @NonNls
     public static final String MAX_SCHEMATIC_SIZE_REACHED                                          = "com.minecolonies.coremod.max.schematic.reached";
+    @NonNls
+    public static final String QUITE_CLOSE_DESC                                                    = "com.minecolonies.coremod.max.schematic.quiteclose";
+    @NonNls
+    public static final String QUITE_FAR_DESC                                                      = "com.minecolonies.coremod.max.schematic.quitefar";
+    @NonNls
+    public static final String REALLY_FAR_DESC                                                     = "com.minecolonies.coremod.max.schematic.reallyfar";
 
     private TranslationConstants()
     {

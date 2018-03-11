@@ -91,6 +91,7 @@ public final class MobEventsUtils
               colony.getMessageEntityPlayers(),
               "Horde Spawn Point: " + targetSpawnPoint);
         }
+        colony.getBarbManager().addBarbarianSpawnPoint(targetSpawnPoint);
 
         int raidNumber = HUGE_HORDE_MESSAGE_ID;
         if(horde < SMALL_HORDE_SIZE)
