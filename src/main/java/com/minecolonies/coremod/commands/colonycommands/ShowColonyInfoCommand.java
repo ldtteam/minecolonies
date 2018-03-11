@@ -38,7 +38,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
     private static final String CITIZENS                   = "§2Citizens: §f";
     private static final String NO_COLONY_FOR_PLAYER_FOUND_MESSAGE = "Colony with mayor %s not found.";
     private static final String NO_COLONY_FOUND_MESSAGE    = "Colony not found.";
-    private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
+    private static final String NO_COLONY_WITH_ID_FOUND_MESSAGE = "Colony with ID %d not found.";
     private static final String LAST_CONTACT_TEXT          = "Last contact with Owner or Officer: %d hours ago!";
     private static final String IS_DELETABLE               = "If true this colony cannot be deleted: ";
     private static final String CANNOT_BE_RAIDED           = "This colony is unable to be raided";
@@ -182,7 +182,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
             }
             else
             {
-                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
+                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_WITH_ID_FOUND_MESSAGE, colonyId)));
             }
             return;
         }
@@ -196,7 +196,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
             }
             else
             {
-                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
+                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_WITH_ID_FOUND_MESSAGE, colonyId)));
             }
             return;
         }
