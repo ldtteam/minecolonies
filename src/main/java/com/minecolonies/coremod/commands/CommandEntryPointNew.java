@@ -33,6 +33,81 @@ import java.util.stream.Collectors;
  */
 public class CommandEntryPointNew extends CommandBase
 {
+    static class ParsingResult
+    {
+        @NotNull private List<String> tabCompletions;
+        @NotNull private TreeNode<Menu> executionTreeNode;
+        @Nullable private List<ActionArgument> executionActionArgumentList;
+        @Nullable private String badArgument;
+
+        ParsingResult(@NotNull final List<String> tabCompletions, @NotNull final TreeNode<Menu> executionTreeNode,
+                @Nullable final List<ActionArgument> executionActionArgumentList,
+                @Nullable final String badArgument)
+        {
+            super();
+            this.tabCompletions = tabCompletions;
+            this.executionTreeNode = executionTreeNode;
+            this.executionActionArgumentList = executionActionArgumentList;
+            this.badArgument = badArgument;
+        }
+
+        public List<String> getTabCompletions()
+        {
+            return tabCompletions;
+        }
+
+        public TreeNode<Menu> getExecutionTreeNode()
+        {
+            return executionTreeNode;
+        }
+
+        public List<ActionArgument> getExecutionActionArgumentList()
+        {
+            return executionActionArgumentList;
+        }
+
+        public String getBadArgument()
+        {
+            return badArgument;
+        }
+
+        public void setBadArgument(final String badArgument)
+        {
+            this.badArgument = badArgument;
+        }
+
+    }
+
+    public static final class ActionMenuHolder
+    {
+        private TreeNode<Menu> treeNode;
+        private ActionArgument actionArgument;
+        private Object value;
+
+        ActionMenuHolder(@NotNull final TreeNode<Menu> treeNode, @NotNull final ActionArgument actionArgument)
+        {
+            super();
+            this.treeNode = treeNode;
+            this.actionArgument = actionArgument;
+        }
+        public TreeNode<Menu> getTreeNode()
+        {
+            return treeNode;
+        }
+        public ActionArgument getActionArgument()
+        {
+            return actionArgument;
+        }
+        public Object getValue()
+        {
+            return value;
+        }
+        public void setValue(final Object value)
+        {
+            this.value = value;
+        }
+    }
+
     /**
      * The level required to execute /mc commands.
      * private static final int OP_PERMISSION_LEVEL = 3;
@@ -332,36 +407,6 @@ public class CommandEntryPointNew extends CommandBase
         return map;
     }
 
-    public static final class ActionMenuHolder
-    {
-        private TreeNode<Menu> treeNode;
-        private ActionArgument actionArgument;
-        private Object value;
-
-        private ActionMenuHolder(@NotNull final TreeNode<Menu> treeNode, @NotNull final ActionArgument actionArgument)
-        {
-            super();
-            this.treeNode = treeNode;
-            this.actionArgument = actionArgument;
-        }
-        public TreeNode<Menu> getTreeNode()
-        {
-            return treeNode;
-        }
-        public ActionArgument getActionArgument()
-        {
-            return actionArgument;
-        }
-        public Object getValue()
-        {
-            return value;
-        }
-        public void setValue(final Object value)
-        {
-            this.value = value;
-        }
-    }
-
     private Map<String, ActionMenuHolder> getActionCommands(@NotNull final TreeNode<Menu> treeNode, @NotNull final List<ActionMenuHolder> parsedHolders)
     {
         final Map<String, ActionMenuHolder> map = new HashMap<>();
@@ -448,51 +493,6 @@ public class CommandEntryPointNew extends CommandBase
             @NotNull final List<ActionArgument> parsedActionArgumentList = new ArrayList<>();
             return getTabCompletionsAndParsingHolders(parsedHolders, treeNode, parsedActionArgumentList, possibleActionCommands, server, sender, args, pos);
         }
-    }
-
-    static class ParsingResult
-    {
-        @NotNull private List<String> tabCompletions;
-        @NotNull private TreeNode<Menu> executionTreeNode;
-        @Nullable private List<ActionArgument> executionActionArgumentList;
-        @Nullable private String badArgument;
-
-        ParsingResult(@NotNull final List<String> tabCompletions, @NotNull final TreeNode<Menu> executionTreeNode,
-                @Nullable final List<ActionArgument> executionActionArgumentList,
-                @Nullable final String badArgument)
-        {
-            super();
-            this.tabCompletions = tabCompletions;
-            this.executionTreeNode = executionTreeNode;
-            this.executionActionArgumentList = executionActionArgumentList;
-            this.badArgument = badArgument;
-        }
-
-        public List<String> getTabCompletions()
-        {
-            return tabCompletions;
-        }
-
-        public TreeNode<Menu> getExecutionTreeNode()
-        {
-            return executionTreeNode;
-        }
-
-        public List<ActionArgument> getExecutionActionArgumentList()
-        {
-            return executionActionArgumentList;
-        }
-
-        public String getBadArgument()
-        {
-            return badArgument;
-        }
-
-        public void setBadArgument(final String badArgument)
-        {
-            this.badArgument = badArgument;
-        }
-
     }
 
     @NotNull
