@@ -515,11 +515,8 @@ public class Colony implements IColony
     {
         buildingManager.tick(event);
 
-        if (event.phase == TickEvent.Phase.END)
-        {
-            getRequestManager().update();
-            packageManager.updateSubscribers();
-        }
+        getRequestManager().update();
+        packageManager.updateSubscribers();
 
         final List<EntityPlayer> visitors = new ArrayList<>(visitingPlayers);
         //Clean up visiting player.
@@ -625,27 +622,23 @@ public class Colony implements IColony
             return;
         }
 
-        if (event.phase == TickEvent.Phase.START)
+        //  Cleanup Buildings whose Blocks have gone AWOL
+        buildingManager.cleanUpBuildings(event);
+
+        // Clean up or spawn citizens.
+        citizenManager.onWorldTick(event);
+
+        if (shallUpdate(world, TICKS_SECOND)
+                && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
+                && Configurations.gameplay.doBarbariansSpawn
+                && barbarianManager.canHaveBarbEvents()
+                && !world.getMinecraftServer().getPlayerList().getPlayers()
+                .stream().filter(permissions::isSubscriber).collect(Collectors.toList()).isEmpty()
+                && MobEventsUtils.isItTimeToRaid(event.world, this))
         {
-
-            //  Cleanup Buildings whose Blocks have gone AWOL
-            buildingManager.cleanUpBuildings(event);
-
-            // Clean up or spawn citizens.
-            citizenManager.onWorldTick(event);
-
-            if (shallUpdate(world, TICKS_SECOND)
-                  && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
-                  && Configurations.gameplay.doBarbariansSpawn
-                  && barbarianManager.canHaveBarbEvents()
-                  && !world.getMinecraftServer().getPlayerList().getPlayers()
-                        .stream().filter(permissions::isSubscriber).collect(Collectors.toList()).isEmpty()
-                  && MobEventsUtils.isItTimeToRaid(event.world, this))
-            {
-                MobEventsUtils.barbarianEvent(event.world, this);
-            }
+            MobEventsUtils.barbarianEvent(event.world, this);
         }
-
+        
         buildingManager.onWorldTick(event);
 
         if (isDay && !world.isDaytime())

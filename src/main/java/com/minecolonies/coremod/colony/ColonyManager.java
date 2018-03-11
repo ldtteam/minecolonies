@@ -795,14 +795,17 @@ public final class ColonyManager
      */
     public static void onServerTick(@NotNull final TickEvent.ServerTickEvent event)
     {
-        for (@NotNull final Colony c : colonies)
+        if (event.phase == TickEvent.Phase.END)
         {
-            c.onServerTick(event);
-        }
+            for (@NotNull final Colony c : colonies)
+            {
+                c.onServerTick(event);
+            }
 
-        if (saveNeeded)
-        {
-            saveColonies();
+            if (saveNeeded)
+            {
+                saveColonies();
+            }
         }
     }
 
@@ -909,7 +912,10 @@ public final class ColonyManager
      */
     public static void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
-        getColonies(event.world).forEach(c -> c.onWorldTick(event));
+        if (event.phase == TickEvent.Phase.END)
+        {
+            getColonies(event.world).forEach(c -> c.onWorldTick(event));
+        }
     }
 
     /**
@@ -1181,7 +1187,6 @@ public final class ColonyManager
             view = ColonyView.createFromNetwork(colonyId);
             colonyViews.add(view);
         }
-
         return view.handleColonyViewMessage(colonyData, world, isNewSubscription);
     }
 
