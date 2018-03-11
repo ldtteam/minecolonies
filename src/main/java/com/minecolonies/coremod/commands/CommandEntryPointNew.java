@@ -33,6 +33,9 @@ import java.util.stream.Collectors;
  */
 public class CommandEntryPointNew extends CommandBase
 {
+    @NotNull
+    private final TreeNode<Menu> root;
+
     private static class ParsingResult
     {
         @NotNull private final List<String> tabCompletions;
@@ -112,9 +115,6 @@ public class CommandEntryPointNew extends CommandBase
      * The level required to execute /mc commands.
      * private static final int OP_PERMISSION_LEVEL = 3;
      */
-
-    @NotNull
-    private final TreeNode<Menu> root;
 
     /**
      * Create our entry point once.
