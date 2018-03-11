@@ -27,11 +27,11 @@ import java.util.UUID;
  */
 public class RefreshColonyCommand extends AbstractSingleCommand implements IActionCommand
 {
-    public static final  String DESC                       = "refresh";
-    private static final String NO_COLONY_WITH_ID_FOUND_MESSAGE = "Colony with ID %d not found.";
-    private static final String NO_COLONY_FOUND_MESSAGE = "Colony not found.";
-    private static final String NO_COLONY_WITH_PLAYER_FOUND_MESSAGE    = "Colony with mayor %s not found.";
-    private static final String REFRESH                    = "Refresh succesful!";
+    public static final  String DESC                                = "refresh";
+    private static final String NO_COLONY_WITH_ID_FOUND_MESSAGE     = "Colony with ID %d not found.";
+    private static final String NO_COLONY_FOUND_MESSAGE             = "Colony not found.";
+    private static final String NO_COLONY_WITH_PLAYER_FOUND_MESSAGE = "Colony with mayor %s not found.";
+    private static final String REFRESH                             = "Refresh succesful!";
 
     /**
      * no-args constructor called by new CommandEntryPoint executer.
@@ -76,26 +76,23 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
             if (null != playerObject)
             {
                 player = (EntityPlayer) playerObject;
-                if (player != null)
+                IColony iColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
+                if (null == iColony)
                 {
-                    IColony iColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
-                    if (null == iColony)
+                    if (sender instanceof EntityPlayer)
                     {
-                        if (sender instanceof EntityPlayer)
+                        final Entity senderEntity = sender.getCommandSenderEntity();
+                        if (senderEntity != null)
                         {
-                            final Entity senderEntity = sender.getCommandSenderEntity();
-                            if (senderEntity != null)
-                            {
-                                final UUID mayorID = senderEntity.getUniqueID();
-                                iColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
-                            }
+                            final UUID mayorID = senderEntity.getUniqueID();
+                            iColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
                         }
                     }
+                }
 
-                    if (null != iColony)
-                    {
-                        colony = ColonyManager.getColony(iColony.getID());
-                    }
+                if (null != iColony)
+                {
+                    colony = ColonyManager.getColony(iColony.getID());
                 }
             }
         }
