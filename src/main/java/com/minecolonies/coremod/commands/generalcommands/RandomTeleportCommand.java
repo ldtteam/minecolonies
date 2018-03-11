@@ -79,7 +79,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
             player = (EntityPlayer) playerObject;
         }
 
-        executeShared(server, sender, player.getName());
+        executeShared(server, sender, ((null != player) ? player.getName() : null));
     }
 
     @Override
