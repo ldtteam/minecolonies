@@ -21,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -249,7 +250,21 @@ public class BuildingBuilder extends AbstractBuildingWorker
                 final String name =
                         workOrderBuildDecoration instanceof WorkOrderBuild ? ((WorkOrderBuild) workOrderBuildDecoration).getUpgradeName() : workOrderBuildDecoration.getName();
                 ByteBufUtils.writeUTF8String(buf, name);
-                ByteBufUtils.writeUTF8String(buf, " at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
+
+                final String desc;
+                if(pos.equals(getLocation()))
+                {
+                    desc = "here";
+                }
+                else
+                {
+                    final BlockPos relativePos = getLocation().subtract(pos);
+                    final EnumFacing facingX = EnumFacing.getFacingFromVector(relativePos.getX(), 0, 0);
+                    final EnumFacing facingZ = EnumFacing.getFacingFromVector(0, 0, relativePos.getZ());
+                    desc = relativePos.getX() + " " + facingX + " " + relativePos.getZ() + " " + facingZ;
+                }
+
+                ByteBufUtils.writeUTF8String(buf, desc);
             }
             else
             {

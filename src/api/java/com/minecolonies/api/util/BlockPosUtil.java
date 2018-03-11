@@ -482,26 +482,26 @@ public final class BlockPosUtil
     }
 
     /**
-     * Calculates the direction the field is from the building.
+     * Calculates the direction a position is from the building.
      *
      * @param building the building.
-     * @param field    the field.
+     * @param pos    the position.
      * @return a string describing the direction.
      */
-    public static String calcDirection(@NotNull final BlockPos building, @NotNull final BlockPos field)
+    public static String calcDirection(@NotNull final BlockPos building, @NotNull final BlockPos pos)
     {
         final StringBuilder dist = new StringBuilder();
 
-        if (field.getZ() > building.getZ() + 1)
+        if (pos.getZ() > building.getZ() + 1)
         {
             dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_SOUTH));
         }
-        else if (field.getZ() < building.getZ() - 1)
+        else if (pos.getZ() < building.getZ() - 1)
         {
             dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_NORTH));
         }
 
-        if (field.getX() > building.getX() + 1)
+        if (pos.getX() > building.getX() + 1)
         {
             if(!dist.toString().isEmpty())
             {
@@ -509,7 +509,7 @@ public final class BlockPosUtil
             }
             dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST));
         }
-        else if (field.getX() < building.getX() - 1)
+        else if (pos.getX() < building.getX() - 1)
         {
             if(!dist.toString().isEmpty())
             {
