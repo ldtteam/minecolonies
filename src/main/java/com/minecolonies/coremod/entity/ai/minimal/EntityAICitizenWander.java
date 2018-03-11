@@ -48,7 +48,11 @@ public class EntityAICitizenWander extends EntityAIBase
         Vec3d vec3d;
         if(citizen.getCitizenData().getSaturation() <= 0)
         {
-            vec3d = new Vec3d(citizen.getColony().getBuildingManager().getBestRestaurant(citizen));
+            final BlockPos pos = citizen.getColony().getBuildingManager().getBestRestaurant(citizen);
+            if(pos != null)
+            {
+                vec3d = new Vec3d(pos);
+            }
         }
         else
         {
