@@ -194,7 +194,7 @@ public class CommandEntryPointNew extends CommandBase
         {
             final StringBuilder sb = new StringBuilder();
             buildParentPathString(sb, currentMenuTreeNode);
-            sb.append(' ').append('<');
+            sb.append(" <");
             boolean first = true;
             for (final TreeNode<Menu> childTreeNode : currentMenuTreeNode.getChildren())
             {
