@@ -35,9 +35,9 @@ public class CommandEntryPointNew extends CommandBase
 {
     static class ParsingResult
     {
-        @NotNull private List<String> tabCompletions;
-        @NotNull private TreeNode<Menu> executionTreeNode;
-        @Nullable private List<ActionArgument> executionActionArgumentList;
+        @NotNull private final List<String> tabCompletions;
+        @NotNull private final TreeNode<Menu> executionTreeNode;
+        @Nullable private final List<ActionArgument> executionActionArgumentList;
         @Nullable private String badArgument;
 
         ParsingResult(@NotNull final List<String> tabCompletions, @NotNull final TreeNode<Menu> executionTreeNode,
