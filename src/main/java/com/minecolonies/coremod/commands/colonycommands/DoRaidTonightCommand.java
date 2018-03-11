@@ -3,6 +3,9 @@ package com.minecolonies.coremod.commands.colonycommands;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.minecolonies.coremod.commands.ActionArgument;
+import com.minecolonies.coremod.commands.IActionCommand;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,17 +17,22 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Command to set whether a colony will raid tonight.
  */
-public class DoRaidTonightCommand extends AbstractSingleCommand
+public class DoRaidTonightCommand extends AbstractSingleCommand implements IActionCommand
 {
 
     public static final  String              DESC                       = "raid-tonight";
     private static final TextComponentString NO_COLONY_FOUND_MESSAGE_ID = new TextComponentString("No Colony found.");
     private static final TextComponentString NO_ARGUMENTS               = new TextComponentString("Please define a colony to raid tonight.");
     private static final TextComponentString SUCCESSFUL                 = new TextComponentString("Command Successful");
+
+    public DoRaidTonightCommand()
+    {
+    }
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -44,7 +52,41 @@ public class DoRaidTonightCommand extends AbstractSingleCommand
     }
 
     @Override
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final List<ActionArgument> actionArgumentList,
+            @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
+    {
+        Colony colony = null;
+        final Object colonyObject = argumentValueByActionArgumentNameMap.get("colony");
+        if (null != colonyObject)
+        {
+            colony = (Colony) colonyObject;
+        }
+
+        executeShared(server, sender, colony);
+    }
+
+    @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    {
+        Colony colony = null;
+        if (args.length != 0)
+        {
+            colony = ColonyManager.getColony(Integer.parseInt(args[0]));
+            if (colony == null)
+            {
+                sender.sendMessage(NO_COLONY_FOUND_MESSAGE_ID);
+                return;
+            }
+        }
+        else
+        {
+            sender.sendMessage(NO_ARGUMENTS);
+        }
+
+        executeShared(server, sender, colony);
+    }
+
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @Nullable final Colony colony)
     {
         if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
         {
@@ -52,23 +94,8 @@ public class DoRaidTonightCommand extends AbstractSingleCommand
             return;
         }
 
-        if (args.length != 0)
-        {
-            final Colony colony = ColonyManager.getColony(Integer.parseInt(args[0]));
-            if (colony == null)
-            {
-                sender.sendMessage(NO_COLONY_FOUND_MESSAGE_ID);
-                return;
-            }
-
-            colony.getBarbManager().setWillRaidTonight(true);
-
-            sender.sendMessage(SUCCESSFUL);
-        }
-        else
-        {
-            sender.sendMessage(NO_ARGUMENTS);
-        }
+        colony.getBarbManager().setWillRaidTonight(true);
+        sender.sendMessage(SUCCESSFUL);
     }
 
     @NotNull

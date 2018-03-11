@@ -30,7 +30,7 @@ public class BackupCommand extends AbstractSingleCommand implements IActionComma
     public BackupCommand()
     {
     }
-    
+
     /**
      * Initialize this SubCommand with it's parents.
      *

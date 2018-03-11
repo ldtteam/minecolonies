@@ -6,6 +6,9 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.minecolonies.coremod.commands.ActionArgument;
+import com.minecolonies.coremod.commands.IActionCommand;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -22,18 +25,26 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.DELETECOLONY;
 
 /**
  * List all colonies.
  */
-public class DeleteColonyCommand extends AbstractSingleCommand
+public class DeleteColonyCommand extends AbstractSingleCommand implements IActionCommand
 {
 
     public static final  String DESC                       = "delete";
-    private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
+    private static final String NO_COLONY_FOUND_FOR_ID_MESSAGE = "Colony with ID %d not found.";
+    private static final String NO_COLONY_FOUND_MESSAGE = "Colony not found.";
     private static final String NO_ARGUMENTS               = "Please define a colony to delete";
+    private static final String DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED = "/mc colony delete %d %s true";
+    private static final String DELETE_COLONY_TASK_SCHEDULED = "Delete colony task scheduled.";
+
+    public DeleteColonyCommand()
+    {
+    }
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -59,11 +70,48 @@ public class DeleteColonyCommand extends AbstractSingleCommand
     }
 
     @Override
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final List<ActionArgument> actionArgumentList,
+            @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
+    {
+        Colony colony = null;
+        final Object colonyObject = argumentValueByActionArgumentNameMap.get("colony");
+        if (null != colonyObject)
+        {
+            colony = (Colony) colonyObject;
+        }
+
+        boolean canDestroy = false;
+        final Object canDestroyObject = argumentValueByActionArgumentNameMap.get("canDestroy");
+        if (null != canDestroyObject)
+        {
+            final Boolean canDestroyBoolean = (Boolean) canDestroyObject;
+            canDestroy = canDestroyBoolean.booleanValue();
+        }
+
+        boolean confirmDelete = false;
+        final Object confirmDeleteObject = argumentValueByActionArgumentNameMap.get("confirmDelete");
+        if (null != confirmDeleteObject)
+        {
+            final Boolean confirmDeleteBoolean = (Boolean) confirmDeleteObject;
+            confirmDelete = confirmDeleteBoolean.booleanValue();
+        }
+
+        if (colony == null)
+        {
+            final String noColonyFoundMessage = String.format(NO_COLONY_FOUND_MESSAGE);
+            sender.sendMessage(new TextComponentString(noColonyFoundMessage));
+            return;
+        }
+
+        executeShared(server, sender, colony, canDestroy, confirmDelete);
+    }
+
+    @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         final int colonyId;
         boolean canDestroy = true;
-        boolean canDelete = false;
+        boolean confirmDelete = false;
         if (args.length == 0)
         {
             IColony colony = null;
@@ -87,45 +135,56 @@ public class DeleteColonyCommand extends AbstractSingleCommand
                 canDestroy = Boolean.parseBoolean(args[1]);
             }
 
-            if(args.length > 2)
+            if (args.length > 2)
             {
-                canDelete = Boolean.parseBoolean(args[2]);
+                confirmDelete = Boolean.parseBoolean(args[2]);
             }
         }
-
-        if(!canDelete)
-        {
-            final ITextComponent deleteButton = new TextComponentString("[DELETE]")
-                    .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-                            new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mc colony delete " + colonyId + " " + canDestroy + " true")
-                    ));
-            sender.sendMessage(new TextComponentString("Click [DELETE] to confirm the deletion of colony: " + colonyId));
-            sender.sendMessage(deleteButton);
-            return;
-        }
-
 
         final Colony colony = ColonyManager.getColony(colonyId);
         if (colony == null)
         {
-            final String noColonyFoundMessage = String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId);
+            final String noColonyFoundMessage = String.format(NO_COLONY_FOUND_FOR_ID_MESSAGE, colonyId);
             sender.sendMessage(new TextComponentString(noColonyFoundMessage));
             return;
         }
+
+        executeShared(server, sender, colony, canDestroy, confirmDelete);
+    }
+
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final Colony colony, final boolean canDestroy,
+            final boolean confirmDelete) throws CommandException
+    {
+
+        if (!confirmDelete)
+        {
+            final ITextComponent deleteButton = new TextComponentString("[DELETE]")
+                    .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+                            new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+                                    String.format(DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED,
+                                            colony.getID(), (canDestroy ? "true" : "false"))
+                    )));
+            sender.sendMessage(new TextComponentString("Click [DELETE] to confirm the deletion of colony: " + colony.getID()));
+            sender.sendMessage(deleteButton);
+            return;
+        }
+
 
         final Entity senderEntity = sender.getCommandSenderEntity();
 
         if (senderEntity instanceof EntityPlayer)
         {
             final EntityPlayer player = (EntityPlayer) sender;
-            if (!canPlayerUseCommand(player, DELETECOLONY, colonyId))
+            if (!canPlayerUseCommand(player, DELETECOLONY, colony.getID()))
             {
                 senderEntity.sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }
         final boolean shouldDestroy = canDestroy;
+        // TODO: pass in sender and notify when the delete task finishes.
         server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID(), shouldDestroy));
+        senderEntity.sendMessage(new TextComponentString(DELETE_COLONY_TASK_SCHEDULED));
     }
 
     @NotNull

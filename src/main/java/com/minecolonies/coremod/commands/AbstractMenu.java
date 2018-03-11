@@ -19,9 +19,8 @@ public abstract class AbstractMenu implements Menu
     }
 
     @Override
-    public void setMenuType(MenuType menuType)
+    public void setMenuType(final MenuType menuType)
     {
         this.menuType = menuType;
-        
     }
 }

@@ -5,7 +5,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionArgument;
-import com.minecolonies.coremod.commands.ActionArgumentType;
 import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import com.minecolonies.coremod.util.ServerUtils;
@@ -46,7 +45,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
     public RandomTeleportCommand()
     {
     }
-    
+
     /**
      * Initialize this SubCommand with it's parents.
      *
@@ -68,21 +67,14 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final List<ActionArgument> actionArgumentList,
             @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
     {
-        String playerName = null;
-        for (final ActionArgument actionArgument : actionArgumentList)
+        EntityPlayer player = null;
+        final Object playerObject = argumentValueByActionArgumentNameMap.get("player");
+        if (null != playerObject)
         {
-            final Object object = argumentValueByActionArgumentNameMap.get(actionArgument.getName());
-            if (ActionArgumentType.Player == actionArgument.getType())
-            {
-                if (object instanceof String)
-                {
-                    playerName = ((String) object);
-                    break;
-                }
-            }
+            player = (EntityPlayer) playerObject;
         }
 
-        executeShared(server, sender, playerName);
+        executeShared(server, sender, player.getName());
     }
 
     @Override

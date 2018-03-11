@@ -28,6 +28,10 @@ public class RespawnCitizenCommand extends AbstractCitizensCommands
     private static final String REMOVED_MESSAGE     = "Has been removed";
     private static final String COORDINATES_XYZ     = "§4x=§f%s §4y=§f%s §4z=§f%s";
 
+    public RespawnCitizenCommand()
+    {
+    }
+
     /**
      * Initialize this SubCommand with it's parents.
      *

@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.commands;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,7 +18,7 @@ public class NavigationMenu extends AbstractMenu
     @Override
     public NavigationMenuType getMenuType()
     {
-        return (NavigationMenuType)menuType;
+        return (NavigationMenuType) menuType;
     }
 
 

@@ -203,7 +203,8 @@ public class CommandEntryPointNew extends CommandBase
             if (actionArgument.isRequired())
             {
                 boolean foundIt = false;
-                if (null != executionActionArgumentList) {
+                if (null != executionActionArgumentList)
+                {
                     for (final ActionArgument executionActionArgument : executionActionArgumentList)
                     {
                         if (null != executionActionArgument)
@@ -212,7 +213,8 @@ public class CommandEntryPointNew extends CommandBase
                             {
                                 if (!executionActionArgument.isValueSet())
                                 {
-                                    if (null == badArgument) {
+                                    if (null == badArgument)
+                                    {
                                         throw new CommandException(
                                                 getCommandUsage(sender, executionTreeNode)
                                                     + ": no value specified for required argument " + actionArgument.getName());
@@ -240,7 +242,8 @@ public class CommandEntryPointNew extends CommandBase
             }
         }
 
-        if (null != executionActionArgumentList) {
+        if (null != executionActionArgumentList)
+        {
             for (final ActionArgument executionActionArgument : executionActionArgumentList)
             {
                 if (null != executionActionArgument)
@@ -553,7 +556,7 @@ public class CommandEntryPointNew extends CommandBase
             }
             final String potentialArgumentValue = sb.toString();
             newArgsStartPos = 1 + wordCount;
-            final Object parsedObject = actionArgumentType.parse(server, pos, parsedHolders, potentialArgumentValue);
+            final Object parsedObject = actionArgumentType.parse(server, sender, pos, parsedHolders, potentialArgumentValue);
             if (null == parsedObject)
             {
                 final List<String> tabCompletions = actionArgumentType.getTabCompletions(server, pos, potentialArgumentValue);

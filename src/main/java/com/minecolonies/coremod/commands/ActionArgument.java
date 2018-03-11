@@ -72,7 +72,8 @@ public class ActionArgument
         return sb.toString();
     }
 
-    public boolean isValueSet() {
+    public boolean isValueSet()
+    {
         return isValueSet;
     }
 
@@ -81,7 +82,7 @@ public class ActionArgument
         return value;
     }
 
-    public void setValue(Object value)
+    public void setValue(final Object value)
     {
         this.isValueSet = true;
         this.value = value;

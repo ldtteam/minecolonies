@@ -43,27 +43,17 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
             @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
     {
         Colony colony = null;
-        CitizenData citizenData = null;
-        for (final ActionArgument actionArgument : actionArgumentList)
+        final Object colonyObject = argumentValueByActionArgumentNameMap.get("colony");
+        if (null != colonyObject)
         {
-            final Object object = argumentValueByActionArgumentNameMap.get(actionArgument.getName());
-            switch (actionArgument.getType())
-            {
-                case Colony:
-                    colony = (Colony) object;
-                    break;
-                case Citizen:
-                    citizenData = (CitizenData) object;
-                    break;
-                case CoordinateX:
-                case CoordinateY:
-                case CoordinateZ:
-                    break;
-                case Player:
-                    break;
-                default:
-                    break;
-            }
+            colony = (Colony) colonyObject;
+        }
+
+        CitizenData citizenData = null;
+        final Object citizenDataObject = argumentValueByActionArgumentNameMap.get("citizen");
+        if (null != citizenDataObject)
+        {
+            citizenData = (CitizenData) colonyObject;
         }
 
         final int citizenId = (null != citizenData) ? citizenData.getId() : -1;

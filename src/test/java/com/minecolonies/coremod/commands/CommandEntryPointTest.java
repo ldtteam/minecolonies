@@ -140,7 +140,8 @@ public class CommandEntryPointTest
         final List<String> results = instance.getTabCompletions(server, sender, args, pos);
 
         // EXPECT:
-        assertThat(results).containsExactlyInAnyOrder("rtp", "backup", "scan", "colony", "citizens");
+        assertThat(results).containsExactlyInAnyOrder("colonies", "colony", "citizens", "kill", "check", "whoami", "whereami", "home", "raid-tonight", "raid-now", "rtp", "backup",
+                "scan");
     }
 
     @Test
@@ -360,7 +361,7 @@ public class CommandEntryPointTest
         final List<String> results = instance.getTabCompletions(server, sender, args, pos);
 
         // EXPECT:
-        assertThat(results).containsExactlyInAnyOrder("info");
+        assertThat(results).containsExactlyInAnyOrder("kill", "info", "list", "respawn");
     }
 
     @Test
@@ -647,7 +648,7 @@ public class CommandEntryPointTest
         final List<String> results = instance.getTabCompletions(server, sender, args, pos);
 
         // EXPECT:
-        assertThat(results).containsExactlyInAnyOrder("ownerchange");
+        assertThat(results).containsExactlyInAnyOrder("addofficer", "barbarians", "delete", "deletable", "info", "ownerchange", "raid", "raid-tonight", "refresh", "teleport");
     }
 
     @Test
@@ -863,7 +864,7 @@ public class CommandEntryPointTest
         }
         catch (final CommandException e)
         {
-            assertThat(e).hasMessage("/minecolonies <colonies|kill|colony|citizens|rtp|backup|home|raid-tonight|raid-now|check|whoami|whereami>");
+            assertThat(e).hasMessage("/mineColonies <colonies|kill|colony|citizens|rtp|backup|home|raid-tonight|raid-now|check|whoami|whereami|scan>");
         }
     }
 
@@ -886,7 +887,7 @@ public class CommandEntryPointTest
         }
         catch (final CommandException e)
         {
-            assertThat(e).hasMessage("/minecolonies citizens <list|kill|respawn|info>");
+            assertThat(e).hasMessage("/mineColonies citizens <list|kill|respawn|info>");
         }
     }
 
@@ -909,7 +910,7 @@ public class CommandEntryPointTest
         }
         catch (final CommandException e)
         {
-            assertThat(e).hasMessage("/MineColonies Citizens info <colony: colony-id>: missing required parameter colony");
+            assertThat(e).hasMessage("/mineColonies citizens info <colony: colony-id>: missing required parameter colony");
         }
     }
 
@@ -932,7 +933,7 @@ public class CommandEntryPointTest
         }
         catch (final CommandException e)
         {
-            assertThat(e).hasMessage("/MineColonies Citizens info <colony: colony-id>: missing required parameter colony");
+            assertThat(e).hasMessage("/mineColonies citizens info <colony: colony-id>: missing required parameter colony");
         }
     }
 
@@ -955,7 +956,7 @@ public class CommandEntryPointTest
         }
         catch (final CommandException e)
         {
-            assertThat(e).hasMessage("/MineColonies Citizens info <colony: colony-id>: no value specified for required argument colony");
+            assertThat(e).hasMessage("/mineColonies citizens info <colony: colony-id>: no value specified for required argument colony");
         }
     }
 
@@ -978,7 +979,7 @@ public class CommandEntryPointTest
         }
         catch (final CommandException e)
         {
-            assertThat(e).hasMessage("/MineColonies Citizens info <colony: colony-id>: invalid value 'BAD' for required argument colony");
+            assertThat(e).hasMessage("/mineColonies citizens info <colony: colony-id>: invalid value 'BAD' for required argument colony");
         }
     }
 }

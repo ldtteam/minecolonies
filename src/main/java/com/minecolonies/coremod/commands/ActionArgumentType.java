@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -19,6 +20,8 @@ import com.minecolonies.coremod.colony.managers.ICitizenManager;
 import com.minecolonies.coremod.commands.CommandEntryPointNew.ActionMenuHolder;
 import com.mojang.authlib.GameProfile;
 
+import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.FakePlayer;
@@ -27,12 +30,14 @@ import java.util.Arrays;
 
 public enum ActionArgumentType
 {
-    Player ("player-expression", 0),
-    Colony ("colony-id", 0),
-    Citizen ("citizen-id or full-name", 2),
-    CoordinateX ("x-coordinate", 0),
-    CoordinateY ("y-coordinate", 0),
-    CoordinateZ ("z-coordinate", 0),
+    Player("player-expression", 0),
+    Colony("colony-id", 0),
+    Citizen("citizen-id or full-name", 2),
+    CoordinateX("x-coordinate", 0),
+    CoordinateY("y-coordinate", 0),
+    CoordinateZ("z-coordinate", 0),
+    BOOLEAN("boolean", 0),
+    INTEGER("integer", 0),
     ;
 
     public enum Is
@@ -98,12 +103,16 @@ public enum ActionArgumentType
     {
         switch (this)
         {
+            case INTEGER:
+                return Collections.emptyList();
+            case BOOLEAN:
+                return Arrays.asList(new String[] {"true", "false"});
             case CoordinateX:
             case CoordinateY:
             case CoordinateZ:
                 if (potentialArgumentValue.isEmpty())
                 {
-                    switch(this)
+                    switch (this)
                     {
                         case CoordinateX:
                             return Collections.singletonList(String.valueOf(pos.getX()));
@@ -224,12 +233,24 @@ public enum ActionArgumentType
         return Collections.emptyList();
     }
 
-    public Object parse(@NotNull final MinecraftServer server, @Nullable final BlockPos pos,
+    public Object parse(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @Nullable final BlockPos pos,
             @NotNull final List<ActionMenuHolder> parsedHolders,
             final String potentialArgumentValue)
     {
         switch (this)
         {
+            case INTEGER:
+                try
+                {
+                    final int coordinate = Integer.parseInt(potentialArgumentValue);
+                    return coordinate;
+                }
+                catch (final NumberFormatException e)
+                {
+                    return null;
+                }
+            case BOOLEAN:
+                return Boolean.parseBoolean(potentialArgumentValue);
             case CoordinateX:
             case CoordinateY:
             case CoordinateZ:
@@ -260,7 +281,18 @@ public enum ActionArgumentType
                 final List<String> colonyNumberStrings = getColonyIdStrings();
                 try
                 {
-                    final int colonyNumber = Integer.parseInt(potentialArgumentValue);
+                    int colonyNumber = Integer.parseInt(potentialArgumentValue);
+                    if (sender instanceof EntityPlayer)
+                    {
+                        if (colonyNumber == -1)
+                        {
+                            final IColony icolony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
+                            if (icolony != null)
+                            {
+                                colonyNumber = icolony.getID();
+                            }
+                        }
+                    }
                     if (colonyNumberStrings.contains(String.valueOf(colonyNumber)))
                     {
                         final Colony colony = ColonyManager.getColony(colonyNumber);

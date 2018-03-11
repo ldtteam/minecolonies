@@ -3,6 +3,7 @@ package com.minecolonies.coremod.commands.colonycommands.requestsystem;
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.coremod.commands.AbstractSplitCommand;
 import com.minecolonies.coremod.commands.ColonyCommand;
+import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.commands.ISubCommand;
 import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import com.minecolonies.coremod.commands.colonycommands.*;

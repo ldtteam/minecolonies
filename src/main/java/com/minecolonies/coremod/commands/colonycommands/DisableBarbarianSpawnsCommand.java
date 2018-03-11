@@ -1,29 +1,39 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.minecolonies.coremod.commands.ActionArgument;
+import com.minecolonies.coremod.commands.IActionCommand;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Command to disable or enable barbarian events in a colony.
  */
-public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand
+public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand implements IActionCommand
 {
 
     public static final  String DESC                       = "barbarians";
     private static final String NO_ARGUMENTS               = "Please define a colony";
-    private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
+    private static final String NO_COLONY_WITH_ID_FOUND_MESSAGE = "Colony with ID %d not found.";
+
+    public DisableBarbarianSpawnsCommand()
+    {
+    }
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -43,21 +53,36 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand
     }
 
     @Override
-    public void execute(
-                         @NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final List<ActionArgument> actionArgumentList,
+            @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
     {
-
-        if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
+        Colony colony = null;
+        final Object colonyObject = argumentValueByActionArgumentNameMap.get("colony");
+        if (null != colonyObject)
         {
-            sender.sendMessage(new TextComponentString("Must be OP to use this command"));
+            colony = (Colony) colonyObject;
         }
 
-        final int colonyId;
+        boolean canHaveBarbEvents = false;
+        final Object disableSpawnsObject = argumentValueByActionArgumentNameMap.get("disableSpawns");
+        if (null != disableSpawnsObject)
+        {
+            final Boolean disableSpawnsBoolean = (Boolean) disableSpawnsObject;
+            canHaveBarbEvents = !disableSpawnsBoolean.booleanValue();
+        }
 
+        executeShared(server, sender, colony, canHaveBarbEvents);
+    }
+
+    @Override
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    {
         if (args.length == 0)
         {
             sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
         }
+
+        final int colonyId;
 
         colonyId = getIthArgument(args, 0, -1);
 
@@ -65,13 +90,26 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand
 
         if (colony == null)
         {
-            sender.sendMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE_ID));
+            final String noColonyFoundMessage = String.format(NO_COLONY_WITH_ID_FOUND_MESSAGE, colonyId);
+            sender.sendMessage(new TextComponentString(noColonyFoundMessage));
             return;
         }
 
-        final boolean setBarbsTo = Boolean.parseBoolean(args[1]);
+        final boolean canHaveBarbEvents = Boolean.parseBoolean(args[1]);
 
-        colony.getBarbManager().setCanHaveBarbEvents(setBarbsTo);
+        executeShared(server, sender, colony, canHaveBarbEvents);
+    }
+
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final Colony colony, final boolean canHaveBarbEvents)
+            throws CommandException
+    {
+
+        if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
+        {
+            sender.sendMessage(new TextComponentString("Must be OP to use this command"));
+        }
+
+        colony.getBarbManager().setCanHaveBarbEvents(canHaveBarbEvents);
 
         sender.sendMessage(new TextComponentString("Colony \" Can have Barbarian Events \" now set to: " + colony.isCanHaveBarbEvents()));
     }

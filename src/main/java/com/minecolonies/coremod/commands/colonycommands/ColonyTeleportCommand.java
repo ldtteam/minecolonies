@@ -1,12 +1,16 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.minecolonies.coremod.commands.ActionArgument;
+import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.util.TeleportToColony;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -15,13 +19,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.annotation.Nullable;
 
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.COLONYTP;
 
 /**
  * this command is made to TP a player to a friends colony.
  */
-public final class ColonyTeleportCommand extends AbstractSingleCommand
+public final class ColonyTeleportCommand extends AbstractSingleCommand implements IActionCommand
 {
     /**
      * The description.
@@ -32,6 +40,10 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand
      * Min distance to townhall to run teleport command.
      */
     private static final double MIN_DISTANCE_TO_TH = 20;
+
+    public ColonyTeleportCommand()
+    {
+    }
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -57,13 +69,84 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand
     }
 
     @Override
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final List<ActionArgument> actionArgumentList,
+            @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
+    {
+        Colony colony = null;
+        final Object colonyObject = argumentValueByActionArgumentNameMap.get("colony");
+        if (null != colonyObject)
+        {
+            colony = (Colony) colonyObject;
+        }
+
+        if (null == colony)
+        {
+            EntityPlayer player = null;
+            final Object playerObject = argumentValueByActionArgumentNameMap.get("player");
+            if (null != playerObject)
+            {
+                player = (EntityPlayer) playerObject;
+                if (player != null)
+                {
+                    IColony iColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
+                    if (null == iColony)
+                    {
+                        if (sender instanceof EntityPlayer)
+                        {
+                            final Entity senderEntity = sender.getCommandSenderEntity();
+                            if (senderEntity != null)
+                            {
+                                final UUID mayorID = senderEntity.getUniqueID();
+                                if (iColony == null)
+                                {
+                                    iColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
+                                }
+                            }
+                        }
+                    }
+
+                    if (null != iColony)
+                    {
+                        colony = ColonyManager.getColony(iColony.getID());
+                    }
+                }
+            }
+        }
+
+        executeShared(server, sender, colony);
+    }
+
+    @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
+        Colony colony = null;
         //see if player is allowed to use in the configs
-        if (sender instanceof EntityPlayer && args.length == 1)
+        if (args.length == 1)
         {
-            final int colonyID = getIthArgument(args, 0, -1);
-            if (colonyID != -1 && canPlayerUseCommand((EntityPlayer) sender, COLONYTP, colonyID))
+            try
+            {
+                final int colonyId = Integer.valueOf(args[0]);
+                colony = ColonyManager.getColony(colonyId);
+            }
+            catch (final NumberFormatException e)
+            {
+            }
+        }
+
+        if (null == colony)
+        {
+            sender.sendMessage(new TextComponentString("You are not allowed to do this"));
+        }
+
+        executeShared(server, sender, colony);
+    }
+
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @Nullable final Colony colony)
+    {
+        //see if player is allowed to use in the configs
+        if (sender instanceof EntityPlayer)
+        {
+            if (canPlayerUseCommand((EntityPlayer) sender, COLONYTP, colony.getID()))
             {
                 final Colony colonyIn = ColonyManager.getColony(((EntityPlayer) sender).world, sender.getPosition());
                 if (isPlayerOpped(sender)
@@ -72,7 +155,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand
                         && colonyIn.getPermissions().hasPermission((EntityPlayer) sender, Action.TELEPORT_TO_COLONY)
                         && ((EntityPlayer) sender).getDistanceSq(colonyIn.getBuildingManager().getTownHall().getLocation()) < MIN_DISTANCE_TO_TH))
                 {
-                    TeleportToColony.colonyTeleport(server, sender, args);
+                    TeleportToColony.colonyTeleport(server, sender, String.valueOf(colony.getID()));
                 }
                 return;
             }

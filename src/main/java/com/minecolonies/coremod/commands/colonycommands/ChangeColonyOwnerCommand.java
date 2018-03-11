@@ -3,7 +3,6 @@ package com.minecolonies.coremod.commands.colonycommands;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -15,7 +14,6 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionArgument;
 import com.minecolonies.coremod.commands.IActionCommand;
-import com.mojang.authlib.GameProfile;
 
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -24,7 +22,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraftforge.common.util.FakePlayer;
 
 /**
  * gives ability to change the colony owner.
@@ -42,7 +39,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
     public ChangeColonyOwnerCommand()
     {
     }
-    
+
     /**
      * Initialize this SubCommand with it's parents.
      *
@@ -65,26 +62,17 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
             @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
     {
         Colony colony = null;
-        EntityPlayer player = null;
-        for (final ActionArgument actionArgument : actionArgumentList)
+        final Object colonyObject = argumentValueByActionArgumentNameMap.get("colony");
+        if (null != colonyObject)
         {
-            final Object object = argumentValueByActionArgumentNameMap.get(actionArgument.getName());
-            switch (actionArgument.getType()) {
-                case Player:
-                    player = (EntityPlayer) object;
-                    break;
-                case Colony:
-                    colony = (Colony) object;
-                    break;
-                case Citizen:
-                    break;
-                case CoordinateX:
-                case CoordinateY:
-                case CoordinateZ:
-                    break;
-                default:
-                    break;
-            }
+            colony = (Colony) colonyObject;
+        }
+
+        EntityPlayer player = null;
+        final Object playerObject = argumentValueByActionArgumentNameMap.get("player");
+        if (null != playerObject)
+        {
+            player = (EntityPlayer) playerObject;
         }
 
         executeShared(server, sender, colony, player);
@@ -149,7 +137,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
             return;
         }
 
-        EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
+        final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
 
         executeShared(server, sender, colony, player);
     }

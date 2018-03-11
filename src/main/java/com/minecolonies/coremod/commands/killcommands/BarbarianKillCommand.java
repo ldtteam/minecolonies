@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.commands.killcommands;
 
+import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
 
 /**

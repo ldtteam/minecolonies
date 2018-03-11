@@ -4,6 +4,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.minecolonies.coremod.commands.ActionArgument;
+import com.minecolonies.coremod.commands.IActionCommand;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -16,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.SHOWCOLONYINFO;
@@ -23,7 +26,7 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.S
 /**
  * List all colonies.
  */
-public class ShowColonyInfoCommand extends AbstractSingleCommand
+public class ShowColonyInfoCommand extends AbstractSingleCommand implements IActionCommand
 {
 
     public static final  String DESC                       = "info";
@@ -33,11 +36,16 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
     private static final String COORDINATES_TEXT           = "§2Coordinates: §f";
     private static final String COORDINATES_XYZ            = "§4x=§f%s §4y=§f%s §4z=§f%s";
     private static final String CITIZENS                   = "§2Citizens: §f";
-    private static final String NO_COLONY_FOUND_MESSAGE    = "Colony with mayor %s not found.";
+    private static final String NO_COLONY_FOR_PLAYER_FOUND_MESSAGE = "Colony with mayor %s not found.";
+    private static final String NO_COLONY_FOUND_MESSAGE    = "Colony not found.";
     private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
     private static final String LAST_CONTACT_TEXT          = "Last contact with Owner or Officer: %d hours ago!";
     private static final String IS_DELETABLE               = "If true this colony cannot be deleted: ";
     private static final String CANNOT_BE_RAIDED           = "This colony is unable to be raided";
+
+    public ShowColonyInfoCommand()
+    {
+    }
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -56,11 +64,78 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
         return super.getCommandUsage(sender) + "<ColonyId|OwnerName>";
     }
 
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final List<ActionArgument> actionArgumentList,
+            @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
+    {
+        // See if we have a valid colony,
+        Colony colony = null;
+        final Object colonyObject = argumentValueByActionArgumentNameMap.get("colony");
+        if (null != colonyObject)
+        {
+            colony = (Colony) colonyObject;
+        }
+
+        EntityPlayer player = null;
+        if (null == colony)
+        {
+            // see if we have a valid player
+            final Object playerObject = argumentValueByActionArgumentNameMap.get("player");
+            if (null != playerObject)
+            {
+                player = (EntityPlayer) playerObject;
+                final IColony iColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player);
+                if (iColony != null)
+                {
+                    if (!canPlayerUseCommand(player, SHOWCOLONYINFO, iColony.getID()))
+                    {
+                        sender.getCommandSenderEntity().sendMessage(new TextComponentString(NOT_PERMITTED));
+                        return;
+                    }
+                    colony = ColonyManager.getColony(iColony.getID());
+                }
+            }
+        }
+
+        if (null == colony)
+        {
+            // see if we have a sender that is a valid player
+            if (sender.getCommandSenderEntity() != null)
+            {
+                final UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
+                final IColony iColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
+                if (iColony != null)
+                {
+                    player = (EntityPlayer) sender;
+                    if (!canPlayerUseCommand(player, SHOWCOLONYINFO, iColony.getID()))
+                    {
+                        sender.getCommandSenderEntity().sendMessage(new TextComponentString(NOT_PERMITTED));
+                        return;
+                    }
+                    colony = ColonyManager.getColony(iColony.getID());
+                }
+            }
+        }
+
+        if (colony == null)
+        {
+            if (null != player)
+            {
+                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, player.getName())));
+            }
+            else
+            {
+                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID)));
+            }
+            return;
+        }
+
+        executeShared(server, sender, colony);
+    }
+
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        int colonyId;
-        colonyId = getIthArgument(args, 0, -1);
+        int colonyId = getIthArgument(args, 0, -1);
         IColony tempColony = ColonyManager.getColony(colonyId);
 
         if (colonyId == -1 && args.length >= 1)
@@ -99,11 +174,11 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
         {
             if (colonyId == -1 && args.length != 0)
             {
-                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, args[0])));
+                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOR_PLAYER_FOUND_MESSAGE, args[0])));
             }
             else
             {
-                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
+                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, colonyId)));
             }
             return;
         }
@@ -122,6 +197,11 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
             return;
         }
 
+        executeShared(server, sender, colony);
+    }
+
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final Colony colony) throws CommandException
+    {
         final BlockPos position = colony.getCenter();
         sender.sendMessage(new TextComponentString(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()));
         final String mayor = colony.getPermissions().getOwnerName();

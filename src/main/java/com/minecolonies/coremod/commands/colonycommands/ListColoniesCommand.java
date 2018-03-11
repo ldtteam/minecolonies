@@ -3,6 +3,9 @@ package com.minecolonies.coremod.commands.colonycommands;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.minecolonies.coremod.commands.ActionArgument;
+import com.minecolonies.coremod.commands.IActionCommand;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -17,18 +20,19 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * List all colonies.
  */
-public class ListColoniesCommand extends AbstractSingleCommand
+public class ListColoniesCommand extends AbstractSingleCommand implements IActionCommand
 {
     public static final  String DESC                   = "list";
     private static final String ID_AND_NAME_TEXT       = "§2ID: §f%s §2 Name: §f%s";
     private static final String COORDINATES_TEXT       = "§2Coordinates: §f";
     private static final String COORDINATES_XYZ        = "§4x=§f%s §4y=§f%s §4z=§f%s";
-    private static final String LIST_COMMAND_SUGGESTED = "/mc colonies list ";
-    public static final  String TELEPORT_COMMAND       = "/mc colony teleport ";
+    private static final String LIST_COMMAND_SUGGESTED = "/mc colonies list page: ";
+    public static final  String TELEPORT_COMMAND       = "/mc colony teleport colony: ";
     private static final String PAGE_TOP_LEFT          = "§2   ------------------ page ";
     private static final String PAGE_TOP_RIGHT         = " ------------------";
     private static final String PAGE_TOP_MIDDLE     = " of ";
@@ -36,8 +40,12 @@ public class ListColoniesCommand extends AbstractSingleCommand
     private static final String NEXT_PAGE           = "next -> ";
     private static final String PAGE_LINE           = "§2 ----------------";
     private static final String PAGE_LINE_DIVIDER   = "§2 | ";
-    private static final String COMMAND_COLONY_INFO = "/mc colony info %d";
+    private static final String COMMAND_COLONY_INFO = "/mc colony info colony: %d";
     private static final int    COLONIES_ON_PAGE    = 9;
+
+    public ListColoniesCommand()
+    {
+    }
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -56,16 +64,46 @@ public class ListColoniesCommand extends AbstractSingleCommand
         return super.getCommandUsage(sender);
     }
 
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final List<ActionArgument> actionArgumentList,
+            @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
+    {
+        Integer page = null;
+        final Object pageObject = argumentValueByActionArgumentNameMap.get("page");
+        if (null != pageObject)
+        {
+            page = (Integer) pageObject;
+        }
+        Integer abandonedSinceTimeInHours = null;
+        final Object abandonedSinceTimeInHoursObject = argumentValueByActionArgumentNameMap.get("abandonedSinceTimeInHours");
+        if (null != abandonedSinceTimeInHoursObject)
+        {
+            abandonedSinceTimeInHours = (Integer) abandonedSinceTimeInHoursObject;
+        }
+        executeShared(server, sender, page, abandonedSinceTimeInHours);
+    }
+
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         int page = getIthArgument(args, 0, 1);
-        final int abandonedSince = getIthArgument(args, 1, 0);
+        final int abandonedSinceTimeInHours = getIthArgument(args, 1, 0);
+
+        executeShared(server, sender, page, abandonedSinceTimeInHours);
+    }
+
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, Integer page, Integer abandonedSinceTimeInHours) throws CommandException
+    {
+        if (null == page) {
+            page = 1;
+        }
+        if (null == abandonedSinceTimeInHours) {
+            abandonedSinceTimeInHours = 0;
+        }
 
         final List<Colony> colonies;
-        if (abandonedSince > 0)
+        if (abandonedSinceTimeInHours > 0)
         {
-            colonies = ColonyManager.getColoniesAbandonedSince(abandonedSince);
+            colonies = ColonyManager.getColoniesAbandonedSince(abandonedSinceTimeInHours);
         }
         else
         {
