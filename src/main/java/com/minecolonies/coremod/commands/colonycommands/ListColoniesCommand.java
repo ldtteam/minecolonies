@@ -89,7 +89,7 @@ public class ListColoniesCommand extends AbstractSingleCommand implements IActio
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        int page = getIthArgument(args, 0, 1);
+        final int page = getIthArgument(args, 0, 1);
         final int abandonedSinceTimeInHours = getIthArgument(args, 1, 0);
 
         executeShared(server, sender, page, abandonedSinceTimeInHours);
