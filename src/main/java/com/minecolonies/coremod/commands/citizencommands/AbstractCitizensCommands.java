@@ -49,6 +49,12 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
             colony = (Colony) colonyObject;
         }
 
+        if (colony == null)
+        {
+            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+            return;
+        }
+
         CitizenData citizenData = null;
         final Object citizenDataObject = argumentValueByActionArgumentNameMap.get("citizen");
         if (null != citizenDataObject)
@@ -206,5 +212,5 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
      * @param colonyId  the id for the colony
      * @param citizenId the id for the citizen
      */
-    public abstract void executeSpecializedCode(@NotNull MinecraftServer server, ICommandSender sender, Colony colonyId, int citizenId);
+    public abstract void executeSpecializedCode(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final Colony colonyId, final int citizenId);
 }
