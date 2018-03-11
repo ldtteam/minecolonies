@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  */
 public class CommandEntryPointNew extends CommandBase
 {
-    static class ParsingResult
+    private static class ParsingResult
     {
         @NotNull private final List<String> tabCompletions;
         @NotNull private final TreeNode<Menu> executionTreeNode;
@@ -343,7 +343,8 @@ public class CommandEntryPointNew extends CommandBase
 
         final Map<String, Object> argumentValueByActionArgumentNameMap = new HashMap<>();
         final List<ActionArgument> actionArgumentList = new ArrayList<>();
-        if (null != executionActionArgumentList) {
+        if (null != executionActionArgumentList)
+        {
             for (final ActionArgument executionActionArgument : executionActionArgumentList)
             {
                 if (!executionActionArgument.isValueSet())
