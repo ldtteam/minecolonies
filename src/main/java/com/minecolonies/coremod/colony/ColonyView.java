@@ -12,7 +12,6 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.permissions.PermissionsView;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
@@ -74,19 +73,24 @@ public final class ColonyView implements IColony
     private boolean hasColonyWarehouse;
 
     /**
+     * Last barbarian spawnpoints.
+     */
+    private final List<BlockPos> lastSpawnPoints = new ArrayList<>();
+
+    /**
      * The Positions which players can freely interact.
      */
-    private Set<BlockPos> freePositions = new HashSet<>();
+    private final Set<BlockPos> freePositions = new HashSet<>();
 
     /**
      * The Blocks which players can freely interact with.
      */
-    private Set<Block> freeBlocks = new HashSet<>();
+    private final Set<Block> freeBlocks = new HashSet<>();
 
     /**
      * The Set of waypoints.
      */
-    private Set<BlockPos> wayPoints = new HashSet<>();
+    private final Set<BlockPos> wayPoints = new HashSet<>();
 
     /**
      * The overall happiness of the colony.
@@ -176,6 +180,12 @@ public final class ColonyView implements IColony
         //  Citizens are sent as a separate packet
 
         ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
+
+        buf.writeInt(colony.getBarbManager().getLastSpawnPoints().size());
+        for (final BlockPos block : colony.getBarbManager().getLastSpawnPoints())
+        {
+            BlockPosUtil.writeToByteBuf(buf, block);
+        }
     }
 
     /**
@@ -448,9 +458,10 @@ public final class ColonyView implements IColony
             buildings.clear();
         }
 
-        freePositions = new HashSet<>();
-        freeBlocks = new HashSet<>();
-        wayPoints = new HashSet<>();
+        freePositions.clear();
+        freeBlocks.clear();
+        wayPoints.clear();
+        lastSpawnPoints.clear();
 
         final int blockListSize = buf.readInt();
         for (int i = 0; i < blockListSize; i++)
@@ -476,6 +487,13 @@ public final class ColonyView implements IColony
 
         this.requestManager = new StandardRequestManager(this);
         this.requestManager.deserializeNBT(ByteBufUtils.readTag(buf));
+
+        final int barbSpawnListSize = buf.readInt();
+        for (int i = 0; i < barbSpawnListSize; i++)
+        {
+            lastSpawnPoints.add(BlockPosUtil.readFromByteBuf(buf));
+        }
+        Collections.reverse(lastSpawnPoints);
         return null;
     }
 
@@ -784,5 +802,15 @@ public final class ColonyView implements IColony
     public Set<BlockPos> getWayPoints()
     {
         return new HashSet<>(wayPoints);
+    }
+
+    /**
+     * Get a list of all barb spawn positions in the colony view.
+     *
+     * @return a copy of the list.
+     */
+    public List<BlockPos> getLastSpawnPoints()
+    {
+        return new ArrayList<>(lastSpawnPoints);
     }
 }

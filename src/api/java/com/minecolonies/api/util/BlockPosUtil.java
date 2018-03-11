@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
+
 /**
  * Utility methods for BlockPos.
  */
@@ -477,5 +479,45 @@ public final class BlockPosUtil
     {
         final BlockPos vector = neighbor.subtract(pos);
         return EnumFacing.getFacingFromVector(vector.getX(), vector.getY(), -vector.getZ());
+    }
+
+    /**
+     * Calculates the direction a position is from the building.
+     *
+     * @param building the building.
+     * @param pos    the position.
+     * @return a string describing the direction.
+     */
+    public static String calcDirection(@NotNull final BlockPos building, @NotNull final BlockPos pos)
+    {
+        final StringBuilder dist = new StringBuilder();
+
+        if (pos.getZ() > building.getZ() + 1)
+        {
+            dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_SOUTH));
+        }
+        else if (pos.getZ() < building.getZ() - 1)
+        {
+            dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_NORTH));
+        }
+
+        if (pos.getX() > building.getX() + 1)
+        {
+            if(!dist.toString().isEmpty())
+            {
+                dist.append('/');
+            }
+            dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST));
+        }
+        else if (pos.getX() < building.getX() - 1)
+        {
+            if(!dist.toString().isEmpty())
+            {
+                dist.append('/');
+            }
+            dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST));
+        }
+
+        return dist.toString();
     }
 }

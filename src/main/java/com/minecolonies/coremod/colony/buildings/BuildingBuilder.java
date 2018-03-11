@@ -10,6 +10,8 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
@@ -19,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -234,6 +237,45 @@ public class BuildingBuilder extends AbstractBuildingWorker
             ByteBufUtils.writeItemStack(buf, resource.getItemStack());
             buf.writeInt(resource.getAvailable());
             buf.writeInt(resource.getAmount());
+        }
+
+        final CitizenData data = this.getMainWorker();
+        if(data != null && data.getJob() instanceof JobBuilder)
+        {
+            final JobBuilder builderJob = (JobBuilder) data.getJob();
+            final WorkOrderBuildDecoration workOrderBuildDecoration = builderJob.getWorkOrder();
+            if(workOrderBuildDecoration != null)
+            {
+                final BlockPos pos = workOrderBuildDecoration.getBuildingLocation();
+                final String name =
+                        workOrderBuildDecoration instanceof WorkOrderBuild ? ((WorkOrderBuild) workOrderBuildDecoration).getUpgradeName() : workOrderBuildDecoration.getName();
+                ByteBufUtils.writeUTF8String(buf, name);
+
+                final String desc;
+                if(pos.equals(getLocation()))
+                {
+                    desc = "here";
+                }
+                else
+                {
+                    final BlockPos relativePos = getLocation().subtract(pos);
+                    final EnumFacing facingX = EnumFacing.getFacingFromVector(relativePos.getX(), 0, 0);
+                    final EnumFacing facingZ = EnumFacing.getFacingFromVector(0, 0, relativePos.getZ());
+                    desc = relativePos.getX() + " " + facingX + " " + relativePos.getZ() + " " + facingZ;
+                }
+
+                ByteBufUtils.writeUTF8String(buf, desc);
+            }
+            else
+            {
+                ByteBufUtils.writeUTF8String(buf, "-");
+                ByteBufUtils.writeUTF8String(buf, "");
+            }
+        }
+        else
+        {
+            ByteBufUtils.writeUTF8String(buf, "-");
+            ByteBufUtils.writeUTF8String(buf, "");
         }
     }
 
