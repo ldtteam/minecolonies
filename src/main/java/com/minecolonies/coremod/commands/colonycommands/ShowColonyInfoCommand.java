@@ -120,11 +120,11 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
         {
             if (null != player)
             {
-                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, player.getName())));
+                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOR_PLAYER_FOUND_MESSAGE, player.getName())));
             }
             else
             {
-                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID)));
+                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE)));
             }
             return;
         }
@@ -178,7 +178,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
             }
             else
             {
-                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, colonyId)));
+                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
             }
             return;
         }
@@ -188,7 +188,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
         {
             if (colonyId == -1 && args.length != 0)
             {
-                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, args[0])));
+                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOR_PLAYER_FOUND_MESSAGE, args[0])));
             }
             else
             {
