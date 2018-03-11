@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.commands;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -34,7 +36,7 @@ public class ActionMenu extends AbstractMenu
 
     public List<ActionArgument> getActionArgumentList()
     {
-        return actionArgumentList;
+        return new ArrayList<>(actionArgumentList);
     }
 
     @Override
