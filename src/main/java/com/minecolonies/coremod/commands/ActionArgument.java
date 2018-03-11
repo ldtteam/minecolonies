@@ -59,7 +59,7 @@ public class ActionArgument
         {
             sb.append('[');
         }
-        sb.append(name).append(':').append(' ').append(type.getUsageValue());
+        sb.append(name).append(": ").append(type.getUsageValue());
         if (isRequired())
         {
             sb.append('>');
