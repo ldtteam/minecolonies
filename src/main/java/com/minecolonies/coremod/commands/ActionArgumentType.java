@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -22,13 +23,10 @@ import com.minecolonies.coremod.commands.CommandEntryPointNew.ActionMenuHolder;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.FakePlayer;
-
-import java.util.Arrays;
 
 public enum ActionArgumentType
 {
@@ -211,8 +209,7 @@ public enum ActionArgumentType
                                 middleNameSet.add(citizenNameParts[1]);
                             }
                         }
-                        final List<String> middleNameMatches = middleNameSet.stream().filter(k -> k.startsWith(potentiaCitizenNameParts[1])).collect(Collectors.toList());
-                        return middleNameMatches;
+                        return middleNameSet.stream().filter(k -> k.startsWith(potentiaCitizenNameParts[1])).collect(Collectors.toList());
                     }
                     else
                     {
@@ -225,8 +222,7 @@ public enum ActionArgumentType
                                 lastNameSet.add(citizenNameParts[2]);
                             }
                         }
-                        final List<String> lastNameMatches = lastNameSet.stream().filter(k -> k.startsWith(potentiaCitizenNameParts[2])).collect(Collectors.toList());
-                        return lastNameMatches;
+                        return lastNameSet.stream().filter(k -> k.startsWith(potentiaCitizenNameParts[2])).collect(Collectors.toList());
                    }
                 }
                 break;
