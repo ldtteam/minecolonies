@@ -247,8 +247,7 @@ public enum ActionArgumentType
             case INTEGER:
                 try
                 {
-                    final int coordinate = Integer.parseInt(potentialArgumentValue);
-                    return coordinate;
+                    return Integer.parseInt(potentialArgumentValue);
                 }
                 catch (final NumberFormatException e)
                 {
@@ -261,8 +260,7 @@ public enum ActionArgumentType
             case COORDINATE_Z:
                 try
                 {
-                    final int coordinate = Integer.parseInt(potentialArgumentValue);
-                    return coordinate;
+                    return Integer.parseInt(potentialArgumentValue);
                 }
                 catch (final NumberFormatException e)
                 {
@@ -300,8 +298,7 @@ public enum ActionArgumentType
                     }
                     if (colonyNumberStrings.contains(String.valueOf(colonyNumber)))
                     {
-                        final Colony colony = ColonyManager.getColony(colonyNumber);
-                        return colony;
+                        return ColonyManager.getColony(colonyNumber);
                     }
                 }
                 catch (final NumberFormatException e)
