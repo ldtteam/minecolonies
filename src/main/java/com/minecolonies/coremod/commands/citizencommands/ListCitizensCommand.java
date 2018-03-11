@@ -175,7 +175,7 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
                 sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
             });
         }
-        drawPageSwitcher(sender, page, citizenCount, halfPage, colony.getID());
+        drawPageSwitcher(sender, page, citizenCount, halfPage, (null != colony ? colony.getID() : -1));
     }
 
     /**
