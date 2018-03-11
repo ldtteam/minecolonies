@@ -194,8 +194,7 @@ public class CommandEntryPointNew extends CommandBase
         {
             final StringBuilder sb = new StringBuilder();
             buildParentPathString(sb, currentMenuTreeNode);
-            sb.append(' ');
-            sb.append('<');
+            sb.append(' ').append('<');
             boolean first = true;
             for (final TreeNode<Menu> childTreeNode : currentMenuTreeNode.getChildren())
             {
@@ -222,8 +221,7 @@ public class CommandEntryPointNew extends CommandBase
                 final ActionMenu actionMenu = (ActionMenu) menu;
                 for (final ActionArgument actionArgument : actionMenu.getActionArgumentList())
                 {
-                    sb.append(' ');
-                    sb.append(actionArgument.getUsage());
+                    sb.append(' ').append(actionArgument.getUsage());
                 }
             }
             return sb.toString();
@@ -239,14 +237,12 @@ public class CommandEntryPointNew extends CommandBase
             treeNodeMenuListMinusRoot.add(currentMenuTreeNode);
             currentMenuTreeNode = currentMenuTreeNode.getParent();
         }
-        sb.append('/');
-        sb.append(currentMenuTreeNode.getData().getMenuItemName());
+        sb.append('/').append(currentMenuTreeNode.getData().getMenuItemName());
 
         Collections.reverse(treeNodeMenuListMinusRoot);
         for (final TreeNode<Menu> treeNode : treeNodeMenuListMinusRoot)
         {
-            sb.append(' ');
-            sb.append(treeNode.getData().getMenuItemName());
+            sb.append(' ').append(treeNode.getData().getMenuItemName());
         }
     }
 
@@ -547,8 +543,7 @@ public class CommandEntryPointNew extends CommandBase
                 final String nextPotentialWord = args[1 + wordCount];
                 if (null == possibleActionCommands.get(nextPotentialWord))
                 {
-                    sb.append(' ');
-                    sb.append(nextPotentialWord);
+                    sb.append(' ').append(nextPotentialWord);
                     ++wordCount;
                 }
                 else
