@@ -30,8 +30,12 @@ public class DoRaidTonightCommand extends AbstractSingleCommand implements IActi
     private static final TextComponentString NO_ARGUMENTS               = new TextComponentString("Please define a colony to raid tonight.");
     private static final TextComponentString SUCCESSFUL                 = new TextComponentString("Command Successful");
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public DoRaidTonightCommand()
     {
+        super();
     }
 
     /**

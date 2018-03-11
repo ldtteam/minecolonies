@@ -27,8 +27,12 @@ public class BackupCommand extends AbstractSingleCommand implements IActionComma
     public static final String BACKUP_SUCCESS_MESSAGE = "Successfully backed up colony data!";
     public static final String BACKUP_FAILURE_MESSAGE = "Failed to back up colony data!";
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public BackupCommand()
     {
+        super();
     }
 
     /**

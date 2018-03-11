@@ -32,8 +32,12 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand implements
     public static final String DESC = "check";
     private static final String COMMAND_CHECK_FOR_AUTODELETES = "/mc check confirmDelete: true";
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public CheckForAutoDeletesCommand()
     {
+        super();
     }
 
     /**

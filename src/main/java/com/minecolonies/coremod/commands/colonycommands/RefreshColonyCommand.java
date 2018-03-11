@@ -32,8 +32,12 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
     private static final String NO_COLONY_FOUND_MESSAGE    = "Colony with mayor %s not found.";
     private static final String REFRESH                    = "Refresh succesful!";
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public RefreshColonyCommand()
     {
+        super();
     }
 
     /**

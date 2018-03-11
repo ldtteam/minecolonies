@@ -30,8 +30,12 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
     private static final String COLONY_NULL     = "Couldn't find colony %d.";
     private static final String NO_ARGUMENTS    = "Please define a colony";
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public RSResetCommand()
     {
+        super();
     }
 
     /**

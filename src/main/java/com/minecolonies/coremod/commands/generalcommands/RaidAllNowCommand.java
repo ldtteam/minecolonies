@@ -28,8 +28,12 @@ public class RaidAllNowCommand extends AbstractSingleCommand implements IActionC
     public static final  String              DESC       = "raid-now";
     private static final TextComponentString SUCCESSFUL = new TextComponentString("Command Successful");
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public RaidAllNowCommand()
     {
+        super();
     }
 
     /**

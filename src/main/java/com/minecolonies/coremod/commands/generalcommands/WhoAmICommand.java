@@ -35,8 +35,12 @@ public class WhoAmICommand extends AbstractSingleCommand implements IActionComma
      */
     public static final String TELL_HIM = "You are %s, your colony is %s at position %s";
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public WhoAmICommand()
     {
+        super();
     }
 
     /**

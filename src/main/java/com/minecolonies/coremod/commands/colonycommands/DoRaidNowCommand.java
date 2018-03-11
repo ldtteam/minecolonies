@@ -30,8 +30,12 @@ public class DoRaidNowCommand extends AbstractSingleCommand implements IActionCo
     private static final TextComponentString NO_ARGUMENTS               = new TextComponentString("Please define a colony to raid.");
     private static final TextComponentString SUCCESSFUL                 = new TextComponentString("Command Successful");
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public DoRaidNowCommand()
     {
+        super();
     }
 
     /**

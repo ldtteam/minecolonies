@@ -43,8 +43,12 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
     private static final int    FALL_DISTANCE    = 5;
     private static final String CANT_FIND_PLAYER = "No player found for teleport, please define one.";
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public RandomTeleportCommand()
     {
+        super();
     }
 
     /**

@@ -35,8 +35,12 @@ public class AddOfficerCommand extends AbstractSingleCommand implements IActionC
     private static final String COLONY_NULL     = "Couldn't find colony %d.";
     private static final String NO_ARGUMENTS    = "Please define a colony or player";
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public AddOfficerCommand()
     {
+        super();
     }
 
     /**

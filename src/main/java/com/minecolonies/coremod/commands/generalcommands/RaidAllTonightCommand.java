@@ -28,8 +28,12 @@ public class RaidAllTonightCommand extends AbstractSingleCommand implements IAct
     public static final  String              DESC       = "raid-tonight";
     private static final TextComponentString SUCCESSFUL = new TextComponentString("Command Successful");
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public RaidAllTonightCommand()
     {
+        super();
     }
 
     /**

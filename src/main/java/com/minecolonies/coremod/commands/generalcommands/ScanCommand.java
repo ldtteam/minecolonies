@@ -31,8 +31,12 @@ public class ScanCommand extends AbstractSingleCommand implements IActionCommand
     public static final String SCAN_SUCCESS_MESSAGE = "Successfully scan structure!";
     public static final String SCAN_FAILURE_MESSAGE = "Failed to scan structure!";
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public ScanCommand()
     {
+        super();
     }
 
     /**

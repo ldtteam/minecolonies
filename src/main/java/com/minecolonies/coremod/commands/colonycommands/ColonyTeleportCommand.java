@@ -41,8 +41,12 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
      */
     private static final double MIN_DISTANCE_TO_TH = 20;
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public ColonyTeleportCommand()
     {
+        super();
     }
 
     /**

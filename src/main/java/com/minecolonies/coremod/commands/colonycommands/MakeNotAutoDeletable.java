@@ -31,8 +31,12 @@ public class MakeNotAutoDeletable extends AbstractSingleCommand implements IActi
 
     private static final int NUMBER_OR_ARGS_REQUIRED = 2;
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public MakeNotAutoDeletable()
     {
+        super();
     }
 
     /**

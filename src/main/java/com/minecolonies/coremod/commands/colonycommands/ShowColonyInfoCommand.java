@@ -43,8 +43,12 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
     private static final String IS_DELETABLE               = "If true this colony cannot be deleted: ";
     private static final String CANNOT_BE_RAIDED           = "This colony is unable to be raided";
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public ShowColonyInfoCommand()
     {
+        super();
     }
 
     /**

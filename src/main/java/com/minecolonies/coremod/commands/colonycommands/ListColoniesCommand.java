@@ -43,8 +43,12 @@ public class ListColoniesCommand extends AbstractSingleCommand implements IActio
     private static final String COMMAND_COLONY_INFO = "/mc colony info colony: %d";
     private static final int    COLONIES_ON_PAGE    = 9;
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public ListColoniesCommand()
     {
+        super();
     }
 
     /**

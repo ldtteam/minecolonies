@@ -36,8 +36,12 @@ public class KillCitizenCommand extends AbstractCitizensCommands implements IAct
      */
     private static final DamageSource CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public KillCitizenCommand()
     {
+        super();
     }
 
     /**

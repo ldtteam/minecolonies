@@ -38,8 +38,12 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
     private static final String CITIZEN_NO_ACTIVITY        = "§4No activity is being desired or executed!";
     private static final String CITIZEN_NOT_LOADED         = "Citizen entity not loaded!";
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public CitizenInfoCommand()
     {
+        super();
     }
 
     /**

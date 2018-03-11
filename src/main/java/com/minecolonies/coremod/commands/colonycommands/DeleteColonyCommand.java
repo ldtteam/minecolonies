@@ -42,8 +42,12 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
     private static final String DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED = "/mc colony delete %d %s true";
     private static final String DELETE_COLONY_TASK_SCHEDULED = "Delete colony task scheduled.";
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public DeleteColonyCommand()
     {
+        super();
     }
 
     /**

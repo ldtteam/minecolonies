@@ -31,8 +31,12 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand impleme
     private static final String NO_ARGUMENTS               = "Please define a colony";
     private static final String NO_COLONY_WITH_ID_FOUND_MESSAGE = "Colony with ID %d not found.";
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public DisableBarbarianSpawnsCommand()
     {
+        super();
     }
 
     /**

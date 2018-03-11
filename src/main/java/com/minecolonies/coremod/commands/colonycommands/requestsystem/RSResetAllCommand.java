@@ -24,8 +24,12 @@ public class RSResetAllCommand extends AbstractSingleCommand implements IActionC
     public static final  String DESC            = "rsResetAll";
     private static final String SUCCESS_MESSAGE = "After 1.618 Seconds it reinstantiated all colonies completely new.";
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public RSResetAllCommand()
     {
+        super();
     }
 
     /**

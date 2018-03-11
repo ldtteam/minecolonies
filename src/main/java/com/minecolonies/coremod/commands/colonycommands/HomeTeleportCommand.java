@@ -27,8 +27,12 @@ public class HomeTeleportCommand extends AbstractSingleCommand implements IActio
      */
     public static final String DESC = "home";
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public HomeTeleportCommand()
     {
+        super();
     }
 
     /**

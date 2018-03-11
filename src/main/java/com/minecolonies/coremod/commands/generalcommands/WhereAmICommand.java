@@ -46,8 +46,12 @@ public class WhereAmICommand extends AbstractSingleCommand implements IActionCom
      */
     public static final String INSIDE = "You're inside colony %s with id: %s, the colony center is approx %.2f blocks away.";
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public WhereAmICommand()
     {
+        super();
     }
 
     /**

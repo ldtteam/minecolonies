@@ -36,8 +36,12 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
     private static final String NO_PLAYER       = "Can't find player to add";
     private static final String HAS_A_COLONY    = "Player %s has a colony already.";
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public ChangeColonyOwnerCommand()
     {
+        super();
     }
 
     /**

@@ -46,8 +46,12 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
     private static final String PAGE_LINE_DIVIDER      = "§2 | ";
     private static final int    CITIZENS_ON_PAGE       = 9;
 
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
     public ListCitizensCommand()
     {
+        super();
     }
 
     /**
