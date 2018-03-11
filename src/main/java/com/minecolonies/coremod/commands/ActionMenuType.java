@@ -280,7 +280,7 @@ public enum ActionMenuType implements MenuType
             )),
     ;
 
-    @NotNull private ActionMenu menu;
+    @NotNull private final ActionMenu menu;
 
     ActionMenuType(@NotNull final ActionMenu menu)
     {

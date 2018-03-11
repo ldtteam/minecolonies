@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.colony.permissions;
 
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraftforge.server.permission.DefaultPermissionLevel;
 
 /**
@@ -46,11 +48,11 @@ public enum ForgePermissionNodes
     SCAN ("com.minecolonies.coremod.Scan", DefaultPermissionLevel.OP, "Can scan structures."),
     ;
 
-    private String nodeName;
-    private DefaultPermissionLevel defaultPermissionLevel;
-    private String description;
+    @NotNull final private String nodeName;
+    @NotNull final private DefaultPermissionLevel defaultPermissionLevel;
+    @NotNull final private String description;
 
-    private ForgePermissionNodes(String nodeName, DefaultPermissionLevel defaultPermissionLevel, String description)
+    private ForgePermissionNodes(@NotNull final String nodeName, @NotNull final DefaultPermissionLevel defaultPermissionLevel, @NotNull final String description)
     {
         this.nodeName = nodeName;
         this.defaultPermissionLevel = defaultPermissionLevel;

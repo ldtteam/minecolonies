@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.jetbrains.annotations.NotNull;
@@ -46,10 +47,10 @@ public enum ActionArgumentType
         OPTIONAL
     }
 
-    private String usageValue;
-    private int allowedSpaceCount;
+    @Nonnull private final String usageValue;
+    private final int allowedSpaceCount;
 
-    ActionArgumentType(final String usageValue, final int allowedSpaceCount)
+    ActionArgumentType(@Nonnull final String usageValue, final int allowedSpaceCount)
     {
         this.usageValue = usageValue;
         this.allowedSpaceCount = allowedSpaceCount;

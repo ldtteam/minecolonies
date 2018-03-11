@@ -3,6 +3,9 @@ package com.minecolonies.coremod.commands;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.jetbrains.annotations.NotNull;
 
 import com.minecolonies.coremod.colony.permissions.ForgePermissionNodes;
@@ -19,7 +22,7 @@ public class ActionMenu extends AbstractMenu
             @NotNull final String menuItemName,
             @NotNull final ForgePermissionNodes forgePermissionNode,
             @NotNull final Class<? extends IActionCommand> actionCommandClass,
-            final ActionArgument ... actionArguments
+            @Nullable final ActionArgument ... actionArguments
             )
     {
         super(menuItemName);

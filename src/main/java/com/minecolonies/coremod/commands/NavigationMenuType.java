@@ -62,7 +62,7 @@ public enum NavigationMenuType implements MenuType
 
     ;
 
-    @NotNull private NavigationMenu menu;
+    @NotNull private final NavigationMenu menu;
 
     NavigationMenuType(@NotNull final NavigationMenu menu)
     {

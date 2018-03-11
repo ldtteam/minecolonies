@@ -3,20 +3,22 @@ package com.minecolonies.coremod.commands;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import org.jetbrains.annotations.NotNull;
 
 import com.minecolonies.coremod.commands.ActionArgumentType.Is;
 
 public class ActionArgument
 {
-    private String name;
-    private ActionArgumentType type;
-    private boolean required;
+    @NotNull private final String name;
+    @NotNull private final ActionArgumentType type;
+    private final boolean required;
     private boolean isValueSet = false;
-    private Object value;
-    @NotNull private final List<ActionArgument> actionArgumentList;
+    @Nullable private Object value;
+    @Nullable private final List<ActionArgument> actionArgumentList;
 
-    public ActionArgument(final String name, final ActionArgumentType type, final Is optionalOrRequired, final ActionArgument ... actionArguments
+    public ActionArgument(@NotNull final String name, @NotNull final ActionArgumentType type, final Is optionalOrRequired, @Nullable final ActionArgument ... actionArguments
 )
     {
         super();
