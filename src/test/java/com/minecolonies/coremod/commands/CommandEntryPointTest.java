@@ -48,7 +48,7 @@ public class CommandEntryPointTest
     @Nullable private BlockPos pos;
 
     @Before
-    public void setup()
+    public void setUp()
     {
         final Colony colony1 = mock(Colony.class);
         when(colony1.getID()).thenReturn(1);
