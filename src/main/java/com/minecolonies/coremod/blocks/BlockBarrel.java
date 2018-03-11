@@ -4,8 +4,10 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
+import com.minecolonies.coremod.tileentities.TileEntityBarrel;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -13,27 +15,23 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
-public class BlockBarrel extends Block
+public class BlockBarrel extends AbstractBlockMinecolonies<BlockBarrel>
 {
-    private static final int MIN_FULLNESS           = 0;
-    private static final int MAX_FULLNESS           = 16;
-    private static final int BARRELSTATE_FILLING    = 0;
-    private static final int BARRELSTATE_COMPOSTING = 1;
-    private static final int BARRELSTATE_DONE       = 2;
 
-    // todo: use a TileEntity to store state
-
-    private static final PropertyInteger            BARRELSTATE    = PropertyInteger.create("BARRELSTATE", BARRELSTATE_FILLING, BARRELSTATE_DONE);
+    //public static final PropertyEnum<BarrelBlockType> VARIANT        = PropertyEnum.create("variant", BarrelBlockType.class);
     /**
      * The hardness this block has.
      */
@@ -41,21 +39,16 @@ public class BlockBarrel extends Block
     /**
      * This blocks name.
      */
-    private static final String                     BLOCK_NAME     = "blockBarrel";
+    private static final String                     BLOCK_NAME     = "Crate";
     /**
      * The resistance this block has.
      */
     private static final float                      RESISTANCE     = 1F;
-    private static final HashMap<BlockPos, Integer> timers         = new HashMap<>();
-    private static final HashMap<BlockPos, Integer> fillings       = new HashMap<>();
-    private static final int                        TIMER_END      = 20;
 
     public BlockBarrel()
     {
         super(Material.WOOD);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(BARRELSTATE, BARRELSTATE_FILLING));
-
-        this.setTickRandomly(true);
+        //this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, BarrelBlockType.ZERO));
         initBlock();
     }
 
@@ -74,83 +67,7 @@ public class BlockBarrel extends Block
         setResistance(RESISTANCE);
     }
 
-    public void addItemToBarrel(final World worldIn, final EntityPlayer playerIn, final ItemStack itemStack, final IBlockState state, final BlockPos pos)
-    {
-        useBarrel(worldIn, playerIn, itemStack, state, pos);
-    }
 
-    //whenever player right click to barrel call this.
-    public boolean useBarrel(final World worldIn, final EntityPlayer playerIn, final ItemStack itemstack, final IBlockState state, final BlockPos pos)
-    {
-        Log.getLogger().info("block activated");
-
-        final int barrelState = state.getValue(BARRELSTATE);
-        int fullness = fillings.getOrDefault(pos, 0);
-
-        Log.getLogger().info("At this moment bs= " + barrelState + " and fl=" + fullness);
-
-
-        //if statement 1
-        if (state.getValue(BARRELSTATE) == BARRELSTATE_DONE)
-        {
-            // todo: add this back in once compost exists again
-            // playerIn.inventory.addItemStackToInventory(new ItemStack(ModItems.compost, 8));
-            worldIn.setBlockState(pos, state.withProperty(BARRELSTATE, BARRELSTATE_FILLING));
-            fillings.put(pos, MIN_FULLNESS);
-            Log.getLogger().info("Set Blockstate to " + worldIn.getBlockState(pos));
-            return true;
-        }
-
-        if (ItemStackUtils.isEmpty(itemstack))
-        {
-            return true;
-        }
-
-        final Item item = itemstack.getItem();
-
-        if (item == Items.ROTTEN_FLESH && barrelState == BARRELSTATE_FILLING)
-        {
-            Log.getLogger().info("item Consumed");
-
-            ItemStackUtils.changeSize(itemstack, -1);
-
-            fullness += 1;
-            if (fullness >= MAX_FULLNESS)
-            {
-                fullness = MAX_FULLNESS;
-                worldIn.setBlockState(pos, state.withProperty(BARRELSTATE, BARRELSTATE_COMPOSTING));
-            }
-            fillings.put(pos, fullness);
-            Log.getLogger().info("now FULLNESS = " + fullness);
-
-            return true;
-        }
-
-        return true;
-    }
-
-    public void getItemFromBarrel(final World worldIn, final EntityPlayer playerIn, final ItemStack itemStack, final IBlockState state, final BlockPos pos)
-    {
-        final int bs = state.getValue(BARRELSTATE);
-        if (bs == 2)
-        {
-            useBarrel(worldIn, playerIn, null, state, pos);
-        }
-    }
-
-    //todo: remove once we no longer need to support this
-    @SuppressWarnings(DEPRECATION)
-    @Override
-    public IBlockState getStateFromMeta(final int meta)
-    {
-        return this.getDefaultState().withProperty(BARRELSTATE, meta);
-    }
-
-    @Override
-    public int getMetaFromState(final IBlockState state)
-    {
-        return state.getValue(BARRELSTATE);
-    }
 
     /**
      * Used to determine ambient occlusion and culling when rebuilding chunks
@@ -169,68 +86,45 @@ public class BlockBarrel extends Block
     @Override
     public void updateTick(final World worldIn, final BlockPos pos, final IBlockState state, final Random rand)
     {
-        Log.getLogger().info("UpdateTick called");
-
-        final int barrelState = state.getValue(BARRELSTATE);
-
-        Log.getLogger().info("now BARRELSTATE = " + barrelState);
-        switch (state.getValue(BARRELSTATE))
+        TileEntity te = worldIn.getTileEntity(pos);
+        if(te instanceof TileEntityBarrel)
         {
-            case BARRELSTATE_FILLING:
-                checkIfBarrelFull(worldIn, pos, state);
-                break;
-            case BARRELSTATE_COMPOSTING:
-                doBarrelCompostTick(worldIn, pos, state);
-                break;
-            case BARRELSTATE_DONE:
-            default:
-                break;
+            ((TileEntityBarrel) te).updateTick(worldIn, pos, state, rand);
         }
     }
 
-    private static void checkIfBarrelFull(final World world, final BlockPos pos, final IBlockState state)
-    {
-        final int fullness = fillings.getOrDefault(pos, 0);
-        if (fullness >= MAX_FULLNESS)
-        {
-            Log.getLogger().info("Barrel is full.");
-            world.setBlockState(pos, state.withProperty(BARRELSTATE, BARRELSTATE_COMPOSTING));
-        }
-    }
-
-    private static void doBarrelCompostTick(final World world, final BlockPos pos, final IBlockState state)
-    {
-        int timer = timers.getOrDefault(pos, 0);
-        timer++;
-        if (timer >= TIMER_END)
-        {
-            world.setBlockState(pos, state.withProperty(BARRELSTATE, BARRELSTATE_DONE));
-            timer = 0;
-        }
-        timers.put(pos, timer);
-    }
-
-    @NotNull
     @Override
-    protected BlockStateContainer createBlockState()
+    public TileEntity createTileEntity(final World world, final IBlockState state)
     {
-        return new BlockStateContainer(this, BARRELSTATE);
+        return new TileEntityBarrel();
     }
 
+    @Override
+    public boolean hasTileEntity(final IBlockState state)
+    {
+        return true;
+    }
+
+    @Override
     public boolean onBlockActivated(
-                                     final World worldIn,
-                                     final BlockPos pos,
-                                     final IBlockState state,
-                                     final EntityPlayer playerIn,
-                                     final EnumFacing side,
-                                     final float hitX,
-                                     final float hitY,
-                                     final float hitZ)
+            final World worldIn,
+            final BlockPos pos,
+            final IBlockState state,
+            final EntityPlayer playerIn,
+            final EnumHand hand,
+            final EnumFacing facing,
+            final float hitX,
+            final float hitY,
+            final float hitZ)
     {
         Log.getLogger().info("block right-clicked");
 
         final ItemStack itemstack = playerIn.inventory.getCurrentItem();
-        useBarrel(worldIn, playerIn, itemstack, state, pos);
+        TileEntity te = worldIn.getTileEntity(pos);
+        if(te instanceof TileEntityBarrel)
+        {
+            ((TileEntityBarrel) te).useBarrel(worldIn, playerIn, itemstack, state, pos);
+        }
         return true;
     }
 }

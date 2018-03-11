@@ -121,6 +121,7 @@ public class CommonProxy implements IProxy
         GameRegistry.registerTileEntity(TileEntityRack.class, Constants.MOD_ID + ".rack");
         GameRegistry.registerTileEntity(TileEntityInfoPoster.class, Constants.MOD_ID + ".InfoPoster");
         GameRegistry.registerTileEntity(TileEntityMultiBlock.class, Constants.MOD_ID + ".MultiBlock");
+        GameRegistry.registerTileEntity(TileEntityBarrel.class, Constants.MOD_ID + ".MultiBlock");
 
         NetworkRegistry.INSTANCE.registerGuiHandler(MineColonies.instance, new GuiHandler());
     }

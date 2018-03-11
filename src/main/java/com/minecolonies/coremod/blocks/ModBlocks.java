@@ -65,6 +65,7 @@ public final class ModBlocks
     public static BlockShingle                blockShingleAcacia;
     public static BlockShingleSlab            blockShingleSlab;
     public static MultiBlock                  multiBlock;
+    public static BlockBarrel                 blockBarrel;
 
 
 

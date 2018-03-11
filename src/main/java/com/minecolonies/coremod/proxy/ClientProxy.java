@@ -214,6 +214,7 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModItems.itemAchievementProxyMetropolis);
         createCustomModel(ModBlocks.blockShingleSlab);
         createCustomModel(ModBlocks.multiBlock);
+        createCustomModel(ModBlocks.blockBarrel);
 
         ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());
 
