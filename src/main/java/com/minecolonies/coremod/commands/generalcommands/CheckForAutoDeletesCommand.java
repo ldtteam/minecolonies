@@ -63,7 +63,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand implements
         final Object confirmDeleteObject = argumentValueByActionArgumentNameMap.get("confirmDelete");
         if (null != confirmDeleteObject)
         {
-            Boolean confirmDeleteBoolean = (Boolean) confirmDeleteObject;
+            final Boolean confirmDeleteBoolean = (Boolean) confirmDeleteObject;
             confirmDelete = confirmDeleteBoolean.booleanValue();
         }
         executeShared(server, sender, confirmDelete);
