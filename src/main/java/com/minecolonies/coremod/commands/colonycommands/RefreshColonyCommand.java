@@ -86,10 +86,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
                             if (senderEntity != null)
                             {
                                 final UUID mayorID = senderEntity.getUniqueID();
-                                if (iColony == null)
-                                {
-                                    iColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
-                                }
+                                iColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
                             }
                         }
                     }
