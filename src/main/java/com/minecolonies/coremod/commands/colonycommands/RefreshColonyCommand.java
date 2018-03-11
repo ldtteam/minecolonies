@@ -28,8 +28,9 @@ import java.util.UUID;
 public class RefreshColonyCommand extends AbstractSingleCommand implements IActionCommand
 {
     public static final  String DESC                       = "refresh";
-    private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
-    private static final String NO_COLONY_FOUND_MESSAGE    = "Colony with mayor %s not found.";
+    private static final String NO_COLONY_WITH_ID_FOUND_MESSAGE = "Colony with ID %d not found.";
+    private static final String NO_COLONY_FOUND_MESSAGE = "Colony not found.";
+    private static final String NO_COLONY_WITH_PLAYER_FOUND_MESSAGE    = "Colony with mayor %s not found.";
     private static final String REFRESH                    = "Refresh succesful!";
 
     /**
@@ -99,6 +100,12 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
             }
         }
 
+        if (colony == null)
+        {
+            sender.sendMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE));
+            return;
+        }
+
         executeShared(server, sender, colony);
     }
 
@@ -137,11 +144,11 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
         {
             if (colonyId == -1 && args.length != 0)
             {
-                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, args[0])));
+                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_WITH_PLAYER_FOUND_MESSAGE, args[0])));
             }
             else
             {
-                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
+                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_WITH_ID_FOUND_MESSAGE, colonyId)));
             }
             return;
         }
@@ -149,7 +156,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
         final Colony colony = ColonyManager.getColony(tempColony.getID());
         if (colony == null)
         {
-            sender.sendMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE_ID));
+            sender.sendMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE));
             return;
         }
 
