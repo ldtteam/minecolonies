@@ -91,6 +91,7 @@ public class DoRaidTonightCommand extends AbstractSingleCommand implements IActi
         else
         {
             sender.sendMessage(NO_ARGUMENTS);
+            return;
         }
 
         executeShared(server, sender, colony);
