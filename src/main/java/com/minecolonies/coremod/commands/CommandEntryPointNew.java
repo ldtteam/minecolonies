@@ -272,14 +272,16 @@ public class CommandEntryPointNew extends CommandBase
 
         final Map<String, Object> argumentValueByActionArgumentNameMap = new HashMap<>();
         final List<ActionArgument> actionArgumentList = new ArrayList<>();
-        for (final ActionArgument executionActionArgument : executionActionArgumentList)
-        {
-            if (!executionActionArgument.isValueSet())
+        if (null != executionActionArgumentList) {
+            for (final ActionArgument executionActionArgument : executionActionArgumentList)
             {
-                throw new CommandException(getCommandUsage(sender, executionTreeNode));
+                if (!executionActionArgument.isValueSet())
+                {
+                    throw new CommandException(getCommandUsage(sender, executionTreeNode));
+                }
+                actionArgumentList.add(executionActionArgument);
+                argumentValueByActionArgumentNameMap.put(executionActionArgument.getName(), executionActionArgument.getValue());
             }
-            actionArgumentList.add(executionActionArgument);
-            argumentValueByActionArgumentNameMap.put(executionActionArgument.getName(), executionActionArgument.getValue());
         }
 
         final Class<? extends IActionCommand> clazz = actionMenu.getActionCommandClass();

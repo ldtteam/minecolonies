@@ -982,4 +982,27 @@ public class CommandEntryPointTest
             assertThat(e).hasMessage("/mineColonies citizens info <colony: colony-id>: invalid value 'BAD' for required argument colony");
         }
     }
+
+    @Test
+    @PrepareForTest(ColonyManager.class)
+    public void GIVEN_args_colony_info__DO_execute__EXPECT_throwUsage()
+    {
+
+        // GIVEN:
+        final String[] args = new String[] {
+                "colony", "info"
+        };
+
+        // DO:
+
+        try
+        {
+            instance.execute(server, sender, args);
+            Fail.failBecauseExceptionWasNotThrown(CommandException.class);
+        }
+        catch (final CommandException e)
+        {
+            assertThat(e).hasMessage("/mineColonies citizens info <colony: colony-id>: missing required parameter colony");
+        }
+    }
 }
