@@ -490,34 +490,34 @@ public final class BlockPosUtil
      */
     public static String calcDirection(@NotNull final BlockPos building, @NotNull final BlockPos field)
     {
-        String dist = "";
+        final StringBuilder dist = new StringBuilder();
 
         if (field.getZ() > building.getZ() + 1)
         {
-            dist = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_SOUTH);
+            dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_SOUTH));
         }
         else if (field.getZ() < building.getZ() - 1)
         {
-            dist = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_NORTH);
+            dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_NORTH));
         }
 
         if (field.getX() > building.getX() + 1)
         {
-            if(!dist.isEmpty())
+            if(!dist.toString().isEmpty())
             {
-                dist += "/";
+                dist.append("/");
             }
-            dist += LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST);
+            dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST));
         }
         else if (field.getX() < building.getX() - 1)
         {
-            if(!dist.isEmpty())
+            if(!dist.toString().isEmpty())
             {
-                dist += "/";
+                dist.append("/");
             }
-            dist += LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST);
+            dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST));
         }
 
-        return dist;
+        return dist.toString();
     }
 }
