@@ -66,6 +66,12 @@ public class DoRaidTonightCommand extends AbstractSingleCommand implements IActi
             colony = (Colony) colonyObject;
         }
 
+        if (colony == null)
+        {
+            sender.sendMessage(NO_COLONY_FOUND_MESSAGE_ID);
+            return;
+        }
+
         executeShared(server, sender, colony);
     }
 
