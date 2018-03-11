@@ -505,7 +505,7 @@ public final class BlockPosUtil
         {
             if(!dist.toString().isEmpty())
             {
-                dist.append("/");
+                dist.append('/');
             }
             dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST));
         }
@@ -513,7 +513,7 @@ public final class BlockPosUtil
         {
             if(!dist.toString().isEmpty())
             {
-                dist.append("/");
+                dist.append('/');
             }
             dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST));
         }
