@@ -22,6 +22,7 @@ import com.minecolonies.coremod.commands.CommandEntryPointNew.ActionMenuHolder;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -238,6 +239,9 @@ public enum ActionArgumentType
             @NotNull final List<ActionMenuHolder> parsedHolders,
             final String potentialArgumentValue)
     {
+        // TODO: selector support, such as used by CommandKill to find player
+        // Entity entity = <net.minecraft.command.CommandBase>.getEntity(server, sender, args[0]);
+
         switch (this)
         {
             case INTEGER:
