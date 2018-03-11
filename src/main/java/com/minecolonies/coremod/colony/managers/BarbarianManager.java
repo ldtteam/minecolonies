@@ -7,6 +7,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,11 @@ public class BarbarianManager implements IBarbarianManager
      * Whether or not this colony may have Barbarian events. (set via command)
      */
     private boolean haveBarbEvents = true;
+
+    /**
+     * Last barbarian spawnpoints.
+     */
+    private final List<BlockPos> lastSpawnPoints = new ArrayList<>();
 
     /**
      * The colony of the manager.
@@ -68,6 +74,13 @@ public class BarbarianManager implements IBarbarianManager
     public void setCanHaveBarbEvents(final boolean canHave)
     {
         this.haveBarbEvents = canHave;
+        colony.markDirty();
+    }
+
+    @Override
+    public void addBarbarianSpawnPoint(final BlockPos pos)
+    {
+        lastSpawnPoints.add(pos);
         colony.markDirty();
     }
 
@@ -139,6 +152,11 @@ public class BarbarianManager implements IBarbarianManager
         return new BlockPos(x, thePos.getY(), z);
     }
 
+    @Override
+    public List<BlockPos> getLastSpawnPoints()
+    {
+        return new ArrayList<>(lastSpawnPoints);
+    }
 
     /**
      * Check if a certain vector matches two directions.
