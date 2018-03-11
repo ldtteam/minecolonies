@@ -315,7 +315,7 @@ public class CommandEntryPointTest
 
                 assertThat(clazz).isEqualTo(ScanCommand.class);
                 assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("x1", "x2", "y1", "y2", "z1", "z2");
-                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.CoordinateX, ActionArgumentType.CoordinateY, ActionArgumentType.CoordinateZ);
+                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.COORDINATE_X, ActionArgumentType.COORDINATE_Y, ActionArgumentType.COORDINATE_Z);
                 assertThat(argumentValueByActionArgumentNameMap.get("x1")).isEqualTo(1);
                 assertThat(argumentValueByActionArgumentNameMap.get("x2")).isEqualTo(2);
                 assertThat(argumentValueByActionArgumentNameMap.get("y1")).isEqualTo(3);
@@ -622,7 +622,7 @@ public class CommandEntryPointTest
 
                 assertThat(clazz).isEqualTo(CitizenInfoCommand.class);
                 assertThat(actionArgumentList).extracting("name").containsExactly("colony", "citizen");
-                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.Colony, ActionArgumentType.Citizen);
+                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.COLONY, ActionArgumentType.CITIZEN);
                 final Colony colony = (Colony) argumentValueByActionArgumentNameMap.get("colony");
                 final CitizenData citizenData = (CitizenData) argumentValueByActionArgumentNameMap.get("citizen");
                 assertThat(colony.getID()).isEqualTo(1);
@@ -800,7 +800,7 @@ public class CommandEntryPointTest
 
                 assertThat(clazz).isEqualTo(ChangeColonyOwnerCommand.class);
                 assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("player", "colony");
-                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.Player, ActionArgumentType.Colony);
+                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.PLAYER, ActionArgumentType.COLONY);
                 final EntityPlayerMP player = (EntityPlayerMP) argumentValueByActionArgumentNameMap.get("player");
                 final Colony colony = (Colony) argumentValueByActionArgumentNameMap.get("colony");
                 assertThat(player.getName()).isEqualTo("Bob");
@@ -834,7 +834,7 @@ public class CommandEntryPointTest
 
                 assertThat(clazz).isEqualTo(ChangeColonyOwnerCommand.class);
                 assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("player", "colony");
-                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.Player, ActionArgumentType.Colony);
+                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.PLAYER, ActionArgumentType.COLONY);
                 final EntityPlayerMP player = (EntityPlayerMP) argumentValueByActionArgumentNameMap.get("player");
                 final Colony colony = (Colony) argumentValueByActionArgumentNameMap.get("colony");
                 assertThat(player.getName()).isEqualTo("Bob");

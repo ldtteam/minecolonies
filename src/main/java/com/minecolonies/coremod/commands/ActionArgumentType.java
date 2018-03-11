@@ -30,20 +30,20 @@ import java.util.Arrays;
 
 public enum ActionArgumentType
 {
-    Player("player-expression", 0),
-    Colony("colony-id", 0),
-    Citizen("citizen-id or full-name", 2),
-    CoordinateX("x-coordinate", 0),
-    CoordinateY("y-coordinate", 0),
-    CoordinateZ("z-coordinate", 0),
+    PLAYER("player-expression", 0),
+    COLONY("colony-id", 0),
+    CITIZEN("citizen-id or full-name", 2),
+    COORDINATE_X("x-coordinate", 0),
+    COORDINATE_Y("y-coordinate", 0),
+    COORDINATE_Z("z-coordinate", 0),
     BOOLEAN("boolean", 0),
     INTEGER("integer", 0),
     ;
 
     public enum Is
     {
-        Required,
-        Optional
+        REQUIRED,
+        OPTIONAL
     }
 
     private String usageValue;
@@ -107,18 +107,18 @@ public enum ActionArgumentType
                 return Collections.emptyList();
             case BOOLEAN:
                 return Arrays.asList(new String[] {"true", "false"});
-            case CoordinateX:
-            case CoordinateY:
-            case CoordinateZ:
+            case COORDINATE_X:
+            case COORDINATE_Y:
+            case COORDINATE_Z:
                 if (potentialArgumentValue.isEmpty())
                 {
                     switch (this)
                     {
-                        case CoordinateX:
+                        case COORDINATE_X:
                             return Collections.singletonList(String.valueOf(pos.getX()));
-                        case CoordinateY:
+                        case COORDINATE_Y:
                             return Collections.singletonList(String.valueOf(pos.getY()));
-                        case CoordinateZ:
+                        case COORDINATE_Z:
                             return Collections.singletonList(String.valueOf(pos.getZ()));
                         default:
                             // We will never reach here.
@@ -135,10 +135,10 @@ public enum ActionArgumentType
                 {
                     return Collections.emptyList();
                 }
-            case Player:
+            case PLAYER:
                 final List<String> playerNameStrings = getOnlinePlayerNames(server);
                 return playerNameStrings.stream().filter(k -> k.startsWith(potentialArgumentValue)).collect(Collectors.toList());
-            case Colony:
+            case COLONY:
                 final List<String> colonyNumberStrings = getColonyIdStrings();
                 if (potentialArgumentValue.isEmpty())
                 {
@@ -153,7 +153,7 @@ public enum ActionArgumentType
                 {
                     return Collections.emptyList();
                 }
-            case Citizen:
+            case CITIZEN:
                 final List<String> citizenNameStrings = getCitizenNames();
                 final List<String> citizenNumberStrings = getColonyIdStrings();
                 final String[] potentiaCitizenNameParts = potentialArgumentValue.split(" ", -1);
@@ -251,9 +251,9 @@ public enum ActionArgumentType
                 }
             case BOOLEAN:
                 return Boolean.parseBoolean(potentialArgumentValue);
-            case CoordinateX:
-            case CoordinateY:
-            case CoordinateZ:
+            case COORDINATE_X:
+            case COORDINATE_Y:
+            case COORDINATE_Z:
                 try
                 {
                     final int coordinate = Integer.parseInt(potentialArgumentValue);
@@ -263,7 +263,7 @@ public enum ActionArgumentType
                 {
                     return null;
                 }
-            case Player:
+            case PLAYER:
                 final List<String> playerNameStrings = getOnlinePlayerNames(server);
                 if (playerNameStrings.contains(potentialArgumentValue))
                 {
@@ -277,7 +277,7 @@ public enum ActionArgumentType
                     }
                     return null;
                 }
-            case Colony:
+            case COLONY:
                 final List<String> colonyNumberStrings = getColonyIdStrings();
                 try
                 {
@@ -303,14 +303,14 @@ public enum ActionArgumentType
                 {
                     return null;
                 }
-            case Citizen:
+            case CITIZEN:
                 final ArrayList<ActionMenuHolder> reversedParsedHolderList = new ArrayList<>(parsedHolders);
                 Collections.reverse(reversedParsedHolderList);
                 Colony colony = null;
                 for (final ActionMenuHolder actionMenuHolder : reversedParsedHolderList)
                 {
                     final ActionArgument actionArgument = actionMenuHolder.getActionArgument();
-                    if (actionArgument.getType() == Colony)
+                    if (actionArgument.getType() == COLONY)
                     {
                         colony = (Colony) actionMenuHolder.getValue();
                         break;

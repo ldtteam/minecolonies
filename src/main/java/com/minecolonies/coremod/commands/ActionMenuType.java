@@ -38,245 +38,245 @@ import com.minecolonies.coremod.commands.killcommands.SheepKillCommand;
 
 public enum ActionMenuType implements MenuType
 {
-    RandomTeleport(new ActionMenu(
+    RANDOM_TELEPORT(new ActionMenu(
             "Random Teleport",
             "rtp",
-            ForgePermissionNodes.RandomTeleport,
+            ForgePermissionNodes.RANDOM_TELEPORT,
             RandomTeleportCommand.class,
-            new ActionArgument("player", ActionArgumentType.Player, ActionArgumentType.Is.Optional)
+            new ActionArgument("player", ActionArgumentType.PLAYER, ActionArgumentType.Is.OPTIONAL)
             )),
-    Backup(new ActionMenu(
+    BACKUP(new ActionMenu(
             "Backup",
             "backup",
-            ForgePermissionNodes.Backup,
+            ForgePermissionNodes.BACKUP,
             BackupCommand.class
             )),
-    HomeTeleport(new ActionMenu(
+    HOME_TELEPORT(new ActionMenu(
             "HomeTeleport",
             "home",
-            ForgePermissionNodes.HomeTeleport,
+            ForgePermissionNodes.HOME_TELEPORT,
             HomeTeleportCommand.class
             )),
-    RaidAllTonight(new ActionMenu(
+    RAID_ALL_TONIGHT(new ActionMenu(
             "RaidAllTonight",
             "raid-tonight",
-            ForgePermissionNodes.RaidAllTonight,
+            ForgePermissionNodes.RAID_ALL_TONIGHT,
             RaidAllTonightCommand.class
             )),
-    RaidAllNow(new ActionMenu(
+    RAID_ALL_NOW(new ActionMenu(
             "RaidAllNow",
             "raid-now",
-            ForgePermissionNodes.RaidAllNow,
+            ForgePermissionNodes.RAID_ALL_NOW,
             RaidAllNowCommand.class
             )),
-    CheckForAutoDeletes(new ActionMenu(
+    CHECK_FOR_AUTO_DELETES(new ActionMenu(
             "CheckForAutoDeletes",
             "check",
-            ForgePermissionNodes.CheckForAutoDeletes,
+            ForgePermissionNodes.CHECK_FOR_AUTO_DELETES,
             CheckForAutoDeletesCommand.class,
-            new ActionArgument("confirmDelete", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.Optional)
+            new ActionArgument("confirmDelete", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.OPTIONAL)
             )),
-    WhoAmI(new ActionMenu(
+    WHO_AM_I(new ActionMenu(
             "WhoAmI",
             "whoami",
-            ForgePermissionNodes.WhoAmI,
+            ForgePermissionNodes.WHO_AM_I,
             WhoAmICommand.class
             )),
-    WhereAmI(new ActionMenu(
+    WHERE_AM_I(new ActionMenu(
             "WhereAmI",
             "whereami",
-            ForgePermissionNodes.WhereAmI,
+            ForgePermissionNodes.WHERE_AM_I,
             WhereAmICommand.class
             )),
 
-    ListColonies(new ActionMenu(
+    LIST_COLONIES(new ActionMenu(
             "ListColonies",
             "list",
-            ForgePermissionNodes.ListColonies,
+            ForgePermissionNodes.LIST_COLONIES,
             ListColoniesCommand.class,
-            new ActionArgument("page", ActionArgumentType.INTEGER, ActionArgumentType.Is.Optional),
-            new ActionArgument("abandonedSinceTimeInHours", ActionArgumentType.INTEGER, ActionArgumentType.Is.Optional)
+            new ActionArgument("page", ActionArgumentType.INTEGER, ActionArgumentType.Is.OPTIONAL),
+            new ActionArgument("abandonedSinceTimeInHours", ActionArgumentType.INTEGER, ActionArgumentType.Is.OPTIONAL)
             )),
-    RequestSystemResetAll(new ActionMenu(
+    REQUEST_SYSTEM_RESET_ALL(new ActionMenu(
             "RequestSystemResetAll",
             "rsResetAll",
-            ForgePermissionNodes.RequestSystemResetAll,
+            ForgePermissionNodes.REQUEST_SYSTEM_RESET_ALL,
             RSResetAllCommand.class
             )),
 
-    ListCitizens(new ActionMenu(
+    LIST_CITIZENS(new ActionMenu(
             "ListCitizens",
             "list",
-            ForgePermissionNodes.ListCitizens,
+            ForgePermissionNodes.LIST_CITIZENS,
             ListCitizensCommand.class,
-            new ActionArgument("colony", ActionArgumentType.Colony, ActionArgumentType.Is.Required),
-            new ActionArgument("page", ActionArgumentType.INTEGER, ActionArgumentType.Is.Optional)
+            new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.REQUIRED),
+            new ActionArgument("page", ActionArgumentType.INTEGER, ActionArgumentType.Is.OPTIONAL)
         )),
-    KillCitizen(new ActionMenu(
+    KILL_CITIZEN(new ActionMenu(
             "KillCitizen",
             "kill",
-            ForgePermissionNodes.KillCitizen,
+            ForgePermissionNodes.KILL_CITIZEN,
             KillCitizenCommand.class,
-            new ActionArgument("colony", ActionArgumentType.Colony, ActionArgumentType.Is.Required,
-                    new ActionArgument("citizen", ActionArgumentType.Citizen, ActionArgumentType.Is.Required))
+            new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.REQUIRED,
+                    new ActionArgument("citizen", ActionArgumentType.CITIZEN, ActionArgumentType.Is.REQUIRED))
         )),
-    RespawnCitizen(new ActionMenu(
+    RESPAWN_CITIZEN(new ActionMenu(
             "RespawnCitizen",
             "respawn",
-            ForgePermissionNodes.RespawnCitizen,
+            ForgePermissionNodes.RESPAWN_CITIZEN,
             RespawnCitizenCommand.class,
-            new ActionArgument("colony", ActionArgumentType.Colony, ActionArgumentType.Is.Required,
-                    new ActionArgument("citizen", ActionArgumentType.Citizen, ActionArgumentType.Is.Required))
+            new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.REQUIRED,
+                    new ActionArgument("citizen", ActionArgumentType.CITIZEN, ActionArgumentType.Is.REQUIRED))
         )),
-    CitizenInfo(new ActionMenu(
+    CITIZEN_INFO(new ActionMenu(
             "Info",
             "info",
-            ForgePermissionNodes.CitizenInfo,
+            ForgePermissionNodes.CITIZEN_INFO,
             CitizenInfoCommand.class,
-            new ActionArgument("colony", ActionArgumentType.Colony, ActionArgumentType.Is.Required,
-                    new ActionArgument("citizen", ActionArgumentType.Citizen, ActionArgumentType.Is.Required))
+            new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.REQUIRED,
+                    new ActionArgument("citizen", ActionArgumentType.CITIZEN, ActionArgumentType.Is.REQUIRED))
         )),
 
-    ShowColonyInfo(new ActionMenu(
+    SHOW_COLONY_INFO(new ActionMenu(
             "ShowColonyInfo",
             "info",
-            ForgePermissionNodes.ShowColonyInfo,
+            ForgePermissionNodes.SHOW_COLONY_INFO,
             ShowColonyInfoCommand.class,
             // TODO: need OR() ActionArgumentType
-            new ActionArgument("player", ActionArgumentType.Player, ActionArgumentType.Is.Optional),
-            new ActionArgument("colony", ActionArgumentType.Colony, ActionArgumentType.Is.Optional)
+            new ActionArgument("player", ActionArgumentType.PLAYER, ActionArgumentType.Is.OPTIONAL),
+            new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.OPTIONAL)
             )),
-    DeleteColony(new ActionMenu(
+    DELETE_COLONY(new ActionMenu(
             "DeleteColony",
             "delete",
-            ForgePermissionNodes.DeleteColony,
+            ForgePermissionNodes.DELETE_COLONY,
             DeleteColonyCommand.class,
-            new ActionArgument("colony", ActionArgumentType.Colony, ActionArgumentType.Is.Required),
-            new ActionArgument("canDestroy", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.Optional),
-            new ActionArgument("confirmDelete", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.Optional)
+            new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.REQUIRED),
+            new ActionArgument("canDestroy", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.OPTIONAL),
+            new ActionArgument("confirmDelete", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.OPTIONAL)
             )),
-    DisableBarbarianSpawns(new ActionMenu(
+    DISABLE_BARBARIAN_SPAWNS(new ActionMenu(
             "DisableBarbarianSpawns",
             "barbarians",
-            ForgePermissionNodes.DisableBarbarianSpawns,
+            ForgePermissionNodes.DISABLE_BARBARIAN_SPAWNS,
             DisableBarbarianSpawnsCommand.class,
-            new ActionArgument("colony", ActionArgumentType.Colony, ActionArgumentType.Is.Required),
-            new ActionArgument("disableSpawns", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.Required)
+            new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.REQUIRED),
+            new ActionArgument("disableSpawns", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.REQUIRED)
             )),
-    AddOfficer(new ActionMenu(
+    ADD_OFFICER(new ActionMenu(
             "AddOfficer",
             "addOfficer",
-            ForgePermissionNodes.AddOfficer,
+            ForgePermissionNodes.ADD_OFFICER,
             AddOfficerCommand.class,
-            new ActionArgument("colony", ActionArgumentType.Colony, ActionArgumentType.Is.Required),
-            new ActionArgument("player", ActionArgumentType.Player, ActionArgumentType.Is.Required)
+            new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.REQUIRED),
+            new ActionArgument("player", ActionArgumentType.PLAYER, ActionArgumentType.Is.REQUIRED)
             )),
-    RefreshColony(new ActionMenu(
+    REFRESH_COLONY(new ActionMenu(
             "RefreshColony",
             "refresh",
-            ForgePermissionNodes.RefreshColony,
+            ForgePermissionNodes.REFRESH_COLONY,
             RefreshColonyCommand.class,
             // TODO: need OR() ActionArgumentType
-            new ActionArgument("player", ActionArgumentType.Player, ActionArgumentType.Is.Optional),
-            new ActionArgument("colony", ActionArgumentType.Colony, ActionArgumentType.Is.Optional)
+            new ActionArgument("player", ActionArgumentType.PLAYER, ActionArgumentType.Is.OPTIONAL),
+            new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.OPTIONAL)
             )),
-    ChangeColonyOwner(new ActionMenu(
+    CHANGE_COLONY_OWNER(new ActionMenu(
             "Ownership Change",
             "ownerchange",
-            ForgePermissionNodes.ChangeColonyOwner,
+            ForgePermissionNodes.CHANGE_COLONY_OWNER,
             ChangeColonyOwnerCommand.class,
-            new ActionArgument("colony", ActionArgumentType.Colony, ActionArgumentType.Is.Required),
-            new ActionArgument("player", ActionArgumentType.Player, ActionArgumentType.Is.Required)
+            new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.REQUIRED),
+            new ActionArgument("player", ActionArgumentType.PLAYER, ActionArgumentType.Is.REQUIRED)
             )),
-    ColonyTeleport(new ActionMenu(
+    COLONY_TELEPORT(new ActionMenu(
             "ColonyTeleport",
             "teleport",
-            ForgePermissionNodes.ColonyTeleport,
+            ForgePermissionNodes.COLONY_TELEPORT,
             ColonyTeleportCommand.class,
-            new ActionArgument("colony", ActionArgumentType.Colony, ActionArgumentType.Is.Required)
+            new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.REQUIRED)
             )),
-    MakeNotAutoDeletable(new ActionMenu(
+    MAKE_NOT_AUTO_DELETABLE(new ActionMenu(
             "MakeNotAutoDeletable",
             "deletable",
-            ForgePermissionNodes.MakeNotAutoDeletable,
+            ForgePermissionNodes.MAKE_NOT_AUTO_DELETABLE,
             com.minecolonies.coremod.commands.colonycommands.MakeNotAutoDeletable.class,
-            new ActionArgument("colony", ActionArgumentType.Colony, ActionArgumentType.Is.Required),
-            new ActionArgument("canBeDeleted", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.Required)
+            new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.REQUIRED),
+            new ActionArgument("canBeDeleted", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.REQUIRED)
             )),
-    DoRaidNow(new ActionMenu(
+    DO_RAID_NOW(new ActionMenu(
             "DoRaidNow",
             "raid",
-            ForgePermissionNodes.DoRaidNow,
+            ForgePermissionNodes.DO_RAID_NOW,
             DoRaidNowCommand.class,
-            new ActionArgument("colony", ActionArgumentType.Colony, ActionArgumentType.Is.Required)
+            new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.REQUIRED)
             )),
-    DoRaidTonight(new ActionMenu(
+    DO_RAID_TONIGHT(new ActionMenu(
             "DoRaidTonight",
             "raid-tonight",
-            ForgePermissionNodes.DoRaidTonight,
+            ForgePermissionNodes.DO_RAID_TONIGHT,
             DoRaidTonightCommand.class,
-            new ActionArgument("colony", ActionArgumentType.Colony, ActionArgumentType.Is.Required)
+            new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.REQUIRED)
             )),
-    RSReset(new ActionMenu(
+    REQUEST_SYSTEM_RESET(new ActionMenu(
             "Request System Reset",
             "reset",
-            ForgePermissionNodes.RSReset,
+            ForgePermissionNodes.REQUEST_SYSTEM_RESET,
             RSResetCommand.class,
-            new ActionArgument("colony", ActionArgumentType.Colony, ActionArgumentType.Is.Required)
+            new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.REQUIRED)
             )),
-    BarbarianKill(new ActionMenu(
+    BARBARIAN_KILL(new ActionMenu(
             "BarbarianKill",
             "barbarians",
-            ForgePermissionNodes.BarbarianKill,
+            ForgePermissionNodes.BARBARIAN_KILL,
             BarbarianKillCommand.class
             )),
-    AnimalKill(new ActionMenu(
+    ANIMAL_KILL(new ActionMenu(
             "AnimalKill",
             "animals",
-            ForgePermissionNodes.AnimalKill,
+            ForgePermissionNodes.ANIMAL_KILL,
             AnimalKillCommand.class
             )),
-    MobKill(new ActionMenu(
+    MOB_KILL(new ActionMenu(
             "MobKill",
             "mob",
-            ForgePermissionNodes.MobKill,
+            ForgePermissionNodes.MOB_KILL,
             MobKillCommand.class
             )),
-    ChickenKill(new ActionMenu(
+    CHICKEN_KILL(new ActionMenu(
             "ChickenKill",
             "chicken",
-            ForgePermissionNodes.ChickenKill,
+            ForgePermissionNodes.CHICKEN_KILL,
             ChickenKillCommand.class
             )),
-    CowKill(new ActionMenu(
+    COW_KILL(new ActionMenu(
             "CowKill",
             "cow",
-            ForgePermissionNodes.CowKill,
+            ForgePermissionNodes.COW_KILL,
             CowKillCommand.class
             )),
-    PigKill(new ActionMenu(
+    PIG_KILL(new ActionMenu(
             "PigKill",
             "pig",
-            ForgePermissionNodes.PigKill,
+            ForgePermissionNodes.PIG_KILL,
             PigKillCommand.class
             )),
-    SheepKill(new ActionMenu(
+    SHEEP_KILL(new ActionMenu(
             "SheepKill",
             "sheep",
-            ForgePermissionNodes.SheepKill,
+            ForgePermissionNodes.SHEEP_KILL,
             SheepKillCommand.class
             )),
-    Scan(new ActionMenu(
+    SCAN(new ActionMenu(
             "Scan",
             "scan",
-            ForgePermissionNodes.Scan,
+            ForgePermissionNodes.SCAN,
             ScanCommand.class,
-            new ActionArgument("x1", ActionArgumentType.CoordinateX, ActionArgumentType.Is.Required),
-            new ActionArgument("y1", ActionArgumentType.CoordinateY, ActionArgumentType.Is.Required),
-            new ActionArgument("z1", ActionArgumentType.CoordinateZ, ActionArgumentType.Is.Required),
-            new ActionArgument("x2", ActionArgumentType.CoordinateX, ActionArgumentType.Is.Required),
-            new ActionArgument("y2", ActionArgumentType.CoordinateY, ActionArgumentType.Is.Required),
-            new ActionArgument("z2", ActionArgumentType.CoordinateZ, ActionArgumentType.Is.Required)
+            new ActionArgument("x1", ActionArgumentType.COORDINATE_X, ActionArgumentType.Is.REQUIRED),
+            new ActionArgument("y1", ActionArgumentType.COORDINATE_Y, ActionArgumentType.Is.REQUIRED),
+            new ActionArgument("z1", ActionArgumentType.COORDINATE_Z, ActionArgumentType.Is.REQUIRED),
+            new ActionArgument("x2", ActionArgumentType.COORDINATE_X, ActionArgumentType.Is.REQUIRED),
+            new ActionArgument("y2", ActionArgumentType.COORDINATE_Y, ActionArgumentType.Is.REQUIRED),
+            new ActionArgument("z2", ActionArgumentType.COORDINATE_Z, ActionArgumentType.Is.REQUIRED)
             )),
     ;
 

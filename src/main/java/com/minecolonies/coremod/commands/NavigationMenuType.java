@@ -4,60 +4,60 @@ import org.jetbrains.annotations.NotNull;
 
 public enum NavigationMenuType implements MenuType
 {
-    Colonies(new NavigationMenu("colonies",
-        ActionMenuType.ListColonies,
-        ActionMenuType.RequestSystemResetAll
+    COLONIES(new NavigationMenu("colonies",
+        ActionMenuType.LIST_COLONIES,
+        ActionMenuType.REQUEST_SYSTEM_RESET_ALL
     )),
 
-    Citizens(new NavigationMenu("citizens",
-        ActionMenuType.ListCitizens,
-        ActionMenuType.KillCitizen,
-        ActionMenuType.RespawnCitizen,
-        ActionMenuType.CitizenInfo
+    CITIZENS(new NavigationMenu("citizens",
+        ActionMenuType.LIST_CITIZENS,
+        ActionMenuType.KILL_CITIZEN,
+        ActionMenuType.RESPAWN_CITIZEN,
+        ActionMenuType.CITIZEN_INFO
     )),
 
-    Colony(new NavigationMenu("colony",
-        ActionMenuType.ShowColonyInfo,
-        ActionMenuType.DeleteColony,
-        ActionMenuType.DisableBarbarianSpawns,
-        ActionMenuType.AddOfficer,
-        ActionMenuType.RefreshColony,
-        ActionMenuType.ChangeColonyOwner,
-        ActionMenuType.ColonyTeleport,
-        ActionMenuType.MakeNotAutoDeletable,
-        ActionMenuType.DoRaidNow,
-        ActionMenuType.DoRaidTonight
+    COLONY(new NavigationMenu("colony",
+        ActionMenuType.SHOW_COLONY_INFO,
+        ActionMenuType.DELETE_COLONY,
+        ActionMenuType.DISABLE_BARBARIAN_SPAWNS,
+        ActionMenuType.ADD_OFFICER,
+        ActionMenuType.REFRESH_COLONY,
+        ActionMenuType.CHANGE_COLONY_OWNER,
+        ActionMenuType.COLONY_TELEPORT,
+        ActionMenuType.MAKE_NOT_AUTO_DELETABLE,
+        ActionMenuType.DO_RAID_NOW,
+        ActionMenuType.DO_RAID_TONIGHT
     )),
 
-    RequestSystem(new NavigationMenu("rs",
-            ActionMenuType.RSReset
+    REQUEST_SYSTEM(new NavigationMenu("rs",
+            ActionMenuType.REQUEST_SYSTEM_RESET
     )),
 
 
-    Delete(new NavigationMenu("kill",
-        ActionMenuType.BarbarianKill,
-        ActionMenuType.AnimalKill,
-        ActionMenuType.MobKill,
-        ActionMenuType.ChickenKill,
-        ActionMenuType.CowKill,
-        ActionMenuType.PigKill,
-        ActionMenuType.SheepKill
+    DELETE(new NavigationMenu("kill",
+        ActionMenuType.BARBARIAN_KILL,
+        ActionMenuType.ANIMAL_KILL,
+        ActionMenuType.MOB_KILL,
+        ActionMenuType.CHICKEN_KILL,
+        ActionMenuType.COW_KILL,
+        ActionMenuType.PIG_KILL,
+        ActionMenuType.SHEEP_KILL
     )),
 
-    MineColonies(new NavigationMenu("mineColonies",
-            NavigationMenuType.Colonies,
-            NavigationMenuType.Delete,
-            NavigationMenuType.Colony,
-            NavigationMenuType.Citizens,
-            ActionMenuType.RandomTeleport,
-            ActionMenuType.Backup,
-            ActionMenuType.HomeTeleport,
-            ActionMenuType.RaidAllTonight,
-            ActionMenuType.RaidAllNow,
-            ActionMenuType.CheckForAutoDeletes,
-            ActionMenuType.WhoAmI,
-            ActionMenuType.WhereAmI,
-            ActionMenuType.Scan
+    MINECOLONIES(new NavigationMenu("mineColonies",
+            NavigationMenuType.COLONIES,
+            NavigationMenuType.DELETE,
+            NavigationMenuType.COLONY,
+            NavigationMenuType.CITIZENS,
+            ActionMenuType.RANDOM_TELEPORT,
+            ActionMenuType.BACKUP,
+            ActionMenuType.HOME_TELEPORT,
+            ActionMenuType.RAID_ALL_TONIGHT,
+            ActionMenuType.RAID_ALL_NOW,
+            ActionMenuType.CHECK_FOR_AUTO_DELETES,
+            ActionMenuType.WHO_AM_I,
+            ActionMenuType.WHERE_AM_I,
+            ActionMenuType.SCAN
     ))
 
     ;

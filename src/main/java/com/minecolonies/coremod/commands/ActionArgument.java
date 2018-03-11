@@ -22,7 +22,7 @@ public class ActionArgument
         super();
         this.name = name;
         this.type = type;
-        this.required = optionalOrRequired == Is.Required;
+        this.required = optionalOrRequired == Is.REQUIRED;
         this.actionArgumentList = Arrays.asList(actionArguments);
     }
 

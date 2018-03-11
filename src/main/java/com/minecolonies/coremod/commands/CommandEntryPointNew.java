@@ -47,7 +47,7 @@ public class CommandEntryPointNew extends CommandBase
     public CommandEntryPointNew()
     {
         super();
-        root = buildMenu(NavigationMenuType.MineColonies);
+        root = buildMenu(NavigationMenuType.MINECOLONIES);
     }
 
     /**
