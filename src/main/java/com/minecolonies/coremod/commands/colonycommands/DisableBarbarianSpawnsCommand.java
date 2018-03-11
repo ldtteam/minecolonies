@@ -30,6 +30,7 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand impleme
     public static final  String DESC                       = "barbarians";
     private static final String NO_ARGUMENTS               = "Please define a colony";
     private static final String NO_COLONY_WITH_ID_FOUND_MESSAGE = "Colony with ID %d not found.";
+    private static final String NO_COLONY_FOUND_MESSAGE = "Colony not found.";
 
     /**
      * no-args constructor called by new CommandEntryPoint executer.
@@ -73,6 +74,13 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand impleme
         {
             final Boolean disableSpawnsBoolean = (Boolean) disableSpawnsObject;
             canHaveBarbEvents = !disableSpawnsBoolean.booleanValue();
+        }
+
+        if (colony == null)
+        {
+            final String noColonyFoundMessage = String.format(NO_COLONY_FOUND_MESSAGE);
+            sender.sendMessage(new TextComponentString(noColonyFoundMessage));
+            return;
         }
 
         executeShared(server, sender, colony, canHaveBarbEvents);
