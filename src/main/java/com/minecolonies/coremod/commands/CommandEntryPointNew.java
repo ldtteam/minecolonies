@@ -80,8 +80,8 @@ public class CommandEntryPointNew extends CommandBase
 
     public static final class ActionMenuHolder
     {
-        private TreeNode<Menu> treeNode;
-        private ActionArgument actionArgument;
+        @NotNull private final TreeNode<Menu> treeNode;
+        @NotNull private final ActionArgument actionArgument;
         private Object value;
 
         ActionMenuHolder(@NotNull final TreeNode<Menu> treeNode, @NotNull final ActionArgument actionArgument)
