@@ -1,5 +1,6 @@
 {
   "forge_marker": 1,
+  "parent": "block/block",
   "variants": {
     "variant": {
       "0perc":   { "model": "minecolonies:barrel_block/0perc_crate"},

@@ -3,6 +3,7 @@ package com.minecolonies.coremod.tileentities;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BarrelType;
+import com.minecolonies.coremod.blocks.BlockBarrel;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
@@ -13,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
 import java.util.HashMap;
@@ -33,7 +35,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     private static final PropertyInteger BARRELSTATE    = PropertyInteger.create("BARRELSTATE", BARRELSTATE_FILLING, BARRELSTATE_DONE);
 
     private static final HashMap<BlockPos, Integer> timers         = new HashMap<>();
-    private static final HashMap<BlockPos, Integer> fillings       = new HashMap<>();
+    private static final HashMap<BlockPos, Integer> fillings       = new HashMap<BlockPos, Integer>();
     private static final int                        TIMER_END      = 20;
 
     @Override
@@ -89,6 +91,19 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     public boolean useBarrel(final World worldIn, final EntityPlayer playerIn, final ItemStack itemstack, final IBlockState state, final BlockPos pos)
     {
         Log.getLogger().info("block activated (currently under development!)");
+        IBlockState blockState =  state.getActualState(worldIn, pos);
+        int next = blockState.getValue(BlockBarrel.VARIANT).getMetadata() +1;
+        if(next > BarrelType.values().length-1)
+        {
+            //TODO: fix double chat messages here
+            playerIn.sendMessage(new TextComponentString("The barrel is full!"));
+            Log.getLogger().info("The barrel is full");
+            worldIn.setBlockState(pos, blockState.withProperty(BlockBarrel.VARIANT, BarrelType.byMetadata(next-1)));
+        }
+        else
+        {
+            worldIn.setBlockState(pos, blockState.withProperty(BlockBarrel.VARIANT, BarrelType.byMetadata(next)));
+        }
 
         /*final int barrelState = state.getValue(BARRELSTATE);
         int fullness = fillings.getOrDefault(pos, 0);

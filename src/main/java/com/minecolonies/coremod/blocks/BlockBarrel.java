@@ -23,14 +23,19 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
@@ -52,6 +57,12 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
      * The resistance this block has.
      */
     private static final float                      RESISTANCE     = 1F;
+
+    /**
+     * BoundingBox of the block
+     * 0.0625 -> factor of the offset in pixels (1/16)
+     */
+    private final static AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0,0,0,1,1.5,1);
 
     public BlockBarrel()
     {
@@ -90,7 +101,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     @Override
     public boolean isOpaqueCube(final IBlockState state)
     {
-        return true;
+        return false;
     }
 
     @Override
@@ -160,7 +171,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     @Override
     public int damageDropped(final IBlockState state)
     {
-        return state.getValue(VARIANT).getMetadata();
+        return this.getDefaultState().getValue(VARIANT).getMetadata();
     }
 
     @Override
@@ -173,7 +184,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     @SideOnly(Side.CLIENT)
     public BlockRenderLayer getBlockLayer()
     {
-        return BlockRenderLayer.TRANSLUCENT;
+        return BlockRenderLayer.CUTOUT_MIPPED;
     }
 
     /**
@@ -185,4 +196,19 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
         return state.getValue(VARIANT).getMetadata();
     }
 
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    {
+        return BOUNDING_BOX;
+    }
+
+
+    @SubscribeEvent
+    public void onDrops(BlockEvent.HarvestDropsEvent event)
+    {
+        event.getDrops().clear();
+        event.getDrops().add(new ItemStack(Item.getItemFromBlock(this), 1, this.getDefaultState().getValue(VARIANT).getMetadata()));
+        //TODO: Drop the items contained in the barrel
+        TileEntity te = event.getWorld().getTileEntity(event.getPos());
+    }
 }
