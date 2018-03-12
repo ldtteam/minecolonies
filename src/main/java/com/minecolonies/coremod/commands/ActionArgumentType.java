@@ -326,7 +326,11 @@ public enum ActionArgumentType
                     for (final Colony someColony : colonyList)
                     {
                         final ICitizenManager citizenManager = someColony.getCitizenManager();
-                        return findCitizenForCitizenManager(citizenManager, potentialArgumentValue);
+                        CitizenData citizen = findCitizenForCitizenManager(citizenManager, potentialArgumentValue);
+                        if (null != citizen)
+                        {
+                            return citizen;
+                        }
                     }
                     return null;
                 }
