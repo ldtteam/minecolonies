@@ -48,8 +48,13 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
         }
 
         final CitizenData citizenData = actionMenu.getCitizenForArgument("citizen");
+        if (null == citizenData)
+        {
+            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+            return;
+        }
 
-        final int citizenId = (null != citizenData) ? citizenData.getId() : -1;
+        final int citizenId = citizenData.getId();
         executeSpecializedCode(server, sender, colony, citizenId);
     }
 
