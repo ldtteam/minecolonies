@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.permissions.ForgePermissionNodes;
+
+import net.minecraft.entity.player.EntityPlayerMP;
 
 public class ActionMenu extends AbstractMenu
 {
@@ -56,5 +61,86 @@ public class ActionMenu extends AbstractMenu
     public Class<? extends IActionCommand> getActionCommandClass()
     {
         return actionCommandClass;
+    }
+
+    public Colony getColonyForArgument(@NotNull final String argumentName)
+    {
+        for (final ActionArgument actionArgument : actionArgumentList)
+        {
+            if (argumentName.equals(actionArgument.getName()))
+            {
+                if (ActionArgumentType.COLONY == actionArgument.getType())
+                {
+                    return (Colony) actionArgument.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    public EntityPlayerMP getPlayerForArgument(@NotNull final String argumentName)
+    {
+        for (final ActionArgument actionArgument : actionArgumentList)
+        {
+            if (argumentName.equals(actionArgument.getName()))
+            {
+                if (ActionArgumentType.PLAYER == actionArgument.getType())
+                {
+                    return (EntityPlayerMP) actionArgument.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    public CitizenData getCitizenForArgument(@NotNull final String argumentName)
+    {
+        for (final ActionArgument actionArgument : actionArgumentList)
+        {
+            if (argumentName.equals(actionArgument.getName()))
+            {
+                if (ActionArgumentType.CITIZEN == actionArgument.getType())
+                {
+                    return (CitizenData) actionArgument.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    public Boolean getBooleanForArgument(@NotNull final String argumentName)
+    {
+        for (final ActionArgument actionArgument : actionArgumentList)
+        {
+            if (argumentName.equals(actionArgument.getName()))
+            {
+                if (ActionArgumentType.BOOLEAN == actionArgument.getType())
+                {
+                    return (Boolean) actionArgument.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    public Integer getIntegerForArgument(@NotNull final String argumentName)
+    {
+        for (final ActionArgument actionArgument : actionArgumentList)
+        {
+            if (argumentName.equals(actionArgument.getName()))
+            {
+                switch (actionArgument.getType())
+                {
+                    case INTEGER:
+                    case COORDINATE_X:
+                    case COORDINATE_Y:
+                    case COORDINATE_Z:
+                        return (Integer) actionArgument.getValue();
+                    default:
+                        break;
+                }
+            }
+        }
+        return null;
     }
 }
