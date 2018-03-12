@@ -1,15 +1,23 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.RTP;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.minecolonies.coremod.commands.ActionArgument;
 import com.minecolonies.coremod.commands.ActionMenu;
 import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import com.minecolonies.coremod.util.ServerUtils;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,14 +26,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.RTP;
 
 /**
  * this command is made to TP a player to a safe random spot that is not to close to another colony.
