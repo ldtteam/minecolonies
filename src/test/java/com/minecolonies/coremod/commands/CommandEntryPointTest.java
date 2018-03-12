@@ -1,12 +1,14 @@
 package com.minecolonies.coremod.commands;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -36,6 +38,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.server.permission.PermissionAPI;
 import scala.actors.threadpool.Arrays;
 
 @RunWith(PowerMockRunner.class)
@@ -98,6 +101,9 @@ public class CommandEntryPointTest
         BDDMockito.given(ColonyManager.getColony(1)).willReturn(colony1);
         BDDMockito.given(ColonyManager.getColony(2)).willReturn(colony2);
 
+        PowerMockito.mockStatic(PermissionAPI.class);
+        BDDMockito.given(PermissionAPI.hasPermission(any(), any())).willReturn(true);
+
         final EntityPlayerMP playerBob = mock(EntityPlayerMP.class);
         when(playerBob.getName()).thenReturn("Bob");
         final EntityPlayerMP playerSally = mock(EntityPlayerMP.class);
@@ -126,7 +132,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_no_args__DO_getTabCompletions__EXPECT_colony_colonies_citizen()
     {
 
@@ -145,7 +151,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_scan__DO_getTabCompletions__EXPECT_x1_x2_y1_y2_z1_z2()
     {
 
@@ -163,7 +169,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_Scan__DO_getTabCompletions__EXPECT_x1_x2_y1_y2_z1_z2()
     {
 
@@ -181,7 +187,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_SCAN__DO_getTabCompletions__EXPECT_x1_x2_y1_y2_z1_z2()
     {
 
@@ -199,7 +205,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_SCAN_x1NoColon__DO_getTabCompletions__EXPECT_x1()
     {
 
@@ -217,7 +223,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_SCAN_X1NoColon__DO_getTabCompletions__EXPECT_x1()
     {
 
@@ -235,7 +241,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_SCAN_X1_space__DO_getTabCompletions__EXPECT_1()
     {
 
@@ -253,7 +259,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_SCAN_y2_space__DO_getTabCompletions__EXPECT_2()
     {
 
@@ -271,7 +277,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_SCAN_z2_space__DO_getTabCompletions__EXPECT_3()
     {
 
@@ -289,7 +295,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_SCAN_X1_1_x2_2_y1_3_y2_4_z1_5_z2_6__DO_execute__EXPECT_scan_command_executed() throws CommandException
     {
 
@@ -305,23 +311,24 @@ public class CommandEntryPointTest
 
         instance = new CommandEntryPointNew()
         {
+            @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    final Map<String, Object> argumentValueByActionArgumentNameMap,
-                    final List<ActionArgument> actionArgumentList,
+                    @NotNull final ActionMenu actionMenu,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).isEqualTo(ScanCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
                 assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("x1", "x2", "y1", "y2", "z1", "z2");
                 assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.COORDINATE_X, ActionArgumentType.COORDINATE_Y, ActionArgumentType.COORDINATE_Z);
-                assertThat(argumentValueByActionArgumentNameMap.get("x1")).isEqualTo(1);
-                assertThat(argumentValueByActionArgumentNameMap.get("x2")).isEqualTo(2);
-                assertThat(argumentValueByActionArgumentNameMap.get("y1")).isEqualTo(3);
-                assertThat(argumentValueByActionArgumentNameMap.get("y2")).isEqualTo(4);
-                assertThat(argumentValueByActionArgumentNameMap.get("z1")).isEqualTo(5);
-                assertThat(argumentValueByActionArgumentNameMap.get("z2")).isEqualTo(6);
+                assertThat(actionMenu.getIntegerForArgument("x1")).isEqualTo(1);
+                assertThat(actionMenu.getIntegerForArgument("x2")).isEqualTo(2);
+                assertThat(actionMenu.getIntegerForArgument("y1")).isEqualTo(3);
+                assertThat(actionMenu.getIntegerForArgument("y2")).isEqualTo(4);
+                assertThat(actionMenu.getIntegerForArgument("z1")).isEqualTo(5);
+                assertThat(actionMenu.getIntegerForArgument("z2")).isEqualTo(6);
             }
         };
 
@@ -329,7 +336,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens__DO_getTabCompletions__EXPECT_citizens()
     {
 
@@ -347,7 +354,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_space__DO_getTabCompletions__EXPECT_info()
     {
 
@@ -365,7 +372,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_in__DO_getTabCompletions__EXPECT_info()
     {
 
@@ -383,7 +390,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_info__DO_getTabCompletions__EXPECT_info()
     {
 
@@ -401,7 +408,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_info_space__DO_getTabCompletions__EXPECT_colony()
     {
 
@@ -419,7 +426,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_info_colonyNoColon_space__DO_getTabCompletions__EXPECT_1_2()
     {
 
@@ -437,7 +444,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_info_colony_space__DO_getTabCompletions__EXPECT_1_2()
     {
 
@@ -455,7 +462,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_info_colony_1_space__DO_getTabCompletions__EXPECT_citizen()
     {
 
@@ -473,7 +480,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_info_colony_1_citizen_J__DO_getTabCompletions__EXPECT_John_Jenna()
     {
 
@@ -491,7 +498,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_info_colony_1_citizen_Jo__DO_getTabCompletions__EXPECT_John()
     {
 
@@ -509,7 +516,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_info_colony_1_citizen_John_space__DO_getTabCompletions__EXPECT_A_S()
     {
 
@@ -527,7 +534,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_info_colony_1_citizen_John_A_space__DO_getTabCompletions__EXPECT_A_S()
     {
 
@@ -545,7 +552,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_info_colony_1_citizen_John_S_space__DO_getTabCompletions__EXPECT_A_S()
     {
 
@@ -563,7 +570,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_info_colony_1_citizen_John_S_Smith_space__DO_getTabCompletions__EXPECT_citizen()
     {
 
@@ -581,7 +588,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_info_colony_1_citizen_1_space__DO_getTabCompletions__EXPECT_citizen()
     {
 
@@ -599,7 +606,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_info_colony_1_citizen_John_S_Smith__DO_execute__EXPECT_colony_info_command_executed() throws CommandException
     {
 
@@ -612,19 +619,22 @@ public class CommandEntryPointTest
 
         instance = new CommandEntryPointNew()
         {
+            @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    final Map<String, Object> argumentValueByActionArgumentNameMap,
-                    final List<ActionArgument> actionArgumentList,
+                    @NotNull final ActionMenu actionMenu,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).isEqualTo(CitizenInfoCommand.class);
-                assertThat(actionArgumentList).extracting("name").containsExactly("colony", "citizen");
-                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.COLONY, ActionArgumentType.CITIZEN);
-                final Colony colony = (Colony) argumentValueByActionArgumentNameMap.get("colony");
-                final CitizenData citizenData = (CitizenData) argumentValueByActionArgumentNameMap.get("citizen");
+                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                assertThat(actionArgumentList).extracting("name").containsExactly("colony");
+                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.COLONY);
+                assertThat(actionArgumentList.get(0).getActionArgumentList()).extracting("name").containsExactly("citizen");
+                assertThat(actionArgumentList.get(0).getActionArgumentList()).extracting("type").containsOnly(ActionArgumentType.CITIZEN);
+                final Colony colony = actionMenu.getColonyForArgument("colony");
+                final CitizenData citizenData = actionMenu.getCitizenForArgument("citizen");
                 assertThat(colony.getID()).isEqualTo(1);
                 assertThat(citizenData.getName()).isEqualTo("John S. Smith");
             }
@@ -634,7 +644,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_colony_space__DO_getTabCompletions__EXPECT_ownerchange()
     {
 
@@ -652,7 +662,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_colony_ownerchange_space__DO_getTabCompletions__EXPECT_colony_player()
     {
 
@@ -670,7 +680,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_colony_ownerchange_colony_space__DO_getTabCompletions__EXPECT_1_2()
     {
 
@@ -688,7 +698,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_colony_ownerchange_player_space__DO_getTabCompletions__EXPECT_Bob_Sally()
     {
 
@@ -706,7 +716,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_colony_ownerchange_player_B__DO_getTabCompletions__EXPECT_Bob()
     {
 
@@ -724,7 +734,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_colony_ownerchange_player_Bob_space__DO_getTabCompletions__EXPECT_colony()
     {
 
@@ -742,7 +752,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_colony_ownerchange_player_Bob_colony_space__DO_getTabCompletions__EXPECT_1_2()
     {
 
@@ -760,7 +770,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_colony_ownerchange_player_Bob_colony_1_space__DO_getTabCompletions__EXPECT_nothing()
     {
 
@@ -778,7 +788,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_colony_ownerchange_colony_1_player_Bob_space__DO_execute__EXPECT_ChangeColonyOwnerCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -790,19 +800,20 @@ public class CommandEntryPointTest
 
         instance = new CommandEntryPointNew()
         {
+            @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    final Map<String, Object> argumentValueByActionArgumentNameMap,
-                    final List<ActionArgument> actionArgumentList,
+                    @NotNull final ActionMenu actionMenu,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).isEqualTo(ChangeColonyOwnerCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
                 assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("player", "colony");
                 assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.PLAYER, ActionArgumentType.COLONY);
-                final EntityPlayerMP player = (EntityPlayerMP) argumentValueByActionArgumentNameMap.get("player");
-                final Colony colony = (Colony) argumentValueByActionArgumentNameMap.get("colony");
+                final EntityPlayerMP player = actionMenu.getPlayerForArgument("player");
+                final Colony colony = actionMenu.getColonyForArgument("colony");
                 assertThat(player.getName()).isEqualTo("Bob");
                 assertThat(colony.getID()).isEqualTo(1);
             }
@@ -812,7 +823,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_colony_ownerchange_player_Bob_colony_1_space__DO_execute__EXPECT_ChangeColonyOwnerCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -824,19 +835,20 @@ public class CommandEntryPointTest
 
         instance = new CommandEntryPointNew()
         {
+            @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    final Map<String, Object> argumentValueByActionArgumentNameMap,
-                    final List<ActionArgument> actionArgumentList,
+                    @NotNull final ActionMenu actionMenu,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).isEqualTo(ChangeColonyOwnerCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
                 assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("player", "colony");
                 assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.PLAYER, ActionArgumentType.COLONY);
-                final EntityPlayerMP player = (EntityPlayerMP) argumentValueByActionArgumentNameMap.get("player");
-                final Colony colony = (Colony) argumentValueByActionArgumentNameMap.get("colony");
+                final EntityPlayerMP player = actionMenu.getPlayerForArgument("player");
+                final Colony colony = actionMenu.getColonyForArgument("colony");
                 assertThat(player.getName()).isEqualTo("Bob");
                 assertThat(colony.getID()).isEqualTo(1);
             }
@@ -846,7 +858,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_noargs__DO_execute__EXPECT_throwUsage()
     {
 
@@ -869,7 +881,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens__DO_execute__EXPECT_throwUsage()
     {
 
@@ -892,7 +904,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_info__DO_execute__EXPECT_throwUsage()
     {
 
@@ -915,7 +927,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_info_colonyNoColon__DO_execute__EXPECT_throwUsage()
     {
 
@@ -938,7 +950,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_info_colony__DO_execute__EXPECT_throwUsage()
     {
 
@@ -961,7 +973,7 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_info_colony_BAD__DO_execute__EXPECT_throwUsage()
     {
 
@@ -984,8 +996,8 @@ public class CommandEntryPointTest
     }
 
     @Test
-    @PrepareForTest(ColonyManager.class)
-    public void GIVEN_args_colony_info__DO_execute__EXPECT_throwUsage()
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_colony_info_sender_is_not_player__DO_execute__EXPECT_sendMsg() throws CommandException
     {
 
         // GIVEN:
@@ -995,14 +1007,28 @@ public class CommandEntryPointTest
 
         // DO:
 
-        try
-        {
-            instance.execute(server, sender, args);
-            Fail.failBecauseExceptionWasNotThrown(CommandException.class);
-        }
-        catch (final CommandException e)
-        {
-            assertThat(e).hasMessage("/mineColonies citizens info <colony: colony-id>: missing required parameter colony");
-        }
+        // Sender is not a player
+        instance.execute(server, sender, args);
+        verify(sender, times(1)).sendMessage(any());
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_colony_info_sender_is_a_player__DO_execute__EXPECT_sendMsg() throws CommandException
+    {
+
+        // GIVEN:
+        final String[] args = new String[] {
+                "colony", "info"
+        };
+
+        // Sender is a player
+        // TODO: make this playerSender the owner of a colony
+        final EntityPlayerMP playerSender = mock(EntityPlayerMP.class);
+
+        // DO:
+
+        instance.execute(server, playerSender, args);
+        verify(playerSender, times(1)).sendMessage(any());
     }
 }
