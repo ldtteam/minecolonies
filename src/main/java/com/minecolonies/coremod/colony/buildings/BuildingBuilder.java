@@ -306,7 +306,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             return;
         }
-        BuildingBuilderResource resource = this.neededResources.get(res.getUnlocalizedName() + ":" + res.getItemDamage());
+        BuildingBuilderResource resource = this.neededResources.get(res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + res.getTagCompound().hashCode());
         if (resource == null)
         {
             resource = new BuildingBuilderResource(res, amount);
@@ -315,7 +315,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             resource.setAmount(resource.getAmount() + amount);
         }
-        this.neededResources.put(res.getUnlocalizedName() + ":" + res.getItemDamage(), resource);
+        this.neededResources.put(res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + res.getTagCompound().hashCode(), resource);
         this.markDirty();
     }
 
@@ -328,7 +328,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     public void reduceNeededResource(final ItemStack res, final int amount)
     {
         int preAmount = 0;
-        final String name = res.getUnlocalizedName() + ":" + res.getItemDamage();
+        final String name = res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + res.getTagCompound().hashCode();
         if (this.neededResources.containsKey(name))
         {
             preAmount = this.neededResources.get(name).getAmount();

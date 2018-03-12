@@ -148,7 +148,7 @@ public class ItemStorage
         final ItemStorage that = (ItemStorage) o;
 
 
-        return getItem().equals(that.getItem()) && (this.shouldIgnoreDamageValue || that.getDamageValue() == this.getDamageValue());
+        return stack.isItemEqual(that.getItemStack()) && (this.shouldIgnoreDamageValue || that.getDamageValue() == this.getDamageValue());
     }
 
     /**

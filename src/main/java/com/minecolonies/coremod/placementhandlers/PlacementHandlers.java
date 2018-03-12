@@ -4,8 +4,6 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
-import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
-import com.minecolonies.api.compatibility.candb.ChiselAndBitsProxy;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -18,15 +16,6 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
-import mod.chiselsandbits.api.IBitAccess;
-import mod.chiselsandbits.api.IBitVisitor;
-import mod.chiselsandbits.chiseledblock.BlockChiseled;
-import mod.chiselsandbits.chiseledblock.data.VoxelBlob;
-import mod.chiselsandbits.core.api.BitAccess;
-import mod.chiselsandbits.core.api.ChiselAndBitsAPI;
-import mod.chiselsandbits.debug.ApiDebug;
-import mod.chiselsandbits.debug.DebugAction;
-import mod.chiselsandbits.helpers.ModUtil;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -688,60 +677,6 @@ public final class PlacementHandlers
             else if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
             {
                 return ActionProcessingResult.DENY;
-            }
-
-            return blockState;
-        }
-    }
-
-    public static class ChiselAndBitsPlacementHandler implements IPlacementHandler
-    {
-
-        @Override
-        public Object handle(
-                @NotNull final World world,
-                @NotNull final BlockPos pos,
-                @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer,
-                final boolean infinteResources,
-                final boolean complete)
-        {
-            if (!ChiselAndBitsCheck.isChiselAndBitsBlock(blockState.getBlock()))
-            {
-                return ActionProcessingResult.IGNORE;
-            }
-
-            final VoxelBlob blob = new VoxelBlob();
-            blob.fill( ModUtil.getStateId( blockState ) );
-            final IBitAccess access = new BitAccess( world, pos, blob, VoxelBlob.NULL_BLOB );
-            IBitVisitor visitor = new
-            access.visitBits();
-            DebugAction.api.
-
-            if (placer != null && !infinteResources)
-            {
-
-
-                final List<ItemStack> itemList = new ArrayList<>();
-                itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
-                itemList.addAll(placer.getItemsFromTileEntity());
-                itemList.removeIf(ItemStackUtils::isEmpty);
-
-                if (checkForListInInvAndRequest(placer, itemList))
-                {
-                    return IPlacementHandler.ActionProcessingResult.DENY;
-                }
-                placer.handleBuildingOverBlock(pos);
-            }
-
-            if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
-            {
-                return ActionProcessingResult.DENY;
-            }
-
-            if (placer != null)
-            {
-                placer.handleTileEntityPlacement(pos);
             }
 
             return blockState;
