@@ -62,9 +62,28 @@ public class ActionMenu extends AbstractMenu
         return actionCommandClass;
     }
 
+    private List<ActionArgument> getAllArgumentsList()
+    {
+        return getAllArgumentsList(getActionArgumentList());
+    }
+
+    private List<ActionArgument> getAllArgumentsList(@NotNull final List<ActionArgument> currentActionArgumentList)
+    {
+        final List<ActionArgument> allActionArgumentsList = new ArrayList<>();
+        for (final ActionArgument actionArgument : currentActionArgumentList)
+        {
+            allActionArgumentsList.add(actionArgument);
+            if (actionArgument.isValueSet())
+            {
+                allActionArgumentsList.addAll(getAllArgumentsList(actionArgument.getActionArgumentList()));
+            }
+        }
+        return allActionArgumentsList;
+    }
+
     public Colony getColonyForArgument(@NotNull final String argumentName)
     {
-        for (final ActionArgument actionArgument : actionArgumentList)
+        for (final ActionArgument actionArgument : getAllArgumentsList())
         {
             if (argumentName.equals(actionArgument.getName()))
             {
@@ -79,7 +98,7 @@ public class ActionMenu extends AbstractMenu
 
     public EntityPlayerMP getPlayerForArgument(@NotNull final String argumentName)
     {
-        for (final ActionArgument actionArgument : actionArgumentList)
+        for (final ActionArgument actionArgument : getAllArgumentsList())
         {
             if (argumentName.equals(actionArgument.getName()))
             {
@@ -94,7 +113,7 @@ public class ActionMenu extends AbstractMenu
 
     public CitizenData getCitizenForArgument(@NotNull final String argumentName)
     {
-        for (final ActionArgument actionArgument : actionArgumentList)
+        for (final ActionArgument actionArgument : getAllArgumentsList())
         {
             if (argumentName.equals(actionArgument.getName()))
             {
@@ -109,7 +128,7 @@ public class ActionMenu extends AbstractMenu
 
     public Boolean getBooleanForArgument(@NotNull final String argumentName)
     {
-        for (final ActionArgument actionArgument : actionArgumentList)
+        for (final ActionArgument actionArgument : getAllArgumentsList())
         {
             if (argumentName.equals(actionArgument.getName()))
             {
@@ -137,7 +156,7 @@ public class ActionMenu extends AbstractMenu
 
     public Integer getIntegerForArgument(@NotNull final String argumentName)
     {
-        for (final ActionArgument actionArgument : actionArgumentList)
+        for (final ActionArgument actionArgument : getAllArgumentsList())
         {
             if (argumentName.equals(actionArgument.getName()))
             {
