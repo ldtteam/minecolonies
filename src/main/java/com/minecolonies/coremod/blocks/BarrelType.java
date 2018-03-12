@@ -11,10 +11,10 @@ public enum BarrelType implements IStringSerializable
 {
     ZERO(0, "0perc", MapColor.WOOD),
     TWENTY(1, "20perc", MapColor.WOOD),
-    FORTY(3, "40perc", MapColor.WOOD),
-    SIXTY(4, "60perc", MapColor.WOOD),
-    EIGHTY(5, "80perc", MapColor.WOOD),
-    HUNDRED(6, "100perc", MapColor.WOOD);
+    FORTY(2, "40perc", MapColor.WOOD),
+    SIXTY(3, "60perc", MapColor.WOOD),
+    EIGHTY(4, "80perc", MapColor.WOOD),
+    HUNDRED(5, "100perc", MapColor.WOOD);
 
     private static final BarrelType[] META_LOOKUP = new BarrelType[values().length];
     static

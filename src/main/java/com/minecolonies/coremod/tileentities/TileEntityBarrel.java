@@ -28,7 +28,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     private static final int BARRELSTATE_DONE       = 2;
 
     // todo: use a TileEntity to store state
-    private static final PropertyEnum<BarrelType> VARIANT        = PropertyEnum.create("variant", BarrelType.class);
+    //private static final PropertyEnum<BarrelType> VARIANT        = PropertyEnum.create("variant", BarrelType.class);
 
     private static final PropertyInteger BARRELSTATE    = PropertyInteger.create("BARRELSTATE", BARRELSTATE_FILLING, BARRELSTATE_DONE);
 
@@ -88,9 +88,9 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     //whenever player right click to barrel call this.
     public boolean useBarrel(final World worldIn, final EntityPlayer playerIn, final ItemStack itemstack, final IBlockState state, final BlockPos pos)
     {
-        Log.getLogger().info("block activated");
+        Log.getLogger().info("block activated (currently under development!)");
 
-        final int barrelState = state.getValue(BARRELSTATE);
+        /*final int barrelState = state.getValue(BARRELSTATE);
         int fullness = fillings.getOrDefault(pos, 0);
 
         Log.getLogger().info("At this moment bs= " + barrelState + " and fl=" + fullness);
@@ -130,7 +130,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
             Log.getLogger().info("now FULLNESS = " + fullness);
 
             return true;
-        }
+        }*/
 
         return false;
     }

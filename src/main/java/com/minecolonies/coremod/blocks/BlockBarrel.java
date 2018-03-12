@@ -7,19 +7,27 @@ import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemColored;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -28,10 +36,10 @@ import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
-public class BlockBarrel extends AbstractBlockMinecolonies<BlockBarrel>
+public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarrel>
 {
 
-    //public static final PropertyEnum<BarrelBlockType> VARIANT        = PropertyEnum.create("variant", BarrelBlockType.class);
+    public static final PropertyEnum<BarrelType> VARIANT        = PropertyEnum.create("variant", BarrelType.class);
     /**
      * The hardness this block has.
      */
@@ -39,7 +47,7 @@ public class BlockBarrel extends AbstractBlockMinecolonies<BlockBarrel>
     /**
      * This blocks name.
      */
-    private static final String                     BLOCK_NAME     = "Crate";
+    private static final String                     BLOCK_NAME     = "barrel_block";
     /**
      * The resistance this block has.
      */
@@ -48,11 +56,15 @@ public class BlockBarrel extends AbstractBlockMinecolonies<BlockBarrel>
     public BlockBarrel()
     {
         super(Material.WOOD);
-        //this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, BarrelBlockType.ZERO));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, BarrelType.ZERO));
         initBlock();
     }
 
-    //todo: register block with new method
+    @Override
+    public void registerItemBlock(final IForgeRegistry<Item> registry)
+    {
+        registry.register((new ItemColored(this, true)).setRegistryName(this.getRegistryName()));
+    }
 
     /**
      * initialize the block
@@ -66,8 +78,6 @@ public class BlockBarrel extends AbstractBlockMinecolonies<BlockBarrel>
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
     }
-
-
 
     /**
      * Used to determine ambient occlusion and culling when rebuilding chunks
@@ -91,6 +101,12 @@ public class BlockBarrel extends AbstractBlockMinecolonies<BlockBarrel>
         {
             ((TileEntityBarrel) te).updateTick(worldIn, pos, state, rand);
         }
+    }
+
+    @Override
+    protected BlockStateContainer createBlockState()
+    {
+        return new BlockStateContainer(this, new IProperty[]{VARIANT});
     }
 
     @Override
@@ -127,4 +143,46 @@ public class BlockBarrel extends AbstractBlockMinecolonies<BlockBarrel>
         }
         return true;
     }
+
+    /**
+     * Convert the given metadata into a BlockState for this Block
+     */
+    @Override
+    public IBlockState getStateFromMeta(final int meta)
+    {
+        return this.getDefaultState().withProperty(VARIANT, BarrelType.byMetadata(meta));
+    }
+
+    /**
+     * Gets the metadata of the item this Block can drop. This method is called when the block gets destroyed. It
+     * returns the metadata of the dropped item based on the old metadata of the block.
+     */
+    @Override
+    public int damageDropped(final IBlockState state)
+    {
+        return state.getValue(VARIANT).getMetadata();
+    }
+
+    @Override
+    protected ItemStack getSilkTouchDrop(final IBlockState state)
+    {
+        return new ItemStack(Item.getItemFromBlock(this), 1, state.getValue(VARIANT).getMetadata());
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public BlockRenderLayer getBlockLayer()
+    {
+        return BlockRenderLayer.TRANSLUCENT;
+    }
+
+    /**
+     * Convert the BlockState into the correct metadata value
+     */
+    @Override
+    public int getMetaFromState(final IBlockState state)
+    {
+        return state.getValue(VARIANT).getMetadata();
+    }
+
 }

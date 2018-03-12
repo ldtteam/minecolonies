@@ -1,11 +1,11 @@
 {
     "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
     "textures": {
-        "0": "blocks/bark",
-        "1": "blocks/wood",
-        "2": "blocks/stone",
-        "3": "blocks/glass",
-        "4": "blocks/compost"
+        "0": "minecolonies:blocks/barrel_block/bark",
+        "1": "minecolonies:blocks/barrel_block/wood",
+        "2": "minecolonies:blocks/barrel_block/stone",
+        "3": "minecolonies:blocks/barrel_block/glass",
+        "4": "minecolonies:blocks/barrel_block/compost"
     },
     "elements": [
         {

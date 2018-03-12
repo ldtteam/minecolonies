@@ -1,11 +1,10 @@
 {
     "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
     "textures": {
-        "0": "blocks/bark",
-        "1": "blocks/wood",
-        "2": "blocks/stone",
-        "3": "blocks/glass",
-        "4": "blocks/compost"
+        "0": "minecolonies:blocks/barrel_block/bark",
+        "1": "minecolonies:blocks/barrel_block/wood",
+        "2": "minecolonies:blocks/barrel_block/stone",
+        "3": "minecolonies:blocks/barrel_block/glass"
     },
     "elements": [
         {
@@ -321,19 +320,6 @@
                 "west": { "texture": "#3", "uv": [ 0.0, 0.0, -15.0, 8.0 ] },
                 "up": { "texture": "#3", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
                 "down": { "texture": "#3", "uv": [ 0.0, 0.0, 2.0, 1.0 ] }
-            }
-        },
-        {
-            "name": "compostTop",
-            "from": [ 2.0, 1.0, 2.0 ], 
-            "to": [ 14.0, 5.0, 14.0 ], 
-            "faces": {
-                "north": { "texture": "#4", "uv": [ 4.0, -4.0, 16.0, 16.0 ] },
-                "east": { "texture": "#4", "uv": [ 0.0, -8.0, 16.0, 16.0 ] },
-                "south": { "texture": "#4", "uv": [ 0.0, -8.0, 16.0, 16.0 ] },
-                "west": { "texture": "#4", "uv": [ 0.0, -8.0, 16.0, 16.0 ] },
-                "up": { "texture": "#4", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
-                "down": { "texture": "#4", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
             }
         }
     ]

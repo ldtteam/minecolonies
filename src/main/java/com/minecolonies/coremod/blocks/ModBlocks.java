@@ -128,6 +128,7 @@ public final class ModBlocks
                 BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.ACACIA.getName()).registerBlock(registry);
         blockShingleSlab = new BlockShingleSlab().registerBlock(registry);
         multiBlock = new MultiBlock().registerBlock(registry);
+        blockBarrel = new BlockBarrel().registerBlock(registry);
 
         for (final BlockPlanks.EnumType type: BlockPlanks.EnumType.values())
         {
@@ -177,6 +178,7 @@ public final class ModBlocks
         blockShingleSlab.registerItemBlock(registry);
         blockHutSmeltery.registerItemBlock(registry);
         multiBlock.registerItemBlock(registry);
+        blockBarrel.registerItemBlock(registry);
 
         for (final BlockTimberFrame frame: timberFrames)
         {
