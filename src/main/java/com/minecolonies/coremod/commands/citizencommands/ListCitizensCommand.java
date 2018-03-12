@@ -1,11 +1,21 @@
 package com.minecolonies.coremod.commands.citizencommands;
 
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.LISTCITIZENS;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.minecolonies.coremod.commands.ActionArgument;
+import com.minecolonies.coremod.commands.ActionMenu;
 import com.minecolonies.coremod.commands.IActionCommand;
 
 import net.minecraft.command.CommandException;
@@ -18,15 +28,6 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.LISTCITIZENS;
 
 /**
  * List all colonies.
@@ -72,21 +73,10 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final List<ActionArgument> actionArgumentList,
-            @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
     {
-        Integer page = null;
-        final Object pageObject = argumentValueByActionArgumentNameMap.get("page");
-        if (null != pageObject)
-        {
-            page = (Integer) pageObject;
-        }
-        Colony colony = null;
-        final Object colonyObject = argumentValueByActionArgumentNameMap.get("colony");
-        if (null != colonyObject)
-        {
-            colony = (Colony) colonyObject;
-        }
+        final Colony colony = actionMenu.getColonyForArgument("colony");
+        final Integer page = actionMenu.getIntegerForArgument("page");
         executeShared(server, sender, colony, page);
     }
 

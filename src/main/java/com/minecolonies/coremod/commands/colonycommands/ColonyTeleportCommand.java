@@ -1,13 +1,24 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.COLONYTP;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.minecolonies.coremod.commands.ActionArgument;
+import com.minecolonies.coremod.commands.ActionMenu;
 import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.util.TeleportToColony;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -15,16 +26,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.annotation.Nullable;
-
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.COLONYTP;
 
 /**
  * this command is made to TP a player to a friends colony.
@@ -73,46 +74,34 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final List<ActionArgument> actionArgumentList,
-            @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
     {
-        Colony colony = null;
-        final Object colonyObject = argumentValueByActionArgumentNameMap.get("colony");
-        if (null != colonyObject)
-        {
-            colony = (Colony) colonyObject;
-        }
-
+        Colony colony = actionMenu.getColonyForArgument("colony");
         if (null == colony)
         {
-            EntityPlayer player = null;
-            final Object playerObject = argumentValueByActionArgumentNameMap.get("player");
-            if (null != playerObject)
+            final EntityPlayer player = actionMenu.getPlayerForArgument("player");
+            if (player != null)
             {
-                player = (EntityPlayer) playerObject;
-                if (player != null)
+                IColony iColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
+                if (null == iColony)
                 {
-                    IColony iColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
-                    if (null == iColony)
+                    if (sender instanceof EntityPlayer)
                     {
-                        if (sender instanceof EntityPlayer)
+                        final Entity senderEntity = sender.getCommandSenderEntity();
+                        if (senderEntity != null)
                         {
-                            final Entity senderEntity = sender.getCommandSenderEntity();
-                            if (senderEntity != null)
+                            final UUID mayorID = senderEntity.getUniqueID();
+                            if (iColony == null)
                             {
-                                final UUID mayorID = senderEntity.getUniqueID();
-                                if (iColony == null)
-                                {
-                                    iColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
-                                }
+                                iColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
                             }
                         }
                     }
+                }
 
-                    if (null != iColony)
-                    {
-                        colony = ColonyManager.getColony(iColony.getID());
-                    }
+                if (null != iColony)
+                {
+                    colony = ColonyManager.getColony(iColony.getID());
                 }
             }
         }

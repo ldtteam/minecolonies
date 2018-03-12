@@ -1,9 +1,16 @@
 package com.minecolonies.coremod.commands.colonycommands.requestsystem;
 
+import java.util.Collections;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.minecolonies.coremod.commands.ActionArgument;
+import com.minecolonies.coremod.commands.ActionMenu;
 import com.minecolonies.coremod.commands.IActionCommand;
 
 import net.minecraft.command.CommandException;
@@ -12,12 +19,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 public class RSResetAllCommand extends AbstractSingleCommand implements IActionCommand
 {
@@ -50,8 +51,7 @@ public class RSResetAllCommand extends AbstractSingleCommand implements IActionC
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final List<ActionArgument> actionArgumentList,
-            @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
     {
         executeShared(server, sender);
     }

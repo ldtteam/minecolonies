@@ -1,10 +1,19 @@
 package com.minecolonies.coremod.commands.colonycommands.requestsystem;
 
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.RSRESET;
+
+import java.util.Collections;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.minecolonies.coremod.commands.ActionArgument;
+import com.minecolonies.coremod.commands.ActionMenu;
 import com.minecolonies.coremod.commands.IActionCommand;
 
 import net.minecraft.command.CommandException;
@@ -14,20 +23,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.RSRESET;
 
 public class RSResetCommand extends AbstractSingleCommand implements IActionCommand
 {
     public static final  String DESC            = "reset";
     private static final String SUCCESS_MESSAGE = "After 1.618 Seconds it reinstantiated completely new.";
     private static final String COLONY_NULL     = "Couldn't find colony %d.";
+    private static final String COLONY_NOT_FOUND = "Couldn't find colony.";
     private static final String NO_ARGUMENTS    = "Please define a colony";
 
     /**
@@ -56,14 +58,13 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final List<ActionArgument> actionArgumentList,
-            @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
     {
-        Colony colony = null;
-        final Object colonyObject = argumentValueByActionArgumentNameMap.get("colony");
-        if (null != colonyObject)
+        final Colony colony = actionMenu.getColonyForArgument("colony");
+        if (colony == null)
         {
-            colony = (Colony) colonyObject;
+            sender.sendMessage(new TextComponentString(COLONY_NOT_FOUND));
+            return;
         }
 
         executeShared(server, sender, colony);

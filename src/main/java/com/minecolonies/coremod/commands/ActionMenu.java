@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.jetbrains.annotations.NotNull;
@@ -123,6 +122,19 @@ public class ActionMenu extends AbstractMenu
         return null;
     }
 
+    public boolean getBooleanValueForArgument(@NotNull final String argumentName, final boolean defaultValue)
+    {
+        final Boolean booleanObject = getBooleanForArgument(argumentName);
+        if (null != booleanObject)
+        {
+            return booleanObject.booleanValue();
+        }
+        else
+        {
+            return defaultValue;
+        }
+    }
+
     public Integer getIntegerForArgument(@NotNull final String argumentName)
     {
         for (final ActionArgument actionArgument : actionArgumentList)
@@ -142,5 +154,18 @@ public class ActionMenu extends AbstractMenu
             }
         }
         return null;
+    }
+
+    public int getIntValueForArgument(@NotNull final String argumentName, final int defaultValue)
+    {
+        final Integer integerObject = getIntegerForArgument(argumentName);
+        if (null != integerObject)
+        {
+            return integerObject.intValue();
+        }
+        else
+        {
+            return defaultValue;
+        }
     }
 }

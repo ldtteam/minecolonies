@@ -12,6 +12,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionArgument;
+import com.minecolonies.coremod.commands.ActionMenu;
 import com.minecolonies.coremod.commands.IActionCommand;
 
 import net.minecraft.command.CommandException;
@@ -63,24 +64,10 @@ public class MakeNotAutoDeletableCommand extends AbstractSingleCommand implement
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final List<ActionArgument> actionArgumentList,
-            @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
     {
-        Colony colony = null;
-        final Object colonyObject = argumentValueByActionArgumentNameMap.get("colony");
-        if (null != colonyObject)
-        {
-            colony = (Colony) colonyObject;
-        }
-
-        boolean canBeDeleted = false;
-        final Object canBeDeletedObject = argumentValueByActionArgumentNameMap.get("canBeDeleted");
-        if (null != canBeDeletedObject)
-        {
-            final Boolean canBeDeletedObjectBoolean = (Boolean) canBeDeletedObject;
-            canBeDeleted = canBeDeletedObjectBoolean.booleanValue();
-        }
-
+        final Colony colony = actionMenu.getColonyForArgument("colony");
+        final boolean canBeDeleted = actionMenu.getBooleanValueForArgument("canBeDeleted", false);
         executeShared(server, sender, colony, canBeDeleted);
     }
 

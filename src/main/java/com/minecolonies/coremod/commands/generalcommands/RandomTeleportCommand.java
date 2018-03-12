@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionArgument;
+import com.minecolonies.coremod.commands.ActionMenu;
 import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import com.minecolonies.coremod.util.ServerUtils;
@@ -69,16 +70,9 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final List<ActionArgument> actionArgumentList,
-            @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
     {
-        EntityPlayer player = null;
-        final Object playerObject = argumentValueByActionArgumentNameMap.get("player");
-        if (null != playerObject)
-        {
-            player = (EntityPlayer) playerObject;
-        }
-
+        final EntityPlayer player = actionMenu.getPlayerForArgument("player");
         executeShared(server, sender, ((null != player) ? player.getName() : null));
     }
 

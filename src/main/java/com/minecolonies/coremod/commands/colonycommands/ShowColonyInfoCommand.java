@@ -1,27 +1,29 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.SHOWCOLONYINFO;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.minecolonies.coremod.commands.ActionArgument;
+import com.minecolonies.coremod.commands.ActionMenu;
 import com.minecolonies.coremod.commands.IActionCommand;
 import com.mojang.authlib.GameProfile;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.SHOWCOLONYINFO;
 
 /**
  * List all colonies.
@@ -68,31 +70,23 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
         return super.getCommandUsage(sender) + "<ColonyId|OwnerName>";
     }
 
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final List<ActionArgument> actionArgumentList,
-            @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
     {
         // See if we have a valid colony,
-        Colony colony = null;
-        final Object colonyObject = argumentValueByActionArgumentNameMap.get("colony");
-        if (null != colonyObject)
-        {
-            colony = (Colony) colonyObject;
-        }
-
+        Colony colony = actionMenu.getColonyForArgument("colony");
         EntityPlayer player = null;
         if (null == colony)
         {
             // see if we have a valid player
-            final Object playerObject = argumentValueByActionArgumentNameMap.get("player");
-            if (null != playerObject)
+            player = actionMenu.getPlayerForArgument("player");
+            if (null != player)
             {
-                player = (EntityPlayer) playerObject;
                 final IColony iColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player);
                 if (iColony != null)
                 {
                     if (!canPlayerUseCommand(player, SHOWCOLONYINFO, iColony.getID()))
                     {
-                        sender.getCommandSenderEntity().sendMessage(new TextComponentString(NOT_PERMITTED));
+                        sender.sendMessage(new TextComponentString(NOT_PERMITTED));
                         return;
                     }
                     colony = ColonyManager.getColony(iColony.getID());
@@ -103,16 +97,16 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
         if (null == colony)
         {
             // see if we have a sender that is a valid player
-            if (sender.getCommandSenderEntity() != null)
+            if (sender instanceof EntityPlayer)
             {
-                final UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
+                player = (EntityPlayer) sender;
+                final UUID mayorID = player.getUniqueID();
                 final IColony iColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
                 if (iColony != null)
                 {
-                    player = (EntityPlayer) sender;
                     if (!canPlayerUseCommand(player, SHOWCOLONYINFO, iColony.getID()))
                     {
-                        sender.getCommandSenderEntity().sendMessage(new TextComponentString(NOT_PERMITTED));
+                        sender.sendMessage(new TextComponentString(NOT_PERMITTED));
                         return;
                     }
                     colony = ColonyManager.getColony(iColony.getID());

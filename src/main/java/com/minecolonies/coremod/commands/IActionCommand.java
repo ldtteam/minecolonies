@@ -4,9 +4,6 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 
-import java.util.List;
-import java.util.Map;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -19,10 +16,8 @@ public interface IActionCommand
      *
      * @param server the server this is executed on.
      * @param sender this commands executor.
-     * @param actionArgumentList named parameters provided to command.
-     * @param argumentValueByActionArgumentNameMap parsed values stored by action argument name
+     * @param actionMenu actionMenu for this execution containing arguments
      * @throws CommandException if something goes wrong (like wrong syntax).
      */
-    void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull List<ActionArgument> actionArgumentList,
-            @NotNull Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException;
+    void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull ActionMenu actionMenu) throws CommandException;
 }

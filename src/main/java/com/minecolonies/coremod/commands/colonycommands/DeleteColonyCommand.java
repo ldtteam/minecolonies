@@ -1,12 +1,21 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.DELETECOLONY;
+
+import java.util.Collections;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.minecolonies.coremod.commands.ActionArgument;
+import com.minecolonies.coremod.commands.ActionMenu;
 import com.minecolonies.coremod.commands.IActionCommand;
 
 import net.minecraft.command.CommandException;
@@ -20,14 +29,6 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.DELETECOLONY;
 
 /**
  * List all colonies.
@@ -74,31 +75,11 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final List<ActionArgument> actionArgumentList,
-            @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
     {
-        Colony colony = null;
-        final Object colonyObject = argumentValueByActionArgumentNameMap.get("colony");
-        if (null != colonyObject)
-        {
-            colony = (Colony) colonyObject;
-        }
-
-        boolean canDestroy = false;
-        final Object canDestroyObject = argumentValueByActionArgumentNameMap.get("canDestroy");
-        if (null != canDestroyObject)
-        {
-            final Boolean canDestroyBoolean = (Boolean) canDestroyObject;
-            canDestroy = canDestroyBoolean.booleanValue();
-        }
-
-        boolean confirmDelete = false;
-        final Object confirmDeleteObject = argumentValueByActionArgumentNameMap.get("confirmDelete");
-        if (null != confirmDeleteObject)
-        {
-            final Boolean confirmDeleteBoolean = (Boolean) confirmDeleteObject;
-            confirmDelete = confirmDeleteBoolean.booleanValue();
-        }
+        final Colony colony = actionMenu.getColonyForArgument("colony");
+        final boolean canDestroy = actionMenu.getBooleanValueForArgument("canDestroy", false);
+        final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
 
         if (colony == null)
         {

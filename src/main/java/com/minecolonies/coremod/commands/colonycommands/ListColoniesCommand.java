@@ -1,9 +1,16 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.minecolonies.coremod.commands.ActionArgument;
+import com.minecolonies.coremod.commands.ActionMenu;
 import com.minecolonies.coremod.commands.IActionCommand;
 
 import net.minecraft.command.CommandException;
@@ -15,12 +22,6 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * List all colonies.
@@ -68,21 +69,10 @@ public class ListColoniesCommand extends AbstractSingleCommand implements IActio
         return super.getCommandUsage(sender);
     }
 
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final List<ActionArgument> actionArgumentList,
-            @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
     {
-        Integer page = null;
-        final Object pageObject = argumentValueByActionArgumentNameMap.get("page");
-        if (null != pageObject)
-        {
-            page = (Integer) pageObject;
-        }
-        Integer abandonedSinceTimeInHours = null;
-        final Object abandonedSinceTimeInHoursObject = argumentValueByActionArgumentNameMap.get("abandonedSinceTimeInHours");
-        if (null != abandonedSinceTimeInHoursObject)
-        {
-            abandonedSinceTimeInHours = (Integer) abandonedSinceTimeInHoursObject;
-        }
+        final Integer page = actionMenu.getIntegerForArgument("page");
+        final Integer abandonedSinceTimeInHours = actionMenu.getIntegerForArgument("abandonedSinceTimeInHours");
         executeShared(server, sender, page, abandonedSinceTimeInHours);
     }
 
@@ -97,10 +87,12 @@ public class ListColoniesCommand extends AbstractSingleCommand implements IActio
 
     private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, Integer page, Integer abandonedSinceTimeInHours) throws CommandException
     {
-        if (null == page) {
+        if (null == page)
+        {
             page = 1;
         }
-        if (null == abandonedSinceTimeInHours) {
+        if (null == abandonedSinceTimeInHours)
+        {
             abandonedSinceTimeInHours = 0;
         }
 

@@ -2,14 +2,13 @@ package com.minecolonies.coremod.commands.generalcommands;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Nullable;
 
 import org.jetbrains.annotations.NotNull;
 
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.minecolonies.coremod.commands.ActionArgument;
+import com.minecolonies.coremod.commands.ActionMenu;
 import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.items.ItemScanTool;
 
@@ -50,15 +49,15 @@ public class ScanCommand extends AbstractSingleCommand implements IActionCommand
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final List<ActionArgument> actionArgumentList,
-            @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
     {
-        final int x1 = (int) argumentValueByActionArgumentNameMap.get("x1");
-        final int y1 = (int) argumentValueByActionArgumentNameMap.get("y1");
-        final int z1 = (int) argumentValueByActionArgumentNameMap.get("z1");
-        final int x2 = (int) argumentValueByActionArgumentNameMap.get("x2");
-        final int y2 = (int) argumentValueByActionArgumentNameMap.get("y2");
-        final int z2 = (int) argumentValueByActionArgumentNameMap.get("z2");
+        // Will throw ClassCastException if null, but should never be null as these values are required.
+        final int x1 = actionMenu.getIntegerForArgument("x1");
+        final int y1 = actionMenu.getIntegerForArgument("y1");
+        final int z1 = actionMenu.getIntegerForArgument("z1");
+        final int x2 = actionMenu.getIntegerForArgument("x2");
+        final int y2 = actionMenu.getIntegerForArgument("y2");
+        final int z2 = actionMenu.getIntegerForArgument("z2");
         final BlockPos from = new BlockPos(x1, y1, z1);
         final BlockPos to = new BlockPos(x2, y2, z2);
         executeShared(server, sender, from, to);

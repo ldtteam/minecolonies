@@ -341,8 +341,6 @@ public class CommandEntryPointNew extends CommandBase
             }
         }
 
-        final Map<String, Object> argumentValueByActionArgumentNameMap = new HashMap<>();
-        final List<ActionArgument> actionArgumentList = new ArrayList<>();
         if (null != executionActionArgumentList)
         {
             for (final ActionArgument executionActionArgument : executionActionArgumentList)
@@ -351,15 +349,13 @@ public class CommandEntryPointNew extends CommandBase
                 {
                     throw new CommandException(getCommandUsage(sender, executionTreeNode));
                 }
-                actionArgumentList.add(executionActionArgument);
-                argumentValueByActionArgumentNameMap.put(executionActionArgument.getName(), executionActionArgument.getValue());
             }
         }
 
         final Class<? extends IActionCommand> clazz = actionMenu.getActionCommandClass();
         try
         {
-            createInstanceAndExecute(server, sender, argumentValueByActionArgumentNameMap, actionArgumentList, clazz);
+            createInstanceAndExecute(server, sender, actionMenu, clazz);
         }
         catch (final InstantiationException | IllegalAccessException e)
         {
@@ -369,11 +365,11 @@ public class CommandEntryPointNew extends CommandBase
         }
     }
 
-    protected void createInstanceAndExecute(final MinecraftServer server, final ICommandSender sender, final Map<String, Object> argumentValueByActionArgumentNameMap,
-            final List<ActionArgument> actionArgumentList, final Class<? extends IActionCommand> clazz) throws InstantiationException, IllegalAccessException, CommandException
+    protected void createInstanceAndExecute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu,
+            @NotNull final Class<? extends IActionCommand> clazz) throws InstantiationException, IllegalAccessException, CommandException
     {
         final IActionCommand actionCommand = clazz.newInstance();
-        actionCommand.execute(server, sender, actionArgumentList, argumentValueByActionArgumentNameMap);
+        actionCommand.execute(server, sender, actionMenu);
     }
 
     /**

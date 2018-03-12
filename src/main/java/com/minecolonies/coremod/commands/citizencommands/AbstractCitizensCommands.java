@@ -5,7 +5,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.minecolonies.coremod.commands.ActionArgument;
+import com.minecolonies.coremod.commands.ActionMenu;
 import com.minecolonies.coremod.commands.IActionCommand;
 
 import net.minecraft.command.CommandException;
@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Parent class for all citizen related commands, contains code which is the same for all commands relating citizens.
@@ -39,28 +38,16 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final List<ActionArgument> actionArgumentList,
-            @NotNull final Map<String, Object> argumentValueByActionArgumentNameMap) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
     {
-        Colony colony = null;
-        final Object colonyObject = argumentValueByActionArgumentNameMap.get("colony");
-        if (null != colonyObject)
-        {
-            colony = (Colony) colonyObject;
-        }
-
+        final Colony colony = actionMenu.getColonyForArgument("colony");
         if (colony == null)
         {
             sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
             return;
         }
 
-        CitizenData citizenData = null;
-        final Object citizenDataObject = argumentValueByActionArgumentNameMap.get("citizen");
-        if (null != citizenDataObject)
-        {
-            citizenData = (CitizenData) colonyObject;
-        }
+        final CitizenData citizenData = actionMenu.getCitizenForArgument("citizen");
 
         final int citizenId = (null != citizenData) ? citizenData.getId() : -1;
         executeSpecializedCode(server, sender, colony, citizenId);
