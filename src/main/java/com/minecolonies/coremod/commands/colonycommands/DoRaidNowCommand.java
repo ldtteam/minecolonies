@@ -85,6 +85,7 @@ public class DoRaidNowCommand extends AbstractSingleCommand implements IActionCo
         else
         {
             sender.sendMessage(NO_ARGUMENTS);
+            return;
         }
 
         executeShared(server, sender, colony);
