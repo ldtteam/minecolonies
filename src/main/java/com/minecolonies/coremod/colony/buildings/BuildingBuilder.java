@@ -185,7 +185,8 @@ public class BuildingBuilder extends AbstractBuildingWorker
             final NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);
             final ItemStack stack = new ItemStack(neededRes);
             final BuildingBuilderResource resource = new BuildingBuilderResource(stack, ItemStackUtils.getSize(stack));
-            neededResources.put(stack.getUnlocalizedName() + ":" + stack.getItemDamage() + "-" + stack.getTagCompound().hashCode(), resource);
+            final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
+            neededResources.put(stack.getUnlocalizedName() + ":" + stack.getItemDamage() + "-" + hashCode, resource);
         }
     }
 
@@ -198,6 +199,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             @NotNull final NBTTagCompound neededRes = new NBTTagCompound();
             final ItemStack itemStack = new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
+            itemStack.setTagCompound(resource.getItemStack().getTagCompound());
             itemStack.writeToNBT(neededRes);
 
             neededResTagList.appendTag(neededRes);
@@ -306,7 +308,8 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             return;
         }
-        BuildingBuilderResource resource = this.neededResources.get(res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + res.getTagCompound().hashCode());
+        final int hashCode = res.hasTagCompound() ? res.getTagCompound().hashCode() : 0;
+        BuildingBuilderResource resource = this.neededResources.get(res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + hashCode);
         if (resource == null)
         {
             resource = new BuildingBuilderResource(res, amount);
@@ -315,7 +318,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             resource.setAmount(resource.getAmount() + amount);
         }
-        this.neededResources.put(res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + res.getTagCompound().hashCode(), resource);
+        this.neededResources.put(res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + hashCode, resource);
         this.markDirty();
     }
 
@@ -327,8 +330,9 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     public void reduceNeededResource(final ItemStack res, final int amount)
     {
+        final int hashCode = res.hasTagCompound() ? res.getTagCompound().hashCode() : 0;
         int preAmount = 0;
-        final String name = res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + res.getTagCompound().hashCode();
+        final String name = res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + hashCode;
         if (this.neededResources.containsKey(name))
         {
             preAmount = this.neededResources.get(name).getAmount();
@@ -362,6 +366,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     public boolean requiresResourceForBuilding(final ItemStack stack)
     {
-        return neededResources.containsKey(stack.getUnlocalizedName() + ":" + stack.getItemDamage() + "-" + stack.getTagCompound().hashCode());
+        final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
+        return neededResources.containsKey(stack.getUnlocalizedName() + ":" + stack.getItemDamage() + "-" + hashCode);
     }
 }
