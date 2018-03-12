@@ -296,6 +296,7 @@ public enum ActionArgumentType
                     {
                         return ColonyManager.getColony(colonyNumber);
                     }
+                    return null;
                 }
                 catch (final NumberFormatException e)
                 {
