@@ -141,13 +141,14 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
             final float hitY,
             final float hitZ)
     {
-        Log.getLogger().info("block right-clicked");
+        if(!worldIn.isRemote) {
+            Log.getLogger().info("block right-clicked");
 
-        final ItemStack itemstack = playerIn.inventory.getCurrentItem();
-        TileEntity te = worldIn.getTileEntity(pos);
-        if(te instanceof TileEntityBarrel)
-        {
-            ((TileEntityBarrel) te).useBarrel(worldIn, playerIn, itemstack, state, pos);
+            final ItemStack itemstack = playerIn.inventory.getCurrentItem();
+            TileEntity te = worldIn.getTileEntity(pos);
+            if (te instanceof TileEntityBarrel) {
+                ((TileEntityBarrel) te).useBarrel(worldIn, playerIn, itemstack, state, pos);
+            }
         }
         return true;
     }

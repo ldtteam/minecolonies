@@ -29,7 +29,8 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     public void update()
     {
         World world = this.getWorld();
-        this.updateTick(world, this.getPos(), world.getBlockState(this.getPos()), new Random());
+        if(!world.isRemote)
+            this.updateTick(world, this.getPos(), world.getBlockState(this.getPos()), new Random());
     }
 
 
@@ -63,6 +64,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     //whenever player right click to barrel call this.
     public boolean useBarrel(final World worldIn, final EntityPlayer playerIn, final ItemStack itemstack, final IBlockState state, final BlockPos pos)
     {
+        if(getWorld().isRemote) return false;
         Log.getLogger().info("block activated (currently under development!)");
         IBlockState blockState =  state.getActualState(worldIn, pos);
 
@@ -70,8 +72,8 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         if(blockState.getValue(BlockBarrel.VARIANT).equals(BarrelType.DONE))
         {
             // TODO: Add this back in once compost exists again. For now it drops a bone
-            // playerIn.inventory.addItemStackToInventory(new ItemStack(ModItems.compost, 8));
-            playerIn.inventory.addItemStackToInventory(new ItemStack(Items.BONE));
+            // playerIn.inventory.addItemStackToInventory(new ItemStack(ModItems.compost, 6));
+            playerIn.inventory.addItemStackToInventory(new ItemStack(Items.DYE, 6, 15));
             this.updateBlock(blockState.withProperty(BlockBarrel.VARIANT, BarrelType.ZERO));
             return true;
         }
@@ -142,7 +144,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         //We update the quantities in the player´s inventory and in the barrel
         this.items = this.items + itemsToRemove;
         itemsToRemove = itemsToRemove/factor;
-        ItemStackUtils.changeSize(itemStack, -itemsToRemove);   //TODO: test if the items get correctly removed in server
+        ItemStackUtils.changeSize(itemStack, -itemsToRemove);
         this.updateBlock(getWorld().getBlockState(pos));
 
         Log.getLogger().info("Consumed "+ itemsToRemove+" and now the barrel contains: "+items);
@@ -160,11 +162,12 @@ public class TileEntityBarrel extends TileEntity implements ITickable
                 || itemStack.getItem().equals(Item.getItemFromBlock(Blocks.SAPLING));
     }
 
-    private void updateBlock(IBlockState newState)
-    {
-        getWorld().setBlockState(pos,newState);
-        this.markDirty();
-        getWorld().notifyBlockUpdate(this.getPos(), newState, newState, 3);
+    private void updateBlock(IBlockState newState) {
+        if (!getWorld().isRemote) {
+            getWorld().setBlockState(pos, newState);
+            this.markDirty();
+            getWorld().notifyBlockUpdate(this.getPos(), newState, newState, 3);
+        }
     }
 
 }
