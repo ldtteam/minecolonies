@@ -129,7 +129,7 @@ public class TransferItemsRequestMessage extends AbstractMessage<TransferItemsRe
         else
         {
             amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory),
-                    stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(message.itemStack)));
+                    stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, message.itemStack, true, true)));
         }
 
         final ItemStack itemStackToTake = new ItemStack(item, amountToTake, message.itemStack.getItemDamage());
@@ -166,7 +166,7 @@ public class TransferItemsRequestMessage extends AbstractMessage<TransferItemsRe
             {
                 final int slot =
                         InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory),
-                                stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(message.itemStack));
+                                stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, message.itemStack, true, true));
                 final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
                 amountToRemoveFromPlayer -= ItemStackUtils.getSize(itemsTaken);
             }

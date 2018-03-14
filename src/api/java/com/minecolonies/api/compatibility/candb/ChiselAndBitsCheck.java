@@ -89,28 +89,7 @@ public final class ChiselAndBitsCheck extends ChiselAndBitsProxy
                 {
                     if (iBitBrush.getStateID() != 0)
                     {
-                        ItemStack stack = iBitBrush.getItemStack(x);
-                        for (final ItemStack tempStack : stacks)
-                        {
-                            if (ItemHandlerHelper.canItemStacksStack(tempStack, stack) && tempStack.getCount() < STACKSIZE)
-                            {
-                                final int count = STACKSIZE - tempStack.getCount();
-                                if(stack.getCount() < count)
-                                {
-                                    tempStack.setCount(tempStack.getCount() + stack.getCount());
-                                    stack = ItemStack.EMPTY;
-                                }
-                                else
-                                {
-                                    tempStack.setCount(STACKSIZE);
-                                    stack.setCount(stack.getCount() - count);
-                                }
-                            }
-                        }
-                        if(!ItemStackUtils.isEmpty(stack))
-                        {
-                            stacks.add(stack);
-                        }
+                        stacks.add(iBitBrush.getItemStack(x));
                     }
                     return iBitBrush;
                 }

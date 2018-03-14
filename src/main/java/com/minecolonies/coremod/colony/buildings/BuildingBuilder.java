@@ -131,7 +131,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
         for (final BuildingBuilderResource stack : neededResources.values())
         {
-            toKeep.put(stack.getItemStack()::isItemEqual, stack.getAmount());
+            toKeep.put(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), stack.getAmount());
         }
 
         return toKeep;
@@ -261,13 +261,16 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
                 if (builderInventory != null)
                 {
-                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory), resource.getItem(), resource.getDamageValue()));
+
+                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory),
+                            stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 
                 final TileEntity chestInventory = this.getTileEntity();
                 if (chestInventory != null)
                 {
-                    resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory, resource.getItem(), resource.getDamageValue()));
+                    resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory,
+                            stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 
                 //Count in the additional chests as well
@@ -278,7 +281,8 @@ public class BuildingBuilder extends AbstractBuildingWorker
                         final TileEntity entity = CompatibilityUtils.getWorld(builder).getTileEntity(pos);
                         if (entity instanceof TileEntityChest)
                         {
-                            resource.addAvailable(InventoryUtils.getItemCountInProvider(entity, resource.getItem(), resource.getDamageValue()));
+                            resource.addAvailable(InventoryUtils.getItemCountInProvider(entity,
+                                    stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                         }
                     }
                 }

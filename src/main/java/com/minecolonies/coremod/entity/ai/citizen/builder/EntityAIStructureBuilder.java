@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
+import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
@@ -274,7 +275,10 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             }
         }
 
-        building.addNeededResource(BlockUtils.getItemStackFromBlockState(blockState), 1);
+        if (!ChiselAndBitsCheck.isChiselAndBitsBlock(blockState))
+        {
+            building.addNeededResource(BlockUtils.getItemStackFromBlockState(blockState), 1);
+        }
     }
 
     private AIState startWorkingAtOwnBuilding()

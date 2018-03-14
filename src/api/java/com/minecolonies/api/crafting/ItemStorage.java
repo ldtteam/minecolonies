@@ -130,7 +130,9 @@ public class ItemStorage
     @Override
     public int hashCode()
     {
-        return Objects.hash(stack.getItem()) + (shouldIgnoreDamageValue ? 0 : (stack.getItemDamage() * 31));
+        return Objects.hash(stack.getItem())
+                + (shouldIgnoreDamageValue ? 0 : (stack.getItemDamage() * 31))
+                + ((stack.getTagCompound() == null) ? 0 : stack.getTagCompound().hashCode());
     }
 
     @Override
@@ -148,7 +150,9 @@ public class ItemStorage
         final ItemStorage that = (ItemStorage) o;
 
 
-        return stack.isItemEqual(that.getItemStack()) && (this.shouldIgnoreDamageValue || that.getDamageValue() == this.getDamageValue());
+        return stack.isItemEqual(that.getItemStack())
+                && (this.shouldIgnoreDamageValue || that.getDamageValue() == this.getDamageValue())
+                &&  that.getItemStack().getTagCompound() == this.getItemStack().getTagCompound();
     }
 
     /**
