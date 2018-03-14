@@ -21,6 +21,8 @@ public final class ModItems
     public static Item ancientTome;
     public static Item chiefSword;
     public static Item clipboard;
+    //TODO: register the compost again when it works.
+    //public static Item compost;
 
     public static Item itemAchievementProxySettlement;
     public static Item itemAchievementProxyTown;
@@ -52,6 +54,7 @@ public final class ModItems
         ancientTome = new ItemAncientTome();
         chiefSword = new ItemChiefSword();
         clipboard = new ItemClipBoard();
+        //compost = new ItemCompost();
         itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement");
         itemAchievementProxyTown = new ItemAchievementProxy("sizeTown");
         itemAchievementProxyCity = new ItemAchievementProxy("sizeCity");
@@ -71,5 +74,6 @@ public final class ModItems
         registry.register(itemAchievementProxyCity);
         registry.register(itemAchievementProxyMetropolis);
         registry.register(clipboard);
+        //registry.register(compost);
     }
 }

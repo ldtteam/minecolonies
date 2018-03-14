@@ -8,7 +8,9 @@
       "40perc":  { "model": "minecolonies:barrel_block/40perc_crate"},
       "60perc":  { "model": "minecolonies:barrel_block/60perc_crate"},
       "80perc":  { "model": "minecolonies:barrel_block/80perc_crate"},
-      "100perc": { "model": "minecolonies:barrel_block/100perc_crate"}
+      "100perc": { "model": "minecolonies:barrel_block/100perc_crate"},
+      "working": { "model": "minecolonies:barrel_block/100perc_crate"},
+      "done":    { "model": "minecolonies:barrel_block/60perc_crate"}
     }
   }
 }

@@ -108,10 +108,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     public void updateTick(final World worldIn, final BlockPos pos, final IBlockState state, final Random rand)
     {
         TileEntity te = worldIn.getTileEntity(pos);
-        if(te instanceof TileEntityBarrel)
-        {
-            ((TileEntityBarrel) te).updateTick(worldIn, pos, state, rand);
-        }
+        ((TileEntityBarrel) te).updateTick(worldIn, pos, state, rand);
     }
 
     @Override
