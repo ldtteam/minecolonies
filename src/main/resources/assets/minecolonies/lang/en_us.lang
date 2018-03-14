@@ -273,7 +273,7 @@ com.minecolonies.coremod.gui.workerHuts.cancelBuild=Cancel Build
 com.minecolonies.coremod.gui.workerHuts.cancelUpgrade=Cancel Upgrade
 com.minecolonies.coremod.gui.workerHuts.cancelRepair=Cancel Repair
 com.minecolonies.coremod.gui.buildtool.hut.level=Level %s
-com.minecolonies.coremod.network.messages.schematicsavemassage.toobig=Schematic size too big, can not be bigger than %s bytes
+com.minecolonies.coremod.network.messages.schematicsavemassage.toobig=Schematic is size too big, can not be bigger than %s bytes
 com.minecolonies.coremod.gui.buildtool.decorations=Decorations
 com.minecolonies.coremod.gui.buildtool.scans=My schematics
 com.minecolonies.coremod.gui.structure.edit.title=Edit Structure
@@ -281,6 +281,7 @@ com.minecolonies.coremod.gui.structure.rename=Rename Structure
 com.minecolonies.coremod.gui.structure.delete=Delete Structure
 com.minecolonies.coremod.gui.structure.delete.title=Delete Structure
 com.minecolonies.coremod.gui.structure.delete.body=Do you want to delete %s?
+
 //death achievements
 achievement.miner.death.lava=Dug too deep.
 achievement.miner.death.fall=It's the stop at the end.
@@ -294,6 +295,7 @@ achievement.lumberjack.death.tree.desc=Your lumberjack is killed by a tree.
 achievement.fisher.death.guardian.desc=Your fisherman is killed by a guardian.
 achievement.guard.death.enderman.desc=Your guard is killed by an enderman.
 achievement.player.death.guard.desc=You are killed by one of your guards.
+
 //statistics achievements
 achievement.builder.hutsBuilt.one=A roof over my head.
 achievement.builder.hutsBuilt.25=I think, I can handle that.
@@ -430,13 +432,12 @@ item.supplyCampDeployer.invalid.air_block_needed=Placing a supply camp requires 
 item.supplyCampDeployer.invalid.inside_existing_colony=You cannot place your supply camp near an existing colony.
 item.minecolonies.supplyChestDeployer.name=SupplyShip Chest
 item.minecolonies.supplyCampDeployer.name=SupplyCamp Chest
-com.minecolonies.coremod.error.supplyChestAlreadyPlaced=You have already placed a supply ship or supply camp!
 com.minecolonies.coremod.gui.townHall.currentHappiness=Overall happiness:
 com.minecolonies.coremod.job.guard.toolClickGuardTooFar=Too far away from guard tower, please upgrade your guard tower.
 com.minecolonies.coremod.saturation.0=I'm starving, I can't work anymore
 com.minecolonies.coremod.saturation.3=I'm quite hungry, I feel very unproductive
 com.minecolonies.coremod.saturation.5=I'm hungry, I'm not that productive anymore
-com.minecolonies.coremod.saturation.7=I'm quite saturated, but I'll have to eat soon again
+com.minecolonies.coremod.saturation.7=I'm quite saturated, but I'll have to eat again soon
 
 com.minecolonies.coremod.item.permissionscepter.setmode=Set to mode '%s'
 com.minecolonies.coremod.item.permissionscepter.permission.deny=You do not have permission to edit blocks with this tool.
@@ -451,11 +452,9 @@ com.minecolonies.coremod.baker.noFurnace=My building doesn't have any furnaces, 
 com.minecolonies.coremod.job.baker=Baker
 com.minecolonies.coremod.gui.workerHuts.saplingList=Tasklist
 
-com.minecolonies.coremod.gui.workerHuts.saplingList=Tasklist
 com.minecolonies.coremod.gui.townHall.housing=Housing assignment mode:
 com.minecolonies.coremod.gui.home.assign=Assign %d citizens
 com.minecolonies.coremod.gui.workerHuts.unassign=Remove citizen
-tile.minecolonies.blockTimberFrame.name=Plain Timber Frame
 tile.minecolonies.blockMinecoloniesRack.name=Rack
 
 com.minecolonies.coremod.status.waitingForWork=Searching job
@@ -554,7 +553,7 @@ tile.minecolonies.blockPaperwall.name=Paper wall
 com.minecolonies.coremod.gui.workerHuts.buildPrio=Delivery Priority:
 item.supplyChestDeployer.invalid=You must place it in a fitting pool of water.
 item.supplyChestDeployer.missing=Are you trying to trick me, pick up that Supplyship again?
-com.minecolonies.coremod.citizen.rename.same=Renaming failed: 2 Citizen are not allowed to have the same name!
+com.minecolonies.coremod.citizen.rename.same=Renaming failed: 2 Citizens are not allowed to have the same name!
 com.minecolonies.coremod.citizen.rename.notAllowed=Renaming failed: You're not allowed to rename your Citizen.
 
 tile.minecolonies.blockshingle_oak.name=Oak Shingle
@@ -579,13 +578,13 @@ com.minecolonies.coremod.job.smelter=Smelter
 tile.minecolonies.blockHutSmeltery.name=Smeltery
 com.minecolonies.coremod.enteringColony=Beware, you're entering %s's colony.
 com.minecolonies.coremod.leavingColony=Farewell, you're leaving %s's colony.
-com.minecolonies.coremod.enteringColonyNotify=Beware %s just entered your colony.
-com.minecolonies.coremod.leavingColonyNotify=Farewell %s, he just left your colony.
+com.minecolonies.coremod.enteringColonyNotify=Beware, %s just entered your colony.
+com.minecolonies.coremod.leavingColonyNotify=Farewell %s, they just left your colony.
 
 event.minecolonies.raidMessage1=Mysterious warriors have been spotted near the encampment.
 event.minecolonies.raidMessage2=Citizens report rumors of raiders nearby!
-event.minecolonies.raidMessage3=Buckle up cowboy! There's some darn raiders commin' for you tonight!
-event.minecolonies.raidMessage4=A huge horde of raiders is commin' your way, and they're not here to play!
+event.minecolonies.raidMessage3=Buckle up cowboy! There's some darn raiders comin' for you tonight!
+event.minecolonies.raidMessage4=A huge horde of raiders is comin' your way, and they're not here to play!
 com.minecolonies.coremod.gui.workerHuts.toggleAllOn=Toggle all (on)
 com.minecolonies.coremod.gui.workerHuts.toggleAllOff=Toggle all (off)
 com.minecolonies.coremod.gui.recipe.remove=Remove
@@ -602,7 +601,7 @@ com.minecolonies.coremod.gui.townHall.tp=Do you really want to teleport to: %s [
 com.minecolonies.coremod.gui.workerHuts.switchStyle=Switch Style
 com.minecolonies.coremod.gui.townHall.tooLow=TH too low
 com.minecolonies.coremod.gui.recipe.full=Max reached for level
-com.minecolonies.coremod.cook.full=Can't bring food to worker since their inventory is full.
+com.minecolonies.coremod.cook.full=Can't bring food to the worker since their inventory is full.
 
 tile.minecolonies.blockTimberFrame_oak_plain.name= Oak Plain Timber Frame
 tile.minecolonies.blockTimberFrame_oak_doublecrossed.name= Oak Crossed Timber Frame
