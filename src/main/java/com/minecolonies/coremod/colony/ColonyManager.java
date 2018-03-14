@@ -1185,7 +1185,6 @@ public final class ColonyManager
             view = ColonyView.createFromNetwork(colonyId);
             colonyViews.add(view);
         }
-
         return view.handleColonyViewMessage(colonyData, world, isNewSubscription);
     }
 

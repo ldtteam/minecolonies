@@ -32,6 +32,9 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
  */
 public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuilderView>
 {
+    private static final String LABEL_CONSTRUCTION_NAME =  "constructionName";
+    private static final String LABEL_CONSTRUCTION_POS =  "constructionPos";
+
     private static final int RED       = Color.getByName("red", 0);
     private static final int DARKGREEN = Color.getByName("darkgreen", 0);
     private static final int BLACK     = Color.getByName("black", 0);
@@ -116,6 +119,10 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
 
         //Make sure we have a fresh view
         MineColonies.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.building));
+
+        findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Label.class).setLabelText(building.getConstructionName());
+        findPaneOfTypeByID(LABEL_CONSTRUCTION_POS, Label.class).setLabelText(building.getConstructionPos());
+
     }
 
     /**

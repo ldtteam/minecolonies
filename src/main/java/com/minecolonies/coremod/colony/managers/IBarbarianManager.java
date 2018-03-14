@@ -3,6 +3,8 @@ package com.minecolonies.coremod.colony.managers;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
+import java.util.List;
+
 /**
  * Interface implementing all methods required for all barbarianmanagers.
  */
@@ -33,6 +35,12 @@ public interface IBarbarianManager
     void setCanHaveBarbEvents(final boolean canHave);
 
     /**
+     * Add a spawnPoint to the last barb spawns.
+     * @param pos the position to set.
+     */
+    void addBarbarianSpawnPoint(final BlockPos pos);
+
+    /**
      * Set if the raid has been calculated.
      * @param hasSet true or false.
      */
@@ -51,4 +59,10 @@ public interface IBarbarianManager
      * @return the position.
      */
     BlockPos getRandomOutsiderInDirection(final EnumFacing directionX, final EnumFacing directionZ);
+
+    /**
+     * Getter for the last spawn points.
+     * @return a copy of the list
+     */
+    List<BlockPos> getLastSpawnPoints();
 }
