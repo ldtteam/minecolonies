@@ -10,23 +10,23 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * This is the fallback for when c&b is not present!
+ * This is the fallback for when candb is not present!
  */
 public abstract class AbstractChiselAndBitsProxy
 {
     /**
-     * This is the fallback for when c&b is not present!
+     * This is the fallback for when candb is not present!
      *
      * @param blockState the IBlockState.
-     * @return if the blockState is a c&b blockState.
+     * @return if the blockState is a candb blockState.
      */
     public abstract boolean checkForChiselAndBitsBlock(@NotNull final IBlockState blockState);
 
     /**
-     * This is the fallback for when c&b is not present!
+     * This is the fallback for when candb is not present!
      *
      * @param tileEntity the tileEntity.
-     * @return if the tileEntity is a c&b tileEntity.
+     * @return if the tileEntity is a candb tileEntity.
      */
     public boolean checkForChiselAndBitsTileEntity(@NotNull final TileEntity tileEntity)
     {
@@ -34,10 +34,10 @@ public abstract class AbstractChiselAndBitsProxy
     }
 
     /**
-     * Check if tileEntity is c&b tileEntity.
+     * Check if tileEntity is candb tileEntity.
      *
      * @param tileEntity the tileEntity.
-     * @return if the tileEntity is a c&b tileEntity.
+     * @return if the tileEntity is a candb tileEntity.
      */
     public List<ItemStack> getChiseledStacks(@NotNull final TileEntity tileEntity)
     {

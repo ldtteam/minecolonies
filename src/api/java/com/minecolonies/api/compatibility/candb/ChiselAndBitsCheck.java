@@ -23,10 +23,10 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
     private static final String CANDB = "chiselsandbits";
 
     /**
-     * Check if tileEntity is c&b block.
+     * Check if tileEntity is candb block.
      *
      * @param tileEntity the tileEntity.
-     * @return if the tileEntity is a c&b tileEntity.
+     * @return if the tileEntity is a candb tileEntity.
      */
     public static boolean isChiselAndBitsTileEntity(@NotNull final TileEntity tileEntity)
     {
@@ -34,10 +34,10 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
     }
 
     /**
-     * Check if blockState is c&b block.
+     * Check if blockState is candb block.
      *
      * @param blockState the blockState.
-     * @return if the blockState is a c&b blockState.
+     * @return if the blockState is a candb blockState.
      */
     public static boolean isChiselAndBitsBlock(@NotNull final IBlockState blockState)
     {
@@ -45,7 +45,7 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
     }
 
     /**
-     * Get c&b bits as a list of itemStacks from tileEntity..
+     * Get candb bits as a list of itemStacks from tileEntity..
      *
      * @param tileEntity the tileEntity.
      * @return the list of itemStacks..
