@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
+import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.Suppression.LOOPS_SHOULD_NOT_CONTAIN_MORE_THAN_A_SINGLE_BREAK_OR_CONTINUE_STATEMENT;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART;
@@ -274,7 +276,27 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             }
         }
 
-        building.addNeededResource(BlockUtils.getItemStackFromBlockState(blockState), 1);
+        if (!ChiselAndBitsCheck.isChiselAndBitsBlock(blockState))
+        {
+            building.addNeededResource(BlockUtils.getItemStackFromBlockState(blockState), 1);
+        }
+    }
+
+    @Override
+    public int getTotalRequiredAmount(final ItemStack deliveredItemStack)
+    {
+        if(getOwnBuilding() instanceof BuildingBuilder)
+        {
+            if (ItemStackUtils.isEmpty(deliveredItemStack))
+            {
+                return 0;
+            }
+            final int hashCode = deliveredItemStack.hasTagCompound() ? deliveredItemStack.getTagCompound().hashCode() : 0;
+            final BuildingBuilderResource resource
+                    = ((BuildingBuilder) getOwnBuilding()).getNeededResources().get(deliveredItemStack.getUnlocalizedName() + ":" + deliveredItemStack.getItemDamage() + "-" + hashCode);
+            return resource.getAmount();
+        }
+        return super.getTotalRequiredAmount(deliveredItemStack);
     }
 
     private AIState startWorkingAtOwnBuilding()
@@ -485,8 +507,17 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             return null;
         }
-        final BuildingBuilderResource resource = ((BuildingBuilder) buildingWorker).getNeededResources().get(stack.getUnlocalizedName());
-        return resource == null ? stack : new ItemStack(resource.getItem(), Math.min(64, resource.getAmount()), resource.getDamageValue());
+        final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
+        final BuildingBuilderResource resource
+                = ((BuildingBuilder) buildingWorker).getNeededResources().get(stack.getUnlocalizedName() + ":" + stack.getItemDamage() + "-" + hashCode);
+
+        if(resource == null)
+        {
+            return stack;
+        }
+        final ItemStack resStack = new ItemStack(resource.getItem(), Math.min(STACKSIZE, resource.getAmount()), resource.getDamageValue());
+        resStack.setTagCompound(resource.getItemStack().getTagCompound());
+        return resStack;
     }
 
     @Override
