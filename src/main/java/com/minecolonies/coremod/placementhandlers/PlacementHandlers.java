@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
+import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -90,9 +91,9 @@ public final class PlacementHandlers
     {
         final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(new InvWrapper(placer.getWorker().getInventoryCitizen()),
           itemStack -> itemList.stream()
-                         .anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack)));
+                         .anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack, true, true)));
         itemList.removeIf(itemStack -> ItemStackUtils.isEmpty(itemStack) || foundStacks.stream()
-                                         .anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack)));
+                                         .anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack, true, true)));
 
         for (final ItemStack placedStack : itemList)
         {
@@ -538,7 +539,10 @@ public final class PlacementHandlers
             if (placer != null && !infiniteResources)
             {
                 final List<ItemStack> itemList = new ArrayList<>();
-                itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
+                if(!ChiselAndBitsCheck.isChiselAndBitsBlock(blockState))
+                {
+                    itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
+                }
                 itemList.addAll(placer.getItemsFromTileEntity());
                 itemList.removeIf(ItemStackUtils::isEmpty);
 
