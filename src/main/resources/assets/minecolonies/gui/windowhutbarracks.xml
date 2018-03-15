@@ -3,6 +3,12 @@
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
     <view id="pageActions" size="100% 100%">
         <layout source="minecolonies:gui/layoutbuildingdefault.xml"/>
+        <label size="100% 11" pos="30 35"
+               label="$(com.minecolonies.coremod.gui.workerHuts.barbpoints)" color="black"/>
+        <list id="positions" size="88% 25%" pos="16 50">
+            <box size="160 12" linewidth="1">
+                <label id="pos" size="120 12" color="black"/>
+            </box>
+        </list>
     </view>
-
 </window>
