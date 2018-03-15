@@ -10,6 +10,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -55,7 +56,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         if (timer >= TIMER_END)
         {
             //TODO: Add particles to the barrel and change models in the blockstate JSON
-            this.updateBlock(blockState.withProperty(BlockBarrel.VARIANT, BarrelType.DONE));
+            this.updateBlock(worldIn, blockState.withProperty(BlockBarrel.VARIANT, BarrelType.DONE));
             timer = 0;
             items = 0;
         }
@@ -71,10 +72,10 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         //If the barrel has finished composting, we drop and change state
         if(blockState.getValue(BlockBarrel.VARIANT).equals(BarrelType.DONE))
         {
-            // TODO: Add this back in once compost exists again. For now it drops a bone
+            // TODO: Add this back in once compost exists again. For now it drops 6 boneMeals
             // playerIn.inventory.addItemStackToInventory(new ItemStack(ModItems.compost, 6));
             playerIn.inventory.addItemStackToInventory(new ItemStack(Items.DYE, 6, 15));
-            this.updateBlock(blockState.withProperty(BlockBarrel.VARIANT, BarrelType.ZERO));
+            this.updateBlock(worldIn, blockState.withProperty(BlockBarrel.VARIANT, BarrelType.ZERO));
             return true;
         }
 
@@ -86,14 +87,13 @@ public class TileEntityBarrel extends TileEntity implements ITickable
 
         if(blockState.getValue(BlockBarrel.VARIANT).equals(BarrelType.WORKING))
         {
-            //TODO: fix double chat messages here
             playerIn.sendMessage(new TextComponentString("The barrel is working!"));
             Log.getLogger().info("The barrel is working");
             return false;
         }
         else
         {
-            this.consumeNeededItems(itemstack);
+            this.consumeNeededItems(worldIn, itemstack);
             this.changeStateOverFullness(worldIn, state);
             return true;
         }
@@ -113,24 +113,24 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         //If the barrel is in a "filling" state, we update it
         if(state.getMetadata() <= posibleStates)
         {
-            this.updateBlock(
+            this.updateBlock(worldIn,
                        blockState.withProperty(
                             BlockBarrel.VARIANT, state));
         }
 
         //If the barrel is full, it starts to compost
         if(items == MAX_ITEMS)
-            this.updateBlock(
+            this.updateBlock(worldIn,
                     blockState.withProperty(
                             BlockBarrel.VARIANT, BarrelType.WORKING));
 
     }
 
-    private void consumeNeededItems(ItemStack itemStack)
+    private void consumeNeededItems(World worldIn, ItemStack itemStack)
     {
         Log.getLogger().info("Consuming: "+itemStack.getItem().getUnlocalizedName());
 
-        int factor = 1;
+        int factor;
         //Rotten Flesh counts as 2 items
         factor = itemStack.getItem().equals(Items.ROTTEN_FLESH)?2 : 1;
 
@@ -145,7 +145,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         this.items = this.items + itemsToRemove;
         itemsToRemove = itemsToRemove/factor;
         ItemStackUtils.changeSize(itemStack, -itemsToRemove);
-        this.updateBlock(getWorld().getBlockState(pos));
+        this.updateBlock(worldIn, worldIn.getBlockState(pos));
 
         Log.getLogger().info("Consumed "+ itemsToRemove+" and now the barrel contains: "+items);
 
@@ -162,12 +162,37 @@ public class TileEntityBarrel extends TileEntity implements ITickable
                 || itemStack.getItem().equals(Item.getItemFromBlock(Blocks.SAPLING));
     }
 
-    private void updateBlock(IBlockState newState) {
-        if (!getWorld().isRemote) {
-            getWorld().setBlockState(pos, newState);
+    private void updateBlock(World worldIn, IBlockState newState) {
+        if (!worldIn.isRemote) {
+            worldIn.setBlockState(pos, newState);
             this.markDirty();
-            getWorld().notifyBlockUpdate(this.getPos(), newState, newState, 3);
+            worldIn.notifyBlockUpdate(this.getPos(), newState, newState, 3);
         }
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+
+        compound.setInteger("items", this.items);
+        compound.setInteger("timer", this.timer);
+
+        return compound;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        this.items = compound.getInteger("items");
+        this.timer = compound.getInteger("timer");
+    }
+
+    @Override
+    public boolean shouldRefresh(final World world, final BlockPos pos, final IBlockState oldState, final IBlockState newState)
+    {
+        return oldState.getBlock() != newState.getBlock();
     }
 
 }
