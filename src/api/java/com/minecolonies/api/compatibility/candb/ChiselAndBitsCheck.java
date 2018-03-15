@@ -1,6 +1,5 @@
 package com.minecolonies.api.compatibility.candb;
 
-import com.minecolonies.api.util.ItemStackUtils;
 import mod.chiselsandbits.api.IBitAccess;
 import mod.chiselsandbits.api.IBitBrush;
 import mod.chiselsandbits.api.IBitVisitor;
@@ -10,19 +9,16 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-
 /**
  * This class is to store a check to see if a block is a chiselsandbits block.
  */
-public final class ChiselAndBitsCheck extends ChiselAndBitsProxy
+public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
 {
     private static final String CANDB = "chiselsandbits";
 

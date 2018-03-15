@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * This is the fallback for when c&b is not present!
  */
-public abstract class ChiselAndBitsProxy
+public abstract class AbstractChiselAndBitsProxy
 {
     /**
      * This is the fallback for when c&b is not present!
