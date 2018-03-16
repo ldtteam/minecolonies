@@ -20,7 +20,10 @@ public abstract class AbstractChiselAndBitsProxy
      * @param blockState the IBlockState.
      * @return if the blockState is a candb blockState.
      */
-    public abstract boolean checkForChiselAndBitsBlock(@NotNull final IBlockState blockState);
+    public boolean checkForChiselAndBitsBlock(@NotNull final IBlockState blockState)
+    {
+        return false;
+    }
 
     /**
      * This is the fallback for when candb is not present!
