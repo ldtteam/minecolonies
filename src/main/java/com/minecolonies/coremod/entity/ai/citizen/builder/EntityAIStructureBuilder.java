@@ -294,7 +294,10 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             final int hashCode = deliveredItemStack.hasTagCompound() ? deliveredItemStack.getTagCompound().hashCode() : 0;
             final BuildingBuilderResource resource
                     = ((BuildingBuilder) getOwnBuilding()).getNeededResources().get(deliveredItemStack.getUnlocalizedName() + ":" + deliveredItemStack.getItemDamage() + "-" + hashCode);
-            return resource.getAmount();
+            if(resource != null)
+            {
+                return resource.getAmount();
+            }
         }
         return super.getTotalRequiredAmount(deliveredItemStack);
     }
