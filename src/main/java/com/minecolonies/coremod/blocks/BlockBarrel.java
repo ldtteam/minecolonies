@@ -6,23 +6,23 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemColored;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -59,6 +59,11 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     private static final float                      RESISTANCE     = 1F;
 
     /**
+     * The position it faces.
+     */
+    public static final PropertyDirection FACING = BlockHorizontal.FACING;
+
+    /**
      * BoundingBox of the block
      * 0.0625 -> factor of the offset in pixels (1/16)
      */
@@ -67,7 +72,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     public BlockBarrel()
     {
         super(Material.WOOD);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, BarrelType.ZERO));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(VARIANT, BarrelType.ZERO));
         initBlock();
     }
 
@@ -114,7 +119,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, new IProperty[]{VARIANT});
+        return new BlockStateContainer(this, new IProperty[]{FACING, VARIANT});
     }
 
     @Override
@@ -159,7 +164,8 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     @Override
     public IBlockState getStateFromMeta(final int meta)
     {
-        return this.getDefaultState().withProperty(VARIANT, BarrelType.byMetadata(meta));
+        return this.getDefaultState().withProperty(FACING,
+                EnumFacing.getHorizontal(meta)).withProperty(VARIANT, BarrelType.byMetadata(meta));
     }
 
     /**
@@ -200,13 +206,33 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
         return BOUNDING_BOX;
     }
 
-
-    @SubscribeEvent
-    public void onDrops(BlockEvent.HarvestDropsEvent event)
+    /**
+     * Convert the BlockState into the correct metadata value.
+     *
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
+    @NotNull
+    @Override
+    @Deprecated
+    public IBlockState withRotation(@NotNull final IBlockState state, final Rotation rot)
     {
-        event.getDrops().clear();
-        event.getDrops().add(new ItemStack(Item.getItemFromBlock(this), 1, this.getDefaultState().getValue(VARIANT).getMetadata()));
-        //TODO: Drop the items contained in the barrel
-        TileEntity te = event.getWorld().getTileEntity(event.getPos());
+        return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
+    }
+
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
+    @NotNull
+    @Override
+    @Deprecated
+    public IBlockState withMirror(@NotNull final IBlockState state, final Mirror mirrorIn)
+    {
+        return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
+    }
+
+    @Override
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY,
+                                            float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+        return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand).withProperty(FACING, placer.getHorizontalFacing());
     }
 }

@@ -1,7 +1,7 @@
 {
     "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
     "textures": {
-        "particle": "blocks/textures/wood",
+        "particle": "minecolonies:blocks/barrel_block/wood",
         "0": "minecolonies:blocks/barrel_block/bark",
         "1": "minecolonies:blocks/barrel_block/wood",
         "2": "minecolonies:blocks/barrel_block/stone",

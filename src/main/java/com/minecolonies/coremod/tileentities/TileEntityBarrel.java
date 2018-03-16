@@ -12,10 +12,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 import java.util.Random;
 
@@ -24,7 +26,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     private int                                     items          = 0;
     private int                                     timer          = 0;
     private static final int                        MAX_ITEMS      = 64;
-    private static final int                        TIMER_END      = 600;
+    private static final int                        TIMER_END      = 24000; //Number of Minecraft ticks in 2 whole days
 
     @Override
     public void update()
@@ -48,6 +50,11 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         {
             doBarrelCompostTick(worldIn, pos, state);
         }
+        if(barrelType.equals(BarrelType.DONE))
+        {
+            //If the barrel is done, we spawn particles imitating "bad smell"
+            ((WorldServer)worldIn).spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, this.getPos().getX()+0.5, this.getPos().getY()+1.5, this.getPos().getZ()+0.5, 1, 0.2, 0, 0.2, 0);
+        }
     }
 
     private void doBarrelCompostTick(final World worldIn, final BlockPos pos, final IBlockState blockState)
@@ -55,7 +62,6 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         timer++;
         if (timer >= TIMER_END)
         {
-            //TODO: Add particles to the barrel and change models in the blockstate JSON
             this.updateBlock(worldIn, blockState.withProperty(BlockBarrel.VARIANT, BarrelType.DONE));
             timer = 0;
             items = 0;

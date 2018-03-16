@@ -1,7 +1,15 @@
 {
   "forge_marker": 1,
   "parent": "block/block",
-  "variants": {
+  "variants":
+  {
+    "facing": {
+        "up":    {},
+        "east":  {"y": 270},
+        "south": {"y": 0},
+        "west":  {"y": 90},
+        "north": {"y": 180}
+    },
     "variant": {
       "0perc":   { "model": "minecolonies:barrel_block/0perc_crate"},
       "20perc":  { "model": "minecolonies:barrel_block/20perc_crate" },
