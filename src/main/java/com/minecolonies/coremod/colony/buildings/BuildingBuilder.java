@@ -134,7 +134,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
         for (final BuildingBuilderResource stack : neededResources.values())
         {
-            toKeep.put(stack.getItemStack()::isItemEqual, stack.getAmount());
+            toKeep.put(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), stack.getAmount());
         }
 
         return toKeep;
@@ -188,7 +188,8 @@ public class BuildingBuilder extends AbstractBuildingWorker
             final NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);
             final ItemStack stack = new ItemStack(neededRes);
             final BuildingBuilderResource resource = new BuildingBuilderResource(stack, ItemStackUtils.getSize(stack));
-            neededResources.put(stack.getUnlocalizedName() + ":" + stack.getItemDamage(), resource);
+            final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
+            neededResources.put(stack.getUnlocalizedName() + ":" + stack.getItemDamage() + "-" + hashCode, resource);
         }
     }
 
@@ -201,6 +202,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             @NotNull final NBTTagCompound neededRes = new NBTTagCompound();
             final ItemStack itemStack = new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
+            itemStack.setTagCompound(resource.getItemStack().getTagCompound());
             itemStack.writeToNBT(neededRes);
 
             neededResTagList.appendTag(neededRes);
@@ -301,13 +303,16 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
                 if (builderInventory != null)
                 {
-                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory), resource.getItem(), resource.getDamageValue()));
+
+                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory),
+                            stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 
                 final TileEntity chestInventory = this.getTileEntity();
                 if (chestInventory != null)
                 {
-                    resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory, resource.getItem(), resource.getDamageValue()));
+                    resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory,
+                            stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 
                 //Count in the additional chests as well
@@ -318,7 +323,8 @@ public class BuildingBuilder extends AbstractBuildingWorker
                         final TileEntity entity = CompatibilityUtils.getWorld(builder).getTileEntity(pos);
                         if (entity instanceof TileEntityChest)
                         {
-                            resource.addAvailable(InventoryUtils.getItemCountInProvider(entity, resource.getItem(), resource.getDamageValue()));
+                            resource.addAvailable(InventoryUtils.getItemCountInProvider(entity,
+                                    stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                         }
                     }
                 }
@@ -348,7 +354,8 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             return;
         }
-        BuildingBuilderResource resource = this.neededResources.get(res.getUnlocalizedName() + ":" + res.getItemDamage());
+        final int hashCode = res.hasTagCompound() ? res.getTagCompound().hashCode() : 0;
+        BuildingBuilderResource resource = this.neededResources.get(res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + hashCode);
         if (resource == null)
         {
             resource = new BuildingBuilderResource(res, amount);
@@ -357,7 +364,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             resource.setAmount(resource.getAmount() + amount);
         }
-        this.neededResources.put(res.getUnlocalizedName() + ":" + res.getItemDamage(), resource);
+        this.neededResources.put(res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + hashCode, resource);
         this.markDirty();
     }
 
@@ -369,8 +376,9 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     public void reduceNeededResource(final ItemStack res, final int amount)
     {
+        final int hashCode = res.hasTagCompound() ? res.getTagCompound().hashCode() : 0;
         int preAmount = 0;
-        final String name = res.getUnlocalizedName() + ":" + res.getItemDamage();
+        final String name = res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + hashCode;
         if (this.neededResources.containsKey(name))
         {
             preAmount = this.neededResources.get(name).getAmount();
@@ -404,6 +412,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     public boolean requiresResourceForBuilding(final ItemStack stack)
     {
-        return neededResources.containsKey(stack.getUnlocalizedName() + ":" + stack.getItemDamage());
+        final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
+        return neededResources.containsKey(stack.getUnlocalizedName() + ":" + stack.getItemDamage() + "-" + hashCode);
     }
 }
