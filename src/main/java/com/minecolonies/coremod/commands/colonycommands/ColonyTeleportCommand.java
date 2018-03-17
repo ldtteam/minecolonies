@@ -110,6 +110,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
         if (null == colony)
         {
             sender.sendMessage(new TextComponentString("You are not allowed to do this"));
+            return;
         }
 
         executeShared(server, sender, colony);
@@ -124,7 +125,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
         {
             try
             {
-                final int colonyId = Integer.valueOf(args[0]);
+                final int colonyId = Integer.parseInt(args[0]);
                 colony = ColonyManager.getColony(colonyId);
             }
             catch (final NumberFormatException e)
@@ -135,6 +136,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
         if (null == colony)
         {
             sender.sendMessage(new TextComponentString("You are not allowed to do this"));
+            return;
         }
 
         executeShared(server, sender, colony);
