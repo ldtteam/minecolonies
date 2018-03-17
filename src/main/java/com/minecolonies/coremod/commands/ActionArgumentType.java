@@ -19,7 +19,6 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.managers.ICitizenManager;
-import com.minecolonies.coremod.commands.CommandEntryPointNew.ActionMenuHolder;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.command.ICommandSender;

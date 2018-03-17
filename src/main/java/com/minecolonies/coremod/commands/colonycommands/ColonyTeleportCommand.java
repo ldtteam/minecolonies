@@ -130,6 +130,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
             }
             catch (final NumberFormatException e)
             {
+                // we ignore the exception and deal with a null colony below.
             }
         }
 
@@ -142,24 +143,21 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
         executeShared(server, sender, colony);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @Nullable final Colony colony)
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final Colony colony)
     {
         //see if player is allowed to use in the configs
-        if (sender instanceof EntityPlayer)
+        if ((sender instanceof EntityPlayer) && canPlayerUseCommand((EntityPlayer) sender, COLONYTP, colony.getID()))
         {
-            if (canPlayerUseCommand((EntityPlayer) sender, COLONYTP, colony.getID()))
+            final Colony colonyIn = ColonyManager.getColony(((EntityPlayer) sender).world, sender.getPosition());
+            if (isPlayerOpped(sender)
+                    || (colonyIn != null
+                    && colonyIn.hasTownHall()
+                    && colonyIn.getPermissions().hasPermission((EntityPlayer) sender, Action.TELEPORT_TO_COLONY)
+                    && ((EntityPlayer) sender).getDistanceSq(colonyIn.getBuildingManager().getTownHall().getLocation()) < MIN_DISTANCE_TO_TH))
             {
-                final Colony colonyIn = ColonyManager.getColony(((EntityPlayer) sender).world, sender.getPosition());
-                if (isPlayerOpped(sender)
-                        || (colonyIn != null
-                        && colonyIn.hasTownHall()
-                        && colonyIn.getPermissions().hasPermission((EntityPlayer) sender, Action.TELEPORT_TO_COLONY)
-                        && ((EntityPlayer) sender).getDistanceSq(colonyIn.getBuildingManager().getTownHall().getLocation()) < MIN_DISTANCE_TO_TH))
-                {
-                    TeleportToColony.colonyTeleport(server, sender, String.valueOf(colony.getID()));
-                }
-                return;
+                TeleportToColony.colonyTeleport(server, sender, String.valueOf(colony.getID()));
             }
+            return;
         }
         sender.sendMessage(new TextComponentString("You are not allowed to do this"));
     }

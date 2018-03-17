@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.commands;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 // From https://stackoverflow.com/a/40622616/1394993
@@ -40,7 +41,7 @@ public class TreeNode<T>
 
     public List<TreeNode<T>> getChildren()
     {
-        return children;
+        return Collections.unmodifiableList(children);
     }
 
     public T getData()

@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class NavigationMenu extends AbstractMenu
 {
-    @NotNull private final List<MenuType> childrenMenuList;
+    @NotNull private final List<IMenuType> childrenMenuList;
 
-    public NavigationMenu(@NotNull final String menuItemName, @NotNull final MenuType ... childMenuTypes)
+    public NavigationMenu(@NotNull final String menuItemName, @NotNull final IMenuType ... childMenuTypes)
     {
         super(menuItemName);
         this.childrenMenuList = Arrays.asList(childMenuTypes);
@@ -22,7 +22,7 @@ public class NavigationMenu extends AbstractMenu
     }
 
 
-    public List<MenuType> getChildrenMenuList()
+    public List<IMenuType> getChildrenMenuList()
     {
         return childrenMenuList;
     }

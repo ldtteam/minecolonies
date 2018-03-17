@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,80 +35,44 @@ import java.util.stream.Collectors;
 public class CommandEntryPointNew extends CommandBase
 {
     @NotNull
-    private final TreeNode<Menu> root;
+    private final TreeNode<IMenu> root;
 
     private static class ParsingResult
     {
         @NotNull private final List<String> tabCompletions;
-        @NotNull private final TreeNode<Menu> executionTreeNode;
+        @NotNull private final TreeNode<IMenu> executionTreeNode;
         @Nullable private final List<ActionArgument> executionActionArgumentList;
         @Nullable private String badArgument;
 
-        ParsingResult(@NotNull final List<String> tabCompletions, @NotNull final TreeNode<Menu> executionTreeNode,
+        ParsingResult(@NotNull final List<String> tabCompletions, @NotNull final TreeNode<IMenu> executionTreeNode,
                 @Nullable final List<ActionArgument> executionActionArgumentList,
                 @Nullable final String badArgument)
         {
             super();
-            this.tabCompletions = tabCompletions;
+            this.tabCompletions = new ArrayList<>(tabCompletions);
             this.executionTreeNode = executionTreeNode;
-            this.executionActionArgumentList = executionActionArgumentList;
+            this.executionActionArgumentList = new ArrayList<>(executionActionArgumentList);
             this.badArgument = badArgument;
         }
 
         public List<String> getTabCompletions()
         {
-            return tabCompletions;
+            return Collections.unmodifiableList(tabCompletions);
         }
 
-        public TreeNode<Menu> getExecutionTreeNode()
+        public TreeNode<IMenu> getExecutionTreeNode()
         {
             return executionTreeNode;
         }
 
         public List<ActionArgument> getExecutionActionArgumentList()
         {
-            return executionActionArgumentList;
+            return Collections.unmodifiableList(executionActionArgumentList);
         }
 
         public String getBadArgument()
         {
             return badArgument;
-        }
-
-        public void setBadArgument(final String badArgument)
-        {
-            this.badArgument = badArgument;
-        }
-
-    }
-
-    public static final class ActionMenuHolder
-    {
-        @NotNull private final TreeNode<Menu> treeNode;
-        @NotNull private final ActionArgument actionArgument;
-        private Object value;
-
-        ActionMenuHolder(@NotNull final TreeNode<Menu> treeNode, @NotNull final ActionArgument actionArgument)
-        {
-            super();
-            this.treeNode = treeNode;
-            this.actionArgument = actionArgument;
-        }
-        public TreeNode<Menu> getTreeNode()
-        {
-            return treeNode;
-        }
-        public ActionArgument getActionArgument()
-        {
-            return actionArgument;
-        }
-        public Object getValue()
-        {
-            return value;
-        }
-        public void setValue(final Object value)
-        {
-            this.value = value;
         }
     }
 
@@ -139,12 +104,12 @@ public class CommandEntryPointNew extends CommandBase
         return Arrays.asList("mc", "col", "mcol", "mcolonies", "minecol", "minecolonies");
     }
 
-    private TreeNode<Menu> buildMenu(@NotNull final MenuType menuType)
+    private TreeNode<IMenu> buildMenu(@NotNull final IMenuType menuType)
     {
         return buildMenu(menuType, new HashSet<>());
     }
 
-    private TreeNode<Menu> buildMenu(@NotNull final MenuType menuType, @NotNull final Set<MenuType> menuTypesSoFar)
+    private TreeNode<IMenu> buildMenu(@NotNull final IMenuType menuType, @NotNull final Set<IMenuType> menuTypesSoFar)
     {
         // Prevent recursion
         if (menuTypesSoFar.contains(menuType))
@@ -156,15 +121,15 @@ public class CommandEntryPointNew extends CommandBase
             menuTypesSoFar.add(menuType);
         }
 
-        final Menu menu = menuType.getMenu();
-        final TreeNode<Menu> treeNode = new TreeNode<Menu>(menu);
+        final IMenu menu = menuType.getMenu();
+        final TreeNode<IMenu> treeNode = new TreeNode<>(menu);
 
         if (menuType.isNavigationMenu())
         {
             final NavigationMenu navigationMenu = (NavigationMenu) menu;
-            for (final MenuType childMenuType : navigationMenu.getChildrenMenuList())
+            for (final IMenuType childMenuType : navigationMenu.getChildrenMenuList())
             {
-                final TreeNode<Menu> childTreeNode = buildMenu(childMenuType, menuTypesSoFar);
+                final TreeNode<IMenu> childTreeNode = buildMenu(childMenuType, menuTypesSoFar);
                 treeNode.addChild(childTreeNode);
             }
         }
@@ -187,16 +152,16 @@ public class CommandEntryPointNew extends CommandBase
     }
 
     @NotNull
-    public String getCommandUsage(final ICommandSender sender, final TreeNode<Menu> currentMenuTreeNode)
+    private static String getCommandUsage(final ICommandSender sender, final TreeNode<IMenu> currentMenuTreeNode)
     {
-        final MenuType currentMenuType = currentMenuTreeNode.getData().getMenuType();
+        final IMenuType currentMenuType = currentMenuTreeNode.getData().getMenuType();
         if (currentMenuTreeNode.hasChildren())
         {
             final StringBuilder sb = new StringBuilder();
             buildParentPathString(sb, currentMenuTreeNode);
             sb.append(" <");
             boolean first = true;
-            for (final TreeNode<Menu> childTreeNode : currentMenuTreeNode.getChildren())
+            for (final TreeNode<IMenu> childTreeNode : currentMenuTreeNode.getChildren())
             {
                 if (first)
                 {
@@ -215,7 +180,7 @@ public class CommandEntryPointNew extends CommandBase
         {
             final StringBuilder sb = new StringBuilder();
             buildParentPathString(sb, currentMenuTreeNode);
-            final Menu menu = currentMenuType.getMenu();
+            final IMenu menu = currentMenuType.getMenu();
             if (!currentMenuType.isNavigationMenu())
             {
                 final ActionMenu actionMenu = (ActionMenu) menu;
@@ -228,10 +193,10 @@ public class CommandEntryPointNew extends CommandBase
         }
     }
 
-    private void buildParentPathString(final StringBuilder sb, final TreeNode<Menu> menuTreeNode)
+    private static void buildParentPathString(final StringBuilder sb, final TreeNode<IMenu> menuTreeNode)
     {
-        final List<TreeNode<Menu>> treeNodeMenuListMinusRoot = new ArrayList<>();
-        TreeNode<Menu> currentMenuTreeNode = menuTreeNode;
+        final List<TreeNode<IMenu>> treeNodeMenuListMinusRoot = new ArrayList<>();
+        TreeNode<IMenu> currentMenuTreeNode = menuTreeNode;
         while (null != currentMenuTreeNode.getParent())
         {
             treeNodeMenuListMinusRoot.add(currentMenuTreeNode);
@@ -240,7 +205,7 @@ public class CommandEntryPointNew extends CommandBase
         sb.append('/').append(currentMenuTreeNode.getData().getMenuItemName());
 
         Collections.reverse(treeNodeMenuListMinusRoot);
-        for (final TreeNode<Menu> treeNode : treeNodeMenuListMinusRoot)
+        for (final TreeNode<IMenu> treeNode : treeNodeMenuListMinusRoot)
         {
             sb.append(' ').append(treeNode.getData().getMenuItemName());
         }
@@ -251,7 +216,7 @@ public class CommandEntryPointNew extends CommandBase
     {
         final BlockPos pos = null;
         final ParsingResult parsingResult = getTabCompletionsAndParsingHolders(root, server, sender, args, pos);
-        final TreeNode<Menu> executionTreeNode = parsingResult.getExecutionTreeNode();
+        final TreeNode<IMenu> executionTreeNode = parsingResult.getExecutionTreeNode();
         final List<ActionArgument> executionActionArgumentList = parsingResult.getExecutionActionArgumentList();
         final String badArgument = parsingResult.getBadArgument();
         if (null == executionTreeNode)
@@ -259,7 +224,7 @@ public class CommandEntryPointNew extends CommandBase
             throw new CommandException(getCommandUsage(sender, root));
         }
 
-        final Menu executionMenu = executionTreeNode.getData();
+        final IMenu executionMenu = executionTreeNode.getData();
         if (executionMenu.getMenuType().isNavigationMenu())
         {
             throw new CommandException(getCommandUsage(sender, executionTreeNode));
@@ -267,67 +232,7 @@ public class CommandEntryPointNew extends CommandBase
 
         final ActionMenu actionMenu = (ActionMenu) executionMenu;
 
-        // Check that required arguments are provided with a valid value
-        final List<ActionArgument> actionArgumentListForActionMenu = actionMenu.getActionArgumentList();
-        for (final ActionArgument actionArgument : actionArgumentListForActionMenu)
-        {
-            if (actionArgument.isRequired())
-            {
-                boolean foundIt = false;
-                if (null != executionActionArgumentList)
-                {
-                    for (final ActionArgument executionActionArgument : executionActionArgumentList)
-                    {
-                        if (null != executionActionArgument)
-                        {
-                            if (actionArgument.getName().equals(executionActionArgument.getName()))
-                            {
-                                if (!executionActionArgument.isValueSet())
-                                {
-                                    if (null == badArgument)
-                                    {
-                                        throw new CommandException(
-                                                getCommandUsage(sender, executionTreeNode)
-                                                    + ": no value specified for required argument " + actionArgument.getName());
-                                    }
-                                    else
-                                    {
-                                        throw new CommandException(
-                                                getCommandUsage(sender, executionTreeNode)
-                                                    + ": invalid value '" + badArgument + "' for required argument " + actionArgument.getName());
-                                    }
-                                }
-                                else
-                                {
-                                    foundIt = true;
-                                }
-                            }
-                        }
-                    }
-                }
-                if (!foundIt)
-                {
-                    throw new CommandException(getCommandUsage(sender, executionTreeNode)
-                            + ": missing required parameter " + actionArgument.getName());
-                }
-            }
-        }
-
-        if (null != executionActionArgumentList)
-        {
-            for (final ActionArgument executionActionArgument : executionActionArgumentList)
-            {
-                if (null != executionActionArgument)
-                {
-                    if (!executionActionArgument.isValueSet())
-                    {
-                        throw new CommandException(
-                                getCommandUsage(sender, executionTreeNode)
-                                    + ": invalid value '" + badArgument + "' for required argument " + executionActionArgument.getName());
-                    }
-                }
-            }
-        }
+        throwCommandUsageExceptionIfRequiredArgumentsAreNotProvided(executionTreeNode, actionMenu, executionActionArgumentList, badArgument, sender);
 
         if (sender instanceof EntityPlayer)
         {
@@ -365,6 +270,65 @@ public class CommandEntryPointNew extends CommandBase
         }
     }
 
+    private static void throwCommandUsageExceptionIfRequiredArgumentsAreNotProvided(final TreeNode<IMenu> executionTreeNode, final ActionMenu actionMenu,
+            final List<ActionArgument> executionActionArgumentList, final String badArgument, final ICommandSender sender) throws CommandException
+    {
+        final List<ActionArgument> actionArgumentListForActionMenu = actionMenu.getActionArgumentList();
+        for (final ActionArgument actionArgument : actionArgumentListForActionMenu)
+        {
+            if (actionArgument.isRequired())
+            {
+                boolean foundArgument = false;
+                if (null != executionActionArgumentList)
+                {
+                    for (final ActionArgument executionActionArgument : executionActionArgumentList)
+                    {
+                        if ((null != executionActionArgument) && actionArgument.getName().equals(executionActionArgument.getName()))
+                        {
+                            if (!executionActionArgument.isValueSet())
+                            {
+                                if (null == badArgument)
+                                {
+                                    throw new CommandException(
+                                            getCommandUsage(sender, executionTreeNode)
+                                                + ": no value specified for required argument " + actionArgument.getName());
+                                }
+                                else
+                                {
+                                    throw new CommandException(
+                                            getCommandUsage(sender, executionTreeNode)
+                                                + ": invalid value '" + badArgument + "' for required argument " + actionArgument.getName());
+                                }
+                            }
+                            else
+                            {
+                                foundArgument = true;
+                            }
+                        }
+                    }
+                }
+                if (!foundArgument)
+                {
+                    throw new CommandException(getCommandUsage(sender, executionTreeNode)
+                            + ": missing required parameter " + actionArgument.getName());
+                }
+            }
+        }
+
+        if (null != executionActionArgumentList)
+        {
+            for (final ActionArgument executionActionArgument : executionActionArgumentList)
+            {
+                if ((null != executionActionArgument) && !executionActionArgument.isValueSet())
+                {
+                    throw new CommandException(
+                            getCommandUsage(sender, executionTreeNode)
+                                + ": invalid value '" + badArgument + "' for required argument " + executionActionArgument.getName());
+                }
+            }
+        }
+    }
+
     protected void createInstanceAndExecute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu,
             @NotNull final Class<? extends IActionCommand> clazz) throws InstantiationException, IllegalAccessException, CommandException
     {
@@ -389,21 +353,21 @@ public class CommandEntryPointNew extends CommandBase
         return true;
     }
 
-    private Map<String, TreeNode<Menu>> getNavigationCommands(@NotNull final TreeNode<Menu> parentTreeNode)
+    private Map<String, TreeNode<IMenu>> getNavigationCommands(@NotNull final TreeNode<IMenu> parentTreeNode)
     {
-        final Map<String, TreeNode<Menu>> map = new HashMap<>();
-        final List<TreeNode<Menu>> children = parentTreeNode.getChildren();
-        for (final TreeNode<Menu> treeNode : children)
+        final Map<String, TreeNode<IMenu>> map = new HashMap<>();
+        final List<TreeNode<IMenu>> children = parentTreeNode.getChildren();
+        for (final TreeNode<IMenu> treeNode : children)
         {
-            map.put(treeNode.getData().getMenuItemName().toLowerCase(), treeNode);
+            map.put(treeNode.getData().getMenuItemName().toLowerCase(Locale.ROOT), treeNode);
         }
         return map;
     }
 
-    private Map<String, ActionMenuHolder> getActionCommands(@NotNull final TreeNode<Menu> treeNode, @NotNull final List<ActionMenuHolder> parsedHolders)
+    private Map<String, ActionMenuHolder> getActionCommands(@NotNull final TreeNode<IMenu> treeNode, @NotNull final List<ActionMenuHolder> parsedHolders)
     {
         final Map<String, ActionMenuHolder> map = new HashMap<>();
-        final Menu menu = treeNode.getData();
+        final IMenu menu = treeNode.getData();
         if (!menu.getMenuType().isNavigationMenu())
         {
             final ActionMenu actionMenu = (ActionMenu) menu;
@@ -445,7 +409,7 @@ public class CommandEntryPointNew extends CommandBase
 
     @NotNull
     private ParsingResult getTabCompletionsAndParsingHolders(
-                                           @NotNull final TreeNode<Menu> treeNode,
+                                           @NotNull final TreeNode<IMenu> treeNode,
                                            @NotNull final MinecraftServer server,
                                            @NotNull final ICommandSender sender,
                                            @NotNull final String[] args,
@@ -453,15 +417,15 @@ public class CommandEntryPointNew extends CommandBase
     {
         if (treeNode.getData().getMenuType().isNavigationMenu())
         {
-            final Map<String, TreeNode<Menu>> childs = getNavigationCommands(treeNode);
-            final String lowerCaseArg0 = args[0].toLowerCase();
+            final Map<String, TreeNode<IMenu>> childs = getNavigationCommands(treeNode);
+            final String lowerCaseArg0 = args[0].toLowerCase(Locale.ROOT);
             if (args.length <= 1
                   || !childs.containsKey(lowerCaseArg0))
             {
                 final List<String> tabCompletions = childs.keySet().stream().filter(k -> k.startsWith(lowerCaseArg0)).collect(Collectors.toList());
                 if (childs.containsKey(lowerCaseArg0))
                 {
-                    final TreeNode<Menu> childTreeNode = childs.get(lowerCaseArg0);
+                    final TreeNode<IMenu> childTreeNode = childs.get(lowerCaseArg0);
                     return new ParsingResult(tabCompletions, childTreeNode, (List<ActionArgument>) null, (String) null);
                 }
                 else
@@ -469,7 +433,7 @@ public class CommandEntryPointNew extends CommandBase
                     return new ParsingResult(tabCompletions, treeNode, (List<ActionArgument>) null, lowerCaseArg0);
                 }
             }
-            final TreeNode<Menu> child = childs.get(lowerCaseArg0);
+            final TreeNode<IMenu> child = childs.get(lowerCaseArg0);
             if (null == child)
             {
                 final List<String> tabCompletions = Collections.emptyList();
@@ -484,14 +448,14 @@ public class CommandEntryPointNew extends CommandBase
             final List<ActionMenuHolder> parsedHolders = new ArrayList<>();
             final Map<String, ActionMenuHolder> possibleActionCommands = getActionCommands(treeNode, parsedHolders);
             @NotNull final List<ActionArgument> parsedActionArgumentList = new ArrayList<>();
-            return getTabCompletionsAndParsingHolders(parsedHolders, treeNode, parsedActionArgumentList, possibleActionCommands, server, sender, args, pos);
+            return getTabCompletionsAndParsingHoldersForActionMenuTreeNode(treeNode, parsedHolders, parsedActionArgumentList, possibleActionCommands, server, sender, args, pos);
         }
     }
 
     @NotNull
-    private ParsingResult getTabCompletionsAndParsingHolders(
+    private ParsingResult getTabCompletionsAndParsingHoldersForActionMenuTreeNode(
+                                           @NotNull final TreeNode<IMenu> actionMenuTreeNode,
                                            @NotNull final List<ActionMenuHolder> parsedHolders,
-                                           @NotNull final TreeNode<Menu> actionMenuTreeNode,
                                            @NotNull final List<ActionArgument> parsedActionArgumentList,
                                            @NotNull final Map<String, ActionMenuHolder> possibleActionCommands,
                                            @NotNull final MinecraftServer server,
@@ -499,7 +463,7 @@ public class CommandEntryPointNew extends CommandBase
                                            @NotNull final String[] args,
                                            @Nullable final BlockPos pos)
     {
-        final String lowerCaseArg0 = args[0].toLowerCase();
+        final String lowerCaseArg0 = args[0].toLowerCase(Locale.ROOT);
         if (args.length <= 1 || !possibleActionCommands.containsKey(lowerCaseArg0))
         {
             final List<String> tabCompletions = possibleActionCommands.keySet().stream().filter(k -> k.startsWith(lowerCaseArg0)).collect(Collectors.toList());
@@ -563,7 +527,7 @@ public class CommandEntryPointNew extends CommandBase
                 parsedHolders.add(holder);
 
                 // add any subArguments
-                final TreeNode<Menu> treeNode = holder.getTreeNode();
+                final TreeNode<IMenu> treeNode = holder.getTreeNode();
                 final List<ActionArgument> subActionArgumentList = actionArgument.getActionArgumentList();
                 for (final ActionArgument subActionArgument : subActionArgumentList)
                 {
@@ -581,16 +545,7 @@ public class CommandEntryPointNew extends CommandBase
 
         final String[] newArgs = new String[args.length - newArgsStartPos];
         System.arraycopy(args, newArgsStartPos, newArgs, 0, newArgs.length);
-        return getTabCompletionsAndParsingHolders(parsedHolders, actionMenuTreeNode, parsedActionArgumentList, possibleActionCommands, server, sender, newArgs, pos);
-    }
-
-    @Override
-    public boolean isUsernameIndex(@NotNull final String[] args, final int index)
-    {
-        super.isUsernameIndex(args, index);
-        // TODO: implement
-        return false;
-
-        // return root.isUsernameIndex(args, index);
+        return getTabCompletionsAndParsingHoldersForActionMenuTreeNode(actionMenuTreeNode, parsedHolders, parsedActionArgumentList, possibleActionCommands, server, sender, newArgs,
+                pos);
     }
 }

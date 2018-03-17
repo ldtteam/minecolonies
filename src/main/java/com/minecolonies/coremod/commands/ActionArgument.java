@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.commands;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -45,7 +46,7 @@ public class ActionArgument
 
     public List<ActionArgument> getActionArgumentList()
     {
-        return actionArgumentList;
+        return Collections.unmodifiableList(actionArgumentList);
     }
 
     public String getUsage()

@@ -37,7 +37,7 @@ import com.minecolonies.coremod.commands.killcommands.MobKillCommand;
 import com.minecolonies.coremod.commands.killcommands.PigKillCommand;
 import com.minecolonies.coremod.commands.killcommands.SheepKillCommand;
 
-public enum ActionMenuType implements MenuType
+public enum ActionMenuType implements IMenuType
 {
     RANDOM_TELEPORT(new ActionMenu(
             "Random Teleport",

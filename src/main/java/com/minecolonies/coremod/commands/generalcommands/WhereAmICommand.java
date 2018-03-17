@@ -65,7 +65,8 @@ public class WhereAmICommand extends AbstractSingleCommand implements IActionCom
         super(parents);
     }
 
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException    {
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
+    {
         executeShared(server, sender);
     }
 

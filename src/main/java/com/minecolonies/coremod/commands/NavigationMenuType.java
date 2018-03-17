@@ -2,7 +2,7 @@ package com.minecolonies.coremod.commands;
 
 import org.jetbrains.annotations.NotNull;
 
-public enum NavigationMenuType implements MenuType
+public enum NavigationMenuType implements IMenuType
 {
     COLONIES(new NavigationMenu("colonies",
         ActionMenuType.LIST_COLONIES,
