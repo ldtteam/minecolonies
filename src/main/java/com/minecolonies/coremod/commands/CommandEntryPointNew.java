@@ -41,11 +41,11 @@ public class CommandEntryPointNew extends CommandBase
     {
         @NotNull private final List<String> tabCompletions;
         @NotNull private final TreeNode<IMenu> executionTreeNode;
-        @Nullable private final List<ActionArgument> executionActionArgumentList;
+        @NotNull private final List<ActionArgument> executionActionArgumentList;
         @Nullable private String badArgument;
 
         ParsingResult(@NotNull final List<String> tabCompletions, @NotNull final TreeNode<IMenu> executionTreeNode,
-                @Nullable final List<ActionArgument> executionActionArgumentList,
+                @NotNull final List<ActionArgument> executionActionArgumentList,
                 @Nullable final String badArgument)
         {
             super();
@@ -246,14 +246,11 @@ public class CommandEntryPointNew extends CommandBase
             }
         }
 
-        if (null != executionActionArgumentList)
+        for (final ActionArgument executionActionArgument : executionActionArgumentList)
         {
-            for (final ActionArgument executionActionArgument : executionActionArgumentList)
+            if (!executionActionArgument.isValueSet())
             {
-                if (!executionActionArgument.isValueSet())
-                {
-                    throw new CommandException(getCommandUsage(sender, executionTreeNode));
-                }
+                throw new CommandException(getCommandUsage(sender, executionTreeNode));
             }
         }
 
@@ -270,8 +267,15 @@ public class CommandEntryPointNew extends CommandBase
         }
     }
 
-    private static void throwCommandUsageExceptionIfRequiredArgumentsAreNotProvided(final TreeNode<IMenu> executionTreeNode, final ActionMenu actionMenu,
-            final List<ActionArgument> executionActionArgumentList, final String badArgument, final ICommandSender sender) throws CommandException
+    protected void createInstanceAndExecute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu,
+            @NotNull final Class<? extends IActionCommand> clazz) throws InstantiationException, IllegalAccessException, CommandException
+    {
+        final IActionCommand actionCommand = clazz.newInstance();
+        actionCommand.execute(server, sender, actionMenu);
+    }
+
+    private static void throwCommandUsageExceptionIfRequiredArgumentsAreNotProvided(@NotNull final TreeNode<IMenu> executionTreeNode, @NotNull final ActionMenu actionMenu,
+            @NotNull final List<ActionArgument> executionActionArgumentList, final String badArgument, @NotNull final ICommandSender sender) throws CommandException
     {
         final List<ActionArgument> actionArgumentListForActionMenu = actionMenu.getActionArgumentList();
         for (final ActionArgument actionArgument : actionArgumentListForActionMenu)
@@ -279,31 +283,28 @@ public class CommandEntryPointNew extends CommandBase
             if (actionArgument.isRequired())
             {
                 boolean foundArgument = false;
-                if (null != executionActionArgumentList)
+                for (final ActionArgument executionActionArgument : executionActionArgumentList)
                 {
-                    for (final ActionArgument executionActionArgument : executionActionArgumentList)
+                    if ((null != executionActionArgument) && actionArgument.getName().equals(executionActionArgument.getName()))
                     {
-                        if ((null != executionActionArgument) && actionArgument.getName().equals(executionActionArgument.getName()))
+                        if (!executionActionArgument.isValueSet())
                         {
-                            if (!executionActionArgument.isValueSet())
+                            if (null == badArgument)
                             {
-                                if (null == badArgument)
-                                {
-                                    throw new CommandException(
-                                            getCommandUsage(sender, executionTreeNode)
-                                                + ": no value specified for required argument " + actionArgument.getName());
-                                }
-                                else
-                                {
-                                    throw new CommandException(
-                                            getCommandUsage(sender, executionTreeNode)
-                                                + ": invalid value '" + badArgument + "' for required argument " + actionArgument.getName());
-                                }
+                                throw new CommandException(
+                                        getCommandUsage(sender, executionTreeNode)
+                                            + ": no value specified for required argument " + actionArgument.getName());
                             }
                             else
                             {
-                                foundArgument = true;
+                                throw new CommandException(
+                                        getCommandUsage(sender, executionTreeNode)
+                                            + ": invalid value '" + badArgument + "' for required argument " + actionArgument.getName());
                             }
+                        }
+                        else
+                        {
+                            foundArgument = true;
                         }
                     }
                 }
@@ -327,13 +328,6 @@ public class CommandEntryPointNew extends CommandBase
                 }
             }
         }
-    }
-
-    protected void createInstanceAndExecute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu,
-            @NotNull final Class<? extends IActionCommand> clazz) throws InstantiationException, IllegalAccessException, CommandException
-    {
-        final IActionCommand actionCommand = clazz.newInstance();
-        actionCommand.execute(server, sender, actionMenu);
     }
 
     /**
@@ -426,18 +420,18 @@ public class CommandEntryPointNew extends CommandBase
                 if (childs.containsKey(lowerCaseArg0))
                 {
                     final TreeNode<IMenu> childTreeNode = childs.get(lowerCaseArg0);
-                    return new ParsingResult(tabCompletions, childTreeNode, (List<ActionArgument>) null, (String) null);
+                    return new ParsingResult(tabCompletions, childTreeNode, Collections.emptyList(), (String) null);
                 }
                 else
                 {
-                    return new ParsingResult(tabCompletions, treeNode, (List<ActionArgument>) null, lowerCaseArg0);
+                    return new ParsingResult(tabCompletions, treeNode, Collections.emptyList(), lowerCaseArg0);
                 }
             }
             final TreeNode<IMenu> child = childs.get(lowerCaseArg0);
             if (null == child)
             {
                 final List<String> tabCompletions = Collections.emptyList();
-                return new ParsingResult(tabCompletions, treeNode, (List<ActionArgument>) null, lowerCaseArg0);
+                return new ParsingResult(tabCompletions, treeNode, Collections.emptyList(), lowerCaseArg0);
             }
             final String[] newArgs = new String[args.length - 1];
             System.arraycopy(args, 1, newArgs, 0, newArgs.length);
