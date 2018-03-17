@@ -41,7 +41,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.server.permission.PermissionAPI;
 import scala.actors.threadpool.Arrays;
 
-@SuppressWarnings({"PMD.MethodNamingConventions", "PMD.JUnitTestsShouldIncludeAssert"})
+@SuppressWarnings({"PMD.MethodNamingConventions", "PMD.JUnitTestsShouldIncludeAssert", "PMD.AvoidDuplicateLiterals"})
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
 public class CommandEntryPointTest

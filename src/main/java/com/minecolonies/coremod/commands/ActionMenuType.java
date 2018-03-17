@@ -37,6 +37,10 @@ import com.minecolonies.coremod.commands.killcommands.MobKillCommand;
 import com.minecolonies.coremod.commands.killcommands.PigKillCommand;
 import com.minecolonies.coremod.commands.killcommands.SheepKillCommand;
 
+//PMD.AvoidDuplicateLiterals: We want to have literals used instead of constants as we are defining commands
+//and do not necessarily want one command's syntax dependent on another command
+//PMD.ExcessiveImports: This class DOES have a high degree of coupling by design.
+@SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.ExcessiveImports"})
 public enum ActionMenuType implements IMenuType
 {
     RANDOM_TELEPORT(new ActionMenu(
