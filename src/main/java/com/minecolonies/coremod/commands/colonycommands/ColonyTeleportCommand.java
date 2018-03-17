@@ -106,6 +106,12 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
             }
         }
 
+        // Required argument: would never be null at this point.
+        if (null == colony)
+        {
+            sender.sendMessage(new TextComponentString("You are not allowed to do this"));
+        }
+
         executeShared(server, sender, colony);
     }
 
