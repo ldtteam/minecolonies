@@ -103,9 +103,14 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
         executeShared(server, sender, colony, page);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final Colony colony, Integer page) throws CommandException
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final Colony colony, final Integer pageProvided) throws CommandException
     {
-        if (null == page)
+        int page;
+        if (null != pageProvided)
+        {
+            page = pageProvided.intValue();
+        }
+        else
         {
             page = 1;
         }
@@ -113,13 +118,10 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
         if (sender instanceof EntityPlayer)
         {
             final EntityPlayer player = (EntityPlayer) sender;
-            if (null != colony)
+            if ((null != colony) && !canPlayerUseCommand(player, LISTCITIZENS, colony.getID()))
             {
-                if (!canPlayerUseCommand(player, LISTCITIZENS, colony.getID()))
-                {
-                    player.sendMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
-                    return;
-                }
+                player.sendMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
+                return;
             }
         }
 

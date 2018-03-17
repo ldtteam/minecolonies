@@ -71,8 +71,8 @@ public class ListColoniesCommand extends AbstractSingleCommand implements IActio
 
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
     {
-        final Integer page = actionMenu.getIntegerForArgument("page");
-        final Integer abandonedSinceTimeInHours = actionMenu.getIntegerForArgument("abandonedSinceTimeInHours");
+        @Nullable final Integer page = actionMenu.getIntegerForArgument("page");
+        @Nullable final Integer abandonedSinceTimeInHours = actionMenu.getIntegerForArgument("abandonedSinceTimeInHours");
         executeShared(server, sender, page, abandonedSinceTimeInHours);
     }
 
@@ -85,13 +85,25 @@ public class ListColoniesCommand extends AbstractSingleCommand implements IActio
         executeShared(server, sender, page, abandonedSinceTimeInHours);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, Integer page, Integer abandonedSinceTimeInHours) throws CommandException
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender,
+            @Nullable final Integer pageProvided, @Nullable final Integer abandonedSinceTimeInHoursProvided) throws CommandException
     {
-        if (null == page)
+        int page;
+        if (null != pageProvided)
+        {
+            page = pageProvided.intValue();
+        }
+        else
         {
             page = 1;
         }
-        if (null == abandonedSinceTimeInHours)
+
+        int abandonedSinceTimeInHours;
+        if (null != abandonedSinceTimeInHoursProvided)
+        {
+            abandonedSinceTimeInHours = abandonedSinceTimeInHoursProvided.intValue();
+        }
+        else
         {
             abandonedSinceTimeInHours = 0;
         }

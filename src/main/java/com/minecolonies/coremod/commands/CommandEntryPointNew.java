@@ -217,8 +217,6 @@ public class CommandEntryPointNew extends CommandBase
         final BlockPos pos = null;
         final ParsingResult parsingResult = getTabCompletionsAndParsingHolders(root, server, sender, args, pos);
         final TreeNode<IMenu> executionTreeNode = parsingResult.getExecutionTreeNode();
-        final List<ActionArgument> executionActionArgumentList = parsingResult.getExecutionActionArgumentList();
-        final String badArgument = parsingResult.getBadArgument();
         if (null == executionTreeNode)
         {
             throw new CommandException(getCommandUsage(sender, root));
@@ -232,6 +230,8 @@ public class CommandEntryPointNew extends CommandBase
 
         final ActionMenu actionMenu = (ActionMenu) executionMenu;
 
+        final List<ActionArgument> executionActionArgumentList = parsingResult.getExecutionActionArgumentList();
+        final String badArgument = parsingResult.getBadArgument();
         throwCommandUsageExceptionIfRequiredArgumentsAreNotProvided(executionTreeNode, actionMenu, executionActionArgumentList, badArgument, sender);
 
         if (sender instanceof EntityPlayer)
