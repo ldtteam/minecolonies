@@ -12,6 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -62,7 +63,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         timer++;
         if (timer >= TIMER_END)
         {
-            this.updateBlock(worldIn, blockState.withProperty(BlockBarrel.VARIANT, BarrelType.DONE));
+            this.updateBlock(worldIn, blockState, BarrelType.DONE);
             timer = 0;
             items = 0;
         }
@@ -81,7 +82,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
             // TODO: Add this back in once compost exists again. For now it drops 6 boneMeals
             // playerIn.inventory.addItemStackToInventory(new ItemStack(ModItems.compost, 6));
             playerIn.inventory.addItemStackToInventory(new ItemStack(Items.DYE, 6, 15));
-            this.updateBlock(worldIn, blockState.withProperty(BlockBarrel.VARIANT, BarrelType.ZERO));
+            this.updateBlock(worldIn, blockState, BarrelType.ZERO);
             return true;
         }
 
@@ -120,15 +121,13 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         if(state.getMetadata() <= posibleStates)
         {
             this.updateBlock(worldIn,
-                       blockState.withProperty(
-                            BlockBarrel.VARIANT, state));
+                       blockState, state);
         }
 
         //If the barrel is full, it starts to compost
         if(items == MAX_ITEMS)
             this.updateBlock(worldIn,
-                    blockState.withProperty(
-                            BlockBarrel.VARIANT, BarrelType.WORKING));
+                    blockState, BarrelType.WORKING);
 
     }
 
@@ -151,7 +150,8 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         this.items = this.items + itemsToRemove;
         itemsToRemove = itemsToRemove/factor;
         ItemStackUtils.changeSize(itemStack, -itemsToRemove);
-        this.updateBlock(worldIn, worldIn.getBlockState(pos));
+        this.updateBlock(worldIn, worldIn.getBlockState(pos),
+                worldIn.getBlockState(pos).getValue(BlockBarrel.VARIANT));
 
         Log.getLogger().info("Consumed "+ itemsToRemove+" and now the barrel contains: "+items);
 
@@ -168,8 +168,10 @@ public class TileEntityBarrel extends TileEntity implements ITickable
                 || itemStack.getItem().equals(Item.getItemFromBlock(Blocks.SAPLING));
     }
 
-    private void updateBlock(World worldIn, IBlockState newState) {
+    private void updateBlock(World worldIn, IBlockState state, BarrelType type) {
         if (!worldIn.isRemote) {
+            IBlockState newState = state.withProperty(BlockBarrel.VARIANT,
+                    type).withProperty(BlockBarrel.FACING, state.getValue(BlockBarrel.FACING));
             worldIn.setBlockState(pos, newState);
             this.markDirty();
             worldIn.notifyBlockUpdate(this.getPos(), newState, newState, 3);
