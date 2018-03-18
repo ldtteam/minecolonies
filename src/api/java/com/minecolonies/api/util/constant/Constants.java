@@ -66,7 +66,7 @@ public final class Constants
     /**
      * Each x blocks walked an action will be triggered to decrease saturation.
      */
-    public static final int    ACTIONS_EACH_BLOCKS_WALKED       = 100;
+    public static final int    ACTIONS_EACH_BLOCKS_WALKED       = 25;
 
     /**
      * Slot with the result of the furnace.
