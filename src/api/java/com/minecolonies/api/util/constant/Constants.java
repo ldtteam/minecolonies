@@ -64,6 +64,11 @@ public final class Constants
     public static final float  WATCH_CLOSEST2_FAR_CHANCE        = 0.02F;
 
     /**
+     * Each x blocks walked an action will be triggered to decrease saturation.
+     */
+    public static final int    ACTIONS_EACH_BLOCKS_WALKED       = 100;
+
+    /**
      * Slot with the result of the furnace.
      */
     public static final int RESULT_SLOT = 2;
