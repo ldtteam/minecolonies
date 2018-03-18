@@ -965,7 +965,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 tryToEat();
             }
 
-            if(distanceWalkedModified % ACTIONS_EACH_BLOCKS_WALKED == 0)
+            if((distanceWalkedModified + 1) % ACTIONS_EACH_BLOCKS_WALKED == 0)
             {
                 decreaseSaturationForAction();
             }
