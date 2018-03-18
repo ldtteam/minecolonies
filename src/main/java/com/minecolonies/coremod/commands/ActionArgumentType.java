@@ -151,6 +151,7 @@ public enum ActionArgumentType
 
     private List<String> getColonyTabCompletions(final String potentialArgumentValue)
     {
+        // TODO: use the colony we are in as the default tab completion.
         final List<String> colonyNumberStrings = getColonyIdStrings();
         if (potentialArgumentValue.isEmpty())
         {
@@ -169,6 +170,7 @@ public enum ActionArgumentType
 
     private List<String> getCitizenTabCompletions(final String potentialArgumentValue)
     {
+        // TODO: see if we can figure out what citizen we are looking at as the default tab completion.
         final List<String> citizenNameStrings = getCitizenNames();
         final List<String> citizenNumberStrings = getColonyIdStrings();
         final String[] potentiaCitizenNameParts = potentialArgumentValue.split(" ", -1);
