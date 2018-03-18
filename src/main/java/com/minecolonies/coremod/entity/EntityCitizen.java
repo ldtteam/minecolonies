@@ -1746,9 +1746,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             if (isDay && citizenData != null)
             {
                 isDay = false;
-                final AbstractBuildingWorker buildingWorker = getWorkBuilding();
-                final double decreaseBy = buildingWorker == null || buildingWorker.getBuildingLevel() == 0 ? 0.1
-                                            : (SATURATION_DECREASE_FACTOR * Math.pow(2, buildingWorker.getBuildingLevel() - 1.0));
+                final double decreaseBy = getPerBuildingFoodCost();
                 citizenData.decreaseSaturation(decreaseBy);
                 citizenData.markDirty();
             }
@@ -1909,8 +1907,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
                   this.getPosition(),
                   SoundEvents.ENTITY_ITEM_PICKUP,
                   SoundCategory.AMBIENT,
-                  0.2F,
-                  (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
+                        (float) DEFAULT_VOLUME,
+                  (float) ((this.rand.nextGaussian() * DEFAULT_PITCH_MULTIPLIER + 1.0D) * 2.0D));
                 this.onItemPickup(entityItem, ItemStackUtils.getSize(itemStack) - resultingStackSize);
 
                 final ItemStack overrulingStack = itemStack.copy();
@@ -2246,6 +2244,25 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public IWalkToProxy getProxy()
     {
         return proxy;
+    }
+
+    public void decreaseSaturationForAction()
+    {
+        if (citizenData != null)
+        {
+            citizenData.decreaseSaturation(getPerBuildingFoodCost());
+            citizenData.markDirty();
+        }
+    }
+
+    /**
+     * Get the amount the worker should decrease its saturation by each action done or x blocks traveled.
+     * @return the double describing it.
+     */
+    private double getPerBuildingFoodCost()
+    {
+        return getWorkBuilding() == null || getWorkBuilding().getBuildingLevel() == 0 ? 1
+                : (SATURATION_DECREASE_FACTOR * Math.pow(2, getWorkBuilding().getBuildingLevel() - 1.0));
     }
 
     /**

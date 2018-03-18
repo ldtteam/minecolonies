@@ -268,6 +268,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
     private AIState completeBuild()
     {
+        incrementActionsDone();
         if (job instanceof AbstractJobStructure)
         {
             executeSpecificCompleteActions();

@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATION;
+import static com.minecolonies.api.util.constant.CitizenConstants.SATURATION_DECREASE_FACTOR;
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -1061,6 +1062,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     protected final void incrementActionsDone()
     {
+        worker.decreaseSaturationForAction();
         actionsDone++;
     }
 
