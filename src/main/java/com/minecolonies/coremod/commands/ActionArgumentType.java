@@ -145,15 +145,7 @@ public enum ActionArgumentType
             }
             return Collections.emptyList();
         }
-        try
-        {
-            Integer.parseInt(potentialArgumentValue);
-            return Collections.emptyList();
-        }
-        catch (final NumberFormatException e)
-        {
-            return Collections.emptyList();
-        }
+        return Collections.emptyList();
     }
 
     private List<String> getColonyTabCompletions(final String potentialArgumentValue)
