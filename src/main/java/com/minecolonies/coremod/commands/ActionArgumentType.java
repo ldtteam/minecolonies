@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.google.common.primitives.Ints;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -155,12 +156,12 @@ public enum ActionArgumentType
         {
             return colonyNumberStrings;
         }
-        try
+        final Integer result = Ints.tryParse(potentialArgumentValue);
+        if (null != result)
         {
-            Integer.parseInt(potentialArgumentValue);
             return colonyNumberStrings.stream().filter(k -> k.startsWith(potentialArgumentValue)).collect(Collectors.toList());
         }
-        catch (final NumberFormatException e)
+        else
         {
             return Collections.emptyList();
         }
@@ -190,12 +191,12 @@ public enum ActionArgumentType
         }
         if (0 == currentWordIndex)
         {
-            try
+            final Integer result = Ints.tryParse(potentialArgumentValue);
+            if (null != result)
             {
-                Integer.parseInt(potentialArgumentValue);
                 return citizenNumberStrings.stream().filter(k -> k.startsWith(potentialArgumentValue)).collect(Collectors.toList());
             }
-            catch (final NumberFormatException e)
+            else
             {
                 final Set<String> firstNameSet = new HashSet<>();
                 for (final String citizenName : citizenNameStrings)
@@ -255,14 +256,7 @@ public enum ActionArgumentType
             case COORDINATE_X:
             case COORDINATE_Y:
             case COORDINATE_Z:
-                try
-                {
-                    return Integer.parseInt(potentialArgumentValue);
-                }
-                catch (final NumberFormatException e)
-                {
-                    return null;
-                }
+                return Ints.tryParse(potentialArgumentValue);
             case BOOLEAN:
                 return Boolean.parseBoolean(potentialArgumentValue);
             case PLAYER:
@@ -296,9 +290,10 @@ public enum ActionArgumentType
     private Colony parseColonyValue(@NotNull final ICommandSender sender, final String potentialArgumentValue)
     {
         final List<String> colonyNumberStrings = getColonyIdStrings();
-        try
+        final Integer result = Ints.tryParse(potentialArgumentValue);
+        if (null != result)
         {
-            int colonyNumber = Integer.parseInt(potentialArgumentValue);
+            int colonyNumber = result.intValue();
             if (sender instanceof EntityPlayer)
             {
                 if (colonyNumber == -1)
@@ -316,7 +311,7 @@ public enum ActionArgumentType
             }
             return null;
         }
-        catch (final NumberFormatException e)
+        else
         {
             return null;
         }
@@ -369,12 +364,13 @@ public enum ActionArgumentType
             }
         }
 
-        try
+        final Integer result = Ints.tryParse(potentialArgumentValue);
+        if (null != result)
         {
-            final int citizenId = Integer.parseInt(potentialArgumentValue);
+            final int citizenId = result.intValue();
             return citizenManager.getCitizen(citizenId);
         }
-        catch (final NumberFormatException e)
+        else
         {
             return null;
         }
