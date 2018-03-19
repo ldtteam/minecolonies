@@ -146,12 +146,6 @@ public class EventHandler
             final Chunk oldChunk = world.getChunkFromChunkCoords(event.getOldChunkX(), event.getOldChunkZ());
             final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null);
 
-            Log.getLogger().warn("Player: " + player.getName()
-                    + " Entering Chunk: " + newChunk.x + " " + newChunk.z
-                    + " with colony: " + newCloseColonies.getOwningColony()
-                    + " and close colonies: " + newCloseColonies.getAllCloseColonies().toArray().toString());
-
-
             // Add new subscribers to colony.
             for(final int colonyId: newCloseColonies.getAllCloseColonies())
             {
