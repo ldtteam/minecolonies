@@ -371,7 +371,7 @@ public class CommandEntryPointNew extends CommandBase
                 {
                     continue;
                 }
-                map.put(actionArgument.getName() + ":", new ActionMenuHolder(treeNode, actionArgument));
+                map.put(actionArgument.getName().toLowerCase(Locale.ROOT) + ":", new ActionMenuHolder(treeNode, actionArgument));
             }
         }
         return map;
@@ -496,7 +496,7 @@ public class CommandEntryPointNew extends CommandBase
             while ((wordCount <= allowedSpaceCount) && ((wordCount + 1) < args.length))
             {
                 final String nextPotentialWord = args[1 + wordCount];
-                if (null == possibleActionCommands.get(nextPotentialWord))
+                if (null == possibleActionCommands.get(nextPotentialWord.toLowerCase(Locale.ROOT)))
                 {
                     sb.append(' ').append(nextPotentialWord);
                     ++wordCount;
@@ -525,7 +525,7 @@ public class CommandEntryPointNew extends CommandBase
                 final List<ActionArgument> subActionArgumentList = actionArgument.getActionArgumentList();
                 for (final ActionArgument subActionArgument : subActionArgumentList)
                 {
-                    possibleActionCommands.put(subActionArgument.getName() + ":", new ActionMenuHolder(treeNode, subActionArgument));
+                    possibleActionCommands.put(subActionArgument.getName().toLowerCase(Locale.ROOT) + ":", new ActionMenuHolder(treeNode, subActionArgument));
                 }
 
 
