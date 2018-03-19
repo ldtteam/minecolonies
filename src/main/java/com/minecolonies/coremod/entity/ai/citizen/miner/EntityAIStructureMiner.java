@@ -364,6 +364,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         setBlockFromInventory(nextLadder, Blocks.LADDER, metadata);
         getOwnBuilding().incrementStartingLevelShaft();
         this.incrementActionsDoneAndDecSaturation();
+        this.incrementActionsDoneAndDecSaturation();
         return MINER_CHECK_MINESHAFT;
     }
 

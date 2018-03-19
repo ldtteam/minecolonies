@@ -275,6 +275,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BREEDING));
 
         breedTwoAnimals(animalOne, animalTwo);
+        incrementActionsDoneAndDecSaturation();
 
         return HERDER_DECIDE;
     }
