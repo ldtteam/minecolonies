@@ -240,6 +240,9 @@ public class ChunkLoadStorage
             }
         }
 
-        this.colonyId = newStorage.getColonyId();
+        if(newStorage.getColonyId() > 0 || !newStorage.coloniesToRemove.isEmpty())
+        {
+            this.colonyId = newStorage.getColonyId();
+        }
     }
 }
