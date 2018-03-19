@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -48,8 +47,7 @@ import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
-import static com.minecolonies.coremod.colony.ColonyManager.FILENAME_COLONY;
-import static com.minecolonies.coremod.colony.ColonyManager.FILENAME_MINECOLONIES_PATH;
+import static com.minecolonies.coremod.colony.ColonyManager.*;
 
 /**
  * This class describes a colony and contains all the data and methods for
@@ -259,8 +257,6 @@ public class Colony implements IColony
         c.readFromNBT(compound);
         return c;
     }
-
-
 
     /**
      * Sets the request manager on colony load.
