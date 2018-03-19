@@ -530,7 +530,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         if (job.tree.getStumpLocations().isEmpty() || timeWaited >= MAX_WAITING_TIME)
         {
             timeWaited = 0;
-            incrementActionsDone();
+            incrementActionsDoneAndDecSaturation();
             setDelay(TIMEOUT_DELAY);
             return true;
         }

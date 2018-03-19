@@ -226,7 +226,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         if (animal != null && !animal.isEntityAlive())
         {
-            incrementActionsDone();
+            incrementActionsDoneAndDecSaturation();
         }
 
         return HERDER_BUTCHER;
@@ -295,7 +295,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             walkToBlock(item.getPosition());
         }
 
-        incrementActionsDone();
+        incrementActionsDoneAndDecSaturation();
 
         return HERDER_DECIDE;
     }
