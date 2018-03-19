@@ -254,10 +254,12 @@ public final class ColonyManager
                     storage.merge(newStorage);
                     if (storage.isEmpty())
                     {
+                        Log.getLogger().warn("Deleting chunk file: " + i + "/" + j + " in dimension: " + dimension);
                         file.delete();
                     }
                     else
                     {
+                        Log.getLogger().warn("Overlapping close colonies at: " + i + "/" + j + " in dimension: " + dimension);
                         saveNBTToPath(file, storage.toNBT());
                         missingChunksToLoad++;
                     }
@@ -280,7 +282,7 @@ public final class ColonyManager
     {
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
         storage.applyToCap(cap);
-        Log.getLogger().warn("Loading Chunk: " + chunk.x + " " + chunk.z);
+        Log.getLogger().warn("Loading Chunk: " + chunk.x + " " + chunk.z + " with colony: " + cap.getOwningColony() + " and close colonies: " + cap.getAllCloseColonies().toArray().toString());
         chunk.markDirty();
         MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
     }

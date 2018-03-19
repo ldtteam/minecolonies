@@ -805,6 +805,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             return handleTargeNotPassable(parent, pos, target);
         }
 
+        //TODO this here is biased if it's a field block. pos.down will return water already probably.
         //  Do we have something to stand on in the target space?
         final IBlockState below = world.getBlockState(pos.down());
         final SurfaceType walkability = isWalkableSurface(below);
