@@ -16,7 +16,6 @@ import org.assertj.core.api.Fail;
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
@@ -32,6 +31,8 @@ import com.minecolonies.coremod.colony.managers.ICitizenManager;
 import com.minecolonies.coremod.commands.citizencommands.CitizenInfoCommand;
 import com.minecolonies.coremod.commands.colonycommands.ChangeColonyOwnerCommand;
 import com.minecolonies.coremod.commands.colonycommands.DeleteColonyCommand;
+import com.minecolonies.coremod.commands.colonycommands.ListColoniesCommand;
+import com.minecolonies.coremod.commands.generalcommands.CheckForAutoDeletesCommand;
 import com.minecolonies.coremod.commands.generalcommands.ScanCommand;
 
 import net.minecraft.command.CommandException;
@@ -1037,6 +1038,40 @@ public class CommandEntryPointTest
 
     @Test
     @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_colony_delete_colony_1_canDestroy_space__DO_getTabCompletions__EXPECT_true_false() throws CommandException
+    {
+        // GIVEN:
+        final String[] args = new String[] {
+                "Colony", "delete", "colony:", "1", "canDestroy:", ""
+        };
+
+        // DO:
+
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+
+        // EXPECT:
+        assertThat(results).containsExactlyInAnyOrder("true", "false");
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_colonies_list_page_space__DO_getTabCompletions__EXPECT_nothing() throws CommandException
+    {
+        // GIVEN:
+        final String[] args = new String[] {
+                "colonies", "list", "page:", ""
+        };
+
+        // DO:
+
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+
+        // EXPECT:
+        assertThat(results).isEmpty();
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_colony_delete_colony_1_canDestroy_true_confirmDelete_true__DO_execute__EXPECT_DeleteColonyCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1070,6 +1105,475 @@ public class CommandEntryPointTest
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isTrue();
                 final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
                 assertThat(confirmDelete).as("confirmDelete").isTrue();
+            }
+        };
+
+        instance.execute(server, sender, args);
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_colony_delete_colony_1__DO_execute__EXPECT_DeleteColonyCommand_executed() throws CommandException
+    {
+        // GIVEN:
+        final String[] args = new String[] {
+                "Colony", "delete", "colony:", "1"
+        };
+
+        // DO:
+
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenu actionMenu,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                // EXPECT:
+
+                assertThat(clazz).as("command class").isEqualTo(DeleteColonyCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("colony", "canDestroy", "confirmDelete");
+                assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN, ActionArgumentType.COLONY);
+                final Colony colony = actionMenu.getColonyForArgument("colony");
+                assertThat(colony.getID()).as("colony.getID()").isEqualTo(1);
+                final Boolean canDestroyBoolean = (Boolean) actionMenu.getBooleanForArgument("canDestroy");
+                assertThat(canDestroyBoolean).as("canDestroyBoolean").isNull();
+                final boolean canDestroy = actionMenu.getBooleanValueForArgument("canDestroy", false);
+                assertThat(canDestroy).as("canDestroy").isFalse();
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isNull();
+                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
+                assertThat(confirmDelete).as("confirmDelete").isFalse();
+            }
+        };
+
+        instance.execute(server, sender, args);
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_colonies_list_page_2_abandonedSinceTimeInHours_3__DO_execute__EXPECT_ListColoniesCommand_executed() throws CommandException
+    {
+        // GIVEN:
+        final String[] args = new String[] {
+                "colonies", "list", "page:", "2", "abandonedSinceTimeInHours:", "3"
+        };
+
+        // DO:
+
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenu actionMenu,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                // EXPECT:
+
+                assertThat(clazz).as("command class").isEqualTo(ListColoniesCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("page", "abandonedSinceTimeInHours");
+                assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.INTEGER);
+                final Integer pageInteger = (Integer) actionMenu.getIntegerForArgument("page");
+                assertThat(pageInteger).as("pageInteger").isEqualTo(2);
+                final int page = actionMenu.getIntValueForArgument("page", 1);
+                assertThat(page).as("page").isEqualTo(2);
+                final Integer abandonedSinceTimeInHoursInteger = (Integer) actionMenu.getIntegerForArgument("abandonedSinceTimeInHours");
+                assertThat(abandonedSinceTimeInHoursInteger).as("abandonedSinceTimeInHoursInteger").isEqualTo(3);
+                final int abandonedSinceTimeInHours = actionMenu.getIntValueForArgument("abandonedSinceTimeInHours", 1);
+                assertThat(abandonedSinceTimeInHours).as("abandonedSinceTimeInHours").isEqualTo(3);
+            }
+        };
+
+        instance.execute(server, sender, args);
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_colonies_list_page_2__DO_execute__EXPECT_ListColoniesCommand_executed() throws CommandException
+    {
+        // GIVEN:
+        final String[] args = new String[] {
+                "colonies", "list", "page:", "2"
+        };
+
+        // DO:
+
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenu actionMenu,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                // EXPECT:
+
+                assertThat(clazz).as("command class").isEqualTo(ListColoniesCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("page", "abandonedSinceTimeInHours");
+                assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.INTEGER);
+                final Integer pageInteger = (Integer) actionMenu.getIntegerForArgument("page");
+                assertThat(pageInteger).as("pageInteger").isEqualTo(2);
+                final int page = actionMenu.getIntValueForArgument("page", 1);
+                assertThat(page).as("page").isEqualTo(2);
+                final Integer abandonedSinceTimeInHoursInteger = (Integer) actionMenu.getIntegerForArgument("abandonedSinceTimeInHours");
+                assertThat(abandonedSinceTimeInHoursInteger).as("abandonedSinceTimeInHoursInteger").isNull();
+                final int abandonedSinceTimeInHours = actionMenu.getIntValueForArgument("abandonedSinceTimeInHours", 1);
+                assertThat(abandonedSinceTimeInHours).as("abandonedSinceTimeInHours").isEqualTo(1);
+            }
+        };
+
+        instance.execute(server, sender, args);
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_check_confirmDelete_true__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
+    {
+        // GIVEN:
+        final String[] args = new String[] {
+                "check", "confirmDelete:", "true"
+        };
+
+        // DO:
+
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenu actionMenu,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                // EXPECT:
+
+                assertThat(clazz).as("command class").isEqualTo(CheckForAutoDeletesCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
+                assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isTrue();
+                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
+                assertThat(confirmDelete).as("confirmDelete").isTrue();
+            }
+        };
+
+        instance.execute(server, sender, args);
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_check_confirmDelete_t__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
+    {
+        // GIVEN:
+        final String[] args = new String[] {
+                "check", "confirmDelete:", "t"
+        };
+
+        // DO:
+
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenu actionMenu,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                // EXPECT:
+
+                assertThat(clazz).as("command class").isEqualTo(CheckForAutoDeletesCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
+                assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isTrue();
+                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
+                assertThat(confirmDelete).as("confirmDelete").isTrue();
+            }
+        };
+
+        instance.execute(server, sender, args);
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_check_confirmDelete_yes__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
+    {
+        // GIVEN:
+        final String[] args = new String[] {
+                "check", "confirmDelete:", "yes"
+        };
+
+        // DO:
+
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenu actionMenu,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                // EXPECT:
+
+                assertThat(clazz).as("command class").isEqualTo(CheckForAutoDeletesCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
+                assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isTrue();
+                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
+                assertThat(confirmDelete).as("confirmDelete").isTrue();
+            }
+        };
+
+        instance.execute(server, sender, args);
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_check_confirmDelete_y__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
+    {
+        // GIVEN:
+        final String[] args = new String[] {
+                "check", "confirmDelete:", "y"
+        };
+
+        // DO:
+
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenu actionMenu,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                // EXPECT:
+
+                assertThat(clazz).as("command class").isEqualTo(CheckForAutoDeletesCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
+                assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isTrue();
+                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
+                assertThat(confirmDelete).as("confirmDelete").isTrue();
+            }
+        };
+
+        instance.execute(server, sender, args);
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_check_confirmDelete_1__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
+    {
+        // GIVEN:
+        final String[] args = new String[] {
+                "check", "confirmDelete:", "1"
+        };
+
+        // DO:
+
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenu actionMenu,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                // EXPECT:
+
+                assertThat(clazz).as("command class").isEqualTo(CheckForAutoDeletesCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
+                assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isTrue();
+                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
+                assertThat(confirmDelete).as("confirmDelete").isTrue();
+            }
+        };
+
+        instance.execute(server, sender, args);
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_check_confirmDelete_false__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
+    {
+        // GIVEN:
+        final String[] args = new String[] {
+                "check", "confirmDelete:", "false"
+        };
+
+        // DO:
+
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenu actionMenu,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                // EXPECT:
+
+                assertThat(clazz).as("command class").isEqualTo(CheckForAutoDeletesCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
+                assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isFalse();
+                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", true);
+                assertThat(confirmDelete).as("confirmDelete").isFalse();
+            }
+        };
+
+        instance.execute(server, sender, args);
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_check_confirmDelete_f__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
+    {
+        // GIVEN:
+        final String[] args = new String[] {
+                "check", "confirmDelete:", "f"
+        };
+
+        // DO:
+
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenu actionMenu,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                // EXPECT:
+
+                assertThat(clazz).as("command class").isEqualTo(CheckForAutoDeletesCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
+                assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isFalse();
+                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", true);
+                assertThat(confirmDelete).as("confirmDelete").isFalse();
+            }
+        };
+
+        instance.execute(server, sender, args);
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_check_confirmDelete_no__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
+    {
+        // GIVEN:
+        final String[] args = new String[] {
+                "check", "confirmDelete:", "no"
+        };
+
+        // DO:
+
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenu actionMenu,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                // EXPECT:
+
+                assertThat(clazz).as("command class").isEqualTo(CheckForAutoDeletesCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
+                assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isFalse();
+                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", true);
+                assertThat(confirmDelete).as("confirmDelete").isFalse();
+            }
+        };
+
+        instance.execute(server, sender, args);
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_check_confirmDelete_n__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
+    {
+        // GIVEN:
+        final String[] args = new String[] {
+                "check", "confirmDelete:", "n"
+        };
+
+        // DO:
+
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenu actionMenu,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                // EXPECT:
+
+                assertThat(clazz).as("command class").isEqualTo(CheckForAutoDeletesCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
+                assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isFalse();
+                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", true);
+                assertThat(confirmDelete).as("confirmDelete").isFalse();
+            }
+        };
+
+        instance.execute(server, sender, args);
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_check_confirmDelete_0__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
+    {
+        // GIVEN:
+        final String[] args = new String[] {
+                "check", "confirmDelete:", "0"
+        };
+
+        // DO:
+
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenu actionMenu,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                // EXPECT:
+
+                assertThat(clazz).as("command class").isEqualTo(CheckForAutoDeletesCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
+                assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isFalse();
+                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", true);
+                assertThat(confirmDelete).as("confirmDelete").isFalse();
             }
         };
 
