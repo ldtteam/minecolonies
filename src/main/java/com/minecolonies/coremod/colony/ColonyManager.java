@@ -258,7 +258,7 @@ public final class ColonyManager
                     }
                     else
                     {
-                        saveNBTToPath(file, newStorage.toNBT());
+                        saveNBTToPath(file, storage.toNBT());
                         missingChunksToLoad++;
                     }
                 }
