@@ -16,6 +16,7 @@ import org.assertj.core.api.Fail;
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
@@ -30,6 +31,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.managers.ICitizenManager;
 import com.minecolonies.coremod.commands.citizencommands.CitizenInfoCommand;
 import com.minecolonies.coremod.commands.colonycommands.ChangeColonyOwnerCommand;
+import com.minecolonies.coremod.commands.colonycommands.DeleteColonyCommand;
 import com.minecolonies.coremod.commands.generalcommands.ScanCommand;
 
 import net.minecraft.command.CommandException;
@@ -1031,5 +1033,46 @@ public class CommandEntryPointTest
 
         instance.execute(server, playerSender, args);
         verify(playerSender, times(1)).sendMessage(any());
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_colony_delete_colony_1_canDestroy_true_confirmDelete_true__DO_execute__EXPECT_DeleteColonyCommand_executed() throws CommandException
+    {
+        // GIVEN:
+        final String[] args = new String[] {
+                "Colony", "delete", "colony:", "1", "canDestroy:", "true", "confirmDelete:", "true"
+        };
+
+        // DO:
+
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenu actionMenu,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                // EXPECT:
+
+                assertThat(clazz).as("command class").isEqualTo(DeleteColonyCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("colony", "canDestroy", "confirmDelete");
+                assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN, ActionArgumentType.COLONY);
+                final Colony colony = actionMenu.getColonyForArgument("colony");
+                assertThat(colony.getID()).as("colony.getID()").isEqualTo(1);
+                final Boolean canDestroyBoolean = (Boolean) actionMenu.getBooleanForArgument("canDestroy");
+                assertThat(canDestroyBoolean).as("canDestroyBoolean").isTrue();
+                final boolean canDestroy = actionMenu.getBooleanValueForArgument("canDestroy", false);
+                assertThat(canDestroy).as("canDestroy").isTrue();
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isTrue();
+                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
+                assertThat(confirmDelete).as("confirmDelete").isTrue();
+            }
+        };
+
+        instance.execute(server, sender, args);
     }
 }

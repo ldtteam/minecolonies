@@ -260,7 +260,7 @@ public enum ActionArgumentType
             case COORDINATE_Z:
                 return Ints.tryParse(potentialArgumentValue);
             case BOOLEAN:
-                return Boolean.parseBoolean(potentialArgumentValue);
+                return parseBoolean(potentialArgumentValue);
             case PLAYER:
                 return parsePlayerValue(server, potentialArgumentValue);
             case COLONY:
@@ -270,6 +270,51 @@ public enum ActionArgumentType
             default:
                 throw new IllegalStateException("Unimplemented ActionArgumentType parsing");
         }
+    }
+
+    private Boolean parseBoolean(final String potentialArgumentValue)
+    {
+        if ("true".equalsIgnoreCase(potentialArgumentValue))
+        {
+            return Boolean.TRUE;
+        }
+        if ("t".equalsIgnoreCase(potentialArgumentValue))
+        {
+            return Boolean.TRUE;
+        }
+        if ("yes".equalsIgnoreCase(potentialArgumentValue))
+        {
+            return Boolean.TRUE;
+        }
+        if ("y".equalsIgnoreCase(potentialArgumentValue))
+        {
+            return Boolean.TRUE;
+        }
+        if ("1".equalsIgnoreCase(potentialArgumentValue))
+        {
+            return Boolean.TRUE;
+        }
+        if ("false".equalsIgnoreCase(potentialArgumentValue))
+        {
+            return Boolean.FALSE;
+        }
+        if ("f".equalsIgnoreCase(potentialArgumentValue))
+        {
+            return Boolean.FALSE;
+        }
+        if ("no".equalsIgnoreCase(potentialArgumentValue))
+        {
+            return Boolean.FALSE;
+        }
+        if ("n".equalsIgnoreCase(potentialArgumentValue))
+        {
+            return Boolean.FALSE;
+        }
+        if ("0".equalsIgnoreCase(potentialArgumentValue))
+        {
+            return Boolean.FALSE;
+        }
+        return null;
     }
 
     private EntityPlayerMP parsePlayerValue(@NotNull final MinecraftServer server, final String potentialArgumentValue)
