@@ -819,18 +819,15 @@ public final class ColonyManager
         @NotNull final File file = getSaveLocation();
         saveNBTToPath(file, compound);
         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-        if (isWorldUnload)
+        for (final Colony colony : colonies)
         {
-            for (final Colony colony : colonies)
+            if (isWorldUnload)
             {
                 final NBTTagCompound colonyCompound = new NBTTagCompound();
                 colony.writeToNBT(colonyCompound);
                 saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID())), colonyCompound);
             }
-        }
-        else
-        {
-            for (final Colony colony : colonies)
+            else
             {
                 saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID())), colony.getColonyTag());
             }
