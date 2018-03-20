@@ -258,7 +258,7 @@ public final class ColonyManager
                     }
                     else
                     {
-                        saveNBTToPath(file, newStorage.toNBT());
+                        saveNBTToPath(file, storage.toNBT());
                         missingChunksToLoad++;
                     }
                 }
@@ -280,7 +280,6 @@ public final class ColonyManager
     {
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
         storage.applyToCap(cap);
-        Log.getLogger().warn("Loading Chunk: " + chunk.x + " " + chunk.z);
         chunk.markDirty();
         MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
     }
