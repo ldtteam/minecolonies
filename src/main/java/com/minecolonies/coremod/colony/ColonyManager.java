@@ -804,7 +804,7 @@ public final class ColonyManager
 
             if (saveNeeded)
             {
-                saveColonies();
+                saveColonies(false);
             }
         }
     }
@@ -812,7 +812,7 @@ public final class ColonyManager
     /**
      * Save all the Colonies.
      */
-    private static void saveColonies()
+    private static void saveColonies(final boolean isWorldUnload)
     {
         @NotNull final NBTTagCompound compound = new NBTTagCompound();
         writeToNBT(compound);
@@ -820,11 +820,22 @@ public final class ColonyManager
         @NotNull final File file = getSaveLocation();
         saveNBTToPath(file, compound);
         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-        for(final Colony colony: colonies)
+        if (isWorldUnload)
         {
-            saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID())), colony.getColonyTag());
+            for (final Colony colony : colonies)
+            {
+                final NBTTagCompound colonyCompound = new NBTTagCompound();
+                colony.writeToNBT(colonyCompound);
+                saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID())), colonyCompound);
+            }
         }
-
+        else
+        {
+            for (final Colony colony : colonies)
+            {
+                saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID())), colony.getColonyTag());
+            }
+        }
         saveNeeded = false;
     }
 
@@ -989,7 +1000,7 @@ public final class ColonyManager
     {
         if (numWorldsLoaded > 0 && saveNeeded)
         {
-            saveColonies();
+            saveColonies(false);
         }
 
         try(FileOutputStream fos = new FileOutputStream(getBackupSaveLocation(new Date())))
@@ -1150,7 +1161,7 @@ public final class ColonyManager
         {
             if (world.provider.getDimension() == 0)
             {
-                saveColonies();
+                saveColonies(true);
             }
 
 
