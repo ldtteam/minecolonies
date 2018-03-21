@@ -1,0 +1,18 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
+        lightbox="false"
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+    <switch id="pages" size="100% 100%">
+        <view id="pageActions" size="100% 100%">
+            <layout source="minecolonies:gui/windowworkerbuildingdefault.xml"/>
+        </view>
+
+        <view id="pageActions" size="100% 100%" pos="0 1">
+            <layout source="minecolonies:gui/windowbase.xml"/>
+            <button id="milkCows" align="TOP_MIDDLE" size="129 17" pos="0 132" label="$(com.minecolonies.coremod.gui.cowboy.collect)"/>
+        </view>
+    </switch>
+
+    <buttonimage id="prevPage" align="TOP_LEFT" size="26 8" pos="12 15" source="minecolonies:textures/gui/builderhut/builder_sketch_arrow_left_c.png"/>
+    <buttonimage id="nextPage" align="TOP_RIGHT" size="26 8" pos="12 15" source="minecolonies:textures/gui/builderhut/builder_sketch_arrow_right_c.png"/>
+
+</window>
