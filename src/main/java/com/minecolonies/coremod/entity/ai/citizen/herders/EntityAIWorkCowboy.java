@@ -124,7 +124,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
                 InventoryUtils.removeStackFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(Items.BUCKET, 1));
             }
 
-            incrementActionsDone();
+            incrementActionsDoneAndDecSaturation();
         }
 
         return HERDER_DECIDE;

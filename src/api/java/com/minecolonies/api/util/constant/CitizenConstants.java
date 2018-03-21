@@ -146,7 +146,7 @@ public final class CitizenConstants
     /**
      * Decrease by this * buildingLevel each new night.
      */
-    public static final double SATURATION_DECREASE_FACTOR = 0.2;
+    public static final double SATURATION_DECREASE_FACTOR = 0.02;
     /**
      * Minimum stuck time for the worker to react.
      */
