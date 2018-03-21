@@ -18,3 +18,15 @@ In any case, use this code:
  */
 @SuppressWarnings("squid:Sxxyy")
 ```
+
+You can suppress PMD/Codacy rules using annotations like this:
+```
+@SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.ExcessiveImports"})
+ ```
+ 
+ You can find which annotation names to use here:
+ 
+ [PMC 4.3.0 rules](http://pmd.sourceforge.net/pmd-4.3.0/rules/)
+ 
+ 
+ 

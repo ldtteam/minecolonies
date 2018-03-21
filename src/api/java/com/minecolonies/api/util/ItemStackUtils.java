@@ -1,6 +1,7 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.entity.Entity;
@@ -119,7 +120,10 @@ public final class ItemStackUtils
                 }
             }
         }
-
+        else if(ChiselAndBitsCheck.isChiselAndBitsTileEntity(tileEntity))
+        {
+            items.addAll(ChiselAndBitsCheck.getBitStacks(tileEntity));
+        }
         return items;
     }
 
@@ -146,6 +150,10 @@ public final class ItemStackUtils
 
     /**
      * Adds entities to the builder building if he needs it.
+     * @param entityInfo the entity info object.
+     * @param world the world.
+     * @param placer the entity placer.
+     * @return a list of stacks.
      */
     public static List<ItemStack> getListOfStackForEntity(final Template.EntityInfo entityInfo, final World world, final Entity placer)
     {

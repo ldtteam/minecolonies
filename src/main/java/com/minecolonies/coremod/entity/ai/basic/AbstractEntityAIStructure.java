@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.ModBlocks;
@@ -427,7 +428,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         final List<ItemStack> itemList = new ArrayList<>();
-        itemList.add(stack);
+        if(!ChiselAndBitsCheck.isChiselAndBitsBlock(stateToPlace))
+        {
+            itemList.add(stack);
+        }
         itemList.addAll(getItemsFromTileEntity());
 
         for (final ItemStack tempStack : itemList)
