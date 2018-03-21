@@ -1,28 +1,40 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.HOMETP;
+
+import java.util.Collections;
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.minecolonies.coremod.commands.ActionMenu;
+import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.util.TeleportToColony;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.List;
-
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.HOMETP;
 
 /**
  * this command is made to TP a player to their home colony.
  */
-public class HomeTeleportCommand extends AbstractSingleCommand
+public class HomeTeleportCommand extends AbstractSingleCommand implements IActionCommand
 {
     /**
      * The description.
      */
     public static final String DESC = "home";
+
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
+    public HomeTeleportCommand()
+    {
+        super();
+    }
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -42,7 +54,18 @@ public class HomeTeleportCommand extends AbstractSingleCommand
     }
 
     @Override
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
+    {
+        executeShared(server, sender);
+    }
+
+    @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    {
+        executeShared(server, sender);
+    }
+
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender) throws CommandException
     {
         //see if player is allowed to use in the configs
         if (canCommandSenderUseCommand(HOMETP))

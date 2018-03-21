@@ -1,25 +1,30 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
+import java.util.Collections;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.minecolonies.coremod.commands.ActionMenu;
+import com.minecolonies.coremod.commands.IActionCommand;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by asie on 2/16/17.
  */
-public class WhoAmICommand extends AbstractSingleCommand
+public class WhoAmICommand extends AbstractSingleCommand implements IActionCommand
 {
     /**
      * Command description.
@@ -32,6 +37,14 @@ public class WhoAmICommand extends AbstractSingleCommand
     public static final String TELL_HIM = "You are %s, your colony is %s at position %s";
 
     /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
+    public WhoAmICommand()
+    {
+        super();
+    }
+
+    /**
      * Initialize this SubCommand with it's parents.
      *
      * @param parents an array of all the parents.
@@ -41,8 +54,18 @@ public class WhoAmICommand extends AbstractSingleCommand
         super(parents);
     }
 
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
+    {
+        executeShared(server, sender);
+    }
+
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    {
+        executeShared(server, sender);
+    }
+
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender) throws CommandException
     {
         if (!(sender instanceof EntityPlayer))
         {
