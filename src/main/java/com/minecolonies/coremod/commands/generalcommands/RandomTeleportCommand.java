@@ -1,12 +1,23 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.RTP;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.minecolonies.coremod.commands.ActionMenu;
+import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import com.minecolonies.coremod.util.ServerUtils;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,20 +26,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.RTP;
 
 /**
  * this command is made to TP a player to a safe random spot that is not to close to another colony.
  * Need to add a configs permissions check.
  * Need to allow OPs to send players ./mc ctp (Player) if player is not allowed.
  */
-public class RandomTeleportCommand extends AbstractSingleCommand
+public class RandomTeleportCommand extends AbstractSingleCommand implements IActionCommand
 {
     public static final  String DESC             = "rtp";
     private static final int    ATTEMPTS         = Configurations.gameplay.numberOfAttemptsForSafeTP;
@@ -39,6 +43,14 @@ public class RandomTeleportCommand extends AbstractSingleCommand
     private static final double SAFETY_DROP      = 6;
     private static final int    FALL_DISTANCE    = 5;
     private static final String CANT_FIND_PLAYER = "No player found for teleport, please define one.";
+
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
+    public RandomTeleportCommand()
+    {
+        super();
+    }
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -58,7 +70,24 @@ public class RandomTeleportCommand extends AbstractSingleCommand
     }
 
     @Override
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
+    {
+        final EntityPlayer player = actionMenu.getPlayerForArgument("player");
+        executeShared(server, sender, ((null != player) ? player.getName() : null));
+    }
+
+    @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    {
+        String playerName = null;
+        if (args.length != 0)
+        {
+            playerName = args[0];
+        }
+        executeShared(server, sender, playerName);
+    }
+
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final String playerName) throws CommandException
     {
         if (SPAWN_NO_TP >= LOWER_BOUNDS)
         {
@@ -80,12 +109,12 @@ public class RandomTeleportCommand extends AbstractSingleCommand
         }
 
         //If the arguments aren't empty, the sender probably wants to teleport another player.
-        if (args.length != 0 && isPlayerOpped(sender))
+        if ((null != playerName) && isPlayerOpped(sender))
         {
             final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
             playerToTeleport =
               ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache()
-                                              .getGameProfileForUsername(args[0]).getId(), world);
+                                              .getGameProfileForUsername(playerName).getId(), world);
 
             sender.sendMessage(new TextComponentString("TPing Player: " + playerToTeleport.getName()));
         }

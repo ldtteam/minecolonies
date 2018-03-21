@@ -29,6 +29,14 @@ public class RespawnCitizenCommand extends AbstractCitizensCommands
     private static final String COORDINATES_XYZ     = "§4x=§f%s §4y=§f%s §4z=§f%s";
 
     /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
+    public RespawnCitizenCommand()
+    {
+        super();
+    }
+
+    /**
      * Initialize this SubCommand with it's parents.
      *
      * @param parents an array of all the parents.
