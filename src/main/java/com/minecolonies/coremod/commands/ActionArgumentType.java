@@ -272,7 +272,14 @@ public enum ActionArgumentType
         }
     }
 
-    private Boolean parseBoolean(final String potentialArgumentValue)
+    /*
+     * Suppressing Sonar Rule squid:S2447
+     * This rule complains about returning null for a Boolean method.
+     * But in this case the rule does not apply because
+     * We are returning null to indicate that no boolean value could be parsed.
+     */
+    @SuppressWarnings({"squid:S2447"})
+    private static Boolean parseBoolean(final String potentialArgumentValue)
     {
         if ("true".equalsIgnoreCase(potentialArgumentValue))
         {
