@@ -258,7 +258,7 @@ public final class ColonyManager
                     }
                     else
                     {
-                        saveNBTToPath(file, newStorage.toNBT());
+                        saveNBTToPath(file, storage.toNBT());
                         missingChunksToLoad++;
                     }
                 }
@@ -280,7 +280,6 @@ public final class ColonyManager
     {
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
         storage.applyToCap(cap);
-        Log.getLogger().warn("Loading Chunk: " + chunk.x + " " + chunk.z);
         chunk.markDirty();
         MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
     }
@@ -846,8 +845,6 @@ public final class ColonyManager
         compound.setTag(TAG_COMPATABILITY_MANAGER, compCompound);
 
         compound.setBoolean(TAG_DISTANCE, true);
-        compound.setInteger(TAG_NEW_COLONIES, colonies.getSize());
-
         final NBTTagCompound recipeCompound = new NBTTagCompound();
         recipeManager.writeToNBT(recipeCompound);
         compound.setTag(RECIPE_MANAGER_TAG, recipeCompound);
@@ -999,7 +996,7 @@ public final class ColonyManager
             @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
             final ZipOutputStream zos = new ZipOutputStream(fos);
 
-            for (int i = 1; i < colonies.getTopID(); i++)
+            for (int i = 1; i < colonies.getTopID() + 1; i++)
             {
                 @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i));
                 if (file.exists())

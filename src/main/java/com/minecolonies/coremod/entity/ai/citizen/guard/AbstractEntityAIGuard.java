@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -625,7 +624,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     {
         final Colony colony = this.getOwnBuilding().getColony();
         colony.getStatsManager().incrementStatistic("mobs");
-        this.incrementActionsDone();
+        this.incrementActionsDoneAndDecSaturation();
         worker.getNavigator().clearPath();
     }
 

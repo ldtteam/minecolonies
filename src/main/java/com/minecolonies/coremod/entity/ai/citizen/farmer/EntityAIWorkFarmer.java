@@ -576,7 +576,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
 
         worker.addExperience(XP_PER_BLOCK);
-        this.incrementActionsDone();
     }
 
     /**

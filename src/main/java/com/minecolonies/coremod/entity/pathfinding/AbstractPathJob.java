@@ -11,6 +11,7 @@ import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.EnumFacing;
@@ -667,6 +668,12 @@ public abstract class AbstractPathJob implements Callable<Path>
     {
         BlockPos pos = parent.pos.add(dPos);
 
+        final Block block = world.getBlockState(parent.pos).getBlock();
+        if (block == Blocks.FARMLAND || block == Blocks.GRASS_PATH)
+        {
+            pos = pos.up();
+        }
+
         //  Cheap test to perform before doing a 'y' test
         //  Has this node been visited?
         int nodeKey = computeNodeKey(pos);
@@ -696,7 +703,6 @@ public abstract class AbstractPathJob implements Callable<Path>
                 return false;
             }
         }
-
 
         final boolean isSwimming = calculateSwimming(world, pos, node);
         final boolean onRoad = BlockUtils.isPathBlock(world.getBlockState(pos.down()).getBlock());
