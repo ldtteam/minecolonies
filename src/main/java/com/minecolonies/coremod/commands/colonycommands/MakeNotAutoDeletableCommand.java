@@ -1,8 +1,20 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.minecolonies.coremod.commands.ActionArgument;
+import com.minecolonies.coremod.commands.ActionMenu;
+import com.minecolonies.coremod.commands.IActionCommand;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,14 +22,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-public class MakeNotAutoDeletable extends AbstractSingleCommand
+public class MakeNotAutoDeletableCommand extends AbstractSingleCommand implements IActionCommand
 {
     public static final  String DESC                       = "deletable";
     private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
@@ -27,11 +33,19 @@ public class MakeNotAutoDeletable extends AbstractSingleCommand
     private static final int NUMBER_OR_ARGS_REQUIRED = 2;
 
     /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
+    public MakeNotAutoDeletableCommand()
+    {
+        super();
+    }
+
+    /**
      * Initialize this SubCommand with it's parents.
      *
      * @param parents an array of all the parents.
      */
-    public MakeNotAutoDeletable(@NotNull final String... parents)
+    public MakeNotAutoDeletableCommand(@NotNull final String... parents)
     {
         super(parents);
     }
@@ -50,7 +64,39 @@ public class MakeNotAutoDeletable extends AbstractSingleCommand
     }
 
     @Override
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
+    {
+        final Colony colony = actionMenu.getColonyForArgument("colony");
+        final boolean canBeDeleted = actionMenu.getBooleanValueForArgument("canBeDeleted", false);
+        executeShared(server, sender, colony, canBeDeleted);
+    }
+
+    @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    {
+        if (args.length < NUMBER_OR_ARGS_REQUIRED)
+        {
+            sender.sendMessage(new TextComponentString(NOT_ENOUGH_ARGUMENTS));
+            return;
+        }
+
+        final int colonyId;
+        colonyId = Integer.parseInt(args[0]);
+        final Colony colony = ColonyManager.getColony(colonyId);
+
+        if (colony == null)
+        {
+            sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
+            return;
+        }
+
+        final boolean canBeDeleted;
+        canBeDeleted = Boolean.parseBoolean(args[1]);
+
+        executeShared(server, sender, colony, canBeDeleted);
+    }
+
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @Nullable final Colony colony, final boolean canBeDeleted)
     {
         if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
         {
@@ -59,27 +105,6 @@ public class MakeNotAutoDeletable extends AbstractSingleCommand
         }
         else if (sender instanceof TileEntity)
         {
-            return;
-        }
-
-        if (args.length < NUMBER_OR_ARGS_REQUIRED)
-        {
-            sender.sendMessage(new TextComponentString(NOT_ENOUGH_ARGUMENTS));
-            return;
-        }
-
-        sender.sendMessage(new TextComponentString(Arrays.toString(args)));
-
-        final int colonyId;
-        colonyId = Integer.parseInt(args[0]);
-        final Colony colony = ColonyManager.getColony(colonyId);
-
-        final boolean canBeDeleted;
-        canBeDeleted = Boolean.parseBoolean(args[1]);
-
-        if (colony == null)
-        {
-            sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
             return;
         }
 

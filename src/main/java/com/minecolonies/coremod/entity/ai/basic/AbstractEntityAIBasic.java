@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATION;
+import static com.minecolonies.api.util.constant.CitizenConstants.SATURATION_DECREASE_FACTOR;
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -1047,6 +1048,23 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         hasDelayed = false;
         return false;
+    }
+
+    /**
+     * Tell the ai that you have done one more action.
+     * <p>
+     * if the actions exceed a certain number,
+     * the ai will dump it's inventory.
+     * this also triggers the AI to get hungry.
+     * <p>
+     * For example:
+     * <p>
+     * After x blocks, bring everything back.
+     */
+    protected final void incrementActionsDoneAndDecSaturation()
+    {
+        worker.decreaseSaturationForAction();
+        actionsDone++;
     }
 
     /**

@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.commands.colonycommands.requestsystem;
 
+import java.util.Map;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.coremod.commands.AbstractSplitCommand;
 import com.minecolonies.coremod.commands.ColonyCommand;
 import com.minecolonies.coremod.commands.ISubCommand;
 import com.minecolonies.coremod.commands.MinecoloniesCommand;
-import com.minecolonies.coremod.commands.colonycommands.*;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 public class RSCommand extends AbstractSplitCommand
 {

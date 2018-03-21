@@ -136,7 +136,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
             }
         }
 
-        incrementActionsDone();
+        incrementActionsDoneAndDecSaturation();
 
         return HERDER_DECIDE;
     }
