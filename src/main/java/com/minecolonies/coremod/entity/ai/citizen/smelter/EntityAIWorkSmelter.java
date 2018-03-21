@@ -153,7 +153,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
                 material.setCount(materialTuple.getSecond());
                 material.setItemDamage(0);
                 new InvWrapper(worker.getInventoryCitizen()).setStackInSlot(slot, material);
-                incrementActionsDone();
+                incrementActionsDoneAndDecSaturation();
             }
             else
             {

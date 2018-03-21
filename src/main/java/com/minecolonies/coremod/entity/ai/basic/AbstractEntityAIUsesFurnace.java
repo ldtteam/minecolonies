@@ -318,7 +318,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         walkTo = null;
 
         extractFromFurnace((TileEntityFurnace) entity);
-        incrementActionsDone();
+        incrementActionsDoneAndDecSaturation();
         setDelay(STANDARD_DELAY);
         return START_WORKING;
     }
