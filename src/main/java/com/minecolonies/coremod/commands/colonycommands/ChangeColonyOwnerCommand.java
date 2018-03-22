@@ -29,7 +29,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
 {
 
     public static final  String DESC            = "ownerchange";
-    private static final String SUCCESS_MESSAGE = "Succesfully switched Owner %s to colony %d";
+    private static final String SUCCESS_MESSAGE = "Successfully switched Owner %s to colony %d";
     private static final String COLONY_NULL     = "Couldn't find colony %d.";
     private static final String NO_ARGUMENTS    = "Please define a colony and player";
     private static final String NO_PLAYER       = "Can't find player to add";
