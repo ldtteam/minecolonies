@@ -276,6 +276,7 @@ public enum ActionMenuType implements IMenuType
             "scan",
             ForgePermissionNodes.SCAN,
             ScanCommand.class,
+            new ActionArgument("player", ActionArgumentType.PLAYER, ActionArgumentType.Is.OPTIONAL),
             new ActionArgument("x1", ActionArgumentType.COORDINATE_X, ActionArgumentType.Is.REQUIRED),
             new ActionArgument("y1", ActionArgumentType.COORDINATE_Y, ActionArgumentType.Is.REQUIRED),
             new ActionArgument("z1", ActionArgumentType.COORDINATE_Z, ActionArgumentType.Is.REQUIRED),

@@ -5,11 +5,10 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.minecolonies.coremod.commands.*;
+import net.minecraft.entity.player.EntityPlayerMP;
 import org.jetbrains.annotations.NotNull;
 
-import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.minecolonies.coremod.commands.ActionMenu;
-import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.items.ItemScanTool;
 
 import net.minecraft.command.CommandException;
@@ -52,25 +51,27 @@ public class ScanCommand extends AbstractSingleCommand implements IActionCommand
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
     {
         // Will throw ClassCastException if null, but should never be null as these values are required.
+        final EntityPlayerMP player = actionMenu.getPlayerForArgument("player");
         final int x1 = actionMenu.getIntegerForArgument("x1");
         final int y1 = actionMenu.getIntegerForArgument("y1");
         final int z1 = actionMenu.getIntegerForArgument("z1");
         final int x2 = actionMenu.getIntegerForArgument("x2");
         final int y2 = actionMenu.getIntegerForArgument("y2");
         final int z2 = actionMenu.getIntegerForArgument("z2");
+
         final BlockPos from = new BlockPos(x1, y1, z1);
         final BlockPos to = new BlockPos(x2, y2, z2);
-        executeShared(server, sender, from, to);
+        executeShared(server, sender, from, to, player);
     }
 
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-//        executeShared(server, sender, from, to);
+        //executeShared(server, sender, from, to);
     }
 
     private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender,
-            @NotNull final BlockPos from, @NotNull final BlockPos to) throws CommandException
+            @NotNull final BlockPos from, @NotNull final BlockPos to, @Nullable final EntityPlayerMP playerArgument) throws CommandException
     {
 
         if (isPlayerOpped(sender))
@@ -78,15 +79,19 @@ public class ScanCommand extends AbstractSingleCommand implements IActionCommand
             server.addScheduledTask(() ->
             {
                 @Nullable final World world = server.getEntityWorld();
-                @NotNull final EntityPlayer player;
-                if (sender instanceof EntityPlayer)
+                @NotNull final EntityPlayerMP player;
+                if(playerArgument != null)
                 {
-                    player = (EntityPlayer) sender;
+                    player = playerArgument;
+                }
+                else if (sender instanceof EntityPlayer)
+                {
+                    player = (EntityPlayerMP) sender;
                 }
                 else
                 {
-                    // Not sure this is allowed in saveStructure()
-                    player = null;
+                    sender.sendMessage(new TextComponentString(SCAN_FAILURE_MESSAGE));
+                    return;
                 }
                 ItemScanTool.saveStructure(world, from, to, player);
                 sender.sendMessage(new TextComponentString(SCAN_SUCCESS_MESSAGE));
