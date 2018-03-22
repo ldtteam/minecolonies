@@ -135,7 +135,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
                 worker.getInventoryCitizen().addItemStackToInventory(item);
             }
         }
-
+        worker.addExperience(1.0);
         incrementActionsDoneAndDecSaturation();
 
         return HERDER_DECIDE;
