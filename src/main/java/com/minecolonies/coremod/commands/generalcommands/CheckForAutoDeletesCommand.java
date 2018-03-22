@@ -1,9 +1,20 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.minecolonies.coremod.commands.ActionMenu;
+import com.minecolonies.coremod.commands.IActionCommand;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,17 +26,20 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-public class CheckForAutoDeletesCommand extends AbstractSingleCommand
+public class CheckForAutoDeletesCommand extends AbstractSingleCommand implements IActionCommand
 {
 
     public static final String DESC = "check";
+    private static final String COMMAND_CHECK_FOR_AUTODELETES = "/mc check confirmDelete: true";
+
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
+    public CheckForAutoDeletesCommand()
+    {
+        super();
+    }
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -43,8 +57,30 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
         return false;
     }
 
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
+    {
+        final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
+        executeShared(server, sender, confirmDelete);
+    }
+
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    {
+        boolean confirmDelete = false;
+        if (args.length == 2)
+        {
+            if ("confirmDelete:".equalsIgnoreCase(args[0]))
+            {
+                if ("true".equalsIgnoreCase(args[1]))
+                {
+                    confirmDelete = true;
+                }
+            }
+        }
+        executeShared(server, sender, confirmDelete);
+    }
+
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final boolean confirmDelete) throws CommandException
     {
         if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
         {
@@ -71,21 +107,18 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
             }
         }
 
-        if (args.length != 0)
+        if (confirmDelete)
         {
-            if ("true".equalsIgnoreCase(args[0]))
+            sender.sendMessage(new TextComponentString("Successful"));
+            for (final Colony col : coloniesToDelete)
             {
-                sender.sendMessage(new TextComponentString("Successful"));
-                for (final Colony col : coloniesToDelete)
-                {
-                    server.addScheduledTask(() -> ColonyManager.deleteColony(col.getID(), Configurations.gameplay.autoDestroyColonyBlocks));
-                }
+                server.addScheduledTask(() -> ColonyManager.deleteColony(col.getID(), Configurations.gameplay.autoDestroyColonyBlocks));
             }
         }
         else
         {
             final ITextComponent deleteButton = new TextComponentString("[DELETE]").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-              new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mc check true")
+              new ClickEvent(ClickEvent.Action.RUN_COMMAND, COMMAND_CHECK_FOR_AUTODELETES)
             ));
             sender.sendMessage(new TextComponentString("There are: " + coloniesToDelete.size() + " of a total of " + colonies.size() + " to delete."));
             sender.sendMessage(new TextComponentString("Click [DELETE] to confirm"));

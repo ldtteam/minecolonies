@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,7 +23,7 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.K
 /**
  * List all colonies.
  */
-public class KillCitizenCommand extends AbstractCitizensCommands
+public class KillCitizenCommand extends AbstractCitizensCommands implements IActionCommand
 {
 
     public static final  String DESC                = "kill";
@@ -34,6 +35,14 @@ public class KillCitizenCommand extends AbstractCitizensCommands
      * The damage source used to kill citizens.
      */
     private static final DamageSource CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
+
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
+    public KillCitizenCommand()
+    {
+        super();
+    }
 
     /**
      * Initialize this SubCommand with it's parents.

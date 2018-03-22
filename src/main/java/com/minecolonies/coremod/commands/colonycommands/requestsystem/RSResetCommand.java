@@ -1,10 +1,21 @@
 package com.minecolonies.coremod.commands.colonycommands.requestsystem;
 
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.RSRESET;
+
+import java.util.Collections;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.minecolonies.coremod.commands.ActionMenu;
+import com.minecolonies.coremod.commands.IActionCommand;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -12,20 +23,22 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.RSRESET;
-
-public class RSResetCommand extends AbstractSingleCommand
+public class RSResetCommand extends AbstractSingleCommand implements IActionCommand
 {
     public static final  String DESC            = "reset";
     private static final String SUCCESS_MESSAGE = "After 1.618 Seconds it reinstantiated completely new.";
     private static final String COLONY_NULL     = "Couldn't find colony %d.";
+    private static final String COLONY_NOT_FOUND = "Couldn't find colony.";
     private static final String NO_ARGUMENTS    = "Please define a colony";
+
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
+    public RSResetCommand()
+    {
+        super();
+    }
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -42,6 +55,19 @@ public class RSResetCommand extends AbstractSingleCommand
     public String getCommandUsage(@NotNull final ICommandSender sender)
     {
         return super.getCommandUsage(sender) + "<ColonyId> <(Optional)Player>";
+    }
+
+    @Override
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
+    {
+        final Colony colony = actionMenu.getColonyForArgument("colony");
+        if (colony == null)
+        {
+            sender.sendMessage(new TextComponentString(COLONY_NOT_FOUND));
+            return;
+        }
+
+        executeShared(server, sender, colony);
     }
 
     @Override
@@ -75,10 +101,17 @@ public class RSResetCommand extends AbstractSingleCommand
             return;
         }
 
+        executeShared(server, sender, colony);
+    }
+
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final Colony colony) throws CommandException
+    {
+        final Entity senderEntity = sender.getCommandSenderEntity();
+
         if (senderEntity instanceof EntityPlayer)
         {
             final EntityPlayer player = (EntityPlayer) sender;
-            if (!canPlayerUseCommand(player, RSRESET, colonyId))
+            if (!canPlayerUseCommand(player, RSRESET, colony.getID()))
             {
                 senderEntity.sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
@@ -86,7 +119,7 @@ public class RSResetCommand extends AbstractSingleCommand
         }
 
         colony.getRequestManager().reset();
-        sender.sendMessage(new TextComponentString(String.format(SUCCESS_MESSAGE, colonyId)));
+        sender.sendMessage(new TextComponentString(String.format(SUCCESS_MESSAGE, colony.getID())));
     }
 
     @NotNull

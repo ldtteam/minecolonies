@@ -1,10 +1,19 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
+import java.util.Collections;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.mojang.authlib.GameProfile;
+import com.minecolonies.coremod.commands.ActionMenu;
+import com.minecolonies.coremod.commands.IActionCommand;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -12,26 +21,27 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraftforge.common.util.FakePlayer;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * gives ability to change the colony owner.
  */
-public class ChangeColonyOwnerCommand extends AbstractSingleCommand
+public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements IActionCommand
 {
 
     public static final  String DESC            = "ownerchange";
-    private static final String SUCCESS_MESSAGE = "Succesfully switched Owner %s to colony %d";
+    private static final String SUCCESS_MESSAGE = "Successfully switched Owner %s to colony %d";
     private static final String COLONY_NULL     = "Couldn't find colony %d.";
     private static final String NO_ARGUMENTS    = "Please define a colony and player";
     private static final String NO_PLAYER       = "Can't find player to add";
     private static final String HAS_A_COLONY    = "Player %s has a colony already.";
+
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
+    public ChangeColonyOwnerCommand()
+    {
+        super();
+    }
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -51,6 +61,14 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
     }
 
     @Override
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
+    {
+        final Colony colony = actionMenu.getColonyForArgument("colony");
+        final EntityPlayer player = actionMenu.getPlayerForArgument("player");
+        executeShared(server, sender, colony, player);
+    }
+
+    @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         if (args.length < 2)
@@ -59,18 +77,13 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
             return;
         }
 
-        if (!isPlayerOpped(sender))
-        {
-            return;
-        }
-
-        final Entity senderEntity = sender.getCommandSenderEntity();
-
         int colonyId = getIthArgument(args, 0, -1);
         if (colonyId == -1)
         {
             final String playerName = args[0];
             final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
+
+            final Entity senderEntity = sender.getCommandSenderEntity();
 
             if (senderEntity == null)
             {
@@ -95,18 +108,17 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
             }
         }
 
-        final Colony colony = ColonyManager.getColony(colonyId);
-
-        if (colony == null)
-        {
-            sender.sendMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
-            return;
-        }
-
         String playerName = null;
         if (args.length >= 2)
         {
             playerName = args[1];
+        }
+
+        final Colony colony = ColonyManager.getColony(colonyId);
+        if (colony == null)
+        {
+            sender.sendMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
+            return;
         }
 
         if (playerName == null || playerName.isEmpty())
@@ -115,29 +127,33 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
             return;
         }
 
-        EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
+        final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
+
+        executeShared(server, sender, colony, player);
+    }
+
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final Colony colony, final EntityPlayer player) throws CommandException
+    {
         if (player == null)
         {
-            if("[abandoned]".equals(playerName))
-            {
-                player = new FakePlayer(server.getWorld(0), new GameProfile(UUID.randomUUID(), "[abandoned]"));
-            }
-            else
-            {
-                sender.sendMessage(new TextComponentString(NO_PLAYER));
-                return;
-            }
+            sender.sendMessage(new TextComponentString(NO_PLAYER));
+            return;
+        }
+
+        if (!isPlayerOpped(sender))
+        {
+            return;
         }
 
         if (ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player) != null)
         {
-            sender.sendMessage(new TextComponentString(String.format(HAS_A_COLONY, playerName)));
+            sender.sendMessage(new TextComponentString(String.format(HAS_A_COLONY, player.getName())));
             return;
         }
 
         colony.getPermissions().setOwner(player);
 
-        sender.sendMessage(new TextComponentString(String.format(SUCCESS_MESSAGE, playerName, colonyId)));
+        sender.sendMessage(new TextComponentString(String.format(SUCCESS_MESSAGE, player.getName(), colony.getID())));
     }
 
     @NotNull

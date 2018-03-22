@@ -611,7 +611,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         worker.captureDrops = true;
         retrieveRod();
         fishingSkill = worker.getLevel();
-        this.incrementActionsDone();
+        this.incrementActionsDoneAndDecSaturation();
         return true;
     }
 

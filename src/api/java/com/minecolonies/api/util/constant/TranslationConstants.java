@@ -228,6 +228,10 @@ public final class TranslationConstants
     @NonNls
     public static final String REALLY_FAR_DESC                                                     = "com.minecolonies.coremod.max.schematic.reallyfar";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_COLLECT                         = "com.minecolonies.coremod.gui.cowboy.collect";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_NOTCOLLECT                      = "com.minecolonies.coremod.gui.cowboy.notcollect";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_AUTO                   = "com.minecolonies.coremod.gui.workerHuts.modeA";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_MANUAL                 = "com.minecolonies.coremod.gui.workerHuts.modeM";
