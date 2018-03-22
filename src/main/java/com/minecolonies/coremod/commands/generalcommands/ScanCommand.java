@@ -37,16 +37,6 @@ public class ScanCommand implements IActionCommand
         super();
     }
 
-    /**
-     * Initialize this SubCommand with it's parents.
-     *
-     * @param parents an array of all the parents.
-     */
-    public ScanCommand(@NotNull final String... parents)
-    {
-        super();
-    }
-
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
     {
