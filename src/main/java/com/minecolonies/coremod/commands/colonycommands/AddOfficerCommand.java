@@ -32,7 +32,7 @@ public class AddOfficerCommand extends AbstractSingleCommand implements IActionC
 {
 
     public static final  String DESC            = "addOfficer";
-    private static final String SUCCESS_MESSAGE = "Succesfully added Player %s to colony %d";
+    private static final String SUCCESS_MESSAGE = "Successfully added Player %s to colony %d";
     private static final String COLONY_NULL     = "Couldn't find colony %d.";
     private static final String NO_ARGUMENTS    = "Please define a colony or player";
 
