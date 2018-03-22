@@ -132,7 +132,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         addMapping("TownHall", BuildingTownHall.class, BuildingTownHall.View.class, BlockHutTownHall.class);
         addMapping("Deliveryman", BuildingDeliveryman.class, BuildingDeliveryman.View.class, BlockHutDeliveryman.class);
         addMapping("Fisherman", BuildingFisherman.class, BuildingFisherman.View.class, BlockHutFisherman.class);
-        addMapping("GuardTower", BuildingGuardTower.class, BuildingGuardTower.View.class, BlockHutGuardTower.class);
+        addMapping("GuardTower", BuildingGuardTowerNew.class, BuildingGuardTowerNew.View.class, BlockHutGuardTower.class);
         addMapping("WareHouse", BuildingWareHouse.class, BuildingWareHouse.View.class, BlockHutWareHouse.class);
         addMapping("Cook", BuildingCook.class, BuildingCook.View.class, BlockHutCook.class);
         addMapping("Barracks", BuildingBarracks.class, BuildingBarracks.View.class, BlockHutBarracks.class);

@@ -5,6 +5,8 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew.GuardTask;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -61,6 +63,35 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
         this.task = task;
     }
 
+    /**
+     * Creates an instance of the guard task message.
+     *
+     * @param building       the building.
+     * @param job            the new job.
+     * @param assignmentMode the new assignment mode.
+     * @param patrollingMode the new patrolling mode.
+     * @param retrieval      the new retrievel mode.
+     * @param task           the new task.
+     */
+    public GuardTaskMessage(
+                             @NotNull final AbstractBuildingGuardsNew.View building,
+                             final int job,
+                             final boolean assignmentMode,
+                             final boolean patrollingMode,
+                             final boolean retrieval,
+                             final int task
+    )
+    {
+        super();
+        this.colonyId = building.getColony().getID();
+        this.buildingId = building.getID();
+        this.job = job;
+        this.assignmentMode = assignmentMode;
+        this.patrollingMode = patrollingMode;
+        this.retrieval = retrieval;
+        this.task = task;
+    }
+
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
@@ -97,19 +128,19 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
                 return;
             }
 
-            @Nullable final AbstractBuildingGuards building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingGuards.class);
+            @Nullable final AbstractBuildingGuardsNew building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingGuardsNew.class);
             if (building != null)
             {
                 if (message.job != -1)
                 {
-                    building.setJob(AbstractBuildingGuards.GuardJob.values()[message.job]);
+                    building.setJob(AbstractBuildingGuardsNew.GuardJob.values()[message.job]);
                 }
                 building.setAssignManually(message.assignmentMode);
                 building.setPatrolManually(message.patrollingMode);
                 building.setRetrieveOnLowHealth(message.retrieval);
-                building.setTask(AbstractBuildingGuards.Task.values()[message.task]);
+                building.setTask(GuardTask.values()[message.task]);
 
-                if (building.getTask().equals(AbstractBuildingGuards.Task.FOLLOW))
+                if (building.getTask().equals(GuardTask.FOLLOW))
                 {
                     building.setPlayerToFollow(player);
                 }

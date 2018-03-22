@@ -227,6 +227,11 @@ public final class TranslationConstants
     public static final String QUITE_FAR_DESC                                                      = "com.minecolonies.coremod.max.schematic.quitefar";
     @NonNls
     public static final String REALLY_FAR_DESC                                                     = "com.minecolonies.coremod.max.schematic.reallyfar";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_AUTO                   = "com.minecolonies.coremod.gui.workerHuts.modeA";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_MANUAL                 = "com.minecolonies.coremod.gui.workerHuts.modeM";
+
 
     private TranslationConstants()
     {

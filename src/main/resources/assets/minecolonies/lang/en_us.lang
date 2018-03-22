@@ -177,6 +177,9 @@ com.minecolonies.coremod.gui.buildtool.hut=Huts
 com.minecolonies.coremod.gui.townHall.addPlayer=Add Player:
 com.minecolonies.coremod.gui.townHall.addBlock=Add Block/Position:
 
+com.minecolonies.coremod.gui.workerHuts.mobsList=Mob Attack List
+com.minecolonies.coremod.job.Ranger=Knight
+com.minecolonies.coremod.job.Knight=Ranger
 com.minecolonies.coremod.gui.warehouse.visitCitizenChests=Visit Citizenchests:
 com.minecolonies.coremod.gui.townHall.population.unemployed=Unemployed: %d
 com.minecolonies.coremod.gui.workerHuts.minerNode=Node

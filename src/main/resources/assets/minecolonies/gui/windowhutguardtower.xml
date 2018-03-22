@@ -53,6 +53,20 @@
 
         </view>
 
+        <view id="mobActions" size="100% 100%">
+            <layout source="minecolonies:gui/windowbase.xml"/>
+            <label size="100% 11" pos="0 12"
+                   label="$(com.minecolonies.coremod.gui.workerHuts.mobsList)" color="black" textalign="BOTTOM_MIDDLE"/>
+            <list id="mobs" size="78% 85%" pos="30 25">
+                <box size="100% 30" linewidth="2">
+                    <button id="prioUp" size="15 15" label="↥" pos="0 0"/>
+                    <button id="prioDown" size="15 15" label="↧" pos="0 15"/>
+                    <label id="name" size="50 12" pos="35 16" textalign="MIDDLE_LEFT" color="black"/>
+                    <button id="switch" size="100 12" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOn)"/>
+                </box>
+            </list>
+        </view>
+
 
     </switch>
     <buttonimage id="prevPage" align="TOP_LEFT" size="26 8" pos="12 15" source="minecolonies:textures/gui/builderhut/builder_sketch_arrow_left_c.png"/>
