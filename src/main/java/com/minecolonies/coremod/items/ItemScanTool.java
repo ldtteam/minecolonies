@@ -152,17 +152,17 @@ public class ItemScanTool extends AbstractItemMinecolonies
         final String fileName;
         if(name == null || name.isEmpty())
         {
-            fileName = LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillisString + ".nbt");
+            fileName = LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillisString);
         }
         else
         {
             fileName = name;
         }
 
-        final Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation(prefix + fileName));
+        final Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation(prefix + fileName + ".nbt"));
         template.takeBlocksFromWorld(world, blockpos, size, true, Blocks.STRUCTURE_VOID);
         template.setAuthor(Constants.MOD_ID);
         MineColonies.getNetwork().sendTo(
-                new SaveScanMessage(template.writeToNBT(new NBTTagCompound()),fileName), (EntityPlayerMP) player);
+                new SaveScanMessage(template.writeToNBT(new NBTTagCompound()), fileName), (EntityPlayerMP) player);
     }
 }
