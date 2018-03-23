@@ -169,7 +169,7 @@ public class CommandEntryPointTest
         final List<String> results = instance.getTabCompletions(server, sender, args, pos);
 
         // EXPECT:
-        assertThat(results).containsExactlyInAnyOrder("x1:", "x2:", "y1:", "y2:", "z1:", "z2:");
+        assertThat(results).containsExactlyInAnyOrder("player:", "x1:", "x2:", "y1:", "y2:", "z1:", "z2:");
     }
 
     @Test
@@ -187,7 +187,7 @@ public class CommandEntryPointTest
         final List<String> results = instance.getTabCompletions(server, sender, args, pos);
 
         // EXPECT:
-        assertThat(results).containsExactlyInAnyOrder("x1:", "x2:", "y1:", "y2:", "z1:", "z2:");
+        assertThat(results).containsExactlyInAnyOrder("player:", "x1:", "x2:", "y1:", "y2:", "z1:", "z2:");
     }
 
     @Test
@@ -205,7 +205,7 @@ public class CommandEntryPointTest
         final List<String> results = instance.getTabCompletions(server, sender, args, pos);
 
         // EXPECT:
-        assertThat(results).containsExactlyInAnyOrder("x1:", "x2:", "y1:", "y2:", "z1:", "z2:");
+        assertThat(results).containsExactlyInAnyOrder("player:", "x1:", "x2:", "y1:", "y2:", "z1:", "z2:");
     }
 
     @Test
@@ -306,6 +306,7 @@ public class CommandEntryPointTest
         // GIVEN:
         final String[] args = new String[] {
                 "SCAN",
+                "player: ", "raycoms",
                 "X1:", "1", "x2:", "2",
                 "y1:", "3", "y2:", "4",
                 "z1:", "5", "z2:", "6",
