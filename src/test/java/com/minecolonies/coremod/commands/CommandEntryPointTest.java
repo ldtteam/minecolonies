@@ -306,8 +306,8 @@ public class CommandEntryPointTest
         // GIVEN:
         final String[] args = new String[] {
                 "SCAN",
-                "player: ", "raycoms",
-                "X1:", "1", "x2:", "2",
+                "player:", "Bob",
+                "x1:", "1", "x2:", "2",
                 "y1:", "3", "y2:", "4",
                 "z1:", "5", "z2:", "6",
         };
@@ -323,17 +323,18 @@ public class CommandEntryPointTest
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
-
                 assertThat(clazz).isEqualTo(ScanCommand.class);
                 final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
-                assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("x1", "x2", "y1", "y2", "z1", "z2");
-                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.COORDINATE_X, ActionArgumentType.COORDINATE_Y, ActionArgumentType.COORDINATE_Z);
+                assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("player", "x1", "x2", "y1", "y2", "z1", "z2");
+
+                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.PLAYER, ActionArgumentType.COORDINATE_X, ActionArgumentType.COORDINATE_Y, ActionArgumentType.COORDINATE_Z);
                 assertThat(actionMenu.getIntegerForArgument("x1")).isEqualTo(1);
                 assertThat(actionMenu.getIntegerForArgument("x2")).isEqualTo(2);
                 assertThat(actionMenu.getIntegerForArgument("y1")).isEqualTo(3);
                 assertThat(actionMenu.getIntegerForArgument("y2")).isEqualTo(4);
                 assertThat(actionMenu.getIntegerForArgument("z1")).isEqualTo(5);
                 assertThat(actionMenu.getIntegerForArgument("z2")).isEqualTo(6);
+
             }
         };
 
