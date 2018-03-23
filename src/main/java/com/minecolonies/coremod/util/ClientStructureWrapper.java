@@ -35,7 +35,7 @@ public final class ClientStructureWrapper
      * Handles the save message of scans.
      *
      * @param nbttagcompound compound to store.
-     * @param currentMillis  milli seconds for fileName.
+     * @param fileName  milli seconds for fileName.
      */
     public static void handleSaveScanMessage(final NBTTagCompound nbttagcompound, final String fileName)
     {
