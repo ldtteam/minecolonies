@@ -125,6 +125,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
             }
 
             incrementActionsDoneAndDecSaturation();
+            worker.addExperience(1.0);
         }
 
         return HERDER_DECIDE;
