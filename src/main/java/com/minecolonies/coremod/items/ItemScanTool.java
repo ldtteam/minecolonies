@@ -108,7 +108,7 @@ public class ItemScanTool extends AbstractItemMinecolonies
             //todo if on client (ssp) -> no need to send message, we can execute it in worldIn.isRemote without a message.
             if (!worldIn.isRemote)
             {
-                saveStructure(worldIn, pos1, pos2, playerIn);
+                saveStructure(worldIn, pos1, pos2, playerIn, null);
             }
             compound.removeTag(FIRST_POS_STRING);
             compound.removeTag(SECOND_POS_STRING);
@@ -123,8 +123,9 @@ public class ItemScanTool extends AbstractItemMinecolonies
      * @param from   First corner.
      * @param to     Second corner.
      * @param player causing this action.
+     * @param name the name of it.
      */
-    public static void saveStructure(@Nullable final World world, @Nullable final BlockPos from, @Nullable final BlockPos to, @NotNull final EntityPlayer player)
+    public static void saveStructure(@Nullable final World world, @Nullable final BlockPos from, @Nullable final BlockPos to, @NotNull final EntityPlayer player, final String name)
     {
         if (world == null || from == null || to == null)
         {
@@ -147,11 +148,21 @@ public class ItemScanTool extends AbstractItemMinecolonies
 
         final long currentMillis = System.currentTimeMillis();
         final String currentMillisString = Long.toString(currentMillis);
-        final String fileName = "/minecolonies/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillisString + ".nbt");
+        final String prefix = "/minecolonies/scans/";
+        final String fileName;
+        if(name == null || name.isEmpty())
+        {
+            fileName = LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillisString + ".nbt");
+        }
+        else
+        {
+            fileName = name;
+        }
 
-        final Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation(fileName));
+        final Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation(prefix + fileName));
         template.takeBlocksFromWorld(world, blockpos, size, true, Blocks.STRUCTURE_VOID);
         template.setAuthor(Constants.MOD_ID);
-        MineColonies.getNetwork().sendTo(new SaveScanMessage(template.writeToNBT(new NBTTagCompound()), currentMillis), (EntityPlayerMP) player);
+        MineColonies.getNetwork().sendTo(
+                new SaveScanMessage(template.writeToNBT(new NBTTagCompound()),fileName), (EntityPlayerMP) player);
     }
 }

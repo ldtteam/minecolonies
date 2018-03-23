@@ -49,6 +49,7 @@ public class ScanCommand implements IActionCommand
         final int x2 = actionMenu.getIntegerForArgument("x2");
         final int y2 = actionMenu.getIntegerForArgument("y2");
         final int z2 = actionMenu.getIntegerForArgument("z2");
+        final String name = actionMenu.getStringForArgument("name");
 
         final BlockPos from = new BlockPos(x1, y1, z1);
         final BlockPos to = new BlockPos(x2, y2, z2);
@@ -71,7 +72,7 @@ public class ScanCommand implements IActionCommand
                     sender.sendMessage(new TextComponentString(SCAN_FAILURE_MESSAGE));
                     return;
                 }
-                ItemScanTool.saveStructure(world, from, to, player);
+                ItemScanTool.saveStructure(world, from, to, player, name == null ? "" : name);
                 sender.sendMessage(new TextComponentString(SCAN_SUCCESS_MESSAGE));
             });
         }

@@ -282,7 +282,8 @@ public enum ActionMenuType implements IMenuType
             new ActionArgument("z1", ActionArgumentType.COORDINATE_Z, ActionArgumentType.Is.REQUIRED),
             new ActionArgument("x2", ActionArgumentType.COORDINATE_X, ActionArgumentType.Is.REQUIRED),
             new ActionArgument("y2", ActionArgumentType.COORDINATE_Y, ActionArgumentType.Is.REQUIRED),
-            new ActionArgument("z2", ActionArgumentType.COORDINATE_Z, ActionArgumentType.Is.REQUIRED)
+            new ActionArgument("z2", ActionArgumentType.COORDINATE_Z, ActionArgumentType.Is.REQUIRED),
+            new ActionArgument("name", ActionArgumentType.STRING, ActionArgumentType.Is.OPTIONAL)
             )),
     ;
 
