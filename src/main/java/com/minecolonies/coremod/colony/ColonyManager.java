@@ -177,7 +177,7 @@ public final class ColonyManager
      * Timer and task for automated backups
      */
     private static Timer backupTimer = new Timer();
-    private static TimerTask backupTimerTask;
+    private static volatile TimerTask backupTimerTask;
     private static boolean backupInProgress = false;
 
     private ColonyManager()
@@ -1012,13 +1012,13 @@ public final class ColonyManager
      * Initiates a timer to schedule the colony backup task
      * backupDelay of 0 disables automatic backup
      */
-    public static void scheduleColonyBackup()
+    private static void scheduleColonyBackup()
     {
         final int backupDelay = Configurations.administration.colonyBackupTimeMins;
         if (backupDelay > 0)
         {
-            backupTimerTask = new backupColonyTimerTask();
-            backupTimer.schedule(backupTimerTask, backupDelay * 60 * 1000);
+            backupTimerTask = new BackupColonyTimerTask();
+            backupTimer.schedule(backupTimerTask, backupDelay * MILLISECONDS_PER_MINUTE);
         }
     }
 
@@ -1027,12 +1027,12 @@ public final class ColonyManager
      * by overriding run() method of base TimerTask
      */
 
-    private static class backupColonyTimerTask extends TimerTask
+    private static class BackupColonyTimerTask extends TimerTask
     {
         @Override
         public void run()
         {
-            Log.getLogger().info(String.format("Initiating scheduled backup"));
+            Log.getLogger().info("Initiating scheduled backup");
             backupColonyData();
         }
     }
@@ -1042,7 +1042,7 @@ public final class ColonyManager
      *
      * @return boolean indicating whether safe to initiate backup
      */
-    synchronized private static boolean isSafeToBackup()
+    private static synchronized boolean isSafeToBackup()
     {
         if (backupInProgress)
         {
@@ -1095,7 +1095,6 @@ public final class ColonyManager
                 addToZipFile(getSaveLocation(), zos);
 
                 zos.close();
-                fos.close();
             }
             catch (final Exception e)
             {
@@ -1103,6 +1102,7 @@ public final class ColonyManager
                  * Intentionally not being propagated.
                  */
                 Log.getLogger().warn("Unable to backup colony data, please contact an administrator");
+                Log.getLogger().debug("Exception:", e);
                 // Don't leave a mess - release the token before we return
                 backupInProgress = false;
                 return false;
@@ -1131,7 +1131,6 @@ public final class ColonyManager
         {
             zos.putNextEntry(new ZipEntry(file.getName()));
             Files.copy(file, zos);
-            fis.close();
         }
         catch (final Exception e)
         {
@@ -1193,7 +1192,7 @@ public final class ColonyManager
         if (!compound.hasKey(TAG_DISTANCE))
         {
             Configurations.gameplay.workingRangeTownHallChunks =
-              (int) ((Math.cos(45.0 / HALF_A_CIRCLE * Math.PI) * Configurations.gameplay.workingRangeTownHall) / BLOCKS_PER_CHUNK);
+                    (int) ((Math.cos(45.0 / HALF_A_CIRCLE * Math.PI) * Configurations.gameplay.workingRangeTownHall) / BLOCKS_PER_CHUNK);
         }
 
         if (!compound.hasKey(TAG_NEW_COLONIES))
