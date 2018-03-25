@@ -10,7 +10,6 @@ import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,12 +35,12 @@ public final class ClientStructureWrapper
      * Handles the save message of scans.
      *
      * @param nbttagcompound compound to store.
-     * @param currentMillis  milli seconds for fileName.
+     * @param fileName  milli seconds for fileName.
      */
-    public static void handleSaveScanMessage(final NBTTagCompound nbttagcompound, final long currentMillis)
+    public static void handleSaveScanMessage(final NBTTagCompound nbttagcompound, final String fileName)
     {
         final StructureName structureName =
-          new StructureName(Structures.SCHEMATICS_SCAN, "new", LanguageHandler.format("item.scepterSteel.scanFormat", currentMillis));
+          new StructureName(Structures.SCHEMATICS_SCAN, "new", fileName);
         final File file = new File(Structure.getClientSchematicsFolder(), structureName.toString() + Structures.SCHEMATIC_EXTENSION);
         Utils.checkDirectory(file.getParentFile());
 

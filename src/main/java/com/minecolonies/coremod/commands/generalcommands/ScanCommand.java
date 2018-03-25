@@ -28,7 +28,7 @@ public class ScanCommand implements IActionCommand
     public static final String SCAN_SUCCESS_MESSAGE = "Successfully scan structure!";
     public static final String SCAN_FAILURE_MESSAGE = "Failed to scan structure!";
     public static final String MISSING_PLAYER = "Failed to scan structure, missing player to store the file!";
-
+    public static final String SPECIAL_CHARACTERS_ADVICE = "Please stick to the default characters A-Z, a-z and, 0-9";
     /**
      * no-args constructor called by new CommandEntryPoint executer.
      */
@@ -49,6 +49,13 @@ public class ScanCommand implements IActionCommand
         final int x2 = actionMenu.getIntegerForArgument("x2");
         final int y2 = actionMenu.getIntegerForArgument("y2");
         final int z2 = actionMenu.getIntegerForArgument("z2");
+        final String name = actionMenu.getStringForArgument("name");
+
+        if (!name.matches("^[\\w]*"))
+        {
+            sender.sendMessage(new TextComponentString(SPECIAL_CHARACTERS_ADVICE));
+            return;
+        }
 
         final BlockPos from = new BlockPos(x1, y1, z1);
         final BlockPos to = new BlockPos(x2, y2, z2);
@@ -58,7 +65,7 @@ public class ScanCommand implements IActionCommand
             {
                 @Nullable final World world = server.getEntityWorld();
                 @NotNull final EntityPlayerMP player;
-                if(playerArgument != null)
+                if (playerArgument != null)
                 {
                     player = playerArgument;
                 }
@@ -71,7 +78,7 @@ public class ScanCommand implements IActionCommand
                     sender.sendMessage(new TextComponentString(SCAN_FAILURE_MESSAGE));
                     return;
                 }
-                ItemScanTool.saveStructure(world, from, to, player);
+                ItemScanTool.saveStructure(world, from, to, player, name == null ? "" : name);
                 sender.sendMessage(new TextComponentString(SCAN_SUCCESS_MESSAGE));
             });
         }

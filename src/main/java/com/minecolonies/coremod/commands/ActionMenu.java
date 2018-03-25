@@ -14,6 +14,8 @@ import com.minecolonies.coremod.colony.permissions.ForgePermissionNodes;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 
+import static com.minecolonies.coremod.commands.ActionArgumentType.STRING;
+
 public class ActionMenu extends AbstractMenu
 {
     @NotNull private final String description;
@@ -170,6 +172,18 @@ public class ActionMenu extends AbstractMenu
                     default:
                         break;
                 }
+            }
+        }
+        return null;
+    }
+
+    public String getStringForArgument(@NotNull final String argumentName)
+    {
+        for (final ActionArgument actionArgument : getAllArgumentsList())
+        {
+            if (argumentName.equals(actionArgument.getName()) && actionArgument.getType() == STRING)
+            {
+                return (String) actionArgument.getValue();
             }
         }
         return null;

@@ -23,7 +23,7 @@ public class SaveScanMessage extends AbstractMessage<SaveScanMessage, IMessage>
     private static final String TAG_SCHEMATIC = "schematic";
 
     private NBTTagCompound nbttagcompound;
-    private long           currentMillis;
+    private String           fileName;
 
     /**
      * Public standard constructor.
@@ -37,11 +37,11 @@ public class SaveScanMessage extends AbstractMessage<SaveScanMessage, IMessage>
      * Send a scan compound to the client.
      *
      * @param nbttagcompound the stream.
-     * @param currentMillis  long describing the current millis at create time.
+     * @param fileName  String with the name of the file.
      */
-    public SaveScanMessage(final NBTTagCompound nbttagcompound, final long currentMillis)
+    public SaveScanMessage(final NBTTagCompound nbttagcompound, final String fileName)
     {
-        this.currentMillis = currentMillis;
+        this.fileName = fileName;
         this.nbttagcompound = nbttagcompound;
     }
 
@@ -53,7 +53,7 @@ public class SaveScanMessage extends AbstractMessage<SaveScanMessage, IMessage>
         {
             final NBTTagCompound wrapperCompound = CompressedStreamTools.readCompressed(stream);
             nbttagcompound = wrapperCompound.getCompoundTag(TAG_SCHEMATIC);
-            currentMillis = wrapperCompound.getLong(TAG_MILLIS);
+            fileName = wrapperCompound.getString(TAG_MILLIS);
         }
         catch (final RuntimeException e)
         {
@@ -69,7 +69,7 @@ public class SaveScanMessage extends AbstractMessage<SaveScanMessage, IMessage>
     public void toBytes(@NotNull final ByteBuf buf)
     {
         final NBTTagCompound wrapperCompound = new NBTTagCompound();
-        wrapperCompound.setLong(TAG_MILLIS, currentMillis);
+        wrapperCompound.setString(TAG_MILLIS, fileName);
         wrapperCompound.setTag(TAG_SCHEMATIC, nbttagcompound);
 
         final PacketBuffer buffer = new PacketBuffer(buf);
@@ -88,7 +88,7 @@ public class SaveScanMessage extends AbstractMessage<SaveScanMessage, IMessage>
     {
         if (message.nbttagcompound != null)
         {
-            ClientStructureWrapper.handleSaveScanMessage(message.nbttagcompound, message.currentMillis);
+            ClientStructureWrapper.handleSaveScanMessage(message.nbttagcompound, message.fileName);
         }
     }
 }
