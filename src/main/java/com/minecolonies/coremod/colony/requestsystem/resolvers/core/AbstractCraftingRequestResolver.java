@@ -51,17 +51,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractBuildingDe
 
     protected boolean createsCraftingCycle(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request, @NotNull final IRequest<? extends Stack> target)
     {
-        if (!request.equals(target) && request.getRequest().equals(target.getRequest()))
-        {
-            return true;
-        }
-
-        if (!request.hasParent())
-        {
-            return false;
-        }
-
-        return createsCraftingCycle(manager, manager.getRequestForToken(request.getParent()), target, 0);
+        return createsCraftingCycle(manager, request, target, 0);
     }
 
     protected boolean createsCraftingCycle(
