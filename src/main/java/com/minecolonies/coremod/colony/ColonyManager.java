@@ -218,6 +218,7 @@ public final class ColonyManager
 
     /**
      * Notify all chunks in the range of the colony about the colony.
+     *
      * @param world the world of the colony.
      * @param add   remove or add
      */
@@ -245,10 +246,10 @@ public final class ColonyManager
         final int chunkX = centralChunk.x;
         final int chunkZ = centralChunk.z;
 
-        final int range  = Configurations.gameplay.workingRangeTownHallChunks;
+        final int range = Configurations.gameplay.workingRangeTownHallChunks;
         final int buffer = Configurations.gameplay.townHallPaddingChunk;
 
-        final int           maxRange = range * 2 + buffer;
+        final int maxRange = range * 2 + buffer;
         @NotNull final File chunkDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), CHUNK_INFO_PATH);
         Utils.checkDirectory(chunkDir);
 
@@ -256,13 +257,13 @@ public final class ColonyManager
         {
             for (int j = chunkZ - maxRange; j <= chunkZ + maxRange; j++)
             {
-                final boolean                   owning     = i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range;
+                final boolean owning = i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range;
                 @NotNull final ChunkLoadStorage newStorage = new ChunkLoadStorage(id, ChunkPos.asLong(i, j), add, dimension, owning);
-                @NotNull final File             file       = new File(chunkDir, String.format(FILENAME_CHUNK, i, j, dimension));
+                @NotNull final File file = new File(chunkDir, String.format(FILENAME_CHUNK, i, j, dimension));
                 if (file.exists())
                 {
                     @Nullable final NBTTagCompound chunkData = loadNBTFromPath(file);
-                    final ChunkLoadStorage         storage   = new ChunkLoadStorage(chunkData);
+                    final ChunkLoadStorage storage = new ChunkLoadStorage(chunkData);
                     storage.merge(newStorage);
                     if (storage.isEmpty())
                     {
@@ -285,6 +286,7 @@ public final class ColonyManager
 
     /**
      * Add a chunk storage to a chunk.
+     *
      * @param chunk   the chunk to add it to.
      * @param storage the said storage.
      */
@@ -298,6 +300,7 @@ public final class ColonyManager
 
     /**
      * Load the colony info for a certain chunk.
+     *
      * @param chunk the chunk.
      * @param world the worldg to.
      */
@@ -306,11 +309,11 @@ public final class ColonyManager
         if (missingChunksToLoad > 0)
         {
             @NotNull final File chunkDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), CHUNK_INFO_PATH);
-            @NotNull final File file     = new File(chunkDir, String.format(FILENAME_CHUNK, chunk.x, chunk.z, world.provider.getDimension()));
+            @NotNull final File file = new File(chunkDir, String.format(FILENAME_CHUNK, chunk.x, chunk.z, world.provider.getDimension()));
             if (file.exists())
             {
                 @Nullable final NBTTagCompound chunkData = loadNBTFromPath(file);
-                final ChunkLoadStorage         storage   = new ChunkLoadStorage(chunkData);
+                final ChunkLoadStorage storage = new ChunkLoadStorage(chunkData);
                 addStorageToChunk(chunk, storage);
                 file.delete();
                 missingChunksToLoad--;
@@ -390,7 +393,7 @@ public final class ColonyManager
             Log.getLogger().warn("Deleting Colony " + id + " errored:", e);
         }
         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-        @NotNull final File file    = new File(saveDir, String.format(FILENAME_COLONY, id));
+        @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, id));
         file.delete();
         ColonyManager.markDirty();
     }
@@ -456,7 +459,7 @@ public final class ColonyManager
     public static Colony getColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
         final Chunk centralChunk = w.getChunkFromBlockCoords(pos);
-        final int   id           = centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony();
+        final int id = centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony();
         if (id == 0)
         {
             return null;
@@ -572,7 +575,7 @@ public final class ColonyManager
     private static ColonyView getColonyView(@NotNull final World w, @NotNull final BlockPos pos)
     {
         final Chunk centralChunk = w.getChunkFromBlockCoords(pos);
-        final int   id           = centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony();
+        final int id = centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony();
         if (id == 0)
         {
             return null;
@@ -612,8 +615,8 @@ public final class ColonyManager
             return null;
         }
 
-        final Chunk                chunk = w.getChunkFromBlockCoords(pos);
-        final IColonyTagCapability cap   = chunk.getCapability(CLOSE_COLONY_CAP, null);
+        final Chunk chunk = w.getChunkFromBlockCoords(pos);
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
         if (cap.getOwningColony() != 0)
         {
             return getColonyView(cap.getOwningColony());
@@ -621,7 +624,7 @@ public final class ColonyManager
         else if (!cap.getAllCloseColonies().isEmpty())
         {
             @Nullable ColonyView closestColony = null;
-            long                 closestDist   = Long.MAX_VALUE;
+            long closestDist = Long.MAX_VALUE;
 
             for (@NotNull final int cId : cap.getAllCloseColonies())
             {
@@ -640,7 +643,7 @@ public final class ColonyManager
         }
 
         @Nullable ColonyView closestColony = null;
-        long                 closestDist   = Long.MAX_VALUE;
+        long closestDist = Long.MAX_VALUE;
 
         for (@NotNull final ColonyView c : colonyViews)
         {
@@ -667,8 +670,8 @@ public final class ColonyManager
      */
     public static Colony getClosestColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        final Chunk                chunk = w.getChunkFromBlockCoords(pos);
-        final IColonyTagCapability cap   = chunk.getCapability(CLOSE_COLONY_CAP, null);
+        final Chunk chunk = w.getChunkFromBlockCoords(pos);
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
         if (cap.getOwningColony() != 0)
         {
             return getColony(cap.getOwningColony());
@@ -676,7 +679,7 @@ public final class ColonyManager
         else if (!cap.getAllCloseColonies().isEmpty())
         {
             @Nullable Colony closestColony = null;
-            long             closestDist   = Long.MAX_VALUE;
+            long closestDist = Long.MAX_VALUE;
 
             for (@NotNull final int cId : cap.getAllCloseColonies())
             {
@@ -695,7 +698,7 @@ public final class ColonyManager
         }
 
         @Nullable Colony closestColony = null;
-        long             closestDist   = Long.MAX_VALUE;
+        long closestDist = Long.MAX_VALUE;
 
         for (@NotNull final Colony c : getColonies(w))
         {
@@ -782,9 +785,9 @@ public final class ColonyManager
         }
 
         return colonies.stream()
-                .filter(c -> owner.equals(c.getPermissions().getOwner()))
-                .findFirst()
-                .orElse(null);
+                 .filter(c -> owner.equals(c.getPermissions().getOwner()))
+                 .findFirst()
+                 .orElse(null);
     }
 
     /**
@@ -957,7 +960,7 @@ public final class ColonyManager
                 //load the structures when we know where the world is
                 Structures.init();
 
-                @NotNull final File            file = getSaveLocation();
+                @NotNull final File file = getSaveLocation();
                 @Nullable final NBTTagCompound data = loadNBTFromPath(file);
                 if (data != null)
                 {
@@ -1005,7 +1008,6 @@ public final class ColonyManager
         }
     }
 
-
     /**
      * Initiates a timer to schedule the colony backup task
      * backupDelay of 0 disables automatic backup
@@ -1033,7 +1035,6 @@ public final class ColonyManager
             Log.getLogger().info(String.format("Initiating scheduled backup"));
             backupColonyData();
         }
-
     }
 
     /**
@@ -1079,8 +1080,9 @@ public final class ColonyManager
 
             try (FileOutputStream fos = new FileOutputStream(backupSaveLocation))
             {
-                @NotNull final File   saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH); //todo remove hardcoded world 0
-                final ZipOutputStream zos     = new ZipOutputStream(fos);
+                @NotNull final File saveDir =
+                  new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH); //todo remove hardcoded world 0
+                final ZipOutputStream zos = new ZipOutputStream(fos);
 
                 for (Colony backupTargetColony : colonies)
                 {
@@ -1142,8 +1144,6 @@ public final class ColonyManager
 
     /**
      * Removes oldest backup files to reduce kept number as desired
-     *
-     * @param numToKeep
      */
     private static void pruneOldBackups(final int numToKeep)
     {
@@ -1193,7 +1193,7 @@ public final class ColonyManager
         if (!compound.hasKey(TAG_DISTANCE))
         {
             Configurations.gameplay.workingRangeTownHallChunks =
-                    (int) ((Math.cos(45.0 / HALF_A_CIRCLE * Math.PI) * Configurations.gameplay.workingRangeTownHall) / BLOCKS_PER_CHUNK);
+              (int) ((Math.cos(45.0 / HALF_A_CIRCLE * Math.PI) * Configurations.gameplay.workingRangeTownHall) / BLOCKS_PER_CHUNK);
         }
 
         if (!compound.hasKey(TAG_NEW_COLONIES))
