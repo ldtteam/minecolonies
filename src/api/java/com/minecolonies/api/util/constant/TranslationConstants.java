@@ -231,6 +231,12 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_COLLECT                         = "com.minecolonies.coremod.gui.cowboy.collect";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_NOTCOLLECT                      = "com.minecolonies.coremod.gui.cowboy.notcollect";
+    @NonNls
+    public static final String COLONIES_BACKUP_FAIL                                                = "com.minecolonies.util.backup.fail";
+    @NonNls
+    public static final String COLONIES_BACKUP_SUCCESS                                             = "com.minecolonies.util.backup.success";
+    @NonNls
+    public static final String COLONIES_BACKUP_NOPERMS                                             = "com.minecolonies.util.backup.noperms";
 
     private TranslationConstants()
     {
