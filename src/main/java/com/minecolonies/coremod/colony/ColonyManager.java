@@ -177,7 +177,7 @@ public final class ColonyManager
      * Timer and task for automated backups
      */
     private static Timer backupTimer = new Timer();
-    private static volatile TimerTask backupTimerTask;
+    private static TimerTask backupTimerTask;
     private static boolean backupInProgress = false;
 
     private ColonyManager()
@@ -968,7 +968,8 @@ public final class ColonyManager
 
                     if (data.hasKey(TAG_NEW_COLONIES))
                     {
-                        final int size = data.getInteger(TAG_NEW_COLONIES); // todo Confirm "amountOfColonies" = "max Colony ID"
+                        // todo Confirm "amountOfColonies" = "max Colony ID"
+                        final int size = data.getInteger(TAG_NEW_COLONIES);
 
                         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
                         for (int colonyId = 0; colonyId <= size; colonyId++)
@@ -1073,15 +1074,16 @@ public final class ColonyManager
             {
                 saveColonies(false);
             }
-
-            final File backupSaveLocation = getBackupSaveLocation(new Date()); // todo Stop taking a gamble that the filename doesn't already exist, it's possible
+            // todo Stop taking a gamble that the filename doesn't already exist, it's possible
+            final File backupSaveLocation = getBackupSaveLocation(new Date());
             // Just in case, try to create the parent backup directory if it doesn't exist
             backupSaveLocation.getParentFile().mkdir();
 
             try (FileOutputStream fos = new FileOutputStream(backupSaveLocation))
             {
+                // todo remove hardcoded world 0
                 @NotNull final File saveDir =
-                  new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH); //todo remove hardcoded world 0
+                  new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
                 final ZipOutputStream zos = new ZipOutputStream(fos);
 
                 for (final Colony backupTargetColony : colonies)
@@ -1138,6 +1140,7 @@ public final class ColonyManager
              * Intentionally not being thrown.
              */
             Log.getLogger().warn("Error packing " + file.getName() + " into the zip.");
+            Log.getLogger().debug(e);
         }
     }
 
@@ -1154,7 +1157,10 @@ public final class ColonyManager
                 Arrays.sort(backupFiles);
                 for (int i = 0; i < backupFiles.length - numToKeep; ++i)
                 {
-                    backupFiles[i].delete();
+                   if(!backupFiles[i].delete())
+                   {
+                       Log.getLogger().warn(String.format("Cannot prune old backup: $s", backupFiles[i].getName()));
+                   }
                 }
             }
         }
@@ -1189,7 +1195,7 @@ public final class ColonyManager
      */
     public static void readFromNBT(@NotNull final NBTTagCompound compound, @NotNull final World world)
     {
-        if (!compound.hasKey(TAG_DISTANCE))
+        if(!compound.hasKey(TAG_DISTANCE))
         {
             Configurations.gameplay.workingRangeTownHallChunks =
                     (int) ((Math.cos(45.0 / HALF_A_CIRCLE * Math.PI) * Configurations.gameplay.workingRangeTownHall) / BLOCKS_PER_CHUNK);
