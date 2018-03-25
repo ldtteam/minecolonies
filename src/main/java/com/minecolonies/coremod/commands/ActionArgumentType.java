@@ -38,7 +38,8 @@ public enum ActionArgumentType
     COORDINATE_Y("y-coordinate", 0),
     COORDINATE_Z("z-coordinate", 0),
     BOOLEAN("boolean", 0),
-    INTEGER("integer", 0)
+    INTEGER("integer", 0),
+    STRING("string", 0)
     ;
 
     public enum Is
@@ -105,6 +106,7 @@ public enum ActionArgumentType
         switch (this)
         {
             case INTEGER:
+            case STRING:
                 return Collections.emptyList();
             case BOOLEAN:
                 return Arrays.asList(new String[] {"true", "false"});
@@ -267,6 +269,8 @@ public enum ActionArgumentType
                 return parseColonyValue(sender, potentialArgumentValue);
             case CITIZEN:
                 return parseCitizenDataValue(parsedHolders, potentialArgumentValue);
+            case STRING:
+                return potentialArgumentValue;
             default:
                 throw new IllegalStateException("Unimplemented ActionArgumentType parsing");
         }
