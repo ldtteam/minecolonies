@@ -85,6 +85,11 @@ public final class ColonyManager
     private static final String FILENAME_MINECOLONIES_BACKUP = "colonies-%s.zip";
 
     /**
+     * The file name of the minecolonies path.
+     */
+    public static final String BACKUP_PATH = FILENAME_MINECOLONIES_PATH + "/backups";
+
+    /**
      * The tag of the colonies.
      */
     private static final String TAG_COLONIES = "colonies";
@@ -97,7 +102,7 @@ public final class ColonyManager
     /**
      * The tag of the pseudo unique identifier
      */
-    private static final String TAG_UUID     = "uuid";
+    private static final String TAG_UUID = "uuid";
 
     /**
      * Colony filename.
@@ -112,13 +117,13 @@ public final class ColonyManager
     /**
      * The damage source used to kill citizens.
      */
-    private static final DamageSource               CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
+    private static final DamageSource CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
 
     /**
      * The list of all colonies.
      */
     @NotNull
-    private static final ColonyList<Colony>         colonies        = new ColonyList<>();
+    private static final ColonyList<Colony> colonies = new ColonyList<>();
 
     /**
      * The list of all colonies by world.
@@ -130,7 +135,7 @@ public final class ColonyManager
      * The list of colony views.
      */
     @NotNull
-    private static final ColonyList<ColonyView>     colonyViews = new ColonyList<>();
+    private static final ColonyList<ColonyView> colonyViews = new ColonyList<>();
 
     /**
      * Amount of worlds loaded.
@@ -146,7 +151,7 @@ public final class ColonyManager
      * Indicate if a schematic have just been downloaded.
      * Client only
      */
-    private static          boolean schematicDownloaded = false;
+    private static boolean schematicDownloaded = false;
 
     /**
      * Recipemanager of this server.
@@ -156,7 +161,7 @@ public final class ColonyManager
     /**
      * Pseudo unique id for the server
      */
-    private static volatile UUID    serverUUID          = null;
+    private static volatile UUID serverUUID = null;
 
     /**
      * Removed elements of the list of chunks to load.
@@ -167,6 +172,13 @@ public final class ColonyManager
      * Creates a new compatabilityManager.
      */
     private static final ICompatabilityManager compatabilityManager = new CompatabilityManager();
+
+    /**
+     * Timer and task for automated backups
+     */
+    private static Timer backupTimer = new Timer();
+    private static TimerTask backupTimerTask;
+    private static boolean backupInProgress = false;
 
     private ColonyManager()
     {
@@ -179,7 +191,7 @@ public final class ColonyManager
      * @param w      World of the colony.
      * @param pos    Coordinate of the center of the colony.
      * @param player the player that creates the colony - owner.
-     * @param style the default style of the colony.
+     * @param style  the default style of the colony.
      * @return The created colony.
      */
     @NotNull
@@ -207,18 +219,18 @@ public final class ColonyManager
     /**
      * Notify all chunks in the range of the colony about the colony.
      * @param world the world of the colony.
-     * @param add remove or add
+     * @param add   remove or add
      */
     public static void notifyChunksInRange(final World world, final boolean add, final int id, final BlockPos center, final int dimension)
     {
         final Chunk centralChunk = world.getChunkFromBlockCoords(center);
-        if(centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() == id && add)
+        if (centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() == id && add)
         {
             return;
         }
         final IColonyTagCapability cap = centralChunk.getCapability(CLOSE_COLONY_CAP, null);
 
-        if(add)
+        if (add)
         {
             cap.setOwningColony(id);
             cap.addColony(id);
@@ -233,24 +245,24 @@ public final class ColonyManager
         final int chunkX = centralChunk.x;
         final int chunkZ = centralChunk.z;
 
-        final int range = Configurations.gameplay.workingRangeTownHallChunks;
+        final int range  = Configurations.gameplay.workingRangeTownHallChunks;
         final int buffer = Configurations.gameplay.townHallPaddingChunk;
 
-        final int maxRange = range * 2 + buffer;
+        final int           maxRange = range * 2 + buffer;
         @NotNull final File chunkDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), CHUNK_INFO_PATH);
         Utils.checkDirectory(chunkDir);
 
-        for(int i = chunkX - maxRange; i <= chunkX + maxRange; i++)
+        for (int i = chunkX - maxRange; i <= chunkX + maxRange; i++)
         {
             for (int j = chunkZ - maxRange; j <= chunkZ + maxRange; j++)
             {
-                final boolean owning = i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range;
+                final boolean                   owning     = i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range;
                 @NotNull final ChunkLoadStorage newStorage = new ChunkLoadStorage(id, ChunkPos.asLong(i, j), add, dimension, owning);
-                @NotNull final File file = new File(chunkDir, String.format(FILENAME_CHUNK, i, j, dimension));
+                @NotNull final File             file       = new File(chunkDir, String.format(FILENAME_CHUNK, i, j, dimension));
                 if (file.exists())
                 {
                     @Nullable final NBTTagCompound chunkData = loadNBTFromPath(file);
-                    final ChunkLoadStorage storage = new ChunkLoadStorage(chunkData);
+                    final ChunkLoadStorage         storage   = new ChunkLoadStorage(chunkData);
                     storage.merge(newStorage);
                     if (storage.isEmpty())
                     {
@@ -273,7 +285,7 @@ public final class ColonyManager
 
     /**
      * Add a chunk storage to a chunk.
-     * @param chunk the chunk to add it to.
+     * @param chunk   the chunk to add it to.
      * @param storage the said storage.
      */
     public static void addStorageToChunk(final Chunk chunk, final ChunkLoadStorage storage)
@@ -291,14 +303,14 @@ public final class ColonyManager
      */
     public static void loadChunk(final Chunk chunk, final World world)
     {
-        if(missingChunksToLoad > 0)
+        if (missingChunksToLoad > 0)
         {
             @NotNull final File chunkDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), CHUNK_INFO_PATH);
-            @NotNull final File file = new File(chunkDir, String.format(FILENAME_CHUNK, chunk.x, chunk.z, world.provider.getDimension()));
-            if(file.exists())
+            @NotNull final File file     = new File(chunkDir, String.format(FILENAME_CHUNK, chunk.x, chunk.z, world.provider.getDimension()));
+            if (file.exists())
             {
                 @Nullable final NBTTagCompound chunkData = loadNBTFromPath(file);
-                final ChunkLoadStorage storage = new ChunkLoadStorage(chunkData);
+                final ChunkLoadStorage         storage   = new ChunkLoadStorage(chunkData);
                 addStorageToChunk(chunk, storage);
                 file.delete();
                 missingChunksToLoad--;
@@ -338,7 +350,8 @@ public final class ColonyManager
             for (final CitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
             {
                 Log.getLogger().info("Kill Citizen " + citizenData.getName());
-                citizenData.getCitizenEntity().ifPresent(entityCitizen -> {
+                citizenData.getCitizenEntity().ifPresent(entityCitizen ->
+                {
                     final World world = entityCitizen.getEntityWorld();
                     entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE);
                     colonyWorlds.add(world);
@@ -377,7 +390,7 @@ public final class ColonyManager
             Log.getLogger().warn("Deleting Colony " + id + " errored:", e);
         }
         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-        @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, id));
+        @NotNull final File file    = new File(saveDir, String.format(FILENAME_COLONY, id));
         file.delete();
         ColonyManager.markDirty();
     }
@@ -443,8 +456,8 @@ public final class ColonyManager
     public static Colony getColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
         final Chunk centralChunk = w.getChunkFromBlockCoords(pos);
-        final int id = centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony();
-        if(id == 0)
+        final int   id           = centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony();
+        if (id == 0)
         {
             return null;
         }
@@ -559,8 +572,8 @@ public final class ColonyManager
     private static ColonyView getColonyView(@NotNull final World w, @NotNull final BlockPos pos)
     {
         final Chunk centralChunk = w.getChunkFromBlockCoords(pos);
-        final int id = centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony();
-        if(id == 0)
+        final int   id           = centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony();
+        if (id == 0)
         {
             return null;
         }
@@ -599,16 +612,16 @@ public final class ColonyManager
             return null;
         }
 
-        final Chunk chunk = w.getChunkFromBlockCoords(pos);
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
-        if(cap.getOwningColony() != 0)
+        final Chunk                chunk = w.getChunkFromBlockCoords(pos);
+        final IColonyTagCapability cap   = chunk.getCapability(CLOSE_COLONY_CAP, null);
+        if (cap.getOwningColony() != 0)
         {
             return getColonyView(cap.getOwningColony());
         }
-        else if(!cap.getAllCloseColonies().isEmpty())
+        else if (!cap.getAllCloseColonies().isEmpty())
         {
             @Nullable ColonyView closestColony = null;
-            long closestDist = Long.MAX_VALUE;
+            long                 closestDist   = Long.MAX_VALUE;
 
             for (@NotNull final int cId : cap.getAllCloseColonies())
             {
@@ -627,7 +640,7 @@ public final class ColonyManager
         }
 
         @Nullable ColonyView closestColony = null;
-        long closestDist = Long.MAX_VALUE;
+        long                 closestDist   = Long.MAX_VALUE;
 
         for (@NotNull final ColonyView c : colonyViews)
         {
@@ -654,16 +667,16 @@ public final class ColonyManager
      */
     public static Colony getClosestColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        final Chunk chunk = w.getChunkFromBlockCoords(pos);
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
-        if(cap.getOwningColony() != 0)
+        final Chunk                chunk = w.getChunkFromBlockCoords(pos);
+        final IColonyTagCapability cap   = chunk.getCapability(CLOSE_COLONY_CAP, null);
+        if (cap.getOwningColony() != 0)
         {
             return getColony(cap.getOwningColony());
         }
-        else if(!cap.getAllCloseColonies().isEmpty())
+        else if (!cap.getAllCloseColonies().isEmpty())
         {
             @Nullable Colony closestColony = null;
-            long closestDist = Long.MAX_VALUE;
+            long             closestDist   = Long.MAX_VALUE;
 
             for (@NotNull final int cId : cap.getAllCloseColonies())
             {
@@ -682,7 +695,7 @@ public final class ColonyManager
         }
 
         @Nullable Colony closestColony = null;
-        long closestDist = Long.MAX_VALUE;
+        long             closestDist   = Long.MAX_VALUE;
 
         for (@NotNull final Colony c : getColonies(w))
         {
@@ -769,9 +782,9 @@ public final class ColonyManager
         }
 
         return colonies.stream()
-                 .filter(c -> owner.equals(c.getPermissions().getOwner()))
-                 .findFirst()
-                 .orElse(null);
+                .filter(c -> owner.equals(c.getPermissions().getOwner()))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -944,7 +957,7 @@ public final class ColonyManager
                 //load the structures when we know where the world is
                 Structures.init();
 
-                @NotNull final File file = getSaveLocation();
+                @NotNull final File            file = getSaveLocation();
                 @Nullable final NBTTagCompound data = loadNBTFromPath(file);
                 if (data != null)
                 {
@@ -952,7 +965,7 @@ public final class ColonyManager
 
                     if (data.hasKey(TAG_NEW_COLONIES))
                     {
-                        final int size = data.getInteger(TAG_NEW_COLONIES);
+                        final int size = data.getInteger(TAG_NEW_COLONIES); // todo Confirm "amountOfColonies" = "max Colony ID"
 
                         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
                         for (int colonyId = 0; colonyId <= size; colonyId++)
@@ -992,49 +1005,129 @@ public final class ColonyManager
         }
     }
 
-    public static boolean backupColonyData()
+
+    /**
+     * Initiates a timer to schedule the colony backup task
+     * backupDelay of 0 disables automatic backup
+     */
+    public static void scheduleColonyBackup()
     {
-        if (numWorldsLoaded > 0 && saveNeeded)
+        final int backupDelay = Configurations.administration.colonyBackupTimeMins;
+        if (backupDelay > 0)
         {
-            saveColonies(false);
+            backupTimerTask = new backupColonyTimerTask();
+            backupTimer.schedule(backupTimerTask, backupDelay * 60 * 1000);
         }
-
-        try(FileOutputStream fos = new FileOutputStream(getBackupSaveLocation(new Date())))
-        {
-            @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-            final ZipOutputStream zos = new ZipOutputStream(fos);
-
-            for (int i = 1; i < colonies.getTopID() + 1; i++)
-            {
-                @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i));
-                if (file.exists())
-                {
-                    addToZipFile(String.format(FILENAME_COLONY, i), zos, saveDir);
-                }
-            }
-            addToZipFile(getSaveLocation().getName(), zos, saveDir);
-
-            zos.close();
-            fos.close();
-        }
-        catch (final Exception e)
-        {
-            /**
-             * Intentionally not being thrown.
-             */
-            Log.getLogger().warn("Unable to backup colony data, please contact an administrator");
-            return false;
-        }
-
-        return true;
     }
 
-    public static void addToZipFile(final String fileName, final ZipOutputStream zos, final File folder)
+    /**
+     * Task to be called from backupTimer, triggers main backup method
+     * by overriding run() method of base TimerTask
+     */
+
+    private static class backupColonyTimerTask extends TimerTask
     {
-        final File file = new File(folder, fileName);
-        try(FileInputStream fis = new FileInputStream(file))
+        @Override
+        public void run()
         {
-            zos.putNextEntry(new ZipEntry(fileName));
+            Log.getLogger().info(String.format("Initiating scheduled backup"));
+            backupColonyData();
+        }
+
+    }
+
+    /**
+     * Thread safe method to lock backups so only one backup may run at a time
+     *
+     * @return boolean indicating whether safe to initiate backup
+     */
+    synchronized private static boolean getBackupToken()
+    {
+        if (backupInProgress)
+        {
+            Log.getLogger().warn("Cannot initiate backup - already in progress");
+            return false;
+        }
+        else
+        {
+            backupInProgress = true;
+            return true;
+        }
+    }
+
+    public static boolean backupColonyData()
+    {
+        // Possibility of the timer kicking in while the command backup is being run, or vice versa
+        // Prevent by requiring a threadsafe token, reject any other backup attempts while the token
+        // is checked out - why run two backups back to back?
+        if (getBackupToken())
+        {
+            // Cancel any pending scheduled backup - we'll reset the timer after we're done
+            if (backupTimerTask != null)
+            {
+                backupTimerTask.cancel();
+            }
+
+            if (numWorldsLoaded > 0 && saveNeeded)
+            {
+                saveColonies(false);
+            }
+
+            final File backupSaveLocation = getBackupSaveLocation(new Date()); // todo Stop taking a gamble that the filename doesn't already exist, it's possible
+            // Just in case, try to create the parent backup directory if it doesn't exist
+            backupSaveLocation.getParentFile().mkdir();
+
+            try (FileOutputStream fos = new FileOutputStream(backupSaveLocation))
+            {
+                @NotNull final File   saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH); //todo remove hardcoded world 0
+                final ZipOutputStream zos     = new ZipOutputStream(fos);
+
+                for (Colony backupTargetColony : colonies)
+                {
+                    @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, backupTargetColony.getID()));
+                    if (file.exists())
+                    {
+                        addToZipFile(file, zos);
+                    }
+                }
+                addToZipFile(getSaveLocation(), zos);
+
+                zos.close();
+                fos.close();
+            }
+            catch (final Exception e)
+            {
+                /**
+                 * Intentionally not being propagated.
+                 */
+                Log.getLogger().warn("Unable to backup colony data, please contact an administrator");
+                // Don't leave a mess - release the token before we return
+                backupInProgress = false;
+                return false;
+            }
+            // remove any surplus backups
+            pruneOldBackups(Configurations.administration.colonyBackupsToKeep);
+            // Schedule the next backup
+            scheduleColonyBackup();
+            // Release the token before we return
+            // no need to be thread safe here, we're the only ones who have it
+            backupInProgress = false;
+
+            return true;
+        }
+        else
+        {
+            // We were denied the backup token. That means there's
+            // another thread already in the process of running the backup
+            return false;
+        }
+    }
+
+    public static void addToZipFile(final File file, final ZipOutputStream zos)
+    {
+        try (FileInputStream fis = new FileInputStream(file))
+        {
+            zos.putNextEntry(new ZipEntry(file.getName()));
             Files.copy(file, zos);
             fis.close();
         }
@@ -1043,7 +1136,28 @@ public final class ColonyManager
             /**
              * Intentionally not being thrown.
              */
-            Log.getLogger().warn("Error packing " + fileName + " into the zip.");
+            Log.getLogger().warn("Error packing " + file.getName() + " into the zip.");
+        }
+    }
+
+    /**
+     * Removes oldest backup files to reduce kept number as desired
+     *
+     * @param numToKeep
+     */
+    private static void pruneOldBackups(final int numToKeep)
+    {
+        if (numToKeep > 0)
+        {
+            File[] backupFiles = getBackupSaveDirectory().listFiles();
+            if (backupFiles != null && backupFiles.length > numToKeep)
+            {
+                Arrays.sort(backupFiles);
+                for (int i = 0; i < backupFiles.length - numToKeep; ++i)
+                {
+                    backupFiles[i].delete();
+                }
+            }
         }
     }
 
@@ -1076,13 +1190,13 @@ public final class ColonyManager
      */
     public static void readFromNBT(@NotNull final NBTTagCompound compound, @NotNull final World world)
     {
-        if(!compound.hasKey(TAG_DISTANCE))
+        if (!compound.hasKey(TAG_DISTANCE))
         {
             Configurations.gameplay.workingRangeTownHallChunks =
                     (int) ((Math.cos(45.0 / HALF_A_CIRCLE * Math.PI) * Configurations.gameplay.workingRangeTownHall) / BLOCKS_PER_CHUNK);
         }
 
-        if(!compound.hasKey(TAG_NEW_COLONIES))
+        if (!compound.hasKey(TAG_NEW_COLONIES))
         {
             final NBTTagList colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
             for (int i = 0; i < colonyTags.tagCount(); ++i)
@@ -1098,7 +1212,7 @@ public final class ColonyManager
             serverUUID = compound.getUniqueId(TAG_UUID);
         }
 
-        if(compound.hasKey(TAG_COMPATABILITY_MANAGER))
+        if (compound.hasKey(TAG_COMPATABILITY_MANAGER))
         {
             compatabilityManager.readFromNBT(compound.getCompoundTag(TAG_COMPATABILITY_MANAGER));
         }
@@ -1116,13 +1230,24 @@ public final class ColonyManager
      * Get save location for Minecolonies backup data, from the world/save
      * directory.
      *
-     * @return Save file for minecolonies.
+     * @param date Date to base filename on.
+     * @return File to use for minecolonies backup.
      */
     @NotNull
     private static File getBackupSaveLocation(final Date date)
     {
-        @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-        return new File(saveDir, String.format(FILENAME_MINECOLONIES_BACKUP, new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(date)));
+        return new File(getBackupSaveDirectory(), String.format(FILENAME_MINECOLONIES_BACKUP, new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(date)));
+    }
+
+    /**
+     * Get save location for Minecolonies backup data, from the world/save
+     * directory.
+     *
+     * @return Save directory for minecolonies backups.
+     */
+    private static File getBackupSaveDirectory()
+    {
+        return new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), BACKUP_PATH);
     }
 
     /**
@@ -1400,6 +1525,7 @@ public final class ColonyManager
 
     /**
      * Get an instance of the compatabilityManager.
+     *
      * @return the manager.
      */
     public static ICompatabilityManager getCompatabilityManager()
@@ -1409,6 +1535,7 @@ public final class ColonyManager
 
     /**
      * Getter for the recipeManager.
+     *
      * @return an IRecipeManager.
      */
     public static IRecipeManager getRecipeManager()
