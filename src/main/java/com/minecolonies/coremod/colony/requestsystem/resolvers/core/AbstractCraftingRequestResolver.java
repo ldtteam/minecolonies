@@ -20,6 +20,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.Constants.MAX_CRAFTING_CYCLE_DEPTH;
+
 public abstract class AbstractCraftingRequestResolver extends AbstractBuildingDependentRequestResolver<Stack>
 {
     public AbstractCraftingRequestResolver(
@@ -59,7 +61,31 @@ public abstract class AbstractCraftingRequestResolver extends AbstractBuildingDe
             return false;
         }
 
-        return createsCraftingCycle(manager, manager.getRequestForToken(request.getParent()), target);
+        return createsCraftingCycle(manager, manager.getRequestForToken(request.getParent()), target, 0);
+    }
+
+    protected boolean createsCraftingCycle(
+            @NotNull final IRequestManager manager,
+            @NotNull final IRequest<?> request,
+            @NotNull final IRequest<? extends Stack> target,
+            final int count)
+    {
+        if (count > MAX_CRAFTING_CYCLE_DEPTH)
+        {
+            return false;
+        }
+
+        if (!request.equals(target) && request.getRequest().equals(target.getRequest()))
+        {
+            return true;
+        }
+
+        if (!request.hasParent())
+        {
+            return false;
+        }
+
+        return createsCraftingCycle(manager, manager.getRequestForToken(request.getParent()), target, count+1);
     }
 
     public abstract boolean canBuildingCraftStack(@NotNull final AbstractBuildingWorker building, ItemStack stack);
