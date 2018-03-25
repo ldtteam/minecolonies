@@ -169,7 +169,7 @@ public class CommandEntryPointTest
         final List<String> results = instance.getTabCompletions(server, sender, args, pos);
 
         // EXPECT:
-        assertThat(results).containsExactlyInAnyOrder("player:", "x1:", "x2:", "y1:", "y2:", "z1:", "z2:");
+        assertThat(results).containsExactlyInAnyOrder("player:", "x1:", "x2:", "y1:", "y2:", "z1:", "z2:", "name:");
     }
 
     @Test
@@ -187,7 +187,7 @@ public class CommandEntryPointTest
         final List<String> results = instance.getTabCompletions(server, sender, args, pos);
 
         // EXPECT:
-        assertThat(results).containsExactlyInAnyOrder("player:", "x1:", "x2:", "y1:", "y2:", "z1:", "z2:");
+        assertThat(results).containsExactlyInAnyOrder("player:", "x1:", "x2:", "y1:", "y2:", "z1:", "z2:", "name:");
     }
 
     @Test
@@ -205,7 +205,7 @@ public class CommandEntryPointTest
         final List<String> results = instance.getTabCompletions(server, sender, args, pos);
 
         // EXPECT:
-        assertThat(results).containsExactlyInAnyOrder("player:", "x1:", "x2:", "y1:", "y2:", "z1:", "z2:");
+        assertThat(results).containsExactlyInAnyOrder("player:", "x1:", "x2:", "y1:", "y2:", "z1:", "z2:", "name:");
     }
 
     @Test
@@ -325,9 +325,9 @@ public class CommandEntryPointTest
                 // EXPECT:
                 assertThat(clazz).isEqualTo(ScanCommand.class);
                 final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
-                assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("player", "x1", "x2", "y1", "y2", "z1", "z2");
+                assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("player", "x1", "x2", "y1", "y2", "z1", "z2", "name");
 
-                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.PLAYER, ActionArgumentType.COORDINATE_X, ActionArgumentType.COORDINATE_Y, ActionArgumentType.COORDINATE_Z);
+                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.PLAYER, ActionArgumentType.COORDINATE_X, ActionArgumentType.COORDINATE_Y, ActionArgumentType.COORDINATE_Z, ActionArgumentType.STRING);
                 assertThat(actionMenu.getIntegerForArgument("x1")).isEqualTo(1);
                 assertThat(actionMenu.getIntegerForArgument("x2")).isEqualTo(2);
                 assertThat(actionMenu.getIntegerForArgument("y1")).isEqualTo(3);
