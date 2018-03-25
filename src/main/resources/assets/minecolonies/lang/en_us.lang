@@ -112,6 +112,10 @@ item.minecolonies.scepterGuard.name=Guard-scepter
 
 com.minecolonies.configgui.title=MineColonies Config
 
+com.minecolonies.util.backup.success=Successfully backed up colony data!
+com.minecolonies.util.backup.fail=Failed to back up colony data!
+com.minecolonies.util.backup.noperms=You do not have permission to backup colony data!
+
 com.minecolonies.coremod.status.herder.goingToHut=Going to Hut
 com.minecolonies.coremod.status.herder.breeding=Breeding
 com.minecolonies.coremod.status.herder.searching=Searching
@@ -675,4 +679,3 @@ com.minecolonies.coremod.max.schematic.quiteclose=Quite close in the
 com.minecolonies.coremod.max.schematic.quitefar=Quite far in the
 com.minecolonies.coremod.max.schematic.reallyfar=Really far in the
 com.minecolonies.coremod.gui.workerHuts.barbpoints=Last Barbarian Spawns:
-

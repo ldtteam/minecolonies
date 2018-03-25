@@ -62,7 +62,7 @@ public final class Constants
     public static final float  WATCH_CLOSEST2                   = 3.0F;
     public static final float  WATCH_CLOSEST2_FAR               = 5.0F;
     public static final float  WATCH_CLOSEST2_FAR_CHANCE        = 0.02F;
-
+    public static final long   MILLISECONDS_PER_MINUTE          = 60000L;
     /**
      * Max crafting cycle depth.
      */
