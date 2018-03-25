@@ -1042,7 +1042,7 @@ public final class ColonyManager
      *
      * @return boolean indicating whether safe to initiate backup
      */
-    synchronized private static boolean getBackupToken()
+    synchronized private static boolean isSafeToBackup()
     {
         if (backupInProgress)
         {
@@ -1061,7 +1061,7 @@ public final class ColonyManager
         // Possibility of the timer kicking in while the command backup is being run, or vice versa
         // Prevent by requiring a threadsafe token, reject any other backup attempts while the token
         // is checked out - why run two backups back to back?
-        if (getBackupToken())
+        if (isSafeToBackup())
         {
             // Cancel any pending scheduled backup - we'll reset the timer after we're done
             if (backupTimerTask != null)
@@ -1084,7 +1084,7 @@ public final class ColonyManager
                   new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH); //todo remove hardcoded world 0
                 final ZipOutputStream zos = new ZipOutputStream(fos);
 
-                for (Colony backupTargetColony : colonies)
+                for (final Colony backupTargetColony : colonies)
                 {
                     @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, backupTargetColony.getID()));
                     if (file.exists())
@@ -1149,7 +1149,7 @@ public final class ColonyManager
     {
         if (numToKeep > 0)
         {
-            File[] backupFiles = getBackupSaveDirectory().listFiles();
+            final File[] backupFiles = getBackupSaveDirectory().listFiles();
             if (backupFiles != null && backupFiles.length > numToKeep)
             {
                 Arrays.sort(backupFiles);
