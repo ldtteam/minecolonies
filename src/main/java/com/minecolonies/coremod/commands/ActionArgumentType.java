@@ -247,6 +247,7 @@ public enum ActionArgumentType
         return Collections.emptyList();
     }
 
+    @Nullable
     public Object parse(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @Nullable final BlockPos pos,
             @NotNull final List<ActionMenuHolder> parsedHolders,
             final String potentialArgumentValue)
@@ -270,7 +271,7 @@ public enum ActionArgumentType
             case CITIZEN:
                 return parseCitizenDataValue(parsedHolders, potentialArgumentValue);
             case STRING:
-                return potentialArgumentValue;
+                return potentialArgumentValue.isEmpty() ? null : potentialArgumentValue;
             default:
                 throw new IllegalStateException("Unimplemented ActionArgumentType parsing");
         }
@@ -283,6 +284,7 @@ public enum ActionArgumentType
      * We are returning null to indicate that no boolean value could be parsed.
      */
     @SuppressWarnings({"squid:S2447"})
+    @Nullable
     private static Boolean parseBoolean(final String potentialArgumentValue)
     {
         if ("true".equalsIgnoreCase(potentialArgumentValue))
@@ -328,6 +330,7 @@ public enum ActionArgumentType
         return null;
     }
 
+    @Nullable
     private EntityPlayerMP parsePlayerValue(@NotNull final MinecraftServer server, final String potentialArgumentValue)
     {
         final List<String> playerNameStrings = getOnlinePlayerNames(server);
@@ -345,6 +348,7 @@ public enum ActionArgumentType
         }
     }
 
+    @Nullable
     private Colony parseColonyValue(@NotNull final ICommandSender sender, final String potentialArgumentValue)
     {
         final List<String> colonyNumberStrings = getColonyIdStrings();
@@ -352,15 +356,12 @@ public enum ActionArgumentType
         if (null != result)
         {
             int colonyNumber = result.intValue();
-            if (sender instanceof EntityPlayer)
+            if (sender instanceof EntityPlayer && colonyNumber == -1)
             {
-                if (colonyNumber == -1)
+                final IColony icolony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
+                if (icolony != null)
                 {
-                    final IColony icolony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
-                    if (icolony != null)
-                    {
-                        colonyNumber = icolony.getID();
-                    }
+                    colonyNumber = icolony.getID();
                 }
             }
             if (colonyNumberStrings.contains(String.valueOf(colonyNumber)))
@@ -375,6 +376,7 @@ public enum ActionArgumentType
         }
     }
 
+    @Nullable
     private CitizenData parseCitizenDataValue(@NotNull final List<ActionMenuHolder> parsedHolders, final String potentialArgumentValue)
     {
         final ArrayList<ActionMenuHolder> reversedParsedHolderList = new ArrayList<>(parsedHolders);
@@ -411,6 +413,7 @@ public enum ActionArgumentType
         }
     }
 
+    @Nullable
     private CitizenData findCitizenForCitizenManager(@NotNull final ICitizenManager citizenManager, final String potentialArgumentValue)
     {
         final List<CitizenData> citizenDataList = citizenManager.getCitizens();

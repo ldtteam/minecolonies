@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.DELETECOLONY;
+import static com.minecolonies.api.util.constant.CommandConstants.*;
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,12 +37,8 @@ import net.minecraft.util.text.event.ClickEvent;
 public class DeleteColonyCommand extends AbstractSingleCommand implements IActionCommand
 {
 
-    public static final  String DESC                       = "delete";
-    private static final String NO_COLONY_FOUND_FOR_ID_MESSAGE = "Colony with ID %d not found.";
-    private static final String NO_COLONY_FOUND_MESSAGE = "Colony not found.";
-    private static final String NO_ARGUMENTS               = "Please define a colony to delete";
+    public static final  String DESC                                           = "delete";
     private static final String DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED = "/mc colony delete %d %s true";
-    private static final String DELETE_COLONY_TASK_SCHEDULED = "Delete colony task scheduled.";
 
     /**
      * no-args constructor called by new CommandEntryPoint executer.
@@ -83,7 +80,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
 
         if (colony == null)
         {
-            final String noColonyFoundMessage = String.format(NO_COLONY_FOUND_MESSAGE);
+            final String noColonyFoundMessage = String.format(NO_COLONY_MESSAGE);
             sender.sendMessage(new TextComponentString(noColonyFoundMessage));
             return;
         }
@@ -107,7 +104,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
 
             if (colony == null)
             {
-                sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+                sender.sendMessage(new TextComponentString(NO_COLONY_MESSAGE));
                 return;
             }
             colonyId = colony.getID();
@@ -129,7 +126,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
         final Colony colony = ColonyManager.getColony(colonyId);
         if (colony == null)
         {
-            final String noColonyFoundMessage = String.format(NO_COLONY_FOUND_FOR_ID_MESSAGE, colonyId);
+            final String noColonyFoundMessage = String.format(COLONY_X_NULL, colonyId);
             sender.sendMessage(new TextComponentString(noColonyFoundMessage));
             return;
         }
@@ -137,7 +134,8 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
         executeShared(server, sender, colony, canDestroy, confirmDelete);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final Colony colony, final boolean canDestroy,
+    private void executeShared(
+            @NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final Colony colony, final boolean canDestroy,
             final boolean confirmDelete) throws CommandException
     {
 
@@ -147,8 +145,8 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
                     .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
                             new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                     String.format(DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED,
-                                            colony.getID(), (canDestroy ? "true" : "false"))
-                    )));
+                                            colony.getID(), canDestroy ? "true" : "false")
+                            )));
             sender.sendMessage(new TextComponentString("Click [DELETE] to confirm the deletion of colony: " + colony.getID()));
             sender.sendMessage(deleteButton);
             return;
@@ -175,10 +173,10 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
-                                                 @NotNull final MinecraftServer server,
-                                                 @NotNull final ICommandSender sender,
-                                                 @NotNull final String[] args,
-                                                 @Nullable final BlockPos pos)
+            @NotNull final MinecraftServer server,
+            @NotNull final ICommandSender sender,
+            @NotNull final String[] args,
+            @Nullable final BlockPos pos)
     {
         return Collections.emptyList();
     }
@@ -187,8 +185,8 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
     public boolean isUsernameIndex(@NotNull final String[] args, final int index)
     {
         return index == 0
-                 && args.length > 0
-                 && !args[0].isEmpty()
-                 && getIthArgument(args, 0, Integer.MAX_VALUE) == Integer.MAX_VALUE;
+                && args.length > 0
+                && !args[0].isEmpty()
+                && getIthArgument(args, 0, Integer.MAX_VALUE) == Integer.MAX_VALUE;
     }
 }
