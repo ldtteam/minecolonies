@@ -22,18 +22,15 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 
+import static com.minecolonies.api.util.constant.CommandConstants.*;
+
 /**
  * gives ability to change the colony owner.
  */
 public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements IActionCommand
 {
 
-    public static final  String DESC            = "ownerchange";
-    private static final String SUCCESS_MESSAGE = "Successfully switched Owner %s to colony %d";
-    private static final String COLONY_NULL     = "Couldn't find colony %d.";
-    private static final String NO_ARGUMENTS    = "Please define a colony and player";
-    private static final String NO_PLAYER       = "Can't find player to add";
-    private static final String HAS_A_COLONY    = "Player %s has a colony already.";
+    public static final String DESC = "ownerchange";
 
     /**
      * no-args constructor called by new CommandEntryPoint executer.
@@ -73,7 +70,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
     {
         if (args.length < 2)
         {
-            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.sendMessage(new TextComponentString(NO_COLONY_OR_PLAYER));
             return;
         }
 
@@ -87,7 +84,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
 
             if (senderEntity == null)
             {
-                server.sendMessage(new TextComponentString(NO_ARGUMENTS));
+                server.sendMessage(new TextComponentString(NO_COLONY_OR_PLAYER));
                 return;
             }
             else
@@ -117,7 +114,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
         final Colony colony = ColonyManager.getColony(colonyId);
         if (colony == null)
         {
-            sender.sendMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
+            sender.sendMessage(new TextComponentString(String.format(COLONY_X_NULL, colonyId)));
             return;
         }
 
@@ -153,16 +150,16 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
 
         colony.getPermissions().setOwner(player);
 
-        sender.sendMessage(new TextComponentString(String.format(SUCCESS_MESSAGE, player.getName(), colony.getID())));
+        sender.sendMessage(new TextComponentString(String.format(SUCCESS_MESSAGE_OWNERCHANGE, player.getName(), colony.getID())));
     }
 
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
-                                                 @NotNull final MinecraftServer server,
-                                                 @NotNull final ICommandSender sender,
-                                                 @NotNull final String[] args,
-                                                 @Nullable final BlockPos pos)
+            @NotNull final MinecraftServer server,
+            @NotNull final ICommandSender sender,
+            @NotNull final String[] args,
+            @Nullable final BlockPos pos)
     {
         return Collections.emptyList();
     }

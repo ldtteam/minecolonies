@@ -113,7 +113,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      * @param theCommand which command to check if the player can use it
      * @return boolean
      */
-    public boolean canCommandSenderUseCommand(final Commands theCommand)
+    public static boolean canCommandSenderUseCommand(final Commands theCommand)
     {
         switch (theCommand)
         {
