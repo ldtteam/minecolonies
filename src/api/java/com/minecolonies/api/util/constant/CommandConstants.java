@@ -40,8 +40,6 @@ public final class CommandConstants
     public static final String  NO_COLONY_MESSAGE         = "Invalid colony, aborting!";
     @NonNls
     public static final String  SPECIAL_CHARACTERS_ADVICE = "Please stick to the default characters A-Z, a-z and, 0-9";
-    @NonNls
-    private static final String NO_COLONY_TO_DELETE       = "Please define a colony to delete";
 
     /**
      * Success messages:
