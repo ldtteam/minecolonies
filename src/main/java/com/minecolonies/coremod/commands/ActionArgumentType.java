@@ -284,6 +284,7 @@ public enum ActionArgumentType
      * We are returning null to indicate that no boolean value could be parsed.
      */
     @SuppressWarnings({"squid:S2447"})
+    @Nullable
     private static Boolean parseBoolean(final String potentialArgumentValue)
     {
         if ("true".equalsIgnoreCase(potentialArgumentValue))
@@ -329,6 +330,7 @@ public enum ActionArgumentType
         return null;
     }
 
+    @Nullable
     private EntityPlayerMP parsePlayerValue(@NotNull final MinecraftServer server, final String potentialArgumentValue)
     {
         final List<String> playerNameStrings = getOnlinePlayerNames(server);
@@ -346,6 +348,7 @@ public enum ActionArgumentType
         }
     }
 
+    @Nullable
     private Colony parseColonyValue(@NotNull final ICommandSender sender, final String potentialArgumentValue)
     {
         final List<String> colonyNumberStrings = getColonyIdStrings();
@@ -373,6 +376,7 @@ public enum ActionArgumentType
         }
     }
 
+    @Nullable
     private CitizenData parseCitizenDataValue(@NotNull final List<ActionMenuHolder> parsedHolders, final String potentialArgumentValue)
     {
         final ArrayList<ActionMenuHolder> reversedParsedHolderList = new ArrayList<>(parsedHolders);
@@ -409,6 +413,7 @@ public enum ActionArgumentType
         }
     }
 
+    @Nullable
     private CitizenData findCitizenForCitizenManager(@NotNull final ICitizenManager citizenManager, final String potentialArgumentValue)
     {
         final List<CitizenData> citizenDataList = citizenManager.getCitizens();
