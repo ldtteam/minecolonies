@@ -26,7 +26,8 @@ public enum NavigationMenuType implements IMenuType
         ActionMenuType.COLONY_TELEPORT,
         ActionMenuType.MAKE_NOT_AUTO_DELETABLE,
         ActionMenuType.DO_RAID_NOW,
-        ActionMenuType.DO_RAID_TONIGHT
+        ActionMenuType.DO_RAID_TONIGHT,
+        ActionMenuType.CLAIM
     )),
 
     REQUEST_SYSTEM(new NavigationMenu("rs",

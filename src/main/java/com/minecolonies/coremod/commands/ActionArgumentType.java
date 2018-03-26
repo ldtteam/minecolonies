@@ -270,7 +270,7 @@ public enum ActionArgumentType
             case CITIZEN:
                 return parseCitizenDataValue(parsedHolders, potentialArgumentValue);
             case STRING:
-                return potentialArgumentValue;
+                return potentialArgumentValue.isEmpty() ? null : potentialArgumentValue;
             default:
                 throw new IllegalStateException("Unimplemented ActionArgumentType parsing");
         }
@@ -352,15 +352,12 @@ public enum ActionArgumentType
         if (null != result)
         {
             int colonyNumber = result.intValue();
-            if (sender instanceof EntityPlayer)
+            if (sender instanceof EntityPlayer && colonyNumber == -1)
             {
-                if (colonyNumber == -1)
+                final IColony icolony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
+                if (icolony != null)
                 {
-                    final IColony icolony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
-                    if (icolony != null)
-                    {
-                        colonyNumber = icolony.getID();
-                    }
+                    colonyNumber = icolony.getID();
                 }
             }
             if (colonyNumberStrings.contains(String.valueOf(colonyNumber)))

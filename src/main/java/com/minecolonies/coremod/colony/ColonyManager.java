@@ -199,7 +199,7 @@ public final class ColonyManager
         colony.getStatsManager().triggerAchievement(ModAchievements.achievementTownhall);
         Log.getLogger().info(String.format("New Colony Id: %d by %s", colony.getID(), player.getName()));
 
-        ColonyManager.notifyChunksInRange(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
+        ColonyManager.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
         ColonyManager.markDirty();
         return colony;
     }
@@ -209,7 +209,7 @@ public final class ColonyManager
      * @param world the world of the colony.
      * @param add remove or add
      */
-    public static void notifyChunksInRange(final World world, final boolean add, final int id, final BlockPos center, final int dimension)
+    public static void claimColonyChunks(final World world, final boolean add, final int id, final BlockPos center, final int dimension)
     {
         final Chunk centralChunk = world.getChunkFromBlockCoords(center);
         if(centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() == id && add)
@@ -236,16 +236,32 @@ public final class ColonyManager
         final int range = Configurations.gameplay.workingRangeTownHallChunks;
         final int buffer = Configurations.gameplay.townHallPaddingChunk;
 
-        final int maxRange = range * 2 + buffer;
+
+        claimChunksInRange(id, dimension, add, chunkX, chunkZ, range, buffer);
+    }
+
+    /**
+     * Claim a number of chunks in a certain range around a position.
+     * @param colonyId the colony id.
+     * @param dimension the dimension.
+     * @param add if claim or unclaim.
+     * @param chunkX the chunkX starter position.
+     * @param chunkZ the chunkZ starter position.
+     * @param range the range.
+     * @param buffer the buffer.
+     */
+    public static void claimChunksInRange(final int colonyId, final int dimension, final boolean add, final int chunkX, final int chunkZ, final int range, final int buffer)
+    {
         @NotNull final File chunkDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), CHUNK_INFO_PATH);
         Utils.checkDirectory(chunkDir);
+        final int maxRange = range * 2 + buffer;
 
         for(int i = chunkX - maxRange; i <= chunkX + maxRange; i++)
         {
             for (int j = chunkZ - maxRange; j <= chunkZ + maxRange; j++)
             {
                 final boolean owning = i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range;
-                @NotNull final ChunkLoadStorage newStorage = new ChunkLoadStorage(id, ChunkPos.asLong(i, j), add, dimension, owning);
+                @NotNull final ChunkLoadStorage newStorage = new ChunkLoadStorage(colonyId, ChunkPos.asLong(i, j), add, dimension, owning);
                 @NotNull final File file = new File(chunkDir, String.format(FILENAME_CHUNK, i, j, dimension));
                 if (file.exists())
                 {
@@ -332,7 +348,7 @@ public final class ColonyManager
         try
         {
             final Colony colony = getColony(id);
-            ColonyManager.notifyChunksInRange(colony.getWorld(), false, id, colony.getCenter(), colony.getDimension());
+            ColonyManager.claimColonyChunks(colony.getWorld(), false, id, colony.getCenter(), colony.getDimension());
             final Set<World> colonyWorlds = new HashSet<>();
             Log.getLogger().info("Removing citizens for " + id);
             for (final CitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
@@ -962,7 +978,7 @@ public final class ColonyManager
                             {
                                 @NotNull final Colony colony = Colony.loadColony(colonyData, world);
                                 colonies.add(colony);
-                                ColonyManager.notifyChunksInRange(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
+                                ColonyManager.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
                                 addColonyByWorld(colony);
                             }
                         }
