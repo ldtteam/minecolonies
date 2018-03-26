@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.minecolonies.coremod.commands.colonycommands.ClaimChunksCommand;
 import org.assertj.core.api.Fail;
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
@@ -343,6 +344,44 @@ public class CommandEntryPointTest
 
     @Test
     @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_CLAIM__DO_execute__EXPECT_claim_command_executed() throws CommandException
+    {
+
+        // GIVEN:
+        final String[] args = new String[] {
+                "Colony",
+                "Claim",
+                "colony:", "1",
+                "range:", "1",
+                "add:", "true"
+        };
+
+        // DO:
+
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenu actionMenu,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                // EXPECT:
+                assertThat(clazz).isEqualTo(ClaimChunksCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("colony", "range", "add");
+
+                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.COLONY, ActionArgumentType.INTEGER, ActionArgumentType.BOOLEAN);
+                assertThat(actionMenu.getIntegerForArgument("range")).isEqualTo(1);
+                assertThat(actionMenu.getBooleanForArgument("add")).isEqualTo(true);
+            }
+        };
+
+        instance.execute(server, sender, args);
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens__DO_getTabCompletions__EXPECT_citizens()
     {
 
@@ -664,7 +703,7 @@ public class CommandEntryPointTest
         final List<String> results = instance.getTabCompletions(server, sender, args, pos);
 
         // EXPECT:
-        assertThat(results).containsExactlyInAnyOrder("addofficer", "barbarians", "delete", "deletable", "info", "ownerchange", "raid", "raid-tonight", "refresh", "teleport");
+        assertThat(results).containsExactlyInAnyOrder("addofficer", "barbarians", "delete", "deletable", "info", "ownerchange", "raid", "raid-tonight", "refresh", "teleport", "claim");
     }
 
     @Test

@@ -247,6 +247,7 @@ public enum ActionArgumentType
         return Collections.emptyList();
     }
 
+    @Nullable
     public Object parse(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @Nullable final BlockPos pos,
             @NotNull final List<ActionMenuHolder> parsedHolders,
             final String potentialArgumentValue)
