@@ -463,12 +463,13 @@ public class CitizenData
         middleInitial = String.valueOf(getRandomLetter(rand));
         lastName = getRandomElement(rand, Configurations.names.lastNames);
 
-        if(Configurations.names.useMiddleInitial) {
-            citizenName = String.format("%s %s. %s",firstName,middleInitial,lastName);
+        if (Configurations.names.useMiddleInitial)
+        {
+            citizenName = String.format("%s %s. %s", firstName, middleInitial, lastName);
         }
         else
         {
-            citizenName = String.format("%s %s",firstName,lastName);
+            citizenName = String.format("%s %s", firstName, lastName);
         }
 
         // Check whether there's already a citizen with this name
