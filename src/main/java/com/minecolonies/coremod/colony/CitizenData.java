@@ -12,6 +12,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.managers.ICitizenManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
@@ -446,20 +447,39 @@ public class CitizenData
     private String generateName(@NotNull final Random rand)
     {
         String citizenName;
+        String firstName;
+        String middleInitial;
+        String lastName;
+
         if (female)
         {
-            citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.names.femaleFirstNames), getRandomLetter(rand),
-              getRandomElement(rand, Configurations.names.lastNames));
+            firstName = getRandomElement(rand, Configurations.names.femaleFirstNames);
         }
         else
         {
-            citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.names.maleFirstNames), getRandomLetter(rand),
-              getRandomElement(rand, Configurations.names.lastNames));
+            firstName = getRandomElement(rand, Configurations.names.maleFirstNames);
         }
+
+        middleInitial = String.valueOf(getRandomLetter(rand));
+        lastName = getRandomElement(rand, Configurations.names.lastNames);
+
+        if (Configurations.names.useMiddleInitial)
+        {
+            citizenName = String.format("%s %s. %s", firstName, middleInitial, lastName);
+        }
+        else
+        {
+            citizenName = String.format("%s %s", firstName, lastName);
+        }
+
+        // Check whether there's already a citizen with this name
+        final ICitizenManager manager = this.getColony().getCitizenManager();
         for (int i = 1; i <= this.getColony().getCitizenManager().getMaxCitizens(); i++)
         {
-            if (this.getColony().getCitizenManager().getCitizen(i) != null && this.getColony().getCitizenManager().getCitizen(i).getName().equals(citizenName))
+            final CitizenData citizen = manager.getCitizen(i);
+            if (citizen != null && citizen.getName().equals(citizenName))
             {
+                // Oops - recurse this function and try again
                 citizenName = generateName(rand);
             }
         }
