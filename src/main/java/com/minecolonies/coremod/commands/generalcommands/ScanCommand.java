@@ -16,6 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
+import static com.minecolonies.api.util.constant.CommandConstants.*;
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.isPlayerOpped;
 
 /**
@@ -24,11 +25,7 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.isPlayerOp
 public class ScanCommand implements IActionCommand
 {
     public static final String DESC                   = "scan";
-    public static final String NO_PERMISSION_MESSAGE  = "You do not have permission to scan structures!";
-    public static final String SCAN_SUCCESS_MESSAGE = "Successfully scan structure!";
-    public static final String SCAN_FAILURE_MESSAGE = "Failed to scan structure!";
-    public static final String MISSING_PLAYER = "Failed to scan structure, missing player to store the file!";
-    public static final String SPECIAL_CHARACTERS_ADVICE = "Please stick to the default characters A-Z, a-z and, 0-9";
+
     /**
      * no-args constructor called by new CommandEntryPoint executer.
      */
@@ -84,7 +81,7 @@ public class ScanCommand implements IActionCommand
         }
         else
         {
-            sender.sendMessage(new TextComponentString(NO_PERMISSION_MESSAGE));
+            sender.sendMessage(new TextComponentString(NO_PERMISSION_TO_SCAN_MESSAGE));
         }
     }
 }
