@@ -99,6 +99,21 @@ public enum ActionArgumentType
         return citizenNameList;
     }
 
+    private List<String> getCitizenIds()
+    {
+        final List<Colony> colonyList = ColonyManager.getColonies();
+        final List<String> citizenNameList = new ArrayList<>();
+        for (final Colony colony : colonyList)
+        {
+            final List<CitizenData> citizenDataList = colony.getCitizenManager().getCitizens();
+            for (final CitizenData citizenData : citizenDataList)
+            {
+                citizenNameList.add(String.valueOf(citizenData.getId()));
+            }
+        }
+        return citizenNameList;
+    }
+
     public List<String> getTabCompletions(@NotNull final MinecraftServer server,
             @Nullable final BlockPos pos,
             final String potentialArgumentValue)
@@ -174,7 +189,7 @@ public enum ActionArgumentType
     {
         // TODO: see if we can figure out what citizen we are looking at as the default tab completion.
         final List<String> citizenNameStrings = getCitizenNames();
-        final List<String> citizenNumberStrings = getColonyIdStrings();
+        final List<String> citizenNumberStrings = getCitizenIds();
         final String[] potentiaCitizenNameParts = potentialArgumentValue.split(" ", -1);
         final int currentWordIndex = potentiaCitizenNameParts.length - 1;
         if (potentialArgumentValue.isEmpty())

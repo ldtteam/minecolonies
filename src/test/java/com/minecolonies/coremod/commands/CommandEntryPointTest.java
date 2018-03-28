@@ -74,32 +74,32 @@ public class CommandEntryPointTest
         when(citizenManager1.getCitizens()).thenReturn(citizenDataList1);
 
         final CitizenData citizenJohnSSmith = mock(CitizenData.class);
-        when(citizenJohnSSmith.getId()).thenReturn(1);
+        when(citizenJohnSSmith.getId()).thenReturn(101);
         when(citizenJohnSSmith.getName()).thenReturn("John S. Smith");
 
         citizenDataList1.add(citizenJohnSSmith);
-        when(citizenManager1.getCitizen(1)).thenReturn(citizenJohnSSmith);
+        when(citizenManager1.getCitizen(101)).thenReturn(citizenJohnSSmith);
 
         final CitizenData citizenJohnSJones = mock(CitizenData.class);
-        when(citizenJohnSJones.getId()).thenReturn(4);
+        when(citizenJohnSJones.getId()).thenReturn(104);
         when(citizenJohnSJones.getName()).thenReturn("John S. Jones");
 
         citizenDataList1.add(citizenJohnSJones);
-        when(citizenManager1.getCitizen(4)).thenReturn(citizenJohnSJones);
+        when(citizenManager1.getCitizen(104)).thenReturn(citizenJohnSJones);
 
         final CitizenData citizenJohnAJones = mock(CitizenData.class);
-        when(citizenJohnAJones.getId()).thenReturn(2);
+        when(citizenJohnAJones.getId()).thenReturn(102);
         when(citizenJohnAJones.getName()).thenReturn("John A. Jones");
 
         citizenDataList1.add(citizenJohnAJones);
-        when(citizenManager1.getCitizen(2)).thenReturn(citizenJohnAJones);
+        when(citizenManager1.getCitizen(102)).thenReturn(citizenJohnAJones);
 
         final CitizenData citizenJennaQBar = mock(CitizenData.class);
-        when(citizenJennaQBar.getId()).thenReturn(3);
+        when(citizenJennaQBar.getId()).thenReturn(103);
         when(citizenJennaQBar.getName()).thenReturn("Jenna Q. Bar");
 
         citizenDataList1.add(citizenJennaQBar);
-        when(citizenManager1.getCitizen(3)).thenReturn(citizenJennaQBar);
+        when(citizenManager1.getCitizen(103)).thenReturn(citizenJennaQBar);
 
         PowerMockito.mockStatic(ColonyManager.class);
         BDDMockito.given(ColonyManager.getColonies()).willReturn(colonyList);
@@ -526,6 +526,24 @@ public class CommandEntryPointTest
 
     @Test
     @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_citizens_info_colony_1_citizen_space__DO_getTabCompletions__EXPECT_101_102_103_104_John_Jenna()
+    {
+
+        // GIVEN:
+        final String[] args = new String[] {
+                "Citizens", "info", "colony:", "1", "citizen:", ""
+        };
+
+        // DO:
+
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+
+        // EXPECT:
+        assertThat(results).containsExactlyInAnyOrder("101", "102", "103", "104", "John", "Jenna");
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_info_colony_1_citizen_J__DO_getTabCompletions__EXPECT_John_Jenna()
     {
 
@@ -634,12 +652,12 @@ public class CommandEntryPointTest
 
     @Test
     @PrepareForTest({PermissionAPI.class,ColonyManager.class})
-    public void GIVEN_args_citizens_info_colony_1_citizen_1_space__DO_getTabCompletions__EXPECT_citizen()
+    public void GIVEN_args_citizens_info_colony_1_citizen_1__DO_getTabCompletions__EXPECT_101_102_103_104()
     {
 
         // GIVEN:
         final String[] args = new String[] {
-                "Citizens", "info", "colony:", "1", "citizen:", "1", ""
+                "Citizens", "info", "colony:", "1", "citizen:", "1"
         };
 
         // DO:
@@ -647,7 +665,23 @@ public class CommandEntryPointTest
         final List<String> results = instance.getTabCompletions(server, sender, args, pos);
 
         // EXPECT:
-        assertThat(results).isEmpty();
+        assertThat(results).containsExactlyInAnyOrder("101", "102", "103", "104");
+    }
+
+    public void GIVEN_args_citizens_info_colony_1_citizen_1_space__DO_getTabCompletions__EXPECT_nothing() 
+    { 
+ 
+        // GIVEN: 
+        final String[] args = new String[] { 
+                "Citizens", "info", "colony:", "1", "citizen:", "1", "" 
+        };
+
+        // DO:
+
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+
+        // EXPECT:
+        assertThat(results).isEmpty(); 
     }
 
     @Test
