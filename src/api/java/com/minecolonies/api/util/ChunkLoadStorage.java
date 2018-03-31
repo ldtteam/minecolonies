@@ -182,8 +182,11 @@ public class ChunkLoadStorage
      */
     public void applyToCap(final IColonyTagCapability cap)
     {
-        cap.setOwningColony(this.colonyId);
-
+        if(this.getColonyId() > 0)
+        {
+            cap.setOwningColony(this.colonyId);
+        }
+        
         for(final int tempColonyId: coloniesToAdd)
         {
             cap.addColony(tempColonyId);
