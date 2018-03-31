@@ -182,7 +182,7 @@ public class ChunkLoadStorage
      */
     public void applyToCap(final IColonyTagCapability cap)
     {
-        if(this.getColonyId() > 0 || !this.coloniesToRemove.isEmpty())
+        if(this.getColonyId() > 0)
         {
             cap.setOwningColony(this.colonyId);
         }
