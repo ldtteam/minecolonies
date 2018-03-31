@@ -6,32 +6,12 @@
       "entries": [
         {
           "type": "item",
-          "weight": 5,
-          "name": "minecraft:diamond_sword"
-        },
-        {
-          "type": "item",
           "weight": 10,
-          "name": "minecraft:golden_sword"
-        },
-        {
-          "type": "item",
-          "weight": 15,
-          "name": "minecraft:iron_sword"
-        },
-        {
-          "type": "item",
-          "weight": 30,
-          "name": "minecraft:stone_sword"
-        },
-        {
-          "type": "item",
-          "weight": 40,
           "name": "minecraft:bow"
         },
         {
           "type": "item",
-          "weight": 20,
+          "weight": 5,
           "name": "minecolonies:ancienttome"
         }
       ]
