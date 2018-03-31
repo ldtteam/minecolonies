@@ -43,9 +43,11 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATION;
+import static com.minecolonies.api.util.constant.CitizenConstants.SATURATION_DECREASE_FACTOR;
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.coremod.colony.buildings.AbstractBuilding.MAX_PRIO;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -489,17 +491,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getToken());
 
                 final ItemStack deliveredItemStack = firstDeliverableRequest.getDelivery();
-                if (InventoryUtils.getItemCountInItemHandler(
-                  new InvWrapper(worker.getInventoryCitizen()), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount())
+                final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
+                        stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(deliveredItemStack, stack, true, true));
+                if (count >= deliveredItemStack.getCount() && getTotalRequiredAmount(deliveredItemStack) <= count)
                 {
                     return NEEDS_ITEM;
                 }
 
                 //Takes one Stack from the hut if existent
-                if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount() &&
+                if (InventoryUtils.getItemCountInProvider(getOwnBuilding(),
+                        stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(deliveredItemStack, stack, true, true)) >= deliveredItemStack.getCount() &&
                       InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                         getOwnBuilding(),
-                        deliveredItemStack::isItemEqualIgnoreDurability,
+                              stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(deliveredItemStack, stack, true, true),
                         deliveredItemStack.getCount(),
                         new InvWrapper(worker.getInventoryCitizen())))
                 {
@@ -523,6 +527,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
 
         return NEEDS_ITEM;
+    }
+
+    /**
+     * Get the total amount required for an itemStack.
+     * Workers have to override this if they have more information.
+     * @param deliveredItemStack the required stack.
+     * @return on default the size of the stack.
+     */
+    public int getTotalRequiredAmount(final ItemStack deliveredItemStack)
+    {
+        return deliveredItemStack.getCount();
     }
 
     /**
@@ -642,7 +657,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  && InventoryFunctions
                       .matchFirstInProviderWithAction(
                         entity,
-                        stack -> !ItemStackUtils.isEmpty(stack) && is.isItemEqualIgnoreDurability(stack),
+                        stack -> !ItemStackUtils.isEmpty(stack) &&  ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true),
                         this::takeItemStackFromProvider
                       );
     }
@@ -808,15 +823,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
 
         delay += DELAY_RECHECK;
-        if (walkToBuilding())
-        {
-            return true;
-        }
-        if (retrieveToolInHut(toolType, minimalLevel))
-        {
-            return false;
-        }
-        return true;
+        return walkToBuilding() || !retrieveToolInHut(toolType, minimalLevel);
     }
 
     /**
@@ -865,14 +872,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return INVENTORY_FULL;
         }
 
-        if (dumpOneMoreSlot())
+        if(InventoryUtils.isProviderFull(getOwnBuilding().getTileEntity()))
+        {
+            getOwnBuilding().alterPickUpPriority(MAX_PRIO);
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST);
+        }
+        else if (dumpOneMoreSlot())
         {
             delay += DELAY_RECHECK;
             return INVENTORY_FULL;
-        }
-        if (isInventoryAndChestFull())
-        {
-            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST);
         }
         //collect items that are nice to have if they are available
         this.itemsNiceToHave().forEach(this::isInHut);
@@ -900,19 +908,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(
               new InvWrapper(worker.getInventoryCitizen()), slot, new InvWrapper(buildingWorker.getTileEntity()))
         ));
-    }
-
-    /**
-     * Checks if the worker inventory and his building chest are full.
-     *
-     * @return true if both are full, else false
-     */
-    private boolean isInventoryAndChestFull()
-    {
-        @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
-        return InventoryUtils.isProviderFull(worker)
-                 && (buildingWorker != null
-                       && InventoryUtils.isProviderFull(buildingWorker.getTileEntity()));
     }
 
     /**
@@ -954,9 +949,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * If we have no tool for the job, we will request on, return immediately.
      *
      * @param target the block to mine
+     * @param pos the pos to mine
      * @return true if we have a tool for the job
      */
-    public final boolean holdEfficientTool(@NotNull final Block target)
+    public final boolean holdEfficientTool(@NotNull final Block target, final BlockPos pos)
     {
         final int bestSlot = getMostEfficientTool(target);
         if (bestSlot >= 0)
@@ -964,7 +960,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             worker.setHeldItem(bestSlot);
             return true;
         }
-        requestTool(target);
+        requestTool(target, pos);
         return false;
     }
 
@@ -972,11 +968,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Request the appropriate tool for this block.
      *
      * @param target the block to mine
+     * @param pos the pos to mine
      */
-    private void requestTool(@NotNull final Block target)
+    private void requestTool(@NotNull final Block target, final BlockPos pos)
     {
         final IToolType toolType = WorkerUtil.getBestToolForBlock(target);
         final int required = WorkerUtil.getCorrectHavestLevelForBlock(target);
+        if (getOwnBuilding().getMaxToolLevel() < required)
+        {
+            chatSpamFilter.talkWithoutSpam(BUILDING_LEVEL_TOO_LOW,new ItemStack(target).getDisplayName(), pos.toString());
+        }
         updateToolFlag(toolType, required);
     }
 
@@ -1047,6 +1048,23 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         hasDelayed = false;
         return false;
+    }
+
+    /**
+     * Tell the ai that you have done one more action.
+     * <p>
+     * if the actions exceed a certain number,
+     * the ai will dump it's inventory.
+     * this also triggers the AI to get hungry.
+     * <p>
+     * For example:
+     * <p>
+     * After x blocks, bring everything back.
+     */
+    protected final void incrementActionsDoneAndDecSaturation()
+    {
+        worker.decreaseSaturationForAction();
+        actionsDone++;
     }
 
     /**
@@ -1147,7 +1165,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean checkIfRequestForItemExistOrCreate(@NotNull final Collection<ItemStack> stacks)
     {
-        return stacks.stream().allMatch(s -> checkIfRequestForItemExistOrCreate(s));
+        return stacks.stream().allMatch(this::checkIfRequestForItemExistOrCreate);
     }
 
     /**
@@ -1195,7 +1213,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final Collection<ItemStack> stacks)
     {
-        return stacks.stream().allMatch(s -> checkIfRequestForItemExistOrCreateAsynch(s));
+        return stacks.stream().allMatch(this::checkIfRequestForItemExistOrCreateAsynch);
     }
 
     /**
@@ -1213,10 +1231,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return true;
         }
 
-        if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), stack::isItemEqualIgnoreDurability) >= stack.getCount() &&
+        if (InventoryUtils.getItemCountInProvider(getOwnBuilding(),
+                itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true)) >= stack.getCount() &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
-                getOwnBuilding(),
-                stack::isItemEqualIgnoreDurability,
+                getOwnBuilding(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true),
                 stack.getCount(),
                 new InvWrapper(worker.getInventoryCitizen())))
         {

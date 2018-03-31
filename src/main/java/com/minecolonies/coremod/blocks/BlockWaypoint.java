@@ -91,4 +91,10 @@ public class BlockWaypoint extends AbstractBlockMinecolonies<BlockWaypoint>
     {
         return false;
     }
+
+    @Override
+    public boolean isPassable(final IBlockAccess worldIn, final BlockPos pos)
+    {
+        return true;
+    }
 }

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.ModBlocks;
@@ -267,6 +268,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
     private AIState completeBuild()
     {
+        incrementActionsDoneAndDecSaturation();
         if (job instanceof AbstractJobStructure)
         {
             executeSpecificCompleteActions();
@@ -427,7 +429,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         final List<ItemStack> itemList = new ArrayList<>();
-        itemList.add(stack);
+        if(!ChiselAndBitsCheck.isChiselAndBitsBlock(stateToPlace))
+        {
+            itemList.add(stack);
+        }
         itemList.addAll(getItemsFromTileEntity());
 
         for (final ItemStack tempStack : itemList)
@@ -606,9 +611,28 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 ((AbstractJobStructure) job).setStructure(null);
             }
 
-            ((AbstractJobStructure) job).getStructure().rotate(rotateTimes, world, position, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
-            ((AbstractJobStructure) job).getStructure().setPosition(position);
+            try
+            {
+                ((AbstractJobStructure) job).getStructure().rotate(rotateTimes, world, position, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
+                ((AbstractJobStructure) job).getStructure().setPosition(position);
+            }
+            catch(final NullPointerException ex)
+            {
+                handleSpecificCancelActions();
+                ((AbstractJobStructure) job).setStructure(null);
+                Log.getLogger().warn("Structure couldn't be found which caused an NPE, removed workOrder, more details in log", ex);
+            }
         }
+    }
+
+    /**
+     * Specific actions to handle a cancelation of a structure.
+     */
+    public void handleSpecificCancelActions()
+    {
+        /**
+         * Child classes have to override this.
+         */
     }
 
     /**

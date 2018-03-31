@@ -191,7 +191,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     {
         final Block curBlock = world.getBlockState(blockToMine).getBlock();
 
-        if (!holdEfficientTool(curBlock))
+        if (!holdEfficientTool(curBlock, blockToMine))
         {
             //We are missing a tool to harvest this block...
             return true;
@@ -200,7 +200,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         final ItemStack tool = worker.getHeldItemMainhand();
 
         if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.BEDROCK
-              && curBlock.getHarvestTool(curBlock.getDefaultState()) != null)
+              && curBlock.getHarvestTool(world.getBlockState(blockToMine)) != null)
         {
             Log.getLogger().info(String.format(
               "ForgeHook not in sync with EfficientTool for %s and %s\n"
@@ -276,7 +276,9 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      */
     public void fillItemsList()
     {
-        searchForItems(worker.getEntityBoundingBox().expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP).expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
+        searchForItems(worker.getEntityBoundingBox()
+                .expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
+                .expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
     }
 
     /**
@@ -289,7 +291,8 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     {
         items = world.getEntitiesWithinAABB(EntityItem.class, boundingBox)
                   .stream()
-                  .filter(item -> item != null && !item.isDead)
+                  .filter(item -> item != null && !item.isDead &&
+                          (!item.getEntityData().hasKey("PreventRemoteMovement") || !item.getEntityData().getBoolean("PreventRemoteMovement")))
                   .map(BlockPosUtil::fromEntity)
                   .collect(Collectors.toList());
     }

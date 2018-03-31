@@ -26,7 +26,7 @@ public class StandardRecipeManager implements IRecipeManager
     /**
      * Map of all recipes which have been discovered globally already.
      */
-    private static final BiMap<IToken, IRecipeStorage> recipes = HashBiMap.create();
+    private final BiMap<IToken, IRecipeStorage> recipes = HashBiMap.create();
 
     @Override
     public ImmutableMap<IToken, IRecipeStorage> getRecipes()

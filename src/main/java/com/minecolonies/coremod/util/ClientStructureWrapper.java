@@ -2,6 +2,7 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.structures.helpers.Settings;
@@ -9,7 +10,6 @@ import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,14 +35,14 @@ public final class ClientStructureWrapper
      * Handles the save message of scans.
      *
      * @param nbttagcompound compound to store.
-     * @param currentMillis  milli seconds for fileName.
+     * @param fileName  milli seconds for fileName.
      */
-    public static void handleSaveScanMessage(final NBTTagCompound nbttagcompound, final long currentMillis)
+    public static void handleSaveScanMessage(final NBTTagCompound nbttagcompound, final String fileName)
     {
         final StructureName structureName =
-          new StructureName(Structures.SCHEMATICS_SCAN, "new", LanguageHandler.format("item.scepterSteel.scanFormat", currentMillis));
+          new StructureName(Structures.SCHEMATICS_SCAN, "new", fileName);
         final File file = new File(Structure.getClientSchematicsFolder(), structureName.toString() + Structures.SCHEMATIC_EXTENSION);
-        checkDirectory(file.getParentFile());
+        Utils.checkDirectory(file.getParentFile());
 
         try (OutputStream outputstream = new FileOutputStream(file))
         {
@@ -57,19 +57,6 @@ public final class ClientStructureWrapper
 
         LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.scepterSteel.scanSuccess", file);
         Settings.instance.setStructureName(structureName.toString());
-    }
-
-    /**
-     * Checks if directory exists, else creates it.
-     *
-     * @param directory the directory to check.
-     */
-    private static void checkDirectory(@NotNull final File directory)
-    {
-        if (!directory.exists() && !directory.mkdirs())
-        {
-            Log.getLogger().error("Directory doesn't exist and failed to be created: " + directory.toString());
-        }
     }
 
     /**

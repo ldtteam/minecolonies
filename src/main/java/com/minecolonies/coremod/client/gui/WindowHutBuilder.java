@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Color;
@@ -31,6 +32,9 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
  */
 public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuilderView>
 {
+    private static final String LABEL_CONSTRUCTION_NAME =  "constructionName";
+    private static final String LABEL_CONSTRUCTION_POS =  "constructionPos";
+
     private static final int RED       = Color.getByName("red", 0);
     private static final int DARKGREEN = Color.getByName("darkgreen", 0);
     private static final int BLACK     = Color.getByName("black", 0);
@@ -79,7 +83,9 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
                 }
                 else
                 {
-                    amountToSet = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), resource.getItem(), resource.getDamageValue());
+                    amountToSet =
+                            InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory),
+                                    stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(resource.getItemStack()));
                 }
                 resource.setPlayerAmount(amountToSet);
             }
@@ -113,6 +119,10 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
 
         //Make sure we have a fresh view
         MineColonies.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.building));
+
+        findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Label.class).setLabelText(building.getConstructionName());
+        findPaneOfTypeByID(LABEL_CONSTRUCTION_POS, Label.class).setLabelText(building.getConstructionPos());
+
     }
 
     /**
@@ -178,7 +188,9 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         rowPane.findPaneOfTypeByID(RESOURCE_ID, Label.class).setLabelText(Integer.toString(index));
         rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount() - resource.getAvailable()));
 
-        rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(new ItemStack(resource.getItem(), 1, resource.getDamageValue()));
+        final ItemStack stack = new ItemStack(resource.getItem(), 1, resource.getDamageValue());
+        stack.setTagCompound(resource.getItemStack().getTagCompound());
+        rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(stack);
     }
 
     /**
@@ -227,6 +239,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
             // and use quantity for the size
             @NotNull final ItemStack itemStack = new ItemStack(res.getItem(), 1, res.getDamageValue());
+            itemStack.setTagCompound(res.getItemStack().getTagCompound());
             final Label quantityLabel = pane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class);
             final int quantity = Integer.parseInt(quantityLabel.getLabelText());
             MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, itemStack, quantity, true));

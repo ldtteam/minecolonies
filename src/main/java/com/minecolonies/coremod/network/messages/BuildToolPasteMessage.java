@@ -12,6 +12,8 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.util.StructureWrapper;
@@ -177,8 +179,20 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             {
                 handleHut(CompatibilityUtils.getWorld(player), player, sn, message.rotation, message.pos, message.mirror);
             }
+
+
             StructureWrapper.loadAndPlaceStructureWithRotation(player.world, message.structureName,
               message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete);
+
+            if (message.isHut)
+            {
+                @Nullable final AbstractBuilding building = ColonyManager.getBuilding(CompatibilityUtils.getWorld(player), message.pos);
+                if (building != null)
+                {
+                    final WorkOrderBuild workOrder = new WorkOrderBuild(building, 1);
+                    ConstructionTapeHelper.removeConstructionTape(workOrder, CompatibilityUtils.getWorld(player));
+                }
+            }
         }
         else if(message.freeMode !=  null )
         {
@@ -254,7 +268,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
         if (tempColony != null
               && !tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
-              && BlockPosUtil.getDistance2D(tempColony.getCenter(), buildPos) >= Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)
+              && !ColonyManager.isTooCloseToColony(world, buildPos))
         {
             return;
         }

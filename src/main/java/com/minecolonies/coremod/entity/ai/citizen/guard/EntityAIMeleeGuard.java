@@ -43,7 +43,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     /**
      * Experience to add when a mob is killed
      */
-    private static final int EXP_PER_MOD_DEATH = 5;
+    private static final int EXP_PER_MOB_DEATH = 5;
 
     /**
      * Random is multiplied by this to get a random arrow sound.
@@ -148,7 +148,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         if (targetEntity != null && (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD)))
         {
             targetEntity = null;
-            worker.addExperience(EXP_PER_MOD_DEATH);
+            worker.addExperience(EXP_PER_MOB_DEATH);
             worker.setAIMoveSpeed((float) 1.0D);
             return GUARD_GATHERING;
         }

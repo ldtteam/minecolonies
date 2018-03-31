@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import static com.minecolonies.api.util.constant.Constants.MAX_SCHEMATIC_SIZE;
 import static com.minecolonies.api.util.constant.Suppression.RESOURCES_SHOULD_BE_CLOSED;
 
 /**
@@ -48,6 +49,11 @@ import static com.minecolonies.api.util.constant.Suppression.RESOURCES_SHOULD_BE
  */
 public class Structure
 {
+    /**
+     * Max amount of entities to render.
+     */
+    private static final int MAX_ENTITIES_TO_RENDER = 10;
+
     /**
      * Rotation by 90°.
      */

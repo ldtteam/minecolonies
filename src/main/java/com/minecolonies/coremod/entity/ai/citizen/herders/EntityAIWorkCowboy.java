@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.herders;
 
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.colony.buildings.BuildingCowboy;
 import com.minecolonies.coremod.colony.jobs.JobCowboy;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -66,7 +67,9 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
 
         final boolean hasBucket = InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), Items.BUCKET, 0);
 
-        if (result.equals(START_WORKING) && hasBucket)
+        final BuildingCowboy building = (BuildingCowboy) worker.getWorkBuilding();
+
+        if (building != null && building.isMilkCows() && result.equals(START_WORKING) && hasBucket)
         {
             return COWBOY_MILK;
         }
@@ -121,7 +124,8 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
                 InventoryUtils.removeStackFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(Items.BUCKET, 1));
             }
 
-            incrementActionsDone();
+            incrementActionsDoneAndDecSaturation();
+            worker.addExperience(1.0);
         }
 
         return HERDER_DECIDE;

@@ -110,6 +110,7 @@ configFile.withReader {
 dependencies {
     deobfCompile "slimeknights.mantle:Mantle:1.12-${config.mantle_version}"
     deobfCompile "slimeknights:TConstruct:1.12-${config.tinker_version}"
+    compile "mod.chiselsandbits:chiselsandbits:${config.c_b_version}"
 
     structuresCompile sourceSets.api.output
     //blockOutCompile sourceSets.api.output
@@ -127,6 +128,8 @@ dependencies {
     testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.6.5'
     testCompile group: 'org.powermock', name: 'powermock-api-mockito', version: '1.6.5'
     testCompile group: 'org.powermock', name: 'powermock-module-junit4-rule-agent', version: '1.6.5'
+
+    testCompile 'org.assertj:assertj-core:3.9.0'
 
     testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
 

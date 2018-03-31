@@ -10,7 +10,8 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
@@ -20,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -132,7 +134,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
         for (final BuildingBuilderResource stack : neededResources.values())
         {
-            toKeep.put(stack.getItemStack()::isItemEqual, stack.getAmount());
+            toKeep.put(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), stack.getAmount());
         }
 
         return toKeep;
@@ -186,7 +188,8 @@ public class BuildingBuilder extends AbstractBuildingWorker
             final NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);
             final ItemStack stack = new ItemStack(neededRes);
             final BuildingBuilderResource resource = new BuildingBuilderResource(stack, ItemStackUtils.getSize(stack));
-            neededResources.put(stack.getUnlocalizedName(), resource);
+            final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
+            neededResources.put(stack.getUnlocalizedName() + ":" + stack.getItemDamage() + "-" + hashCode, resource);
         }
     }
 
@@ -199,6 +202,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             @NotNull final NBTTagCompound neededRes = new NBTTagCompound();
             final ItemStack itemStack = new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
+            itemStack.setTagCompound(resource.getItemStack().getTagCompound());
             itemStack.writeToNBT(neededRes);
 
             neededResTagList.appendTag(neededRes);
@@ -230,12 +234,50 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
         updateAvailableResources();
         buf.writeInt(neededResources.size());
-        for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
+        for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
-            final BuildingBuilderResource resource = neededResources.get(entry.getKey());
             ByteBufUtils.writeItemStack(buf, resource.getItemStack());
             buf.writeInt(resource.getAvailable());
             buf.writeInt(resource.getAmount());
+        }
+
+        final CitizenData data = this.getMainWorker();
+        if(data != null && data.getJob() instanceof JobBuilder)
+        {
+            final JobBuilder builderJob = (JobBuilder) data.getJob();
+            final WorkOrderBuildDecoration workOrderBuildDecoration = builderJob.getWorkOrder();
+            if(workOrderBuildDecoration != null)
+            {
+                final BlockPos pos = workOrderBuildDecoration.getBuildingLocation();
+                final String name =
+                        workOrderBuildDecoration instanceof WorkOrderBuild ? ((WorkOrderBuild) workOrderBuildDecoration).getUpgradeName() : workOrderBuildDecoration.getName();
+                ByteBufUtils.writeUTF8String(buf, name);
+
+                final String desc;
+                if(pos.equals(getLocation()))
+                {
+                    desc = "here";
+                }
+                else
+                {
+                    final BlockPos relativePos = getLocation().subtract(pos);
+                    final EnumFacing facingX = EnumFacing.getFacingFromVector(relativePos.getX(), 0, 0);
+                    final EnumFacing facingZ = EnumFacing.getFacingFromVector(0, 0, relativePos.getZ());
+                    desc = relativePos.getX() + " " + facingX + " " + relativePos.getZ() + " " + facingZ;
+                }
+
+                ByteBufUtils.writeUTF8String(buf, desc);
+            }
+            else
+            {
+                ByteBufUtils.writeUTF8String(buf, "-");
+                ByteBufUtils.writeUTF8String(buf, "");
+            }
+        }
+        else
+        {
+            ByteBufUtils.writeUTF8String(buf, "-");
+            ByteBufUtils.writeUTF8String(buf, "");
         }
     }
 
@@ -261,13 +303,16 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
                 if (builderInventory != null)
                 {
-                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory), resource.getItem(), resource.getDamageValue()));
+
+                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory),
+                            stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 
                 final TileEntity chestInventory = this.getTileEntity();
                 if (chestInventory != null)
                 {
-                    resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory, resource.getItem(), resource.getDamageValue()));
+                    resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory,
+                            stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 
                 //Count in the additional chests as well
@@ -278,7 +323,8 @@ public class BuildingBuilder extends AbstractBuildingWorker
                         final TileEntity entity = CompatibilityUtils.getWorld(builder).getTileEntity(pos);
                         if (entity instanceof TileEntityChest)
                         {
-                            resource.addAvailable(InventoryUtils.getItemCountInProvider(entity, resource.getItem(), resource.getDamageValue()));
+                            resource.addAvailable(InventoryUtils.getItemCountInProvider(entity,
+                                    stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                         }
                     }
                 }
@@ -308,7 +354,8 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             return;
         }
-        BuildingBuilderResource resource = this.neededResources.get(res.getUnlocalizedName());
+        final int hashCode = res.hasTagCompound() ? res.getTagCompound().hashCode() : 0;
+        BuildingBuilderResource resource = this.neededResources.get(res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + hashCode);
         if (resource == null)
         {
             resource = new BuildingBuilderResource(res, amount);
@@ -317,7 +364,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             resource.setAmount(resource.getAmount() + amount);
         }
-        this.neededResources.put(res.getUnlocalizedName(), resource);
+        this.neededResources.put(res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + hashCode, resource);
         this.markDirty();
     }
 
@@ -329,19 +376,21 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     public void reduceNeededResource(final ItemStack res, final int amount)
     {
+        final int hashCode = res.hasTagCompound() ? res.getTagCompound().hashCode() : 0;
         int preAmount = 0;
-        if (this.neededResources.containsKey(res.getUnlocalizedName()))
+        final String name = res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + hashCode;
+        if (this.neededResources.containsKey(name))
         {
-            preAmount = this.neededResources.get(res.getUnlocalizedName()).getAmount();
+            preAmount = this.neededResources.get(name).getAmount();
         }
 
         if (preAmount - amount <= 0)
         {
-            this.neededResources.remove(res.getUnlocalizedName());
+            this.neededResources.remove(name);
         }
         else
         {
-            this.neededResources.get(res.getUnlocalizedName()).setAmount(preAmount - amount);
+            this.neededResources.get(name).setAmount(preAmount - amount);
         }
         this.markDirty();
     }
@@ -363,6 +412,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     public boolean requiresResourceForBuilding(final ItemStack stack)
     {
-        return neededResources.containsKey(stack.getUnlocalizedName());
+        final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
+        return neededResources.containsKey(stack.getUnlocalizedName() + ":" + stack.getItemDamage() + "-" + hashCode);
     }
 }

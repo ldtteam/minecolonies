@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
@@ -129,7 +130,9 @@ public class ItemStorage
     @Override
     public int hashCode()
     {
-        return 31 * getItem().hashCode() + getDamageValue();
+        return Objects.hash(stack.getItem())
+                + (shouldIgnoreDamageValue ? 0 : (stack.getItemDamage() * 31))
+                + ((stack.getTagCompound() == null) ? 0 : stack.getTagCompound().hashCode());
     }
 
     @Override
@@ -147,7 +150,9 @@ public class ItemStorage
         final ItemStorage that = (ItemStorage) o;
 
 
-        return getItem().equals(that.getItem()) && (this.shouldIgnoreDamageValue || that.getDamageValue() == this.getDamageValue());
+        return stack.isItemEqual(that.getItemStack())
+                && (this.shouldIgnoreDamageValue || that.getDamageValue() == this.getDamageValue())
+                &&  that.getItemStack().getTagCompound() == this.getItemStack().getTagCompound();
     }
 
     /**

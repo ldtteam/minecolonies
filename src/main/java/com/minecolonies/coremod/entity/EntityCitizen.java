@@ -73,28 +73,16 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
-import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
-import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_NOT_ALLOWED;
-import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_SAME;
+import static com.minecolonies.api.util.constant.Suppression.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * The Class used to represent the citizen entities.
  */
 public class EntityCitizen extends EntityAgeable implements INpc
 {
-    private static final float CONST_BED_HEIGHT             = 0.6875f;
-    private static final float CONST_HALF_BLOCK             = 0.5f;
-    private static final float CONST_SLEEPING_RENDER_OFFSET = -1.5f;
-
-    private static final int NINETY_DEGREE  = 90;
-    private static final int HALF_ROTATION  = 180;
-    private static final int THREE_QUARTERS = 270;
-
-    private static final int SPAWN_SEARCH_SIZE = 2;
-    private static final int PLAYER_HEIGHT     = 2;
-
     private static final DataParameter<Integer>  DATA_TEXTURE         = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
     private static final DataParameter<Integer>  DATA_LEVEL           = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
     private static final DataParameter<Integer>  DATA_IS_FEMALE       = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
@@ -105,39 +93,99 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private static final DataParameter<Boolean>  DATA_IS_ASLEEP       = EntityDataManager.createKey(EntityCitizen.class, DataSerializers.BOOLEAN);
     private static final DataParameter<BlockPos> DATA_BED_POS         = EntityDataManager.createKey(EntityCitizen.class, DataSerializers.BLOCK_POS);
 
+    /**
+     * The navigator field of the citizen.
+     */
     private static Field navigatorField;
+
+    /**
+     * The Status message of the citizen. (What he is up to currently).
+     */
     @NotNull
     private final Map<String, Integer> statusMessages = new HashMap<>();
+
+    /**
+     * The New PathNavigate navigator.
+     */
     private final PathNavigate newNavigator;
+
     /**
      * The 4 lines of the latest status.
      */
-    private final ITextComponent[]         latestStatus = new ITextComponent[MAX_LINES_OF_LATEST_LOG];
-    protected     Status                   status       = Status.IDLE;
+    private final ITextComponent[] latestStatus = new ITextComponent[MAX_LINES_OF_LATEST_LOG];
+
+    /**
+     * The Current Status.
+     */
+    protected Status status = Status.IDLE;
+
     /**
      * The last job of the citizen.
      */
-    private       String                   lastJob      = "";
-    private       RenderBipedCitizen.Model modelId      = RenderBipedCitizen.Model.SETTLER;
-    private String           renderMetadata;
-    private ResourceLocation texture;
-    private int              colonyId;
-    private int citizenId = 0;
-    private int          level;
-    private int          textureId;
+    private String lastJob = "";
+
     /**
-     * Walk to proxy.
+     * The default model.
+     */
+    private RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
+
+    /**
+     * Additional render data.
+     */
+    private String renderMetadata;
+
+    /**
+     * The texture.
+     */
+    private ResourceLocation texture;
+
+    /**
+     * It's colony id.
+     */
+    private int colonyId;
+
+    /**
+     * It's citizen Id.
+     */
+    private int citizenId = 0;
+
+    /**
+     * The current level.
+     */
+    private int level;
+
+    /**
+     * The texture id.
+     */
+    private int textureId;
+
+    /**
+     * The Walk to proxy (Shortest path through intermediate blocks).
      */
     private IWalkToProxy proxy;
+
     /**
      * Skill modifier defines how fast a citizen levels in a certain skill.
      */
     private double skillModifier = 0;
-    private boolean     female;
+
+    /**
+     * The gender, true if female.
+     */
+    private boolean female;
+
+    /**
+     * The colony reference.
+     */
     @Nullable
-    private Colony      colony;
+    private Colony colony;
+
+    /**
+     * Reference to the data representation inside the colony.
+     */
     @Nullable
     private CitizenData citizenData;
+
     /**
      * The entities current Position.
      */
@@ -158,6 +206,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private boolean triedMovingAway = false;
 
+    /**
+     * Backup of the citizen.
+     */
     private NBTTagCompound dataBackup = null;
 
     /**
@@ -183,6 +234,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
         initTasks();
     }
 
+    /**
+     * Method used to update the navigator field.
+     * Gets the minecraft path navigate through reflection.
+     */
     private synchronized void updateNavigatorField()
     {
         if (navigatorField == null)
@@ -234,14 +289,18 @@ public class EntityCitizen extends EntityAgeable implements INpc
         this.tasks.addTask(++priority, new EntityAISleep(this));
         this.tasks.addTask(++priority, new EntityAIOpenDoor(this, true));
         this.tasks.addTask(priority, new EntityAIOpenFenceGate(this, true));
-        this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
-        this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, EntityCitizen.class, 5.0F, 0.02F));
-        this.tasks.addTask(++priority, new EntityAICitizenWander(this, 0.6D));
-        this.tasks.addTask(++priority, new EntityAIWatchClosest(this, EntityLiving.class, 6.0F));
+        this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, EntityPlayer.class, WATCH_CLOSEST2, 1.0F));
+        this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
+        this.tasks.addTask(++priority, new EntityAICitizenWander(this, DEFAULT_SPEED));
+        this.tasks.addTask(++priority, new EntityAIWatchClosest(this, EntityLiving.class, WATCH_CLOSEST));
 
         onJobChanged(getColonyJob());
     }
 
+    /**
+     * Gets the job of the entity.
+     * @return the job or els enull.
+     */
     @Nullable
     public AbstractJob getColonyJob()
     {
@@ -635,7 +694,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
 
         //Spawn particle explosion of xp orbs on death
-        for (int i = 0; i < 20; ++i)
+        for (int i = 0; i < XP_PARTICLE_EXPLOSION_SIZE; ++i)
         {
             final double d2 = this.rand.nextGaussian() * 0.02D;
             final double d0 = this.rand.nextGaussian() * 0.02D;
@@ -904,6 +963,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
             if (citizenData.getSaturation() < HIGH_SATURATION)
             {
                 tryToEat();
+            }
+
+            if((distanceWalkedModified + 1.0) % ACTIONS_EACH_BLOCKS_WALKED == 0)
+            {
+                decreaseSaturationForAction();
             }
         }
 
@@ -1504,9 +1568,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return;
         }
 
-        this.setPosition((double) ((float) bedLocation.getX() + CONST_HALF_BLOCK),
-          (double) ((float) bedLocation.getY() + CONST_BED_HEIGHT),
-          (double) ((float) bedLocation.getZ() + CONST_HALF_BLOCK));
+        this.setPosition((double) ((float) bedLocation.getX() + HALF_BLOCK),
+          (double) ((float) bedLocation.getY() + BED_HEIGHT),
+          (double) ((float) bedLocation.getZ() + HALF_BLOCK));
 
         this.motionX = 0.0D;
         this.motionY = 0.0D;
@@ -1538,7 +1602,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return 0;
         }
 
-        return CONST_SLEEPING_RENDER_OFFSET * (float) enumfacing.getFrontOffsetX();
+        return SLEEPING_RENDER_OFFSET * (float) enumfacing.getFrontOffsetX();
     }
 
     public float getRenderOffsetZ()
@@ -1557,7 +1621,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return 0;
         }
 
-        return CONST_SLEEPING_RENDER_OFFSET * (float) enumfacing.getFrontOffsetZ();
+        return SLEEPING_RENDER_OFFSET * (float) enumfacing.getFrontOffsetZ();
     }
 
     /**
@@ -1655,7 +1719,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return getColony().getBuildingManager().getTownHall().getLocation();
         }
 
-        return null;
+        return super.getHomePosition();
     }
 
     @Nullable
@@ -1687,9 +1751,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             if (isDay && citizenData != null)
             {
                 isDay = false;
-                final AbstractBuildingWorker buildingWorker = getWorkBuilding();
-                final double decreaseBy = buildingWorker == null || buildingWorker.getBuildingLevel() == 0 ? 0.1
-                                            : (SATURATION_DECREASE_FACTOR * Math.pow(2, buildingWorker.getBuildingLevel() - 1.0));
+                final double decreaseBy = getPerBuildingFoodCost();
                 citizenData.decreaseSaturation(decreaseBy);
                 citizenData.markDirty();
             }
@@ -1748,7 +1810,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public EnumActionResult applyPlayerInteraction(final EntityPlayer player, final Vec3d vec, final EnumHand hand)
     {
-        SoundUtils.playInteractionSoundAtCitizenWithChance(CompatibilityUtils.getWorld(this), this.getPosition(), 100, this);
+        SoundUtils.playInteractionSoundAtCitizenWithChance(CompatibilityUtils.getWorld(this), this.getPosition(), ONE_HUNDRED_PERCENT, this);
         return super.applyPlayerInteraction(player, vec, hand);
     }
 
@@ -1850,8 +1912,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
                   this.getPosition(),
                   SoundEvents.ENTITY_ITEM_PICKUP,
                   SoundCategory.AMBIENT,
-                  0.2F,
-                  (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
+                        (float) DEFAULT_VOLUME,
+                  (float) ((this.rand.nextGaussian() * DEFAULT_PITCH_MULTIPLIER + 1.0D) * 2.0D));
                 this.onItemPickup(entityItem, ItemStackUtils.getSize(itemStack) - resultingStackSize);
 
                 final ItemStack overrulingStack = itemStack.copy();
@@ -1966,8 +2028,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
               block.getSoundType(blockState, CompatibilityUtils.getWorld(this), blockPos, this).getPitch());
         }
     }
-
-    //todo resolve problem if citizen don't get to replentish at home.
 
     /**
      * Damage the current held item.
@@ -2112,7 +2172,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (spawn != null && !spawn.equals(BlockPos.ORIGIN))
         {
-            setPosition(spawn.getX(), spawn.getY(), spawn.getZ());
+            setPosition(spawn.getX() + Constants.HALF_BLOCK, spawn.getY() + Constants.HALF_BLOCK, spawn.getZ() + Constants.HALF_BLOCK);
         }
 
         setIsAsleep(false);
@@ -2156,13 +2216,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 case SOUTH:
                     return NINETY_DEGREE;
                 case WEST:
-                    return 0.0f;
+                    return 0.0F;
                 case NORTH:
                     return THREE_QUARTERS;
                 case EAST:
                     return HALF_ROTATION;
                 default:
-                    return 0f;
+                    return 0F;
             }
         }
 
@@ -2189,6 +2249,25 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public IWalkToProxy getProxy()
     {
         return proxy;
+    }
+
+    public void decreaseSaturationForAction()
+    {
+        if (citizenData != null)
+        {
+            citizenData.decreaseSaturation(getPerBuildingFoodCost());
+            citizenData.markDirty();
+        }
+    }
+
+    /**
+     * Get the amount the worker should decrease its saturation by each action done or x blocks traveled.
+     * @return the double describing it.
+     */
+    private double getPerBuildingFoodCost()
+    {
+        return getWorkBuilding() == null || getWorkBuilding().getBuildingLevel() == 0 ? 1
+                : (SATURATION_DECREASE_FACTOR * Math.pow(2, getWorkBuilding().getBuildingLevel() - 1.0));
     }
 
     /**

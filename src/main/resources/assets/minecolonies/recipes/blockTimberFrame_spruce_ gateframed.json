@@ -2,13 +2,11 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecolonies:blocktimberframe_spruce",
-      "data": 3
+      "item": "minecolonies:blocktimberframe_spruce_sideframed"
     }
   ],
   "result": {
-    "item": "minecolonies:blocktimberframe_spruce",
-    "data": 4,
+    "item": "minecolonies:blocktimberframe_spruce_gateframed",
     "count": 1
   }
 }
