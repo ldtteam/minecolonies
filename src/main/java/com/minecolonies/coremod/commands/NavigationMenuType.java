@@ -50,6 +50,7 @@ public enum NavigationMenuType implements IMenuType
             NavigationMenuType.DELETE,
             NavigationMenuType.COLONY,
             NavigationMenuType.CITIZENS,
+            NavigationMenuType.REQUEST_SYSTEM,
             ActionMenuType.RANDOM_TELEPORT,
             ActionMenuType.BACKUP,
             ActionMenuType.HOME_TELEPORT,
