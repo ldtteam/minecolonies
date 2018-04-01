@@ -84,7 +84,7 @@ public enum ActionArgumentType
         return colonyIdList;
     }
 
-    private List<String> getCitizenNames(Colony colonyToUse)
+    private List<String> getCitizenNames(@Nullable final Colony colonyToUse)
     {
         final List<Colony> colonyList;
         if (null != colonyToUse)
