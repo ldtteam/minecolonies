@@ -511,7 +511,7 @@ public class CommandEntryPointNew extends CommandBase
             final Object parsedObject = actionArgumentType.parse(server, sender, pos, parsedHolders, potentialArgumentValue);
             if (null == parsedObject)
             {
-                final List<String> tabCompletions = actionArgumentType.getTabCompletions(server, pos, potentialArgumentValue);
+                final List<String> tabCompletions = actionArgumentType.getTabCompletions(server, pos, actionMenuTreeNode, potentialArgumentValue);
                 return new ParsingResult(tabCompletions, actionMenuTreeNode, parsedActionArgumentList, potentialArgumentValue);
             }
             else

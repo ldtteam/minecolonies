@@ -84,9 +84,17 @@ public enum ActionArgumentType
         return colonyIdList;
     }
 
-    private List<String> getCitizenNames()
+    private List<String> getCitizenNames(Colony colonyToUse)
     {
-        final List<Colony> colonyList = ColonyManager.getColonies();
+        final List<Colony> colonyList;
+        if (null != colonyToUse)
+        {
+            colonyList = Collections.singletonList(colonyToUse);
+        }
+        else
+        {
+            colonyList = ColonyManager.getColonies();
+        }
         final List<String> citizenNameList = new ArrayList<>();
         for (final Colony colony : colonyList)
         {
@@ -99,9 +107,17 @@ public enum ActionArgumentType
         return citizenNameList;
     }
 
-    private List<String> getCitizenIds()
+    private List<String> getCitizenIds(@Nullable final Colony colonyToUse)
     {
-        final List<Colony> colonyList = ColonyManager.getColonies();
+        final List<Colony> colonyList;
+        if (null != colonyToUse)
+        {
+            colonyList = Collections.singletonList(colonyToUse);
+        }
+        else
+        {
+            colonyList = ColonyManager.getColonies();
+        }
         final List<String> citizenNameList = new ArrayList<>();
         for (final Colony colony : colonyList)
         {
@@ -116,7 +132,7 @@ public enum ActionArgumentType
 
     public List<String> getTabCompletions(@NotNull final MinecraftServer server,
             @Nullable final BlockPos pos,
-            final String potentialArgumentValue)
+            @NotNull final TreeNode<IMenu> actionMenuTreeNode, final String potentialArgumentValue)
     {
         switch (this)
         {
@@ -135,7 +151,7 @@ public enum ActionArgumentType
             case COLONY:
                 return getColonyTabCompletions(potentialArgumentValue);
             case CITIZEN:
-                return getCitizenTabCompletions(potentialArgumentValue);
+                return getCitizenTabCompletions(actionMenuTreeNode, potentialArgumentValue);
             default:
                 throw new IllegalStateException("Unimplemented ActionArgumentType tab completion");
         }
@@ -185,11 +201,32 @@ public enum ActionArgumentType
         }
     }
 
-    private List<String> getCitizenTabCompletions(final String potentialArgumentValue)
+    private List<String> getCitizenTabCompletions(@NotNull final TreeNode<IMenu> actionMenuTreeNode, final String potentialArgumentValue)
     {
         // TODO: see if we can figure out what citizen we are looking at as the default tab completion.
-        final List<String> citizenNameStrings = getCitizenNames();
-        final List<String> citizenNumberStrings = getCitizenIds();
+        final IMenu menu = actionMenuTreeNode.getData();
+        @Nullable Colony colony = null;
+        if (!menu.getMenuType().isNavigationMenu())
+        {
+            final ActionMenu actionMenu = (ActionMenu)menu;
+            // Try to find a valid colony value.
+            // TODO: doesn't check subarguments but should only check arguments for parents of this argument.
+            // TODO: Also no guarantee that we've grabbed the right colony argument if the command has more than one.
+            for (final ActionArgument actionArgument : actionMenu.getActionArgumentList())
+            {
+                if (ActionArgumentType.COLONY == actionArgument.getType())
+                {
+                    colony = (Colony) actionArgument.getValue();
+                    if (null != colony)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
+        final List<String> citizenNameStrings = getCitizenNames(colony);
+        final List<String> citizenNumberStrings = getCitizenIds(colony);
         final String[] potentiaCitizenNameParts = potentialArgumentValue.split(" ", -1);
         final int currentWordIndex = potentiaCitizenNameParts.length - 1;
         if (potentialArgumentValue.isEmpty())

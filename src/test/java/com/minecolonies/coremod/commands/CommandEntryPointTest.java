@@ -101,6 +101,17 @@ public class CommandEntryPointTest
         citizenDataList1.add(citizenJennaQBar);
         when(citizenManager1.getCitizen(103)).thenReturn(citizenJennaQBar);
 
+        final List<CitizenData> citizenDataList2 = new ArrayList<>();
+        when(citizenManager2.getCitizens()).thenReturn(citizenDataList2);
+
+
+        final CitizenData citizenRandomStranger = mock(CitizenData.class);
+        when(citizenRandomStranger.getId()).thenReturn(201);
+        when(citizenRandomStranger.getName()).thenReturn("Random A. Stranger");
+
+        citizenDataList2.add(citizenRandomStranger);
+        when(citizenManager2.getCitizen(201)).thenReturn(citizenRandomStranger);
+
         PowerMockito.mockStatic(ColonyManager.class);
         BDDMockito.given(ColonyManager.getColonies()).willReturn(colonyList);
         BDDMockito.given(ColonyManager.getColony(1)).willReturn(colony1);
@@ -540,6 +551,24 @@ public class CommandEntryPointTest
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("101", "102", "103", "104", "John", "Jenna");
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_citizens_info_colony_2_citizen_space__DO_getTabCompletions__EXPECT_201_Random()
+    {
+
+        // GIVEN:
+        final String[] args = new String[] {
+                "Citizens", "info", "colony:", "2", "citizen:", ""
+        };
+
+        // DO:
+
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+
+        // EXPECT:
+        assertThat(results).containsExactlyInAnyOrder("201", "Random");
     }
 
     @Test
