@@ -38,7 +38,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
 {
 
     public static final  String DESC                                           = "delete";
-    private static final String DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED = "/mc colony delete %d %s true";
+    private static final String DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED = "/mc colony delete colony: %d canDestroy: %s confirmDelete: true";
 
     /**
      * no-args constructor called by new CommandEntryPoint executer.
@@ -75,7 +75,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
     {
         final Colony colony = actionMenu.getColonyForArgument("colony");
-        final boolean canDestroy = actionMenu.getBooleanValueForArgument("canDestroy", false);
+        final boolean canDestroy = actionMenu.getBooleanValueForArgument("canDestroy", true);
         final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
 
         if (colony == null)
