@@ -70,14 +70,14 @@ public enum ActionArgumentType
     }
 
     @NotNull
-    private List<String> getOnlinePlayerNames(@NotNull final MinecraftServer server)
+    private static List<String> getOnlinePlayerNames(@NotNull final MinecraftServer server)
     {
         final String[] onlinePlayerNames = server.getOnlinePlayerNames();
         return Arrays.asList(onlinePlayerNames);
     }
 
     @NotNull
-    private List<String> getAllPlayerNames(@NotNull final MinecraftServer server)
+    private static List<String> getAllPlayerNames(@NotNull final MinecraftServer server)
     {
         final PlayerList playerList = server.getPlayerList();
         final List<EntityPlayerMP> allPlayersList = playerList.getPlayers();
@@ -94,7 +94,7 @@ public enum ActionArgumentType
     }
 
     @NotNull
-    private List<String> getColonyIdStrings()
+    private static List<String> getColonyIdStrings()
     {
         final List<Colony> colonyList = ColonyManager.getColonies();
         final List<String> colonyIdList = new ArrayList<>(colonyList.size());
