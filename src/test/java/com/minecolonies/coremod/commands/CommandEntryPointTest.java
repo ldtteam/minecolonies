@@ -129,6 +129,12 @@ public class CommandEntryPointTest
         when(serverPlayerList.getPlayerByUsername("Bob")).thenReturn(playerBob);
         when(serverPlayerList.getPlayerByUsername("Sally")).thenReturn(playerSally);
 
+        final List<EntityPlayerMP> allEntityPlayerMPList = new ArrayList<>();
+        allEntityPlayerMPList.add(playerBob);
+        allEntityPlayerMPList.add(playerSally);
+
+        when(serverPlayerList.getPlayers()).thenReturn(allEntityPlayerMPList);
+
         server = mock(MinecraftServer.class);
         when(server.getOnlinePlayerNames()).thenReturn(new String[] {"Bob", "Sally"});
         when(server.getPlayerList()).thenReturn(serverPlayerList);
@@ -162,7 +168,7 @@ public class CommandEntryPointTest
         final List<String> results = instance.getTabCompletions(server, sender, args, pos);
 
         // EXPECT:
-        assertThat(results).containsExactlyInAnyOrder("colonies", "colony", "citizens", "kill", "check", "whoami", "whereami", "home", "raid-tonight", "raid-now", "rtp", "backup",
+        assertThat(results).containsExactlyInAnyOrder("colonies", "colony", "citizens", "kill", "check", "whoami", "whereami", "home", "raid-tonight", "raid-now", "rs", "rtp", "backup",
                 "scan");
     }
 
@@ -339,7 +345,7 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
                 assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("player", "x1", "x2", "y1", "y2", "z1", "z2", "name");
 
-                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.PLAYER, ActionArgumentType.COORDINATE_X, ActionArgumentType.COORDINATE_Y, ActionArgumentType.COORDINATE_Z, ActionArgumentType.STRING);
+                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.ONLINE_PLAYER, ActionArgumentType.COORDINATE_X, ActionArgumentType.COORDINATE_Y, ActionArgumentType.COORDINATE_Z, ActionArgumentType.STRING);
                 assertThat(actionMenu.getIntegerForArgument("x1")).isEqualTo(1);
                 assertThat(actionMenu.getIntegerForArgument("x2")).isEqualTo(2);
                 assertThat(actionMenu.getIntegerForArgument("y1")).isEqualTo(3);
@@ -984,7 +990,7 @@ public class CommandEntryPointTest
         }
         catch (final CommandException e)
         {
-            assertThat(e).hasMessage("/mineColonies <colonies|kill|colony|citizens|rtp|backup|home|raid-tonight|raid-now|check|whoami|whereami|scan>");
+            assertThat(e).hasMessage("/mineColonies <colonies|kill|colony|citizens|rs|rtp|backup|home|raid-tonight|raid-now|check|whoami|whereami|scan>");
         }
     }
 
