@@ -84,7 +84,7 @@ public enum ActionArgumentType
         return colonyIdList;
     }
 
-    private List<String> getCitizenNames(@Nullable final Colony colonyToUse)
+    private static List<String> getCitizenNames(@Nullable final Colony colonyToUse)
     {
         final List<Colony> colonyList;
         if (null != colonyToUse)
@@ -107,7 +107,7 @@ public enum ActionArgumentType
         return citizenNameList;
     }
 
-    private List<String> getCitizenIds(@Nullable final Colony colonyToUse)
+    private static List<String> getCitizenIds(@Nullable final Colony colonyToUse)
     {
         final List<Colony> colonyList;
         if (null != colonyToUse)
@@ -208,7 +208,7 @@ public enum ActionArgumentType
         @Nullable Colony colony = null;
         if (!menu.getMenuType().isNavigationMenu())
         {
-            final ActionMenu actionMenu = (ActionMenu)menu;
+            final ActionMenu actionMenu = (ActionMenu) menu;
             // Try to find a valid colony value.
             // TODO: doesn't check subarguments but should only check arguments for parents of this argument.
             // TODO: Also no guarantee that we've grabbed the right colony argument if the command has more than one.
