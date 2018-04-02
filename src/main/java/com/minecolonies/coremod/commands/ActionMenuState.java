@@ -18,14 +18,14 @@ import net.minecraft.entity.player.EntityPlayerMP;
 
 public class ActionMenuState
 {
+    @NotNull private final ActionMenu actionMenu;
+    @NotNull private final Map<String, ArgumentState> argumentStateByActionArgumentNameMap = new HashMap<>();
+
     private static class ArgumentState
     {
         private boolean valueIsSet = false;
         @Nullable private Object value;
     }
-
-    @NotNull private final ActionMenu actionMenu;
-    @NotNull private final Map<String, ArgumentState> argumentStateByActionArgumentNameMap = new HashMap<>();
 
     public ActionMenuState(@NotNull final ActionMenu actionMenu)
     {

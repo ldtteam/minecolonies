@@ -42,7 +42,7 @@ public class CommandEntryPointNew extends CommandBase
         @NotNull private final List<String> tabCompletions;
         @NotNull private final TreeNode<IMenu> executionTreeNode;
         @NotNull private final List<ActionArgument> executionActionArgumentList;
-        @Nullable private ActionMenuState actionMenuState;
+        @Nullable private final ActionMenuState actionMenuState;
         @Nullable private final String badArgument;
 
         ParsingResult(@NotNull final List<String> tabCompletions, @NotNull final TreeNode<IMenu> executionTreeNode,
