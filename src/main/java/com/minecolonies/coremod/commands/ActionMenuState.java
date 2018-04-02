@@ -24,7 +24,7 @@ public class ActionMenuState
     private static class ArgumentState
     {
         private boolean valueIsSet = false;
-        @Nullable private Object value;
+        @Nullable private Object value = null;
     }
 
     public ActionMenuState(@NotNull final ActionMenu actionMenu)
@@ -134,6 +134,14 @@ public class ActionMenuState
         return null;
     }
 
+    /*
+     * Suppressing Sonar Rule squid:S2447
+     * This rule complains about returning null for a Boolean method.
+     * But in this case the rule does not apply because
+     * We are returning null to indicate that no boolean argument value was set.
+     */
+    @SuppressWarnings({"squid:S2447"})
+    @Nullable
     public Boolean getBooleanForArgument(@NotNull final String argumentName)
     {
         for (final ActionArgument actionArgument : getAllArgumentsList())
