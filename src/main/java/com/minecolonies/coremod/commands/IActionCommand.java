@@ -16,7 +16,7 @@ public interface IActionCommand
      *
      * @param server the server this is executed on.
      * @param sender this commands executor.
-     * @param ActionMenuState actionMenuState for this execution containing arguments
+     * @param actionMenuState for this execution containing arguments
      * @throws CommandException if something goes wrong (like wrong syntax).
      */
     void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull ActionMenuState actionMenuState) throws CommandException;
