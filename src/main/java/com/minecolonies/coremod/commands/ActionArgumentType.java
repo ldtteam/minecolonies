@@ -44,6 +44,8 @@ public enum ActionArgumentType
     STRING("string", 0)
     ;
 
+    private static final String ABANDONED_FAKE_PLAYER_NAME = "[abandoned]";
+
     public enum Is
     {
         REQUIRED,
@@ -419,9 +421,9 @@ public enum ActionArgumentType
         }
         else
         {
-            if ("[abandoned]".equals(potentialArgumentValue))
+            if (ABANDONED_FAKE_PLAYER_NAME.equals(potentialArgumentValue))
             {
-                return new FakePlayer(server.getWorld(0), new GameProfile(UUID.randomUUID(), "[abandoned]"));
+                return new FakePlayer(server.getWorld(0), new GameProfile(UUID.randomUUID(), ABANDONED_FAKE_PLAYER_NAME));
             }
             return null;
         }
@@ -437,9 +439,9 @@ public enum ActionArgumentType
         }
         else
         {
-            if ("[abandoned]".equals(potentialArgumentValue))
+            if (ABANDONED_FAKE_PLAYER_NAME.equals(potentialArgumentValue))
             {
-                return new FakePlayer(server.getWorld(0), new GameProfile(UUID.randomUUID(), "[abandoned]"));
+                return new FakePlayer(server.getWorld(0), new GameProfile(UUID.randomUUID(), ABANDONED_FAKE_PLAYER_NAME));
             }
             return null;
         }
