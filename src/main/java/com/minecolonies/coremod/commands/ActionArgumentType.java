@@ -155,7 +155,7 @@ public enum ActionArgumentType
     @NotNull
     public List<String> getTabCompletions(@NotNull final MinecraftServer server,
             @Nullable final BlockPos pos,
-            @NotNull final TreeNode<IMenu> actionMenuTreeNode, final String potentialArgumentValue)
+            @NotNull final ActionMenuState actionMenuState, final String potentialArgumentValue)
     {
         switch (this)
         {
@@ -177,7 +177,7 @@ public enum ActionArgumentType
             case COLONY:
                 return getColonyTabCompletions(potentialArgumentValue);
             case CITIZEN:
-                return getCitizenTabCompletions(actionMenuTreeNode, potentialArgumentValue);
+                return getCitizenTabCompletions(actionMenuState, potentialArgumentValue);
             default:
                 throw new IllegalStateException("Unimplemented ActionArgumentType tab completion");
         }
@@ -230,26 +230,22 @@ public enum ActionArgumentType
     }
 
     @NotNull
-    private List<String> getCitizenTabCompletions(@NotNull final TreeNode<IMenu> actionMenuTreeNode, final String potentialArgumentValue)
+    private List<String> getCitizenTabCompletions(@NotNull final ActionMenuState actionMenuState, final String potentialArgumentValue)
     {
         // TODO: see if we can figure out what citizen we are looking at as the default tab completion.
-        final IMenu menu = actionMenuTreeNode.getData();
         @Nullable Colony colony = null;
-        if (!menu.getMenuType().isNavigationMenu())
+        // Try to find a valid colony value.
+        // TODO: doesn't check subarguments but should only check arguments for parents of this argument.
+        // TODO: Also no guarantee that we've grabbed the right colony argument if the command has more than one.
+        final ActionMenu actionMenu = actionMenuState.getActionMenu();
+        for (final ActionArgument actionArgument : actionMenu.getActionArgumentList())
         {
-            final ActionMenu actionMenu = (ActionMenu) menu;
-            // Try to find a valid colony value.
-            // TODO: doesn't check subarguments but should only check arguments for parents of this argument.
-            // TODO: Also no guarantee that we've grabbed the right colony argument if the command has more than one.
-            for (final ActionArgument actionArgument : actionMenu.getActionArgumentList())
+            if (ActionArgumentType.COLONY == actionArgument.getType())
             {
-                if (ActionArgumentType.COLONY == actionArgument.getType())
+                colony = (Colony) actionMenuState.getValue(actionArgument);
+                if (null != colony)
                 {
-                    colony = (Colony) actionArgument.getValue();
-                    if (null != colony)
-                    {
-                        break;
-                    }
+                    break;
                 }
             }
         }

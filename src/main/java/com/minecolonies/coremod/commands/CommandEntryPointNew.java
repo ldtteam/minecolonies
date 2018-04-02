@@ -42,16 +42,19 @@ public class CommandEntryPointNew extends CommandBase
         @NotNull private final List<String> tabCompletions;
         @NotNull private final TreeNode<IMenu> executionTreeNode;
         @NotNull private final List<ActionArgument> executionActionArgumentList;
+        @Nullable private ActionMenuState actionMenuState;
         @Nullable private final String badArgument;
 
         ParsingResult(@NotNull final List<String> tabCompletions, @NotNull final TreeNode<IMenu> executionTreeNode,
                 @NotNull final List<ActionArgument> executionActionArgumentList,
+                @Nullable final ActionMenuState actionMenuState,
                 @Nullable final String badArgument)
         {
             super();
             this.tabCompletions = new ArrayList<>(tabCompletions);
             this.executionTreeNode = executionTreeNode;
             this.executionActionArgumentList = new ArrayList<>(executionActionArgumentList);
+            this.actionMenuState = actionMenuState;
             this.badArgument = badArgument;
         }
 
@@ -73,6 +76,12 @@ public class CommandEntryPointNew extends CommandBase
         public String getBadArgument()
         {
             return badArgument;
+        }
+
+        @Nullable
+        public ActionMenuState getActionMenuState()
+        {
+            return actionMenuState;
         }
     }
 
@@ -228,11 +237,13 @@ public class CommandEntryPointNew extends CommandBase
             throw new CommandException(getCommandUsage(sender, executionTreeNode));
         }
 
-        final ActionMenu actionMenu = (ActionMenu) executionMenu;
+        @NotNull final List<ActionArgument> executionActionArgumentList = parsingResult.getExecutionActionArgumentList();
+        // actionMenuState will be non-null at this point
+        @NotNull final ActionMenuState actionMenuState = parsingResult.getActionMenuState();
+        final ActionMenu actionMenu = actionMenuState.getActionMenu();
 
-        final List<ActionArgument> executionActionArgumentList = parsingResult.getExecutionActionArgumentList();
         final String badArgument = parsingResult.getBadArgument();
-        throwCommandUsageExceptionIfRequiredArgumentsAreNotProvided(executionTreeNode, actionMenu, executionActionArgumentList, badArgument, sender);
+        throwCommandUsageExceptionIfRequiredArgumentsAreNotProvided(executionTreeNode, actionMenu, executionActionArgumentList, actionMenuState, badArgument, sender);
 
         if (sender instanceof EntityPlayer)
         {
@@ -248,7 +259,7 @@ public class CommandEntryPointNew extends CommandBase
 
         for (final ActionArgument executionActionArgument : executionActionArgumentList)
         {
-            if (!executionActionArgument.isValueSet())
+            if (!actionMenuState.isValueSet(executionActionArgument))
             {
                 throw new CommandException(getCommandUsage(sender, executionTreeNode));
             }
@@ -257,7 +268,7 @@ public class CommandEntryPointNew extends CommandBase
         final Class<? extends IActionCommand> clazz = actionMenu.getActionCommandClass();
         try
         {
-            createInstanceAndExecute(server, sender, actionMenu, clazz);
+            createInstanceAndExecute(server, sender, actionMenuState, clazz);
         }
         catch (final InstantiationException | IllegalAccessException e)
         {
@@ -267,15 +278,16 @@ public class CommandEntryPointNew extends CommandBase
         }
     }
 
-    protected void createInstanceAndExecute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu,
+    protected void createInstanceAndExecute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState,
             @NotNull final Class<? extends IActionCommand> clazz) throws InstantiationException, IllegalAccessException, CommandException
     {
         final IActionCommand actionCommand = clazz.newInstance();
-        actionCommand.execute(server, sender, actionMenu);
+        actionCommand.execute(server, sender, actionMenuState);
     }
 
     private static void throwCommandUsageExceptionIfRequiredArgumentsAreNotProvided(@NotNull final TreeNode<IMenu> executionTreeNode, @NotNull final ActionMenu actionMenu,
-            @NotNull final List<ActionArgument> executionActionArgumentList, final String badArgument, @NotNull final ICommandSender sender) throws CommandException
+            @NotNull final List<ActionArgument> executionActionArgumentList, @NotNull final ActionMenuState actionMenuState, final String badArgument,
+            @NotNull final ICommandSender sender) throws CommandException
     {
         final List<ActionArgument> actionArgumentListForActionMenu = actionMenu.getActionArgumentList();
         for (final ActionArgument actionArgument : actionArgumentListForActionMenu)
@@ -287,7 +299,7 @@ public class CommandEntryPointNew extends CommandBase
                 {
                     if ((null != executionActionArgument) && actionArgument.getName().equals(executionActionArgument.getName()))
                     {
-                        if (!executionActionArgument.isValueSet())
+                        if (!actionMenuState.isValueSet(executionActionArgument))
                         {
                             if (null == badArgument)
                             {
@@ -320,7 +332,7 @@ public class CommandEntryPointNew extends CommandBase
         {
             for (final ActionArgument executionActionArgument : executionActionArgumentList)
             {
-                if ((null != executionActionArgument) && !executionActionArgument.isValueSet())
+                if ((null != executionActionArgument) && !actionMenuState.isValueSet(executionActionArgument))
                 {
                     throw new CommandException(
                             getCommandUsage(sender, executionTreeNode)
@@ -420,18 +432,29 @@ public class CommandEntryPointNew extends CommandBase
                 if (childs.containsKey(lowerCaseArg0))
                 {
                     final TreeNode<IMenu> childTreeNode = childs.get(lowerCaseArg0);
-                    return new ParsingResult(tabCompletions, childTreeNode, Collections.emptyList(), (String) null);
+                    final IMenu childMenu = childTreeNode.getData();
+                    final ActionMenuState actionMenuState;
+                    if (!childMenu.getMenuType().isNavigationMenu())
+                    {
+                        final ActionMenu actionMenu = (ActionMenu) childMenu;
+                        actionMenuState = new ActionMenuState(actionMenu);
+                    }
+                    else
+                    {
+                        actionMenuState = (ActionMenuState) null;
+                    }
+                    return new ParsingResult(tabCompletions, childTreeNode, Collections.emptyList(), actionMenuState, (String) null);
                 }
                 else
                 {
-                    return new ParsingResult(tabCompletions, treeNode, Collections.emptyList(), lowerCaseArg0);
+                    return new ParsingResult(tabCompletions, treeNode, Collections.emptyList(), (ActionMenuState) null, lowerCaseArg0);
                 }
             }
             final TreeNode<IMenu> child = childs.get(lowerCaseArg0);
             if (null == child)
             {
                 final List<String> tabCompletions = Collections.emptyList();
-                return new ParsingResult(tabCompletions, treeNode, Collections.emptyList(), lowerCaseArg0);
+                return new ParsingResult(tabCompletions, treeNode, Collections.emptyList(), (ActionMenuState) null, lowerCaseArg0);
             }
             final String[] newArgs = new String[args.length - 1];
             System.arraycopy(args, 1, newArgs, 0, newArgs.length);
@@ -442,13 +465,18 @@ public class CommandEntryPointNew extends CommandBase
             final List<ActionMenuHolder> parsedHolders = new ArrayList<>();
             final Map<String, ActionMenuHolder> possibleActionCommands = getActionCommands(treeNode, parsedHolders);
             @NotNull final List<ActionArgument> parsedActionArgumentList = new ArrayList<>();
-            return getTabCompletionsAndParsingHoldersForActionMenuTreeNode(treeNode, parsedHolders, parsedActionArgumentList, possibleActionCommands, server, sender, args, pos);
+            final ActionMenu actionMenu = (ActionMenu) treeNode.getData();
+            @NotNull final ActionMenuState actionMenuState = new ActionMenuState(actionMenu);
+            return getTabCompletionsAndParsingHoldersForActionMenuTreeNode(treeNode, actionMenuState, parsedHolders, parsedActionArgumentList, possibleActionCommands, server,
+                    sender, args, pos);
         }
     }
 
     @NotNull
     private ParsingResult getTabCompletionsAndParsingHoldersForActionMenuTreeNode(
                                            @NotNull final TreeNode<IMenu> actionMenuTreeNode,
+           // TODO: can parsedHolders, parsedActionArgumentList, and possibleActionCommands be merged into actionMenuState?
+                                           @NotNull final ActionMenuState actionMenuState,
                                            @NotNull final List<ActionMenuHolder> parsedHolders,
                                            @NotNull final List<ActionArgument> parsedActionArgumentList,
                                            @NotNull final Map<String, ActionMenuHolder> possibleActionCommands,
@@ -466,18 +494,18 @@ public class CommandEntryPointNew extends CommandBase
                 final ActionMenuHolder actionMenuHolder = possibleActionCommands.get(lowerCaseArg0);
                 final ActionArgument actionArgument = actionMenuHolder.getActionArgument();
                 parsedActionArgumentList.add(actionArgument);
-                return new ParsingResult(tabCompletions, actionMenuTreeNode, parsedActionArgumentList, (String) null);
+                return new ParsingResult(tabCompletions, actionMenuTreeNode, parsedActionArgumentList, actionMenuState, (String) null);
             }
             else
             {
-                return new ParsingResult(tabCompletions, actionMenuTreeNode, parsedActionArgumentList, lowerCaseArg0);
+                return new ParsingResult(tabCompletions, actionMenuTreeNode, parsedActionArgumentList, actionMenuState, lowerCaseArg0);
             }
         }
         final ActionMenuHolder holder = possibleActionCommands.get(lowerCaseArg0);
         if (null == holder)
         {
             final List<String> tabCompletions = Collections.emptyList();
-            return new ParsingResult(tabCompletions, actionMenuTreeNode, parsedActionArgumentList, lowerCaseArg0);
+            return new ParsingResult(tabCompletions, actionMenuTreeNode, parsedActionArgumentList, actionMenuState, lowerCaseArg0);
         }
         else
         {
@@ -511,13 +539,13 @@ public class CommandEntryPointNew extends CommandBase
             final Object parsedObject = actionArgumentType.parse(server, sender, pos, parsedHolders, potentialArgumentValue);
             if (null == parsedObject)
             {
-                final List<String> tabCompletions = actionArgumentType.getTabCompletions(server, pos, actionMenuTreeNode, potentialArgumentValue);
-                return new ParsingResult(tabCompletions, actionMenuTreeNode, parsedActionArgumentList, potentialArgumentValue);
+                final List<String> tabCompletions = actionArgumentType.getTabCompletions(server, pos, actionMenuState, potentialArgumentValue);
+                return new ParsingResult(tabCompletions, actionMenuTreeNode, parsedActionArgumentList, actionMenuState, potentialArgumentValue);
             }
             else
             {
                 final ActionArgument actionArgument = holder.getActionArgument();
-                actionArgument.setValue(parsedObject);
+                actionMenuState.setValue(actionArgument, parsedObject);
                 parsedHolders.add(holder);
 
                 // add any subArguments
@@ -532,14 +560,14 @@ public class CommandEntryPointNew extends CommandBase
                 if (newArgsStartPos == args.length)
                 {
                     final List<String> tabCompletions = Collections.emptyList();
-                    return new ParsingResult(tabCompletions, actionMenuTreeNode, parsedActionArgumentList, (String) null);
+                    return new ParsingResult(tabCompletions, actionMenuTreeNode, parsedActionArgumentList, actionMenuState, (String) null);
                 }
             }
         }
 
         final String[] newArgs = new String[args.length - newArgsStartPos];
         System.arraycopy(args, newArgsStartPos, newArgs, 0, newArgs.length);
-        return getTabCompletionsAndParsingHoldersForActionMenuTreeNode(actionMenuTreeNode, parsedHolders, parsedActionArgumentList, possibleActionCommands, server, sender, newArgs,
-                pos);
+        return getTabCompletionsAndParsingHoldersForActionMenuTreeNode(actionMenuTreeNode, actionMenuState, parsedHolders, parsedActionArgumentList, possibleActionCommands, server,
+                sender, newArgs, pos);
     }
 }

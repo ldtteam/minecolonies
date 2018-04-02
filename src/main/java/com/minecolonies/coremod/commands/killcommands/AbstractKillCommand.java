@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.minecolonies.coremod.commands.ActionMenu;
+import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.DeleteCommand;
 import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.commands.MinecoloniesCommand;
@@ -45,7 +45,7 @@ public abstract class AbstractKillCommand<T extends Entity> extends AbstractSing
     public abstract String getDesc();
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
         executeShared(server, sender);
     }

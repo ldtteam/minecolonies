@@ -14,7 +14,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.minecolonies.coremod.commands.ActionMenu;
+import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import com.mojang.authlib.GameProfile;
 
@@ -70,15 +70,15 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
         return super.getCommandUsage(sender) + "<ColonyId|OwnerName>";
     }
 
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
         // See if we have a valid colony,
-        Colony colony = actionMenu.getColonyForArgument("colony");
+        Colony colony = actionMenuState.getColonyForArgument("colony");
         EntityPlayer player = null;
         if (null == colony)
         {
             // see if we have a valid player
-            player = actionMenu.getPlayerForArgument("player");
+            player = actionMenuState.getPlayerForArgument("player");
             if (null != player)
             {
                 final IColony iColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player);
