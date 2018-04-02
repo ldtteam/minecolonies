@@ -74,32 +74,43 @@ public class CommandEntryPointTest
         when(citizenManager1.getCitizens()).thenReturn(citizenDataList1);
 
         final CitizenData citizenJohnSSmith = mock(CitizenData.class);
-        when(citizenJohnSSmith.getId()).thenReturn(1);
+        when(citizenJohnSSmith.getId()).thenReturn(101);
         when(citizenJohnSSmith.getName()).thenReturn("John S. Smith");
 
         citizenDataList1.add(citizenJohnSSmith);
-        when(citizenManager1.getCitizen(1)).thenReturn(citizenJohnSSmith);
+        when(citizenManager1.getCitizen(101)).thenReturn(citizenJohnSSmith);
 
         final CitizenData citizenJohnSJones = mock(CitizenData.class);
-        when(citizenJohnSJones.getId()).thenReturn(4);
+        when(citizenJohnSJones.getId()).thenReturn(104);
         when(citizenJohnSJones.getName()).thenReturn("John S. Jones");
 
         citizenDataList1.add(citizenJohnSJones);
-        when(citizenManager1.getCitizen(4)).thenReturn(citizenJohnSJones);
+        when(citizenManager1.getCitizen(104)).thenReturn(citizenJohnSJones);
 
         final CitizenData citizenJohnAJones = mock(CitizenData.class);
-        when(citizenJohnAJones.getId()).thenReturn(2);
+        when(citizenJohnAJones.getId()).thenReturn(102);
         when(citizenJohnAJones.getName()).thenReturn("John A. Jones");
 
         citizenDataList1.add(citizenJohnAJones);
-        when(citizenManager1.getCitizen(2)).thenReturn(citizenJohnAJones);
+        when(citizenManager1.getCitizen(102)).thenReturn(citizenJohnAJones);
 
         final CitizenData citizenJennaQBar = mock(CitizenData.class);
-        when(citizenJennaQBar.getId()).thenReturn(3);
+        when(citizenJennaQBar.getId()).thenReturn(103);
         when(citizenJennaQBar.getName()).thenReturn("Jenna Q. Bar");
 
         citizenDataList1.add(citizenJennaQBar);
-        when(citizenManager1.getCitizen(3)).thenReturn(citizenJennaQBar);
+        when(citizenManager1.getCitizen(103)).thenReturn(citizenJennaQBar);
+
+        final List<CitizenData> citizenDataList2 = new ArrayList<>();
+        when(citizenManager2.getCitizens()).thenReturn(citizenDataList2);
+
+
+        final CitizenData citizenRandomStranger = mock(CitizenData.class);
+        when(citizenRandomStranger.getId()).thenReturn(201);
+        when(citizenRandomStranger.getName()).thenReturn("Random A. Stranger");
+
+        citizenDataList2.add(citizenRandomStranger);
+        when(citizenManager2.getCitizen(201)).thenReturn(citizenRandomStranger);
 
         PowerMockito.mockStatic(ColonyManager.class);
         BDDMockito.given(ColonyManager.getColonies()).willReturn(colonyList);
@@ -117,6 +128,12 @@ public class CommandEntryPointTest
         final PlayerList serverPlayerList = mock(PlayerList.class);
         when(serverPlayerList.getPlayerByUsername("Bob")).thenReturn(playerBob);
         when(serverPlayerList.getPlayerByUsername("Sally")).thenReturn(playerSally);
+
+        final List<EntityPlayerMP> allEntityPlayerMPList = new ArrayList<>();
+        allEntityPlayerMPList.add(playerBob);
+        allEntityPlayerMPList.add(playerSally);
+
+        when(serverPlayerList.getPlayers()).thenReturn(allEntityPlayerMPList);
 
         server = mock(MinecraftServer.class);
         when(server.getOnlinePlayerNames()).thenReturn(new String[] {"Bob", "Sally"});
@@ -151,8 +168,8 @@ public class CommandEntryPointTest
         final List<String> results = instance.getTabCompletions(server, sender, args, pos);
 
         // EXPECT:
-        assertThat(results).containsExactlyInAnyOrder("colonies", "colony", "citizens", "kill", "check", "whoami", "whereami", "home", "raid-tonight", "raid-now", "rtp", "backup",
-                "scan");
+        assertThat(results).containsExactlyInAnyOrder("colonies", "colony", "citizens", "kill", "check", "whoami", "whereami", "home", "raid-tonight", "raid-now", "rs", "rtp",
+                "backup", "scan");
     }
 
     @Test
@@ -319,22 +336,23 @@ public class CommandEntryPointTest
         {
             @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    @NotNull final ActionMenu actionMenu,
+                    @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
                 assertThat(clazz).isEqualTo(ScanCommand.class);
-                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("player", "x1", "x2", "y1", "y2", "z1", "z2", "name");
 
-                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.PLAYER, ActionArgumentType.COORDINATE_X, ActionArgumentType.COORDINATE_Y, ActionArgumentType.COORDINATE_Z, ActionArgumentType.STRING);
-                assertThat(actionMenu.getIntegerForArgument("x1")).isEqualTo(1);
-                assertThat(actionMenu.getIntegerForArgument("x2")).isEqualTo(2);
-                assertThat(actionMenu.getIntegerForArgument("y1")).isEqualTo(3);
-                assertThat(actionMenu.getIntegerForArgument("y2")).isEqualTo(4);
-                assertThat(actionMenu.getIntegerForArgument("z1")).isEqualTo(5);
-                assertThat(actionMenu.getIntegerForArgument("z2")).isEqualTo(6);
+                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.ONLINE_PLAYER, ActionArgumentType.COORDINATE_X, ActionArgumentType.COORDINATE_Y,
+                        ActionArgumentType.COORDINATE_Z, ActionArgumentType.STRING);
+                assertThat(actionMenuState.getIntegerForArgument("x1")).isEqualTo(1);
+                assertThat(actionMenuState.getIntegerForArgument("x2")).isEqualTo(2);
+                assertThat(actionMenuState.getIntegerForArgument("y1")).isEqualTo(3);
+                assertThat(actionMenuState.getIntegerForArgument("y2")).isEqualTo(4);
+                assertThat(actionMenuState.getIntegerForArgument("z1")).isEqualTo(5);
+                assertThat(actionMenuState.getIntegerForArgument("z2")).isEqualTo(6);
 
             }
         };
@@ -362,18 +380,18 @@ public class CommandEntryPointTest
         {
             @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    @NotNull final ActionMenu actionMenu,
+                    @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
                 assertThat(clazz).isEqualTo(ClaimChunksCommand.class);
-                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("colony", "range", "add");
 
                 assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.COLONY, ActionArgumentType.INTEGER, ActionArgumentType.BOOLEAN);
-                assertThat(actionMenu.getIntegerForArgument("range")).isEqualTo(1);
-                assertThat(actionMenu.getBooleanForArgument("add")).isEqualTo(true);
+                assertThat(actionMenuState.getIntegerForArgument("range")).isEqualTo(1);
+                assertThat(actionMenuState.getBooleanForArgument("add")).isEqualTo(true);
             }
         };
 
@@ -526,6 +544,42 @@ public class CommandEntryPointTest
 
     @Test
     @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_citizens_info_colony_1_citizen_space__DO_getTabCompletions__EXPECT_101_102_103_104_John_Jenna()
+    {
+
+        // GIVEN:
+        final String[] args = new String[] {
+                "Citizens", "info", "colony:", "1", "citizen:", ""
+        };
+
+        // DO:
+
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+
+        // EXPECT:
+        assertThat(results).containsExactlyInAnyOrder("101", "102", "103", "104", "John", "Jenna");
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_citizens_info_colony_2_citizen_space__DO_getTabCompletions__EXPECT_201_Random()
+    {
+
+        // GIVEN:
+        final String[] args = new String[] {
+                "Citizens", "info", "colony:", "2", "citizen:", ""
+        };
+
+        // DO:
+
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+
+        // EXPECT:
+        assertThat(results).containsExactlyInAnyOrder("201", "Random");
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_info_colony_1_citizen_J__DO_getTabCompletions__EXPECT_John_Jenna()
     {
 
@@ -634,12 +688,12 @@ public class CommandEntryPointTest
 
     @Test
     @PrepareForTest({PermissionAPI.class,ColonyManager.class})
-    public void GIVEN_args_citizens_info_colony_1_citizen_1_space__DO_getTabCompletions__EXPECT_citizen()
+    public void GIVEN_args_citizens_info_colony_1_citizen_1__DO_getTabCompletions__EXPECT_101_102_103_104()
     {
 
         // GIVEN:
         final String[] args = new String[] {
-                "Citizens", "info", "colony:", "1", "citizen:", "1", ""
+                "Citizens", "info", "colony:", "1", "citizen:", "1"
         };
 
         // DO:
@@ -647,7 +701,23 @@ public class CommandEntryPointTest
         final List<String> results = instance.getTabCompletions(server, sender, args, pos);
 
         // EXPECT:
-        assertThat(results).isEmpty();
+        assertThat(results).containsExactlyInAnyOrder("101", "102", "103", "104");
+    }
+
+    public void GIVEN_args_citizens_info_colony_1_citizen_1_space__DO_getTabCompletions__EXPECT_nothing() 
+    { 
+ 
+        // GIVEN: 
+        final String[] args = new String[] { 
+                "Citizens", "info", "colony:", "1", "citizen:", "1", "" 
+        };
+
+        // DO:
+
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+
+        // EXPECT:
+        assertThat(results).isEmpty(); 
     }
 
     @Test
@@ -666,20 +736,20 @@ public class CommandEntryPointTest
         {
             @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    @NotNull final ActionMenu actionMenu,
+                    @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).isEqualTo(CitizenInfoCommand.class);
-                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).extracting("name").containsExactly("colony");
                 assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.COLONY);
                 assertThat(actionArgumentList.get(0).getActionArgumentList()).extracting("name").containsExactly("citizen");
                 assertThat(actionArgumentList.get(0).getActionArgumentList()).extracting("type").containsOnly(ActionArgumentType.CITIZEN);
-                final Colony colony = actionMenu.getColonyForArgument("colony");
-                final CitizenData citizenData = actionMenu.getCitizenForArgument("citizen");
+                final Colony colony = actionMenuState.getColonyForArgument("colony");
+                final CitizenData citizenData = actionMenuState.getCitizenForArgument("citizen");
                 assertThat(colony.getID()).isEqualTo(1);
                 assertThat(citizenData.getName()).isEqualTo("John S. Smith");
             }
@@ -703,7 +773,8 @@ public class CommandEntryPointTest
         final List<String> results = instance.getTabCompletions(server, sender, args, pos);
 
         // EXPECT:
-        assertThat(results).containsExactlyInAnyOrder("addofficer", "barbarians", "delete", "deletable", "info", "ownerchange", "raid", "raid-tonight", "refresh", "teleport", "claim");
+        assertThat(results).containsExactlyInAnyOrder("addofficer", "barbarians", "delete", "deletable", "info", "ownerchange", "raid", "raid-tonight", "refresh", "teleport",
+                "claim");
     }
 
     @Test
@@ -847,18 +918,18 @@ public class CommandEntryPointTest
         {
             @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    @NotNull final ActionMenu actionMenu,
+                    @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).isEqualTo(ChangeColonyOwnerCommand.class);
-                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("player", "colony");
                 assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.PLAYER, ActionArgumentType.COLONY);
-                final EntityPlayerMP player = actionMenu.getPlayerForArgument("player");
-                final Colony colony = actionMenu.getColonyForArgument("colony");
+                final EntityPlayerMP player = actionMenuState.getPlayerForArgument("player");
+                final Colony colony = actionMenuState.getColonyForArgument("colony");
                 assertThat(player.getName()).isEqualTo("Bob");
                 assertThat(colony.getID()).isEqualTo(1);
             }
@@ -882,18 +953,18 @@ public class CommandEntryPointTest
         {
             @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    @NotNull final ActionMenu actionMenu,
+                    @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).isEqualTo(ChangeColonyOwnerCommand.class);
-                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("player", "colony");
                 assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.PLAYER, ActionArgumentType.COLONY);
-                final EntityPlayerMP player = actionMenu.getPlayerForArgument("player");
-                final Colony colony = actionMenu.getColonyForArgument("colony");
+                final EntityPlayerMP player = actionMenuState.getPlayerForArgument("player");
+                final Colony colony = actionMenuState.getColonyForArgument("colony");
                 assertThat(player.getName()).isEqualTo("Bob");
                 assertThat(colony.getID()).isEqualTo(1);
             }
@@ -921,7 +992,7 @@ public class CommandEntryPointTest
         }
         catch (final CommandException e)
         {
-            assertThat(e).hasMessage("/mineColonies <colonies|kill|colony|citizens|rtp|backup|home|raid-tonight|raid-now|check|whoami|whereami|scan>");
+            assertThat(e).hasMessage("/mineColonies <colonies|kill|colony|citizens|rs|rtp|backup|home|raid-tonight|raid-now|check|whoami|whereami|scan>");
         }
     }
 
@@ -1126,25 +1197,25 @@ public class CommandEntryPointTest
         {
             @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    @NotNull final ActionMenu actionMenu,
+                    @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).as("command class").isEqualTo(DeleteColonyCommand.class);
-                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("colony", "canDestroy", "confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN, ActionArgumentType.COLONY);
-                final Colony colony = actionMenu.getColonyForArgument("colony");
+                final Colony colony = actionMenuState.getColonyForArgument("colony");
                 assertThat(colony.getID()).as("colony.getID()").isEqualTo(1);
-                final Boolean canDestroyBoolean = (Boolean) actionMenu.getBooleanForArgument("canDestroy");
+                final Boolean canDestroyBoolean = (Boolean) actionMenuState.getBooleanForArgument("canDestroy");
                 assertThat(canDestroyBoolean).as("canDestroyBoolean").isTrue();
-                final boolean canDestroy = actionMenu.getBooleanValueForArgument("canDestroy", false);
+                final boolean canDestroy = actionMenuState.getBooleanValueForArgument("canDestroy", false);
                 assertThat(canDestroy).as("canDestroy").isTrue();
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isTrue();
-                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
+                final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", false);
                 assertThat(confirmDelete).as("confirmDelete").isTrue();
             }
         };
@@ -1167,25 +1238,25 @@ public class CommandEntryPointTest
         {
             @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    @NotNull final ActionMenu actionMenu,
+                    @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).as("command class").isEqualTo(DeleteColonyCommand.class);
-                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("colony", "canDestroy", "confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN, ActionArgumentType.COLONY);
-                final Colony colony = actionMenu.getColonyForArgument("colony");
+                final Colony colony = actionMenuState.getColonyForArgument("colony");
                 assertThat(colony.getID()).as("colony.getID()").isEqualTo(1);
-                final Boolean canDestroyBoolean = (Boolean) actionMenu.getBooleanForArgument("canDestroy");
+                final Boolean canDestroyBoolean = (Boolean) actionMenuState.getBooleanForArgument("canDestroy");
                 assertThat(canDestroyBoolean).as("canDestroyBoolean").isNull();
-                final boolean canDestroy = actionMenu.getBooleanValueForArgument("canDestroy", false);
+                final boolean canDestroy = actionMenuState.getBooleanValueForArgument("canDestroy", false);
                 assertThat(canDestroy).as("canDestroy").isFalse();
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isNull();
-                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
+                final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", false);
                 assertThat(confirmDelete).as("confirmDelete").isFalse();
             }
         };
@@ -1208,23 +1279,23 @@ public class CommandEntryPointTest
         {
             @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    @NotNull final ActionMenu actionMenu,
+                    @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).as("command class").isEqualTo(ListColoniesCommand.class);
-                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("page", "abandonedSinceTimeInHours");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.INTEGER);
-                final Integer pageInteger = (Integer) actionMenu.getIntegerForArgument("page");
+                final Integer pageInteger = (Integer) actionMenuState.getIntegerForArgument("page");
                 assertThat(pageInteger).as("pageInteger").isEqualTo(2);
-                final int page = actionMenu.getIntValueForArgument("page", 1);
+                final int page = actionMenuState.getIntValueForArgument("page", 1);
                 assertThat(page).as("page").isEqualTo(2);
-                final Integer abandonedSinceTimeInHoursInteger = (Integer) actionMenu.getIntegerForArgument("abandonedSinceTimeInHours");
+                final Integer abandonedSinceTimeInHoursInteger = (Integer) actionMenuState.getIntegerForArgument("abandonedSinceTimeInHours");
                 assertThat(abandonedSinceTimeInHoursInteger).as("abandonedSinceTimeInHoursInteger").isEqualTo(3);
-                final int abandonedSinceTimeInHours = actionMenu.getIntValueForArgument("abandonedSinceTimeInHours", 1);
+                final int abandonedSinceTimeInHours = actionMenuState.getIntValueForArgument("abandonedSinceTimeInHours", 1);
                 assertThat(abandonedSinceTimeInHours).as("abandonedSinceTimeInHours").isEqualTo(3);
             }
         };
@@ -1247,23 +1318,23 @@ public class CommandEntryPointTest
         {
             @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    @NotNull final ActionMenu actionMenu,
+                    @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).as("command class").isEqualTo(ListColoniesCommand.class);
-                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("page", "abandonedSinceTimeInHours");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.INTEGER);
-                final Integer pageInteger = (Integer) actionMenu.getIntegerForArgument("page");
+                final Integer pageInteger = (Integer) actionMenuState.getIntegerForArgument("page");
                 assertThat(pageInteger).as("pageInteger").isEqualTo(2);
-                final int page = actionMenu.getIntValueForArgument("page", 1);
+                final int page = actionMenuState.getIntValueForArgument("page", 1);
                 assertThat(page).as("page").isEqualTo(2);
-                final Integer abandonedSinceTimeInHoursInteger = (Integer) actionMenu.getIntegerForArgument("abandonedSinceTimeInHours");
+                final Integer abandonedSinceTimeInHoursInteger = (Integer) actionMenuState.getIntegerForArgument("abandonedSinceTimeInHours");
                 assertThat(abandonedSinceTimeInHoursInteger).as("abandonedSinceTimeInHoursInteger").isNull();
-                final int abandonedSinceTimeInHours = actionMenu.getIntValueForArgument("abandonedSinceTimeInHours", 1);
+                final int abandonedSinceTimeInHours = actionMenuState.getIntValueForArgument("abandonedSinceTimeInHours", 1);
                 assertThat(abandonedSinceTimeInHours).as("abandonedSinceTimeInHours").isEqualTo(1);
             }
         };
@@ -1286,19 +1357,19 @@ public class CommandEntryPointTest
         {
             @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    @NotNull final ActionMenu actionMenu,
+                    @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).as("command class").isEqualTo(CheckForAutoDeletesCommand.class);
-                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isTrue();
-                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
+                final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", false);
                 assertThat(confirmDelete).as("confirmDelete").isTrue();
             }
         };
@@ -1321,19 +1392,19 @@ public class CommandEntryPointTest
         {
             @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    @NotNull final ActionMenu actionMenu,
+                    @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).as("command class").isEqualTo(CheckForAutoDeletesCommand.class);
-                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isTrue();
-                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
+                final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", false);
                 assertThat(confirmDelete).as("confirmDelete").isTrue();
             }
         };
@@ -1356,19 +1427,19 @@ public class CommandEntryPointTest
         {
             @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    @NotNull final ActionMenu actionMenu,
+                    @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).as("command class").isEqualTo(CheckForAutoDeletesCommand.class);
-                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isTrue();
-                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
+                final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", false);
                 assertThat(confirmDelete).as("confirmDelete").isTrue();
             }
         };
@@ -1391,19 +1462,19 @@ public class CommandEntryPointTest
         {
             @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    @NotNull final ActionMenu actionMenu,
+                    @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).as("command class").isEqualTo(CheckForAutoDeletesCommand.class);
-                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isTrue();
-                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
+                final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", false);
                 assertThat(confirmDelete).as("confirmDelete").isTrue();
             }
         };
@@ -1426,19 +1497,19 @@ public class CommandEntryPointTest
         {
             @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    @NotNull final ActionMenu actionMenu,
+                    @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).as("command class").isEqualTo(CheckForAutoDeletesCommand.class);
-                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isTrue();
-                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
+                final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", false);
                 assertThat(confirmDelete).as("confirmDelete").isTrue();
             }
         };
@@ -1461,19 +1532,19 @@ public class CommandEntryPointTest
         {
             @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    @NotNull final ActionMenu actionMenu,
+                    @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).as("command class").isEqualTo(CheckForAutoDeletesCommand.class);
-                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isFalse();
-                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", true);
+                final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", true);
                 assertThat(confirmDelete).as("confirmDelete").isFalse();
             }
         };
@@ -1496,19 +1567,19 @@ public class CommandEntryPointTest
         {
             @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    @NotNull final ActionMenu actionMenu,
+                    @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).as("command class").isEqualTo(CheckForAutoDeletesCommand.class);
-                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isFalse();
-                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", true);
+                final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", true);
                 assertThat(confirmDelete).as("confirmDelete").isFalse();
             }
         };
@@ -1531,19 +1602,19 @@ public class CommandEntryPointTest
         {
             @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    @NotNull final ActionMenu actionMenu,
+                    @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).as("command class").isEqualTo(CheckForAutoDeletesCommand.class);
-                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isFalse();
-                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", true);
+                final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", true);
                 assertThat(confirmDelete).as("confirmDelete").isFalse();
             }
         };
@@ -1566,19 +1637,19 @@ public class CommandEntryPointTest
         {
             @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    @NotNull final ActionMenu actionMenu,
+                    @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).as("command class").isEqualTo(CheckForAutoDeletesCommand.class);
-                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isFalse();
-                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", true);
+                final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", true);
                 assertThat(confirmDelete).as("confirmDelete").isFalse();
             }
         };
@@ -1601,20 +1672,123 @@ public class CommandEntryPointTest
         {
             @Override
             protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
-                    @NotNull final ActionMenu actionMenu,
+                    @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
             {
                 // EXPECT:
 
                 assertThat(clazz).as("command class").isEqualTo(CheckForAutoDeletesCommand.class);
-                final List<ActionArgument> actionArgumentList = actionMenu.getActionArgumentList();
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenu.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isFalse();
-                final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", true);
+                final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", true);
                 assertThat(confirmDelete).as("confirmDelete").isFalse();
+            }
+        };
+
+        instance.execute(server, sender, args);
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_delete_colony_1__DO_execute_twice__EXPECT_DeleteColonyCommand_state_2nd_time_to_be_different() throws CommandException
+    {
+        // GIVEN:
+        final String[] argsFirstTime = new String[] {
+                "colony", "delete", "colony:", "1", "confirmDelete:", "true", "canDestroy:", "true"
+        };
+
+        final String[] argsSecondTime = new String[] {
+                "colony", "delete", "colony:", "1"
+        };
+
+        // DO:
+
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenuState actionMenuState,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                // EXPECT:
+
+                assertThat(clazz).as("command class").isEqualTo(DeleteColonyCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
+                assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("colony", "canDestroy", "confirmDelete");
+                assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.COLONY, ActionArgumentType.BOOLEAN);
+                final Colony colony = actionMenuState.getColonyForArgument("colony");
+                final Boolean canDestroy = actionMenuState.getBooleanForArgument("canDestroy");
+                final Boolean confirmDelete = actionMenuState.getBooleanForArgument("confirmDelete");
+                assertThat(colony.getID()).isEqualTo(1);
+                assertThat(canDestroy).isTrue();
+                assertThat(confirmDelete).isTrue();
+            }
+        };
+
+        instance.execute(server, sender, argsFirstTime);
+
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenuState actionMenuState,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                // EXPECT:
+
+                assertThat(clazz).as("command class").isEqualTo(DeleteColonyCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
+                assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("colony", "canDestroy", "confirmDelete");
+                assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.COLONY, ActionArgumentType.BOOLEAN);
+                final Colony colony = actionMenuState.getColonyForArgument("colony");
+                final Boolean canDestroy = actionMenuState.getBooleanForArgument("canDestroy");
+                final Boolean confirmDelete = actionMenuState.getBooleanForArgument("confirmDelete");
+                assertThat(colony.getID()).isEqualTo(1);
+                assertThat(canDestroy).isNull();
+                assertThat(confirmDelete).isNull();
+            }
+        };
+
+        instance.execute(server, sender, argsSecondTime);
+    }
+
+    @Test
+    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    public void GIVEN_args_delete_colony_1__DO_execute__EXPECT_DeleteColonyCommand_executed() throws CommandException
+    {
+        // GIVEN:
+        final String[] args = new String[] {
+                "colony", "delete", "colony:", "1"
+        };
+
+        // DO:
+
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenuState actionMenuState,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                // EXPECT:
+
+                assertThat(clazz).as("command class").isEqualTo(DeleteColonyCommand.class);
+                final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
+                assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("colony", "canDestroy", "confirmDelete");
+                assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.COLONY, ActionArgumentType.BOOLEAN);
+                final Colony colony = actionMenuState.getColonyForArgument("colony");
+                final Boolean canDestroy = actionMenuState.getBooleanForArgument("canDestroy");
+                final Boolean confirmDelete = actionMenuState.getBooleanForArgument("confirmDelete");
+                assertThat(colony.getID()).isEqualTo(1);
+                assertThat(canDestroy).isNull();
+                assertThat(confirmDelete).isNull();
             }
         };
 
