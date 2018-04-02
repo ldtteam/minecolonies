@@ -441,7 +441,7 @@ public class CommandEntryPointNew extends CommandBase
                     }
                     else
                     {
-                        actionMenuState = (ActionMenuState) null;
+                        actionMenuState = null;
                     }
                     return new ParsingResult(tabCompletions, childTreeNode, Collections.emptyList(), actionMenuState, (String) null);
                 }
