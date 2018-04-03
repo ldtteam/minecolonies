@@ -5,12 +5,15 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.minecolonies.api.util.LanguageHandler;
 import org.jetbrains.annotations.NotNull;
 
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -23,10 +26,7 @@ import net.minecraft.util.text.TextComponentString;
  */
 public class BackupCommand extends AbstractSingleCommand implements IActionCommand
 {
-    public static final String DESC                   = "backup";
-    public static final String NO_PERMISSION_MESSAGE  = "You do not have permission to backup colony data!";
-    public static final String BACKUP_SUCCESS_MESSAGE = "Successfully backed up colony data!";
-    public static final String BACKUP_FAILURE_MESSAGE = "Failed to back up colony data!";
+    public static final String DESC = "backup";
 
     /**
      * no-args constructor called by new CommandEntryPoint executer.
@@ -67,27 +67,27 @@ public class BackupCommand extends AbstractSingleCommand implements IActionComma
             {
                 if (ColonyManager.backupColonyData())
                 {
-                    sender.sendMessage(new TextComponentString(BACKUP_SUCCESS_MESSAGE));
+                    sender.sendMessage(new TextComponentString(LanguageHandler.format(COLONIES_BACKUP_SUCCESS)));
                 }
                 else
                 {
-                    sender.sendMessage(new TextComponentString(BACKUP_FAILURE_MESSAGE));
+                    sender.sendMessage(new TextComponentString(LanguageHandler.format(COLONIES_BACKUP_FAIL)));
                 }
             });
         }
         else
         {
-            sender.sendMessage(new TextComponentString(NO_PERMISSION_MESSAGE));
+            sender.sendMessage(new TextComponentString(LanguageHandler.format(COLONIES_BACKUP_NOPERMS)));
         }
     }
 
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
-                                                 @NotNull final MinecraftServer server,
-                                                 @NotNull final ICommandSender sender,
-                                                 @NotNull final String[] args,
-                                                 @Nullable final BlockPos pos)
+      @NotNull final MinecraftServer server,
+      @NotNull final ICommandSender sender,
+      @NotNull final String[] args,
+      @Nullable final BlockPos pos)
     {
         return Collections.emptyList();
     }

@@ -19,6 +19,9 @@ public class Configurations
     @Config.Comment("All configurations related to the request system")
     public static RequestSystem requestSystem = new RequestSystem();
 
+    @Config.Comment("All configurations related to admin functions")
+    public static final Administration administration = new Administration();
+
     public static class Gameplay
     {
         @Config.Comment("Should builder place construction tape?")
@@ -82,7 +85,7 @@ public class Configurations
         public int averageNumberOfNightsBetweenRaids = 3;
 
         @Config.Comment("Should players be allowed to build their colonies over existing villages?")
-        public boolean protectVillages = false;
+        public boolean protectVillages         = false;
         /* schematics usage */
         @Config.Comment("Should the default schematics be ignored (from the jar)?")
         public boolean ignoreSchematicsFromJar = false;
@@ -94,15 +97,15 @@ public class Configurations
         public int maxCachedSchematics = 100;
 
         @Config.Comment("Should players be allowed to change names? -1 for false, 0 for specific groups, 1 for true")
-        public  int allowGlobalNameChanges = 1;
+        public int allowGlobalNameChanges = 1;
 
         @Config.Comment("Players who have special permission (Patreons for example)")
-        public  String[] specialPermGroup = new String[]
-                {
-                        "_Raycoms_"
-                };
+        public String[] specialPermGroup = new String[]
+                                             {
+                                               "_Raycoms_"
+                                             };
 
-    /* Command configs */
+        /* Command configs */
 
         @Config.Comment("Time until a next teleport can be executed (in seconds)")
         public int teleportBuffer = 120;
@@ -179,13 +182,13 @@ public class Configurations
         public boolean enableInDevelopmentFeatures = false;
 
         @Config.Comment("Blocks players should be able to interact with in any colony (Ex vending machines)")
-        public String[] freeToInteractBlocks = new String[]
-                                                 {
-                                                   "block:dirt",
-                                                   "0 0 0"
-                                                 };
+        public String[] freeToInteractBlocks  = new String[]
+                                                  {
+                                                    "block:dirt",
+                                                    "0 0 0"
+                                                  };
         @Config.Comment("Should colonies in other dimensions be allowed (Default = false)?")
-        public boolean allowOtherDimColonies = false;
+        public boolean  allowOtherDimColonies = false;
     }
 
     public static class Pathfinding
@@ -817,5 +820,14 @@ public class Configurations
 
         @Config.Comment("Should the player be allowed to use the '/mc colony rs reset' command?")
         public boolean canPlayerUseResetCommand = false;
+    }
+
+    public static class Administration
+    {
+        @Config.Comment("Minutes between automatic colony data backups (0 to disable)")
+        public int colonyBackupTimeMins = 15;
+
+        @Config.Comment("Number of backups to keep before pruning old backups (0 disables pruning)")
+        public int colonyBackupsToKeep = 5;
     }
 }
