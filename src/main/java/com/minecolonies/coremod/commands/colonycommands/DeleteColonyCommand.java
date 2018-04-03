@@ -74,9 +74,9 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        final Colony colony = actionMenu.getColonyForArgument("colony");
-        final boolean canDestroy = actionMenu.getBooleanValueForArgument("canDestroy", true);
-        final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
+        final Colony colony = actionMenuState.getColonyForArgument("colony");
+        final boolean canDestroy = actionMenuState.getBooleanValueForArgument("canDestroy", true);
+        final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", false);
 
         if (colony == null)
         {
