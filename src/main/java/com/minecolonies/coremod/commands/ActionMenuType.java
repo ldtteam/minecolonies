@@ -280,7 +280,7 @@ public enum ActionMenuType implements IMenuType
             ForgePermissionNodes.CLAIM,
             ClaimChunksCommand.class,
             new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.OPTIONAL),
-            new ActionArgument("range", ActionArgumentType.INTEGER, ActionArgumentType.Is.REQUIRED),
+            new ActionArgument("range", ActionArgumentType.INTEGER, ActionArgumentType.Is.OPTIONAL),
             new ActionArgument("add", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.OPTIONAL)
             ))
     ;

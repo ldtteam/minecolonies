@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.ActionMenu;
 import com.minecolonies.coremod.commands.IActionCommand;
-import com.minecolonies.coremod.util.TeleportToColony;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -13,8 +13,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.chunk.Chunk;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.CommandConstants.NO_COLONY_MESSAGE;
-import static com.minecolonies.api.util.constant.CommandConstants.NO_PERMISSION_TO_CLAIM_MESSAGE;
+import static com.minecolonies.api.util.constant.CommandConstants.*;
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.isPlayerOpped;
 
 /**
@@ -49,11 +48,12 @@ public class ClaimChunksCommand implements IActionCommand
                 return;
             }
 
-            final int range = actionMenu.getIntegerForArgument("range");
+            final int range = actionMenu.getIntValueForArgument("range", Configurations.gameplay.workingRangeTownHallChunks);
             final Boolean add = actionMenu.getBooleanForArgument("add");
 
             final Chunk chunk = ((EntityPlayerMP) sender).getServerWorld().getChunkFromBlockCoords(sender.getPosition());
             ColonyManager.claimChunksInRange(colony.getID(), colony.getDimension(), add == null ? true : add, chunk.x, chunk.z, range, 0);
+            sender.sendMessage(new TextComponentString(SUCCESFULLY_CLAIMED_CHUNKS));
             return;
         }
         else
