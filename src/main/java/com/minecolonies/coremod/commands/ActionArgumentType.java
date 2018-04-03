@@ -26,11 +26,13 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.FakePlayer;
 
 public enum ActionArgumentType
 {
+    ONLINE_PLAYER("online-player-expression", 0),
     PLAYER("player-expression", 0),
     COLONY("colony-id", 0),
     CITIZEN("citizen-id or full-name", 2),
@@ -41,6 +43,8 @@ public enum ActionArgumentType
     INTEGER("integer", 0),
     STRING("string", 0)
     ;
+
+    private static final String ABANDONED_FAKE_PLAYER_NAME = "[abandoned]";
 
     public enum Is
     {
@@ -67,13 +71,32 @@ public enum ActionArgumentType
         return allowedSpaceCount;
     }
 
-    private List<String> getOnlinePlayerNames(@NotNull final MinecraftServer server)
+    @NotNull
+    private static List<String> getOnlinePlayerNames(@NotNull final MinecraftServer server)
     {
         final String[] onlinePlayerNames = server.getOnlinePlayerNames();
         return Arrays.asList(onlinePlayerNames);
     }
 
-    private List<String> getColonyIdStrings()
+    @NotNull
+    private static List<String> getAllPlayerNames(@NotNull final MinecraftServer server)
+    {
+        final PlayerList playerList = server.getPlayerList();
+        final List<EntityPlayerMP> allPlayersList = playerList.getPlayers();
+        final List<String> playerNames = new ArrayList<>(allPlayersList.size());
+        for (final EntityPlayerMP entityPlayerMP : allPlayersList)
+        {
+            final String playerName = entityPlayerMP.getName();
+            if (!playerNames.contains(playerName))
+            {
+                playerNames.add(playerName);
+            }
+        }
+        return playerNames;
+    }
+
+    @NotNull
+    private static List<String> getColonyIdStrings()
     {
         final List<Colony> colonyList = ColonyManager.getColonies();
         final List<String> colonyIdList = new ArrayList<>(colonyList.size());
@@ -84,9 +107,17 @@ public enum ActionArgumentType
         return colonyIdList;
     }
 
-    private List<String> getCitizenNames()
+    private static List<String> getCitizenNames(@Nullable final Colony colonyToUse)
     {
-        final List<Colony> colonyList = ColonyManager.getColonies();
+        final List<Colony> colonyList;
+        if (null != colonyToUse)
+        {
+            colonyList = Collections.singletonList(colonyToUse);
+        }
+        else
+        {
+            colonyList = ColonyManager.getColonies();
+        }
         final List<String> citizenNameList = new ArrayList<>();
         for (final Colony colony : colonyList)
         {
@@ -99,9 +130,34 @@ public enum ActionArgumentType
         return citizenNameList;
     }
 
+    @NotNull
+    private static List<String> getCitizenIds(@Nullable final Colony colonyToUse)
+    {
+        final List<Colony> colonyList;
+        if (null != colonyToUse)
+        {
+            colonyList = Collections.singletonList(colonyToUse);
+        }
+        else
+        {
+            colonyList = ColonyManager.getColonies();
+        }
+        final List<String> citizenNameList = new ArrayList<>();
+        for (final Colony colony : colonyList)
+        {
+            final List<CitizenData> citizenDataList = colony.getCitizenManager().getCitizens();
+            for (final CitizenData citizenData : citizenDataList)
+            {
+                citizenNameList.add(String.valueOf(citizenData.getId()));
+            }
+        }
+        return citizenNameList;
+    }
+
+    @NotNull
     public List<String> getTabCompletions(@NotNull final MinecraftServer server,
             @Nullable final BlockPos pos,
-            final String potentialArgumentValue)
+            @NotNull final ActionMenuState actionMenuState, final String potentialArgumentValue)
     {
         switch (this)
         {
@@ -114,18 +170,22 @@ public enum ActionArgumentType
             case COORDINATE_Y:
             case COORDINATE_Z:
                 return getCoordinateTabCompletions(pos, potentialArgumentValue);
+            case ONLINE_PLAYER:
+                final List<String> onlinePlayerNameStrings = getOnlinePlayerNames(server);
+                return onlinePlayerNameStrings.stream().filter(k -> k.startsWith(potentialArgumentValue)).collect(Collectors.toList());
             case PLAYER:
-                final List<String> playerNameStrings = getOnlinePlayerNames(server);
-                return playerNameStrings.stream().filter(k -> k.startsWith(potentialArgumentValue)).collect(Collectors.toList());
+                final List<String> allPlayerNameStrings = getAllPlayerNames(server);
+                return allPlayerNameStrings.stream().filter(k -> k.startsWith(potentialArgumentValue)).collect(Collectors.toList());
             case COLONY:
                 return getColonyTabCompletions(potentialArgumentValue);
             case CITIZEN:
-                return getCitizenTabCompletions(potentialArgumentValue);
+                return getCitizenTabCompletions(actionMenuState, potentialArgumentValue);
             default:
                 throw new IllegalStateException("Unimplemented ActionArgumentType tab completion");
         }
     }
 
+    @NotNull
     private List<String> getCoordinateTabCompletions(@Nullable final BlockPos pos, final String potentialArgumentValue)
     {
         if (null == pos)
@@ -151,6 +211,7 @@ public enum ActionArgumentType
         return Collections.emptyList();
     }
 
+    @NotNull
     private List<String> getColonyTabCompletions(final String potentialArgumentValue)
     {
         // TODO: use the colony we are in as the default tab completion.
@@ -170,11 +231,29 @@ public enum ActionArgumentType
         }
     }
 
-    private List<String> getCitizenTabCompletions(final String potentialArgumentValue)
+    @NotNull
+    private List<String> getCitizenTabCompletions(@NotNull final ActionMenuState actionMenuState, final String potentialArgumentValue)
     {
         // TODO: see if we can figure out what citizen we are looking at as the default tab completion.
-        final List<String> citizenNameStrings = getCitizenNames();
-        final List<String> citizenNumberStrings = getColonyIdStrings();
+        @Nullable Colony colony = null;
+        // Try to find a valid colony value.
+        // TODO: doesn't check subarguments but should only check arguments for parents of this argument.
+        // TODO: Also no guarantee that we've grabbed the right colony argument if the command has more than one.
+        final ActionMenu actionMenu = actionMenuState.getActionMenu();
+        for (final ActionArgument actionArgument : actionMenu.getActionArgumentList())
+        {
+            if (ActionArgumentType.COLONY == actionArgument.getType())
+            {
+                colony = (Colony) actionMenuState.getValue(actionArgument);
+                if (null != colony)
+                {
+                    break;
+                }
+            }
+        }
+
+        final List<String> citizenNameStrings = getCitizenNames(colony);
+        final List<String> citizenNumberStrings = getCitizenIds(colony);
         final String[] potentiaCitizenNameParts = potentialArgumentValue.split(" ", -1);
         final int currentWordIndex = potentiaCitizenNameParts.length - 1;
         if (potentialArgumentValue.isEmpty())
@@ -264,8 +343,10 @@ public enum ActionArgumentType
                 return Ints.tryParse(potentialArgumentValue);
             case BOOLEAN:
                 return parseBoolean(potentialArgumentValue);
+            case ONLINE_PLAYER:
+                return parseOnlinePlayerValue(server, potentialArgumentValue);
             case PLAYER:
-                return parsePlayerValue(server, potentialArgumentValue);
+                return parseAnyPlayerValue(server, potentialArgumentValue);
             case COLONY:
                 return parseColonyValue(sender, potentialArgumentValue);
             case CITIZEN:
@@ -331,7 +412,7 @@ public enum ActionArgumentType
     }
 
     @Nullable
-    private EntityPlayerMP parsePlayerValue(@NotNull final MinecraftServer server, final String potentialArgumentValue)
+    private EntityPlayerMP parseOnlinePlayerValue(@NotNull final MinecraftServer server, final String potentialArgumentValue)
     {
         final List<String> playerNameStrings = getOnlinePlayerNames(server);
         if (playerNameStrings.contains(potentialArgumentValue))
@@ -340,9 +421,27 @@ public enum ActionArgumentType
         }
         else
         {
-            if ("[abandoned]".equals(potentialArgumentValue))
+            if (ABANDONED_FAKE_PLAYER_NAME.equals(potentialArgumentValue))
             {
-                return new FakePlayer(server.getWorld(0), new GameProfile(UUID.randomUUID(), "[abandoned]"));
+                return new FakePlayer(server.getWorld(0), new GameProfile(UUID.randomUUID(), ABANDONED_FAKE_PLAYER_NAME));
+            }
+            return null;
+        }
+    }
+
+    @Nullable
+    private EntityPlayerMP parseAnyPlayerValue(@NotNull final MinecraftServer server, final String potentialArgumentValue)
+    {
+        final List<String> playerNameStrings = getAllPlayerNames(server);
+        if (playerNameStrings.contains(potentialArgumentValue))
+        {
+            return server.getPlayerList().getPlayerByUsername(potentialArgumentValue);
+        }
+        else
+        {
+            if (ABANDONED_FAKE_PLAYER_NAME.equals(potentialArgumentValue))
+            {
+                return new FakePlayer(server.getWorld(0), new GameProfile(UUID.randomUUID(), ABANDONED_FAKE_PLAYER_NAME));
             }
             return null;
         }

@@ -16,7 +16,7 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.minecolonies.coremod.commands.ActionMenu;
+import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 
 import net.minecraft.command.CommandException;
@@ -72,11 +72,11 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        final Colony colony = actionMenu.getColonyForArgument("colony");
-        final boolean canDestroy = actionMenu.getBooleanValueForArgument("canDestroy", true);
-        final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
+        final Colony colony = actionMenuState.getColonyForArgument("colony");
+        final boolean canDestroy = actionMenuState.getBooleanValueForArgument("canDestroy", true);
+        final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", false);
 
         if (colony == null)
         {

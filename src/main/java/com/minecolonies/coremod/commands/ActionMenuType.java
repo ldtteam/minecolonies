@@ -37,7 +37,7 @@ public enum ActionMenuType implements IMenuType
             "rtp",
             ForgePermissionNodes.RANDOM_TELEPORT,
             RandomTeleportCommand.class,
-            new ActionArgument("player", ActionArgumentType.PLAYER, ActionArgumentType.Is.OPTIONAL)
+            new ActionArgument("player", ActionArgumentType.ONLINE_PLAYER, ActionArgumentType.Is.OPTIONAL)
             )),
     BACKUP(new ActionMenu(
             "Backup",
@@ -265,7 +265,7 @@ public enum ActionMenuType implements IMenuType
             "scan",
             ForgePermissionNodes.SCAN,
             ScanCommand.class,
-            new ActionArgument("player", ActionArgumentType.PLAYER, ActionArgumentType.Is.OPTIONAL),
+            new ActionArgument("player", ActionArgumentType.ONLINE_PLAYER, ActionArgumentType.Is.OPTIONAL),
             new ActionArgument("x1", ActionArgumentType.COORDINATE_X, ActionArgumentType.Is.REQUIRED),
             new ActionArgument("y1", ActionArgumentType.COORDINATE_Y, ActionArgumentType.Is.REQUIRED),
             new ActionArgument("z1", ActionArgumentType.COORDINATE_Z, ActionArgumentType.Is.REQUIRED),
