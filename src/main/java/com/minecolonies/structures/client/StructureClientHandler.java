@@ -21,9 +21,16 @@ public class StructureClientHandler
 
     private static final BlockRendererDispatcher blockRendererDispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
 
-    public static void renderStructure(@NotNull final World world, @NotNull final Structure structure)
+    public static void renderStructure(@NotNull final World world, @NotNull final Structure structure, float partialTicks)
     {
-        GlStateManager.pushMatrix();
+        double d3 = Minecraft.getMinecraft().player.lastTickPosX + (Minecraft.getMinecraft().player.posX - Minecraft.getMinecraft().player.lastTickPosX) * partialTicks;
+        double d4 = Minecraft.getMinecraft().player.lastTickPosY + (Minecraft.getMinecraft().player.posY - Minecraft.getMinecraft().player.lastTickPosY) * partialTicks;
+        double d5 = Minecraft.getMinecraft().player.lastTickPosZ + (Minecraft.getMinecraft().player.posZ - Minecraft.getMinecraft().player.lastTickPosZ) * partialTicks;
+
+
+        TemplateRenderHandler.getInstance().draw(structure, d3, d4, d5);
+
+        /*GlStateManager.pushMatrix();
         GL11.glPushAttrib(GL_LIGHTING_BIT);
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -31,7 +38,7 @@ public class StructureClientHandler
 
         structure.getBlockInfoWithSettings(structure.getSettings()).forEach(blockInfo -> {
             renderStructureComponentInWorld(world, blockInfo);
-        });
+        });*/
     }
 
     private static void renderStructureComponentInWorld(@NotNull final World world, @NotNull final Template.BlockInfo blockInfo)
