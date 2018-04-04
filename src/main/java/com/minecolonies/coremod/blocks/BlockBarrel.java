@@ -147,7 +147,6 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
             final float hitZ)
     {
         if(!worldIn.isRemote) {
-            Log.getLogger().info("block right-clicked");
 
             final ItemStack itemstack = playerIn.inventory.getCurrentItem();
             TileEntity te = worldIn.getTileEntity(pos);
@@ -165,7 +164,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     public IBlockState getStateFromMeta(final int meta)
     {
         return this.getDefaultState().withProperty(FACING,
-                EnumFacing.getHorizontal(meta)).withProperty(VARIANT, BarrelType.byMetadata(meta));
+                EnumFacing.getHorizontal(meta));
     }
 
     /**
@@ -197,7 +196,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     @Override
     public int getMetaFromState(final IBlockState state)
     {
-        return state.getValue(VARIANT).getMetadata();
+        return state.getValue(FACING).getHorizontalIndex();
     }
 
     @Override
@@ -234,5 +233,57 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY,
                                             float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
         return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand).withProperty(FACING, placer.getHorizontalFacing());
+    }
+
+    /**
+     * @deprecated remove when minecraft invents something better.
+     */
+    @Deprecated
+    @Override
+    public IBlockState getActualState(@NotNull final IBlockState state, @NotNull final IBlockAccess worldIn, @NotNull final BlockPos pos)
+    {
+        return changeStateOverFullness((World) worldIn, state, pos);
+    }
+
+    private IBlockState changeStateOverFullness(World worldIn, IBlockState blockState, BlockPos pos)
+    {
+        if(!(worldIn.getTileEntity(pos) instanceof TileEntityBarrel))
+            return null;
+
+        TileEntityBarrel te = (TileEntityBarrel) worldIn.getTileEntity(pos);
+
+        //The posible states of the barrel (minus the state done and working)
+        int posibleStates = BarrelType.values().length-3;   //From 0 to last state
+
+        //12.8 -> the number of items needed to go up on a state (having 6 filling states)
+        //So items/12.8 -> meta of the state we should get
+        BarrelType state = BarrelType.byMetadata((int) Math.round(te.getItems()/12.8));
+
+        //We check if the barrel is marked as empty but it have items inside. If so, means that it
+        //does not have all the items needed to go on TWENTY state, but we need to mark it so the player
+        //knows it have some items inside
+        if(state.equals(BarrelType.ZERO) && te.getItems()> 0)
+            state = BarrelType.TWENTY;
+
+        IBlockState newState = updateBlock(worldIn,
+            blockState, state, pos);
+
+        //If the barrel is full, it starts to compost
+        if(te.getItems() == TileEntityBarrel.MAX_ITEMS)
+            newState = updateBlock(worldIn,
+                    blockState, BarrelType.WORKING, pos);
+
+        return newState;
+
+    }
+
+    //This method creates a new IBlockState based in a blockType (may not need forced updates)
+    private IBlockState updateBlock(World worldIn, IBlockState state, BarrelType type, BlockPos pos)
+    {
+        IBlockState newState = state.withProperty(BlockBarrel.VARIANT,
+                type).withProperty(BlockBarrel.FACING, state.getValue(BlockBarrel.FACING));
+        worldIn.setBlockState(pos, newState);
+        worldIn.notifyBlockUpdate(pos, newState, newState, 3);
+        return newState;
     }
 }
