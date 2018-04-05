@@ -202,6 +202,9 @@ public class Configurations
 
     public static class Names
     {
+        @Config.Comment("Generate a middle initial when creating new colonist names")
+        public boolean useMiddleInitial = true;
+
         @Config.Comment("Male first names to be used for colonists")
         public String[] maleFirstNames = new String[]
                                            {
