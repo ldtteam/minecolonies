@@ -8,6 +8,7 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.BuildingBarracks;
+import com.minecolonies.coremod.colony.buildings.BuildingBarracksNew;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +19,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Window for the barracks building.
  */
-public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarracks.View>
+public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarracksNew.View>
 {
     /**
      * Id of the positions list.
@@ -65,7 +66,7 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
      *
      * @param building View of the home building.
      */
-    public WindowBarracksBuilding(final BuildingBarracks.View building)
+    public WindowBarracksBuilding(final BuildingBarracksNew.View building)
     {
         super(building, Constants.MOD_ID + HOME_BUILDING_RESOURCE_SUFFIX);
         colonyView = building.getColony();

@@ -180,6 +180,7 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutWareHouse);
         createCustomModel(ModBlocks.blockHutDeliveryman);
         createCustomModel(ModBlocks.blockSubstitution);
+        createCustomModel(ModBlocks.blockBarracksTowerSubstitution);
         createCustomModel(ModBlocks.blockHutField);
         createCustomModel(ModBlocks.blockHutGuardTower);
         createCustomModel(ModBlocks.blockHutBarracks);

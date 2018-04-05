@@ -193,11 +193,11 @@ public class BuildingBarracks extends AbstractBuilding
             super(c, l);
         }
 
-        @NotNull
+        /*@NotNull
         @Override
         public Window getWindow()
         {
             return new WindowBarracksBuilding(this);
-        }
+        }*/
     }
 }

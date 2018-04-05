@@ -249,7 +249,7 @@ public class CitizenManager implements ICitizenManager
                 {
                     newMaxCitizens += ((BuildingHome) b).getMaxInhabitants();
                 }
-                else if (b instanceof BuildingBarracksTower)
+                else if (b instanceof BuildingBarracksTowerNew)
                 {
                     newMaxCitizens += b.getBuildingLevel();
                 }

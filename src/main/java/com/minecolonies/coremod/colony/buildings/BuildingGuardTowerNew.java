@@ -16,9 +16,9 @@ public class BuildingGuardTowerNew extends AbstractBuildingGuardsNew
     /**
      * Our constants. The Schematic names, Defence bonus, and Offence bonus.
      */
-    private static final String NAME          = "GuardTower";
-    private static final int    DEFENCE_BONUS = 5;
-    private static final int    OFFENCE_BONUS = 0;
+    private static final String SCHEMATIC_NAME = "GuardTower";
+    private static final int    DEFENCE_BONUS  = 5;
+    private static final int    OFFENCE_BONUS  = 0;
 
     /**
      * The abstract constructor of the building.
@@ -46,7 +46,7 @@ public class BuildingGuardTowerNew extends AbstractBuildingGuardsNew
     @Override
     public String getSchematicName()
     {
-        return NAME;
+        return SCHEMATIC_NAME;
     }
 
     @Override
