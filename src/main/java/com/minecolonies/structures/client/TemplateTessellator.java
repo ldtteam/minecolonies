@@ -1,9 +1,13 @@
 package com.minecolonies.structures.client;
 
 import com.minecolonies.structures.helpers.Settings;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.texture.ITextureObject;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexBuffer;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
 
 import java.nio.FloatBuffer;
 
@@ -55,17 +59,27 @@ public class TemplateTessellator {
             this.isReadOnly = true;
         }
 
+        final ITextureObject textureObject = Minecraft.getMinecraft().getTextureMapBlocks();
+        GlStateManager.bindTexture(textureObject.getGlTextureId());
+
         GlStateManager.pushMatrix();
         GlStateManager.translate((float)((double) Settings.instance.getPosition().getX() - viewEntityX), (float)((double)Settings.instance.getPosition().getX() - viewEntityY), (float)((double)Settings.instance.getPosition().getX() - viewEntityZ));
-        GlStateManager.disableDepth();
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.color(1F,1F,1F,1F);
         GlStateManager.pushMatrix();
 
-        this.multModelviewMatrix();
+        //this.multModelviewMatrix();
 
         this.buffer.bindBuffer();
+
+        GlStateManager.glEnableClientState(32884);
+        OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+        GlStateManager.glEnableClientState(32888);
+        OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
+        GlStateManager.glEnableClientState(32888);
+        OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+        GlStateManager.glEnableClientState(32886);
 
         GlStateManager.glVertexPointer(3, 5126, 28, 0);
         GlStateManager.glColorPointer(4, 5121, 28, 12);
@@ -74,14 +88,38 @@ public class TemplateTessellator {
         GlStateManager.glTexCoordPointer(2, 5122, 28, 24);
         OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
 
+        //GlStateManager.disableCull();
+
         this.buffer.drawArrays(7);
+
+        //GlStateManager.enableCull();
+
+        for (VertexFormatElement vertexformatelement : DefaultVertexFormats.BLOCK.getElements())
+        {
+            VertexFormatElement.EnumUsage vertexformatelement$enumusage = vertexformatelement.getUsage();
+            int k1 = vertexformatelement.getIndex();
+
+            switch (vertexformatelement$enumusage)
+            {
+                case POSITION:
+                    GlStateManager.glDisableClientState(32884);
+                    break;
+                case UV:
+                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + k1);
+                    GlStateManager.glDisableClientState(32888);
+                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+                    break;
+                case COLOR:
+                    GlStateManager.glDisableClientState(32886);
+                    GlStateManager.resetColor();
+            }
+        }
 
         this.buffer.unbindBuffer();
 
         GlStateManager.popMatrix();
         GlStateManager.color(1F, 1F, 1F, 1F);
-        GlStateManager.disableDepth();
-        GlStateManager.enableDepth();
+        GlStateManager.disableBlend();
         GlStateManager.popMatrix();
     }
 
