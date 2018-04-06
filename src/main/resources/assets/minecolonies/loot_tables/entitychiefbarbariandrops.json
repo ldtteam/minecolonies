@@ -11,27 +11,27 @@
         },
         {
           "type": "item",
-          "weight": 5,
+          "weight": 2,
           "name": "minecraft:diamond_sword"
         },
         {
           "type": "item",
-          "weight": 10,
+          "weight": 5,
           "name": "minecraft:golden_sword"
         },
         {
           "type": "item",
-          "weight": 15,
+          "weight": 10,
           "name": "minecraft:iron_sword"
         },
         {
           "type": "item",
-          "weight": 30,
+          "weight": 15,
           "name": "minecraft:stone_sword"
         },
         {
           "type": "item",
-          "weight": 20,
+          "weight": 5,
           "name": "minecolonies:ancienttome"
         }
       ]

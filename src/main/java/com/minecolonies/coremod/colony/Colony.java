@@ -158,6 +158,11 @@ public class Colony implements IColony
     private BlockPos center;
 
     /**
+     * Th
+     */
+    private int nightsSinceLastRaid = 0;
+
+    /**
      * The colony permission object.
      */
     @NotNull
@@ -640,6 +645,7 @@ public class Colony implements IColony
         if (isDay && !world.isDaytime())
         {
             isDay = false;
+            nightsSinceLastRaid++;
             citizenManager.checkCitizensForHappiness();
         }
         else if (!isDay && world.isDaytime())
@@ -1130,5 +1136,23 @@ public class Colony implements IColony
             this.writeToNBT(new NBTTagCompound());
         }
         return this.colonyTag;
+    }
+
+    /**
+     * Getter for the nights since the last raid.
+     * @return the number of nights.
+     */
+    public int getNightsSinceLastRaid()
+    {
+        return nightsSinceLastRaid;
+    }
+
+    /**
+     * Setter for the nights since the last raid.
+     * @param nights the number of nights.
+     */
+    public void setNightsSinceLastRaid(final int nights)
+    {
+        this.nightsSinceLastRaid = nights;
     }
 }
