@@ -3,7 +3,6 @@ package com.minecolonies.structures.client;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
-import com.google.common.cache.RemovalNotification;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.structures.lib.TemplateUtils;
 import net.minecraft.client.Minecraft;
@@ -16,19 +15,18 @@ import net.minecraft.world.gen.structure.template.Template;
 
 import java.util.concurrent.ExecutionException;
 
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+
 public class TemplateRenderHandler
 {
-    private static TemplateRenderHandler ourInstance = new TemplateRenderHandler();
-    private final Cache<Template, TemplateTessellator> templateBufferBuilderCache =
-      CacheBuilder.newBuilder().maximumSize(50).removalListener(new RemovalListener<Template, TemplateTessellator>()
-      {
-          @Override
-          public void onRemoval(RemovalNotification<Template, TemplateTessellator> notification)
-          {
-              notification.getValue().getBuffer().deleteGlBuffers();
-          }
-      }).build();
-    private final BlockRendererDispatcher              rendererDispatcher         = Minecraft.getMinecraft().getBlockRendererDispatcher();
+    private static TemplateRenderHandler                ourInstance                = new TemplateRenderHandler();
+    private final  Cache<Template, TemplateTessellator> templateBufferBuilderCache =
+      CacheBuilder.newBuilder()
+        .maximumSize(50)
+        .removalListener((RemovalListener<Template, TemplateTessellator>) notification -> notification.getValue().getBuffer().deleteGlBuffers())
+        .build();
+    private final  BlockRendererDispatcher              rendererDispatcher         = Minecraft.getMinecraft().getBlockRendererDispatcher();
+
     private TemplateRenderHandler()
     {
     }
@@ -46,7 +44,7 @@ public class TemplateRenderHandler
         {
             templateBufferBuilderCache.get(template, () -> {
                 TemplateTessellator tessellator = new TemplateTessellator();
-                tessellator.getBuilder().begin(7, DefaultVertexFormats.BLOCK);
+                tessellator.getBuilder().begin(GL_QUADS, DefaultVertexFormats.BLOCK);
 
                 template.blocks.stream().forEach(b -> {
                     rendererDispatcher.renderBlock(b.blockState, b.pos, blockAccess, tessellator.getBuilder());

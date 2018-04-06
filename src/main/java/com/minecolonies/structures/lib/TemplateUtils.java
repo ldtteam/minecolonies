@@ -11,18 +11,31 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-public final class TemplateUtils {
+public final class TemplateUtils
+{
 
     private static final Cache<Template, Map<BlockPos, Template.BlockInfo>> templateBlockInfoCache = CacheBuilder.newBuilder().maximumSize(50).build();
 
-    private TemplateUtils() {
+    private TemplateUtils()
+    {
         throw new IllegalArgumentException("Utils class");
+    }
+
+    public static TileEntity getTileEntityFromPos(final Template template, final BlockPos pos)
+    {
+        final Template.BlockInfo blockInfo = getBlockInfoFromPos(template, pos);
+        if (blockInfo.tileentityData != null)
+        {
+            //TODO: Figure out if this world = null thing does not harm anyone for rendering purposes.
+            return TileEntity.create(null, blockInfo.tileentityData);
+        }
+
+        return null;
     }
 
     public static Template.BlockInfo getBlockInfoFromPos(final Template template, final BlockPos pos)
@@ -42,25 +55,11 @@ public final class TemplateUtils {
         return new Template.BlockInfo(pos, Blocks.AIR.getDefaultState(), null);
     }
 
-    public static TileEntity getTileEntityFromPos(final Template template, final BlockPos pos)
-    {
-        final Template.BlockInfo blockInfo = getBlockInfoFromPos(template, pos);
-        if (blockInfo.tileentityData != null)
-        {
-            //TODO: Figure out if this world = null thing does not harm anyone for rendering purposes.
-            return TileEntity.create(null, blockInfo.tileentityData);
-        }
-
-        return null;
-    }
-
     public static BlockPos getPrimaryBlockOffset(@NotNull final Template template)
     {
         return template.blocks.stream()
                  .filter(blockInfo -> blockInfo.blockState.getBlock() instanceof AbstractBlockHut<?>)
                  .findFirst().map(blockInfo -> blockInfo.pos)
-                 .orElse(new BlockPos(template.getSize().getX() / 2, 0 , template.getSize().getZ() / 2));
+                 .orElse(new BlockPos(template.getSize().getX() / 2, 0, template.getSize().getZ() / 2));
     }
-
-
 }

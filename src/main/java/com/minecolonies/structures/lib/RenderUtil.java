@@ -9,6 +9,9 @@ import org.jetbrains.annotations.NotNull;
 public final class RenderUtil
 {
 
+    public static final float QUARTER = 90f;
+    public static final float HALF = 180f;
+
     private RenderUtil()
     {
         throw new IllegalArgumentException("Utility Class");
@@ -23,17 +26,20 @@ public final class RenderUtil
                 angle = -0f;
                 break;
             case CLOCKWISE_90:
-                angle = -90f;
+                angle = -QUARTER;
                 break;
             case CLOCKWISE_180:
-                angle = -180f;
+                angle = -HALF;
                 break;
             case COUNTERCLOCKWISE_90:
-                angle = 90f;
+                angle = QUARTER;
+                break;
+            default:
+                angle = 0f;
                 break;
         }
 
-        GlStateManager.rotate(angle, 0, 1, 0f);
+        GlStateManager.rotate(angle, 0, 1, 0);
     }
 
     public static void applyMirror(@NotNull final Mirror mirror, @NotNull final BlockPos appliedPrimaryBlockOff)
@@ -41,15 +47,15 @@ public final class RenderUtil
         switch (mirror)
         {
             case NONE:
-                GlStateManager.scale(1f, 1f, 1f);
+                GlStateManager.scale(1, 1, 1);
                 break;
             case LEFT_RIGHT:
-                GlStateManager.scale(-1f, 1f,1f);
-                GlStateManager.translate(0f,0f,0f);
+                GlStateManager.scale(-1, 1, 1);
+                GlStateManager.translate(0, 0, 0);
                 break;
             case FRONT_BACK:
-                GlStateManager.translate(0,0,2 * appliedPrimaryBlockOff.getZ());
-                GlStateManager.scale(1f, 1f, -1f);
+                GlStateManager.translate(0, 0, 2 * appliedPrimaryBlockOff.getZ());
+                GlStateManager.scale(1, 1, -1);
                 break;
         }
     }

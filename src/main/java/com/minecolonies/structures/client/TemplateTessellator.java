@@ -11,12 +11,21 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.*;
 
 public class TemplateTessellator
 {
 
+    public static final  int   VERTEX_COMPONENT_SIZE             = 3;
+    public static final  int   COLOR_COMPONENT_SIZE              = 4;
+    public static final  int   TEX_COORD_COMPONENT_SIZE          = 2;
+    public static final  int   LIGHT_TEX_COORD_COMPONENT_SIZE    = TEX_COORD_COMPONENT_SIZE;
+    public static final  int   VERTEX_SIZE                       = 28;
+    public static final  int   VERTEX_COMPONENT_OFFSET           = 0;
+    public static final  int   COLOR_COMPONENT_OFFSET            = 12;
+    public static final  int   TEX_COORD_COMPONENT_OFFSET        = 16;
+    public static final  int   LIGHT_TEXT_COORD_COMPONENT_OFFSET = 24;
+    private static final float HALF_PERCENT_SHRINK               = 0.995F;
     private final BufferBuilder builder;
     private final VertexBuffer         buffer      = new VertexBuffer(DefaultVertexFormats.BLOCK);
     private final VertexBufferUploader vboUploader = new VertexBufferUploader();
@@ -46,7 +55,7 @@ public class TemplateTessellator
 
         preTemplateDraw();
 
-        this.buffer.drawArrays(7);
+        this.buffer.drawArrays(GL_QUADS);
 
         postTemplateDraw();
 
@@ -69,28 +78,28 @@ public class TemplateTessellator
         RenderUtil.applyRotationToYAxis(rotation);
         RenderUtil.applyMirror(mirror, inTemplateOffset);
 
-        GlStateManager.scale(0.995f, 0.995f, 0.995f);
+        GlStateManager.scale(HALF_PERCENT_SHRINK, HALF_PERCENT_SHRINK, HALF_PERCENT_SHRINK);
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.color(1F, 1F, 1F, 1F);
+        GlStateManager.resetColor();
         GlStateManager.pushMatrix();
     }
 
     private static void preTemplateDraw()
     {
-        GlStateManager.glEnableClientState(32884);
+        GlStateManager.glEnableClientState(GL_VERTEX_ARRAY);
         OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
-        GlStateManager.glEnableClientState(32888);
+        GlStateManager.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
-        GlStateManager.glEnableClientState(32888);
+        GlStateManager.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
-        GlStateManager.glEnableClientState(32886);
+        GlStateManager.glEnableClientState(GL_COLOR_ARRAY);
 
-        GlStateManager.glVertexPointer(3, 5126, 28, 0);
-        GlStateManager.glColorPointer(4, 5121, 28, 12);
-        GlStateManager.glTexCoordPointer(2, 5126, 28, 16);
+        GlStateManager.glVertexPointer(VERTEX_COMPONENT_SIZE, GL_FLOAT, VERTEX_SIZE, VERTEX_COMPONENT_OFFSET);
+        GlStateManager.glColorPointer(COLOR_COMPONENT_SIZE, GL_UNSIGNED_BYTE, VERTEX_SIZE, COLOR_COMPONENT_OFFSET);
+        GlStateManager.glTexCoordPointer(TEX_COORD_COMPONENT_SIZE, GL_FLOAT, VERTEX_SIZE, TEX_COORD_COMPONENT_OFFSET);
         OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
-        GlStateManager.glTexCoordPointer(2, 5122, 28, 24);
+        GlStateManager.glTexCoordPointer(LIGHT_TEX_COORD_COMPONENT_SIZE, GL_SHORT, VERTEX_SIZE, LIGHT_TEXT_COORD_COMPONENT_OFFSET);
         OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
 
         GlStateManager.disableCull();
@@ -102,21 +111,21 @@ public class TemplateTessellator
 
         for (VertexFormatElement vertexformatelement : DefaultVertexFormats.BLOCK.getElements())
         {
-            VertexFormatElement.EnumUsage vertexformatelement$enumusage = vertexformatelement.getUsage();
+            VertexFormatElement.EnumUsage vfeUsage = vertexformatelement.getUsage();
             int k1 = vertexformatelement.getIndex();
 
-            switch (vertexformatelement$enumusage)
+            switch (vfeUsage)
             {
                 case POSITION:
-                    GlStateManager.glDisableClientState(32884);
+                    GlStateManager.glDisableClientState(GL_VERTEX_ARRAY);
                     break;
                 case UV:
                     OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + k1);
-                    GlStateManager.glDisableClientState(32888);
+                    GlStateManager.glDisableClientState(GL_TEXTURE_COORD_ARRAY);
                     OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
                     break;
                 case COLOR:
-                    GlStateManager.glDisableClientState(32886);
+                    GlStateManager.glDisableClientState(GL_COLOR_ARRAY);
                     GlStateManager.resetColor();
             }
         }
@@ -125,7 +134,7 @@ public class TemplateTessellator
     private void postTemplateBufferUnbinding()
     {
         GlStateManager.popMatrix();
-        GlStateManager.color(1F, 1F, 1F, 1F);
+        GlStateManager.resetColor();
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
     }

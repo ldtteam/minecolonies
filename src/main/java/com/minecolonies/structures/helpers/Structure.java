@@ -8,13 +8,10 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
-import net.minecraft.block.BlockIce;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -41,7 +38,6 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import static com.minecolonies.api.util.constant.Constants.MAX_SCHEMATIC_SIZE;
 import static com.minecolonies.api.util.constant.Suppression.RESOURCES_SHOULD_BE_CLOSED;
 
 /**
@@ -536,6 +532,39 @@ public class Structure
     }
 
     /**
+     * Get entity info with specific setting.
+     *
+     * @param entityInfo the entity to transform.
+     * @param world      world the entity is in.
+     * @param pos        the position it is at.
+     * @param settings   the settings.
+     * @return the entity info aray.
+     */
+    public Template.EntityInfo transformEntityInfoWithSettings(final Template.EntityInfo entityInfo, final World world, final BlockPos pos, final PlacementSettings settings)
+    {
+        final Entity finalEntity = EntityList.createEntityFromNBT(entityInfo.entityData, world);
+
+        //err might be here? only use pos? or don't add?
+        final Vec3d entityVec = Structure.transformedVec3d(settings, entityInfo.pos).add(new Vec3d(pos));
+
+        if (finalEntity != null)
+        {
+            finalEntity.prevRotationYaw = (float) (finalEntity.getMirroredYaw(settings.getMirror()) - NINETY_DEGREES);
+            final double rotationYaw
+              = (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double) finalEntity.rotationYaw - (double) finalEntity.getRotatedYaw(settings.getRotation()));
+
+            finalEntity.setLocationAndAngles(entityVec.x, entityVec.y, entityVec.z,
+              (float) rotationYaw, finalEntity.rotationPitch);
+
+            final NBTTagCompound nbttagcompound = new NBTTagCompound();
+            finalEntity.writeToNBTOptional(nbttagcompound);
+            return new Template.EntityInfo(entityInfo.pos, entityInfo.blockPos, nbttagcompound);
+        }
+
+        return null;
+    }
+
+    /**
      * Transform a Vec3d with placement settings.
      *
      * @param settings the settings.
@@ -574,39 +603,6 @@ public class Structure
             default:
                 return flag ? new Vec3d(xCoord, yCoord, zCoord) : vec;
         }
-    }
-
-    /**
-     * Get entity info with specific setting.
-     *
-     * @param entityInfo the entity to transform.
-     * @param world      world the entity is in.
-     * @param pos        the position it is at.
-     * @param settings   the settings.
-     * @return the entity info aray.
-     */
-    public Template.EntityInfo transformEntityInfoWithSettings(final Template.EntityInfo entityInfo, final World world, final BlockPos pos, final PlacementSettings settings)
-    {
-        final Entity finalEntity = EntityList.createEntityFromNBT(entityInfo.entityData, world);
-
-        //err might be here? only use pos? or don't add?
-        final Vec3d entityVec = Structure.transformedVec3d(settings, entityInfo.pos).add(new Vec3d(pos));
-
-        if (finalEntity != null)
-        {
-            finalEntity.prevRotationYaw = (float) (finalEntity.getMirroredYaw(settings.getMirror()) - NINETY_DEGREES);
-            final double rotationYaw
-              = (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double) finalEntity.rotationYaw - (double) finalEntity.getRotatedYaw(settings.getRotation()));
-
-            finalEntity.setLocationAndAngles(entityVec.x, entityVec.y, entityVec.z,
-              (float) rotationYaw, finalEntity.rotationPitch);
-
-            final NBTTagCompound nbttagcompound = new NBTTagCompound();
-            finalEntity.writeToNBTOptional(nbttagcompound);
-            return new Template.EntityInfo(entityInfo.pos, entityInfo.blockPos, nbttagcompound);
-        }
-
-        return null;
     }
 
     /**

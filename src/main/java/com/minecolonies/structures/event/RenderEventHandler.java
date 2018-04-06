@@ -1,13 +1,8 @@
 package com.minecolonies.structures.event;
 
-import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.structures.client.StructureClientHandler;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
-import com.sun.jna.StructureReadContext;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
