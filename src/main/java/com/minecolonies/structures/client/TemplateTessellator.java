@@ -1,6 +1,8 @@
 package com.minecolonies.structures.client;
 
+import com.minecolonies.blockout.Render;
 import com.minecolonies.structures.helpers.Settings;
+import com.minecolonies.structures.lib.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.ITextureObject;
@@ -8,6 +10,9 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexBuffer;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
+import net.minecraft.util.Mirror;
+import net.minecraft.util.Rotation;
+import net.minecraft.util.math.BlockPos;
 
 import java.nio.FloatBuffer;
 
@@ -50,7 +55,7 @@ public class TemplateTessellator {
     /**
      * Draws the data set up in this tessellator and resets the state to prepare for new drawing.
      */
-    public void draw(double viewEntityX, double viewEntityY, double viewEntityZ)
+    public void draw(final Rotation rotation, final Mirror mirror, final Vector3d drawingOffset, final BlockPos inTemplateOffset)
     {
         if (!isReadOnly)
         {
@@ -63,13 +68,19 @@ public class TemplateTessellator {
         GlStateManager.bindTexture(textureObject.getGlTextureId());
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate((float)((double) Settings.instance.getPosition().getX() - viewEntityX), (float)((double)Settings.instance.getPosition().getX() - viewEntityY), (float)((double)Settings.instance.getPosition().getX() - viewEntityZ));
+        GlStateManager.translate(drawingOffset.x, drawingOffset.y, drawingOffset.z);
+
+        BlockPos rotateInTemplateOffset = inTemplateOffset.rotate(rotation);
+        GlStateManager.translate(-rotateInTemplateOffset.getX(), -rotateInTemplateOffset.getY(), -rotateInTemplateOffset.getZ());
+
+        RenderUtil.applyRotationToYAxis(rotation);
+        RenderUtil.applyMirror(mirror, inTemplateOffset);
+
+        GlStateManager.scale(0.995f, 0.995f, 0.995f);
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.color(1F,1F,1F,1F);
         GlStateManager.pushMatrix();
-
-        //this.multModelviewMatrix();
 
         this.buffer.bindBuffer();
 
@@ -88,11 +99,11 @@ public class TemplateTessellator {
         GlStateManager.glTexCoordPointer(2, 5122, 28, 24);
         OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
 
-        //GlStateManager.disableCull();
+        GlStateManager.disableCull();
 
         this.buffer.drawArrays(7);
 
-        //GlStateManager.enableCull();
+        GlStateManager.enableCull();
 
         for (VertexFormatElement vertexformatelement : DefaultVertexFormats.BLOCK.getElements())
         {

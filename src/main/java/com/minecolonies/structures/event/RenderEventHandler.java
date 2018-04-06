@@ -29,40 +29,7 @@ public class RenderEventHandler
 
         if (structure != null)
         {
-            BlockPos size = structure.getSize(BlockUtils.getRotation(Settings.instance.getRotation()));
-            BlockPos position = Settings.instance.getPosition();
-
-            final int x = size.getX();
-            final int z = size.getZ();
-            final int y = size.getY();
-
-            if (Settings.instance.getRotation() == 1)
-            {
-                size = new BlockPos(-x, y, z);
-            }
-            if (Settings.instance.getRotation() == 2)
-            {
-                size = new BlockPos(-x, y, -z);
-            }
-            if (Settings.instance.getRotation() == 3)
-            {
-                size = new BlockPos(x, y, -z);
-            }
-
-            final BlockPos offset = Settings.instance.getOffset(
-              new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror()));
-
-            if (offset.equals(new BlockPos(0, 0, 0)))
-            {
-                position = position.subtract(new BlockPos(size.getX() / 2, 0, size.getZ() / 2));
-            }
-            else
-            {
-                position = position.subtract(offset);
-            }
-
-            StructureClientHandler.renderStructure(Minecraft.getMinecraft().world, structure, event.getPartialTicks());
-            //structure.renderStructure(position, Minecraft.getMinecraft().world, Minecraft.getMinecraft().player, event.getPartialTicks());
+            StructureClientHandler.renderStructure(structure, event.getPartialTicks());
         }
     }
 }

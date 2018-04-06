@@ -5,23 +5,17 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 import com.minecolonies.blockout.Log;
-import com.minecolonies.structures.helpers.Settings;
-import com.minecolonies.structures.helpers.Structure;
-import net.minecraft.block.state.IBlockState;
+import com.minecolonies.structures.lib.TemplateUtils;
+import net.minecraft.block.BlockChest;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.Vector3d;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.world.gen.structure.template.PlacementSettings;
+import net.minecraft.util.Mirror;
+import net.minecraft.util.Rotation;
 import net.minecraft.world.gen.structure.template.Template;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
 public class TemplateRenderHandler {
     private static TemplateRenderHandler ourInstance = new TemplateRenderHandler();
@@ -41,10 +35,8 @@ public class TemplateRenderHandler {
     private TemplateRenderHandler() {
     }
 
-    public void draw(Structure structure, double viewEntityX, double viewEntityY, double viewEntityZ) {
-        PlacementSettings settings = structure.getSettings();
-        Template template = structure.getTemplate();
-        TemplateBlockAccess blockAccess = new TemplateBlockAccess(template);
+    public void draw(final Template template, final Rotation rotation, final Mirror mirror, final Vector3d drawingOffset) {
+        final TemplateBlockAccess blockAccess = new TemplateBlockAccess(template);
 
         try {
             templateBufferBuilderCache.get(template, () -> {
@@ -56,11 +48,9 @@ public class TemplateRenderHandler {
                 });
 
                 return tessellator;
-            }).draw(viewEntityX, viewEntityY, viewEntityZ);
+            }).draw(rotation, mirror, drawingOffset, TemplateUtils.getPrimaryBlockOffset(template));
         } catch (ExecutionException e) {
             Log.getLogger().error(e);
         }
-
-
     }
 }
