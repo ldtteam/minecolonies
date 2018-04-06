@@ -37,7 +37,5 @@ public class StructureClientHandler
 
             TemplateRenderHandler.getInstance().draw(structure.getTemplate(), structure.getSettings().getRotation(), structure.getSettings().getMirror(), renderOffset);
         }
-
-
     }
 }

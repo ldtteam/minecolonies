@@ -14,52 +14,62 @@ import net.minecraft.world.gen.structure.template.Template;
 
 import javax.annotation.Nullable;
 
-public class TemplateBlockAccess implements IBlockAccess {
+public class TemplateBlockAccess implements IBlockAccess
+{
 
     private final Template template;
 
-    public TemplateBlockAccess(Template template) {
+    public TemplateBlockAccess(Template template)
+    {
         this.template = template;
     }
 
     @Nullable
     @Override
-    public TileEntity getTileEntity(BlockPos pos) {
+    public TileEntity getTileEntity(BlockPos pos)
+    {
         return TemplateUtils.getTileEntityFromPos(template, pos);
     }
 
     @Override
-    public int getCombinedLight(BlockPos pos, int lightValue) {
+    public int getCombinedLight(BlockPos pos, int lightValue)
+    {
         return lightValue;
     }
 
     @Override
-    public IBlockState getBlockState(BlockPos pos) {
+    public IBlockState getBlockState(BlockPos pos)
+    {
         return TemplateUtils.getBlockInfoFromPos(template, pos).blockState;
     }
 
     @Override
-    public boolean isAirBlock(BlockPos pos) {
+    public boolean isAirBlock(BlockPos pos)
+    {
         return getBlockState(pos).getBlock() instanceof BlockAir;
     }
 
     @Override
-    public Biome getBiome(BlockPos pos) {
+    public Biome getBiome(BlockPos pos)
+    {
         return Biomes.PLAINS;
     }
 
     @Override
-    public int getStrongPower(BlockPos pos, EnumFacing direction) {
+    public int getStrongPower(BlockPos pos, EnumFacing direction)
+    {
         return 0;
     }
 
     @Override
-    public WorldType getWorldType() {
+    public WorldType getWorldType()
+    {
         return WorldType.DEFAULT;
     }
 
     @Override
-    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default) {
+    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default)
+    {
         return getBlockState(pos).isSideSolid(this, pos, side);
     }
 }
