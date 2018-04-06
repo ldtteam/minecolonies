@@ -35,18 +35,18 @@ public class ScanCommand implements IActionCommand
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        final EntityPlayerMP playerArgument = actionMenu.getPlayerForArgument("player");
+        final EntityPlayerMP playerArgument = actionMenuState.getPlayerForArgument("player");
 
         // Will throw ClassCastException if null, but should never be null as these values are required.
-        final int x1 = actionMenu.getIntegerForArgument("x1");
-        final int y1 = actionMenu.getIntegerForArgument("y1");
-        final int z1 = actionMenu.getIntegerForArgument("z1");
-        final int x2 = actionMenu.getIntegerForArgument("x2");
-        final int y2 = actionMenu.getIntegerForArgument("y2");
-        final int z2 = actionMenu.getIntegerForArgument("z2");
-        final String name = actionMenu.getStringForArgument("name");
+        final int x1 = actionMenuState.getIntegerForArgument("x1");
+        final int y1 = actionMenuState.getIntegerForArgument("y1");
+        final int z1 = actionMenuState.getIntegerForArgument("z1");
+        final int x2 = actionMenuState.getIntegerForArgument("x2");
+        final int y2 = actionMenuState.getIntegerForArgument("y2");
+        final int z2 = actionMenuState.getIntegerForArgument("z2");
+        final String name = actionMenuState.getStringForArgument("name");
 
         if (!name.matches("^[\\w]*"))
         {

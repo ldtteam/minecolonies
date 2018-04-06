@@ -231,7 +231,8 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_COLLECT                         = "com.minecolonies.coremod.gui.cowboy.collect";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_NOTCOLLECT                      = "com.minecolonies.coremod.gui.cowboy.notcollect";
-
+    @NonNls
+    public static final String RAID_EVENT_MESSAGE                                                  = "event.minecolonies.raidMessage";
     private TranslationConstants()
     {
         //empty default
