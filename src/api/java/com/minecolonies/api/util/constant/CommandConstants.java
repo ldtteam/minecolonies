@@ -52,6 +52,8 @@ public final class CommandConstants
     public static final String SUCCESS_MESSAGE_OWNERCHANGE = "Successfully switched Owner %s to colony %d";
     @NonNls
     public static final String DELETE_COLONY_TASK_SCHEDULED = "Delete colony task scheduled.";
+    @NonNls
+    public static final String SUCCESFULLY_CLAIMED_CHUNKS = "Succesfully claimed chunks in every direction";
 
     /**
      * Private constructor to hide the implicit one.
