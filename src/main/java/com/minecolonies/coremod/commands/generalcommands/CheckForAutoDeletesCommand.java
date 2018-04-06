@@ -12,7 +12,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.minecolonies.coremod.commands.ActionMenu;
+import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 
 import net.minecraft.command.CommandException;
@@ -57,9 +57,9 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand implements
         return false;
     }
 
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        final boolean confirmDelete = actionMenu.getBooleanValueForArgument("confirmDelete", false);
+        final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", false);
         executeShared(server, sender, confirmDelete);
     }
 

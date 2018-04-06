@@ -15,8 +15,6 @@ public class ActionArgument
     @NotNull private final String name;
     @NotNull private final ActionArgumentType type;
     private final boolean required;
-    private boolean valueIsSet = false;
-    @Nullable private Object value;
     @Nullable private final List<ActionArgument> actionArgumentList;
 
     public ActionArgument(@NotNull final String name, @NotNull final ActionArgumentType type, final Is optionalOrRequired, @Nullable final ActionArgument ... actionArguments
@@ -70,21 +68,5 @@ public class ActionArgument
             sb.append(']');
         }
         return sb.toString();
-    }
-
-    public boolean isValueSet()
-    {
-        return valueIsSet;
-    }
-
-    public Object getValue()
-    {
-        return value;
-    }
-
-    public void setValue(final Object value)
-    {
-        this.valueIsSet = true;
-        this.value = value;
     }
 }
