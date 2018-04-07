@@ -63,16 +63,13 @@ public class ClientEventHandler
 
         if (structure != null)
         {
-            final BlockPos position = Settings.instance.getPosition();
             if (Settings.instance.getStructureName().contains(AbstractEntityAIStructure.WAYPOINT_STRING))
             {
                 //TODO: Implement waypoint rendering.
-                //RenderUtils.renderWayPoints(position, world, event.getPartialTicks());
             }
             else
             {
                 //TODO: Implement rendering of the colony border.
-                //RenderUtils.renderColonyBorder(position, world, event.getPartialTicks(), player, colonyBorder);
             }
             return;
         }
@@ -84,8 +81,6 @@ public class ClientEventHandler
                 if (entityCitizen instanceof EntityCitizen)
                 {
                     //TODO: Reimplement status rendering.
-                    //RenderUtils.renderSigns(world, event.getPartialTicks(), citizen, player,
-                    //  entityCitizen.getPosition());
                     ticksPassed += event.getPartialTicks();
                     if (ticksPassed > Constants.TICKS_SECOND * SECONDS_TO_SHOW)
                     {
@@ -111,7 +106,6 @@ public class ClientEventHandler
                     if (entityCitizen instanceof EntityCitizen && entityCitizen.getPosition().distanceSq(player.getPosition()) <= 2)
                     {
                         //TODO: Reimplement sign rendering.
-                        //RenderUtils.renderSigns(world, event.getPartialTicks(), citizenDataView, player, entityCitizen.getPosition());
                         citizen = citizenDataView;
                         return;
                     }

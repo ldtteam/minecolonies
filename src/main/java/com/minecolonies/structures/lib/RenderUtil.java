@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
 public final class RenderUtil
 {
 
-    public static final float QUARTER = 90f;
-    public static final float HALF = 180f;
+    public static final float QUARTER = 90F;
+    public static final float HALF = 180F;
 
     private RenderUtil()
     {
@@ -19,11 +19,11 @@ public final class RenderUtil
 
     public static void applyRotationToYAxis(@NotNull final Rotation rotation)
     {
-        float angle = 0f;
+        float angle;
         switch (rotation)
         {
             case NONE:
-                angle = -0f;
+                angle = 0F;
                 break;
             case CLOCKWISE_90:
                 angle = -QUARTER;
@@ -35,7 +35,7 @@ public final class RenderUtil
                 angle = QUARTER;
                 break;
             default:
-                angle = 0f;
+                angle = 0F;
                 break;
         }
 
@@ -56,6 +56,9 @@ public final class RenderUtil
             case FRONT_BACK:
                 GlStateManager.translate(0, 0, 2 * appliedPrimaryBlockOff.getZ());
                 GlStateManager.scale(1, 1, -1);
+                break;
+            default:
+                //Should never occur.
                 break;
         }
     }

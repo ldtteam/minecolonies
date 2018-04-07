@@ -17,9 +17,9 @@ import java.util.concurrent.ExecutionException;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 
-public class TemplateRenderHandler
+public final class TemplateRenderHandler
 {
-    private static TemplateRenderHandler                ourInstance                = new TemplateRenderHandler();
+    private static final TemplateRenderHandler                ourInstance                = new TemplateRenderHandler();
     private final  Cache<Template, TemplateTessellator> templateBufferBuilderCache =
       CacheBuilder.newBuilder()
         .maximumSize(50)
@@ -29,6 +29,7 @@ public class TemplateRenderHandler
 
     private TemplateRenderHandler()
     {
+        throw new IllegalArgumentException("Utility class");
     }
 
     public static TemplateRenderHandler getInstance()
@@ -43,12 +44,10 @@ public class TemplateRenderHandler
         try
         {
             templateBufferBuilderCache.get(template, () -> {
-                TemplateTessellator tessellator = new TemplateTessellator();
+                final TemplateTessellator tessellator = new TemplateTessellator();
                 tessellator.getBuilder().begin(GL_QUADS, DefaultVertexFormats.BLOCK);
 
-                template.blocks.stream().forEach(b -> {
-                    rendererDispatcher.renderBlock(b.blockState, b.pos, blockAccess, tessellator.getBuilder());
-                });
+                template.blocks.stream().forEach(b -> rendererDispatcher.renderBlock(b.blockState, b.pos, blockAccess, tessellator.getBuilder()));
 
                 return tessellator;
             }).draw(rotation, mirror, drawingOffset, TemplateUtils.getPrimaryBlockOffset(template));

@@ -519,7 +519,7 @@ public class Structure
      */
     public ImmutableList<Template.BlockInfo> getBlockInfoWithSettings(final PlacementSettings settings)
     {
-        ImmutableList.Builder<Template.BlockInfo> builder = ImmutableList.builder();
+        final ImmutableList.Builder<Template.BlockInfo> builder = ImmutableList.builder();
 
         template.blocks.forEach(blockInfo -> {
             final IBlockState finalState = blockInfo.blockState.withMirror(settings.getMirror()).withRotation(settings.getRotation());

@@ -16,16 +16,18 @@ import static org.lwjgl.opengl.GL11.*;
 public class TemplateTessellator
 {
 
-    public static final  int   VERTEX_COMPONENT_SIZE             = 3;
-    public static final  int   COLOR_COMPONENT_SIZE              = 4;
-    public static final  int   TEX_COORD_COMPONENT_SIZE          = 2;
-    public static final  int   LIGHT_TEX_COORD_COMPONENT_SIZE    = TEX_COORD_COMPONENT_SIZE;
-    public static final  int   VERTEX_SIZE                       = 28;
-    public static final  int   VERTEX_COMPONENT_OFFSET           = 0;
-    public static final  int   COLOR_COMPONENT_OFFSET            = 12;
-    public static final  int   TEX_COORD_COMPONENT_OFFSET        = 16;
-    public static final  int   LIGHT_TEXT_COORD_COMPONENT_OFFSET = 24;
+    private static final int VERTEX_COMPONENT_SIZE = 3;
+    private static final  int   COLOR_COMPONENT_SIZE              = 4;
+    private static final  int   TEX_COORD_COMPONENT_SIZE          = 2;
+    private static final  int   LIGHT_TEX_COORD_COMPONENT_SIZE    = TEX_COORD_COMPONENT_SIZE;
+    private static final  int   VERTEX_SIZE                       = 28;
+    private static final  int   VERTEX_COMPONENT_OFFSET           = 0;
+    private static final  int   COLOR_COMPONENT_OFFSET            = 12;
+    private static final  int   TEX_COORD_COMPONENT_OFFSET        = 16;
+    private static final  int   LIGHT_TEXT_COORD_COMPONENT_OFFSET = 24;
     private static final float HALF_PERCENT_SHRINK               = 0.995F;
+    private static final int DEFAULT_BUFFER_SIZE = 2097152;
+
     private final BufferBuilder builder;
     private final VertexBuffer         buffer      = new VertexBuffer(DefaultVertexFormats.BLOCK);
     private final VertexBufferUploader vboUploader = new VertexBufferUploader();
@@ -33,7 +35,7 @@ public class TemplateTessellator
 
     public TemplateTessellator()
     {
-        this.builder = new BufferBuilder(2097152);
+        this.builder = new BufferBuilder(DEFAULT_BUFFER_SIZE);
         this.vboUploader.setVertexBuffer(buffer);
     }
 
@@ -72,7 +74,7 @@ public class TemplateTessellator
         GlStateManager.pushMatrix();
         GlStateManager.translate(drawingOffset.x, drawingOffset.y, drawingOffset.z);
 
-        BlockPos rotateInTemplateOffset = inTemplateOffset.rotate(rotation);
+        final BlockPos rotateInTemplateOffset = inTemplateOffset.rotate(rotation);
         GlStateManager.translate(-rotateInTemplateOffset.getX(), -rotateInTemplateOffset.getY(), -rotateInTemplateOffset.getZ());
 
         RenderUtil.applyRotationToYAxis(rotation);
@@ -109,10 +111,10 @@ public class TemplateTessellator
     {
         GlStateManager.enableCull();
 
-        for (VertexFormatElement vertexformatelement : DefaultVertexFormats.BLOCK.getElements())
+        for (final VertexFormatElement vertexformatelement : DefaultVertexFormats.BLOCK.getElements())
         {
-            VertexFormatElement.EnumUsage vfeUsage = vertexformatelement.getUsage();
-            int k1 = vertexformatelement.getIndex();
+            final VertexFormatElement.EnumUsage vfeUsage = vertexformatelement.getUsage();
+            final int formatIndex = vertexformatelement.getIndex();
 
             switch (vfeUsage)
             {
@@ -120,13 +122,17 @@ public class TemplateTessellator
                     GlStateManager.glDisableClientState(GL_VERTEX_ARRAY);
                     break;
                 case UV:
-                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + k1);
+                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + formatIndex);
                     GlStateManager.glDisableClientState(GL_TEXTURE_COORD_ARRAY);
                     OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
                     break;
                 case COLOR:
                     GlStateManager.glDisableClientState(GL_COLOR_ARRAY);
                     GlStateManager.resetColor();
+                    break;
+                default:
+                    //NOOP
+                    break;
             }
         }
     }

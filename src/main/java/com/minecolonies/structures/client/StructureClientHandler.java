@@ -9,14 +9,20 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class StructureClientHandler
+public final class StructureClientHandler
 {
-    public static void renderStructure(@NotNull final Structure structure, float partialTicks)
+
+    private StructureClientHandler()
+    {
+        throw new IllegalArgumentException("Utility class");
+    }
+
+    public static void renderStructure(@NotNull final Structure structure, final float partialTicks)
     {
         renderStructure(structure, Minecraft.getMinecraft().player, partialTicks);
     }
 
-    public static void renderStructure(@NotNull final Structure structure, @Nullable final Entity perspectiveEntity, float partialTicks)
+    public static void renderStructure(@NotNull final Structure structure, @Nullable final Entity perspectiveEntity, final float partialTicks)
     {
         if (perspectiveEntity != null)
         {
