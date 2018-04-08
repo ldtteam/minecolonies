@@ -29,7 +29,6 @@ public final class TemplateRenderHandler
 
     private TemplateRenderHandler()
     {
-        throw new IllegalArgumentException("Utility class");
     }
 
     public static TemplateRenderHandler getInstance()
