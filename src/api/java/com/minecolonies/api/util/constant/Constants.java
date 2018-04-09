@@ -64,6 +64,11 @@ public final class Constants
     public static final float  WATCH_CLOSEST2_FAR_CHANCE        = 0.02F;
 
     /**
+     * Max crafting cycle depth.
+     */
+    public static final int MAX_CRAFTING_CYCLE_DEPTH = 20;
+
+    /**
      * Each x blocks walked an action will be triggered to decrease saturation.
      */
     public static final int    ACTIONS_EACH_BLOCKS_WALKED       = 25;

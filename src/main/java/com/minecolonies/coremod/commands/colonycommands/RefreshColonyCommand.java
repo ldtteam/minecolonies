@@ -12,7 +12,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.minecolonies.coremod.commands.ActionMenu;
+import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 
 import net.minecraft.command.CommandException;
@@ -60,12 +60,12 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenu actionMenu) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        Colony colony = actionMenu.getColonyForArgument("colony");
+        Colony colony = actionMenuState.getColonyForArgument("colony");
         if (null == colony)
         {
-            final EntityPlayer player = actionMenu.getPlayerForArgument("player");
+            final EntityPlayer player = actionMenuState.getPlayerForArgument("player");
             if (null != player)
             {
                 IColony iColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);

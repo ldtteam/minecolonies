@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.RAID_EVENT_MESSAGE;
+
 /**
  * Utils for Colony mob events
  */
@@ -48,15 +50,10 @@ public final class MobEventsUtils
     private static final int MEDIUM_HORDE_SIZE = 10;
     private static final int BIG_HORDE_SIZE = 20;
 
-
     /**
      * Spawn modifier to decrease the spawnrate.
      */
     private static final int SPAWN_MODIFIER   = 3;
-
-    private static       int    numberOfBarbarians           = 0;
-    private static       int    numberOfArchers              = 0;
-    private static       int    numberOfChiefs               = 0;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -72,8 +69,9 @@ public final class MobEventsUtils
             return;
         }
 
-        final int horde = numberOfSpawns(colony);
-        if(horde == 0)
+        final Horde horde = numberOfSpawns(colony);
+        final int hordeSize = horde.hordeSize;
+        if(hordeSize == 0)
         {
             return;
         }
@@ -94,26 +92,27 @@ public final class MobEventsUtils
         colony.getBarbManager().addBarbarianSpawnPoint(targetSpawnPoint);
 
         int raidNumber = HUGE_HORDE_MESSAGE_ID;
-        if(horde < SMALL_HORDE_SIZE)
+        if(hordeSize < SMALL_HORDE_SIZE)
         {
             raidNumber = SMALL_HORDE_MESSAGE_ID;
         }
-        else if(horde < MEDIUM_HORDE_SIZE)
+        else if(hordeSize < MEDIUM_HORDE_SIZE)
         {
             raidNumber = MEDIUM_HORDE_MESSAGE_ID;
         }
-        else if(horde < BIG_HORDE_SIZE)
+        else if(hordeSize < BIG_HORDE_SIZE)
         {
             raidNumber = BIG_HORDE_MESSAGE_ID;
         }
         LanguageHandler.sendPlayersMessage(
                 colony.getMessageEntityPlayers(),
-                "event.minecolonies.raidMessage" + raidNumber);
+                RAID_EVENT_MESSAGE + raidNumber);
 
+        colony.setNightsSinceLastRaid(0);
 
-        BarbarianSpawnUtils.spawn(BARBARIAN, numberOfBarbarians, targetSpawnPoint, world);
-        BarbarianSpawnUtils.spawn(ARCHER, numberOfArchers, targetSpawnPoint, world);
-        BarbarianSpawnUtils.spawn(CHIEF, numberOfChiefs, targetSpawnPoint, world);
+        BarbarianSpawnUtils.spawn(BARBARIAN, horde.numberOfBarbarians, targetSpawnPoint, world);
+        BarbarianSpawnUtils.spawn(ARCHER, horde.numberOfArchers, targetSpawnPoint, world);
+        BarbarianSpawnUtils.spawn(CHIEF, horde.numberOfChiefs, targetSpawnPoint, world);
     }
 
     /**
@@ -122,18 +121,18 @@ public final class MobEventsUtils
      * @param colony The colony to get the RaidLevel from
      * @return the total horde strength.
      */
-    private static int numberOfSpawns(final Colony colony)
+    private static Horde numberOfSpawns(final Colony colony)
     {
         if (colony.getCitizenManager().getCitizens().size() < MIN_CITIZENS_FOR_RAID)
         {
-            return 0;
+            return new Horde(0, 0, 0, 0);
         }
 
         final int raidLevel = getColonyRaidLevel(colony);
 
-        numberOfBarbarians = (int) (BARBARIANS_MULTIPLIER * raidLevel / SPAWN_MODIFIER);
-        numberOfArchers = (int) (ARCHER_BARBARIANS_MULTIPLIER * raidLevel / SPAWN_MODIFIER);
-        numberOfChiefs = (int) (CHIEF_BARBARIANS_MULTIPLIER * raidLevel / SPAWN_MODIFIER);
+        int numberOfBarbarians = (int) (BARBARIANS_MULTIPLIER * raidLevel / SPAWN_MODIFIER);
+        int numberOfArchers = (int) (ARCHER_BARBARIANS_MULTIPLIER * raidLevel / SPAWN_MODIFIER);
+        int numberOfChiefs = (int) (CHIEF_BARBARIANS_MULTIPLIER * raidLevel / SPAWN_MODIFIER);
 
         int hordeTotal = numberOfBarbarians + numberOfArchers + numberOfChiefs;
 
@@ -154,7 +153,7 @@ public final class MobEventsUtils
             numberOfChiefs = equalizeBarbarianSpawns(hordeTotal, numberOfChiefs);
         }
 
-        return hordeTotal;
+        return new Horde(hordeTotal, numberOfBarbarians, numberOfArchers, numberOfChiefs);
     }
 
     /**
@@ -236,7 +235,7 @@ public final class MobEventsUtils
             colony.getBarbManager().setHasRaidBeenCalculated(true);
             if (!colony.hasWillRaidTonight())
             {
-                final boolean raid = raidThisNight(world);
+                final boolean raid = raidThisNight(world, colony);
                 if (Configurations.gameplay.enableInDevelopmentFeatures)
                 {
                     LanguageHandler.sendPlayersMessage(
@@ -273,8 +272,28 @@ public final class MobEventsUtils
      * @param world The world in which the raid is possibly happening (Used to get a random number easily)
      * @return Boolean value on whether to act this night
      */
-    private static boolean raidThisNight(final World world)
+    private static boolean raidThisNight(final World world, final Colony colony)
     {
-        return world.rand.nextDouble() < 1.0 / Configurations.gameplay.averageNumberOfNightsBetweenRaids;
+        return colony.getNightsSinceLastRaid() > Configurations.gameplay.minimumNumberOfNightsBetweenRaids
+                && world.rand.nextDouble() < 1.0 / Configurations.gameplay.averageNumberOfNightsBetweenRaids;
+    }
+
+    /**
+     * Class representing a horde attack.
+     */
+    private static class Horde
+    {
+        private final int numberOfBarbarians;
+        private final int numberOfArchers;
+        private final int numberOfChiefs;
+        private final int hordeSize;
+
+        public Horde(final int hordeSize, final int numberOfBarbarians, final int numberOfArchers, final int numberOfChiefs)
+        {
+            this.hordeSize = hordeSize;
+            this.numberOfBarbarians = numberOfBarbarians;
+            this.numberOfArchers = numberOfArchers;
+            this.numberOfChiefs = numberOfChiefs;
+        }
     }
 }

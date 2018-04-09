@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.commands;
 
+import com.minecolonies.coremod.commands.colonycommands.*;
 import org.jetbrains.annotations.NotNull;
 
 import com.minecolonies.coremod.colony.permissions.ForgePermissionNodes;
@@ -7,18 +8,6 @@ import com.minecolonies.coremod.commands.citizencommands.CitizenInfoCommand;
 import com.minecolonies.coremod.commands.citizencommands.KillCitizenCommand;
 import com.minecolonies.coremod.commands.citizencommands.ListCitizensCommand;
 import com.minecolonies.coremod.commands.citizencommands.RespawnCitizenCommand;
-import com.minecolonies.coremod.commands.colonycommands.AddOfficerCommand;
-import com.minecolonies.coremod.commands.colonycommands.ChangeColonyOwnerCommand;
-import com.minecolonies.coremod.commands.colonycommands.ColonyTeleportCommand;
-import com.minecolonies.coremod.commands.colonycommands.DeleteColonyCommand;
-import com.minecolonies.coremod.commands.colonycommands.DisableBarbarianSpawnsCommand;
-import com.minecolonies.coremod.commands.colonycommands.DoRaidNowCommand;
-import com.minecolonies.coremod.commands.colonycommands.DoRaidTonightCommand;
-import com.minecolonies.coremod.commands.colonycommands.HomeTeleportCommand;
-import com.minecolonies.coremod.commands.colonycommands.ListColoniesCommand;
-import com.minecolonies.coremod.commands.colonycommands.MakeNotAutoDeletableCommand;
-import com.minecolonies.coremod.commands.colonycommands.RefreshColonyCommand;
-import com.minecolonies.coremod.commands.colonycommands.ShowColonyInfoCommand;
 import com.minecolonies.coremod.commands.colonycommands.requestsystem.RSResetAllCommand;
 import com.minecolonies.coremod.commands.colonycommands.requestsystem.RSResetCommand;
 import com.minecolonies.coremod.commands.generalcommands.BackupCommand;
@@ -48,7 +37,7 @@ public enum ActionMenuType implements IMenuType
             "rtp",
             ForgePermissionNodes.RANDOM_TELEPORT,
             RandomTeleportCommand.class,
-            new ActionArgument("player", ActionArgumentType.PLAYER, ActionArgumentType.Is.OPTIONAL)
+            new ActionArgument("player", ActionArgumentType.ONLINE_PLAYER, ActionArgumentType.Is.OPTIONAL)
             )),
     BACKUP(new ActionMenu(
             "Backup",
@@ -276,13 +265,24 @@ public enum ActionMenuType implements IMenuType
             "scan",
             ForgePermissionNodes.SCAN,
             ScanCommand.class,
+            new ActionArgument("player", ActionArgumentType.ONLINE_PLAYER, ActionArgumentType.Is.OPTIONAL),
             new ActionArgument("x1", ActionArgumentType.COORDINATE_X, ActionArgumentType.Is.REQUIRED),
             new ActionArgument("y1", ActionArgumentType.COORDINATE_Y, ActionArgumentType.Is.REQUIRED),
             new ActionArgument("z1", ActionArgumentType.COORDINATE_Z, ActionArgumentType.Is.REQUIRED),
             new ActionArgument("x2", ActionArgumentType.COORDINATE_X, ActionArgumentType.Is.REQUIRED),
             new ActionArgument("y2", ActionArgumentType.COORDINATE_Y, ActionArgumentType.Is.REQUIRED),
-            new ActionArgument("z2", ActionArgumentType.COORDINATE_Z, ActionArgumentType.Is.REQUIRED)
+            new ActionArgument("z2", ActionArgumentType.COORDINATE_Z, ActionArgumentType.Is.REQUIRED),
+            new ActionArgument("name", ActionArgumentType.STRING, ActionArgumentType.Is.OPTIONAL)
             )),
+    CLAIM(new ActionMenu(
+            "Claim",
+            "claim",
+            ForgePermissionNodes.CLAIM,
+            ClaimChunksCommand.class,
+            new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.OPTIONAL),
+            new ActionArgument("range", ActionArgumentType.INTEGER, ActionArgumentType.Is.OPTIONAL),
+            new ActionArgument("add", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.OPTIONAL)
+            ))
     ;
 
     @NotNull private final ActionMenu menu;

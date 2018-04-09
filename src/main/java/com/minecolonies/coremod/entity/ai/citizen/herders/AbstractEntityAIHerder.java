@@ -188,7 +188,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         {
             checkIfRequestForItemExistOrCreateAsynch(item);
         }
-
+        setDelay(DECIDING_DELAY);
         return HERDER_DECIDE;
     }
 
@@ -226,6 +226,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         if (animal != null && !animal.isEntityAlive())
         {
+            worker.addExperience(1.0);
             incrementActionsDoneAndDecSaturation();
         }
 
@@ -276,7 +277,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         breedTwoAnimals(animalOne, animalTwo);
         incrementActionsDoneAndDecSaturation();
-
+        worker.addExperience(1.0);
         return HERDER_DECIDE;
     }
 

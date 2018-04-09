@@ -57,7 +57,8 @@ public final class Settings
 
     /**
      * Set up the static mode.
-     * @param name the name of the schematic.
+     *
+     * @param name     the name of the schematic.
      * @param freeMode the mode.
      */
     public void setupStaticMode(final String name, final WindowBuildTool.FreeMode freeMode)
@@ -262,6 +263,7 @@ public final class Settings
 
     /**
      * Check if static mode.
+     *
      * @return true if so.
      */
     public boolean isStaticSchematicMode()
@@ -271,6 +273,7 @@ public final class Settings
 
     /**
      * Get the schematic name of the static mode.
+     *
      * @return the string.
      */
     public String getStaticSchematicName()
@@ -280,6 +283,7 @@ public final class Settings
 
     /**
      * Getter of the mode in static mode.
+     *
      * @return the FreeMode (enum).
      */
     public WindowBuildTool.FreeMode getFreeMode()
