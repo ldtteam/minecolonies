@@ -2,6 +2,7 @@ package com.minecolonies.api.util.constant;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.MathUtils;
+import net.minecraft.util.ResourceLocation;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
@@ -83,6 +84,33 @@ public final class ColonyConstants
      * Max amount of permission events to store in the colony.
      */
     public static final int MAX_PERMISSION_EVENTS = 100;
+
+    /**
+     * Barbarian Constants.
+     */
+    public static final ResourceLocation BARBARIAN                    = new ResourceLocation(Constants.MOD_ID, "Barbarian");
+    public static final ResourceLocation ARCHER                       = new ResourceLocation(Constants.MOD_ID, "ArcherBarbarian");
+    public static final ResourceLocation CHIEF                        = new ResourceLocation(Constants.MOD_ID, "ChiefBarbarian");
+    public static final int              MAX_SIZE                     = Configurations.gameplay.maxBarbarianHordeSize;
+    public static final double           BARBARIANS_MULTIPLIER        = 0.5;
+    public static final double           ARCHER_BARBARIANS_MULTIPLIER = 0.25;
+    public static final double           CHIEF_BARBARIANS_MULTIPLIER  = 0.1;
+    public static final int              PREFERRED_MAX_HORDE_SIZE     = 40;
+    public static final int              PREFERRED_MAX_BARBARIANS     = 22;
+    public static final int              PREFERRED_MAX_ARCHERS        = 16;
+    public static final int              PREFERRED_MAX_CHIEFS         = 2;
+    public static final int              MIN_CITIZENS_FOR_RAID        = 5;
+    public static final int              NUMBER_OF_CITIZENS_NEEDED    = 5;
+    /**
+     * Different horde ids and their sizes.
+     */
+    public static final int              SMALL_HORDE_MESSAGE_ID       = 1;
+    public static final int              MEDIUM_HORDE_MESSAGE_ID      = 2;
+    public static final int              BIG_HORDE_MESSAGE_ID         = 3;
+    public static final int              HUGE_HORDE_MESSAGE_ID        = 4;
+    public static final int              SMALL_HORDE_SIZE             = 5;
+    public static final int              MEDIUM_HORDE_SIZE            = 10;
+    public static final int              BIG_HORDE_SIZE               = 20;
 
     /**
      * Private constructor to hide the implicit one.

@@ -1,9 +1,14 @@
 {
   "pools": [
     {
-      "name": "minecolonies: Barbarian",
+      "name": "minecolonies:Barbarian",
       "rolls": 1,
+      "bonus_rolls": 1,
       "entries": [
+        {
+          "type": "empty",
+          "weight": 80
+        },
         {
           "type": "item",
           "weight": 1,
@@ -16,17 +21,17 @@
         },
         {
           "type": "item",
-          "weight": 7,
+          "weight": 15,
           "name": "minecraft:iron_sword"
         },
         {
           "type": "item",
-          "weight": 10,
+          "weight": 20,
           "name": "minecraft:stone_sword"
         },
         {
           "type": "item",
-          "weight": 5,
+          "weight": 10,
           "name": "minecolonies:ancienttome"
         }
       ]
