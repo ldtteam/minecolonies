@@ -148,9 +148,13 @@ public abstract class AbstractEntityBarbarian extends EntityMob
 
     public Colony getColony()
     {
-        if (colony == null)
+        if (!world.isRemote && colony == null)
         {
             colony = ColonyManager.getClosestColony(CompatibilityUtils.getWorld(this), this.getPosition());
+            if (colony != null)
+            {
+                colony.getBarbManager().registerBarbarian(this);
+            }
         }
 
         return colony;
@@ -254,6 +258,16 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     {
         worldTimeAtSpawn = compound.getLong(TAG_TIME);
         super.readFromNBT(compound);
+    }
+
+    @Override
+    public void onDeath(final DamageSource cause)
+    {
+        super.onDeath(cause);
+        if (!world.isRemote && getColony() != null)
+        {
+            getColony().getBarbManager().unregisterBarbarian(this);
+        }
     }
 
     @Override

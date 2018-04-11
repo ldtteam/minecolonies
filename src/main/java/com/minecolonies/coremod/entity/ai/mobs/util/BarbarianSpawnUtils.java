@@ -63,7 +63,7 @@ public final class BarbarianSpawnUtils
      * Values used for mob attributes.
      */
     private static final double FOLLOW_RANGE                = 35.0D;
-    private static final double MOVEMENT_SPEED              = 0.3D;
+    private static final double MOVEMENT_SPEED              = 0.25D;
     private static final double ARMOR                       = 2.0D;
     private static final double BARBARIAN_BASE_HEALTH       = 10;
     private static final double BARBARIAN_HEALTH_MULTIPLIER = 0.25;

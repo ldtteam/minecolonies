@@ -233,6 +233,11 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_NOTCOLLECT                      = "com.minecolonies.coremod.gui.cowboy.notcollect";
     @NonNls
     public static final String RAID_EVENT_MESSAGE                                                  = "event.minecolonies.raidMessage";
+    @NonNls
+    public static final String ONLY_X_BARBARIANS_LEFT_MESSAGE                                      = "com.minecolonies.coremod.barbarians.left";
+    @NonNls
+    public static final String ALL_BARBARIANS_KILLED_MESSAGE                                       = "com.minecolonies.coremod.barbarians.killed";
+
     private TranslationConstants()
     {
         //empty default
