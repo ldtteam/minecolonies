@@ -1,37 +1,43 @@
 {
   "pools": [
     {
-      "name": "minecolonies: ChiefBarbarian",
+      "name": "minecolonies:ChiefBarbarian",
       "rolls": 1,
+      "bonus_rolls": 1,
       "entries": [
         {
+          "type": "empty",
+          "weight": 50
+        },
+        {
           "type": "item",
-          "weight": 0.001,
+          "weight": 0.1,
+          "quality": 1,
           "name": "minecolonies:chiefsword"
         },
         {
           "type": "item",
-          "weight": 2,
+          "weight": 5,
           "name": "minecraft:diamond_sword"
         },
         {
           "type": "item",
-          "weight": 5,
+          "weight": 10,
           "name": "minecraft:golden_sword"
         },
         {
           "type": "item",
-          "weight": 10,
+          "weight": 20,
           "name": "minecraft:iron_sword"
         },
         {
           "type": "item",
-          "weight": 15,
+          "weight": 30,
           "name": "minecraft:stone_sword"
         },
         {
           "type": "item",
-          "weight": 5,
+          "weight": 10,
           "name": "minecolonies:ancienttome"
         }
       ]

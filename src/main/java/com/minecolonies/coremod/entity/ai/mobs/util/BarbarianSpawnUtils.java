@@ -63,7 +63,7 @@ public final class BarbarianSpawnUtils
      * Values used for mob attributes.
      */
     private static final double FOLLOW_RANGE                = 35.0D;
-    private static final double MOVEMENT_SPEED              = 0.2D;
+    private static final double MOVEMENT_SPEED              = 0.3D;
     private static final double ARMOR                       = 2.0D;
     private static final double BARBARIAN_BASE_HEALTH       = 10;
     private static final double BARBARIAN_HEALTH_MULTIPLIER = 0.25;
@@ -177,7 +177,7 @@ public final class BarbarianSpawnUtils
                 {
                     setBarbarianEquipment(entity);
                     entity.setPositionAndRotation(x, y + 1.0, z, (float) MathHelper.wrapDegrees(world.rand.nextDouble() * WHOLE_CIRCLE), 0.0F);
-                    entity.applyInternalEntityAttributes();
+                    BarbarianSpawnUtils.setBarbarianAttributes(entity, entity.getColony());
                     CompatibilityUtils.spawnEntity(world, entity);
                 }
             });

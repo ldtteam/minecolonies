@@ -24,7 +24,6 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.Random;
-import java.util.stream.Stream;
 
 /**
  * Abstract for all Barbarian entities.
@@ -57,7 +56,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     private static final int    TIME_TO_COUNTDOWN           = 240;
     private static final int    COUNTDOWN_SECOND_MULTIPLIER = 4;
     private static final int    SPEED_EFFECT_DISTANCE       = 7;
-    private static final int    SPEED_EFFECT_DURATION       = 160;
+    private static final int    SPEED_EFFECT_DURATION       = 240;
     private static final int    SPEED_EFFECT_MULTIPLIER     = 2;
 
     /**
@@ -190,6 +189,12 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     @Override
     public void onLivingUpdate()
     {
+        if(world.isRemote)
+        {
+            super.onLivingUpdate();
+            return;
+        }
+
         if (currentTick % (random.nextInt(EVERY_X_TICKS) + 1) == 0)
         {
             if (worldTimeAtSpawn == 0)
@@ -202,13 +207,18 @@ public abstract class AbstractEntityBarbarian extends EntityMob
                 this.setDead();
             }
 
-            if (this.getHeldItemMainhand() != null && SPEED_EFFECT != null && this.getHeldItemMainhand().getItem() instanceof ItemChiefSword
-                  && Configurations.gameplay.barbarianHordeDifficulty >= BARBARIAN_HORDE_DIFFICULTY_FIVE
-                  && currentCount <= 0)
+            if(currentCount <= 0)
             {
-                final Stream<AbstractEntityBarbarian> barbarians = BarbarianUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE).stream();
-                barbarians.forEach(entity -> entity.addPotionEffect(new PotionEffect(SPEED_EFFECT, SPEED_EFFECT_DURATION, SPEED_EFFECT_MULTIPLIER)));
                 currentCount = COUNTDOWN_SECOND_MULTIPLIER * TIME_TO_COUNTDOWN;
+                BarbarianSpawnUtils.setBarbarianAttributes(this, getColony());
+
+                if (this.getHeldItemMainhand() != null && SPEED_EFFECT != null && this.getHeldItemMainhand().getItem() instanceof ItemChiefSword
+                        && Configurations.gameplay.barbarianHordeDifficulty >= BARBARIAN_HORDE_DIFFICULTY_FIVE)
+                {
+                    BarbarianUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE)
+                            .stream().filter(entity -> !entity.isPotionActive(SPEED_EFFECT))
+                            .forEach(entity -> entity.addPotionEffect(new PotionEffect(SPEED_EFFECT, SPEED_EFFECT_DURATION, SPEED_EFFECT_MULTIPLIER)));
+                }
             }
             else
             {
@@ -230,11 +240,6 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     protected SoundEvent getDeathSound()
     {
         return BarbarianSounds.barbarianDeath;
-    }
-
-    public void applyInternalEntityAttributes()
-    {
-        BarbarianSpawnUtils.setBarbarianAttributes(this, getColony());
     }
 
     @Override
