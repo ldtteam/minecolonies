@@ -123,6 +123,16 @@ public class BuildingHome extends AbstractBuildingHut
         }
     }
 
+    /**
+     * Get a list of all residents.
+     * @return
+     */
+    @NotNull
+    public List<CitizenData> getResidents()
+    {
+        return new ArrayList<>(residents);
+    }
+
     @NotNull
     @Override
     public String getSchematicName()

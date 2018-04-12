@@ -808,7 +808,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * @param complete if pasted, should it be complete.
      * @param structureName of the scan to be built.
      */
-    private static void requestScannedSchematic(@NotNull final StructureName structureName, final boolean paste, final boolean complete)
+    public static void requestScannedSchematic(@NotNull final StructureName structureName, final boolean paste, final boolean complete)
     {
         if (!Structures.isPlayerSchematicsAllowed())
         {

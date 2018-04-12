@@ -95,6 +95,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         initStyleNavigation();
         registerButton(BUTTON_BUILD, this::confirmClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
+        registerButton(BUTTON_MOVE_BUILDING, this::moveBuildingClicked);
         final Button buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
         if (building.getBuildingLevel() == 0)
         {
@@ -108,6 +109,15 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         {
             buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.upgrade"));
         }
+    }
+
+    /**
+     * When the move building button has been clicked.
+     */
+    private void moveBuildingClicked()
+    {
+        final WindowMoveBuilding window = new WindowMoveBuilding(building.getLocation(), building, styles.get(stylesDropDownList.getSelectedIndex()));
+        window.open();
     }
 
     /**

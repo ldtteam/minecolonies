@@ -678,4 +678,5 @@ com.minecolonies.coremod.max.schematic.reallyfar=Really far in the
 com.minecolonies.coremod.gui.workerHuts.barbpoints=Last Barbarian Spawns:
 com.minecolonies.coremod.barbarians.left=Only %d barbarians left!
 com.minecolonies.coremod.barbarians.killed=You succesfully defended your colony against the Barbarian intruders!
+com.minecolonies.coremod.gui.workerHuts.reposition=Reposition
 
