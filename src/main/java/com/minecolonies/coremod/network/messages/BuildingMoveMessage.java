@@ -247,6 +247,7 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
                 }
             }
 
+            building.requestRepair();
             final BlockPos pos = oldBuilding.getID();
             world.setBlockToAir(pos);
         }
