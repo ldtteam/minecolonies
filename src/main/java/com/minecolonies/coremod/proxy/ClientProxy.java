@@ -256,7 +256,6 @@ public class ClientProxy extends CommonProxy
         }
 
         //Additionally we register an exclusion handler here;
-        TemplateRenderHandler.getInstance().registerExclusionHandler((b) -> b.blockState.getBlock() instanceof BlockSolidSubstitution);
         TemplateRenderHandler.getInstance().registerExclusionHandler((b) -> b.blockState.getBlock() instanceof BlockSubstitution);
 
     }
