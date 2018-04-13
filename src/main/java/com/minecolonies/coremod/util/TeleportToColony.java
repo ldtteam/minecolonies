@@ -112,8 +112,6 @@ public final class TeleportToColony
             return;
         }
 
-        playerToTeleport.sendMessage(new TextComponentString("We got places to go, kid..."));
-
         final BlockPos position = townHall.getLocation();
 
         final int dimension = playerToTeleport.getEntityWorld().provider.getDimension();
@@ -128,6 +126,7 @@ public final class TeleportToColony
         final EntityPlayerMP entityPlayerMP = (EntityPlayerMP) sender;
         if (dimension != colonyDimension)
         {
+            playerToTeleport.sendMessage(new TextComponentString("We got places to go, kid..."));
             playerToTeleport.sendMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
             final MinecraftServer server = sender.getEntityWorld().getMinecraftServer();
             final WorldServer worldServer = server.getWorld(colonyDimension);
