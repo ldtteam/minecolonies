@@ -58,7 +58,7 @@ public final class RenderUtil
                 GlStateManager.scale(-1, 1, 1);
                 break;
             case LEFT_RIGHT:
-                GlStateManager.translate(0, 0, (2 * appliedPrimaryBlockOff.getX()) + 1);
+                GlStateManager.translate(0, 0, (2 * appliedPrimaryBlockOff.getZ()) + 1);
                 GlStateManager.scale(1, 1, -1);
                 break;
             default:
