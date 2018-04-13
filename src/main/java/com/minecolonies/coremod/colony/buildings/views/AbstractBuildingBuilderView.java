@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.views;
 
-import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.client.gui.WindowHutBuilder;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
@@ -18,7 +16,7 @@ import java.util.Map;
 /**
  * Provides a view of the builder building class.
  */
-public class BuildingBuilderView extends AbstractBuildingWorker.View
+public class AbstractBuildingBuilderView extends AbstractBuildingWorker.View
 {
     /**
      * The resources he has to keep.
@@ -41,21 +39,9 @@ public class BuildingBuilderView extends AbstractBuildingWorker.View
      * @param c the colony.
      * @param l the position.
      */
-    public BuildingBuilderView(final ColonyView c, final BlockPos l)
+    public AbstractBuildingBuilderView(final ColonyView c, final BlockPos l)
     {
         super(c, l);
-    }
-
-    /**
-     * Gets the blockOut Window.
-     *
-     * @return the window of the builder building.
-     */
-    @NotNull
-    @Override
-    public Window getWindow()
-    {
-        return new WindowHutBuilder(this);
     }
 
     @Override
@@ -77,20 +63,6 @@ public class BuildingBuilderView extends AbstractBuildingWorker.View
 
         constructionName = ByteBufUtils.readUTF8String(buf);
         constructionPos = ByteBufUtils.readUTF8String(buf);
-    }
-
-    @NotNull
-    @Override
-    public AbstractBuildingWorker.Skill getPrimarySkill()
-    {
-        return AbstractBuildingWorker.Skill.INTELLIGENCE;
-    }
-
-    @NotNull
-    @Override
-    public AbstractBuildingWorker.Skill getSecondarySkill()
-    {
-        return AbstractBuildingWorker.Skill.STRENGTH;
     }
 
     /**

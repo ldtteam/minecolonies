@@ -190,8 +190,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 final Structure.Result result = advanceBlock.get();
                 if (result == Structure.Result.AT_END)
                 {
-                    switchStage(nextState);
-                    return nextState;
+                    return switchStage(nextState);
                 }
                 if (result == Structure.Result.CONFIG_LIMIT)
                 {
@@ -205,7 +204,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     /**
      * Switches the structures stage after the current one has been completed.
      */
-    private void switchStage(final AIState state)
+    public AIState switchStage(final AIState state)
     {
         if (state.equals(BUILDING_STEP))
         {
@@ -223,6 +222,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         {
             currentStructure.setStage(Structure.Stage.COMPLETE);
         }
+        return state;
     }
 
     private AIState pickUpResiduals()
@@ -574,16 +574,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @return the Block.
      */
     public abstract IBlockState getSolidSubstitution(BlockPos location);
-
-    /**
-     * Requests Materials if required.
-     */
-    public void requestMaterialsIfRequired()
-    {
-        /**
-         * Extending entities implement this if required.
-         */
-    }
 
     /**
      * Loads the structure given the name, rotation and position.

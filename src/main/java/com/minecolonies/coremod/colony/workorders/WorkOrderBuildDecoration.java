@@ -157,61 +157,6 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     }
 
     /**
-     * Attempt to fulfill the Work Order.
-     * Override this with an implementation for the Work Order to find a Citizen to perform the job
-     * <p>
-     * finds the closest suitable builder for this job.
-     *
-     * @param colony The colony that owns the Work Order.
-     */
-    @Override
-    public void attemptToFulfill(@NotNull final Colony colony)
-    {
-        boolean sendMessage = true;
-        boolean hasBuilder = false;
-        double distanceToBuilder = 0;
-        CitizenData claimedBy = null;
-
-        for (@NotNull final CitizenData citizen : colony.getCitizenManager().getCitizens())
-        {
-            final JobBuilder job = citizen.getJob(JobBuilder.class);
-
-            if (job == null || citizen.getWorkBuilding() == null)
-            {
-                continue;
-            }
-
-            hasBuilder = true;
-
-            // don't send a message if we have a valid worker that is busy.
-            if (canBuild(citizen))
-            {
-                sendMessage = false;
-            }
-
-            if (!job.hasWorkOrder() && canBuild(citizen))
-            {
-                final double distance = citizen.getWorkBuilding().getID().distanceSq(this.buildingLocation);
-                if (claimedBy == null || distance < distanceToBuilder)
-                {
-                    claimedBy = citizen;
-                    distanceToBuilder = distance;
-                }
-            }
-        }
-
-        if (claimedBy != null)
-        {
-            final JobBuilder job = claimedBy.getJob(JobBuilder.class);
-            job.setWorkOrder(this);
-            this.setClaimedBy(claimedBy);
-            return;
-        }
-
-        sendBuilderMessage(colony, hasBuilder, sendMessage);
-    }
-
-    /**
      * Checks if a builder may accept this workOrder.
      * <p>
      * Suppressing Sonar Rule squid:S1172

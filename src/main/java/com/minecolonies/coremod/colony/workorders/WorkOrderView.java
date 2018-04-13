@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony;
+package com.minecolonies.coremod.colony.workorders;
 
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import io.netty.buffer.ByteBuf;

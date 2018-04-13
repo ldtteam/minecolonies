@@ -128,7 +128,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     }
 
     @Override
-    protected boolean canBuild(@NotNull final CitizenData citizen)
+    public boolean canBuild(@NotNull final CitizenData citizen)
     {
         //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
         //  - The Builder's Work AbstractBuilding is built

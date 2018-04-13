@@ -3,7 +3,6 @@ package com.minecolonies.coremod.colony.workorders;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.WorkOrderView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -34,6 +33,9 @@ public abstract class AbstractWorkOrder
     {
         addMapping("build", WorkOrderBuild.class);
         addMapping("decoration", WorkOrderBuildDecoration.class);
+        addMapping("removal", WorkOrderBuildRemoval.class);
+        addMapping("building", WorkOrderBuildBuilding.class);
+        addMapping("miner", WorkOrderBuildMiner.class);
     }
 
     protected int id;
@@ -299,14 +301,6 @@ public abstract class AbstractWorkOrder
     {
         return true;
     }
-
-    /**
-     * Attempt to fulfill the Work Order.
-     * Override this with an implementation for the Work Order to find a Citizen to perform the job
-     *
-     * @param colony The colony that owns the Work Order
-     */
-    public abstract void attemptToFulfill(Colony colony);
 
     /**
      * Writes the workOrders data to a byte buf for transition.

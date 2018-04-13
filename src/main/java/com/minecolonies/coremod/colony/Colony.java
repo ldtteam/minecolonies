@@ -15,6 +15,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.managers.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
+import com.minecolonies.coremod.colony.workorders.WorkManager;
 import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
@@ -945,10 +946,13 @@ public class Colony implements IColony
      * @param building The upgraded building.
      * @param level    The new level.
      */
-    public void onBuildingUpgradeComplete(@NotNull final AbstractBuilding building, final int level)
+    public void onBuildingUpgradeComplete(@Nullable final AbstractBuilding building, final int level)
     {
-        building.onUpgradeComplete(level);
-        this.markDirty();
+        if (building != null)
+        {
+            building.onUpgradeComplete(level);
+            this.markDirty();
+        }
     }
 
     /**

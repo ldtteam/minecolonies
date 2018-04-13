@@ -217,6 +217,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return worker.getWorkBuilding();
     }
 
+    /**
+     * Can be overridden in implementations to return the exact building type.
+     *
+     * @return the building associated with this AI's worker.
+     */
+    @Nullable
+    public <W extends AbstractBuildingWorker> W getOwnBuilding(@NotNull final Class<W> type)
+    {
+        return (W) worker.getWorkBuilding();
+    }
+
     @Override
     protected void onException(final RuntimeException e)
     {
