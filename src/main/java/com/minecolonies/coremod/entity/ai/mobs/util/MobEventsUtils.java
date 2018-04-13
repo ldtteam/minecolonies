@@ -4,11 +4,9 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static com.minecolonies.api.util.constant.ColonyConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.RAID_EVENT_MESSAGE;
 
 /**
@@ -24,32 +23,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RAID_EVENT
  */
 public final class MobEventsUtils
 {
-    private static final ResourceLocation BARBARIAN = new ResourceLocation(Constants.MOD_ID, "Barbarian");
-    private static final ResourceLocation ARCHER    = new ResourceLocation(Constants.MOD_ID, "ArcherBarbarian");
-    private static final ResourceLocation CHIEF     = new ResourceLocation(Constants.MOD_ID, "ChiefBarbarian");
-
-    private static final int    MAX_SIZE                     = Configurations.gameplay.maxBarbarianHordeSize;
-    private static final double BARBARIANS_MULTIPLIER        = 0.5;
-    private static final double ARCHER_BARBARIANS_MULTIPLIER = 0.25;
-    private static final double CHIEF_BARBARIANS_MULTIPLIER  = 0.1;
-    private static final int    PREFERRED_MAX_HORDE_SIZE     = 40;
-    private static final int    PREFERRED_MAX_BARBARIANS     = 22;
-    private static final int    PREFERRED_MAX_ARCHERS        = 16;
-    private static final int    PREFERRED_MAX_CHIEFS         = 2;
-    private static final int    MIN_CITIZENS_FOR_RAID        = 5;
-    private static final int    NUMBER_OF_CITIZENS_NEEDED    = 5;
-
-    /**
-     * Different horde ids and their sizes.
-     */
-    private static final int SMALL_HORDE_MESSAGE_ID = 1;
-    private static final int MEDIUM_HORDE_MESSAGE_ID = 2;
-    private static final int BIG_HORDE_MESSAGE_ID = 3;
-    private static final int HUGE_HORDE_MESSAGE_ID = 4;
-    private static final int SMALL_HORDE_SIZE = 5;
-    private static final int MEDIUM_HORDE_SIZE = 10;
-    private static final int BIG_HORDE_SIZE = 20;
-
     /**
      * Spawn modifier to decrease the spawnrate.
      */

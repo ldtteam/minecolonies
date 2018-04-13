@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -65,4 +67,16 @@ public interface IBarbarianManager
      * @return a copy of the list
      */
     List<BlockPos> getLastSpawnPoints();
+
+    /**
+     * Register a barbarian at the colony.
+     * @param abstractEntityBarbarian the barbarian to register.
+     */
+    void registerBarbarian(@NotNull final AbstractEntityBarbarian abstractEntityBarbarian);
+
+    /**
+     * Unregister a barbarian from the colony.
+     * @param abstractEntityBarbarian the barbarian to unregister.
+     */
+    void unregisterBarbarian(@NotNull final AbstractEntityBarbarian abstractEntityBarbarian);
 }

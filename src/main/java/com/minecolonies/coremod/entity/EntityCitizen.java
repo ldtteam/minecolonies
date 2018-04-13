@@ -1128,7 +1128,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
             triedMovingAway = false;
 
-            final BlockPos destination = BlockPosUtil.getFloor(newNavigator.getDestination(), CompatibilityUtils.getWorld(this));
+            final BlockPos destination = BlockPosUtil.getFloor(newNavigator.getDestination().up(), CompatibilityUtils.getWorld(this));
             @Nullable final BlockPos spawnPoint =
               Utils.scanForBlockNearPoint
                       (CompatibilityUtils.getWorld(this), destination, 1, 1, 1, 3,
