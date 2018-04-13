@@ -19,6 +19,8 @@ public final class RenderUtil
 
     public static void applyRotationToYAxis(@NotNull final Rotation rotation)
     {
+        GlStateManager.translate(0.5F, 0F, 0.5F);
+
         float angle;
         switch (rotation)
         {
@@ -40,6 +42,8 @@ public final class RenderUtil
         }
 
         GlStateManager.rotate(angle, 0, 1, 0);
+
+        GlStateManager.translate(-0.5F, 0F, -0.5F);
     }
 
     public static void applyMirror(@NotNull final Mirror mirror, @NotNull final BlockPos appliedPrimaryBlockOff)
@@ -49,12 +53,12 @@ public final class RenderUtil
             case NONE:
                 GlStateManager.scale(1, 1, 1);
                 break;
-            case LEFT_RIGHT:
-                GlStateManager.scale(-1, 1, 1);
-                GlStateManager.translate(0, 0, 0);
-                break;
             case FRONT_BACK:
-                GlStateManager.translate(0, 0, 2 * appliedPrimaryBlockOff.getZ());
+                GlStateManager.translate((2 * appliedPrimaryBlockOff.getX()) + 1, 0, 0);
+                GlStateManager.scale(-1, 1, 1);
+                break;
+            case LEFT_RIGHT:
+                GlStateManager.translate(0, 0, (2 * appliedPrimaryBlockOff.getX()) + 1);
                 GlStateManager.scale(1, 1, -1);
                 break;
             default:
