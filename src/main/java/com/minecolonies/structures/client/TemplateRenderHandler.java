@@ -3,6 +3,7 @@ package com.minecolonies.structures.client;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
+import com.google.common.collect.Lists;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.structures.lib.TemplateUtils;
 import net.minecraft.client.Minecraft;
@@ -12,8 +13,12 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.world.gen.structure.template.Template;
+import net.minecraft.world.gen.structure.template.Template.BlockInfo;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Predicate;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 
@@ -25,7 +30,9 @@ public final class TemplateRenderHandler
         .maximumSize(50)
         .removalListener((RemovalListener<Template, TemplateTessellator>) notification -> notification.getValue().getBuffer().deleteGlBuffers())
         .build();
-    private final  BlockRendererDispatcher              rendererDispatcher         = Minecraft.getMinecraft().getBlockRendererDispatcher();
+    private BlockRendererDispatcher              rendererDispatcher;
+
+    private final List<Predicate<BlockInfo>> exclusionBlockInfoHandlers = Lists.newArrayList();
 
     private TemplateRenderHandler()
     {
@@ -38,6 +45,11 @@ public final class TemplateRenderHandler
 
     public void draw(final Template template, final Rotation rotation, final Mirror mirror, final Vector3d drawingOffset)
     {
+        if (rendererDispatcher == null)
+        {
+            rendererDispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+        }
+
         final TemplateBlockAccess blockAccess = new TemplateBlockAccess(template);
 
         try
@@ -46,7 +58,10 @@ public final class TemplateRenderHandler
                 final TemplateTessellator tessellator = new TemplateTessellator();
                 tessellator.getBuilder().begin(GL_QUADS, DefaultVertexFormats.BLOCK);
 
-                template.blocks.stream().forEach(b -> rendererDispatcher.renderBlock(b.blockState, b.pos, blockAccess, tessellator.getBuilder()));
+                template.blocks.stream().filter(b -> exclusionBlockInfoHandlers
+                                                       .stream()
+                                                       .noneMatch(f -> f.test(b)))
+                  .forEach(b -> rendererDispatcher.renderBlock(b.blockState, b.pos, blockAccess, tessellator.getBuilder()));
 
                 return tessellator;
             }).draw(rotation, mirror, drawingOffset, TemplateUtils.getPrimaryBlockOffset(template));
@@ -55,5 +70,10 @@ public final class TemplateRenderHandler
         {
             Log.getLogger().error(e);
         }
+    }
+
+    public void registerExclusionHandler(@NotNull final Predicate<BlockInfo> exclusionHandler)
+    {
+        this.exclusionBlockInfoHandlers.add(exclusionHandler);
     }
 }
