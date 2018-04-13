@@ -120,7 +120,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
             final EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, getCommand(), colonyId))
             {
-                player.sendMessage(new TextComponentString(NOT_PERMITTED));
+                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }
