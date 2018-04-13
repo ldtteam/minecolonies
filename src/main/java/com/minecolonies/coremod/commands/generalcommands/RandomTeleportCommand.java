@@ -183,7 +183,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
                 }
                 else
                 {
-                    sender.getCommandSenderEntity().sendMessage(
+                    sender.sendMessage(
                             new TextComponentString("Please wait at least " + Configurations.gameplay.teleportBuffer + " seconds to teleport again"));
                 }
                 return;

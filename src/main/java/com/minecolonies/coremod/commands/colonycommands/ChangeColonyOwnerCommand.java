@@ -91,7 +91,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
             {
                 if (playerName == null || playerName.isEmpty() || player == null)
                 {
-                    senderEntity.sendMessage(new TextComponentString(NO_PLAYER));
+                    sender.sendMessage(new TextComponentString(NO_PLAYER));
                     return;
                 }
                 final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player.getUniqueID());

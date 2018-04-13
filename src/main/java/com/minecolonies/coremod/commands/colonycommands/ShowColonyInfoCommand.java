@@ -163,7 +163,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
 
             if (!canPlayerUseCommand(player, SHOWCOLONYINFO, colonyId))
             {
-                sender.getCommandSenderEntity().sendMessage(new TextComponentString(NOT_PERMITTED));
+                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }
