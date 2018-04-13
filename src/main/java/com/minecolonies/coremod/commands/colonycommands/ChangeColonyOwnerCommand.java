@@ -84,7 +84,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
 
             if (senderEntity == null)
             {
-                server.sendMessage(new TextComponentString(NO_COLONY_OR_PLAYER));
+                sender.sendMessage(new TextComponentString(NO_COLONY_OR_PLAYER));
                 return;
             }
             else
