@@ -46,7 +46,9 @@ public final class TemplateRenderHandler
     public void draw(final Template template, final Rotation rotation, final Mirror mirror, final Vector3d drawingOffset)
     {
         if (rendererDispatcher == null)
+        {
             rendererDispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+        }
 
         final TemplateBlockAccess blockAccess = new TemplateBlockAccess(template);
 
