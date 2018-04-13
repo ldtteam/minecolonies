@@ -54,8 +54,8 @@ public final class RenderUtil
                 GlStateManager.scale(1, 1, 1);
                 break;
             case FRONT_BACK:
-                GlStateManager.translate(0, 0, (2 * appliedPrimaryBlockOff.getZ()) + 1);
-                GlStateManager.scale(1, 1, -1);
+                GlStateManager.translate((2 * appliedPrimaryBlockOff.getX()) + 1, 0, 0);
+                GlStateManager.scale(-1, 1, 1);
                 break;
             default:
                 //Should never occur.
