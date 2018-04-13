@@ -189,7 +189,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
                 return;
             }
         }
-        playerToTeleport.getCommandSenderEntity().sendMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));
+        sender.sendMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));
     }
 
     /**

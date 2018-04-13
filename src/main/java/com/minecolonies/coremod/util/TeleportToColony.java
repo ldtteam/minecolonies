@@ -121,7 +121,7 @@ public final class TeleportToColony
 
         if (colID < MIN_COLONY_ID)
         {
-            playerToTeleport.sendMessage(new TextComponentString(CANT_FIND_COLONY));
+            sender.sendMessage(new TextComponentString(CANT_FIND_COLONY));
             return;
         }
 
