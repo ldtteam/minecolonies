@@ -116,6 +116,21 @@ public class ActionMenuState
         return null;
     }
 
+    public EntityPlayerMP getOnlinePlayerForArgument(@NotNull final String argumentName)
+    {
+        for (final ActionArgument actionArgument : getAllArgumentsList())
+        {
+            if (argumentName.equals(actionArgument.getName()))
+            {
+                if (ActionArgumentType.ONLINE_PLAYER == actionArgument.getType())
+                {
+                    return (EntityPlayerMP) getValue(actionArgument);
+                }
+            }
+        }
+        return null;
+    }
+
     public CitizenData getCitizenForArgument(@NotNull final String argumentName)
     {
         for (final ActionArgument actionArgument : getAllArgumentsList())
