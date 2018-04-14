@@ -50,7 +50,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     /**
      * Constructor for window builder hut.
      *
-     * @param building {@link com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView}.
+     * @param building {@link com.minecolonies.coremod.colony.buildings.views.BuildingBuilder.View}.
      */
     public WindowHutBuilder(final BuildingBuilder.View building)
     {
