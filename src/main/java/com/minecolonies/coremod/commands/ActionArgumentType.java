@@ -35,7 +35,7 @@ public enum ActionArgumentType
     ONLINE_PLAYER("online-player-expression", 0),
     PLAYER("player-expression", 0),
     COLONY("colony-id", 0),
-    CITIZEN("citizen-id or full-name", 2),
+    CITIZEN("citizen-id or full-name", 10),
     COORDINATE_X("x-coordinate", 0),
     COORDINATE_Y("y-coordinate", 0),
     COORDINATE_Z("z-coordinate", 0),
@@ -279,51 +279,37 @@ public enum ActionArgumentType
             {
                 return citizenNumberStrings.stream().filter(k -> k.startsWith(potentialArgumentValue)).collect(Collectors.toList());
             }
-            else
+        }
+
+        final Set<String> nameAtIndexStringSet = new HashSet<>();
+        for (final String citizenName : citizenNameStrings)
+        {
+            final String[] citizenNameParts = citizenName.split(" ");
+            if (citizenNameParts.length > currentWordIndex)
             {
-                final Set<String> firstNameSet = new HashSet<>();
-                for (final String citizenName : citizenNameStrings)
+                int i = 0;
+                while (i < currentWordIndex)
                 {
-                    final String[] citizenNameParts = citizenName.split(" ");
-                    firstNameSet.add(citizenNameParts[0]);
+                    if (!potentiaCitizenNameParts[i].equals(citizenNameParts[i]))
+                    {
+                        break;
+                    }
+                    ++i;
                 }
-                final List<String> firstNameMatches = firstNameSet.stream().filter(k -> k.startsWith(potentialArgumentValue)).collect(Collectors.toList());
-                if (!firstNameMatches.isEmpty())
+                if (i == currentWordIndex)
                 {
-                    return firstNameMatches;
+                    nameAtIndexStringSet.add(citizenNameParts[currentWordIndex]);
                 }
             }
+        }
+        if (!nameAtIndexStringSet.isEmpty())
+        {
+            return nameAtIndexStringSet.stream().filter(k -> k.startsWith(potentiaCitizenNameParts[currentWordIndex])).collect(Collectors.toList());
         }
         else
         {
-            if (1 == currentWordIndex)
-            {
-                final Set<String> middleNameSet = new HashSet<>();
-                for (final String citizenName : citizenNameStrings)
-                {
-                    final String[] citizenNameParts = citizenName.split(" ");
-                    if (potentiaCitizenNameParts[0].equals(citizenNameParts[0]))
-                    {
-                        middleNameSet.add(citizenNameParts[1]);
-                    }
-                }
-                return middleNameSet.stream().filter(k -> k.startsWith(potentiaCitizenNameParts[1])).collect(Collectors.toList());
-            }
-            else
-            {
-                final Set<String> lastNameSet = new HashSet<>();
-                for (final String citizenName : citizenNameStrings)
-                {
-                    final String[] citizenNameParts = citizenName.split(" ");
-                    if ((potentiaCitizenNameParts[0].equals(citizenNameParts[0])) && (potentiaCitizenNameParts[1].equals(citizenNameParts[1])))
-                    {
-                        lastNameSet.add(citizenNameParts[2]);
-                    }
-                }
-                return lastNameSet.stream().filter(k -> k.startsWith(potentiaCitizenNameParts[2])).collect(Collectors.toList());
-           }
+            return Collections.emptyList();
         }
-        return Collections.emptyList();
     }
 
     @Nullable
