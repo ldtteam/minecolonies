@@ -22,7 +22,7 @@ public class WorkOrderBuildBuilding extends WorkOrderBuild
      * Create a new WorkOrder.
      *
      * @param building the building to build.
-     * @param level    the level it should have.
+     * @param newLevel    the level it should have.
      */
     public WorkOrderBuildBuilding(@NotNull final AbstractBuilding building, final int newLevel)
     {
