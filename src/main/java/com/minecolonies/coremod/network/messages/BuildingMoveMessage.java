@@ -157,12 +157,14 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
         if (oldBuilding instanceof BuildingTownHall)
         {
             oldBuilding = null;
-            world.setBlockToAir(oldBuildingId);
+            world.destroyBlock(oldBuildingId, false);
         }
 
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
         {
+            world.destroyBlock(oldBuildingId, false);
             world.destroyBlock(buildPos, true);
+
             world.setBlockState(buildPos, block.getDefaultState().withRotation(BlockUtils.getRotation(rotation)));
             ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
             setupBuilding(world, player, sn, rotation, buildPos, mirror, oldBuilding);
@@ -251,9 +253,6 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
             colony.getWorkManager().addWorkOrder(new WorkOrderBuildRemoval(oldBuilding, oldBuilding.getBuildingLevel()), false);
             colony.getWorkManager().addWorkOrder(new WorkOrderBuildBuilding(building, building.getBuildingLevel()), false);
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
-
-            final BlockPos pos = oldBuilding.getID();
-            world.setBlockToAir(pos);
         }
     }
 }
