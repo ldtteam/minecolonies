@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Provides a view of the builder building class.
  */
-public class AbstractBuildingBuilderView extends AbstractBuildingWorker.View
+public abstract class AbstractBuildingBuilderView extends AbstractBuildingWorker.View
 {
     /**
      * The resources he has to keep.

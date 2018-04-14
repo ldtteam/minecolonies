@@ -106,7 +106,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         if (job.getWorkOrder() instanceof WorkOrderBuildRemoval && state.equals(BUILDING_STEP))
         {
-            return AIState.COMPLETE_BUILD;
+            return COMPLETE_BUILD;
         }
         return super.switchStage(state);
     }

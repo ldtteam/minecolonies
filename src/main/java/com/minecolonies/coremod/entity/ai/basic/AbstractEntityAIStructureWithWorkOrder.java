@@ -356,13 +356,12 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Nullable
     public ItemStack getTotalAmount(@Nullable final ItemStack stack)
     {
-        final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding(AbstractBuildingStructureBuilder.class);
-
         if (ItemStackUtils.isEmpty(stack))
         {
             return null;
         }
         final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
+        final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding(AbstractBuildingStructureBuilder.class);
         final BuildingBuilderResource resource = buildingWorker.getNeededResources().get(stack.getUnlocalizedName() + ":" + stack.getItemDamage() + "-" + hashCode);
 
         if(resource == null)
