@@ -45,6 +45,7 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
             final BlockPos minerBuilding)
     {
         super(structureName, workOrderName, rotation, location, mirror);
+        this.minerBuilding = minerBuilding;
     }
 
     /**
@@ -56,7 +57,7 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        BlockPosUtil.writeToNBT(compound, TAG_POS, minerBuilding);
+        minerBuilding = BlockPosUtil.readFromNBT(compound, TAG_POS);
     }
 
     /**
@@ -68,7 +69,7 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        minerBuilding = BlockPosUtil.readFromNBT(compound, TAG_POS);
+        BlockPosUtil.writeToNBT(compound, TAG_POS, minerBuilding);
     }
 
     /**

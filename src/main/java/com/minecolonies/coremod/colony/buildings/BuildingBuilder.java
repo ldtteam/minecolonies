@@ -11,13 +11,16 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT_FIRST;
@@ -122,9 +125,11 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return;
         }
 
-        final List<WorkOrderBuildBuilding> list = getColony().getWorkManager().getOrderedList(WorkOrderBuildBuilding.class);
+        final List<WorkOrderBuild> list = new ArrayList<>();
+        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildRemoval.class));
+        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildBuilding.class));
 
-        for (final WorkOrderBuildBuilding wo: list)
+        for (final WorkOrderBuild wo: list)
         {
             double distanceToBuilder = Double.MAX_VALUE;
 

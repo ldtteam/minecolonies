@@ -113,8 +113,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
 
         final int tempRotation = workOrder.getRotation(world);
+        final boolean removal = workOrder instanceof WorkOrderBuildRemoval;
 
-        loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored());
+        loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored(), removal);
         workOrder.setCleared(false);
         workOrder.setRequested(false);
 
@@ -309,13 +310,13 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     protected boolean checkIfCanceled()
     {
-        if (job.getWorkOrder() == null)
+        if (job.getWorkOrder() == null && job.getStructure() != null)
         {
             super.resetTask();
             job.setStructure(null);
             job.setWorkOrder(null);
             resetCurrentStructure();
-            return false;
+            return true;
         }
         return false;
     }

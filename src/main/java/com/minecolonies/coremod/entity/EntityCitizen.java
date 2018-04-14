@@ -898,6 +898,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public void onLivingUpdate()
     {
+        super.onLivingUpdate();
+
         if (recentlyHit > 0)
         {
             citizenData.markDirty();
@@ -980,7 +982,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
 
         checkHeal();
-        super.onLivingUpdate();
     }
 
     private void updateColonyClient()
@@ -2258,6 +2259,26 @@ public class EntityCitizen extends EntityAgeable implements INpc
             citizenData.decreaseSaturation(getPerBuildingFoodCost());
             citizenData.markDirty();
         }
+    }
+
+    @Override
+    public boolean equals(final Object obj)
+    {
+        if (obj instanceof EntityCitizen)
+        {
+            final EntityCitizen citizen = (EntityCitizen) obj;
+            if (citizen.colonyId == this.colonyId && citizen.citizenId == this.citizenId)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(super.hashCode(), citizenId, colonyId);
     }
 
     /**

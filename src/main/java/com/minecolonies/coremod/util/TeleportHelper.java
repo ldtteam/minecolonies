@@ -39,7 +39,6 @@ public final class TeleportHelper
         }
 
         citizen.dismountRidingEntity();
-
         citizen.setLocationAndAngles(
           spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
           spawnPoint.getY(),
