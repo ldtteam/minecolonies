@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.workorders;
 
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import org.jetbrains.annotations.NotNull;
 
