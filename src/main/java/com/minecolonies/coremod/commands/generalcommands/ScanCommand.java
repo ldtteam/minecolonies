@@ -1,20 +1,19 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
-import javax.annotation.Nullable;
-
-import com.minecolonies.coremod.commands.*;
-import net.minecraft.entity.player.EntityPlayerMP;
-import org.jetbrains.annotations.NotNull;
-
+import com.minecolonies.coremod.commands.ActionMenuState;
+import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.items.ItemScanTool;
-
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
 
 import static com.minecolonies.api.util.constant.CommandConstants.*;
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.isPlayerOpped;

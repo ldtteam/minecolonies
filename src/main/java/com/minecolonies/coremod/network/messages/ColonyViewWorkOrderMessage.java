@@ -3,13 +3,12 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
+import com.minecolonies.coremod.colony.workorders.WorkOrderView;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Add or Update a ColonyView on the client.
@@ -29,7 +28,7 @@ public class ColonyViewWorkOrderMessage extends AbstractMessage<ColonyViewWorkOr
     }
 
     /**
-     * Updates a {@link com.minecolonies.coremod.colony.WorkOrderView} of the workOrders.
+     * Updates a {@link WorkOrderView} of the workOrders.
      *
      * @param colony    colony of the workOrder.
      * @param workOrder workOrder of the colony to update view.

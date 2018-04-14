@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.achievements;
 
-import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;

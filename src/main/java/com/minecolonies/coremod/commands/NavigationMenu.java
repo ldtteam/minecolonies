@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.commands;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.List;
-
-import org.jetbrains.annotations.NotNull;
 
 public class NavigationMenu extends AbstractMenu
 {

@@ -11,8 +11,6 @@ import com.minecolonies.coremod.colony.buildings.BuildingBarracks;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**

@@ -1,14 +1,12 @@
 package com.minecolonies.coremod.commands;
 
+import com.minecolonies.coremod.commands.ActionArgumentType.Is;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.Nullable;
-
-import org.jetbrains.annotations.NotNull;
-
-import com.minecolonies.coremod.commands.ActionArgumentType.Is;
 
 public class ActionArgument
 {

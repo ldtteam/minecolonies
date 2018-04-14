@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.requestsystem.data;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
-import com.minecolonies.api.colony.requestsystem.data.IProviderResolverAssignmentDataStore;
 import com.minecolonies.api.colony.requestsystem.data.IRequestResolverRequestAssignmentDataStore;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;

@@ -1,18 +1,6 @@
 package com.minecolonies.coremod.commands.killcommands;
 
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import org.jetbrains.annotations.NotNull;
-
-import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.minecolonies.coremod.commands.ActionMenuState;
-import com.minecolonies.coremod.commands.DeleteCommand;
-import com.minecolonies.coremod.commands.IActionCommand;
-import com.minecolonies.coremod.commands.MinecoloniesCommand;
-
+import com.minecolonies.coremod.commands.*;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -20,6 +8,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Abstract command for killing all entities of Type T on map.
