@@ -366,6 +366,9 @@ public class Structure
                 return advanceBlocks(this.theStructure::incrementBlock, structureBlock ->
                                                                        structureBlock.doesStructureBlockEqualWorldBlock()
                                                                          || structureBlock.metadata.getMaterial().isSolid());
+            case REMOVE:
+                return advanceBlocks(this.theStructure::decrementBlock,
+                        structureBlock -> structureBlock.worldBlock == Blocks.AIR);
             default:
                 return Result.NEW_BLOCK;
         }
@@ -476,6 +479,7 @@ public class Structure
         BUILD,
         DECORATE,
         SPAWN,
-        COMPLETE
+        COMPLETE,
+        REMOVE
     }
 }

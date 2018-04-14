@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony;
+package com.minecolonies.coremod.event;
 
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;

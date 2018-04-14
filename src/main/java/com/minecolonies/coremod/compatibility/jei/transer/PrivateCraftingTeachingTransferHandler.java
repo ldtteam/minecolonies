@@ -22,7 +22,9 @@ import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.text.translation.I18n;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHandler<CraftingGUIBuilding>
 {

@@ -9,8 +9,10 @@ import com.minecolonies.coremod.client.gui.WindowHutMiner;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
@@ -35,7 +37,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * The miners building.
  */
-public class BuildingMiner extends AbstractBuildingWorker
+public class BuildingMiner extends AbstractBuildingStructureBuilder
 {
     /**
      * The NBT Tag to store the floorBlock.
@@ -97,13 +99,10 @@ public class BuildingMiner extends AbstractBuildingWorker
     private static final String TAG_SHAFT_BLOCK = "shaftBlock";
 
     /**
-     * The maximum upgrade of the building.
-     */
-    private static final int         MAX_BUILDING_LEVEL = 5;
-    /**
      * The job description.
      */
     private static final String      MINER              = "Miner";
+
     /**
      * Defines the material used for the floor of the shaft.
      */
@@ -637,10 +636,32 @@ public class BuildingMiner extends AbstractBuildingWorker
         this.clearedShaft = clearedShaft;
     }
 
+    @Override
+    public void searchWorkOrder()
+    {
+        final CitizenData citizen = getMainWorker();
+        if (citizen == null)
+        {
+            return;
+        }
+
+        final List<WorkOrderBuildMiner> list = getColony().getWorkManager().getOrderedList(WorkOrderBuildMiner.class);
+
+        for (final WorkOrderBuildMiner wo: list)
+        {
+            if(this.getID().equals(wo.getMinerBuilding()))
+            {
+                citizen.getJob(JobMiner.class).setWorkOrder(wo);
+                wo.setClaimedBy(citizen);
+                return;
+            }
+        }
+    }
+
     /**
      * Provides a view of the miner building class.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingBuilderView
     {
         /**
          * The different miner levels the miner already has.

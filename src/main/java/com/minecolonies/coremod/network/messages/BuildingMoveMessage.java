@@ -8,6 +8,8 @@ import com.minecolonies.coremod.blocks.BlockHutTownHall;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
 import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
 import com.minecolonies.coremod.event.EventHandler;
@@ -15,7 +17,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -156,12 +157,14 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
         if (oldBuilding instanceof BuildingTownHall)
         {
             oldBuilding = null;
-            world.setBlockToAir(oldBuildingId);
+            world.destroyBlock(oldBuildingId, false);
         }
 
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
         {
+            world.destroyBlock(oldBuildingId, false);
             world.destroyBlock(buildPos, true);
+
             world.setBlockState(buildPos, block.getDefaultState().withRotation(BlockUtils.getRotation(rotation)));
             ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
             setupBuilding(world, player, sn, rotation, buildPos, mirror, oldBuilding);
@@ -247,9 +250,9 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
                 }
             }
 
-            building.requestRepair();
-            final BlockPos pos = oldBuilding.getID();
-            world.setBlockToAir(pos);
+            colony.getWorkManager().addWorkOrder(new WorkOrderBuildRemoval(oldBuilding, oldBuilding.getBuildingLevel()), false);
+            colony.getWorkManager().addWorkOrder(new WorkOrderBuildBuilding(building, building.getBuildingLevel()), false);
+            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
         }
     }
 }

@@ -15,8 +15,9 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.managers.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
+import com.minecolonies.coremod.colony.workorders.WorkManager;
 import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
-import com.minecolonies.coremod.network.messages.*;
+import com.minecolonies.coremod.network.messages.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.block.Block;
@@ -47,7 +48,8 @@ import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
-import static com.minecolonies.coremod.colony.ColonyManager.*;
+import static com.minecolonies.coremod.colony.ColonyManager.FILENAME_COLONY;
+import static com.minecolonies.coremod.colony.ColonyManager.FILENAME_MINECOLONIES_PATH;
 
 /**
  * This class describes a colony and contains all the data and methods for
@@ -945,10 +947,13 @@ public class Colony implements IColony
      * @param building The upgraded building.
      * @param level    The new level.
      */
-    public void onBuildingUpgradeComplete(@NotNull final AbstractBuilding building, final int level)
+    public void onBuildingUpgradeComplete(@Nullable final AbstractBuilding building, final int level)
     {
-        building.onUpgradeComplete(level);
-        this.markDirty();
+        if (building != null)
+        {
+            building.onUpgradeComplete(level);
+            this.markDirty();
+        }
     }
 
     /**

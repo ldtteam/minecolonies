@@ -1,37 +1,27 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
+import com.minecolonies.coremod.client.gui.WindowHutBuilder;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
+import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.inventory.InventoryCitizen;
-import io.netty.buffer.ByteBuf;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Predicate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT_FIRST;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -39,26 +29,12 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * The builders building.
  */
-public class BuildingBuilder extends AbstractBuildingWorker
+public class BuildingBuilder extends AbstractBuildingStructureBuilder
 {
-    /**
-     * The maximum upgrade of the building.
-     */
-    public static final  int    MAX_BUILDING_LEVEL = 5;
     /**
      * The job description.
      */
-    private static final String BUILDER            = "Builder";
-
-    /**
-     * Tags to store the needed resourced to nbt.
-     */
-    private static final String TAG_RESOURCE_LIST = "resourcesItem";
-
-    /**
-     * Contains all resources needed for a certain build.
-     */
-    private HashMap<String, BuildingBuilderResource> neededResources = new HashMap<>();
+    private static final String BUILDER = "Builder";
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -85,17 +61,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
     public String getSchematicName()
     {
         return BUILDER;
-    }
-
-    /**
-     * Getter of the max building level.
-     *
-     * @return the integer.
-     */
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return MAX_BUILDING_LEVEL;
     }
 
     /**
@@ -126,45 +91,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
         }
     }
 
-    @Override
-    public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
-    {
-        final Map<Predicate<ItemStack>, Integer> toKeep = new HashMap<>(keepX);
-        toKeep.putAll(keepX);
-
-        for (final BuildingBuilderResource stack : neededResources.values())
-        {
-            toKeep.put(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), stack.getAmount());
-        }
-
-        return toKeep;
-    }
-
-    @Override
-    public ItemStack transferStack(@NotNull final ItemStack stack, @NotNull final World world)
-    {
-        @NotNull final ItemStack resultStack = super.transferStack(stack, world);
-
-        if (ItemStackUtils.isEmpty(resultStack))
-        {
-            this.markDirty();
-        }
-
-        return resultStack;
-    }
-
-    @Override
-    public ItemStack forceTransferStack(final ItemStack stack, final World world)
-    {
-        final ItemStack itemStack = super.forceTransferStack(stack, world);
-        if (ItemStackUtils.isEmpty(itemStack))
-        {
-            this.markDirty();
-        }
-
-        return itemStack;
-    }
-
     /**
      * Create the job for the builder.
      *
@@ -176,38 +102,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
     public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobBuilder(citizen);
-    }
-
-    @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-        final NBTTagList neededResTagList = compound.getTagList(TAG_RESOURCE_LIST, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < neededResTagList.tagCount(); ++i)
-        {
-            final NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);
-            final ItemStack stack = new ItemStack(neededRes);
-            final BuildingBuilderResource resource = new BuildingBuilderResource(stack, ItemStackUtils.getSize(stack));
-            final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
-            neededResources.put(stack.getUnlocalizedName() + ":" + stack.getItemDamage() + "-" + hashCode, resource);
-        }
-    }
-
-    @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
-        @NotNull final NBTTagList neededResTagList = new NBTTagList();
-        for (@NotNull final BuildingBuilderResource resource : neededResources.values())
-        {
-            @NotNull final NBTTagCompound neededRes = new NBTTagCompound();
-            final ItemStack itemStack = new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
-            itemStack.setTagCompound(resource.getItemStack().getTagCompound());
-            itemStack.writeToNBT(neededRes);
-
-            neededResTagList.appendTag(neededRes);
-        }
-        compound.setTag(TAG_RESOURCE_LIST, neededResTagList);
     }
 
     /**
@@ -222,197 +116,91 @@ public class BuildingBuilder extends AbstractBuildingWorker
         return BUILDER;
     }
 
-    /**
-     * Method to serialize data to send it to the view.
-     *
-     * @param buf the used ByteBuffer.
-     */
     @Override
-    public void serializeToView(@NotNull final ByteBuf buf)
+    public void searchWorkOrder()
     {
-        super.serializeToView(buf);
-
-        updateAvailableResources();
-        buf.writeInt(neededResources.size());
-        for (@NotNull final BuildingBuilderResource resource : neededResources.values())
-        {
-            ByteBufUtils.writeItemStack(buf, resource.getItemStack());
-            buf.writeInt(resource.getAvailable());
-            buf.writeInt(resource.getAmount());
-        }
-
-        final CitizenData data = this.getMainWorker();
-        if(data != null && data.getJob() instanceof JobBuilder)
-        {
-            final JobBuilder builderJob = (JobBuilder) data.getJob();
-            final WorkOrderBuildDecoration workOrderBuildDecoration = builderJob.getWorkOrder();
-            if(workOrderBuildDecoration != null)
-            {
-                final BlockPos pos = workOrderBuildDecoration.getBuildingLocation();
-                final String name =
-                        workOrderBuildDecoration instanceof WorkOrderBuild ? ((WorkOrderBuild) workOrderBuildDecoration).getUpgradeName() : workOrderBuildDecoration.getName();
-                ByteBufUtils.writeUTF8String(buf, name);
-
-                final String desc;
-                if(pos.equals(getLocation()))
-                {
-                    desc = "here";
-                }
-                else
-                {
-                    final BlockPos relativePos = getLocation().subtract(pos);
-                    final EnumFacing facingX = EnumFacing.getFacingFromVector(relativePos.getX(), 0, 0);
-                    final EnumFacing facingZ = EnumFacing.getFacingFromVector(0, 0, relativePos.getZ());
-                    desc = relativePos.getX() + " " + facingX + " " + relativePos.getZ() + " " + facingZ;
-                }
-
-                ByteBufUtils.writeUTF8String(buf, desc);
-            }
-            else
-            {
-                ByteBufUtils.writeUTF8String(buf, "-");
-                ByteBufUtils.writeUTF8String(buf, "");
-            }
-        }
-        else
-        {
-            ByteBufUtils.writeUTF8String(buf, "-");
-            ByteBufUtils.writeUTF8String(buf, "");
-        }
-    }
-
-    /**
-     * Update the available resources.
-     * <p>
-     * which are needed for the build and in the builder's chest or inventory
-     */
-    private void updateAvailableResources()
-    {
-        getMainWorkerEntity().ifPresent(builder -> {
-            final InventoryCitizen builderInventory = getMainWorker().getInventory();
-            if (builderInventory == null)
-            {
-                return;
-            }
-
-            for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
-            {
-                final BuildingBuilderResource resource = entry.getValue();
-
-                resource.setAvailable(0);
-
-                if (builderInventory != null)
-                {
-
-                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory),
-                            stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
-                }
-
-                final TileEntity chestInventory = this.getTileEntity();
-                if (chestInventory != null)
-                {
-                    resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory,
-                            stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
-                }
-
-                //Count in the additional chests as well
-                if (builder != null)
-                {
-                    for (final BlockPos pos : getAdditionalCountainers())
-                    {
-                        final TileEntity entity = CompatibilityUtils.getWorld(builder).getTileEntity(pos);
-                        if (entity instanceof TileEntityChest)
-                        {
-                            resource.addAvailable(InventoryUtils.getItemCountInProvider(entity,
-                                    stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    /**
-     * Get the needed resources for the current build.
-     *
-     * @return a new Hashmap.
-     */
-    public Map<String, BuildingBuilderResource> getNeededResources()
-    {
-        return new HashMap<>(neededResources);
-    }
-
-    /**
-     * Add a new resource to the needed list.
-     *
-     * @param res    the resource.
-     * @param amount the amount.
-     */
-    public void addNeededResource(@Nullable final ItemStack res, final int amount)
-    {
-        if (ItemStackUtils.isEmpty(res) || amount == 0)
+        final CitizenData citizen = getMainWorker();
+        if (citizen == null)
         {
             return;
         }
-        final int hashCode = res.hasTagCompound() ? res.getTagCompound().hashCode() : 0;
-        BuildingBuilderResource resource = this.neededResources.get(res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + hashCode);
-        if (resource == null)
+
+        final List<WorkOrderBuild> list = new ArrayList<>();
+        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildRemoval.class));
+        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildBuilding.class));
+
+        for (final WorkOrderBuild wo: list)
         {
-            resource = new BuildingBuilderResource(res, amount);
+            double distanceToBuilder = Double.MAX_VALUE;
+
+            if (!wo.canBuild(citizen))
+            {
+                continue;
+            }
+
+            for (@NotNull final CitizenData otherBuilder : getColony().getCitizenManager().getCitizens())
+            {
+                final JobBuilder job = otherBuilder.getJob(JobBuilder.class);
+
+                if (job == null || otherBuilder.getWorkBuilding() == null || citizen.getId() == otherBuilder.getId())
+                {
+                    continue;
+                }
+
+                if (!job.hasWorkOrder() && wo.canBuild(otherBuilder))
+                {
+                    final double distance = otherBuilder.getWorkBuilding().getID().distanceSq(wo.getBuildingLocation());
+                    if (distance < distanceToBuilder)
+                    {
+                        distanceToBuilder = distance;
+                    }
+                }
+            }
+
+            if (citizen.getWorkBuilding().getID().distanceSq(wo.getBuildingLocation()) < distanceToBuilder)
+            {
+                citizen.getJob(JobBuilder.class).setWorkOrder(wo);
+                wo.setClaimedBy(citizen);
+                return;
+            }
         }
-        else
-        {
-            resource.setAmount(resource.getAmount() + amount);
-        }
-        this.neededResources.put(res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + hashCode, resource);
-        this.markDirty();
     }
 
     /**
-     * Reduce a resource of the needed list.
-     *
-     * @param res    the resource.
-     * @param amount the amount.
+     * Provides a view of the miner building class.
      */
-    public void reduceNeededResource(final ItemStack res, final int amount)
+    public static class View extends AbstractBuildingBuilderView
     {
-        final int hashCode = res.hasTagCompound() ? res.getTagCompound().hashCode() : 0;
-        int preAmount = 0;
-        final String name = res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + hashCode;
-        if (this.neededResources.containsKey(name))
+        /**
+         * Public constructor of the view, creates an instance of it.
+         *
+         * @param c the colony.
+         * @param l the position.
+         */
+        public View(final ColonyView c, final BlockPos l)
         {
-            preAmount = this.neededResources.get(name).getAmount();
+            super(c, l);
         }
 
-        if (preAmount - amount <= 0)
+        @NotNull
+        @Override
+        public Window getWindow()
         {
-            this.neededResources.remove(name);
+            return new WindowHutBuilder(this);
         }
-        else
+
+        @NotNull
+        @Override
+        public Skill getPrimarySkill()
         {
-            this.neededResources.get(name).setAmount(preAmount - amount);
+            return Skill.STRENGTH;
         }
-        this.markDirty();
-    }
 
-    /**
-     * Resets the needed resources completely.
-     */
-    public void resetNeededResources()
-    {
-        neededResources = new HashMap<>();
-        this.markDirty();
-    }
-
-    /**
-     * Check if the builder requires a certain ItemStack for the current construction.
-     *
-     * @param stack the stack to test.
-     * @return true if so.
-     */
-    public boolean requiresResourceForBuilding(final ItemStack stack)
-    {
-        final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
-        return neededResources.containsKey(stack.getUnlocalizedName() + ":" + stack.getItemDamage() + "-" + hashCode);
+        @NotNull
+        @Override
+        public Skill getSecondarySkill()
+        {
+            return Skill.ENDURANCE;
+        }
     }
 }

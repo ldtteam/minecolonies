@@ -138,6 +138,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
            */
           new AITarget(IDLE, this::isThereAStructureToBuild, () -> START_BUILDING),
           /**
+           * Clean up area completely.
+           */
+          new AITarget(REMOVE_STEP, generateStructureGenerator(this::clearStep, COMPLETE_BUILD)),
+          /**
            * Clear out the building area.
            */
           new AITarget(CLEAR_STEP, generateStructureGenerator(this::clearStep, BUILDING_STEP)),
@@ -190,8 +194,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 final Structure.Result result = advanceBlock.get();
                 if (result == Structure.Result.AT_END)
                 {
-                    switchStage(nextState);
-                    return nextState;
+                    return switchStage(nextState);
                 }
                 if (result == Structure.Result.CONFIG_LIMIT)
                 {
@@ -205,9 +208,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     /**
      * Switches the structures stage after the current one has been completed.
      */
-    private void switchStage(final AIState state)
+    public AIState switchStage(final AIState state)
     {
-        if (state.equals(BUILDING_STEP))
+        if(state.equals(REMOVE_STEP))
+        {
+            currentStructure.setStage(Structure.Stage.REMOVE);
+        }
+        else if (state.equals(BUILDING_STEP))
         {
             currentStructure.setStage(Structure.Stage.BUILD);
         }
@@ -223,6 +230,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         {
             currentStructure.setStage(Structure.Stage.COMPLETE);
         }
+        return state;
     }
 
     private AIState pickUpResiduals()
@@ -576,24 +584,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     public abstract IBlockState getSolidSubstitution(BlockPos location);
 
     /**
-     * Requests Materials if required.
-     */
-    public void requestMaterialsIfRequired()
-    {
-        /**
-         * Extending entities implement this if required.
-         */
-    }
-
-    /**
      * Loads the structure given the name, rotation and position.
      *
      * @param name        the name to retrieve  it.
      * @param rotateTimes number of times to rotateWithMirror it.
      * @param position    the position to set it.
      * @param isMirrored  is the structure mirroed?
+     * @param removal     is this a removal task?
      */
-    public void loadStructure(@NotNull final String name, final int rotateTimes, final BlockPos position, final boolean isMirrored)
+    public void loadStructure(@NotNull final String name, final int rotateTimes, final BlockPos position, final boolean isMirrored, final boolean removal)
     {
         if (job instanceof AbstractJobStructure)
         {
@@ -603,7 +602,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 final StructureWrapper wrapper = new StructureWrapper(world, name);
 
                 ((AbstractJobStructure) job).setStructure(wrapper);
-                currentStructure = new Structure(world, wrapper, Structure.Stage.CLEAR);
+                currentStructure = new Structure(world, wrapper, removal ? Structure.Stage.REMOVE : Structure.Stage.CLEAR);
             }
             catch (final IllegalStateException e)
             {
@@ -649,7 +648,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private boolean clearStep(@NotNull final Structure.StructureBlock currentBlock)
     {
-        if (isAlreadyCleared() || !currentStructure.getStage().equals(Structure.Stage.CLEAR))
+        if (isAlreadyCleared() || (!currentStructure.getStage().equals(Structure.Stage.CLEAR) && !currentStructure.getStage().equals(Structure.Stage.REMOVE)))
         {
             return true;
         }
@@ -738,6 +737,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
         switch (currentStructure.getStage())
         {
+            case REMOVE:
+                return REMOVE_STEP;
             case CLEAR:
                 return CLEAR_STEP;
             case BUILD:

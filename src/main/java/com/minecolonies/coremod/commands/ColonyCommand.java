@@ -3,7 +3,6 @@ package com.minecolonies.coremod.commands;
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.coremod.commands.colonycommands.*;
 import com.minecolonies.coremod.commands.colonycommands.requestsystem.RSCommand;
-import com.minecolonies.coremod.commands.colonycommands.requestsystem.RSResetCommand;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
