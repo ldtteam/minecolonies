@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.workorders;
 
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;

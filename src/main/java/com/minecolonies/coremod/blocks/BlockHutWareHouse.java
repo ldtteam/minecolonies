@@ -1,10 +1,8 @@
 package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
-import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 /**

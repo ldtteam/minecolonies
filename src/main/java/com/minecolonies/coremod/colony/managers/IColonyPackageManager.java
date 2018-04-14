@@ -1,12 +1,9 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.entity.player.EntityPlayerMP;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
-
-import static com.minecolonies.api.util.constant.Constants.TICKS_HOUR;
 
 /**
  * Colony package manager, responsible to update views etc.

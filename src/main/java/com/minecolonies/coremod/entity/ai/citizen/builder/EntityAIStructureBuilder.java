@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
-
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
@@ -19,10 +19,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-
-import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import static com.minecolonies.api.util.constant.Suppression.LOOPS_SHOULD_NOT_CONTAIN_MORE_THAN_A_SINGLE_BREAK_OR_CONTINUE_STATEMENT;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -85,6 +81,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         }
 
         final WorkOrderBuildDecoration wo = job.getWorkOrder();
+
+        if (wo == null)
+        {
+            job.setWorkOrder(null);
+            return true;
+        }
 
         final AbstractBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
         if (building == null && wo instanceof WorkOrderBuild && !(wo instanceof WorkOrderBuildRemoval))

@@ -1,13 +1,12 @@
 package com.minecolonies.coremod.placementhandlers;
 
+import com.google.common.collect.Lists;
+import net.minecraft.util.math.BlockPos;
+
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.Lists;
-
-import net.minecraft.util.math.BlockPos;
 
 public class PlacementError
 {
