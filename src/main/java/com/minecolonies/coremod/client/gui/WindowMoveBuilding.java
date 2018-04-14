@@ -76,6 +76,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
         this.building = building;
         this.schematicName = schematicName;
         this.pos = pos;
+
         this.init();
     }
 
@@ -150,7 +151,6 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
                     Log.getLogger().error("WindowBuildTool: Need to download schematic on a standalone client/server. This should never happen");
                 }
             }
-
             Settings.instance.setStructureName(structureName.toString());
             Settings.instance.setActiveSchematic(structure);
         }
@@ -245,8 +245,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
-        final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, schematicName ,
-                building.getSchematicName() + building.getBuildingLevel());
+        final StructureName structureName = new StructureName(Settings.instance.getStructureName());
         if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
             //We need to check that the server have it too using the md5

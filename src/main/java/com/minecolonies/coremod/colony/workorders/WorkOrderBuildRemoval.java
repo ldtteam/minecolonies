@@ -26,9 +26,9 @@ public class WorkOrderBuildRemoval extends WorkOrderBuild
      * @param building the building to build.
      * @param level    the level it should have.
      */
-    public WorkOrderBuildRemoval(@NotNull final AbstractBuilding building, final int newLevel)
+    public WorkOrderBuildRemoval(@NotNull final AbstractBuilding building, final int level)
     {
-        super(building, newLevel);
+        super(building, level);
     }
 
     @Override
