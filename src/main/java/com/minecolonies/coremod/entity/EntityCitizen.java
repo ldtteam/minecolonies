@@ -75,8 +75,10 @@ import java.util.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.Suppression.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
+import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_NOT_ALLOWED;
+import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_SAME;
 
 /**
  * The Class used to represent the citizen entities.
@@ -898,6 +900,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public void onLivingUpdate()
     {
+        super.onLivingUpdate();
+
         if (recentlyHit > 0)
         {
             citizenData.markDirty();
@@ -980,7 +984,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
 
         checkHeal();
-        super.onLivingUpdate();
     }
 
     private void updateColonyClient()
@@ -2258,6 +2261,26 @@ public class EntityCitizen extends EntityAgeable implements INpc
             citizenData.decreaseSaturation(getPerBuildingFoodCost());
             citizenData.markDirty();
         }
+    }
+
+    @Override
+    public boolean equals(final Object obj)
+    {
+        if (obj instanceof EntityCitizen)
+        {
+            final EntityCitizen citizen = (EntityCitizen) obj;
+            if (citizen.colonyId == this.colonyId && citizen.citizenId == this.citizenId)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(super.hashCode(), citizenId, colonyId);
     }
 
     /**

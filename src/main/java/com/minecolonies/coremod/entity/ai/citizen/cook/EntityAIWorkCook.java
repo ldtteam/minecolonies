@@ -22,7 +22,7 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.RESULT_SLOT;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.HUNGRY_INV_FULL;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**

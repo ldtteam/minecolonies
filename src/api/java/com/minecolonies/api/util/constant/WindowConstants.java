@@ -446,6 +446,11 @@ public final class WindowConstants
     public static final String BUILD_TOOL_RESOURCE_SUFFIX = ":gui/windowbuilldtool.xml";
 
     /**
+     * Resource suffix.
+     */
+    public static final String MOVE_BUILDING_SOURCE_SUFFIX = ":gui/windowmovebuilding.xml";
+
+    /**
      * Hut prefix.
      */
     public static final String HUT_PREFIX = ":blockHut";
@@ -495,6 +500,11 @@ public final class WindowConstants
      * Id of the speed input field.
      */
     public static final String INPUT_SPEED     = "speed";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String BUTTON_MOVE_BUILDING = "reposition";
 
     /**
      * public constructor to hide implicit public one.

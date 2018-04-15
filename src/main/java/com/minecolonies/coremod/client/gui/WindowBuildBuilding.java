@@ -12,7 +12,6 @@ import com.minecolonies.blockout.controls.ItemIcon;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.DropDownList;
 import com.minecolonies.blockout.views.ScrollingList;
-import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -43,7 +42,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -95,10 +93,12 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         initStyleNavigation();
         registerButton(BUTTON_BUILD, this::confirmClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
+        registerButton(BUTTON_MOVE_BUILDING, this::moveBuildingClicked);
         final Button buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
         if (building.getBuildingLevel() == 0)
         {
             buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.build"));
+            findPaneOfTypeByID(BUTTON_MOVE_BUILDING, Button.class).disable();
         }
         else if(building.getBuildingLevel() == building.getBuildingMaxLevel())
         {
@@ -108,6 +108,15 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         {
             buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.upgrade"));
         }
+    }
+
+    /**
+     * When the move building button has been clicked.
+     */
+    private void moveBuildingClicked()
+    {
+        final WindowMoveBuilding window = new WindowMoveBuilding(building.getLocation(), building, styles.get(stylesDropDownList.getSelectedIndex()));
+        window.open();
     }
 
     /**

@@ -1,22 +1,20 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.HOMETP;
-
-import java.util.Collections;
-import java.util.List;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.util.TeleportToColony;
-
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.List;
+
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.HOMETP;
 
 /**
  * this command is made to TP a player to their home colony.

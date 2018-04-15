@@ -6,7 +6,8 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.block.Block;
@@ -26,7 +27,7 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 /**
  * Class which handles the miner behaviour.
  */
-public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
+public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrder<JobMiner>
 {
     /**
      * Lead the miner to the other side of the shaft.
@@ -580,24 +581,36 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
      */
     private void initStructure(final Node mineNode, final int rotateTimes, final BlockPos structurePos)
     {
+        String requiredName = null;
+        int rotateCount = 0;
         if (mineNode == null)
         {
-            loadStructure(Structures.SCHEMATICS_PREFIX + "/miner/minerMainShaft", getRotationFromVector(), structurePos, false);
+            rotateCount = getRotationFromVector();
+            requiredName = Structures.SCHEMATICS_PREFIX + "/miner/minerMainShaft";
         }
         else
         {
+            rotateCount = rotateTimes;
             if (mineNode.getStyle() == Node.NodeType.CROSSROAD)
             {
-                loadStructure(Structures.SCHEMATICS_PREFIX + "/miner/minerX4", rotateTimes, structurePos, false);
+                requiredName = Structures.SCHEMATICS_PREFIX + "/miner/minerX4";
             }
-            if (mineNode.getStyle() == Node.NodeType.BEND)
+            else if (mineNode.getStyle() == Node.NodeType.BEND)
             {
-                loadStructure(Structures.SCHEMATICS_PREFIX + "/miner/minerX2Right", rotateTimes, structurePos, false);
+                requiredName = Structures.SCHEMATICS_PREFIX + "/miner/minerX2Right";
             }
-            if (mineNode.getStyle() == Node.NodeType.TUNNEL)
+            else if (mineNode.getStyle() == Node.NodeType.TUNNEL)
             {
-                loadStructure(Structures.SCHEMATICS_PREFIX + "/miner/minerX2Top", rotateTimes, structurePos, false);
+                requiredName = Structures.SCHEMATICS_PREFIX + "/miner/minerX2Top";
             }
+        }
+
+        if (requiredName != null)
+        {
+            final WorkOrderBuildMiner wo = new WorkOrderBuildMiner(requiredName, requiredName, rotateCount, structurePos, false, getOwnBuilding().getLocation());
+            worker.getColony().getWorkManager().addWorkOrder(wo, false);
+            job.setWorkOrder(wo);
+            initiate();
         }
     }
 
@@ -800,6 +813,10 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     @Override
     protected boolean checkIfCanceled()
     {
+        if (super.checkIfCanceled())
+        {
+            return true;
+        }
         if (!isThereAStructureToBuild())
         {
             switch (getState())

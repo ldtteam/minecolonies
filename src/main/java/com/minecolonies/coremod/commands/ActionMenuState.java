@@ -1,20 +1,17 @@
 package com.minecolonies.coremod.commands;
 
-import static com.minecolonies.coremod.commands.ActionArgumentType.STRING;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
+import net.minecraft.entity.player.EntityPlayerMP;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
-import org.jetbrains.annotations.NotNull;
-
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-
-import net.minecraft.entity.player.EntityPlayerMP;
+import static com.minecolonies.coremod.commands.ActionArgumentType.STRING;
 
 public class ActionMenuState
 {
@@ -110,7 +107,7 @@ public class ActionMenuState
         {
             if (argumentName.equals(actionArgument.getName()))
             {
-                if (ActionArgumentType.PLAYER == actionArgument.getType())
+                if (ActionArgumentType.ONLINE_PLAYER == actionArgument.getType() || ActionArgumentType.PLAYER == actionArgument.getType())
                 {
                     return (EntityPlayerMP) getValue(actionArgument);
                 }

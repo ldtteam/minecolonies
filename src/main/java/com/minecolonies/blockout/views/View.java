@@ -1,6 +1,9 @@
 package com.minecolonies.blockout.views;
 
-import com.minecolonies.blockout.*;
+import com.minecolonies.blockout.Alignment;
+import com.minecolonies.blockout.Loader;
+import com.minecolonies.blockout.Pane;
+import com.minecolonies.blockout.PaneParams;
 import net.minecraft.client.renderer.GlStateManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
