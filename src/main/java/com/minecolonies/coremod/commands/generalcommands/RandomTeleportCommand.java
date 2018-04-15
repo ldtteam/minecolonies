@@ -70,7 +70,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        final EntityPlayer player = actionMenuState.getOnlinePlayerForArgument("player");
+        final EntityPlayer player = actionMenuState.getPlayerForArgument("player");
         executeShared(server, sender, ((null != player) ? player.getName() : null));
     }
 

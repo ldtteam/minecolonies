@@ -36,7 +36,7 @@ public class ScanCommand implements IActionCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        final EntityPlayerMP playerArgument = actionMenuState.getOnlinePlayerForArgument("player");
+        final EntityPlayerMP playerArgument = actionMenuState.getPlayerForArgument("player");
 
         // Will throw ClassCastException if null, but should never be null as these values are required.
         final int x1 = actionMenuState.getIntegerForArgument("x1");
