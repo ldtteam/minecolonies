@@ -107,7 +107,7 @@ public class ActionMenuState
         {
             if (argumentName.equals(actionArgument.getName()))
             {
-                if (ActionArgumentType.PLAYER == actionArgument.getType())
+                if (ActionArgumentType.ONLINE_PLAYER == actionArgument.getType() || ActionArgumentType.PLAYER == actionArgument.getType())
                 {
                     return (EntityPlayerMP) getValue(actionArgument);
                 }
