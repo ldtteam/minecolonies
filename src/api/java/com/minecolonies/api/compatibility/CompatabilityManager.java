@@ -72,9 +72,9 @@ public class CompatabilityManager implements ICompatabilityManager
     @Override
     public IBlockState getLeaveForSapling(final ItemStack stack)
     {
-        if(leavesToSaplingMap.inverse().containsKey(new ItemStorage(stack)))
+        if(leavesToSaplingMap.inverse().containsKey(new ItemStorage(stack, false, true)))
         {
-            return leavesToSaplingMap.inverse().get(new ItemStorage(stack));
+            return leavesToSaplingMap.inverse().get(new ItemStorage(stack, false, true));
         }
         return null;
     }
@@ -148,7 +148,7 @@ public class CompatabilityManager implements ICompatabilityManager
                                 .map(CompatabilityManager::readLeaveSaplingEntryFromNBT)
                                 .collect(Collectors.toMap(Tuple::getFirst, Tuple::getSecond)));
         final List<ItemStorage> storages = NBTUtils.streamCompound(compound.getTagList(TAG_SAPLINGS, Constants.NBT.TAG_COMPOUND))
-                .map(tempCompound -> new ItemStorage(new ItemStack(tempCompound)))
+                .map(tempCompound -> new ItemStorage(new ItemStack(tempCompound), false, true))
                 .collect(Collectors.toList());
 
         //Filter duplicated values.
@@ -178,9 +178,9 @@ public class CompatabilityManager implements ICompatabilityManager
     {
         final ItemStack tempStack = new ItemStack(leave.getBlock(), 1, leave.getBlock().getMetaFromState(leave));
         final IBlockState tempLeave = BlockLeaves.getBlockFromItem(tempStack.getItem()).getStateFromMeta(tempStack.getMetadata());
-        if(!leavesToSaplingMap.containsKey(tempLeave) && !leavesToSaplingMap.containsValue(new ItemStorage(stack)))
+        if(!leavesToSaplingMap.containsKey(tempLeave) && !leavesToSaplingMap.containsValue(new ItemStorage(stack, false, true)))
         {
-            leavesToSaplingMap.put(tempLeave, new ItemStorage(stack));
+            leavesToSaplingMap.put(tempLeave, new ItemStorage(stack, false, true));
         }
     }
 
@@ -223,9 +223,9 @@ public class CompatabilityManager implements ICompatabilityManager
                     for (final ItemStack stack : list)
                     {
                         //Just put it in if not in there already, don't mind the leave yet.
-                        if(!ItemStackUtils.isEmpty(stack) && !leavesToSaplingMap.containsValue(new ItemStorage(stack)) && !saplings.contains(new ItemStorage(stack)))
+                        if(!ItemStackUtils.isEmpty(stack) && !leavesToSaplingMap.containsValue(new ItemStorage(stack, false, true)) && !saplings.contains(new ItemStorage(stack, false, true)))
                         {
-                            saplings.add(new ItemStorage(stack));
+                            saplings.add(new ItemStorage(stack, false, true));
                         }
                     }
                 }
@@ -244,6 +244,6 @@ public class CompatabilityManager implements ICompatabilityManager
 
     private static Tuple<IBlockState, ItemStorage> readLeaveSaplingEntryFromNBT(final NBTTagCompound compound)
     {
-        return new Tuple<>(NBTUtil.readBlockState(compound), new ItemStorage(new ItemStack(compound)));
+        return new Tuple<>(NBTUtil.readBlockState(compound), new ItemStorage(new ItemStack(compound), false, true));
     }
 }
