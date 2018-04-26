@@ -1,6 +1,7 @@
-package com.minecolonies.coremod.colony;
+package com.minecolonies.coremod.colony.workorders;
 
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -247,14 +248,19 @@ public class WorkManager
                     o.resetChange();
                 }
             }
-
-            if ((event.world.getWorldTime() % WORK_ORDER_FULFILL_INCREMENT) == 0)
-            {
-                workOrders.values().stream().filter(o -> !o.isClaimed())
-                  .sorted(Comparator.comparingInt(AbstractWorkOrder::getPriority).reversed())
-                  .forEach(o -> o.attemptToFulfill(colony));
-            }
         }
+    }
+
+    /**
+     * Get an ordered list by priority of the work orders.
+     * @param type the type of workOrder which is required.
+     * @return the list.
+     */
+    public <W extends AbstractWorkOrder> List<W> getOrderedList(@NotNull final Class<W> type)
+    {
+        return workOrders.values().stream().filter(o -> !o.isClaimed() && type.isInstance(o)).map(o -> (W) o)
+                .sorted(Comparator.comparingInt(AbstractWorkOrder::getPriority).reversed())
+                .collect(Collectors.toList());
     }
 
     /**

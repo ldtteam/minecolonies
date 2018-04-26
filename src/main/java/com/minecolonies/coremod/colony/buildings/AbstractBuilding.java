@@ -21,10 +21,9 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.inventory.api.CombinedItemHandler;
@@ -123,7 +122,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     {
         addMapping("Baker", BuildingBaker.class, BuildingBaker.View.class, BlockHutBaker.class);
         addMapping("Blacksmith", BuildingBlacksmith.class, BuildingBlacksmith.View.class, BlockHutBlacksmith.class);
-        addMapping("Builder", BuildingBuilder.class, BuildingBuilderView.class, BlockHutBuilder.class);
+        addMapping("Builder", BuildingBuilder.class, BuildingBuilder.View.class, BlockHutBuilder.class);
         addMapping("Home", BuildingHome.class, BuildingHome.View.class, BlockHutCitizen.class);
         addMapping("Farmer", BuildingFarmer.class, BuildingFarmer.View.class, BlockHutFarmer.class);
         addMapping("Lumberjack", BuildingLumberjack.class, BuildingLumberjack.View.class, BlockHutLumberjack.class);
@@ -470,7 +469,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
         if (building != null && parent.getWorld() != null)
         {
-            final WorkOrderBuild workOrder = new WorkOrderBuild(building, 1);
+            final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
             final StructureWrapper wrapper = new StructureWrapper(parent.getWorld(), workOrder.getStructureName());
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
               = ColonyUtils.calculateCorners(building.getLocation(),
@@ -833,7 +832,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      */
     protected void requestWorkOrder(final int level)
     {
-        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        for (@NotNull final WorkOrderBuildBuilding o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildBuilding.class))
         {
             if (o.getBuildingLocation().equals(getID()))
             {
@@ -841,7 +840,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             }
         }
 
-        colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level), false);
+        colony.getWorkManager().addWorkOrder(new WorkOrderBuildBuilding(this, level), false);
         LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
         markDirty();
     }
@@ -886,7 +885,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      */
     private int getCurrentWorkOrderLevel()
     {
-        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        for (@NotNull final WorkOrderBuildBuilding o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildBuilding.class))
         {
             if (o.getBuildingLocation().equals(getID()))
             {
@@ -915,7 +914,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      */
     public void removeWorkOrder()
     {
-        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        for (@NotNull final WorkOrderBuildBuilding o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildBuilding.class))
         {
             if (o.getBuildingLocation().equals(getID()))
             {
@@ -993,7 +992,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     @SuppressWarnings("squid:S1172")
     public void onUpgradeComplete(final int newLevel)
     {
-        final WorkOrderBuild workOrder = new WorkOrderBuild(this, newLevel);
+        final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, newLevel);
         final StructureWrapper wrapper = new StructureWrapper(colony.getWorld(), workOrder.getStructureName());
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
           = ColonyUtils.calculateCorners(this.getLocation(),

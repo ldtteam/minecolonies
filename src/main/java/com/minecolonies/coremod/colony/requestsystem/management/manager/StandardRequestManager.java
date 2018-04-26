@@ -7,9 +7,7 @@ import com.minecolonies.api.colony.requestsystem.data.*;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
-import com.minecolonies.api.colony.requestsystem.requestable.IRetryable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
@@ -22,18 +20,15 @@ import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequest
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.*;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.naming.spi.Resolver;
 import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
-import static com.minecolonies.api.util.constant.Suppression.*;
+import static com.minecolonies.api.util.constant.Suppression.BIG_CLASS;
 
 /**
  * Main class of the request system.

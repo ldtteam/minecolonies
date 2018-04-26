@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
@@ -12,7 +11,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.items.ModItems;
@@ -189,7 +188,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
                 @Nullable final AbstractBuilding building = ColonyManager.getBuilding(CompatibilityUtils.getWorld(player), message.pos);
                 if (building != null)
                 {
-                    final WorkOrderBuild workOrder = new WorkOrderBuild(building, 1);
+                    final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
                     ConstructionTapeHelper.removeConstructionTape(workOrder, CompatibilityUtils.getWorld(player));
                 }
             }

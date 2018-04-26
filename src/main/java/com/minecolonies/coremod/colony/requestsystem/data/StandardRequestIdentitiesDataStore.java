@@ -21,9 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LIST;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_REQUEST;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TOKEN;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * A default implementation of the {@link IRequestIdentitiesDataStore} interface.

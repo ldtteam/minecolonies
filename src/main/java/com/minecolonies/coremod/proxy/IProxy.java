@@ -2,7 +2,6 @@ package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.colony.CitizenDataView;
-import net.minecraft.client.util.RecipeBookClient;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.math.BlockPos;

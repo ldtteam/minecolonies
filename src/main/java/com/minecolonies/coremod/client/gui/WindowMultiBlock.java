@@ -17,7 +17,8 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.coremod.tileentities.TileEntityMultiBlock.*;
+import static com.minecolonies.coremod.tileentities.TileEntityMultiBlock.DEFAULT_RANGE;
+import static com.minecolonies.coremod.tileentities.TileEntityMultiBlock.DEFAULT_SPEED;
 import static net.minecraft.util.EnumFacing.*;
 
 /**

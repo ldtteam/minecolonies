@@ -51,6 +51,10 @@ public enum AIState
      */
     CLEAR_STEP,
     /**
+     * Cleans the building area.
+     */
+    REMOVE_STEP,
+    /**
      * Requests materials.
      */
     REQUEST_MATERIALS,

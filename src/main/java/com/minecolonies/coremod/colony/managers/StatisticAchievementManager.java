@@ -3,11 +3,8 @@ package com.minecolonies.coremod.colony.managers;
 import com.minecolonies.coremod.achievements.MineColoniesAchievement;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.TriggerColonyAchievements;
-import com.minecolonies.coremod.util.AchievementUtils;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

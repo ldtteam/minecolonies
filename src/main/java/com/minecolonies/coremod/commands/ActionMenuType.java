@@ -1,30 +1,16 @@
 package com.minecolonies.coremod.commands;
 
-import com.minecolonies.coremod.commands.colonycommands.*;
-import org.jetbrains.annotations.NotNull;
-
 import com.minecolonies.coremod.colony.permissions.ForgePermissionNodes;
 import com.minecolonies.coremod.commands.citizencommands.CitizenInfoCommand;
 import com.minecolonies.coremod.commands.citizencommands.KillCitizenCommand;
 import com.minecolonies.coremod.commands.citizencommands.ListCitizensCommand;
 import com.minecolonies.coremod.commands.citizencommands.RespawnCitizenCommand;
+import com.minecolonies.coremod.commands.colonycommands.*;
 import com.minecolonies.coremod.commands.colonycommands.requestsystem.RSResetAllCommand;
 import com.minecolonies.coremod.commands.colonycommands.requestsystem.RSResetCommand;
-import com.minecolonies.coremod.commands.generalcommands.BackupCommand;
-import com.minecolonies.coremod.commands.generalcommands.CheckForAutoDeletesCommand;
-import com.minecolonies.coremod.commands.generalcommands.RaidAllNowCommand;
-import com.minecolonies.coremod.commands.generalcommands.RaidAllTonightCommand;
-import com.minecolonies.coremod.commands.generalcommands.RandomTeleportCommand;
-import com.minecolonies.coremod.commands.generalcommands.ScanCommand;
-import com.minecolonies.coremod.commands.generalcommands.WhereAmICommand;
-import com.minecolonies.coremod.commands.generalcommands.WhoAmICommand;
-import com.minecolonies.coremod.commands.killcommands.AnimalKillCommand;
-import com.minecolonies.coremod.commands.killcommands.BarbarianKillCommand;
-import com.minecolonies.coremod.commands.killcommands.ChickenKillCommand;
-import com.minecolonies.coremod.commands.killcommands.CowKillCommand;
-import com.minecolonies.coremod.commands.killcommands.MobKillCommand;
-import com.minecolonies.coremod.commands.killcommands.PigKillCommand;
-import com.minecolonies.coremod.commands.killcommands.SheepKillCommand;
+import com.minecolonies.coremod.commands.generalcommands.*;
+import com.minecolonies.coremod.commands.killcommands.*;
+import org.jetbrains.annotations.NotNull;
 
 //PMD.AvoidDuplicateLiterals: We want to have literals used instead of constants as we are defining commands
 //and do not necessarily want one command's syntax dependent on another command
@@ -280,7 +266,7 @@ public enum ActionMenuType implements IMenuType
             ForgePermissionNodes.CLAIM,
             ClaimChunksCommand.class,
             new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.OPTIONAL),
-            new ActionArgument("range", ActionArgumentType.INTEGER, ActionArgumentType.Is.REQUIRED),
+            new ActionArgument("range", ActionArgumentType.INTEGER, ActionArgumentType.Is.OPTIONAL),
             new ActionArgument("add", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.OPTIONAL)
             ))
     ;

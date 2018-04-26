@@ -1,27 +1,31 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.ColonyConstants.DEFAULT_SPAWN_RADIUS;
-import static com.minecolonies.api.util.constant.ColonyConstants.MAX_SPAWN_RADIUS;
+import static com.minecolonies.api.util.constant.ColonyConstants.*;
 import static com.minecolonies.api.util.constant.Constants.HALF_A_CIRCLE;
 import static com.minecolonies.api.util.constant.Constants.WHOLE_CIRCLE;
+import static com.minecolonies.api.util.constant.TranslationConstants.ALL_BARBARIANS_KILLED_MESSAGE;
+import static com.minecolonies.api.util.constant.TranslationConstants.ONLY_X_BARBARIANS_LEFT_MESSAGE;
 
 public class BarbarianManager implements IBarbarianManager
 {
     /**
      * Whether there will be a raid in this colony tonight.
      */
-    private boolean raidTonight = false;
+    private boolean raidTonight                             = false;
 
     /**
      * Whether or not the raid has been calculated for today.
@@ -42,6 +46,11 @@ public class BarbarianManager implements IBarbarianManager
      * The colony of the manager.
      */
     private final Colony colony;
+
+    /**
+     * List of barbarians registered to the colony.
+     */
+    private final List<AbstractEntityBarbarian> horde = new ArrayList<>();
 
     /**
      * Creates the BarbarianManager for a colony.
@@ -156,6 +165,34 @@ public class BarbarianManager implements IBarbarianManager
     public List<BlockPos> getLastSpawnPoints()
     {
         return new ArrayList<>(lastSpawnPoints);
+    }
+
+    @Override
+    public void registerBarbarian(final AbstractEntityBarbarian abstractEntityBarbarian)
+    {
+        this.horde.add(abstractEntityBarbarian);
+    }
+
+    @Override
+    public void unregisterBarbarian(@NotNull final AbstractEntityBarbarian abstractEntityBarbarian)
+    {
+        for(final AbstractEntityBarbarian barbarian : new ArrayList<>(horde))
+        {
+            if(barbarian.isDead || barbarian.getUniqueID().equals(abstractEntityBarbarian.getUniqueID()))
+            {
+                horde.remove(barbarian);
+            }
+        }
+
+        if(horde.isEmpty())
+        {
+            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), ALL_BARBARIANS_KILLED_MESSAGE);
+        }
+        else if(horde.size() <= SMALL_HORDE_SIZE)
+        {
+            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), ONLY_X_BARBARIANS_LEFT_MESSAGE, horde.size());
+        }
+
     }
 
     /**

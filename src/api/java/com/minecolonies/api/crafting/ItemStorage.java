@@ -25,6 +25,11 @@ public class ItemStorage
     private final boolean shouldIgnoreDamageValue;
 
     /**
+     * Set this to ignore the damage value in comparisons.
+     */
+    private final boolean shouldIgnoreNBTValue;
+
+    /**
      * Amount of the storage.
      */
     private int amount;
@@ -40,6 +45,22 @@ public class ItemStorage
     {
         this.stack = stack;
         this.shouldIgnoreDamageValue = ignoreDamageValue;
+        this.shouldIgnoreNBTValue = ignoreDamageValue;
+        this.amount = amount;
+    }
+
+    /**
+     * Creates an instance of the storage.
+     *
+     * @param stack                the stack.
+     * @param ignoreDamageValue    should the damage value be ignored?
+     * @param shouldIgnoreNBTValue should the nbt value be ignored?
+     */
+    public ItemStorage(@NotNull final ItemStack stack, final boolean ignoreDamageValue, final boolean shouldIgnoreNBTValue)
+    {
+        this.stack = stack;
+        this.shouldIgnoreDamageValue = ignoreDamageValue;
+        this.shouldIgnoreNBTValue = shouldIgnoreNBTValue;
         this.amount = amount;
     }
 
@@ -53,6 +74,7 @@ public class ItemStorage
     {
         this.stack = stack;
         this.shouldIgnoreDamageValue = ignoreDamageValue;
+        this.shouldIgnoreNBTValue = ignoreDamageValue;
         this.amount = ItemStackUtils.getSize(stack);
     }
 
@@ -65,6 +87,7 @@ public class ItemStorage
     {
         this.stack = stack;
         this.shouldIgnoreDamageValue = false;
+        this.shouldIgnoreNBTValue = false;
         this.amount = ItemStackUtils.getSize(stack);
     }
 
@@ -131,8 +154,8 @@ public class ItemStorage
     public int hashCode()
     {
         return Objects.hash(stack.getItem())
-                + (shouldIgnoreDamageValue ? 0 : (stack.getItemDamage() * 31))
-                + ((stack.getTagCompound() == null) ? 0 : stack.getTagCompound().hashCode());
+                + (this.shouldIgnoreDamageValue ? 0 : (this.stack.getItemDamage() * 31))
+                + (this.shouldIgnoreNBTValue ? 0 : ((this.stack.getTagCompound() == null) ? 0 : this.stack.getTagCompound().hashCode()));
     }
 
     @Override
@@ -152,7 +175,7 @@ public class ItemStorage
 
         return stack.isItemEqual(that.getItemStack())
                 && (this.shouldIgnoreDamageValue || that.getDamageValue() == this.getDamageValue())
-                &&  that.getItemStack().getTagCompound() == this.getItemStack().getTagCompound();
+                && (this.shouldIgnoreNBTValue || that.getItemStack().getTagCompound() == this.getItemStack().getTagCompound());
     }
 
     /**

@@ -81,6 +81,9 @@ public class Configurations
         @Config.Comment("The average amount of nights between raids")
         public int averageNumberOfNightsBetweenRaids = 3;
 
+        @Config.Comment("The minimum number of nights between raids")
+        public int minimumNumberOfNightsBetweenRaids = 1;
+
         @Config.Comment("Should players be allowed to build their colonies over existing villages?")
         public boolean protectVillages = false;
         /* schematics usage */

@@ -23,6 +23,7 @@ import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
+import com.minecolonies.structures.client.TemplateRenderHandler;
 import com.minecolonies.structures.event.RenderEventHandler;
 import com.minecolonies.structures.helpers.Settings;
 import net.minecraft.block.Block;
@@ -253,6 +254,10 @@ public class ClientProxy extends CommonProxy
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(frame), 0,
                         new ModelResourceLocation(frame.getRegistryName(), INVENTORY));
         }
+
+        //Additionally we register an exclusion handler here;
+        TemplateRenderHandler.getInstance().registerExclusionHandler((b) -> b.blockState.getBlock() instanceof BlockSubstitution);
+
     }
 
     @Override

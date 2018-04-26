@@ -7,10 +7,8 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
@@ -121,6 +119,16 @@ public class BuildingHome extends AbstractBuildingHut
                 world.setBlockState(pos, state.withProperty(BlockBed.OCCUPIED, false), 0x03);
             }
         }
+    }
+
+    /**
+     * Get a list of all residents.
+     * @return
+     */
+    @NotNull
+    public List<CitizenData> getResidents()
+    {
+        return new ArrayList<>(residents);
     }
 
     @NotNull

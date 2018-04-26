@@ -19,9 +19,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.Constants.HALF_BLOCK;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.coremod.util.SoundUtils.*;
+import static com.minecolonies.coremod.util.SoundUtils.PITCH;
+import static com.minecolonies.coremod.util.SoundUtils.VOLUME;
 import static net.minecraft.util.EnumFacing.*;
 
 /**
