@@ -103,7 +103,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
             }
             else
             {
-                return HERDER_DECIDE;
+                return DECIDE;
             }
         }
 
@@ -111,7 +111,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
 
         if (cow == null)
         {
-            return HERDER_DECIDE;
+            return DECIDE;
         }
 
         if (!walkingToAnimal(cow) && equipItem(new ItemStack(Items.BUCKET, 1)))
@@ -128,6 +128,6 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
             worker.addExperience(1.0);
         }
 
-        return HERDER_DECIDE;
+        return DECIDE;
     }
 }

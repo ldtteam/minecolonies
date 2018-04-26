@@ -101,7 +101,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         super.registerTargets(
           new AITarget(GUARD_SEARCH_TARGET, this::searchTarget),
           new AITarget(GUARD_GET_TARGET, this::getTarget),
-          new AITarget(GUARD_HUNT_DOWN_TARGET, this::huntDown),
+          new AITarget(GUARD_ATTACK, this::huntDown),
           new AITarget(GUARD_PATROL, this::patrol),
           new AITarget(GUARD_RESTOCK, this::goToBuilding)
         );
@@ -171,7 +171,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
                 return GUARD_RESTOCK;
             }
 
-            return GUARD_HUNT_DOWN_TARGET;
+            return GUARD_ATTACK;
         }
 
         if (shouldReturnToTarget(targetEntity.getPosition(), FOLLOW_RANGE))

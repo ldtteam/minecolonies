@@ -113,7 +113,7 @@ item.minecolonies.scepterGuard.name=Guard-scepter
 
 com.minecolonies.configgui.title=MineColonies Config
 
-com.minecolonies.coremod.status.herder.goingToHut=Going to Hut
+com.minecolonies.coremod.status.worker.goingToHut=Going to Hut
 com.minecolonies.coremod.status.herder.breeding=Breeding
 com.minecolonies.coremod.status.herder.searching=Searching
 com.minecolonies.coremod.status.herder.goingToAnimal=Going to Animal
@@ -247,6 +247,7 @@ com.minecolonies.coremod.gui.workerHuts.retrieveOff=Off
 com.minecolonies.coremod.gui.workerHuts.retrieveOn=On
 com.minecolonies.coremod.gui.workerHuts.task.guard=Guard
 com.minecolonies.coremod.gui.workerHuts.task.patrol=Patrol
+com.minecolonies.coremod.gui.workerHuts.calculate=Recalculate List
 com.minecolonies.coremod.gui.workerHuts.task.follow=Follow
 com.minecolonies.coremod.gui.workerHuts.targetPatrol=Set patrol positions.
 com.minecolonies.coremod.gui.workerHuts.targetGuard=Set guarding target.

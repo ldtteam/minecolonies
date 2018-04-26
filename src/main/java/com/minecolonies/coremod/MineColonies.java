@@ -159,6 +159,7 @@ public class MineColonies
         getNetwork().registerMessage(ColonyViewWorkOrderMessage.class, ColonyViewWorkOrderMessage.class, ++id, Side.CLIENT);
         getNetwork().registerMessage(ColonyViewRemoveWorkOrderMessage.class, ColonyViewRemoveWorkOrderMessage.class, ++id, Side.CLIENT);
         getNetwork().registerMessage(UpdateChunkCapabilityMessage.class, UpdateChunkCapabilityMessage.class, ++id, Side.CLIENT);
+        getNetwork().registerMessage(GuardMobAttackListMessage.class, GuardMobAttackListMessage.class, ++id, Side.CLIENT);
 
         //  Permission Request messages
         getNetwork().registerMessage(PermissionsMessage.Permission.class, PermissionsMessage.Permission.class, ++id, Side.SERVER);
@@ -180,6 +181,7 @@ public class MineColonies
         getNetwork().registerMessage(AssignFieldMessage.class, AssignFieldMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(AssignmentModeMessage.class, AssignmentModeMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(GuardTaskMessage.class, GuardTaskMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(GuardRecalculateMessage.class, GuardRecalculateMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(MobEntryChangeMessage.class, MobEntryChangeMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(GuardScepterMessage.class, GuardScepterMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(RecallTownhallMessage.class, RecallTownhallMessage.class, ++id, Side.SERVER);

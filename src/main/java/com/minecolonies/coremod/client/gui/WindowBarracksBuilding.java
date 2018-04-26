@@ -7,12 +7,9 @@ import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.buildings.BuildingBarracks;
 import com.minecolonies.coremod.colony.buildings.BuildingBarracksNew;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 

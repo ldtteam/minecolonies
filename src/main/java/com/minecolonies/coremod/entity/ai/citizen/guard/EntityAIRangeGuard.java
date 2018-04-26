@@ -17,9 +17,7 @@ import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.DifficultyInstance;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -156,7 +154,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         super.registerTargets(
           new AITarget(GUARD_SEARCH_TARGET, this::searchTarget),
           new AITarget(GUARD_GET_TARGET, this::getTarget),
-          new AITarget(GUARD_HUNT_DOWN_TARGET, this::huntDown),
+          new AITarget(GUARD_ATTACK, this::huntDown),
           new AITarget(GUARD_PATROL, this::patrol),
           new AITarget(GUARD_RESTOCK, this::goToBuilding)
         );
@@ -227,7 +225,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
                 return GUARD_RESTOCK;
             }
 
-            return GUARD_HUNT_DOWN_TARGET;
+            return GUARD_ATTACK;
         }
 
         if (shouldReturnToTarget(targetEntity.getPosition(), FOLLOW_RANGE + MAX_ATTACK_DISTANCE))

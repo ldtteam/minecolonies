@@ -1,13 +1,12 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.blockout.views.Window;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.blocks.BlockBarracksTowerSubstitution;
-import com.minecolonies.coremod.blocks.BlockHutBarracks;
-import com.minecolonies.coremod.blocks.BlockHutBarracksTower;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTowerNew;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
@@ -16,27 +15,24 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobKnight;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.util.StructureWrapper;
+import com.minecolonies.coremod.network.messages.GuardMobAttackListMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
-import net.minecraft.block.Block;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -173,10 +169,21 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
     {
         super(c, l);
 
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SWORD, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.BOW, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
-        keepX.put(itemStack -> itemStack.getItem() instanceof ItemTool, 1);
-        keepX.put(itemStack -> itemStack.getItem() instanceof ItemArmor, 1);
+        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.doesItemServeAsWeapon(itemStack), 1);
+
+        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
+                                 && itemStack.getItem() instanceof ItemArmor
+                                 && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.CHEST, 1);
+        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
+                                 && itemStack.getItem() instanceof ItemArmor
+                                 && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.HEAD, 1);
+        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
+                                 && itemStack.getItem() instanceof ItemArmor
+                                 && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.LEGS, 1);
+        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
+                                 && itemStack.getItem() instanceof ItemArmor
+                                 && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.FEET, 1);
     }
 
     //// ---- NBT Overrides ---- \\\\
@@ -608,6 +615,11 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
         return MAX_VISION_BONUS_MULTIPLIER * VISION_BONUS;
     }
 
+    /**
+     * Populates the mobs list from the ForgeRegistries.
+     *
+     * @return the list of MobEntrys to attack.
+     */
     public List<MobEntryView> calculateMobs()
     {
         final List<MobEntryView> mobs = new ArrayList<>();
@@ -620,7 +632,25 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
                 i++;
                 mobs.add(new MobEntryView(entry.getRegistryName(), true, i));
             }
+            else
+            {
+                for (String location : Configurations.gameplay.guardResourceLocations)
+                {
+                    if (entry.getRegistryName() != null && entry.getRegistryName().toString().equals(location))
+                    {
+                        i++;
+                        mobs.add(new MobEntryView(entry.getRegistryName(), true, i));
+                    }
+                }
+            }
         }
+
+        getColony().getPackageManager().getSubscribers().forEach(player -> MineColonies
+                                                                             .getNetwork()
+                                                                             .sendTo(new GuardMobAttackListMessage(getColony().getID(),
+                                                                               getID(),
+                                                                               mobsToAttack),
+                                                                               player));
 
         return mobs;
     }
@@ -669,7 +699,7 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
         /**
          * Hashmap of mobs we may or may not attack.
          */
-        private ArrayList<MobEntryView> mobsToAttack = new ArrayList<>();
+        private List<MobEntryView> mobsToAttack = new ArrayList<>();
 
         /**
          * The client view constructor for the AbstractGuardBuilding.
@@ -774,6 +804,11 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
         public void setPatrolManually(final boolean patrolManually)
         {
             this.patrolManually = patrolManually;
+        }
+
+        public void setMobsToAttack(final List<MobEntryView> mobsToAttack)
+        {
+            this.mobsToAttack = mobsToAttack;
         }
 
         public boolean isPatrolManually()

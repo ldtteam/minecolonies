@@ -12,6 +12,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew.GuardJob;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew.GuardTask;
 import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
+import com.minecolonies.coremod.network.messages.GuardRecalculateMessage;
 import com.minecolonies.coremod.network.messages.GuardScepterMessage;
 import com.minecolonies.coremod.network.messages.GuardTaskMessage;
 import com.minecolonies.coremod.network.messages.MobEntryChangeMessage;
@@ -49,6 +50,7 @@ public class WindowHutGuardTowerNew extends AbstractWindowWorkerBuilding<Abstrac
     private static final String  GUI_BUTTON_SET_TARGET      = "setTarget";
     private static final String  GUI_BUTTON_NEXT_PAGE       = "nextPage";
     private static final String  GUI_BUTTON_PREV_PAGE       = "prevPage";
+    private static final String  GUI_BUTTON_RECALCULATE     = "recalculate";
     //GUI Switches
     private static final String  GUI_SWITCH_VIEW_PAGES      = "pages";
     private static final String  GUI_SWITCH_TASK_PATROL     = "patrolling";
@@ -130,6 +132,7 @@ public class WindowHutGuardTowerNew extends AbstractWindowWorkerBuilding<Abstrac
         registerButton(GUI_BUTTON_PATROL_MODE, this::switchPatrolMode);
         registerButton(GUI_BUTTON_RETRIEVAL_MODE, this::switchRetrievalMode);
         registerButton(GUI_BUTTON_SET_TARGET, this::setTarget);
+        registerButton(GUI_BUTTON_RECALCULATE, this::recalculate);
 
         registerButton(GUI_SWITCH_TASK_PATROL, this::switchTask);
         registerButton(GUI_SWITCH_TASK_FOLLOW, this::switchTask);
@@ -504,6 +507,15 @@ public class WindowHutGuardTowerNew extends AbstractWindowWorkerBuilding<Abstrac
             LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.job.guard.tool.taskGuard");
         }
         window.close();
+    }
+
+    /**
+     * Recalculates the mob list.
+     */
+    private void recalculate()
+    {
+        MineColonies.getNetwork().sendToServer(new GuardRecalculateMessage(building.getColony().getID(), building.getID()));
+        pullInfoFromHut();
     }
 
     /**

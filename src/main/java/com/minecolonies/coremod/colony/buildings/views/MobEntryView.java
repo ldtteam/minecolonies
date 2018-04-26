@@ -6,6 +6,8 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,17 +16,17 @@ import org.jetbrains.annotations.NotNull;
 public class MobEntryView
 {
     /**
-     * The priority.
+     * The priority for attacking this mob.
      */
     private int priority;
 
     /**
-     * The ResourceLocation.
+     * The ResourceLocation of the mob.
      */
     private ResourceLocation location;
 
     /**
-     * The attack Boolean.
+     * Whether to attack this mob.
      */
     private boolean attack;
 
@@ -172,5 +174,10 @@ public class MobEntryView
             return (EntityList.getTranslationName(this.location) + ": " + this.priority);
         }
         return EntityList.getTranslationName(this.location);
+    }
+
+    public EntityEntry getEntityEntry()
+    {
+        return ForgeRegistries.ENTITIES.getValue(this.getLocation());
     }
 }

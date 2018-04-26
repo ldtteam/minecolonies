@@ -103,8 +103,6 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         }
         final AbstractBuildingGuardsNew tower = (AbstractBuildingGuardsNew) hut;
 
-        tower.calculateMobs();
-
         if(BlockPosUtil.getDistance2D(pos, guardTower) > tower.getPatrolDistance())
         {
             LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolClickGuardTooFar");

@@ -78,6 +78,10 @@ public enum AIState
      * Go search food.
      */
     HUNGRY,
+    /**
+     * Decide what AIstate to go to next.
+     */
+    DECIDE,
     /*
 ###FISHERMAN###
      */
@@ -209,9 +213,19 @@ public enum AIState
     GUARD_GET_TARGET,
 
     /**
-     * Hunt the target down.
+     *Guard attack target.
      */
-    GUARD_HUNT_DOWN_TARGET,
+    GUARD_ATTACK,
+
+    /**
+     * Physically attack the target.
+     */
+    GUARD_ATTACK_PHYSICAL,
+
+    /**
+     * Allow the guard to protect himself.
+     */
+    GUARD_ATTACK_PROTECT,
 
     /**
      * Patrol through the village.
@@ -320,11 +334,6 @@ public enum AIState
     /*
 ### Herders ###
      */
-
-    /**
-     * Decide what AIstate to go to next.
-     */
-    HERDER_DECIDE,
 
     /**
      * Breed two animals together.

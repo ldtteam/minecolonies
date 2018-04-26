@@ -186,7 +186,16 @@ public class Configurations
                                                  };
         @Config.Comment("Should colonies in other dimensions be allowed (Default = false)?")
         public boolean allowOtherDimColonies = false;
-    }
+
+        @Config.Comment("ResourceLocations for extra entities for the GuardHut's list. \n"
+                          + "once done you'll need to recalculate the list."
+                          + "EntityMob's already calculated in list.")
+        public String[] guardResourceLocations = new String[]
+                                                           {
+                                                             "minecraft:slime",
+                                                             "tconstruct:blueslime"
+                                                           };
+     }
 
     public static class Pathfinding
     {

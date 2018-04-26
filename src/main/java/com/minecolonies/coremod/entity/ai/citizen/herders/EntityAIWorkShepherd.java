@@ -102,7 +102,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
 
         if (sheeps.isEmpty())
         {
-            return HERDER_DECIDE;
+            return DECIDE;
         }
 
         if (!equipTool(ToolType.SHEARS))
@@ -138,7 +138,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
         worker.addExperience(1.0);
         incrementActionsDoneAndDecSaturation();
 
-        return HERDER_DECIDE;
+        return DECIDE;
     }
 
     /**

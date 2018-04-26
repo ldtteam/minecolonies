@@ -325,7 +325,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                     {
                         targetEntity = (EntityLivingBase) entity;
                         worker.getNavigator().clearPath();
-                        return GUARD_HUNT_DOWN_TARGET;
+                        return GUARD_ATTACK;
                     }
                     entityList.remove(0);
                     setDelay(BASE_DELAY);
@@ -337,7 +337,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
 
                     worker.getNavigator().clearPath();
                     targetEntity = (EntityLivingBase) entity;
-                    return GUARD_HUNT_DOWN_TARGET;
+                    return GUARD_ATTACK;
                 }
             }
 
@@ -362,7 +362,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         if (huntDownlastAttacker())
         {
             targetEntity = this.worker.getLastAttackedEntity();
-            return GUARD_HUNT_DOWN_TARGET;
+            return GUARD_ATTACK;
         }
 
         if (targetEntity == null)
@@ -376,7 +376,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
 
         if (targetEntity != null && targetEntity.isEntityAlive() && worker.getEntitySenses().canSee(targetEntity))
         {
-            return GUARD_HUNT_DOWN_TARGET;
+            return GUARD_ATTACK;
         }
 
         setDelay(BASE_DELAY);

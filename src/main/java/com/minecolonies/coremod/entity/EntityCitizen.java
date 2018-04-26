@@ -17,7 +17,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.JobGuard;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
@@ -41,6 +41,7 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
+import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.*;
@@ -626,6 +627,22 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return result;
     }
 
+    @Override
+    public boolean isActiveItemStackBlocking()
+    {
+        return getHeldItemMainhand().getItem() instanceof ItemShield;
+    }
+
+    @Override
+    protected void damageShield(final float damage)
+    {
+        if (getHeldItemMainhand().getItem() instanceof ItemShield)
+        {
+            damageItemInHand((int) damage);
+        }
+        super.damageShield(damage);
+    }
+
     /**
      * Called when the mob's health reaches 0.
      *
@@ -654,7 +671,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             colony.decreaseOverallHappiness(penalty);
             triggerDeathAchievement(damageSource, getColonyJob());
-            if (getColonyJob() instanceof JobGuard)
+            if (getColonyJob() instanceof AbstractJobGuard)
             {
                 LanguageHandler.sendPlayersMessage(
                   colony.getMessageEntityPlayers(),
@@ -1736,12 +1753,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @NotNull
     public DesiredActivity getDesiredActivity()
     {
-        if (this.getColonyJob() instanceof JobGuard)
+        if (this.getColonyJob() instanceof AbstractJobGuard)
         {
             return DesiredActivity.WORK;
         }
 
-        if (BarbarianUtils.getClosestBarbarianToEntity(this, AVOID_BARBARIAN_RANGE) != null && !(this.getColonyJob() instanceof JobGuard))
+        if (BarbarianUtils.getClosestBarbarianToEntity(this, AVOID_BARBARIAN_RANGE) != null && !(this.getColonyJob() instanceof AbstractJobGuard))
         {
             return DesiredActivity.SLEEP;
         }
