@@ -157,14 +157,14 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
             final EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, DELETECOLONY, colony.getID()))
             {
-                senderEntity.sendMessage(new TextComponentString(NOT_PERMITTED));
+                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }
         final boolean shouldDestroy = canDestroy;
         // TODO: pass in sender and notify when the delete task finishes.
         server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID(), shouldDestroy));
-        senderEntity.sendMessage(new TextComponentString(DELETE_COLONY_TASK_SCHEDULED));
+        sender.sendMessage(new TextComponentString(DELETE_COLONY_TASK_SCHEDULED));
     }
 
     @NotNull
