@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.workorders;
 
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -69,6 +70,30 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
     {
         super.writeToNBT(compound);
         BlockPosUtil.writeToNBT(compound, TAG_POS, minerBuilding);
+    }
+
+    @Override
+    public void onAdded(final Colony colony, final boolean readingFromNbt)
+    {
+        /**
+         * Override this to avoid action!
+         */
+    }
+
+    @Override
+    public void onRemoved(final Colony colony)
+    {
+        /**
+         * Override this to avoid action!
+         */
+    }
+
+    @Override
+    public void onCompleted(final Colony colony)
+    {
+        /**
+         * Override this to avoid action!
+         */
     }
 
     /**

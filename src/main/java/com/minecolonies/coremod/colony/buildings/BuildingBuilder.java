@@ -11,10 +11,7 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
+import com.minecolonies.coremod.colony.workorders.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.util.math.BlockPos;
@@ -130,6 +127,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildRemoval.class));
         list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildBuilding.class));
         list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildDecoration.class));
+        list.removeIf(order -> order instanceof WorkOrderBuildMiner);
 
         for (final WorkOrderBuildDecoration wo: list)
         {
