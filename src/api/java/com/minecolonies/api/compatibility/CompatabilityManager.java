@@ -144,9 +144,11 @@ public class CompatabilityManager implements ICompatabilityManager
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        leavesToSaplingMap.putAll(NBTUtils.streamCompound(compound.getTagList(TAG_SAP_LEAVE, Constants.NBT.TAG_COMPOUND))
-                                .map(CompatabilityManager::readLeaveSaplingEntryFromNBT)
-                                .collect(Collectors.toMap(Tuple::getFirst, Tuple::getSecond)));
+        NBTUtils.streamCompound(compound.getTagList(TAG_SAP_LEAVE, Constants.NBT.TAG_COMPOUND))
+                .map(CompatabilityManager::readLeaveSaplingEntryFromNBT)
+                .filter(key -> !leavesToSaplingMap.containsKey(key.getFirst()) && !leavesToSaplingMap.containsValue(key.getSecond()))
+                .forEach(key -> leavesToSaplingMap.put(key.getFirst(), key.getSecond()));
+
         final List<ItemStorage> storages = NBTUtils.streamCompound(compound.getTagList(TAG_SAPLINGS, Constants.NBT.TAG_COMPOUND))
                 .map(tempCompound -> new ItemStorage(new ItemStack(tempCompound), false, true))
                 .collect(Collectors.toList());
