@@ -84,7 +84,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
             final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
             if (colony == null)
             {
-                senderEntity.sendMessage(new TextComponentString(COLONY_NULL));
+                sender.sendMessage(new TextComponentString(COLONY_NULL));
                 return;
             }
             colonyId = colony.getID();
@@ -110,7 +110,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
             final EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, RSRESET, colony.getID()))
             {
-                senderEntity.sendMessage(new TextComponentString(NOT_PERMITTED));
+                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }
