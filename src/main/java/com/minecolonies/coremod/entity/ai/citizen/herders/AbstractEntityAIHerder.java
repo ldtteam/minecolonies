@@ -206,7 +206,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             return DECIDE;
         }
 
-        if (!equipTool(ToolType.AXE))
+        if (!equipTool(EnumHand.MAIN_HAND, ToolType.AXE))
         {
             return START_WORKING;
         }
@@ -268,7 +268,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             return DECIDE;
         }
 
-        if (!equipItem(getBreedingItems()))
+        if (!equipItem(EnumHand.MAIN_HAND, getBreedingItems()))
         {
             return START_WORKING;
         }
@@ -432,11 +432,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      * @param toolType the {@link ToolType} we want to equip
      * @return true if the tool was equipped.
      */
-    public boolean equipTool(final ToolType toolType)
+    public boolean equipTool(final EnumHand hand, final ToolType toolType)
     {
         if (getToolSlot(toolType) != -1)
         {
-            worker.setHeldItem(getToolSlot(toolType));
+            worker.setHeldItem(hand, getToolSlot(toolType));
             return true;
         }
         return false;
@@ -469,11 +469,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      * @param itemStack the {@link ItemStack} to equip.
      * @return true if the item was equipped.
      */
-    public boolean equipItem(final ItemStack itemStack)
+    public boolean equipItem(final EnumHand hand, final ItemStack itemStack)
     {
         if (checkIfRequestForItemExistOrCreateAsynch(itemStack))
         {
-            worker.setHeldItem(getItemSlot(itemStack.getItem()));
+            worker.setHeldItem(hand, getItemSlot(itemStack.getItem()));
             return true;
         }
         return false;

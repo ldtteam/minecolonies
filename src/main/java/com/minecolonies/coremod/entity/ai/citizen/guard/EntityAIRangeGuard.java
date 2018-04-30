@@ -176,7 +176,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         InventoryFunctions.matchFirstInProviderWithSimpleAction(worker,
           stack -> !ItemStackUtils.isEmpty(stack)
                      && ItemStackUtils.hasToolLevel(stack, ToolType.BOW, 0, getOwnBuilding().getMaxToolLevel()),
-          worker::setHeldItem);
+          worker::setMainHeldItem);
         return super.searchTarget();
     }
 
@@ -275,7 +275,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) getRandomPitch());
         worker.world.spawnEntity(arrowEntity);
 
-        worker.damageItemInHand(1);
+        worker.damageItemInHand(EnumHand.MAIN_HAND, 1);
     }
 
     @Override

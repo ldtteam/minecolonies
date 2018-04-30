@@ -9,6 +9,7 @@ import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -114,13 +115,13 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
             return DECIDE;
         }
 
-        if (!walkingToAnimal(cow) && equipItem(new ItemStack(Items.BUCKET, 1)))
+        if (!walkingToAnimal(cow) && equipItem(EnumHand.MAIN_HAND, new ItemStack(Items.BUCKET, 1)))
         {
 
             if (!worker.getInventoryCitizen().addItemStackToInventory(new ItemStack(Items.MILK_BUCKET)))
             {
                 worker.removeHeldItem();
-                equipItem(new ItemStack(Items.MILK_BUCKET));
+                equipItem(EnumHand.MAIN_HAND, new ItemStack(Items.MILK_BUCKET));
                 InventoryUtils.removeStackFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(Items.BUCKET, 1));
             }
 

@@ -21,6 +21,7 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -307,7 +308,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(building.getTileEntity().getSingleChestHandler(), currentSlot, new InvWrapper(worker.getInventoryCitizen()));
         building.markDirty();
         setDelay(DUMP_AND_GATHER_DELAY);
-        worker.setHeldItem(SLOT_HAND);
+        worker.setHeldItem(EnumHand.MAIN_HAND, SLOT_HAND);
         return false;
     }
 
@@ -388,7 +389,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         getWareHouse().getTileEntity().dumpInventoryIntoWareHouse(worker.getInventoryCitizen());
         gatherTarget = null;
-        worker.setHeldItem(SLOT_HAND);
+        worker.setHeldItem(EnumHand.MAIN_HAND, SLOT_HAND);
 
         final Set<IToken> finallyAssignedTokens = worker.getColony().getRequestManager().getPlayerResolver()
                 .getAllAssignedRequests().stream().collect(Collectors.toSet());
@@ -524,7 +525,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         lastDelivery = deliveryHut.getBuildingToDeliver();
         worker.addExperience(1.0D);
-        worker.setHeldItem(SLOT_HAND);
+        worker.setHeldItem(EnumHand.MAIN_HAND, SLOT_HAND);
         deliveryHut.setBuildingToDeliver(null);
         job.finishRequest(true);
 

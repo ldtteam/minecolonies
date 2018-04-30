@@ -105,7 +105,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
             return DECIDE;
         }
 
-        if (!equipTool(ToolType.SHEARS))
+        if (!equipTool(EnumHand.MAIN_HAND, ToolType.SHEARS))
         {
             return PREPARING;
         }

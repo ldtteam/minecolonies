@@ -130,7 +130,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
                 return START_WORKING;
             }
 
-            worker.setHeldItem(slot);
+            worker.setHeldItem(EnumHand.MAIN_HAND, slot);
         }
 
         worker.hitBlockWithToolInHand(getOwnBuilding().getLocation());

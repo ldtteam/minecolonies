@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
+import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -11,9 +12,15 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import net.minecraft.entity.Entity;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -30,6 +37,31 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
      * The priority we are currently at for getting a target.
      */
     private int currentPriority = -1;
+
+    /**
+     * The pitch will be divided by this to calculate it for the arrow sound.
+     */
+    private static final double PITCH_DIVIDER = 1.0D;
+
+    /**
+     * The base pitch, add more to this to change the sound.
+     */
+    private static final double BASE_PITCH = 0.8D;
+
+    /**
+     * Random is multiplied by this to get a random sound.
+     */
+    private static final double PITCH_MULTIPLIER = 0.4D;
+
+    /**
+     * Quantity the worker should turn around all at once.
+     */
+    private static final double TURN_AROUND = 180D;
+
+    /**
+     * Normal volume at which sounds are played at.
+     */
+    private static final double BASIC_VOLUME = 1.0D;
 
     /**
      * Tools and Items needed by the worker.
@@ -50,7 +82,7 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
     /**
      * The current target for our guard.
      */
-    protected Entity target = null;
+    protected EntityLiving target = null;
 
     /**
      * Default vision range.
@@ -77,7 +109,8 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
           new AITarget(PREPARING, this::prepare),
           new AITarget(DECIDE, this::decide),
           new AITarget(GUARD_SEARCH_TARGET, this::getTarget),
-          new AITarget(GUARD_ATTACK_PROTECT, this::attackProtect)
+          new AITarget(GUARD_ATTACK_PROTECT, this::attackProtect),
+          new AITarget(GUARD_ATTACK_PHYSICAL, this::attackPhyisical)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -118,7 +151,7 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
                   stack -> !ItemStackUtils.isEmpty(stack)
                              && ItemStackUtils.doesItemServeAsWeapon(stack)
                              && ItemStackUtils.hasToolLevel(stack, tool, 0, getOwnBuilding().getMaxToolLevel()),
-                  worker::setHeldItem);
+                  worker::setMainHeldItem);
             }
         }
 
@@ -137,6 +170,8 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
      */
     protected AIState decide()
     {
+        setDelay(20);
+        System.out.println("Decide1");
         for (final ToolType toolType : toolsNeeded)
         {
             if (getOwnBuilding() != null && !InventoryUtils.hasItemHandlerToolWithLevel(new InvWrapper(getInventory()),
@@ -148,6 +183,7 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
             }
         }
 
+        System.out.println("Decide2");
         for (final ItemStack item : itemsNeeded)
         {
             if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventory()),
@@ -158,19 +194,21 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
             }
         }
 
+        System.out.println("Decide3");
         if (target == null)
         {
+            System.out.println("Decide null");
             return GUARD_SEARCH_TARGET;
         }
 
-        if (!target.isDead)
+        System.out.println("Decide4");
+        if (target.isDead)
         {
-            return DECIDE;
-        }
-        else
-        {
+            System.out.println("Decide dead");
             target = null;
         }
+
+        System.out.println("Decide5");
 
         return DECIDE;
     }
@@ -196,9 +234,12 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
 
             if (mobEntry != null && mobEntry.getAttack())
             {
-                target = world.findNearestEntityWithinAABB(mobEntry.getEntityEntry().getEntityClass(),
-                  getSearchArea(),
-                  worker);
+                if (mobEntry.getEntityEntry().newInstance(world) instanceof EntityLiving)
+                {
+                    target = (EntityLiving) world.findNearestEntityWithinAABB(mobEntry.getEntityEntry().getEntityClass(),
+                      getSearchArea(),
+                      worker);
+                }
 
                 if (target != null)
                 {
@@ -229,16 +270,83 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
     {
         final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventory()),
           Items.SHIELD,
-          0);
+          -1);
 
         if (shieldSlot != -1)
         {
-            worker.setHeldItem(shieldSlot);
+            worker.setHeldItem(EnumHand.OFF_HAND, shieldSlot);
+            worker.setActiveHand(EnumHand.OFF_HAND);
         }
 
-        return DECIDE;
+        return GUARD_ATTACK_PHYSICAL;
     }
 
+    protected AIState attackPhyisical()
+    {
+
+        if (target == null || target.isDead)
+        {
+            return DECIDE;
+        }
+
+        if (currentAttackDelay != 0)
+        {
+            currentAttackDelay--;
+            return GUARD_ATTACK_PROTECT;
+        }
+        else
+        {
+            currentAttackDelay = PHYSICAL_ATTACK_DELAY;
+        }
+
+        if (getOwnBuilding() != null)
+        {
+            final int swordSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()),
+              ToolType.SWORD,
+              0,
+              getOwnBuilding().getMaxToolLevel());
+
+            if (swordSlot != -1)
+            {
+                worker.setHeldItem(EnumHand.MAIN_HAND, swordSlot);
+                //worker.setActiveHand(EnumHand.MAIN_HAND);
+
+                worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+                worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+
+                worker.swingArm(EnumHand.MAIN_HAND);
+                worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) getRandomPitch());
+
+                double damageToBeDealt = 3;
+
+                if (worker.getHealth() <= 2)
+                {
+                    damageToBeDealt *= 2;
+                }
+
+                final ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
+
+                if (ItemStackUtils.doesItemServeAsWeapon(heldItem))
+                {
+                    if(heldItem.getItem() instanceof ItemSword)
+                    {
+                        damageToBeDealt += ((ItemSword) heldItem.getItem()).getAttackDamage();
+                    }
+                    else
+                    {
+                        damageToBeDealt += TinkersWeaponHelper.getDamage(heldItem);
+                    }
+                    damageToBeDealt += EnchantmentHelper.getModifierForCreature(heldItem, target.getCreatureAttribute());
+                }
+
+                target.attackEntityFrom(new DamageSource(worker.getName()), (float) damageToBeDealt);
+                target.setRevengeTarget(worker);
+
+                worker.damageItemInHand(EnumHand.MAIN_HAND, 1);
+            }
+        }
+        return GUARD_ATTACK_PHYSICAL;
+    }
 
     /**
      * Get the {@link AxisAlignedBB} we're searching for targets in.
@@ -262,5 +370,10 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
         }
 
         return getOwnBuilding().getTargetableArea(world);
+    }
+
+    private double getRandomPitch()
+    {
+        return PITCH_DIVIDER / (worker.getRNG().nextDouble() * PITCH_MULTIPLIER + BASE_PITCH);
     }
 }

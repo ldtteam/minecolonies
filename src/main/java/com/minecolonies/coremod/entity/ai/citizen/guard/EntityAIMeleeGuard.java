@@ -124,7 +124,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
           stack -> !ItemStackUtils.isEmpty(stack)
                      && ItemStackUtils.doesItemServeAsWeapon(stack)
                      && ItemStackUtils.hasToolLevel(stack, ToolType.SWORD, 0, getOwnBuilding().getMaxToolLevel()),
-          worker::setHeldItem);
+          worker::setMainHeldItem);
         return super.searchTarget();
     }
 
@@ -243,7 +243,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         worker.swingArm(EnumHand.MAIN_HAND);
         worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) getRandomPitch());
 
-        worker.damageItemInHand(1);
+        worker.damageItemInHand(EnumHand.MAIN_HAND, 1);
         return killedEnemy;
     }
 

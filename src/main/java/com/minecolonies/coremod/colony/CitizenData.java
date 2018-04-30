@@ -21,6 +21,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -66,6 +67,7 @@ public class CitizenData
     private static final String TAG_SKILL_DEXTERITY     = "dexterity";
     private static final String TAG_SATURATION          = "saturation";
     private static final String TAG_HELD_ITEM_SLOT      = "HeldItemSlot";
+    public static final String TAG_OFFHAND_HELD_ITEM_SLOT        = "OffhandHeldItemSlot";
     private static final String TAG_INVENTORY           = "inventory";
 
     /**
@@ -208,7 +210,8 @@ public class CitizenData
         {
             final NBTTagList nbttaglist = compound.getTagList(TAG_INVENTORY, 10);
             this.inventory.readFromNBT(nbttaglist);
-            this.inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
+            this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInteger(TAG_HELD_ITEM_SLOT));
+            this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInteger(TAG_OFFHAND_HELD_ITEM_SLOT));
         }
     }
 
@@ -771,7 +774,8 @@ public class CitizenData
         }
 
         compound.setTag(TAG_INVENTORY, inventory.writeToNBT(new NBTTagList()));
-        compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot());
+        compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.MAIN_HAND));
+        compound.setInteger(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.OFF_HAND));
         return compound;
     }
 

@@ -45,27 +45,36 @@ public class EntityAIKnight extends AbstractEntityAIGuardNew
     {
         final AIState superState = super.decide();
 
-        if (superState != DECIDE)
+        System.out.println("Decide6");
+        if (superState != DECIDE || target == null)
         {
+            System.out.println("Decide return super");
             return superState;
         }
 
+        System.out.println("Decide7");
         if (worker.getDistance(target) > MAX_DISTANCE_FOR_ATTACK)
         {
+            System.out.println("Decide walking");
             walkToBlock(target.getPosition());
         }
         else if (worker.getDistance(target) < MAX_DISTANCE_FOR_ATTACK)
         {
             if (currentAttackDelay == 0)
             {
+                System.out.println("Decide attack");
                 currentAttackDelay = PHYSICAL_ATTACK_DELAY;
                 return GUARD_ATTACK_PHYSICAL;
             }
             else
             {
+                System.out.println("Decide protect");
+                currentAttackDelay--;
                 return GUARD_ATTACK_PROTECT;
             }
         }
+
+        System.out.println("Decide end");
 
         return DECIDE;
     }

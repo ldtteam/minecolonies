@@ -59,6 +59,7 @@ public final class NbtTagConstants
     public static final String TAG_COLONY_ID             = "colony";
     public static final String TAG_CITIZEN               = "citizen";
     public static final String TAG_HELD_ITEM_SLOT        = "HeldItemSlot";
+    public static final String TAG_OFFHAND_HELD_ITEM_SLOT        = "OffhandHeldItemSlot";
     public static final String TAG_STATUS                = "status";
     public static final String TAG_LAST_JOB              = "lastJob";
     public static final String TAG_DAY                   = "day";
