@@ -92,7 +92,7 @@ public class WhereAmICommand extends AbstractSingleCommand implements IActionCom
         final BlockPos center = colony.getCenter();
         final double distance = BlockPosUtil.getDistanceSquared(center, new BlockPos(playerPos.getX(), center.getY(), playerPos.getZ()));
 
-        if (!ColonyManager.isTooCloseToColony(sender.getEntityWorld(), playerPos))
+        if (!ColonyManager.isCoordinateInAnyColony(sender.getEntityWorld(), playerPos))
         {
             sender.sendMessage(new TextComponentString(String.format(NONE_CLOSE, Math.sqrt(distance))));
             return;
