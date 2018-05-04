@@ -680,4 +680,4 @@ com.minecolonies.coremod.gui.workerHuts.barbpoints=Last Barbarian Spawns:
 com.minecolonies.coremod.barbarians.left=Only %d barbarians left!
 com.minecolonies.coremod.barbarians.killed=You succesfully defended your colony against the Barbarian intruders!
 com.minecolonies.coremod.gui.workerHuts.reposition=Reposition
-
+tile.minecolonies.multiBlock.name=MultiBlock
