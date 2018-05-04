@@ -156,7 +156,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
             final EntityPlayer senderPlayer = (EntityPlayer) sender.getCommandSenderEntity();
             if (!canPlayerUseCommand(senderPlayer, Commands.REFRESH_COLONY, colony.getID()))
             {
-                senderPlayer.sendMessage(new TextComponentString(NOT_PERMITTED));
+                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }
