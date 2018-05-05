@@ -169,7 +169,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_TOGGLE_JOB, this::toggleHiring);
         registerButton(BUTTON_TOGGLE_HOUSING, this::toggleHousing);
-
+        registerButton(NAME_LABEL, this::fillCitizenInfo);
+        registerButton(RECALL_ONE, this::recallOneClicked);
 
         registerButton(BUTTON_PREV_PAGE_PERM, this::switchPage);
         registerButton(BUTTON_NEXT_PAGE_PERM, this::switchPage);
@@ -794,6 +795,39 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
+     * Executed when fill citizen is clicked.
+     * @param button the clicked button.
+     */
+    private void fillCitizenInfo(final Button button)
+    {
+        final ScrollingList citizenList = findPaneOfTypeByID(LIST_CITIZENS, ScrollingList.class);
+        for (final Pane pane: citizenList.getContainer().getChildren())
+        {
+            pane.findPaneOfTypeByID(NAME_LABEL, ButtonImage.class).enable();
+        }
+        final int row = citizenList.getListElementIndexByPane(button);
+        findPaneByID(CITIZEN_INFO).show();
+        button.disable();
+        final CitizenDataView view = citizens.get(row);
+        WindowCitizen.createXpBar(view, this);
+        WindowCitizen.createSkillContent(view, this);
+        findPaneOfTypeByID(JOB_LABEL, Label.class).setLabelText("§l" + LanguageHandler.format(view.getJob()));
+        findPaneOfTypeByID(HIDDEN_CITIZEN_ID, Label.class).setLabelText(String.valueOf(view.getId()));
+    }
+
+    /**
+     * Executed when the recall one button has been clicked.
+     * Recalls one specific citizen.
+     * @param button the clicked button.
+     */
+    private void recallOneClicked(final Button button)
+    {
+        final String citizenidLabel = button.getParent().findPaneOfTypeByID(HIDDEN_CITIZEN_ID, Label.class).getLabelText();
+        final int citizenid = Integer.parseInt(citizenidLabel);
+        MineColonies.getNetwork().sendToServer(new RecallSingleCitizenMessage(townHall, citizenid));
+    }
+
+    /**
      * Fills the citizens list in the GUI.
      */
     private void fillCitizensList()
@@ -812,7 +846,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             {
                 final CitizenDataView citizen = citizens.get(index);
 
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(citizen.getName());
+                rowPane.findPaneOfTypeByID(NAME_LABEL, ButtonImage.class).setLabel(citizen.getName());
             }
         });
     }

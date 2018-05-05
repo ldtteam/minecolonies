@@ -367,8 +367,8 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
         createHealthBar();
         createSaturationBar();
-        createXpBar();
-        createSkillContent();
+        createXpBar(citizen, this);
+        createSkillContent(citizen, this);
 
         resourceList.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -532,13 +532,14 @@ public class WindowCitizen extends AbstractWindowSkeleton
      * Creates the xp bar for each citizen.
      * Calculates an xpBarCap which is the maximum of xp to fit into the bar.
      * Then creates an xp bar and fills it up with the available xp.
+     * @param citizen the citizen.
+     * @param window the window to fill.
      */
-    private void createXpBar()
+    public static void createXpBar(final CitizenDataView citizen, final AbstractWindowSkeleton window)
     {
         //Calculates how much percent of the next level has been completed.
         final double experienceRatio = ExperienceUtils.getPercentOfLevelCompleted(citizen.getExperience(), citizen.getLevel());
-
-        findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setLabelText(Integer.toString(citizen.getLevel()));
+        window.findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setLabelText(Integer.toString(citizen.getLevel()));
 
         @NotNull final Image xpBar = new Image();
         xpBar.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, XP_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);
@@ -548,32 +549,34 @@ public class WindowCitizen extends AbstractWindowSkeleton
         xpBar2.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN_END, XP_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false);
         xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y);
 
-        findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBar);
-        findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBar2);
+        window.findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBar);
+        window.findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBar2);
 
         if (experienceRatio > 0)
         {
             @NotNull final Image xpBarFull = new Image();
             xpBarFull.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, XP_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false);
             xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
-            findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBarFull);
+            window.findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBarFull);
         }
     }
 
     /**
      * Fills the citizen gui with it's skill values.
+     * @param citizen the citizen to use.
+     * @param window the window to fill.
      */
-    private void createSkillContent()
+    public static void createSkillContent(final CitizenDataView citizen, final AbstractWindowSkeleton window)
     {
-        findPaneOfTypeByID(STRENGTH, Label.class).setLabelText(
+        window.findPaneOfTypeByID(STRENGTH, Label.class).setLabelText(
           LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.strength", citizen.getStrength()));
-        findPaneOfTypeByID(ENDURANCE, Label.class).setLabelText(
+        window.findPaneOfTypeByID(ENDURANCE, Label.class).setLabelText(
           LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.endurance", citizen.getEndurance()));
-        findPaneOfTypeByID(CHARISMA, Label.class).setLabelText(
+        window.findPaneOfTypeByID(CHARISMA, Label.class).setLabelText(
           LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.charisma", citizen.getCharisma()));
-        findPaneOfTypeByID(INTELLIGENCE, Label.class).setLabelText(
+        window.findPaneOfTypeByID(INTELLIGENCE, Label.class).setLabelText(
           LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.intelligence", citizen.getIntelligence()));
-        findPaneOfTypeByID(DEXTERITY, Label.class).setLabelText(
+        window.findPaneOfTypeByID(DEXTERITY, Label.class).setLabelText(
           LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.dexterity", citizen.getDexterity()));
     }
 
