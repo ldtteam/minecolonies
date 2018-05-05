@@ -47,7 +47,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
-import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
@@ -333,6 +333,17 @@ public class EventHandler
             return canOwnerPlaceTownHallHere(world, player, colony, pos);
         }
 
+        final int spawnDistance = (int) pos.distanceSq(world.getSpawnPoint());
+        if (spawnDistance < Configurations.gameplay.minDistanceFromWorldSpawn * Configurations.gameplay.minDistanceFromWorldSpawn)
+        {
+            LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, Configurations.gameplay.minDistanceFromWorldSpawn);
+            return false;
+        }
+        else if (spawnDistance > Configurations.gameplay.maxDistanceFromWorldSpawn * Configurations.gameplay.maxDistanceFromWorldSpawn)
+        {
+            LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, Configurations.gameplay.maxDistanceFromWorldSpawn);
+            return false;
+        }
 
         colony = ColonyManager.getClosestIColony(world, pos);
         if (colony == null)
