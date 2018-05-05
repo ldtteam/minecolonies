@@ -608,6 +608,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         if (mineNode == null)
         {
+            rotateCount = getRotationFromVector();
             requiredName = getCorrectStyleLocation(style, MAIN_SHAFT_NAME);
         }
         else
