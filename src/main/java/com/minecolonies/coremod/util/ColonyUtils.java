@@ -25,8 +25,9 @@ public class ColonyUtils
     public static boolean isCitizenMissingFromWorld(@NotNull final CitizenData citizen)
     {
         return citizen.getCitizenEntity()
-                 .map(entityCitizen -> CompatibilityUtils.getWorld(entityCitizen).getEntityByID(entityCitizen.getEntityId()) == null)
-                 .orElse(false);
+                 .map(entityCitizen -> entityCitizen.getEntityWorld().getMinecraftServer()
+                         .getWorld(entityCitizen.dimension).getEntityFromUuid(entityCitizen.getUniqueID()) == null)
+                .orElse(false);
     }
 
     /**
