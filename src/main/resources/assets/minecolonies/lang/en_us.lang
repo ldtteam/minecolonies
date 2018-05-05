@@ -681,3 +681,5 @@ com.minecolonies.coremod.barbarians.left=Only %d barbarians left!
 com.minecolonies.coremod.barbarians.killed=You succesfully defended your colony against the Barbarian intruders!
 com.minecolonies.coremod.gui.workerHuts.reposition=Reposition
 tile.minecolonies.multiBlock.name=MultiBlock
+com.minecolonies.coremod.tooClose=Too close to world spawn, needs to be at least %d blocks away.
+com.minecolonies.coremod.tooFar=Too far away from the world spawn, needs to be max %d blocks away.

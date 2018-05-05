@@ -119,7 +119,7 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
 
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_CURRENT_SAPLING, Button.class);
 
-                if (treesToFell.get(new ItemStorage(sapling)))
+                if (treesToFell.containsKey(new ItemStorage(sapling)) && treesToFell.get(new ItemStorage(sapling)))
                 {
                     switchButton.setLabel(ON);
                 }
