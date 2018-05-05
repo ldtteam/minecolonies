@@ -52,7 +52,7 @@ public class RecallSingleCitizenMessage extends AbstractMessage<RecallSingleCiti
      * Object creation for the recall.
      *
      * @param building View of the building the citizen should be teleported to.
-     * @param citizenId the id of the citizen.
+     * @param citizenid the id of the citizen.
      */
     public RecallSingleCitizenMessage(final AbstractBuildingView building, final int citizenid)
     {
