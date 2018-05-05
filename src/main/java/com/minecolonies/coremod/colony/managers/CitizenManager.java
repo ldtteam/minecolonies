@@ -108,9 +108,24 @@ public class CitizenManager implements ICitizenManager
             {
                 if (citizen.isDirty() || hasNewSubscribers)
                 {
-                    subscribers.stream()
-                            .filter(player -> citizen.isDirty() || !oldSubscribers.contains(player))
-                            .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewCitizenViewMessage(colony, citizen), player));
+                    if (citizen.getCitizenEntity().isPresent())
+                    {
+                        final List<EntityCitizen> list = colony.getWorld()
+                                .getEntities(EntityCitizen.class,
+                                        entityCitizen -> entityCitizen.getColony().getID() == colony.getID() && entityCitizen.getCitizenData().getId() == citizen.getId());
+
+                        if (!list.isEmpty() && citizen.getCitizenEntity().get().getEntityId() != list.get(0).getEntityId())
+                        {
+                            citizen.setCitizenEntity(list.get(0));
+                        }
+                        subscribers.stream()
+                                .filter(player -> citizen.isDirty() || !oldSubscribers.contains(player))
+                                .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewCitizenViewMessage(colony, citizen), player));
+                    }
+                    else
+                    {
+                        citizen.updateCitizenEntityIfNecessary();
+                    }
                 }
             }
         }

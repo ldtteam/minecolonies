@@ -79,7 +79,7 @@ public final class MobEventsUtils
         }
         LanguageHandler.sendPlayersMessage(
                 colony.getMessageEntityPlayers(),
-                RAID_EVENT_MESSAGE + raidNumber);
+                RAID_EVENT_MESSAGE + raidNumber, colony.getName());
 
         colony.setNightsSinceLastRaid(0);
 

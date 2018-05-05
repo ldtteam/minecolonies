@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -664,6 +665,16 @@ public class CitizenData
     {
         if (!getCitizenEntity().isPresent())
         {
+            final List<EntityCitizen> list = colony.getWorld()
+                    .getEntities(EntityCitizen.class,
+                            entityCitizen -> entityCitizen.getColony().getID() == colony.getID() && entityCitizen.getCitizenData().getId() == getId());
+
+            if (!list.isEmpty())
+            {
+                setCitizenEntity(list.get(0));
+                return;
+            }
+
             //The current citizen entity seems to be gone (either on purpose or the game unloaded the entity)
             //No biggy lets respawn an entity.
             colony.getCitizenManager().spawnCitizen(this, colony.getWorld());
