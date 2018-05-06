@@ -527,6 +527,41 @@ public final class WindowConstants
     public static final String BUTTON_MOVE_BUILDING = "reposition";
 
     /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String BUTTON_SHOW_RES = "showRes";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String POS1X_LABEL = "pos1x";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String POS1Y_LABEL = "pos1y";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String POS1Z_LABEL = "pos1z";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String POS2X_LABEL = "pos2x";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String POS2Y_LABEL = "pos2y";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String POS2Z_LABEL = "pos2z";
+
+    /**
      * public constructor to hide implicit public one.
      */
     private WindowConstants()

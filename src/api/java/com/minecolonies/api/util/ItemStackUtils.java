@@ -155,7 +155,7 @@ public final class ItemStackUtils
      * @param placer the entity placer.
      * @return a list of stacks.
      */
-    public static List<ItemStack> getListOfStackForEntity(final Template.EntityInfo entityInfo, final World world, final Entity placer)
+    public static List<ItemStack> getListOfStackForEntityInfo(final Template.EntityInfo entityInfo, final World world, final Entity placer)
     {
         if (entityInfo != null)
         {
@@ -163,30 +163,45 @@ public final class ItemStackUtils
 
             if (entity != null)
             {
-                final List<ItemStack> request = new ArrayList<>();
-                if (entity instanceof EntityItemFrame)
-                {
-                    final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
-                    if (!ItemStackUtils.isEmpty(stack))
-                    {
-                        ItemStackUtils.setSize(stack, 1);
-                        request.add(stack);
-                    }
-                    request.add(new ItemStack(Items.ITEM_FRAME, 1));
-                }
-                else if (entity instanceof EntityArmorStand)
-                {
-                    request.add(entity.getPickedResult(new RayTraceResult(placer)));
-                    entity.getArmorInventoryList().forEach(request::add);
-                    entity.getHeldEquipment().forEach(request::add);
-                }
-                else if (!(entity instanceof EntityMob))
-                {
-                    request.add(entity.getPickedResult(new RayTraceResult(placer)));
-                }
-
-                return request;
+                return getListOfStackForEntity(entity, placer);
             }
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Adds entities to the builder building if he needs it.
+     * @param entity the entity object.
+     * @param placer the entity placer.
+     * @return a list of stacks.
+     */
+    public static List<ItemStack> getListOfStackForEntity(final Entity entity, final Entity placer)
+    {
+        if (entity != null)
+        {
+            final List<ItemStack> request = new ArrayList<>();
+            if (entity instanceof EntityItemFrame)
+            {
+                final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
+                if (!ItemStackUtils.isEmpty(stack))
+                {
+                    ItemStackUtils.setSize(stack, 1);
+                    request.add(stack);
+                }
+                request.add(new ItemStack(Items.ITEM_FRAME, 1));
+            }
+            else if (entity instanceof EntityArmorStand)
+            {
+                request.add(entity.getPickedResult(new RayTraceResult(placer)));
+                entity.getArmorInventoryList().forEach(request::add);
+                entity.getHeldEquipment().forEach(request::add);
+            }
+            else if (!(entity instanceof EntityMob))
+            {
+                request.add(entity.getPickedResult(new RayTraceResult(placer)));
+            }
+
+            return request;
         }
         return Collections.emptyList();
     }

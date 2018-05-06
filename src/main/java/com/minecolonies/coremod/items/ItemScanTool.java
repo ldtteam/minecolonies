@@ -4,6 +4,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.client.gui.WindowScan;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.network.messages.SaveScanMessage;
 import net.minecraft.entity.player.EntityPlayer;
@@ -108,8 +109,20 @@ public class ItemScanTool extends AbstractItemMinecolonies
             //todo if on client (ssp) -> no need to send message, we can execute it in worldIn.isRemote without a message.
             if (!worldIn.isRemote)
             {
-                saveStructure(worldIn, pos1, pos2, playerIn, null);
+                if (playerIn.isSneaking())
+                {
+                    saveStructure(worldIn, pos1, pos2, playerIn, null);
+                }
             }
+            else
+            {
+                if (!playerIn.isSneaking())
+                {
+                    final WindowScan window = new WindowScan(pos1, pos2);
+                    window.open();
+                }
+            }
+
             compound.removeTag(FIRST_POS_STRING);
             compound.removeTag(SECOND_POS_STRING);
             return EnumActionResult.SUCCESS;
