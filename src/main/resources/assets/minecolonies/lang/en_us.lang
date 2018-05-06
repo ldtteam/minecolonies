@@ -684,3 +684,8 @@ tile.minecolonies.multiBlock.name=MultiBlock
 
 com.minecolonies.coremod.tooClose=Too close to world spawn, needs to be at least %d blocks away.
 com.minecolonies.coremod.tooFar=Too far away from the world spawn, needs to be max %d blocks away.
+
+com.minecolonies.coremod.gui.scanTool.showRes=Show Resources
+com.minecolonies.coremod.gui.scanTool.to=To:
+com.minecolonies.coremod.gui.scanTool.from=From:
+com.minecolonies.coremod.gui.scanTool.name=Scan Name:

@@ -234,6 +234,14 @@ public class CommonProxy implements IProxy
     }
 
     @Override
+    public void openScanToolWindow(final BlockPos pos1, final BlockPos pos2)
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
+    @Override
     public void openMultiBlockWindow(final BlockPos pos)
     {
         /*

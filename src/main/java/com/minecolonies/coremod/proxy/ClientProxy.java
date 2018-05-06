@@ -3,10 +3,7 @@ package com.minecolonies.coremod.proxy;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.*;
-import com.minecolonies.coremod.client.gui.WindowBuildTool;
-import com.minecolonies.coremod.client.gui.WindowCitizen;
-import com.minecolonies.coremod.client.gui.WindowClipBoard;
-import com.minecolonies.coremod.client.gui.WindowMultiBlock;
+import com.minecolonies.coremod.client.gui.*;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
@@ -113,6 +110,18 @@ public class ClientProxy extends CommonProxy
         }
 
         @Nullable final WindowBuildTool window = new WindowBuildTool(pos);
+        window.open();
+    }
+
+    @Override
+    public void openScanToolWindow(@Nullable final BlockPos pos1, @Nullable final BlockPos pos2)
+    {
+        if (pos1 == null || pos2 == null)
+        {
+            return;
+        }
+
+        @Nullable final WindowScan window = new WindowScan(pos1, pos2);
         window.open();
     }
 
