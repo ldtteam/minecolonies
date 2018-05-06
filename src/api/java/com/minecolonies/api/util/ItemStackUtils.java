@@ -172,7 +172,6 @@ public final class ItemStackUtils
     /**
      * Adds entities to the builder building if he needs it.
      * @param entity the entity object.
-     * @param world the world.
      * @param placer the entity placer.
      * @return a list of stacks.
      */
