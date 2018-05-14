@@ -228,7 +228,7 @@
                     <label id="dexterity" size="100% 11" color="black"/>
                 </group>
                 <image id="deco3" size="73 16" source="minecolonies:textures/gui/citizen/colonist_decor_up.png" pos="36 113"/>
-                <buttonimage label="$(com.minecolonies.coremod.gui.townHall.recallone)" id="recallone" pos="30 132" size="86 17"
+                <buttonimage label="$(com.minecolonies.coremod.gui.townHall.recallOne)" id="recallone" pos="30 132" size="86 17"
                              source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
             </box>
 
