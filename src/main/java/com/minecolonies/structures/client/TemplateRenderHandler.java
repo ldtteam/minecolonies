@@ -32,8 +32,6 @@ public final class TemplateRenderHandler
         .build();
     private BlockRendererDispatcher              rendererDispatcher;
 
-    private final List<Predicate<BlockInfo>> exclusionBlockInfoHandlers = Lists.newArrayList();
-
     private TemplateRenderHandler()
     {
     }
@@ -58,9 +56,8 @@ public final class TemplateRenderHandler
                 final TemplateTessellator tessellator = new TemplateTessellator();
                 tessellator.getBuilder().begin(GL_QUADS, DefaultVertexFormats.BLOCK);
 
-                template.blocks.stream().filter(b -> exclusionBlockInfoHandlers
-                                                       .stream()
-                                                       .noneMatch(f -> f.test(b)))
+                template.blocks.stream()
+                  .map(b -> TemplateBlockAccessTransformHandler.getInstance().Transform(b))
                   .forEach(b -> rendererDispatcher.renderBlock(b.blockState, b.pos, blockAccess, tessellator.getBuilder()));
 
                 return tessellator;
@@ -70,10 +67,5 @@ public final class TemplateRenderHandler
         {
             Log.getLogger().error(e);
         }
-    }
-
-    public void registerExclusionHandler(@NotNull final Predicate<BlockInfo> exclusionHandler)
-    {
-        this.exclusionBlockInfoHandlers.add(exclusionHandler);
     }
 }

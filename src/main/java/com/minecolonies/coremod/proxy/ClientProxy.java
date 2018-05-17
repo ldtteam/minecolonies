@@ -20,6 +20,7 @@ import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
+import com.minecolonies.structures.client.TemplateBlockAccessTransformHandler;
 import com.minecolonies.structures.client.TemplateRenderHandler;
 import com.minecolonies.structures.event.RenderEventHandler;
 import com.minecolonies.structures.helpers.Settings;
@@ -30,11 +31,13 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -264,8 +267,10 @@ public class ClientProxy extends CommonProxy
         }
 
         //Additionally we register an exclusion handler here;
-        TemplateRenderHandler.getInstance().registerExclusionHandler((b) -> b.blockState.getBlock() instanceof BlockSubstitution);
-
+        TemplateBlockAccessTransformHandler.getInstance().AddTransformHandler(
+          (b) -> b.blockState.getBlock() instanceof BlockSubstitution,
+          (b) -> new Template.BlockInfo(b.pos, Blocks.AIR.getDefaultState(), null)
+        );
     }
 
     @Override
