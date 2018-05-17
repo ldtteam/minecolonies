@@ -5,6 +5,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.structures.client.TemplateBlockAccessTransformHandler;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -42,10 +43,10 @@ public final class TemplateUtils
     {
         try
         {
-            return Optional.ofNullable(templateBlockInfoCache
+            return TemplateBlockAccessTransformHandler.getInstance().Transform(Optional.ofNullable(templateBlockInfoCache
                                          .get(template, () -> template.blocks.stream().collect(Collectors.toMap(bi -> bi.pos, Functions.identity())))
                                          .get(pos))
-                     .orElse(new Template.BlockInfo(pos, Blocks.AIR.getDefaultState(), null));
+                     .orElse(new Template.BlockInfo(pos, Blocks.AIR.getDefaultState(), null)));
         }
         catch (ExecutionException e)
         {
@@ -59,7 +60,9 @@ public final class TemplateUtils
     {
         return template.blocks.stream()
                  .filter(blockInfo -> blockInfo.blockState.getBlock() instanceof AbstractBlockHut<?>)
-                 .findFirst().map(blockInfo -> blockInfo.pos)
+                 .findFirst()
+                 .map(blockInfo -> TemplateBlockAccessTransformHandler.getInstance().Transform(blockInfo))
+                 .map(blockInfo -> blockInfo.pos)
                  .orElse(new BlockPos(template.getSize().getX() / 2, 0, template.getSize().getZ() / 2));
     }
 }
