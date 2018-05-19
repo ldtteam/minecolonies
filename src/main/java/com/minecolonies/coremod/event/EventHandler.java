@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
@@ -332,17 +333,20 @@ public class EventHandler
         {
             return canOwnerPlaceTownHallHere(world, player, colony, pos);
         }
-
-        final int spawnDistance = (int) pos.distanceSq(world.getSpawnPoint());
-        if (spawnDistance < Configurations.gameplay.minDistanceFromWorldSpawn * Configurations.gameplay.minDistanceFromWorldSpawn)
+        
+        if (Configurations.gameplay.restrictColonyPlacement)
         {
-            LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, Configurations.gameplay.minDistanceFromWorldSpawn);
-            return false;
-        }
-        else if (spawnDistance > Configurations.gameplay.maxDistanceFromWorldSpawn * Configurations.gameplay.maxDistanceFromWorldSpawn)
-        {
-            LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, Configurations.gameplay.maxDistanceFromWorldSpawn);
-            return false;
+            final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, world.getSpawnPoint()));
+            if (spawnDistance < Configurations.gameplay.minDistanceFromWorldSpawn)
+            {
+                LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, Configurations.gameplay.minDistanceFromWorldSpawn);
+                return false;
+            }
+            else if (spawnDistance > Configurations.gameplay.maxDistanceFromWorldSpawn)
+            {
+                LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, Configurations.gameplay.maxDistanceFromWorldSpawn);
+                return false;
+            }
         }
 
         colony = ColonyManager.getClosestIColony(world, pos);
