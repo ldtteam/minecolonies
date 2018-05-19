@@ -10,7 +10,7 @@ import gigaherz.guidebook.client.BookRegistryEvent;
 /**
  * This class is for guidebook integration
  */
-public final class GbookCheck
+public class GbookCheck
 {
     private static final String GBOOK = "gbook";
 
