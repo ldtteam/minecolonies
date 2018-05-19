@@ -1,7 +1,6 @@
 package com.minecolonies.coremod;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
-import com.minecolonies.api.compatibility.gbook.GbookCheck;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
@@ -63,7 +62,6 @@ public class MineColonies
         MinecraftForge.EVENT_BUS.register(new BarbarianSpawnEventHandler());
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         MinecraftForge.EVENT_BUS.register(new FMLEventHandler());
-        MinecraftForge.EVENT_BUS.register(GbookCheck.class);
     }
 
     /**

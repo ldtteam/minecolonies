@@ -2,6 +2,7 @@ package com.minecolonies.api.compatibility.gbook;
 
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -10,7 +11,8 @@ import gigaherz.guidebook.client.BookRegistryEvent;
 /**
  * This class is for guidebook integration
  */
-public class GbookCheck
+@Mod.EventBusSubscriber
+public class GbookEventHandler
 {
     private static final String GBOOK = "gbook";
 
