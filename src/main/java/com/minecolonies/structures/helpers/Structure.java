@@ -131,7 +131,6 @@ public class Structure
 
             if (inputStream == null)
             {
-                Log.getLogger().warn(String.format("Failed to load template %s", correctStructureName));
                 return;
             }
 
@@ -195,11 +194,6 @@ public class Structure
             {
                 inputstream = Structure.getStreamFromJar(structureName);
             }
-        }
-
-        if (inputstream == null)
-        {
-            Log.getLogger().warn("Structure: Couldn't find any structure with this name " + structureName);
         }
 
         return inputstream;

@@ -157,7 +157,15 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
         if (oldBuilding instanceof BuildingTownHall)
         {
             oldBuilding = null;
+            if (tempColony != null)
+            {
+                tempColony.getBuildingManager().setTownHall(null);
+            }
             world.destroyBlock(oldBuildingId, false);
+        }
+        else if(oldBuilding instanceof BuildingWareHouse && tempColony != null)
+        {
+            tempColony.getBuildingManager().setWareHouse(null);
         }
 
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
