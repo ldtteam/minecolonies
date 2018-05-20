@@ -43,7 +43,7 @@ public class CitizenManager implements ICitizenManager
     /**
      * Variables to determine if citizens have to be updated on the client side.
      */
-    private boolean isCitizensDirty  = false;
+    private boolean isCitizensDirty = false;
 
     /**
      * The highest citizen id.
@@ -62,6 +62,7 @@ public class CitizenManager implements ICitizenManager
 
     /**
      * Creates the Citizenmanager for a colony.
+     *
      * @param colony the colony.
      */
     public CitizenManager(final Colony colony)
@@ -106,26 +107,41 @@ public class CitizenManager implements ICitizenManager
         {
             for (@NotNull final CitizenData citizen : citizens.values())
             {
-                if (citizen.isDirty() || hasNewSubscribers)
+                if (citizen.getCitizenEntity().isPresent())
                 {
-                    if (citizen.getCitizenEntity().isPresent())
-                    {
-                        final List<EntityCitizen> list = colony.getWorld()
-                                .getEntities(EntityCitizen.class,
-                                        entityCitizen -> entityCitizen.getColony().getID() == colony.getID() && entityCitizen.getCitizenData().getId() == citizen.getId());
+                    final List<EntityCitizen> list = colony.getWorld()
+                            .getEntities(EntityCitizen.class,
+                                    entityCitizen -> entityCitizen.getColony().getID() == colony.getID() && entityCitizen.getCitizenData().getId() == citizen.getId());
 
-                        if (!list.isEmpty() && citizen.getCitizenEntity().get().getEntityId() != list.get(0).getEntityId())
+                    if (!list.isEmpty() && citizen.getCitizenEntity().get().getEntityId() != list.get(0).getEntityId())
+                    {
+                        citizen.setCitizenEntity(list.get(0));
+                    }
+                    else if (list.isEmpty() && colony.getWorld().isBlockLoaded(citizen.getLastPosition()))
+                    {
+                        citizen.setCitizenEntity(null);
+                        citizen.updateCitizenEntityIfNecessary();
+                        Log.getLogger().warn("Citizen went MIA, updating him!");
+                    }
+
+                    if(list.size() > 1)
+                    {
+                        for (int i = 1; i < list.size(); i++)
                         {
-                            citizen.setCitizenEntity(list.get(0));
+                            colony.getWorld().removeEntity(list.get(i));
                         }
+                    }
+
+                    if (citizen.isDirty() || hasNewSubscribers)
+                    {
                         subscribers.stream()
                                 .filter(player -> citizen.isDirty() || !oldSubscribers.contains(player))
                                 .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewCitizenViewMessage(colony, citizen), player));
                     }
-                    else
-                    {
-                        citizen.updateCitizenEntityIfNecessary();
-                    }
+                }
+                else
+                {
+                    citizen.updateCitizenEntityIfNecessary();
                 }
             }
         }
@@ -144,7 +160,7 @@ public class CitizenManager implements ICitizenManager
     @Override
     public void spawnCitizen(@Nullable final CitizenData data, @Nullable final World world)
     {
-        if(!colony.getBuildingManager().hasTownHall())
+        if (!colony.getBuildingManager().hasTownHall())
         {
             return;
         }
