@@ -123,13 +123,10 @@ public class CitizenManager implements ICitizenManager
                         citizen.updateCitizenEntityIfNecessary();
                         Log.getLogger().warn("Citizen went MIA, updating him!");
                     }
-
-                    if(list.size() > 1)
+                    
+                    for (int i = 1; i < list.size(); i++)
                     {
-                        for (int i = 1; i < list.size(); i++)
-                        {
-                            colony.getWorld().removeEntity(list.get(i));
-                        }
+                        colony.getWorld().removeEntity(list.get(i));
                     }
 
                     if (citizen.isDirty() || hasNewSubscribers)
