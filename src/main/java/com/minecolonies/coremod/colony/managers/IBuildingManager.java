@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.managers;
 
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
@@ -171,4 +172,16 @@ public interface IBuildingManager
      * @return the Position of it.
      */
     BlockPos getBestRestaurant(final EntityCitizen citizen);
+
+    /**
+     * Set the townhall building.
+     * @param building the building to set.
+     */
+    void setTownHall(@Nullable final BuildingTownHall building);
+
+    /**
+     * Set the warehouse building.
+     * @param building the building to set.
+     */
+    void setWareHouse(@Nullable final BuildingWareHouse building);
 }
