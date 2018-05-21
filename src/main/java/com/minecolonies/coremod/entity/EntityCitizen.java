@@ -918,6 +918,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 pickupItems();
                 cleanupChatMessages();
                 updateColonyServer();
+
+                if (citizenData != null)
+                {
+                    citizenData.setLastPosition(getPosition());
+                }
             }
 
             if (getColonyJob() != null || !CompatibilityUtils.getWorld(this).isDaytime())
@@ -926,7 +931,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 {
                     checkIfStuck();
 
-                    if (ticksExisted % (MAX_STUCK_TIME * 2 + TICKS_20) == 0)
+                    if (ticksExisted % (MAX_STUCK_TIME * TICKS_SECOND) == 0)
                     {
                         triedMovingAway = false;
                     }
@@ -1117,6 +1122,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (stuckTime >= MIN_STUCK_TIME + getRandom().nextInt(MIN_STUCK_TIME) && !triedMovingAway)
         {
+            triedMovingAway = true;
             newNavigator.moveAwayFromXYZ(currentPosition, getRandom().nextInt(MOVE_AWAY_RANGE), 1);
             return;
         }
@@ -1448,6 +1454,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         updateLevel();
 
         citizenData.setCitizenEntity(this);
+        citizenData.setLastPosition(getPosition());
 
         onJobChanged(getColonyJob());
     }
