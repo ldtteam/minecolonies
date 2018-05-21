@@ -47,7 +47,7 @@ public class RemoveEntityMessage extends AbstractMessage<RemoveEntityMessage, IM
      * Create a message to remove an entity from the world.
      * @param pos1 start coordinate.
      * @param pos2 end coordinate.
-     * @param stack the block to remove.
+     * @param entityName the entity to remove.
      */
     public RemoveEntityMessage(@NotNull final BlockPos pos1, @NotNull final BlockPos pos2, @NotNull final String entityName)
     {
