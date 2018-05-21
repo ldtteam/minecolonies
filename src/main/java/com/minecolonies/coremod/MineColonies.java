@@ -75,7 +75,7 @@ public class MineColonies
     }
 
     /**
-     * Returns whether the side is client or not
+     * Returns whether the side is server or not
      *
      * @return True when server, otherwise false
      */
