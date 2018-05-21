@@ -690,3 +690,7 @@ com.minecolonies.coremod.gui.scanTool.showRes=Show Resources
 com.minecolonies.coremod.gui.scanTool.to=To:
 com.minecolonies.coremod.gui.scanTool.from=From:
 com.minecolonies.coremod.gui.scanTool.name=Scan Name:
+com.minecolonies.coremod.gui.scanTool.remove=Remove
+com.minecolonies.coremod.gui.scanTool.replace=Replace
+com.minecolonies.coremod.gui.scan.replace.title=Block Replacement GUI
+com.minecolonies.coremod.gui.scanTool.select=Select
