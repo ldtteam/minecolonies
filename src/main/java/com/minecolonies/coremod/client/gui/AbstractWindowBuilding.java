@@ -5,7 +5,6 @@ import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.BuildRequestMessage;
@@ -19,7 +18,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
  *
  * @param <B> Class extending {@link AbstractBuildingHut.View}.
  */
-public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View> extends AbstractWindowSkeleton
+public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> extends AbstractWindowSkeleton
 {
     /**
      * Type B is a class that extends {@link AbstractBuildingWorker.View}.

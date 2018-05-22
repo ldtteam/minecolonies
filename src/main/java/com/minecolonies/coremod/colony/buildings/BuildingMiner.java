@@ -639,7 +639,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     @Override
     public void searchWorkOrder()
     {
-        final CitizenData citizen = getMainWorker();
+        final CitizenData citizen = getMainCitizen();
         if (citizen == null)
         {
             return;

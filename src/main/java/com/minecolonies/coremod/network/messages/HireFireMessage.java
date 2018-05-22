@@ -106,7 +106,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
             if (message.hire)
             {
 
-                ((AbstractBuildingWorker) colony.getBuildingManager().getBuilding(message.buildingId)).setWorker(citizen);
+                ((AbstractBuildingWorker) colony.getBuildingManager().getBuilding(message.buildingId)).assignCitizen(citizen);
             }
             else
             {
