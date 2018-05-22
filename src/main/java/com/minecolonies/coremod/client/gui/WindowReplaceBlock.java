@@ -13,8 +13,10 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.ReplaceBlockMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
@@ -109,8 +111,18 @@ public class WindowReplaceBlock extends Window implements ButtonHandler
                 Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName(), ex);
             }
 
-            return stacks.stream().filter(stack -> stack.getItem() instanceof ItemBlock && (filter.isEmpty() || stack.getUnlocalizedName().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))));
+            return stacks.stream().filter(stack -> (stack.getItem() instanceof ItemBlock || stack.getItem() instanceof ItemDoor)
+                    && (filter.isEmpty() || stack.getUnlocalizedName().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))));
         }).collect(Collectors.toList())));
+
+        final List<ItemStack> specialBlockList = new ArrayList<>();
+        specialBlockList.add(new ItemStack(Items.WATER_BUCKET));
+        specialBlockList.add(new ItemStack(Items.LAVA_BUCKET));
+        specialBlockList.add(new ItemStack(Items.MILK_BUCKET));
+
+        allItems.addAll(specialBlockList.stream().filter(
+                stack -> filter.isEmpty() || stack.getUnlocalizedName().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US)))
+                .collect(Collectors.toList()));
         updateResourceList();
     }
 

@@ -8,6 +8,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemBed;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
@@ -160,6 +162,14 @@ public class ReplaceBlockMessage extends AbstractMessage<ReplaceBlockMessage, IM
                         {
                             final IBlockState transformation = newBlockState.withProperty(BlockDoor.FACING, blockState.getValue(BlockDoor.FACING));
                             world.setBlockState(here, transformation);
+                        }
+                        else if (stackToPlace.getItem() == Items.LAVA_BUCKET)
+                        {
+                            world.setBlockState(here, Blocks.LAVA.getDefaultState());
+                        }
+                        else if (stackToPlace.getItem() == Items.WATER_BUCKET)
+                        {
+                            world.setBlockState(here, Blocks.WATER.getDefaultState());
                         }
                     }
                 }
