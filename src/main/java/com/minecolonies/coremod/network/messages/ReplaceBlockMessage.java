@@ -12,6 +12,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemBed;
 import net.minecraft.item.ItemDoor;
+import net.minecraft.item.ItemSlab;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -122,7 +123,9 @@ public class ReplaceBlockMessage extends AbstractMessage<ReplaceBlockMessage, IM
                         {
                             fakePlayer.rotationYaw = blockState.getValue(BlockBed.FACING).getHorizontalIndex() * 90;
                         }
-                        final EnumFacing facing = message.blockTo.getItem() instanceof ItemDoor || message.blockTo.getItem() instanceof ItemBed? EnumFacing.UP : EnumFacing.NORTH;
+                        final EnumFacing facing = (message.blockTo.getItem() instanceof ItemDoor
+                                || message.blockTo.getItem() instanceof ItemBed
+                                || message.blockTo.getItem() instanceof ItemSlab)? EnumFacing.UP : EnumFacing.NORTH;
                         ForgeHooks.onPlaceItemIntoWorld(stackToPlace, fakePlayer, world, here, facing, 0, 0, 0, EnumHand.MAIN_HAND);
 
                         final IBlockState newBlockState= world.getBlockState(here);
@@ -131,7 +134,8 @@ public class ReplaceBlockMessage extends AbstractMessage<ReplaceBlockMessage, IM
                             final IBlockState transformation = newBlockState.withProperty(BlockStairs.FACING, blockState.getValue(BlockStairs.FACING));
                             world.setBlockState(here, transformation);
                         }
-                        else if(newBlockState.getBlock() instanceof BlockHorizontal && blockState.getBlock() instanceof BlockHorizontal && !(blockState.getBlock() instanceof BlockBed))
+                        else if(newBlockState.getBlock() instanceof BlockHorizontal && blockState.getBlock() instanceof BlockHorizontal
+                                && !(blockState.getBlock() instanceof BlockBed))
                         {
                             final IBlockState transformation = newBlockState.withProperty(BlockHorizontal.FACING, blockState.getValue(BlockHorizontal.FACING));
                             world.setBlockState(here, transformation);
@@ -144,6 +148,11 @@ public class ReplaceBlockMessage extends AbstractMessage<ReplaceBlockMessage, IM
                         else if(newBlockState.getBlock() instanceof BlockSlab && blockState.getBlock() instanceof BlockSlab)
                         {
                             final IBlockState transformation = newBlockState.withProperty(BlockSlab.HALF, blockState.getValue(BlockSlab.HALF));
+                            world.setBlockState(here, transformation);
+                        }
+                        else if(newBlockState.getBlock() instanceof BlockLog && blockState.getBlock() instanceof BlockLog)
+                        {
+                            final IBlockState transformation = newBlockState.withProperty(BlockLog.LOG_AXIS, blockState.getValue(BlockLog.LOG_AXIS));
                             world.setBlockState(here, transformation);
                         }
                         else if(newBlockState.getBlock() instanceof BlockRotatedPillar && blockState.getBlock() instanceof BlockRotatedPillar)
