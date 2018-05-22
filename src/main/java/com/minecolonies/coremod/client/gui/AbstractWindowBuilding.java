@@ -16,7 +16,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Manage windows associated with Buildings.
  *
- * @param <B> Class extending {@link AbstractBuildingHut.View}.
+ * @param <B> Class extending {@link AbstractBuildingView}.
  */
 public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> extends AbstractWindowSkeleton
 {
@@ -34,7 +34,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
     /**
      * Constructor for the windows that are associated with buildings.
      *
-     * @param building Class extending {@link AbstractBuildingHut.View}.
+     * @param building Class extending {@link AbstractBuildingView}.
      * @param resource Resource location string.
      */
     public AbstractWindowBuilding(final B building, final String resource)
