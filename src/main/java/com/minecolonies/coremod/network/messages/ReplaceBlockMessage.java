@@ -2,6 +2,7 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.coremod.client.gui.WindowScan;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.*;
@@ -102,7 +103,7 @@ public class ReplaceBlockMessage extends AbstractMessage<ReplaceBlockMessage, IM
                     final BlockPos here = new BlockPos(x, y, z);
                     final IBlockState blockState = world.getBlockState(here);
                     final ItemStack stack = BlockUtils.getItemStackFromBlockState(blockState);
-                    if (stack != null && stack.isItemEqual(message.blockFrom))
+                    if (WindowScan.correctBlockToRemoveOrReplace(stack, blockState, message.blockFrom))
                     {
                         if ((blockState.getBlock() instanceof BlockDoor && blockState.getValue(BlockDoor.HALF) == BlockDoor.EnumDoorHalf.UPPER)
                                 || (blockState.getBlock() instanceof BlockBed && blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.HEAD))

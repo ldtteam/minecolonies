@@ -2,9 +2,12 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.coremod.client.gui.WindowScan;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -83,7 +86,7 @@ public class RemoveBlockMessage extends AbstractMessage<RemoveBlockMessage, IMes
                     final BlockPos here = new BlockPos(x, y, z);
                     final IBlockState blockState = world.getBlockState(here);
                     final ItemStack stack = BlockUtils.getItemStackFromBlockState(blockState);
-                    if (stack != null && stack.isItemEqual(message.block))
+                    if (WindowScan.correctBlockToRemoveOrReplace(stack, blockState, message.block))
                     {
                         world.setBlockToAir(here);
                     }

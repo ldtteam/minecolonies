@@ -16,10 +16,12 @@ import com.minecolonies.coremod.network.messages.RemoveBlockMessage;
 import com.minecolonies.coremod.network.messages.RemoveEntityMessage;
 import com.minecolonies.coremod.network.messages.ScanOnServerMessage;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -288,7 +290,7 @@ public class WindowScan extends AbstractWindowSkeleton
                     }
 
                     @Nullable final Block block = blockState.getBlock();
-                    if (block != null && block != Blocks.AIR)
+                    if (block != null)
                     {
                         if (tileEntity != null)
                         {
@@ -300,6 +302,19 @@ public class WindowScan extends AbstractWindowSkeleton
                             }
                         }
 
+                        if (block == Blocks.WATER || block == Blocks.FLOWING_WATER)
+                        {
+                            addNeededResource(new ItemStack(Items.WATER_BUCKET, 1), 1);
+                        }
+                        else if(block == Blocks.LAVA || block == Blocks.FLOWING_LAVA)
+                        {
+                            addNeededResource(new ItemStack(Items.LAVA_BUCKET, 1), 1);
+                        }
+                        else if (block == Blocks.AIR)
+                        {
+                            addNeededResource(new ItemStack(Blocks.AIR, 1), 1);
+                        }
+
                         addNeededResource(BlockUtils.getItemStackFromBlockState(blockState), 1);
                     }
                 }
@@ -309,6 +324,20 @@ public class WindowScan extends AbstractWindowSkeleton
         window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).refreshElementPanes();
         updateResourceList();
         updateEntitylist();
+    }
+
+    /**
+     * Is this the correct block to remove it or replace it.
+     * @param worldStack the world stack to check.
+     * @param worldState the world state to check.
+     * @param compareStack the comparison stack.
+     * @return true if so.
+     */
+    public static boolean correctBlockToRemoveOrReplace(final ItemStack worldStack, final IBlockState worldState, final ItemStack compareStack)
+    {
+        return worldStack != null && (worldStack.isItemEqual(compareStack)
+                || (compareStack.getItem() == Items.LAVA_BUCKET && (worldState.getBlock() == Blocks.LAVA || worldState.getBlock() == Blocks.FLOWING_LAVA))
+                || (compareStack.getItem() == Items.WATER_BUCKET && (worldState.getBlock() == Blocks.WATER || worldState.getBlock() == Blocks.FLOWING_WATER)));
     }
 
     /**

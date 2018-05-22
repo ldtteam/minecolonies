@@ -33,7 +33,7 @@ item.minecolonies.scepterSteel.name=Scan Tool
 item.minecolonies.caliper.name=Caliper
 
 item.scepterSteel.point=Point one saved
-item.scepterSteel.point2=Point two saved, right click again to save the schematic
+item.scepterSteel.point2=Point two saved, shift right click again to immediatly save the schematic or right click to open the GUI.
 item.scepterSteel.samePoint=That was the same point
 item.scepterSteel.scanFormat=SCAN_%s-%s
 item.scepterSteel.scanSuccess=Scan successfully saved as %s
