@@ -327,20 +327,6 @@ public class WindowScan extends AbstractWindowSkeleton
     }
 
     /**
-     * Is this the correct block to remove it or replace it.
-     * @param worldStack the world stack to check.
-     * @param worldState the world state to check.
-     * @param compareStack the comparison stack.
-     * @return true if so.
-     */
-    public static boolean correctBlockToRemoveOrReplace(final ItemStack worldStack, final IBlockState worldState, final ItemStack compareStack)
-    {
-        return worldStack != null && (worldStack.isItemEqual(compareStack)
-                || (compareStack.getItem() == Items.LAVA_BUCKET && (worldState.getBlock() == Blocks.LAVA || worldState.getBlock() == Blocks.FLOWING_LAVA))
-                || (compareStack.getItem() == Items.WATER_BUCKET && (worldState.getBlock() == Blocks.WATER || worldState.getBlock() == Blocks.FLOWING_WATER)));
-    }
-
-    /**
      * Add a new resource to the needed list.
      *
      * @param res    the resource.

@@ -86,7 +86,7 @@ public class RemoveBlockMessage extends AbstractMessage<RemoveBlockMessage, IMes
                     final BlockPos here = new BlockPos(x, y, z);
                     final IBlockState blockState = world.getBlockState(here);
                     final ItemStack stack = BlockUtils.getItemStackFromBlockState(blockState);
-                    if (WindowScan.correctBlockToRemoveOrReplace(stack, blockState, message.block))
+                    if (ReplaceBlockMessage.correctBlockToRemoveOrReplace(stack, blockState, message.block))
                     {
                         world.setBlockToAir(here);
                     }

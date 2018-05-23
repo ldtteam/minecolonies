@@ -106,7 +106,7 @@ public class ReplaceBlockMessage extends AbstractMessage<ReplaceBlockMessage, IM
                     final BlockPos here = new BlockPos(x, y, z);
                     final IBlockState blockState = world.getBlockState(here);
                     final ItemStack stack = BlockUtils.getItemStackFromBlockState(blockState);
-                    if (WindowScan.correctBlockToRemoveOrReplace(stack, blockState, message.blockFrom))
+                    if (correctBlockToRemoveOrReplace(stack, blockState, message.blockFrom))
                     {
                         if ((blockState.getBlock() instanceof BlockDoor && blockState.getValue(BlockDoor.HALF) == BlockDoor.EnumDoorHalf.UPPER)
                                 || (blockState.getBlock() instanceof BlockBed && blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.HEAD))
@@ -184,5 +184,19 @@ public class ReplaceBlockMessage extends AbstractMessage<ReplaceBlockMessage, IM
                 }
             }
         }
+    }
+
+    /**
+     * Is this the correct block to remove it or replace it.
+     * @param worldStack the world stack to check.
+     * @param worldState the world state to check.
+     * @param compareStack the comparison stack.
+     * @return true if so.
+     */
+    public static boolean correctBlockToRemoveOrReplace(final ItemStack worldStack, final IBlockState worldState, final ItemStack compareStack)
+    {
+        return worldStack != null && (worldStack.isItemEqual(compareStack)
+                || (compareStack.getItem() == Items.LAVA_BUCKET && (worldState.getBlock() == Blocks.LAVA || worldState.getBlock() == Blocks.FLOWING_LAVA))
+                || (compareStack.getItem() == Items.WATER_BUCKET && (worldState.getBlock() == Blocks.WATER || worldState.getBlock() == Blocks.FLOWING_WATER)));
     }
 }
