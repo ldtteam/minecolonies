@@ -279,8 +279,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
                     final CitizenData data = getColony().getCitizenManager().getCitizen(workersTagList.getCompoundTagAt(i).getInteger(TAG_ID));
                     if (data != null)
                     {
-                        assignCitizenFromNBtAction(data);
                         assignCitizen(data);
+                        assignCitizenFromNBtAction(data);
                     }
                 }
             }
@@ -315,7 +315,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
                 if (data != null)
                 {
                     final NBTTagCompound idCompound = new NBTTagCompound();
-                    idCompound.setInteger(TAG_WORKER_ID, data.getId());
+                    idCompound.setInteger(TAG_ID, data.getId());
                     workersTagList.appendTag(idCompound);
                 }
             }

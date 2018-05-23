@@ -92,6 +92,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
                 building.removeCitizen(citizen);
             }
             citizen.setHomeBuilding(this);
+            citizen.setWorkBuilding(this);
         }
         return assignalResult;
     }
