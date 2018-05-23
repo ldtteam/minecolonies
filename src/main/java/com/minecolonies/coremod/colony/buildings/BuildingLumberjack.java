@@ -84,13 +84,13 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     {
         final Map<Predicate<ItemStack>, Integer> tempKeep = super.getRequiredItemsAndAmount();
 
-        if(getMainWorker() != null && getMainWorker().getInventory() != null)
+        if(getMainCitizen() != null && getMainCitizen().getInventory() != null)
         {
-            final int invSIze = getMainWorker().getInventory().getSizeInventory();
+            final int invSIze = getMainCitizen().getInventory().getSizeInventory();
             int keptStacks = 0;
             for (int i = 0; i < invSIze; i++)
             {
-                final ItemStack stack = getMainWorker().getInventory().getStackInSlot(i);
+                final ItemStack stack = getMainCitizen().getInventory().getStackInSlot(i);
 
                 if (ItemStackUtils.isEmpty(stack) || stack.getItem() != SAPLING_STACK.getItem())
                 {

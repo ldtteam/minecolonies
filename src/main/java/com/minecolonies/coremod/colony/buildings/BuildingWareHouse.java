@@ -14,6 +14,7 @@ import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowWareHouseBuilding;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
@@ -322,7 +323,7 @@ public class BuildingWareHouse extends AbstractBuilding
     /**
      * BuildWarehouse View.
      */
-    public static class View extends AbstractBuildingHut.View
+    public static class View extends AbstractBuildingView
     {
         /**
          * Should the building allow further storage upgrades.
