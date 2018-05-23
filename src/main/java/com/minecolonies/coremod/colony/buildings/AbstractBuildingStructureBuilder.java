@@ -147,7 +147,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             buf.writeInt(resource.getAmount());
         }
 
-        final CitizenData data = this.getMainWorker();
+        final CitizenData data = this.getMainCitizen();
         if(data != null && data.getJob() instanceof AbstractJobStructure)
         {
             final AbstractJobStructure structureBuilderJob = (AbstractJobStructure) data.getJob();
@@ -194,8 +194,8 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      */
     private void updateAvailableResources()
     {
-        getMainWorkerEntity().ifPresent(structureBuilder -> {
-            final InventoryCitizen structureBuilderInventory = getMainWorker().getInventory();
+        getMainCitizenEntity().ifPresent(structureBuilder -> {
+            final InventoryCitizen structureBuilderInventory = getMainCitizen().getInventory();
             if (structureBuilderInventory == null)
             {
                 return;

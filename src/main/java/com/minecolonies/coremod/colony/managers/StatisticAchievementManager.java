@@ -244,7 +244,7 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
     public void checkAchievements()
     {
         // the colonies size
-        //final int size = this.citizenManager.getCitizens().size();
+        //final int size = this.citizenManager.getAssignedCitizen().size();
 
         //todo check those later again
         /*if (size >= ModAchievements.ACHIEVEMENT_SIZE_SETTLEMENT)
