@@ -385,7 +385,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     {
         if (job.getStructure().getBlockInfo().tileentityData != null)
         {
-            TileEntity tileentityflowerpot = world.getTileEntity(pos);
+            final TileEntity tileentityflowerpot = world.getTileEntity(pos);
             if (tileentityflowerpot == null)
             {
                 TileEntity.create(world, job.getStructure().getBlockInfo().tileentityData);
