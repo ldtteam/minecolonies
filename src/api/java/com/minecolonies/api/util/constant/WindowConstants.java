@@ -191,6 +191,21 @@ public final class WindowConstants
     public static final String ACTION_LABEL = "action";
 
     /**
+     * Id of the citizen info box.
+     */
+    public static final String CITIZEN_INFO = "citizenInfoBox";
+
+    /**
+     * The button id to recall one specific citizen.
+     */
+    public static final String RECALL_ONE = "recallone";
+
+    /**
+     * The job of the citizen.
+     */
+    public static final String JOB_LABEL = "job";
+
+    /**
      * Id of the distance label in the GUI.
      */
     public static final String DIST_LABEL = "dist";
@@ -199,6 +214,11 @@ public final class WindowConstants
      * Id of the total citizens label in the GUI.
      */
     public static final String TOTAL_CITIZENS_LABEL = "totalCitizens";
+
+    /**
+     * Id of the hidden citizen id in the GUI.
+     */
+    public static final String HIDDEN_CITIZEN_ID = "hiddenCitizenId";
 
     /**
      * Statistics label width.
@@ -505,6 +525,41 @@ public final class WindowConstants
      * This button will remove the currently rendered structure.
      */
     public static final String BUTTON_MOVE_BUILDING = "reposition";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String BUTTON_SHOW_RES = "showRes";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String POS1X_LABEL = "pos1x";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String POS1Y_LABEL = "pos1y";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String POS1Z_LABEL = "pos1z";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String POS2X_LABEL = "pos2x";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String POS2Y_LABEL = "pos2y";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String POS2Z_LABEL = "pos2z";
 
     /**
      * public constructor to hide implicit public one.

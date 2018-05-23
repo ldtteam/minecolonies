@@ -117,7 +117,7 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
             final EntityPlayer player = (EntityPlayer) sender;
             if ((null != colony) && !canPlayerUseCommand(player, LISTCITIZENS, colony.getID()))
             {
-                player.sendMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
+                sender.sendMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
                 return;
             }
         }

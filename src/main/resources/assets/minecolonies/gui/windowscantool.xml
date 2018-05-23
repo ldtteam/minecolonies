@@ -1,0 +1,30 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="420 240" pause="false"
+        lightbox="false" xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+
+    <label size="100% 11" pos="40 10" color="white" label="$(com.minecolonies.coremod.gui.scanTool.from)"/>
+    <input id="pos1x" size="36 18" pos="70 5" maxlength="10"/>
+    <input id="pos1y" size="36 18" pos="110 5" maxlength="10"/>
+    <input id="pos1z" size="36 18" pos="150 5" maxlength="10"/>
+
+    <label size="100% 11" pos="200 10" color="white" label="$(com.minecolonies.coremod.gui.scanTool.to)"/>
+    <input id="pos2x" size="36 18" pos="220 5" maxlength="10"/>
+    <input id="pos2y" size="36 18" pos="260 5" maxlength="10"/>
+    <input id="pos2z" size="36 18" pos="300 5" maxlength="10"/>
+
+    <label size="100% 11" pos="52 35" color="white" label="$(com.minecolonies.coremod.gui.scanTool.name)"/>
+    <input id="name" size="158 18" pos="110 30" maxlength="25"/>
+
+    <buttonimage id="confirm" source="minecolonies:textures/gui/buildtool/confirm.png" size="32" pos="125 50"/>
+    <buttonimage id="cancel" source="minecolonies:textures/gui/buildtool/cancel.png" size="32" pos="215 50"/>
+
+    <buttonimage label="$(com.minecolonies.coremod.gui.scanTool.showRes)" id="showRes" pos="120 90" size="129 17"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
+
+    <list id="resources" size="80% 100" pos="35 110">
+        <box size="100% 30" linewidth="2">
+            <itemicon id="resourceIcon" size="24 24" pos="1 1"/>
+            <label id="resourceName" size="140 12" pos="30 9" color="white"/>
+            <label id="resourceQuantity" size="12 12" pos="170 9" color="white"/>
+        </box>
+    </list>
+</window>

@@ -393,6 +393,18 @@ public class BuildingManager implements IBuildingManager
         return goodCook;
     }
 
+    @Override
+    public void setTownHall(@Nullable final BuildingTownHall building)
+    {
+        this.townHall = building;
+    }
+
+    @Override
+    public void setWareHouse(@Nullable final BuildingWareHouse building)
+    {
+        this.wareHouse = building;
+    }
+
     /**
      * Updates all subscribers of fields etc.
      */

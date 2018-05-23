@@ -7,6 +7,7 @@ import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkManager;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.network.messages.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewWorkOrderMessage;
@@ -236,8 +237,11 @@ public class ColonyPackageManager implements IColonyPackageManager
         {
             for (final AbstractWorkOrder workOrder : workManager.getWorkOrders().values())
             {
-                subscribers.stream().filter(player -> workManager.isDirty() || !oldSubscribers.contains(player))
-                        .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewWorkOrderMessage(colony, workOrder), player));
+                if (!(workOrder instanceof WorkOrderBuildMiner))
+                {
+                    subscribers.stream().filter(player -> workManager.isDirty() || !oldSubscribers.contains(player))
+                            .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewWorkOrderMessage(colony, workOrder), player));
+                }
             }
 
             workManager.setDirty(false);

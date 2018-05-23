@@ -81,7 +81,7 @@ public class AddOfficerCommand extends AbstractSingleCommand implements IActionC
             final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
             if (colony == null)
             {
-                senderEntity.sendMessage(new TextComponentString(COLONY_X_NULL));
+                sender.sendMessage(new TextComponentString(COLONY_X_NULL));
                 return;
             }
             colonyId = colony.getID();
@@ -118,7 +118,7 @@ public class AddOfficerCommand extends AbstractSingleCommand implements IActionC
             final EntityPlayer senderPlayer = (EntityPlayer) sender;
             if (!canPlayerUseCommand(senderPlayer, ADDOFFICER, colony.getID()))
             {
-                senderEntity.sendMessage(new TextComponentString(NOT_PERMITTED));
+                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }

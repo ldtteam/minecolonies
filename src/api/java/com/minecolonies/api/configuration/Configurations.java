@@ -157,6 +157,9 @@ public class Configurations
         @Config.Comment("Amount of attemps to find a save rtp")
         public int numberOfAttemptsForSafeTP = 4;
 
+        @Config.Comment("Should the min/max distance from spawn also affect colony placement?")
+        public boolean restrictColonyPlacement = false;
+
         @Config.Comment("Max distance from world spawn")
         public int maxDistanceFromWorldSpawn = 8000;
 

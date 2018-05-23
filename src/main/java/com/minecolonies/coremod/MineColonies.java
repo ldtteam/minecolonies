@@ -75,7 +75,7 @@ public class MineColonies
     }
 
     /**
-     * Returns whether the side is client or not
+     * Returns whether the side is server or not
      *
      * @return True when server, otherwise false
      */
@@ -202,6 +202,8 @@ public class MineColonies
         getNetwork().registerMessage(MultiBlockChangeMessage.class, MultiBlockChangeMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(CowboySetMilkCowsMessage.class, CowboySetMilkCowsMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(BuildingMoveMessage.class, BuildingMoveMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(RecallSingleCitizenMessage.class, RecallSingleCitizenMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(ScanOnServerMessage.class, ScanOnServerMessage.class, ++id, Side.SERVER);
 
         // Schematic transfer messages
         getNetwork().registerMessage(SchematicRequestMessage.class, SchematicRequestMessage.class, ++id, Side.SERVER);

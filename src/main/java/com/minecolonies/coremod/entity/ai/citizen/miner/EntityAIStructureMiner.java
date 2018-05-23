@@ -10,6 +10,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.state.IBlockState;
@@ -29,6 +30,26 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
  */
 public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrder<JobMiner>
 {
+    /**
+     * Main shaft location.
+     */
+    private static final String MAIN_SHAFT_NAME = "/miner/minerMainShaft";
+
+    /**
+     * X4 shaft location.
+     */
+    private static final String X4_SHAFT_NAME = "/miner/minerX4";
+
+    /**
+     * X2 right shaft location.
+     */
+    private static final String X2_RIGHT_SHAFT_NAME = "/miner/minerX2Right";
+
+    /**
+     * X2 top shaft location.
+     */
+    private static final String X2_TOP_SHAFT_NAME = "/miner/minerX2Top";
+
     /**
      * Lead the miner to the other side of the shaft.
      */
@@ -581,27 +602,29 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
      */
     private void initStructure(final Node mineNode, final int rotateTimes, final BlockPos structurePos)
     {
+        final String style = getOwnBuilding().getStyle();
         String requiredName = null;
         int rotateCount = 0;
+
         if (mineNode == null)
         {
             rotateCount = getRotationFromVector();
-            requiredName = Structures.SCHEMATICS_PREFIX + "/miner/minerMainShaft";
+            requiredName = getCorrectStyleLocation(style, MAIN_SHAFT_NAME);
         }
         else
         {
             rotateCount = rotateTimes;
             if (mineNode.getStyle() == Node.NodeType.CROSSROAD)
             {
-                requiredName = Structures.SCHEMATICS_PREFIX + "/miner/minerX4";
+                requiredName = getCorrectStyleLocation(style, X4_SHAFT_NAME);
             }
             else if (mineNode.getStyle() == Node.NodeType.BEND)
             {
-                requiredName = Structures.SCHEMATICS_PREFIX + "/miner/minerX2Right";
+                requiredName = getCorrectStyleLocation(style, X2_RIGHT_SHAFT_NAME);
             }
             else if (mineNode.getStyle() == Node.NodeType.TUNNEL)
             {
-                requiredName = Structures.SCHEMATICS_PREFIX + "/miner/minerX2Top";
+                requiredName = getCorrectStyleLocation(style, X2_TOP_SHAFT_NAME);
             }
         }
 
@@ -611,6 +634,25 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             worker.getColony().getWorkManager().addWorkOrder(wo, false);
             job.setWorkOrder(wo);
             initiate();
+        }
+    }
+
+    /**
+     * Get the correct style for the shaft. Return default back.
+     * @param style the style to check.
+     * @param shaft the shaft.
+     * @return the correct location.
+     */
+    private String getCorrectStyleLocation(final String style, final String shaft)
+    {
+        final StructureWrapper wrapper = new StructureWrapper(world, Structures.SCHEMATICS_PREFIX + "/" + style + shaft);
+        if (wrapper.getStructure().getStructure().getTemplate() != null)
+        {
+            return Structures.SCHEMATICS_PREFIX + "/" + style + shaft;
+        }
+        else
+        {
+            return Structures.SCHEMATICS_PREFIX + shaft;
         }
     }
 

@@ -23,6 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
+
 /**
  * Colony Permissions System.
  */
@@ -285,6 +287,12 @@ public class Permissions implements IPermissions
         {
             final NBTTagCompound ownerCompound = ownerTagList.getCompoundTagAt(i);
             @NotNull final UUID id = UUID.fromString(ownerCompound.getString(TAG_ID));
+            String name = "";
+            if (ownerCompound.hasKey(TAG_NAME))
+            {
+                name = ownerCompound.getString(TAG_NAME);
+            }
+
             final Rank rank = Rank.valueOf(ownerCompound.getString(TAG_RANK));
 
             final GameProfile player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getProfileByUUID(id);
@@ -292,6 +300,10 @@ public class Permissions implements IPermissions
             if (player != null)
             {
                 players.put(id, new Player(id, player.getName(), rank));
+            }
+            else if(!name.isEmpty())
+            {
+                players.put(id, new Player(id, name, rank));
             }
         }
 
@@ -490,6 +502,7 @@ public class Permissions implements IPermissions
         {
             @NotNull final NBTTagCompound ownersCompound = new NBTTagCompound();
             ownersCompound.setString(TAG_ID, player.getID().toString());
+            ownersCompound.setString(TAG_NAME, player.getName());
             ownersCompound.setString(TAG_RANK, player.getRank().name());
             ownerTagList.appendTag(ownersCompound);
         }
