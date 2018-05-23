@@ -130,7 +130,9 @@ public class ReplaceBlockMessage extends AbstractMessage<ReplaceBlockMessage, IM
                         final IBlockState newBlockState= world.getBlockState(here);
                         if (newBlockState.getBlock() instanceof BlockStairs && blockState.getBlock() instanceof BlockStairs)
                         {
-                            final IBlockState transformation = newBlockState.withProperty(BlockStairs.FACING, blockState.getValue(BlockStairs.FACING));
+                            IBlockState transformation = newBlockState.withProperty(BlockStairs.FACING, blockState.getValue(BlockStairs.FACING));
+                            transformation = transformation.withProperty(BlockStairs.HALF, blockState.getValue(BlockStairs.HALF));
+                            transformation = transformation.withProperty(BlockStairs.SHAPE, blockState.getValue(BlockStairs.SHAPE));
                             world.setBlockState(here, transformation);
                         }
                         else if(newBlockState.getBlock() instanceof BlockHorizontal && blockState.getBlock() instanceof BlockHorizontal

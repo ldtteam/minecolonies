@@ -16,7 +16,6 @@ import com.minecolonies.coremod.network.messages.RemoveBlockMessage;
 import com.minecolonies.coremod.network.messages.RemoveEntityMessage;
 import com.minecolonies.coremod.network.messages.ScanOnServerMessage;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
