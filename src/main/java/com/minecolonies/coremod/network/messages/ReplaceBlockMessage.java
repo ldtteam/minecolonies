@@ -148,7 +148,15 @@ public class ReplaceBlockMessage extends AbstractMessage<ReplaceBlockMessage, IM
                         }
                         else if(newBlockState.getBlock() instanceof BlockSlab && blockState.getBlock() instanceof BlockSlab)
                         {
-                            final IBlockState transformation = newBlockState.withProperty(BlockSlab.HALF, blockState.getValue(BlockSlab.HALF));
+                            final IBlockState transformation;
+                            if (blockState.getBlock() instanceof BlockDoubleStoneSlab || blockState.getBlock() instanceof BlockDoubleStoneSlabNew)
+                            {
+                                transformation = blockState.withProperty(BlockDoubleStoneSlab.VARIANT, newBlockState.getValue(BlockDoubleStoneSlab.VARIANT));
+                            }
+                            else
+                            {
+                                transformation = newBlockState.withProperty(BlockSlab.HALF, blockState.getValue(BlockSlab.HALF));
+                            }
                             world.setBlockState(here, transformation);
                         }
                         else if(newBlockState.getBlock() instanceof BlockLog && blockState.getBlock() instanceof BlockLog)
