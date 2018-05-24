@@ -347,8 +347,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             {
                 return getState();
             }
-            plantSapling();
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("trees");
+
+            final AbstractBuilding building = getOwnBuilding();
+            if (((BuildingLumberjack) building).shouldReplant()) plantSapling();
+            building.getColony().getStatsManager().incrementStatistic("trees");
             workFrom = null;
             return LUMBERJACK_GATHERING;
         }

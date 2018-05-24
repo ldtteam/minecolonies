@@ -11,6 +11,7 @@ import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.BuildingLumberjack;
+import com.minecolonies.coremod.network.messages.LumberjackReplantSaplingToggleMessage;
 import com.minecolonies.coremod.network.messages.LumberjackSaplingSelectorMessage;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -47,6 +48,11 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     private static final String BUTTON_TOGGLE_ALL = "toggleAll";
 
     /**
+     * Id of the button to toggle replant of saplings
+     */
+    private static final String BUTTON_TOGGLE_REPLANT = "saplingReplant";
+
+    /**
      * String describing on for the gui.
      */
     private static final String ON = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON);
@@ -74,7 +80,7 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     private ScrollingList saplingsList;
 
     /**
-     * Constructor for the window of the fisherman.
+     * Constructor for the window of the lumberjack.
      *
      * @param building {@link BuildingLumberjack.View}.
      */
@@ -83,6 +89,19 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
         super(building, Constants.MOD_ID + ":gui/windowHutLumberjack.xml");
         this.ownBuilding = building;
         pullLevelsFromHut();
+        registerButton(BUTTON_TOGGLE_REPLANT, this::switchReplant);
+    }
+
+    private void switchReplant()
+    {
+        if (ownBuilding.shouldReplant)
+        {
+            MineColonies.getNetwork().sendToServer(new LumberjackReplantSaplingToggleMessage(ownBuilding, false));
+        }
+        else
+        {
+            MineColonies.getNetwork().sendToServer(new LumberjackReplantSaplingToggleMessage(ownBuilding, true));
+        }
     }
 
     /**
@@ -192,6 +211,7 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
             this.ownBuilding.treesToFell.clear();
             this.ownBuilding.treesToFell.putAll(treesToFell);
         }
+
         else
         {
             super.onButtonClicked(button);

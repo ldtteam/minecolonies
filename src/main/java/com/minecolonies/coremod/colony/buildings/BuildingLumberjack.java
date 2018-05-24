@@ -46,6 +46,15 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     private static final String TAG_CUT = "shouldCut";
 
     /**
+     * NBT tag if the lj should replant saplings
+     */
+    private static final String TAG_REPLANT = "shouldReplant";
+
+    /**
+     * Whether or not the LJ should replant saplings
+     */
+    private boolean shouldReplant = true;
+    /**
      * A default sapling itemStack.
      */
     private static final ItemStack SAPLING_STACK = new ItemStack(Blocks.SAPLING);
@@ -212,7 +221,9 @@ public class BuildingLumberjack extends AbstractBuildingWorker
                 treesToFell.put(new ItemStorage(stack), cut);
             }
         }
+        shouldReplant = compound.getBoolean(TAG_REPLANT);
         checkTreesToFell();
+
     }
 
     @Override
@@ -228,6 +239,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             saplingTagList.appendTag(saplingCompound);
         }
         compound.setTag(TAG_SAPLINGS, saplingTagList);
+        compound.setBoolean(TAG_REPLANT, shouldReplant);
     }
 
     /**
@@ -252,6 +264,15 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             ByteBufUtils.writeItemStack(buf, entry.getKey().getItemStack());
             buf.writeBoolean(entry.getValue());
         }
+    }
+
+    public boolean shouldReplant(){
+        return shouldReplant;
+    }
+
+    public void setShouldReplant(boolean shouldReplant){
+        this.shouldReplant = shouldReplant;
+        markDirty();
     }
 
     /**
@@ -281,6 +302,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
          */
         public final Map<ItemStorage, Boolean> treesToFell = new LinkedHashMap<>();
 
+
         /**
          * Public constructor of the view, creates an instance of it.
          *
@@ -291,6 +313,11 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         {
             super(c, l);
         }
+
+        /**
+         * Whether or not the LJ should replant saplings
+         */
+        public final boolean shouldReplant = true;
 
         @Override
         public void deserialize(@NotNull final ByteBuf buf)
