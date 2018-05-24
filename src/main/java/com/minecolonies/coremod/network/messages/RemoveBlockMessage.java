@@ -4,6 +4,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -73,6 +74,11 @@ public class RemoveBlockMessage extends AbstractMessage<RemoveBlockMessage, IMes
     @Override
     public void messageOnServerThread(final RemoveBlockMessage message, final EntityPlayerMP player)
     {
+        if (!Minecraft.getMinecraft().player.capabilities.isCreativeMode)
+        {
+            return;
+        }
+        
         final World world = player.getServerWorld();
         for(int x = Math.min(message.from.getX(), message.to.getX()); x <= Math.max(message.from.getX(), message.to.getX()); x++)
         {
