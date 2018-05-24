@@ -196,11 +196,6 @@ public class WindowReplaceBlock extends Window implements ButtonHandler
                 resourceLabel.setLabelText(resource.getDisplayName());
                 resourceLabel.setColor(WHITE, WHITE);
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
-                if (!Minecraft.getMinecraft().player.capabilities.isCreativeMode)
-                {
-                    findPaneOfTypeByID(BUTTON_SELECT, Button.class).hide();
-                    findPaneOfTypeByID(BUTTON_REPLACE_BLOCK, Button.class).hide();
-                }
             }
         });
     }

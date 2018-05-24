@@ -12,7 +12,7 @@
     <input id="pos2z" size="36 18" pos="320 5" maxlength="10"/>
 
     <label size="100% 11" pos="72 35" color="white" label="$(com.minecolonies.coremod.gui.scanTool.name)"/>
-    <input id="name" size="178 18" pos="110 30" maxlength="25"/>
+    <input id="name" size="178 18" pos="130 30" maxlength="25"/>
 
     <buttonimage id="confirm" source="minecolonies:textures/gui/buildtool/confirm.png" size="32" pos="145 50"/>
     <buttonimage id="cancel" source="minecolonies:textures/gui/buildtool/cancel.png" size="32" pos="235 50"/>

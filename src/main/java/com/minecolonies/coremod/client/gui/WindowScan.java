@@ -381,7 +381,7 @@ public class WindowScan extends AbstractWindowSkeleton
                 rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class).setLabelText(tempEntities.get(index).getName());
                 if (!Minecraft.getMinecraft().player.capabilities.isCreativeMode)
                 {
-                    findPaneOfTypeByID(BUTTON_REMOVE_ENTITY, Button.class).hide();
+                    rowPane.findPaneOfTypeByID(BUTTON_REMOVE_ENTITY, Button.class).hide();
                 }
             }
         });
@@ -424,8 +424,8 @@ public class WindowScan extends AbstractWindowSkeleton
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(new ItemStack(resource.getItem(), 1, resource.getDamageValue()));
                 if (!Minecraft.getMinecraft().player.capabilities.isCreativeMode)
                 {
-                    findPaneOfTypeByID(BUTTON_REMOVE_BLOCK, Button.class).hide();
-                    findPaneOfTypeByID(BUTTON_REPLACE_BLOCK, Button.class).hide();
+                    rowPane.findPaneOfTypeByID(BUTTON_REMOVE_BLOCK, Button.class).hide();
+                    rowPane.findPaneOfTypeByID(BUTTON_REPLACE_BLOCK, Button.class).hide();
                 }
             }
         });
