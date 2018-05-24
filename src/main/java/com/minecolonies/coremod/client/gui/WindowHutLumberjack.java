@@ -89,14 +89,20 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
         super(building, Constants.MOD_ID + ":gui/windowHutLumberjack.xml");
         this.ownBuilding = building;
         pullLevelsFromHut();
-        registerButton(BUTTON_TOGGLE_REPLANT, this::switchReplant);
+        //registerButton(BUTTON_TOGGLE_REPLANT, this::switchReplant);
     }
 
+
+    /**
+     * Method to send the message to switch the toggle to the server, then updates button
+     */
     private void switchReplant()
     {
-
         MineColonies.getNetwork().sendToServer(new LumberjackReplantSaplingToggleMessage(building, !building.shouldReplant));
-
+        Button buttonReplant = findPaneOfTypeByID(BUTTON_TOGGLE_REPLANT, Button.class);
+        
+        if (ownBuilding.shouldReplant) buttonReplant.setLabel("Replant On");
+        else buttonReplant.setLabel("Replant Off");
     }
 
     /**
@@ -171,10 +177,8 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     }
 
     @Override
-    public void onButtonClicked(@NotNull final Button button)
-    {
-        if (button.getID().equals(BUTTON_CURRENT_SAPLING))
-        {
+    public void onButtonClicked(@NotNull final Button button) {
+        if (button.getID().equals(BUTTON_CURRENT_SAPLING)) {
             final int row = saplingsList.getListElementIndexByPane(button);
 
             final ItemStorage saplingStack = treesToFell.keySet().toArray(new ItemStorage[treesToFell.size()])[row];
@@ -185,28 +189,23 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
 
             this.ownBuilding.treesToFell.clear();
             this.ownBuilding.treesToFell.putAll(treesToFell);
-        }
-        else if(button.getID().equals(BUTTON_TOGGLE_ALL))
-        {
+        } else if (button.getID().equals(BUTTON_TOGGLE_ALL)) {
             final boolean on = button.getLabel().equals(LanguageHandler.format(TOGGLE_ALL_OPTIONS_ON));
 
-            if(on)
-            {
+            if (on) {
                 button.setLabel(LanguageHandler.format(TOGGLE_ALL_OPTIONS_OFF));
-            }
-            else
-            {
+            } else {
                 button.setLabel(LanguageHandler.format(TOGGLE_ALL_OPTIONS_ON));
             }
 
-            for(final Map.Entry<ItemStorage, Boolean> entry: new HashSet<Map.Entry<ItemStorage, Boolean>>(treesToFell.entrySet()))
-            {
+            for (final Map.Entry<ItemStorage, Boolean> entry : new HashSet<Map.Entry<ItemStorage, Boolean>>(treesToFell.entrySet())) {
                 treesToFell.put(entry.getKey(), on);
             }
             this.ownBuilding.treesToFell.clear();
             this.ownBuilding.treesToFell.putAll(treesToFell);
+        } else if (button.getID().equals(BUTTON_TOGGLE_REPLANT)) {
+            switchReplant();
         }
-
         else
         {
             super.onButtonClicked(button);

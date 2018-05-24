@@ -258,6 +258,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
+        buf.writeBoolean(shouldReplant);
         buf.writeInt(treesToFell.size());
         for (final Map.Entry<ItemStorage, Boolean> entry : treesToFell.entrySet())
         {
@@ -302,6 +303,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
          */
         public final Map<ItemStorage, Boolean> treesToFell = new LinkedHashMap<>();
 
+        public boolean shouldReplant = true;
 
         /**
          * Public constructor of the view, creates an instance of it.
@@ -317,12 +319,13 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         /**
          * Whether or not the LJ should replant saplings
          */
-        public final boolean shouldReplant = true;
+
 
         @Override
         public void deserialize(@NotNull final ByteBuf buf)
         {
             super.deserialize(buf);
+            shouldReplant = buf.readBoolean();
             treesToFell.clear();
             final int size = buf.readInt();
             for (int i = 0; i < size; i++)
