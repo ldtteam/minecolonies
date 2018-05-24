@@ -94,14 +94,9 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
 
     private void switchReplant()
     {
-        if (ownBuilding.shouldReplant)
-        {
-            MineColonies.getNetwork().sendToServer(new LumberjackReplantSaplingToggleMessage(ownBuilding, false));
-        }
-        else
-        {
-            MineColonies.getNetwork().sendToServer(new LumberjackReplantSaplingToggleMessage(ownBuilding, true));
-        }
+
+        MineColonies.getNetwork().sendToServer(new LumberjackReplantSaplingToggleMessage(building, !building.shouldReplant));
+
     }
 
     /**
