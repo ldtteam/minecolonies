@@ -2,7 +2,6 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -75,7 +74,7 @@ public class RemoveEntityMessage extends AbstractMessage<RemoveEntityMessage, IM
     @Override
     public void messageOnServerThread(final RemoveEntityMessage message, final EntityPlayerMP player)
     {
-        if (!Minecraft.getMinecraft().player.capabilities.isCreativeMode)
+        if (!player.capabilities.isCreativeMode)
         {
             return;
         }
