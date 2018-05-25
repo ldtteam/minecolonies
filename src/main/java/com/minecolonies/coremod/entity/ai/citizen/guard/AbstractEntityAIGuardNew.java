@@ -122,7 +122,7 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
     /**
      * Y search range.
      */
-    private static final int Y_VISION = 15;
+    private static final int Y_VISION = 10;
 
     /**
      * The current blockPos we're patrolling at.
