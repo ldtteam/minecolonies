@@ -98,9 +98,15 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
      */
     private void switchReplant()
     {
-        MineColonies.getNetwork().sendToServer(new LumberjackReplantSaplingToggleMessage(building, !building.shouldReplant));
+
+        ownBuilding.shouldReplant = !ownBuilding.shouldReplant;
+        MineColonies.getNetwork().sendToServer(new LumberjackReplantSaplingToggleMessage(building, ownBuilding.shouldReplant));
+        updateReplantButton();
+    }
+
+    private void updateReplantButton(){
         Button buttonReplant = findPaneOfTypeByID(BUTTON_TOGGLE_REPLANT, Button.class);
-        
+
         if (ownBuilding.shouldReplant) buttonReplant.setLabel("Replant On");
         else buttonReplant.setLabel("Replant Off");
     }
@@ -121,6 +127,7 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     public void onOpened()
     {
         super.onOpened();
+        updateReplantButton();
         saplingsList = findPaneOfTypeByID(LIST_SAPLINGS, ScrollingList.class);
         saplingsList.setDataProvider(new ScrollingList.DataProvider()
         {

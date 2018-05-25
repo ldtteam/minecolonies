@@ -341,18 +341,18 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             }
         }
 
-        if (!job.tree.hasLogs() && (!job.tree.isSlimeTree() || !job.tree.hasLeaves()))
-        {
-            if (hasNotDelayed(WAIT_BEFORE_SAPLING))
-            {
+        if (!job.tree.hasLogs() && (!job.tree.isSlimeTree() || !job.tree.hasLeaves())) {
+            if (hasNotDelayed(WAIT_BEFORE_SAPLING)) {
                 return getState();
             }
 
             final AbstractBuilding building = getOwnBuilding();
             if (((BuildingLumberjack) building).shouldReplant()) plantSapling();
-            building.getColony().getStatsManager().incrementStatistic("trees");
-            workFrom = null;
-            return LUMBERJACK_GATHERING;
+                building.getColony().getStatsManager().incrementStatistic("trees");
+                workFrom = null;
+                return LUMBERJACK_GATHERING;
+
+
         }
 
         if (isOnSapling())
