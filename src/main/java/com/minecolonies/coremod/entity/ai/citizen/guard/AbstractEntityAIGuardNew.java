@@ -1,24 +1,28 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew;
 import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.util.DamageSource;
@@ -146,6 +150,17 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
         worker.setCanPickUpLoot(true);
     }
 
+    /**
+     * Can be overridden in implementations.
+     * <p>
+     * Here the AI can check if the armour have to be re rendered and do it.
+     */
+    @Override
+    protected void updateRenderMetaData()
+    {
+        updateArmor();
+    }
+
     abstract int getAttackRange();
 
     /**
@@ -193,6 +208,24 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
             checkIfRequestForItemExistOrCreateAsynch(item);
         }
 
+        if (getOwnBuilding() != null)
+        {
+            final TileEntityColonyBuilding chest = getOwnBuilding().getTileEntity();
+            for (int i = 0; i < getOwnBuilding().getTileEntity().getSizeInventory(); i++)
+            {
+                final ItemStack stack = chest.getStackInSlot(i);
+
+                if (InventoryUtils.findFirstSlotInProviderWith(chest,
+                  itemStack -> itemStack.getItem() instanceof ItemArmor) != -1)
+                {
+                    InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+                      getOwnBuilding(), itemStack -> itemStack.getItem() instanceof ItemArmor,
+                      stack.getCount(),
+                      new InvWrapper(worker.getInventoryCitizen()));
+                }
+            }
+        }
+
         return DECIDE;
     }
 
@@ -215,16 +248,6 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
             }
         }
 
-        for (final ItemStack item : itemsNeeded)
-        {
-            if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventory()),
-              item.getItem(),
-              item.getCount()))
-            {
-                return START_WORKING;
-            }
-        }
-
         if (worker.getWorkBuilding() != null
               && !(worker.getLastAttackedEntity() != null
               && !worker.getLastAttackedEntity().isDead)
@@ -236,23 +259,24 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
             switch (guardBuilding.getTask())
             {
                 case PATROL:
-                    System.out.println("Patrol");
-                    currentPatrolPoint = guardBuilding.getNextPatrolTarget(currentPatrolPoint);
-                    if (currentPatrolPoint != null)
+                    if (currentPatrolPoint == null)
                     {
-                        worker.isWorkerAtSiteWithMove(currentPatrolPoint, 0);
+                        currentPatrolPoint = guardBuilding.getNextPatrolTarget(currentPatrolPoint);
+                    }
+                    if (currentPatrolPoint != null
+                      && worker.isWorkerAtSiteWithMove(currentPatrolPoint, 1))
+                    {
+                        currentPatrolPoint = guardBuilding.getNextPatrolTarget(currentPatrolPoint);
                     }
                     break;
                 case GUARD:
-                    System.out.println("Guard");
+
                     worker.isWorkerAtSiteWithMove(guardBuilding.getGuardPos(), GUARD_POS_RANGE);
                     break;
                 case FOLLOW:
-                    System.out.println("Follow");
                     worker.isWorkerAtSiteWithMove(guardBuilding.getPlayerToFollow(), GUARD_POS_RANGE);
                     break;
                 default:
-                    System.out.println("Default");
                     worker.isWorkerAtSiteWithMove(worker.getWorkBuilding().getLocation(), 10);
             }
         }
@@ -283,6 +307,20 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
         if (building != null && target == null)
         {
             final List<EntityLivingBase> targets = world.getEntitiesWithinAABB(EntityLivingBase.class, getSearchArea());
+
+            for (final EntityLivingBase entity : targets)
+            {
+                if (entity instanceof EntityPlayer)
+                {
+                    final EntityPlayer player = (EntityPlayer) entity;
+
+                    if (worker.getColony() != null && worker.getColony().getPermissions().hasPermission(player, Action.GUARDS_ATTACK))
+                    {
+                        return entity;
+                    }
+
+                }
+            }
 
             float closest = -1;
             EntityLivingBase targetEntity = null;
@@ -327,6 +365,7 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
      */
     protected AIState attackProtect()
     {
+        setDelay(2);
         final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventory()),
           Items.SHIELD,
           -1);
@@ -383,6 +422,7 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
             if (worker.getDistance(target) > getAttackRange())
             {
                 worker.isWorkerAtSiteWithMove(target.getPosition(), getAttackRange());
+                return GUARD_ATTACK_PHYSICAL;
             }
 
             final int swordSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()),
@@ -462,6 +502,7 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
             if (worker.getDistance(target) > getAttackRange())
             {
                 worker.isWorkerAtSiteWithMove(target.getPosition(), getAttackRange());
+                return GUARD_ATTACK_RANGED;
             }
 
             final int bowslot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()),
@@ -568,6 +609,33 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
         }
 
         return getOwnBuilding().getTargetableArea(world);
+    }
+
+    /**
+     * Updates the equipment. Always take the first item of each type and set it.
+     */
+    protected void updateArmor()
+    {
+        worker.setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStackUtils.EMPTY);
+        worker.setItemStackToSlot(EntityEquipmentSlot.FEET, ItemStackUtils.EMPTY);
+        worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStackUtils.EMPTY);
+        worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStackUtils.EMPTY);
+
+        for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
+        {
+            final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
+
+            if (ItemStackUtils.isEmpty(stack))
+            {
+                new InvWrapper(worker.getInventoryCitizen()).extractItem(i, Integer.MAX_VALUE, false);
+                continue;
+            }
+
+            if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == ItemStackUtils.EMPTY)
+            {
+                worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
+            }
+        }
     }
 
     private double getRandomPitch()

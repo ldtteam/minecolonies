@@ -153,6 +153,8 @@ public class WindowHutGuardTowerNew extends AbstractWindowWorkerBuilding<Abstrac
     {
         super.onOpened();
 
+        pullInfoFromHut();
+
         patrolList = findPaneOfTypeByID(GUI_ELEMENT_LIST_LEVELS, ScrollingList.class);
         if (task.equals(GuardTask.PATROL))
         {

@@ -35,6 +35,7 @@ public class EntityAIKnight extends AbstractEntityAIGuardNew<JobKnight>
     {
         super(job);
         toolsNeeded.add(ToolType.SWORD);
+        itemsNeeded.add(new ItemStack(Items.SHIELD, 1));
     }
 
     @Override
@@ -72,15 +73,6 @@ public class EntityAIKnight extends AbstractEntityAIGuardNew<JobKnight>
             return superState;
         }
 
-        if (worker.getDistance(target) > MAX_DISTANCE_FOR_ATTACK)
-        {
-            walkToBlock(target.getPosition());
-        }
-        else if (worker.getDistance(target) < MAX_DISTANCE_FOR_ATTACK)
-        {
-                return GUARD_ATTACK_PHYSICAL;
-        }
-
-        return DECIDE;
+        return GUARD_ATTACK_PHYSICAL;
     }
 }

@@ -25,6 +25,8 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.EntityEntry;
@@ -32,10 +34,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
@@ -125,6 +124,21 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
      * Whether to retrieve the guard on low health.
      */
     private boolean retrieveOnLowHealth = false;
+
+    /**
+     * The length range one patrolling operation can have on x or z.
+     */
+    private static final int LENGTH_RANGE = 10;
+
+    /**
+     * The length range one patrolling operation can have on y.
+     */
+    private static final int UP_DOWN_RANGE = 4;
+
+    /**
+     * Max tries to find a position to path to.
+     */
+    private static final int MAX_TRIES = 20;
 
     /**
      * Whether to patrol manually or not.
@@ -309,6 +323,18 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
     @Nullable
     public BlockPos getNextPatrolTarget(final BlockPos currentPatrolTarget)
     {
+        if (!patrolManually)
+        {
+            if (currentPatrolTarget == null)
+            {
+                return getLocation();
+            }
+            else
+            {
+                return getRandomBuilding(currentPatrolTarget);
+            }
+        }
+
         if (patrolTargets == null || patrolTargets.isEmpty())
         {
             return null;
@@ -331,6 +357,62 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
             return patrolTargets.get(index);
         }
         return patrolTargets.get(0);
+    }
+
+    /**
+     * Gets a random building from this colony.
+     *
+     * @return a random blockPos.
+     */
+    private BlockPos getRandomBuilding(final BlockPos currentPosition)
+    {
+        if (getColony() == null)
+        {
+            return getLocation();
+        }
+
+        final Random random = new Random();
+
+        int tries = 0;
+        BlockPos pos = null;
+        while (pos == null
+                 || getColony().getWorld().getBlockState(pos).getMaterial().isLiquid()
+                 || !getColony().getWorld().getBlockState(pos.down()).getMaterial().isSolid()
+                 || (!getColony().getWorld().isAirBlock(pos) && !getColony().getWorld().isAirBlock(pos.up())))
+        {
+            final Tuple<EnumFacing, EnumFacing> direction = getRandomDirectionTuple(random);
+            pos =
+              new BlockPos(currentPosition)
+                .offset(direction.getFirst(), random.nextInt(LENGTH_RANGE))
+                .offset(direction.getSecond(), random.nextInt(LENGTH_RANGE))
+                .up(random.nextInt(UP_DOWN_RANGE))
+                .down(random.nextInt(UP_DOWN_RANGE));
+
+            if (tries >= MAX_TRIES)
+            {
+                return getLocation();
+            }
+
+            tries++;
+        }
+
+
+        if (BlockPosUtil.getDistance2D(pos, getLocation()) > getPatrolDistance())
+        {
+            return getLocation();
+        }
+        return pos;
+    }
+
+    /**
+     * Searches a random direction.
+     *
+     * @param random a random object.
+     * @return a tuple of two directions.
+     */
+    private Tuple<EnumFacing, EnumFacing> getRandomDirectionTuple(final Random random)
+    {
+        return new Tuple<>(EnumFacing.random(random), EnumFacing.random(random));
     }
 
     /**
@@ -474,6 +556,11 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
     {
         this.task = task;
         this.markDirty();
+    }
+
+    public List<BlockPos> getPatrolTargets()
+    {
+        return new ArrayList<>(patrolTargets);
     }
 
     /**

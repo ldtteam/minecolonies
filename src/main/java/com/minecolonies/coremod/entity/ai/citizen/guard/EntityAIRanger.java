@@ -43,15 +43,6 @@ public class EntityAIRanger extends AbstractEntityAIGuardNew<JobRanger>
             return superState;
         }
 
-        if (worker.getDistance(target) > MAX_DISTANCE_FOR_ATTACK)
-        {
-            walkToBlock(target.getPosition());
-        }
-        else if (worker.getDistance(target) < MAX_DISTANCE_FOR_ATTACK)
-        {
-            return GUARD_ATTACK_RANGED;
-        }
-
-        return DECIDE;
+        return GUARD_ATTACK_RANGED;
     }
 }

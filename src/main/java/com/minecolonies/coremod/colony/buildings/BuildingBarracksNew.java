@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.BlockBarracksTowerSubstitution;
 import com.minecolonies.coremod.blocks.BlockHutBarracks;
@@ -13,7 +14,6 @@ import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Building class for the Barracks.
@@ -33,6 +34,16 @@ public class BuildingBarracksNew extends AbstractBuilding
      * Name of our building's Schematics.
      */
     private static final String SCHEMATIC_NAME = "Barracks";
+
+    /**
+     * Max hut level of the Barracks.
+     */
+    private static final int BARRACKS_HUT_MAX_LEVEL = 5;
+
+    /**
+     * Tower position offset.
+     */
+    private static final int TOWER_OFFSET = 8;
 
     /**
      * Constructor for a AbstractBuilding.
@@ -80,7 +91,26 @@ public class BuildingBarracksNew extends AbstractBuilding
 
         if (world != null)
         {
-            for (final Tuple<BlockPos, EnumFacing> tower : getBarracksTowers())
+
+            for (int i = 1; i <= newLevel && i < BARRACKS_HUT_MAX_LEVEL; i++)
+            {
+                final Tuple<BlockPos, EnumFacing> tuple = getPositionAndFacingForLevel(i);
+
+                if (!(world.getBlockState(tuple.getFirst()).getBlock() instanceof BlockHutBarracksTower))
+                {
+                    world.setBlockState(tuple.getFirst(), ModBlocks.blockHutBarracksTower.getDefaultState().withProperty(BlockHutBarracksTower.FACING, tuple.getSecond()));
+                    getColony().getBuildingManager().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(tuple.getFirst()), world);
+                }
+                final AbstractBuilding building = getColony().getBuildingManager().getBuilding(tuple.getFirst());
+                if (building instanceof BuildingBarracksTowerNew)
+                {
+                    building.setStyle(this.getStyle());
+                    ((BuildingBarracksTowerNew) building).addBarracks(getLocation());
+                }
+            }
+
+            //TODO: Implement the following properly. Once we've got textures and etc for a Substitution block.
+            /*for (final Tuple<BlockPos, EnumFacing> tower : getBarracksTowers())
             {
 
                 if (world.getBlockState(tower.getFirst()).getBlock() instanceof BlockBarracksTowerSubstitution)
@@ -101,9 +131,74 @@ public class BuildingBarracksNew extends AbstractBuilding
                     building.setStyle(this.getStyle());
                     ((BuildingBarracksTowerNew) building).addBarracks(getLocation());
                 }
-            }
+            }*/
         }
         super.onUpgradeComplete(newLevel);
+    }
+
+    /**
+     * Calculate position and facing of the tower to add.
+     *
+     * @param level the level of the barracks.
+     * @return a tuple with position and facing.
+     */
+    private final Tuple<BlockPos, EnumFacing> getPositionAndFacingForLevel(final int level)
+    {
+
+        BlockPos position = getLocation();
+        int tempLevel = level;
+
+        if (isMirrored())
+        {
+            tempLevel += Constants.ROTATE_ONCE;
+        }
+
+        switch (getRotation())
+        {
+            case Constants.ROTATE_ONCE:
+                tempLevel += Constants.ROTATE_THREE_TIMES;
+                break;
+            case Constants.ROTATE_TWICE:
+                tempLevel += Constants.ROTATE_ONCE;
+                break;
+            case Constants.ROTATE_THREE_TIMES:
+                tempLevel += Constants.ROTATE_TWICE;
+                break;
+            default:
+                //do nothing
+        }
+
+        if (tempLevel > Constants.MAX_ROTATIONS)
+        {
+            tempLevel -= Constants.MAX_ROTATIONS;
+        }
+
+        EnumFacing facing = EnumFacing.NORTH;
+
+        final int offset = getStyle().toLowerCase(Locale.ENGLISH).contains("birch") ? (TOWER_OFFSET + 1) : TOWER_OFFSET;
+
+        switch (tempLevel)
+        {
+            case Constants.ROTATE_ONCE:
+                position = position.offset(EnumFacing.SOUTH, offset).offset(EnumFacing.WEST, offset);
+                break;
+            case Constants.ROTATE_TWICE:
+                position = position.offset(EnumFacing.NORTH, offset).offset(EnumFacing.EAST, offset);
+                facing = EnumFacing.SOUTH;
+                break;
+            case Constants.ROTATE_THREE_TIMES:
+                position = position.offset(EnumFacing.SOUTH, offset).offset(EnumFacing.EAST, offset);
+                facing = EnumFacing.WEST;
+                break;
+            case Constants.MAX_ROTATIONS:
+                position = position.offset(EnumFacing.NORTH, offset).offset(EnumFacing.WEST, offset);
+                facing = EnumFacing.EAST;
+                break;
+            default:
+                //do nothing
+        }
+
+        return new Tuple<>(position, facing);
     }
 
     /**
