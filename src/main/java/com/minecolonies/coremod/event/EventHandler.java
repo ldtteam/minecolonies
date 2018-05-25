@@ -234,12 +234,9 @@ public class EventHandler
             final NBTTagCompound compound = itemstack.getTagCompound();
 
             BlockPosUtil.writeToNBT(compound, FIRST_POS_STRING, event.getPos());
-            if (event.getPlayer().world.isRemote)
-            {
-                LanguageHandler.sendPlayerMessage(event.getPlayer(), "item.scepterSteel.point", event.getPos().getX(), event.getPos().getY(), event.getPos().getZ());
-            }
-
+            LanguageHandler.sendPlayerMessage(event.getPlayer(), "item.scepterSteel.point", event.getPos().getX(), event.getPos().getY(), event.getPos().getZ());
             itemstack.setTagCompound(compound);
+
             event.setCanceled(true);
         }
     }
