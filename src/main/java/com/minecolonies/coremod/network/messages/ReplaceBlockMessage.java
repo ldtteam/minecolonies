@@ -6,7 +6,6 @@ import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -95,7 +94,7 @@ public class ReplaceBlockMessage extends AbstractMessage<ReplaceBlockMessage, IM
     @Override
     public void messageOnServerThread(final ReplaceBlockMessage message, final EntityPlayerMP player)
     {
-        if (!Minecraft.getMinecraft().player.capabilities.isCreativeMode)
+        if (!player.capabilities.isCreativeMode)
         {
             return;
         }
