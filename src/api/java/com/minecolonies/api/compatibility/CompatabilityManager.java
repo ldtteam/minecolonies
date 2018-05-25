@@ -137,8 +137,15 @@ public class CompatabilityManager implements ICompatabilityManager
                 saplings.stream().map(sap ->  sap.getItemStack().writeToNBT(new NBTTagCompound())).collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_SAPLINGS, saplingTagList);
 
-        @NotNull final NBTTagList oresTagList = ores.stream().map(ore -> NBTUtil.writeBlockState(new NBTTagCompound(), ore.getDefaultState())).collect(NBTUtils.toNBTTagList());
-        compound.setTag(TAG_ORES, oresTagList);
+        try
+        {
+            @NotNull final NBTTagList oresTagList = ores.stream().map(ore -> NBTUtil.writeBlockState(new NBTTagCompound(), ore.getDefaultState())).collect(NBTUtils.toNBTTagList());
+            compound.setTag(TAG_ORES, oresTagList);
+        }
+        catch (final Exception e)
+        {
+            Log.getLogger().error("Error caught during ore serialization!", e);
+        }
     }
 
     @Override
