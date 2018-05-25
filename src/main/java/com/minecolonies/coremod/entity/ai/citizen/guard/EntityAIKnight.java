@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.colony.jobs.JobKnight;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -11,13 +11,19 @@ import java.util.List;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
-public class EntityAIKnight extends AbstractEntityAIGuardNew
+@SuppressWarnings("squid:MaximumInheritanceDepth")
+public class EntityAIKnight extends AbstractEntityAIGuardNew<JobKnight>
 {
 
     /**
      * This guard's minimum distance for attack.
      */
-    private static final double MAX_DISTANCE_FOR_ATTACK = 5;
+    private static final double MAX_DISTANCE_FOR_ATTACK = 3;
+
+    /**
+     * Basic delay for the next shot.
+     */
+    private static final int BASE_RELOAD_TIME = 30;
 
     /**
      * Creates the abstract part of the AI.
@@ -25,10 +31,26 @@ public class EntityAIKnight extends AbstractEntityAIGuardNew
      *
      * @param job the job to fulfill
      */
-    public EntityAIKnight(@NotNull final AbstractJobGuard job)
+    public EntityAIKnight(@NotNull final JobKnight job)
     {
         super(job);
         toolsNeeded.add(ToolType.SWORD);
+    }
+
+    @Override
+    int getAttackRange()
+    {
+        return (int) MAX_DISTANCE_FOR_ATTACK;
+    }
+
+    @Override
+    protected int getAttackDelay()
+    {
+        if (worker.getCitizenData() != null)
+        {
+            return BASE_RELOAD_TIME / (worker.getCitizenData().getLevel() + 1);
+        }
+        return BASE_RELOAD_TIME;
     }
 
     @NotNull
@@ -45,36 +67,19 @@ public class EntityAIKnight extends AbstractEntityAIGuardNew
     {
         final AIState superState = super.decide();
 
-        System.out.println("Decide6");
         if (superState != DECIDE || target == null)
         {
-            System.out.println("Decide return super");
             return superState;
         }
 
-        System.out.println("Decide7");
         if (worker.getDistance(target) > MAX_DISTANCE_FOR_ATTACK)
         {
-            System.out.println("Decide walking");
             walkToBlock(target.getPosition());
         }
         else if (worker.getDistance(target) < MAX_DISTANCE_FOR_ATTACK)
         {
-            if (currentAttackDelay == 0)
-            {
-                System.out.println("Decide attack");
-                currentAttackDelay = PHYSICAL_ATTACK_DELAY;
                 return GUARD_ATTACK_PHYSICAL;
-            }
-            else
-            {
-                System.out.println("Decide protect");
-                currentAttackDelay--;
-                return GUARD_ATTACK_PROTECT;
-            }
         }
-
-        System.out.println("Decide end");
 
         return DECIDE;
     }

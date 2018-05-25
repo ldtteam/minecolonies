@@ -6,6 +6,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew;
 import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
@@ -13,15 +14,18 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.MoverType;
+import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -31,17 +35,19 @@ import java.util.List;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
+@SuppressWarnings("squid:MaximumInheritanceDepth")
 public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> extends AbstractEntityAIInteract<J>
 {
-    /**
-     * The priority we are currently at for getting a target.
-     */
-    private int currentPriority = -1;
 
     /**
      * The pitch will be divided by this to calculate it for the arrow sound.
      */
     private static final double PITCH_DIVIDER = 1.0D;
+
+    /**
+     * Range a guard should be within of GuardPos.
+     */
+    private static final int GUARD_POS_RANGE = 0;
 
     /**
      * The base pitch, add more to this to change the sound.
@@ -64,6 +70,11 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
     private static final double BASIC_VOLUME = 1.0D;
 
     /**
+     * Experience to add when a mob is killed
+     */
+    private static final int EXP_PER_MOD_DEATH = 5;
+
+    /**
      * Tools and Items needed by the worker.
      */
     public final List<ToolType>  toolsNeeded = new ArrayList<>();
@@ -77,12 +88,27 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
     /**
      * Physical Attack delay in ticks.
      */
-    protected static final int PHYSICAL_ATTACK_DELAY = 40;
+    protected static final int RANGED_ATTACK_DELAY_BASE = 20;
+
+    /**
+     * Ranged hit chance devider.
+     */
+    private static final double HIT_CHANCE_DIVIDER = 15.0D;
+
+    /**
+     * Have to aim that bit higher to hit the target.
+     */
+    private static final double RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER = 0.20000000298023224D;
+
+    /**
+     * Quantity to be moved to rotate the entity without actually moving.
+     */
+    private static final double MOVE_MINIMAL = 0.01D;
 
     /**
      * The current target for our guard.
      */
-    protected EntityLiving target = null;
+    protected EntityLivingBase target = null;
 
     /**
      * Default vision range.
@@ -93,6 +119,11 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
      * Y search range.
      */
     private static final int Y_VISION = 15;
+
+    /**
+     * The current blockPos we're patrolling at.
+     */
+    private BlockPos currentPatrolPoint = null;
 
     /**
      * Creates the abstract part of the AI.
@@ -108,12 +139,14 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
           new AITarget(PREPARING, this::prepare),
           new AITarget(DECIDE, this::decide),
-          new AITarget(GUARD_SEARCH_TARGET, this::getTarget),
           new AITarget(GUARD_ATTACK_PROTECT, this::attackProtect),
-          new AITarget(GUARD_ATTACK_PHYSICAL, this::attackPhyisical)
+          new AITarget(GUARD_ATTACK_PHYSICAL, this::attackPhyisical),
+          new AITarget(GUARD_ATTACK_RANGED, this::attackRanged)
         );
         worker.setCanPickUpLoot(true);
     }
+
+    abstract int getAttackRange();
 
     /**
      * Redirects the herder to their building.
@@ -171,7 +204,6 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
     protected AIState decide()
     {
         setDelay(20);
-        System.out.println("Decide1");
         for (final ToolType toolType : toolsNeeded)
         {
             if (getOwnBuilding() != null && !InventoryUtils.hasItemHandlerToolWithLevel(new InvWrapper(getInventory()),
@@ -183,7 +215,6 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
             }
         }
 
-        System.out.println("Decide2");
         for (final ItemStack item : itemsNeeded)
         {
             if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventory()),
@@ -194,21 +225,48 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
             }
         }
 
-        System.out.println("Decide3");
+        if (worker.getWorkBuilding() != null
+              && !(worker.getLastAttackedEntity() != null
+              && !worker.getLastAttackedEntity().isDead)
+              && getOwnBuilding() instanceof AbstractBuildingGuardsNew
+              && target == null)
+        {
+            final AbstractBuildingGuardsNew guardBuilding = (AbstractBuildingGuardsNew) getOwnBuilding();
+
+            switch (guardBuilding.getTask())
+            {
+                case PATROL:
+                    System.out.println("Patrol");
+                    currentPatrolPoint = guardBuilding.getNextPatrolTarget(currentPatrolPoint);
+                    if (currentPatrolPoint != null)
+                    {
+                        worker.isWorkerAtSiteWithMove(currentPatrolPoint, 0);
+                    }
+                    break;
+                case GUARD:
+                    System.out.println("Guard");
+                    worker.isWorkerAtSiteWithMove(guardBuilding.getGuardPos(), GUARD_POS_RANGE);
+                    break;
+                case FOLLOW:
+                    System.out.println("Follow");
+                    worker.isWorkerAtSiteWithMove(guardBuilding.getPlayerToFollow(), GUARD_POS_RANGE);
+                    break;
+                default:
+                    System.out.println("Default");
+                    worker.isWorkerAtSiteWithMove(worker.getWorkBuilding().getLocation(), 10);
+            }
+        }
+
         if (target == null)
         {
-            System.out.println("Decide null");
-            return GUARD_SEARCH_TARGET;
+            target = getTarget();
         }
 
-        System.out.println("Decide4");
-        if (target.isDead)
+        if (target != null && target.isDead)
         {
-            System.out.println("Decide dead");
+            worker.addExperience(EXP_PER_MOD_DEATH);
             target = null;
         }
-
-        System.out.println("Decide5");
 
         return DECIDE;
     }
@@ -218,46 +276,47 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
      *
      * @return The next AIState to go to.
      */
-    protected AIState getTarget()
+    protected EntityLivingBase getTarget()
     {
-        setDelay(20);
-
         final AbstractBuildingGuardsNew building = (AbstractBuildingGuardsNew) getOwnBuilding();
 
         if (building != null && target == null)
         {
-            final MobEntryView mobEntry = building.getMobsToAttack()
-                                         .stream()
-                                         .filter(view -> view.getPriority() == currentPriority)
-                                         .findFirst()
-                                         .orElse(null);
+            final List<EntityLivingBase> targets = world.getEntitiesWithinAABB(EntityLivingBase.class, getSearchArea());
 
-            if (mobEntry != null && mobEntry.getAttack())
+            float closest = -1;
+            EntityLivingBase targetEntity = null;
+
+            for (final MobEntryView mobEntry : building.getMobsToAttack())
             {
-                if (mobEntry.getEntityEntry().newInstance(world) instanceof EntityLiving)
+
+                if (mobEntry.getAttack())
                 {
-                    target = (EntityLiving) world.findNearestEntityWithinAABB(mobEntry.getEntityEntry().getEntityClass(),
-                      getSearchArea(),
-                      worker);
-                }
+                    for (final EntityLivingBase entity : targets)
+                    {
+                        if (mobEntry.getEntityEntry().getEntityClass().isInstance(entity)
+                              && ( worker.getDistance(entity) < closest
+                              || closest == -1))
+                        {
+                            closest = worker.getDistance(entity);
+                            targetEntity = entity;
+                        }
+                    }
 
-                if (target != null)
-                {
-                    currentPriority = 0;
-                    return DECIDE;
-                }
-            }
+                    if (targetEntity != null)
+                    {
+                        return targetEntity;
+                    }
 
-            if (currentPriority > 1)
-            {
-                currentPriority -= 1;
-            }
-            else
-            {
-                currentPriority = building.getMobsToAttack().size();
+                }
             }
         }
-        return DECIDE;
+        else if (target != null)
+        {
+            return target;
+        }
+
+        return null;
     }
 
     /**
@@ -272,10 +331,21 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
           Items.SHIELD,
           -1);
 
-        if (shieldSlot != -1)
+        if (shieldSlot != -1
+              && target != null
+              && !target.isDead)
         {
             worker.setHeldItem(EnumHand.OFF_HAND, shieldSlot);
             worker.setActiveHand(EnumHand.OFF_HAND);
+
+            worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+            worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+
+            if (worker.getDistance(target) > getAttackRange())
+            {
+                worker.isWorkerAtSiteWithMove(target.getPosition(), getAttackRange());
+            }
+
         }
 
         return GUARD_ATTACK_PHYSICAL;
@@ -284,8 +354,16 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
     protected AIState attackPhyisical()
     {
 
+        if (worker.getLastAttackedEntity() != null
+              && !worker.getLastAttackedEntity().isDead
+              && worker.getDistance(worker.getLastAttackedEntity()) < getAttackRange())
+        {
+            target = worker.getLastAttackedEntity();
+        }
+
         if (target == null || target.isDead)
         {
+            worker.addExperience(EXP_PER_MOD_DEATH);
             return DECIDE;
         }
 
@@ -296,11 +374,17 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
         }
         else
         {
-            currentAttackDelay = PHYSICAL_ATTACK_DELAY;
+            currentAttackDelay = getAttackDelay();
         }
 
         if (getOwnBuilding() != null)
         {
+
+            if (worker.getDistance(target) > getAttackRange())
+            {
+                worker.isWorkerAtSiteWithMove(target.getPosition(), getAttackRange());
+            }
+
             final int swordSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()),
               ToolType.SWORD,
               0,
@@ -309,7 +393,6 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
             if (swordSlot != -1)
             {
                 worker.setHeldItem(EnumHand.MAIN_HAND, swordSlot);
-                //worker.setActiveHand(EnumHand.MAIN_HAND);
 
                 worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
                 worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
@@ -346,6 +429,121 @@ public abstract class AbstractEntityAIGuardNew<J extends AbstractJobGuard> exten
             }
         }
         return GUARD_ATTACK_PHYSICAL;
+    }
+
+    protected AIState attackRanged()
+    {
+        if (worker.getLastAttackedEntity() != null
+              && !worker.getLastAttackedEntity().isDead
+              && worker.getDistance(worker.getLastAttackedEntity()) < getAttackRange())
+        {
+            target = worker.getLastAttackedEntity();
+        }
+
+        if (target == null || target.isDead)
+        {
+            worker.addExperience(EXP_PER_MOD_DEATH);
+            return DECIDE;
+        }
+
+        if (currentAttackDelay != 0)
+        {
+            currentAttackDelay--;
+            return GUARD_ATTACK_RANGED;
+        }
+        else
+        {
+            currentAttackDelay = getAttackDelay();
+        }
+
+        if (getOwnBuilding() != null && worker.getCitizenData() != null)
+        {
+
+            if (worker.getDistance(target) > getAttackRange())
+            {
+                worker.isWorkerAtSiteWithMove(target.getPosition(), getAttackRange());
+            }
+
+            final int bowslot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()),
+              ToolType.BOW,
+              0,
+              getOwnBuilding().getMaxToolLevel());
+
+            if (bowslot != -1)
+            {
+                worker.setHeldItem(EnumHand.MAIN_HAND, bowslot);
+
+                worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+                worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+
+                worker.swingArm(EnumHand.MAIN_HAND);
+
+                final EntityTippedArrow arrow = new GuardArrow(world, worker);
+                final double xVector = target.posX - worker.posX;
+                final double yVector = target.getEntityBoundingBox().minY + target.height / getAimHeight() - arrow.posY;
+                final double zVector = target.posZ - worker.posZ;
+                final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
+                double damage = getRangedAttackDamage();
+                final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getLevel() + 1);
+
+                arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) 1.6D, (float) chance);
+
+                if (worker.getHealth() <= 2)
+                {
+                    damage *= 2;
+                }
+
+                arrow.setDamage(damage);
+                final double xDiff = target.posX - worker.posX;
+                final double zDiff = target.posZ - worker.posZ;
+                final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
+                final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
+
+                worker.move(MoverType.SELF, goToX, 0, goToZ);
+                worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) getRandomPitch());
+                worker.world.spawnEntity(arrow);
+
+                target.setRevengeTarget(worker);
+
+                worker.damageItemInHand(EnumHand.MAIN_HAND, 1);
+            }
+        }
+        return GUARD_ATTACK_RANGED;
+    }
+
+    /**
+     * Gets the reload time for a Range guard attack.
+     * @return the reload time
+     */
+    protected int getAttackDelay()
+    {
+        if (worker.getCitizenData() != null)
+        {
+            return RANGED_ATTACK_DELAY_BASE / (worker.getCitizenData().getLevel() + 1);
+        }
+        return RANGED_ATTACK_DELAY_BASE;
+    }
+
+    /**
+     * Gets the aim height for ranged guards.
+     * @return the aim height.
+     * Suppression because the method already explains the value.
+     */
+    @SuppressWarnings("squid:S3400")
+    protected double getAimHeight()
+    {
+        return 3.0D;
+    }
+
+    /**
+     * Damage per ranged attack.
+     * @return the attack damage
+     * Suppression because the method already explains the value.
+     */
+    @SuppressWarnings("squid:S3400")
+    protected float getRangedAttackDamage()
+    {
+        return 2;
     }
 
     /**

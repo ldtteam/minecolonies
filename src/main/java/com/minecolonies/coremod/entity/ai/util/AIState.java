@@ -227,6 +227,11 @@ public enum AIState
     GUARD_ATTACK_PHYSICAL,
 
     /**
+     * Use a ranged attack against the target.
+     */
+    GUARD_ATTACK_RANGED,
+
+    /**
      * Allow the guard to protect himself.
      */
     GUARD_ATTACK_PROTECT,

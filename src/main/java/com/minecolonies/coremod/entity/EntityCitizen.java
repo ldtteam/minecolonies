@@ -18,6 +18,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
@@ -1289,7 +1290,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 return;
             }
 
-            double localXp = xp * skillModifier / EXP_DIVIDER;
+            double currenSkillModifier = skillModifier;
+            if (currenSkillModifier == 0)
+            {
+                currenSkillModifier = (double) 1;
+            }
+            double localXp = xp * currenSkillModifier / EXP_DIVIDER;
             final double workBuildingLevel = getWorkBuilding() == null ? 0 : getWorkBuilding().getBuildingLevel();
             final double bonusXp = (workBuildingLevel * (1 + citizenHutLevel) / Math.log(this.citizenData.getLevel() + 2.0D)) / 2;
             localXp = localXp * bonusXp;
@@ -1816,7 +1822,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private boolean shouldWorkWhileRaining()
     {
-        return (this.getWorkBuilding() != null && (this.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL)) || Configurations.gameplay.workersAlwaysWorkInRain;
+        return (this.getWorkBuilding() != null && (this.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL))
+                 || Configurations.gameplay.workersAlwaysWorkInRain
+                 || (getColonyJob() instanceof AbstractJobGuard);
     }
 
     /**

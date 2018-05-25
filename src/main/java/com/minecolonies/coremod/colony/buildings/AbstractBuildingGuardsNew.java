@@ -30,8 +30,10 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -299,6 +301,39 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
     }
 
     /**
+     * Returns a patrolTarget to patrol to.
+     *
+     * @param currentPatrolTarget previous target.
+     * @return the position of the next target.
+     */
+    @Nullable
+    public BlockPos getNextPatrolTarget(final BlockPos currentPatrolTarget)
+    {
+        if (patrolTargets == null || patrolTargets.isEmpty())
+        {
+            return null;
+        }
+
+        if (currentPatrolTarget == null)
+        {
+            return patrolTargets.get(0);
+        }
+
+        if (patrolTargets.contains(currentPatrolTarget))
+        {
+            int index = patrolTargets.indexOf(currentPatrolTarget) + 1;
+
+            if (index >= patrolTargets.size())
+            {
+                index = 0;
+            }
+
+            return patrolTargets.get(index);
+        }
+        return patrolTargets.get(0);
+    }
+
+    /**
      * We use this to set possible health multipliers and give achievements.
      *
      * @param newLevel The new level.
@@ -528,6 +563,7 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
      */
     public List<MobEntryView> getMobsToAttack()
     {
+        mobsToAttack.sort(Comparator.comparing(MobEntryView::getPriority, Comparator.reverseOrder()));
         return mobsToAttack;
     }
 
@@ -627,7 +663,7 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
         int i = 0;
         for (final EntityEntry entry : ForgeRegistries.ENTITIES.getValuesCollection())
         {
-            if (entry.newInstance(getColony().getWorld()) instanceof EntityMob)
+            if (EntityMob.class.isAssignableFrom(entry.getEntityClass()))
             {
                 i++;
                 mobs.add(new MobEntryView(entry.getRegistryName(), true, i));

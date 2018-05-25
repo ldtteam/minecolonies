@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.colony.jobs.JobRanger;
 import com.minecolonies.coremod.entity.ai.util.AIState;
-import net.minecraft.util.DamageSource;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
-public class EntityAIRanger extends AbstractEntityAIGuardNew
+@SuppressWarnings("squid:MaximumInheritanceDepth")
+public class EntityAIRanger extends AbstractEntityAIGuardNew<JobRanger>
 {
     /**
      * This guard's minimum distance for attack.
@@ -16,15 +16,21 @@ public class EntityAIRanger extends AbstractEntityAIGuardNew
     private static final double MAX_DISTANCE_FOR_ATTACK = 5;
 
     /**
-     * Creates the abstract part of the AI.
+     * Creates the abstract part of the AI.inte
      * Always use this constructor!
      *
      * @param job the job to fulfill
      */
-    public EntityAIRanger(@NotNull final AbstractJobGuard job)
+    public EntityAIRanger(@NotNull final JobRanger job)
     {
         super(job);
         toolsNeeded.add(ToolType.BOW);
+    }
+
+    @Override
+    int getAttackRange()
+    {
+        return (int) MAX_DISTANCE_FOR_ATTACK;
     }
 
     @Override
@@ -32,13 +38,19 @@ public class EntityAIRanger extends AbstractEntityAIGuardNew
     {
         final AIState superState = super.decide();
 
-        if (superState != DECIDE)
+        if (superState != DECIDE || target == null)
         {
             return superState;
         }
 
-        System.out.println("RANGER ATTACK: " + target);
-        target.attackEntityFrom(new DamageSource(worker.getName()), 10);
+        if (worker.getDistance(target) > MAX_DISTANCE_FOR_ATTACK)
+        {
+            walkToBlock(target.getPosition());
+        }
+        else if (worker.getDistance(target) < MAX_DISTANCE_FOR_ATTACK)
+        {
+            return GUARD_ATTACK_RANGED;
+        }
 
         return DECIDE;
     }

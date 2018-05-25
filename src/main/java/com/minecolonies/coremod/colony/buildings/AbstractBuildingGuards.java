@@ -523,7 +523,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     /**
-     * Getter of the position the gurd should guard.
+     * Getter of the position the guard should guard.
      *
      * @return the blockPos position.
      */
