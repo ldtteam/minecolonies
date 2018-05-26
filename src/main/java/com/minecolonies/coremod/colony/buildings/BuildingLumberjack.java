@@ -46,6 +46,15 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     private static final String TAG_CUT = "shouldCut";
 
     /**
+     * NBT tag if the lj should replant saplings
+     */
+    private static final String TAG_REPLANT = "shouldReplant";
+
+    /**
+     * Whether or not the LJ should replant saplings
+     */
+    private boolean replant = true;
+    /**
      * A default sapling itemStack.
      */
     private static final ItemStack SAPLING_STACK = new ItemStack(Blocks.SAPLING);
@@ -212,7 +221,9 @@ public class BuildingLumberjack extends AbstractBuildingWorker
                 treesToFell.put(new ItemStorage(stack), cut);
             }
         }
+        replant = compound.getBoolean(TAG_REPLANT);
         checkTreesToFell();
+
     }
 
     @Override
@@ -228,6 +239,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             saplingTagList.appendTag(saplingCompound);
         }
         compound.setTag(TAG_SAPLINGS, saplingTagList);
+        compound.setBoolean(TAG_REPLANT, replant);
     }
 
     /**
@@ -246,12 +258,31 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
+        buf.writeBoolean(replant);
         buf.writeInt(treesToFell.size());
         for (final Map.Entry<ItemStorage, Boolean> entry : treesToFell.entrySet())
         {
             ByteBufUtils.writeItemStack(buf, entry.getKey().getItemStack());
             buf.writeBoolean(entry.getValue());
         }
+    }
+
+    /**
+     * Whether or not the LJ should replant saplings
+     */
+    public boolean shouldReplant()
+    {
+        return replant;
+    }
+
+    /**
+     * Set whether or not LJ should replant saplings
+     * @param shouldReplant
+     */
+    public void setShouldReplant(final boolean shouldReplant)
+    {
+        this.replant = shouldReplant;
+        markDirty();
     }
 
     /**
@@ -282,6 +313,11 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         public final Map<ItemStorage, Boolean> treesToFell = new LinkedHashMap<>();
 
         /**
+         * Whether or not the LJ should replant saplings
+         */
+        public boolean shouldReplant = true;
+
+        /**
          * Public constructor of the view, creates an instance of it.
          *
          * @param c the colony.
@@ -292,10 +328,14 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             super(c, l);
         }
 
+
+
+
         @Override
         public void deserialize(@NotNull final ByteBuf buf)
         {
             super.deserialize(buf);
+            shouldReplant = buf.readBoolean();
             treesToFell.clear();
             final int size = buf.readInt();
             for (int i = 0; i < size; i++)
