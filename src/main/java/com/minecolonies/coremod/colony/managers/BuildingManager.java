@@ -83,7 +83,7 @@ public class BuildingManager implements IBuildingManager
         for (int i = 0; i < buildingTagList.tagCount(); ++i)
         {
             final NBTTagCompound buildingCompound = buildingTagList.getCompoundTagAt(i);
-            @Nullable final AbstractBuilding b = AbstractBuilding.createFromNBT(colony, buildingCompound);
+            @Nullable final AbstractBuilding b = BuildingRegistry.createFromNBT(colony, buildingCompound);
             if (b != null)
             {
                 addBuilding(b);
@@ -99,7 +99,6 @@ public class BuildingManager implements IBuildingManager
                 addField(BlockPosUtil.readFromNBT(fieldTagList.getCompoundTagAt(i), TAG_POS));
             }
         }
-
     }
 
     @Override
@@ -290,7 +289,7 @@ public class BuildingManager implements IBuildingManager
         tileEntity.setColony(colony);
         if (!buildings.containsKey(tileEntity.getPosition()))
         {
-            @Nullable final AbstractBuilding building = AbstractBuilding.create(colony, tileEntity);
+            @Nullable final AbstractBuilding building = BuildingRegistry.create(colony, tileEntity);
             if (building != null)
             {
                 addBuilding(building);
