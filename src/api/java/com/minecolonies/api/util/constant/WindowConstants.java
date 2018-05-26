@@ -371,6 +371,21 @@ public final class WindowConstants
     public static final String BUTTON_REMOVE_BLOCK = "removeBlock";
 
     /**
+     * Button to remove a entity or position of the list.
+     */
+    public static final String BUTTON_REMOVE_ENTITY = "removeEntity";
+
+    /**
+     * Button to replace a block or position in th eworld..
+     */
+    public static final String BUTTON_REPLACE_BLOCK = "replaceBlock";
+
+    /**
+     * Button to select a block for a replacement.
+     */
+    public static final String BUTTON_SELECT = "select";
+
+    /**
      * This button is used to set the previous available building type.
      */
     public static final String BUTTON_PREVIOUS_TYPE_ID = "previousBuildingType";
@@ -480,6 +495,7 @@ public final class WindowConstants
      */
     public static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutbuilder.xml";
     public static final String LIST_RESOURCES              = "resources";
+    public static final String LIST_ENTITIES               = "entities";
     public static final String PAGE_RESOURCES              = "resourceActions";
     public static final String RESOURCE_NAME               = "resourceName";
     public static final String RESOURCE_AVAILABLE_NEEDED   = "resourceAvailableNeeded";
@@ -560,6 +576,11 @@ public final class WindowConstants
      * This button will remove the currently rendered structure.
      */
     public static final String POS2Z_LABEL = "pos2z";
+
+    /**
+     * The filter field of the scan tool window.
+     */
+    public static final String FILTER_NAME = "filter";
 
     /**
      * public constructor to hide implicit public one.

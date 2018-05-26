@@ -215,6 +215,42 @@ public final class NbtTagConstants
     public static final String TAG_PROGRESS = "progress";
     public static final String TAG_OUTPUT_DIRECTION = "outputDirection";
     public static final String TAG_SPEED = "speed";
+
+    /**
+     * Tag used to store the worker to nbt.
+     */
+    public static final String TAG_WORKER = "worker";
+
+    /**
+     * NBTTag to store the recipes list.
+     */
+    public static final String TAG_RECIPES = "recipes";
+
+    /**
+     * Tag to store the id to NBT.
+     */
+    public static final String TAG_WORKER_ID = "workerId";
+
+    /**
+     * The tag used to store the residents.
+     */
+    public static final String TAG_RESIDENTS = "residents";
+
+    /**
+     * List storing all beds which have been registered to the building.
+     */
+    public static final String TAG_BEDS = "beds";
+
+    /**
+     * Var for first pos string.
+     */
+    public static final String FIRST_POS_STRING = "pos1";
+
+    /**
+     * Var for second pos string.
+     */
+    public static final String SECOND_POS_STRING = "pos2";
+
     /**
      * Private constructor to hide the implicit one.
      */

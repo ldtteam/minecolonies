@@ -545,7 +545,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             @Nullable Block block = structureBlock.block;
             @Nullable IBlockState blockState = structureBlock.metadata;
             if (block == ModBlocks.blockSolidSubstitution
-                  && shallReplaceSolidSubstitutionBlock(structureBlock.worldBlock, structureBlock.worldMetadata))
+                  || shallReplaceSolidSubstitutionBlock(structureBlock.worldBlock, structureBlock.worldMetadata))
             {
                 blockState = getSolidSubstitution(structureBlock.blockPosition);
                 block = blockState.getBlock();
