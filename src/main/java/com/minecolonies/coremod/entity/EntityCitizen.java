@@ -1293,7 +1293,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             }
 
             double currenSkillModifier = skillModifier;
-            if (currenSkillModifier == 0)
+            if ((int) currenSkillModifier == 0)
             {
                 currenSkillModifier = (double) 1;
             }

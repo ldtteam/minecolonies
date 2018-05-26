@@ -69,7 +69,7 @@ public final class ModBlocks
 
     public static List<BlockTimberFrame> getTimberFrames()
     {
-        return timberFrames;
+        return new ArrayList<>(timberFrames);
     }
 
     /**

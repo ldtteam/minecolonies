@@ -64,6 +64,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     private static final double PITCH_MULTIPLIER = 0.4D;
 
     /**
+     * Ranged attack velocity
+     */
+    private static final float RANGED_VELOCITY = (float) 1.6D;
+
+    /**
      * Quantity the worker should turn around all at once.
      */
     private static final double TURN_AROUND = 180D;
@@ -77,6 +82,16 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      * Experience to add when a mob is killed
      */
     private static final int EXP_PER_MOD_DEATH = 5;
+
+    /**
+     * How many ticks are in a second
+     */
+    private static final int TICKS_PER_SECOND = 20;
+
+    /**
+     * Base physical damage.
+     */
+    private static final int BASE_PHYSICAL_DAMAGE = 3;
 
     /**
      * Tools and Items needed by the worker.
@@ -113,6 +128,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      * double damage threshold
      */
     private static final int DOUBLE_DAMAGE_THRESHOLD = 2;
+
+    /**
+     * Seconds to delay after prepare AI State.
+     */
+    private static final int PREPARE_DELAY_SECONDS = 5;
 
     /**
      * The current target for our guard.
@@ -190,7 +210,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private AIState prepare()
     {
-        setDelay(20 * 5);
+        setDelay(TICKS_PER_SECOND * PREPARE_DELAY_SECONDS);
 
         for (final ToolType tool : toolsNeeded)
         {
@@ -241,7 +261,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     protected AIState decide()
     {
-        setDelay(20);
+        setDelay(TICKS_PER_SECOND);
         for (final ToolType toolType : toolsNeeded)
         {
             if (getOwnBuilding() != null && !InventoryUtils.hasItemHandlerToolWithLevel(new InvWrapper(getInventory()),
@@ -281,7 +301,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     worker.isWorkerAtSiteWithMove(guardBuilding.getPlayerToFollow(), GUARD_POS_RANGE);
                     break;
                 default:
-                    worker.isWorkerAtSiteWithMove(worker.getWorkBuilding().getLocation(), 10);
+                    worker.isWorkerAtSiteWithMove(worker.getWorkBuilding().getLocation(), GUARD_POS_RANGE);
                     break;
             }
         }
@@ -339,7 +359,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     {
                         if (mobEntry.getEntityEntry().getEntityClass().isInstance(entity)
                               && ( worker.getDistance(entity) < closest
-                              || closest == -1))
+                              || (int) closest == -1))
                         {
                             closest = worker.getDistance(entity);
                             targetEntity = entity;
@@ -445,7 +465,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 worker.swingArm(EnumHand.MAIN_HAND);
                 worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) getRandomPitch());
 
-                double damageToBeDealt = 3;
+                double damageToBeDealt = BASE_PHYSICAL_DAMAGE;
 
                 if (worker.getHealth() <= DOUBLE_DAMAGE_THRESHOLD)
                 {
@@ -532,7 +552,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 double damage = getRangedAttackDamage();
                 final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getLevel() + 1);
 
-                arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) 1.6D, (float) chance);
+                arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
 
                 if (worker.getHealth() <= DOUBLE_DAMAGE_THRESHOLD)
                 {
@@ -575,7 +595,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      * @return the aim height.
      * Suppression because the method already explains the value.
      */
-    @SuppressWarnings("squid:S3400")
+    @SuppressWarnings({"squid:S3400", "squid:S109"})
     protected double getAimHeight()
     {
         return 3.0D;
@@ -586,7 +606,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      * @return the attack damage
      * Suppression because the method already explains the value.
      */
-    @SuppressWarnings("squid:S3400")
+    @SuppressWarnings({"squid:S3400", "squid:S109"})
     protected float getRangedAttackDamage()
     {
         return 2;
