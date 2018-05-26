@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -34,14 +34,14 @@ public class MobEntryChangeMessage extends AbstractMessage<MobEntryChangeMessage
     }
 
     public MobEntryChangeMessage(
-      @NotNull final AbstractBuildingGuardsNew.View building,
+      @NotNull final AbstractBuildingGuards.View building,
                                   final List<MobEntryView> mobsToAttack
     )
     {
         super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
-        this.mobsToAttack = mobsToAttack;
+        this.mobsToAttack = new ArrayList<>(mobsToAttack);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class MobEntryChangeMessage extends AbstractMessage<MobEntryChangeMessage
                 return;
             }
 
-            @Nullable final AbstractBuildingGuardsNew building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingGuardsNew.class);
+            @Nullable final AbstractBuildingGuards building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingGuards.class);
             if (building != null)
             {
                 building.setMobsToAttack(message.mobsToAttack);

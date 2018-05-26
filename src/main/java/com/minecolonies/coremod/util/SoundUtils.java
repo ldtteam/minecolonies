@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.util;
 
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.sounds.AbstractWorkerSounds;
 import com.minecolonies.coremod.sounds.ModSoundEvents;
@@ -78,9 +78,9 @@ public final class SoundUtils
                 prefix = citizen.getWorkBuilding().getJobName();
             }
 
-            if (GUARD_TOWER.equals(prefix) && citizen.getWorkBuilding() instanceof AbstractBuildingGuardsNew)
+            if (GUARD_TOWER.equals(prefix) && citizen.getWorkBuilding() instanceof AbstractBuildingGuards)
             {
-                if (((AbstractBuildingGuardsNew) citizen.getWorkBuilding()).getJob() == AbstractBuildingGuardsNew.GuardJob.RANGER)
+                if (((AbstractBuildingGuards) citizen.getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
                 {
                     prefix = "archer";
                 }
@@ -162,9 +162,9 @@ public final class SoundUtils
                 prefix = citizen.getWorkBuilding().getJobName();
             }
 
-            if ("GuardTower".equals(prefix) && citizen.getWorkBuilding() instanceof AbstractBuildingGuardsNew)
+            if (GUARD_TOWER.equals(prefix) && citizen.getWorkBuilding() instanceof AbstractBuildingGuards)
             {
-                if (((AbstractBuildingGuardsNew) citizen.getWorkBuilding()).getJob() == AbstractBuildingGuardsNew.GuardJob.RANGER)
+                if (((AbstractBuildingGuards) citizen.getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
                 {
                     prefix = "archer";
                 }

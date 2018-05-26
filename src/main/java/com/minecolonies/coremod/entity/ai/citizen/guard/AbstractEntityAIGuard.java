@@ -7,7 +7,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
@@ -110,6 +110,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     private static final double MOVE_MINIMAL = 0.01D;
 
     /**
+     * Ranger's double damange threshold
+     */
+    private static final int DOUBLE_DAMAGE_THRESHOLD = 2;
+
+    /**
      * The current target for our guard.
      */
     protected EntityLivingBase target = null;
@@ -161,7 +166,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         updateArmor();
     }
 
-    abstract int getAttackRange();
+    protected abstract int getAttackRange();
 
     /**
      * Redirects the herder to their building.
@@ -251,10 +256,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         if (worker.getWorkBuilding() != null
               && !(worker.getLastAttackedEntity() != null
               && !worker.getLastAttackedEntity().isDead)
-              && getOwnBuilding() instanceof AbstractBuildingGuardsNew
+              && getOwnBuilding() instanceof AbstractBuildingGuards
               && target == null)
         {
-            final AbstractBuildingGuardsNew guardBuilding = (AbstractBuildingGuardsNew) getOwnBuilding();
+            final AbstractBuildingGuards guardBuilding = (AbstractBuildingGuards) getOwnBuilding();
 
             switch (guardBuilding.getTask())
             {
@@ -270,7 +275,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     }
                     break;
                 case GUARD:
-
                     worker.isWorkerAtSiteWithMove(guardBuilding.getGuardPos(), GUARD_POS_RANGE);
                     break;
                 case FOLLOW:
@@ -278,6 +282,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     break;
                 default:
                     worker.isWorkerAtSiteWithMove(worker.getWorkBuilding().getLocation(), 10);
+                    break;
             }
         }
 
@@ -302,7 +307,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     protected EntityLivingBase getTarget()
     {
-        final AbstractBuildingGuardsNew building = (AbstractBuildingGuardsNew) getOwnBuilding();
+        final AbstractBuildingGuards building = (AbstractBuildingGuards) getOwnBuilding();
 
         if (building != null && target == null)
         {
@@ -328,7 +333,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             for (final MobEntryView mobEntry : building.getMobsToAttack())
             {
 
-                if (mobEntry.getAttack())
+                if (mobEntry.hasAttack())
                 {
                     for (final EntityLivingBase entity : targets)
                     {
@@ -442,7 +447,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
                 double damageToBeDealt = 3;
 
-                if (worker.getHealth() <= 2)
+                if (worker.getHealth() <= DOUBLE_DAMAGE_THRESHOLD)
                 {
                     damageToBeDealt *= 2;
                 }
@@ -594,7 +599,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     protected AxisAlignedBB getSearchArea()
     {
-        final AbstractBuildingGuardsNew building = (AbstractBuildingGuardsNew) getOwnBuilding();
+        final AbstractBuildingGuards building = (AbstractBuildingGuards) getOwnBuilding();
 
         if (building != null)
         {

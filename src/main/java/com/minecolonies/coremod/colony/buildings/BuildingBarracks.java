@@ -103,10 +103,10 @@ public class BuildingBarracks extends AbstractBuilding
                     getColony().getBuildingManager().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(tuple.getFirst()), world);
                 }
                 final AbstractBuilding building = getColony().getBuildingManager().getBuilding(tuple.getFirst());
-                if (building instanceof BuildingBarracksTowerNew)
+                if (building instanceof BuildingBarracksTower)
                 {
                     building.setStyle(this.getStyle());
-                    ((BuildingBarracksTowerNew) building).addBarracks(getLocation());
+                    ((BuildingBarracksTower) building).addBarracks(getLocation());
                 }
             }
 
@@ -221,7 +221,7 @@ public class BuildingBarracks extends AbstractBuilding
         BlockPos barracksPos = null;
         final List<Template.BlockInfo> barracksTowers = new ArrayList<>();
 
-        for (Template.BlockInfo block : wrapper.getStructure().getStructure().getTemplate().blocks)
+        for (final Template.BlockInfo block : wrapper.getStructure().getStructure().getTemplate().blocks)
         {
             if (block.blockState.getBlock() instanceof BlockHutBarracks)
             {

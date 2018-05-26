@@ -277,7 +277,7 @@ public class CitizenManager implements ICitizenManager
                 {
                     newMaxCitizens += ((BuildingHome) b).getMaxInhabitants();
                 }
-                else if (b instanceof BuildingBarracksTowerNew)
+                else if (b instanceof BuildingBarracksTower)
                 {
                     newMaxCitizens += b.getBuildingLevel();
                 }
@@ -356,7 +356,7 @@ public class CitizenManager implements ICitizenManager
             final AbstractBuildingWorker buildingWorker = citizen.getWorkBuilding();
             if (buildingWorker != null)
             {
-                if (buildingWorker instanceof AbstractBuildingGuardsNew)
+                if (buildingWorker instanceof AbstractBuildingGuards)
                 {
                     guards += buildingWorker.getBuildingLevel();
                 }

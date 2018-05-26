@@ -28,7 +28,7 @@ public class JobKnight extends AbstractJobGuard
      * @return The AI.
      */
     @Override
-    AbstractEntityAIGuard generateGuardAI()
+    public AbstractEntityAIGuard generateGuardAI()
     {
         return new EntityAIKnight(this);
     }

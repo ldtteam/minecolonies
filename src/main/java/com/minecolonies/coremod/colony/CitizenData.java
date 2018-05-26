@@ -9,7 +9,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.BuildingBarracksTowerNew;
+import com.minecolonies.coremod.colony.buildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.managers.ICitizenManager;
@@ -619,7 +619,7 @@ public class CitizenData
             markDirty();
         }
 
-        if (building == null || building instanceof BuildingHome || building instanceof BuildingBarracksTowerNew)
+        if (building == null || building instanceof BuildingHome || building instanceof BuildingBarracksTower)
         {
             homeBuilding = building;
             markDirty();

@@ -13,7 +13,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Building class for the Barracks Tower.
  */
-public class BuildingBarracksTowerNew extends AbstractBuildingGuardsNew
+@SuppressWarnings("squid:MaximumInheritanceDepth")
+public class BuildingBarracksTower extends AbstractBuildingGuards
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String TAG_POS = "pos";
@@ -37,7 +38,7 @@ public class BuildingBarracksTowerNew extends AbstractBuildingGuardsNew
      * @param c the colony
      * @param l the position
      */
-    public BuildingBarracksTowerNew(@NotNull final Colony c, final BlockPos l)
+    public BuildingBarracksTower(@NotNull final Colony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -141,7 +142,7 @@ public class BuildingBarracksTowerNew extends AbstractBuildingGuardsNew
     /**
      * The client view for the baker building.
      */
-    public static class View extends AbstractBuildingGuardsNew.View
+    public static class View extends AbstractBuildingGuards.View
     {
         /**
          * The client view constructor for the AbstractGuardBuilding.

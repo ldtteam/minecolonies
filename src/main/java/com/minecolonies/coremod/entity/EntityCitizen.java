@@ -18,7 +18,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
@@ -42,7 +41,6 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
-import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.*;
@@ -1003,10 +1001,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
             final NBTTagList nbttaglist = dataBackup.getTagList("Inventory", 10);
             this.getCitizenData().getInventory().readFromNBT(nbttaglist);
             if (dataBackup.hasKey(TAG_HELD_ITEM_SLOT))
+            {
                 this.getCitizenData().getInventory().setHeldItem(EnumHand.MAIN_HAND, dataBackup.getInteger(TAG_HELD_ITEM_SLOT));
+            }
 
             if (dataBackup.hasKey(TAG_OFFHAND_HELD_ITEM_SLOT))
+            {
                 this.getCitizenData().getInventory().setHeldItem(EnumHand.OFF_HAND, dataBackup.getInteger(TAG_OFFHAND_HELD_ITEM_SLOT));
+            }
 
             dataBackup = null;
         }
@@ -1990,9 +1992,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         getCitizenData().getInventory().setHeldItem(hand, slot);
         if (hand.equals(EnumHand.MAIN_HAND))
-        setItemStackToSlot(EntityEquipmentSlot.MAINHAND, getCitizenData().getInventory().getStackInSlot(slot));
+        {
+            setItemStackToSlot(EntityEquipmentSlot.MAINHAND, getCitizenData().getInventory().getStackInSlot(slot));
+        }
         else if (hand.equals(EnumHand.OFF_HAND))
+        {
             setItemStackToSlot(EntityEquipmentSlot.OFFHAND, getCitizenData().getInventory().getStackInSlot(slot));
+        }
     }
 
     /**

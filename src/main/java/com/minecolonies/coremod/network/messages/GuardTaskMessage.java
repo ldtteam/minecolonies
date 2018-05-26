@@ -4,8 +4,8 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew.GuardTask;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.GuardTask;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -45,7 +45,7 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
      * @param task           the new task.
      */
     public GuardTaskMessage(
-                             @NotNull final AbstractBuildingGuardsNew.View building,
+                             @NotNull final AbstractBuildingGuards.View building,
                              final int job,
                              final boolean assignmentMode,
                              final boolean patrollingMode,
@@ -99,12 +99,12 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
                 return;
             }
 
-            @Nullable final AbstractBuildingGuardsNew building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingGuardsNew.class);
+            @Nullable final AbstractBuildingGuards building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingGuards.class);
             if (building != null)
             {
                 if (message.job != -1)
                 {
-                    building.setJob(AbstractBuildingGuardsNew.GuardJob.values()[message.job]);
+                    building.setJob(AbstractBuildingGuards.GuardJob.values()[message.job]);
                 }
                 building.setAssignManually(message.assignmentMode);
                 building.setPatrolManually(message.patrollingMode);

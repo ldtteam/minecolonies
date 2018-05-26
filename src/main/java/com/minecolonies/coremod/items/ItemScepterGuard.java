@@ -6,8 +6,8 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew.GuardTask;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.GuardTask;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -51,13 +51,13 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
       final float hitY,
       final float hitZ)
     {
-        final ItemStack scepter = playerIn.getHeldItem(hand);
         // if server world, do nothing
         if (worldIn.isRemote)
         {
             return EnumActionResult.FAIL;
         }
 
+        final ItemStack scepter = playerIn.getHeldItem(hand);
         if (!scepter.hasTagCompound())
         {
             scepter.setTagCompound(new NBTTagCompound());
@@ -97,11 +97,11 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
 
         final BlockPos guardTower = BlockPosUtil.readFromNBT(compound, "pos");
         final AbstractBuilding hut = colony.getBuildingManager().getBuilding(guardTower);
-        if (!(hut instanceof AbstractBuildingGuardsNew))
+        if (!(hut instanceof AbstractBuildingGuards))
         {
             return EnumActionResult.FAIL;
         }
-        final AbstractBuildingGuardsNew tower = (AbstractBuildingGuardsNew) hut;
+        final AbstractBuildingGuards tower = (AbstractBuildingGuards) hut;
 
         if(BlockPosUtil.getDistance2D(pos, guardTower) > tower.getPatrolDistance())
         {

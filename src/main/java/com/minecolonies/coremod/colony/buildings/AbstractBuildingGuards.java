@@ -41,7 +41,8 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * Abstract class for Guard huts.
  */
-public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
+@SuppressWarnings({"squid:MaximumInheritanceDepth", "squid:S1448"})
+public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_TASK           = "TASK";
@@ -141,6 +142,11 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
     private static final int MAX_TRIES = 20;
 
     /**
+     * The level for getting our achievement
+     */
+    private static final int ACHIEVEMENT_LEVEL = 1;
+
+    /**
      * Whether to patrol manually or not.
      */
     private boolean patrolManually = false;
@@ -181,7 +187,7 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
      * @param c the colony
      * @param l the position
      */
-    public AbstractBuildingGuardsNew(@NotNull final Colony c, final BlockPos l)
+    public AbstractBuildingGuards(@NotNull final Colony c, final BlockPos l)
     {
         super(c, l);
 
@@ -436,7 +442,7 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
 
         super.onUpgradeComplete(newLevel);
 
-        if (newLevel == 1)
+        if (newLevel == ACHIEVEMENT_LEVEL)
         {
             this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingGuard);
         }
@@ -651,7 +657,7 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
     public List<MobEntryView> getMobsToAttack()
     {
         mobsToAttack.sort(Comparator.comparing(MobEntryView::getPriority, Comparator.reverseOrder()));
-        return mobsToAttack;
+        return new ArrayList<>(mobsToAttack);
     }
 
     /**
@@ -662,7 +668,7 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
     public void setMobsToAttack(final List<MobEntryView> list)
     {
         this.mobsToAttack.clear();
-        this.mobsToAttack = list;
+        this.mobsToAttack = new ArrayList<>(list);
     }
 
     /**
@@ -757,7 +763,7 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
             }
             else
             {
-                for (String location : Configurations.gameplay.guardResourceLocations)
+                for (final String location : Configurations.gameplay.guardResourceLocations)
                 {
                     if (entry.getRegistryName() != null && entry.getRegistryName().toString().equals(location))
                     {
@@ -931,7 +937,7 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
 
         public void setMobsToAttack(final List<MobEntryView> mobsToAttack)
         {
-            this.mobsToAttack = mobsToAttack;
+            this.mobsToAttack = new ArrayList<>(mobsToAttack);
         }
 
         public boolean isPatrolManually()
@@ -966,12 +972,12 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
 
         public List<BlockPos> getPatrolTargets()
         {
-            return patrolTargets;
+            return new ArrayList<>(patrolTargets);
         }
 
         public List<MobEntryView> getMobsToAttack()
         {
-            return mobsToAttack;
+            return new ArrayList<>(mobsToAttack);
         }
     }
 }

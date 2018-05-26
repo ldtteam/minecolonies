@@ -39,7 +39,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     }
 
     @Override
-    int getAttackRange()
+    protected int getAttackRange()
     {
         return (int) MAX_DISTANCE_FOR_ATTACK;
     }

@@ -8,9 +8,9 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew.GuardJob;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew.GuardTask;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.GuardJob;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.GuardTask;
 import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import com.minecolonies.coremod.network.messages.GuardRecalculateMessage;
 import com.minecolonies.coremod.network.messages.GuardScepterMessage;
@@ -31,7 +31,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
  *
  * @author Asherslab
  */
-public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBuildingGuardsNew.View>
+public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBuildingGuards.View>
 {
     //// ---- GUI Constants ---- \\\\
     //GUI Lists
@@ -121,9 +121,9 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     /**
      * Constructor for the window of the worker building.
      *
-     * @param building class extending {@link AbstractBuildingGuardsNew.View}.
+     * @param building class extending {@link AbstractBuildingGuards.View}.
      */
-    public WindowHutGuardTower(final AbstractBuildingGuardsNew.View building)
+    public WindowHutGuardTower(final AbstractBuildingGuards.View building)
     {
         super(building, Constants.MOD_ID + GUI_RESOURCE);
 
@@ -193,7 +193,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             });
         }
 
-        ScrollingList mobsList = findPaneOfTypeByID(GUI_ELEMENT_LIST_MOBS, ScrollingList.class);
+        final ScrollingList mobsList = findPaneOfTypeByID(GUI_ELEMENT_LIST_MOBS, ScrollingList.class);
         mobsList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
@@ -211,7 +211,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
 
                 final Button switchButton = rowPane.findPaneOfTypeByID(GUI_LIST_BUTTON_SWITCH, Button.class);
 
-                if (mobsToAttack.get(index).getAttack())
+                if (mobsToAttack.get(index).hasAttack())
                 {
                     switchButton.setLabel(GUI_SWITCH_ON);
                 }
@@ -229,8 +229,8 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         final Pane currentPane = findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).getCurrentView();
         if (currentPane != null)
         {
-            Button buttonNextPage = findPaneOfTypeByID(GUI_BUTTON_NEXT_PAGE, Button.class);
-            Button buttonPrevPage = findPaneOfTypeByID(GUI_BUTTON_PREV_PAGE, Button.class);
+            final Button buttonNextPage = findPaneOfTypeByID(GUI_BUTTON_NEXT_PAGE, Button.class);
+            final Button buttonPrevPage = findPaneOfTypeByID(GUI_BUTTON_PREV_PAGE, Button.class);
             final String currentPage = currentPane.getID();
             switch (button.getID())
             {
@@ -258,6 +258,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
                     break;
                 default:
                     super.onButtonClicked(button);
+                    break;
             }
         }
     }
@@ -345,7 +346,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             {
                 if (entry.getName().equals(idLabel.getLabelText()))
                 {
-                    entry.setAttack(!entry.getAttack());
+                    entry.setAttack(!entry.hasAttack());
                 }
             }
             MineColonies.getNetwork().sendToServer(new MobEntryChangeMessage(building, this.mobsToAttack));

@@ -28,7 +28,7 @@ public class JobRanger extends AbstractJobGuard
      * @return The AI.
      */
     @Override
-    AbstractEntityAIGuard generateGuardAI()
+    public AbstractEntityAIGuard generateGuardAI()
     {
         return new EntityAIRanger(this);
     }

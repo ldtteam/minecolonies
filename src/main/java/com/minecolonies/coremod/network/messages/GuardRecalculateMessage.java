@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -69,7 +69,7 @@ public class GuardRecalculateMessage extends AbstractMessage<GuardRecalculateMes
                 return;
             }
 
-            @Nullable final AbstractBuildingGuardsNew building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingGuardsNew.class);
+            @Nullable final AbstractBuildingGuards building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingGuards.class);
             if (building != null)
             {
                 building.setMobsToAttack(building.calculateMobs());

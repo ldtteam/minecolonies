@@ -27,7 +27,7 @@ public abstract class AbstractJobGuard extends AbstractJob
         super(entity);
     }
 
-    abstract AbstractEntityAIGuard generateGuardAI();
+    protected abstract AbstractEntityAIGuard generateGuardAI();
 
     @Override
     public AbstractAISkeleton<? extends AbstractJob> generateAI()

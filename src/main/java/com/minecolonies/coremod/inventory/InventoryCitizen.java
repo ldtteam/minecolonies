@@ -58,8 +58,8 @@ public class InventoryCitizen implements IInventory
     /**
      * The index of the currently held items (0-8).
      */
-    public        int mainItem;
-    public        int offhandItem;
+    private        int mainItem;
+    private        int offhandItem;
 
     private ItemStack itemStack = ItemStackUtils.EMPTY;
 
@@ -160,7 +160,9 @@ public class InventoryCitizen implements IInventory
     public ItemStack getHeldItem(final EnumHand hand)
     {
         if (hand.equals(EnumHand.MAIN_HAND))
+        {
             return getStackInSlot(mainItem);
+        }
 
         return getStackInSlot(offhandItem);
     }
@@ -173,7 +175,9 @@ public class InventoryCitizen implements IInventory
     public void setHeldItem(final EnumHand hand, final int slot)
     {
         if (hand.equals(EnumHand.MAIN_HAND))
+        {
             this.mainItem = slot;
+        }
 
         this.offhandItem = slot;
     }
@@ -186,7 +190,9 @@ public class InventoryCitizen implements IInventory
     public int getHeldItemSlot(final EnumHand hand)
     {
         if (hand.equals(EnumHand.MAIN_HAND))
+        {
             return mainItem;
+        }
 
         return offhandItem;
     }
@@ -731,12 +737,10 @@ public class InventoryCitizen implements IInventory
                 f *= (this.mainInventory.get(this.mainItem)).getDestroySpeed(state);
             }
         }
-        else if (hand.equals(EnumHand.OFF_HAND))
+        else if (hand.equals(EnumHand.OFF_HAND)
+                   && !(this.mainInventory.get(this.offhandItem)).isEmpty())
         {
-            if (!(this.mainInventory.get(this.offhandItem)).isEmpty())
-            {
-                f *= (this.mainInventory.get(this.offhandItem)).getDestroySpeed(state);
-            }
+            f *= (this.mainInventory.get(this.offhandItem)).getDestroySpeed(state);
         }
 
         return f;

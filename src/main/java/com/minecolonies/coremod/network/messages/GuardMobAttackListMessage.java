@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import io.netty.buffer.ByteBuf;
 import jline.internal.Nullable;
@@ -44,7 +44,7 @@ public class GuardMobAttackListMessage extends AbstractMessage<GuardMobAttackLis
         super();
         this.colonyId = colonyId;
         this.buildingId = buildingId;
-        this.mobsToAttack = mobsToAttack;
+        this.mobsToAttack = new ArrayList<>(mobsToAttack);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class GuardMobAttackListMessage extends AbstractMessage<GuardMobAttackLis
 
         if (colonyView != null)
         {
-            @Nullable AbstractBuildingGuardsNew.View buildingView = (AbstractBuildingGuardsNew.View) colonyView.getBuilding(message.buildingId);
+            @Nullable final AbstractBuildingGuards.View buildingView = (AbstractBuildingGuards.View) colonyView.getBuilding(message.buildingId);
 
             if (buildingView != null)
             {

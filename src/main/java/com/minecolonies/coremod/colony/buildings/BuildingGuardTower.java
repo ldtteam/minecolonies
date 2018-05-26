@@ -10,7 +10,8 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Asherslab
  */
-public class BuildingGuardTower extends AbstractBuildingGuardsNew
+@SuppressWarnings("squid:MaximumInheritanceDepth")
+public class BuildingGuardTower extends AbstractBuildingGuards
 {
 
     /**
@@ -19,6 +20,7 @@ public class BuildingGuardTower extends AbstractBuildingGuardsNew
     private static final String SCHEMATIC_NAME = "GuardTower";
     private static final int    DEFENCE_BONUS  = 5;
     private static final int    OFFENCE_BONUS  = 0;
+    private static final int    MAX_LEVEL      = 5;
 
     /**
      * The abstract constructor of the building.
@@ -52,13 +54,13 @@ public class BuildingGuardTower extends AbstractBuildingGuardsNew
     @Override
     public int getMaxBuildingLevel()
     {
-        return 5;
+        return MAX_LEVEL;
     }
 
     /**
      * The client view for the baker building.
      */
-    public static class View extends AbstractBuildingGuardsNew.View
+    public static class View extends AbstractBuildingGuards.View
     {
         /**
          * The client view constructor for the AbstractGuardBuilding.
