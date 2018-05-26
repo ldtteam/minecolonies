@@ -154,7 +154,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
 
             final Colony colony = ColonyManager.getClosestColony(sender.getEntityWorld(), tpPos);
             /* Check for a close by colony*/
-            if (BlockPosUtil.getDistance2D(colony.getCenter(), tpPos) < Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)
+            if (colony != null && BlockPosUtil.getDistance2D(colony.getCenter(), tpPos) < Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)
             {
                 continue;
             }
