@@ -1,5 +1,8 @@
 package com.minecolonies.api.util.constant;
 
+/**
+ * Constants regarding citizens.
+ */
 public final class CitizenConstants
 {
     /**
@@ -110,7 +113,7 @@ public final class CitizenConstants
     /**
      * If the entitiy is stuck for 2 minutes do something.
      */
-    public static final int    MAX_STUCK_TIME             = 60;
+    public static final int    MAX_STUCK_TIME             = 120;
     /**
      * The max amount of lines the latest log allows.
      */

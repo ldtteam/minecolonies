@@ -7,6 +7,7 @@ import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowBarracksBuilding;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
@@ -180,7 +181,7 @@ public class BuildingBarracks extends AbstractBuilding
     /**
      * BuildingDeliveryman View.
      */
-    public static class View extends AbstractBuildingHut.View
+    public static class View extends AbstractBuildingView
     {
         /**
          * Instantiate the deliveryman view.

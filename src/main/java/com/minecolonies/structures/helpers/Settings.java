@@ -3,6 +3,7 @@ package com.minecolonies.structures.helpers;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
@@ -29,6 +30,11 @@ public final class Settings
     private             int                      rotation       = 0;
     private             String                   structureName  = null;
     private             boolean                  isPendingReset = false;
+
+    /**
+     * Possible box.
+     */
+    private Tuple<BlockPos, BlockPos> box = null;
 
     /**
      * Check if the tool is in the static schematic mode.
@@ -76,6 +82,26 @@ public final class Settings
     public BlockPos getPosition()
     {
         return pos;
+    }
+
+    /**
+     * Get a possibly existing box.
+     * @return a blockpos tuple.
+     */
+    @Nullable
+    public Tuple<BlockPos, BlockPos> getBox()
+    {
+        return box;
+    }
+
+    /**
+     * Set a possible box.
+     * @param box
+     */
+    @NotNull
+    public void setBox(final Tuple<BlockPos, BlockPos> box)
+    {
+        this.box = box;
     }
 
     /**
