@@ -58,7 +58,7 @@ public class Configurations
         @Config.Comment("Delay modifier to mine a block (Decreasing it, decreases the delay)")
         public int blockMiningDelayModifier = 500;
 
-        @Config.Comment("Should workerbuildings work during the rain?")
+        @Config.Comment("Should workers work during the rain?")
         public boolean workersAlwaysWorkInRain = false;
 
         @Config.Comment("Should the colony protection be enabled?")
@@ -178,7 +178,7 @@ public class Configurations
         @Config.Comment("Amount of blocks the builder checks (to decrease lag by builder)")
         public int maxBlocksCheckedByBuilder = 1000;
 
-        @Config.Comment("Chat frequency of workerbuildings requests")
+        @Config.Comment("Chat frequency of worker requests")
         public int chatFrequency = 30;
 
         @Config.Comment("Should in development features be enabled (might be buggy)")

@@ -60,7 +60,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     /**
      * Id of the the worker label inside the GUI.
      */
-    private static final String TAG_WORKER = "workerbuildings";
+    private static final String TAG_WORKER = "worker";
 
     /**
      * Id of the the distance label inside the GUI.

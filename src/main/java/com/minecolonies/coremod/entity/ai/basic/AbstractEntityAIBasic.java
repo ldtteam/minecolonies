@@ -565,7 +565,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Check all chests in the worker hut for a required item matching a certain predicate
+     * Check all chests in the workers hut for a required item matching a certain predicate
      *
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
@@ -603,7 +603,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Check all chests in the worker hut for a required item.
+     * Check all chests in the workers hut for a required item.
      *
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
@@ -837,7 +837,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Check all chests in the worker hut for a required tool.
+     * Check all chests in the workers hut for a required tool.
      *
      * @param toolType     the type of tool requested (amount is ignored)
      * @param minimalLevel the minimal level the tool should have.

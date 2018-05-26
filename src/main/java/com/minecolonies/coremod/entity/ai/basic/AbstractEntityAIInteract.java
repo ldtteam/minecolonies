@@ -282,7 +282,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     }
 
     /**
-     * Search for all items around the worworkerkerbuildings.
+     * Search for all items around the worker.
      * and store them in the items list.
      *
      * @param boundingBox the area to search.

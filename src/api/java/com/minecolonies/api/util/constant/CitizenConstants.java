@@ -91,7 +91,7 @@ public final class CitizenConstants
      */
     public static final double RENDER_DISTANCE_WEIGHT     = 2.0D;
     /**
-     * Building level at which the worker work even if it is raining.
+     * Building level at which the workers work even if it is raining.
      */
     public static final int    BONUS_BUILDING_LEVEL       = 5;
     /**

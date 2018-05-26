@@ -134,7 +134,7 @@ public class CitizenData
     private       WeakReference<EntityCitizen> entity;
 
     /**
-     * Attributes, which influence the worker behaviour.
+     * Attributes, which influence the workers behaviour.
      * May be added more later.
      */
     private       int                          strength;

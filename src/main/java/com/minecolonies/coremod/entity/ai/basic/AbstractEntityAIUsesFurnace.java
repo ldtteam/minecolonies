@@ -115,7 +115,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
 
     /**
      * Central method of the furnace user, he decides about what to do next from here.
-     * First check if any of the worker has important tasks to handle first.
+     * First check if any of the workers has important tasks to handle first.
      * If not check if there is an oven with an item which has to be retrieved.
      * If not check if fuel and smeltable are available and request if necessary and get into inventory.
      * Then check if able to smelt already.
