@@ -67,6 +67,11 @@ public final class ModBlocks
     public static BlockShingleSlab      blockShingleSlab;
     public static MultiBlock            multiBlock;
 
+    public static List<BlockTimberFrame> getTimberFrames()
+    {
+        return timberFrames;
+    }
+
     /**
      * Private constructor to hide the implicit public one.
      */

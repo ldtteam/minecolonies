@@ -261,7 +261,7 @@ public class ClientProxy extends CommonProxy
               new ModelResourceLocation(ModBlocks.blockPaperWall.getRegistryName() + "_" + type.getName(), INVENTORY));
         }
 
-        for (final BlockTimberFrame frame : ModBlocks.timberFrames)
+        for (final BlockTimberFrame frame : ModBlocks.getTimberFrames())
         {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(frame), 0,
                         new ModelResourceLocation(frame.getRegistryName(), INVENTORY));
