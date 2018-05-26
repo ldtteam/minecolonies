@@ -18,12 +18,14 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.inventory.api.CombinedItemHandler;
@@ -115,6 +117,12 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      */
     @NotNull
     private static final Map<Integer, Class<?>>  classNameHashToViewClassMap  = new HashMap<>();
+
+    /**
+     * List of workers assosiated to the building.
+     */
+    private final List<CitizenData> assignedCitizen = new ArrayList();
+
     /*
      * Add all the mappings.
      */
@@ -405,6 +413,8 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         {
             this.pickUpPriority = compound.getInteger(TAG_PRIO);
         }
+
+        assignedCitizen.clear();
     }
 
     /**
@@ -692,6 +702,13 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         }
 
         ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
+
+        if (hasAssignedCitizen())
+        {
+            // EntityCitizen will detect the workplace is gone and fix up it's
+            // Entity properly
+            assignedCitizen.clear();
+        }
     }
 
     /**
@@ -769,16 +786,6 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
                 }
             }
         }
-    }
-
-    /**
-     * Method to remove a citizen.
-     *
-     * @param citizen Citizen to be removed.
-     */
-    public void removeCitizen(final CitizenData citizen)
-    {
-        // Can be overridden by other buildings.
     }
 
     /**
@@ -1190,6 +1197,16 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         return BuildingUtils.getTargetAbleArea(world, this);
     }
 
+
+    /**
+     * Sets the mirror of the current building.
+     */
+    public void invertMirror()
+    {
+        this.isBuildingMirrored = !isBuildingMirrored;
+    }
+
+
     //------------------------- Starting Required Tools/Item handling -------------------------//
 
     @Override
@@ -1328,13 +1345,160 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
     //------------------------- Ending Required Tools/Item handling -------------------------//
 
+    //------------------------- Starting Assigned Citizen handling -------------------------//
+
     /**
-     * Sets the mirror of the current building.
+     * Get the main worker of the building (the first in the list).
+     *
+     * @return the matching CitizenData.
      */
-    public void invertMirror()
+    public CitizenData getMainCitizen()
     {
-        this.isBuildingMirrored = !isBuildingMirrored;
+        if (assignedCitizen.isEmpty())
+        {
+            return null;
+        }
+        return assignedCitizen.get(0);
     }
+
+    /**
+     * Returns the worker of the current building.
+     *
+     * @return {@link CitizenData} of the current building
+     */
+    public List<CitizenData> getAssignedCitizen()
+    {
+        return new ArrayList<>(assignedCitizen);
+    }
+
+    /**
+     * Method to remove a citizen.
+     *
+     * @param citizen Citizen to be removed.
+     */
+    public void removeCitizen(final CitizenData citizen)
+    {
+        if (isCitizenAssigned(citizen))
+        {
+            assignedCitizen.remove(citizen);
+            citizen.setWorkBuilding(null);
+            markDirty();
+        }
+    }
+
+    /**
+     * Returns if the {@link CitizenData} is the same as the worker.
+     *
+     * @param citizen {@link CitizenData} you want to compare
+     * @return true if same citizen, otherwise false
+     */
+    public boolean isCitizenAssigned(final CitizenData citizen)
+    {
+        return assignedCitizen.contains(citizen);
+    }
+
+    /**
+     * Returns the first worker in the list.
+     *
+     * @return the EntityCitizen of that worker.
+     */
+    public Optional<EntityCitizen> getMainCitizenEntity()
+    {
+        if (assignedCitizen.isEmpty())
+        {
+            return Optional.empty();
+        }
+        return assignedCitizen.get(0).getCitizenEntity();
+    }
+
+    /**
+     * Returns whether or not the building has a worker.
+     *
+     * @return true if building has worker, otherwise false.
+     */
+    public boolean hasAssignedCitizen()
+    {
+        return !assignedCitizen.isEmpty();
+    }
+
+    /**
+     * Returns the {@link net.minecraft.entity.Entity} of the worker.
+     *
+     * @return {@link net.minecraft.entity.Entity} of the worker
+     */
+    @Nullable
+    public List<Optional<EntityCitizen>> getAssignedEntities()
+    {
+        return assignedCitizen.stream().filter(Objects::nonNull).map(CitizenData::getCitizenEntity).collect(Collectors.toList());
+    }
+
+    /**
+     * Assign the citizen to the current building.
+     *
+     * @param citizen {@link CitizenData} of the worker
+     */
+    public boolean assignCitizen(final CitizenData citizen)
+    {
+        if (assignedCitizen.contains(citizen))
+        {
+            return false;
+        }
+
+        // If we set a worker, inform it of such
+        if (citizen != null)
+        {
+            assignedCitizen.add(citizen);
+        }
+
+        markDirty();
+        return true;
+    }
+
+    /**
+     * Assign the citizen after loading it from NBT.
+     * @param data the citizen data.
+     */
+    public void assignCitizenFromNBtAction(final CitizenData data)
+    {
+        /**
+         * Specific classes will override this.
+         */
+    }
+
+    /**
+     * Returns whether the citizen has this as home or not.
+     *
+     * @param citizen Citizen to check.
+     * @return True if citizen lives here, otherwise false.
+     */
+    public boolean hasAssignedCitizen(final CitizenData citizen)
+    {
+        return assignedCitizen.contains(citizen);
+    }
+
+
+    /**
+     * Checks if the building is full.
+     *
+     * @return true if so.
+     */
+    public boolean isFull()
+    {
+        return assignedCitizen.size() >= getMaxInhabitants();
+    }
+
+    /**
+     * Returns the max amount of inhabitants.
+     *
+     * @return Max inhabitants.
+     */
+    public int getMaxInhabitants()
+    {
+        return 1;
+    }
+
+
+    //------------------------- Ending Assigned Citizen handling -------------------------//
 
     //------------------------- !START! RequestSystem handling for minecolonies buildings -------------------------//
 

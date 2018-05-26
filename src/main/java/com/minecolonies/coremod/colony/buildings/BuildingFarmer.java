@@ -324,7 +324,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             {
                 if (((ScarecrowTileEntity) scareCrow).isTaken())
                 {
-                    if (getWorker().isEmpty() || ((ScarecrowTileEntity) scareCrow).getOwnerId() == getMainWorker().getId())
+                    if (getAssignedCitizen().isEmpty() || ((ScarecrowTileEntity) scareCrow).getOwnerId() == getMainCitizen().getId())
                     {
                         size++;
                     }
@@ -344,7 +344,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             {
                 if (((ScarecrowTileEntity) scareCrow).isTaken())
                 {
-                    if (getWorker().isEmpty() || ((ScarecrowTileEntity) scareCrow).getOwnerId() == getMainWorker().getId())
+                    if (getAssignedCitizen().isEmpty() || ((ScarecrowTileEntity) scareCrow).getOwnerId() == getMainCitizen().getId())
                     {
                         BlockPosUtil.writeToByteBuf(buf, field);
                     }
@@ -449,7 +449,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 final TileEntity scarecrow = world.getTileEntity(field);
                 if (scarecrow instanceof  ScarecrowTileEntity)
                 {
-                    ((ScarecrowTileEntity) scarecrow).setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER, getMainWorker().getName()));
+                    ((ScarecrowTileEntity) scarecrow).setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER, getMainCitizen().getName()));
                     getColony().getWorld()
                             .notifyBlockUpdate(scarecrow.getPos(),
                                     getColony().getWorld().getBlockState(scarecrow.getPos()),
@@ -514,9 +514,9 @@ public class BuildingFarmer extends AbstractBuildingWorker
         {
             ((ScarecrowTileEntity) scarecrow).setTaken(true);
 
-            if (getMainWorker() != null)
+            if (getMainCitizen() != null)
             {
-                ((ScarecrowTileEntity) scarecrow).setOwner(getMainWorker().getId());
+                ((ScarecrowTileEntity) scarecrow).setOwner(getMainCitizen().getId());
             }
             farmerFields.add(position);
         }

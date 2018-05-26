@@ -205,7 +205,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     {
         if (newLevel > MAX_VISION_BONUS_MULTIPLIER)
         {
-            getWorkerEntities().stream()
+            getAssignedEntities().stream()
             .filter(Optional::isPresent)
             .map(Optional::get)
               .forEach(entityCitizen -> entityCitizen.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(SharedMonsterAttributes.MAX_HEALTH.getDefaultValue() + getBonusHealth()));
@@ -354,14 +354,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     @Override
-    public void setWorker(final CitizenData citizen)
+    public boolean assignCitizen(final CitizenData citizen)
     {
         citizen.getCitizenEntity().ifPresent(entityCitizen -> {
             entityCitizen.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(SharedMonsterAttributes.MAX_HEALTH.getDefaultValue() + getBonusHealth());
             entityCitizen.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue() + getDefenceBonus());
         });
 
-        super.setWorker(citizen);
+        return super.assignCitizen(citizen);
     }
 
     /**
