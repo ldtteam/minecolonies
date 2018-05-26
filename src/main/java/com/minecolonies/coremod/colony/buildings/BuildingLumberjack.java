@@ -53,7 +53,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     /**
      * Whether or not the LJ should replant saplings
      */
-    private boolean shouldReplant = true;
+    private boolean replant = true;
     /**
      * A default sapling itemStack.
      */
@@ -221,7 +221,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
                 treesToFell.put(new ItemStorage(stack), cut);
             }
         }
-        shouldReplant = compound.getBoolean(TAG_REPLANT);
+        replant = compound.getBoolean(TAG_REPLANT);
         checkTreesToFell();
 
     }
@@ -239,7 +239,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             saplingTagList.appendTag(saplingCompound);
         }
         compound.setTag(TAG_SAPLINGS, saplingTagList);
-        compound.setBoolean(TAG_REPLANT, shouldReplant);
+        compound.setBoolean(TAG_REPLANT, replant);
     }
 
     /**
@@ -258,7 +258,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
-        buf.writeBoolean(shouldReplant);
+        buf.writeBoolean(replant);
         buf.writeInt(treesToFell.size());
         for (final Map.Entry<ItemStorage, Boolean> entry : treesToFell.entrySet())
         {
@@ -267,13 +267,14 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         }
     }
 
-    public boolean shouldReplant(){
-        return shouldReplant;
+    public boolean shouldReplant()
+    {
+        return replant;
     }
 
-    public void setShouldReplant(boolean shouldReplant)
+    public void setShouldReplant(final boolean shouldReplant)
     {
-        this.shouldReplant = shouldReplant;
+        this.replant = shouldReplant;
         markDirty();
     }
 

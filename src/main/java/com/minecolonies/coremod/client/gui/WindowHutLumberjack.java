@@ -14,7 +14,6 @@ import com.minecolonies.coremod.colony.buildings.BuildingLumberjack;
 import com.minecolonies.coremod.network.messages.LumberjackReplantSaplingToggleMessage;
 import com.minecolonies.coremod.network.messages.LumberjackSaplingSelectorMessage;
 import net.minecraft.item.ItemStack;
-import org.apache.commons.codec.language.bm.Lang;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -98,7 +97,6 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
      */
     private void switchReplant()
     {
-
         ownBuilding.shouldReplant = !ownBuilding.shouldReplant;
         MineColonies.getNetwork().sendToServer(new LumberjackReplantSaplingToggleMessage(building, ownBuilding.shouldReplant));
         updateReplantButton();
@@ -106,10 +104,16 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
 
     private void updateReplantButton()
     {
-        Button buttonReplant = findPaneOfTypeByID(BUTTON_TOGGLE_REPLANT, Button.class);
+        final Button buttonReplant = findPaneOfTypeByID(BUTTON_TOGGLE_REPLANT, Button.class);
 
-        if (ownBuilding.shouldReplant) {buttonReplant.setLabel(LanguageHandler.format(TOGGLE_REPLANT_SAPLINGS_ON));}
-        else buttonReplant.setLabel(LanguageHandler.format(TOGGLE_REPLANT_SAPLINGS_OFF));
+        if (ownBuilding.shouldReplant)
+        {
+            buttonReplant.setLabel(LanguageHandler.format(TOGGLE_REPLANT_SAPLINGS_ON));
+        }
+        else
+        {
+            buttonReplant.setLabel(LanguageHandler.format(TOGGLE_REPLANT_SAPLINGS_OFF));
+        }
     }
 
     /**
