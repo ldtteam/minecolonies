@@ -356,7 +356,7 @@ public class CitizenManager implements ICitizenManager
             final AbstractBuildingWorker buildingWorker = citizen.getWorkBuilding();
             if (buildingWorker != null)
             {
-                if (buildingWorker instanceof AbstractBuildingGuards)
+                if (buildingWorker instanceof AbstractBuildingGuardsNew)
                 {
                     guards += buildingWorker.getBuildingLevel();
                 }

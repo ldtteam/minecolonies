@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuardsNew.GuardTask;
 import io.netty.buffer.ByteBuf;
@@ -33,34 +32,6 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
     public GuardTaskMessage()
     {
         super();
-    }
-
-    /**
-     * Creates an instance of the guard task message.
-     *
-     * @param building       the building.
-     * @param job            the new job.
-     * @param assignmentMode the new assignment mode.
-     * @param patrollingMode the new patrolling mode.
-     * @param retrieval      the new retrievel mode.
-     * @param task           the new task.
-     */
-    public GuardTaskMessage(
-                             @NotNull final AbstractBuildingGuards.View building,
-                             final int job,
-                             final boolean assignmentMode,
-                             final boolean patrollingMode,
-                             final boolean retrieval,
-                             final int task)
-    {
-        super();
-        this.colonyId = building.getColony().getID();
-        this.buildingId = building.getID();
-        this.job = job;
-        this.assignmentMode = assignmentMode;
-        this.patrollingMode = patrollingMode;
-        this.retrieval = retrieval;
-        this.task = task;
     }
 
     /**

@@ -12,7 +12,7 @@ import java.util.List;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class EntityAIKnight extends AbstractEntityAIGuardNew<JobKnight>
+public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 {
 
     /**

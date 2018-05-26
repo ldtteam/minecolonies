@@ -80,7 +80,6 @@ public abstract class AbstractJob
         addMapping(MAPPING_LUMBERJACK, JobLumberjack.class);
         addMapping(MAPPING_FARMER, JobFarmer.class);
         addMapping(MAPPING_FISHERMAN, JobFisherman.class);
-        addMapping(MAPPING_TOWER_GUARD, JobGuard.class);
         addMapping(MAPPING_BAKER, JobBaker.class);
         addMapping(MAPPING_COOK, JobCook.class);
         addMapping(MAPPING_SHEPHERD, JobShepherd.class);

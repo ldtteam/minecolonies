@@ -4,7 +4,7 @@ import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuardNew;
+import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.sounds.ArcherSounds;
 import com.minecolonies.coremod.sounds.KnightSounds;
 import net.minecraft.entity.monster.EntityEnderman;
@@ -27,7 +27,7 @@ public abstract class AbstractJobGuard extends AbstractJob
         super(entity);
     }
 
-    abstract AbstractEntityAIGuardNew generateGuardAI();
+    abstract AbstractEntityAIGuard generateGuardAI();
 
     @Override
     public AbstractAISkeleton<? extends AbstractJob> generateAI()

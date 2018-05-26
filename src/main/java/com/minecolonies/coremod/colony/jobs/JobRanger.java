@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuardNew;
+import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIRanger;
 
 /**
@@ -23,12 +23,12 @@ public class JobRanger extends AbstractJobGuard
     }
 
     /**
-     * Generates the {@link AbstractEntityAIGuardNew} job for our ranger.
+     * Generates the {@link AbstractEntityAIGuard} job for our ranger.
      *
      * @return The AI.
      */
     @Override
-    AbstractEntityAIGuardNew generateGuardAI()
+    AbstractEntityAIGuard generateGuardAI()
     {
         return new EntityAIRanger(this);
     }
