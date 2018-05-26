@@ -323,7 +323,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * First find your way to the tree trunk.
      * Then chop away
      * and wait for saplings to drop
-     * then place a sapling
+     * then place a sapling if shouldReplant is true
      *
      * @return LUMBERJACK_GATHERING if tree is done
      */
@@ -347,8 +347,18 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             {
                 return getState();
             }
-            plantSapling();
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("trees");
+
+            final BuildingLumberjack building = getOwnBuilding(BuildingLumberjack.class);
+            if ( building.shouldReplant())
+            {
+                plantSapling();
+            }
+            else
+            {
+                job.tree = null;
+                checkedInHut = false;
+            }
+            building.getColony().getStatsManager().incrementStatistic("trees");
             workFrom = null;
             return LUMBERJACK_GATHERING;
         }
