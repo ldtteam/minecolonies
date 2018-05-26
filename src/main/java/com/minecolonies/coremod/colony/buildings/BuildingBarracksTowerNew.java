@@ -89,9 +89,9 @@ public class BuildingBarracksTowerNew extends AbstractBuildingGuardsNew
     }
 
     @Override
-    public void setWorker(final CitizenData citizen)
+    public boolean assignCitizen(final CitizenData citizen)
     {
-        super.setWorker(citizen);
+        final boolean assignalResult = super.assignCitizen(citizen);
         if (citizen != null)
         {
             final AbstractBuilding building = citizen.getHomeBuilding();
@@ -100,7 +100,9 @@ public class BuildingBarracksTowerNew extends AbstractBuildingGuardsNew
                 building.removeCitizen(citizen);
             }
             citizen.setHomeBuilding(this);
+            citizen.setWorkBuilding(this);
         }
+        return assignalResult;
     }
 
     @Override
@@ -121,9 +123,9 @@ public class BuildingBarracksTowerNew extends AbstractBuildingGuardsNew
     }
 
     @Override
-    public boolean hasEnoughWorkers()
+    public boolean hasAssignedCitizen()
     {
-        return getWorker().size() >= getBuildingLevel();
+        return getAssignedCitizen().size() >= getBuildingLevel();
     }
 
     /**

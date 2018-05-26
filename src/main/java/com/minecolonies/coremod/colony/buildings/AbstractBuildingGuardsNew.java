@@ -423,9 +423,9 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
-        if (getWorkerEntities() != null)
+        if (getAssignedEntities() != null)
         {
-            for (final Optional<EntityCitizen> optCitizen : getWorkerEntities())
+            for (final Optional<EntityCitizen> optCitizen : getAssignedEntities())
             {
                 if (optCitizen.isPresent() && newLevel > MAX_VISION_BONUS_MULTIPLIER)
                 {
@@ -462,7 +462,7 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
     }
 
     @Override
-    public void setWorker(final CitizenData citizen)
+    public boolean assignCitizen(final CitizenData citizen)
     {
         if (citizen != null)
         {
@@ -479,7 +479,7 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
                   .setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue() + getDefenceBonus());
             }
         }
-        super.setWorker(citizen);
+        return super.assignCitizen(citizen);
     }
 
     //// ---- Overrides ---- \\\\
@@ -530,7 +530,7 @@ public abstract class AbstractBuildingGuardsNew extends AbstractBuildingWorker
     public void setJob(final GuardJob job)
     {
         this.job = job;
-        for (final CitizenData citizen : getWorker())
+        for (final CitizenData citizen : getAssignedCitizen())
         {
             citizen.setJob(createJob(citizen));
         }

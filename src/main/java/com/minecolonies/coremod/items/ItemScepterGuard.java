@@ -110,7 +110,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         }
 
         final GuardTask task = GuardTask.values()[compound.getInteger("task")];
-        final CitizenData citizen = tower.getMainWorker();
+        final CitizenData citizen = tower.getMainCitizen();
 
         String name = "";
         if (citizen != null)

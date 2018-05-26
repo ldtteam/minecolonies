@@ -11,6 +11,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.init.Blocks;
@@ -260,7 +261,7 @@ public class BuildingBarracksNew extends AbstractBuilding
     /**
      * BuildingDeliveryman View.
      */
-    public static class View extends AbstractBuildingHut.View
+    public static class View extends AbstractBuildingView
     {
         /**
          * Instantiate the deliveryman view.
