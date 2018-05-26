@@ -110,7 +110,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     private static final double MOVE_MINIMAL = 0.01D;
 
     /**
-     * Ranger's double damange threshold
+     * double damage threshold
      */
     private static final int DOUBLE_DAMAGE_THRESHOLD = 2;
 
@@ -534,7 +534,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
                 arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) 1.6D, (float) chance);
 
-                if (worker.getHealth() <= 2)
+                if (worker.getHealth() <= DOUBLE_DAMAGE_THRESHOLD)
                 {
                     damage *= 2;
                 }

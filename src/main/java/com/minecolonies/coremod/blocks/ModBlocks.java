@@ -23,7 +23,7 @@ public final class ModBlocks
      * References can be made to here.
      */
 
-    protected static List<BlockTimberFrame> timberFrames = new ArrayList<>();
+    private static final List<BlockTimberFrame> timberFrames = new ArrayList<>();
     public static BlockHutTownHall               blockHutTownHall;
     public static BlockHutCitizen                blockHutCitizen;
     public static BlockHutMiner                  blockHutMiner;
