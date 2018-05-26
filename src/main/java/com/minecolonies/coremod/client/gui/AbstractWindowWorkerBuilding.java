@@ -13,7 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Abstract class for window for worker building.
+ * Abstract class for window for workerbuildings building.
  *
  * @param <B> Class extending {@link AbstractBuildingWorker.View}
  */
@@ -60,7 +60,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     private static final String BUTTON_RECIPES_LIST = "recipelist";
 
     /**
-     * Constructor for the window of the worker building.
+     * Constructor for the window of the workerbuildings building.
      *
      * @param building class extending {@link AbstractBuildingWorker.View}.
      * @param resource Resource of the window.
@@ -90,8 +90,8 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
 
     /**
      * Action when a hire button is clicked.
-     * If there is no worker (worker.Id == 0) => Contract someone.
-     * Else => Fire the current worker.
+     * If there is no workerbuildings (workerbuildings.Id == 0) => Contract someone.
+     * Else => Fire the current workerbuildings.
      *
      * @param button the clicked button.
      */

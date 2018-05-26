@@ -4,7 +4,7 @@ import com.minecolonies.api.entity.ai.pathfinding.AbstractWalkToProxy;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.BuildingMiner;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -24,12 +24,12 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
     private static final int OTHER_SIDE_OF_SHAFT = 6;
 
     /**
-     * The worker entity associated with the proxy.
+     * The workerbuildings entity associated with the proxy.
      */
     private final EntityCitizen citizen;
 
     /**
-     * Creates a walkToProxy for a certain worker.
+     * Creates a walkToProxy for a certain workerbuildings.
      *
      * @param entity the citizen entity.
      */

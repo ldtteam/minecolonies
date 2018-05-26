@@ -5,7 +5,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Window for worker.
+ * Window for workerbuildings.
  * Placeholder for many different jobs.
  *
  * @param <B> Object extending {@link AbstractBuildingWorker.View}.
@@ -16,7 +16,7 @@ public class WindowHutWorkerPlaceholder<B extends AbstractBuildingWorker.View> e
     private final String name;
 
     /**
-     * Window for worker placeholder.
+     * Window for workerbuildings placeholder.
      * Used by Baker, Blacksmith, Lumberjack ans Stonemason.
      *
      * @param building AbstractBuilding extending {@link AbstractBuildingWorker.View}.

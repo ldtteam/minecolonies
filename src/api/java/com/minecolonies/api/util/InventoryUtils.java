@@ -1295,12 +1295,12 @@ public class InventoryUtils
 
     /**
      * Verifies if there is one tool with an acceptable level
-     * in a worker's inventory.
+     * in a workerbuildings's inventory.
      *
-     * @param itemHandler   the worker's inventory
+     * @param itemHandler   the workerbuildings's inventory
      * @param toolType      the type of tool needed
      * @param requiredLevel the minimum tool level
-     * @param maximumLevel  the worker's hut level
+     * @param maximumLevel  the workerbuildings's hut level
      * @return true if tool is acceptable
      */
     public static boolean hasItemHandlerToolWithLevel(@NotNull final IItemHandler itemHandler, final IToolType toolType, final int requiredLevel, final int maximumLevel)

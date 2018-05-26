@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.buildings;
+package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -8,6 +8,7 @@ import com.minecolonies.coremod.client.gui.WindowHutBaker;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
@@ -73,7 +74,7 @@ public class BuildingBaker extends AbstractBuildingWorker
      */
     private static final int WAIT_TICKS = 320;
     /**
-     * Always try to keep at least 2 stacks of wheat in the inventory and in the workers chest.
+     * Always try to keep at least 2 stacks of wheat in the inventory and in the workerbuildings chest.
      */
     private static final int WHEAT_TO_KEEP = 128;
     /**

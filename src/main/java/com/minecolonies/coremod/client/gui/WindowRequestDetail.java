@@ -99,7 +99,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     private int lifeCount = 0;
 
     /**
-     * Constructor for the window when the player wants to hire a worker for a certain job.
+     * Constructor for the window when the player wants to hire a workerbuildings for a certain job.
      *
      * @param c       the colony view.
      * @param request the building position.

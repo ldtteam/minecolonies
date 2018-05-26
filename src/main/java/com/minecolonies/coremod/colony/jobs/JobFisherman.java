@@ -141,7 +141,7 @@ public class JobFisherman extends AbstractJob
     }
 
     /**
-     * Override this to let the worker return a bedTimeSound.
+     * Override this to let the workerbuildings return a bedTimeSound.
      *
      * @return soundEvent to be played.
      */
@@ -156,7 +156,7 @@ public class JobFisherman extends AbstractJob
     }
 
     /**
-     * Override this to let the worker return a badWeatherSound.
+     * Override this to let the workerbuildings return a badWeatherSound.
      *
      * @return soundEvent to be played.
      */

@@ -9,8 +9,8 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.BuildingBarracksTower;
-import com.minecolonies.coremod.colony.buildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.managers.ICitizenManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -134,7 +134,7 @@ public class CitizenData
     private       WeakReference<EntityCitizen> entity;
 
     /**
-     * Attributes, which influence the workers behaviour.
+     * Attributes, which influence the workerbuildings behaviour.
      * May be added more later.
      */
     private       int                          strength;

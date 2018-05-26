@@ -115,7 +115,7 @@ public final class DeliverymanSounds extends AbstractWorkerSounds
     public void playInteractionSound(final World world, final BlockPos position, final boolean female)
     {
         /**
-         * Do nothing, we have nothing for this worker.
+         * Do nothing, we have nothing for this workerbuildings.
          */
     }
 

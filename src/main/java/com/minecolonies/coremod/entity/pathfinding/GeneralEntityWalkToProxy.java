@@ -17,7 +17,7 @@ public class GeneralEntityWalkToProxy extends AbstractWalkToProxy
 {
 
     /**
-     * Creates a walkToProxy for a certain worker.
+     * Creates a walkToProxy for a certain workerbuildings.
      *
      * @param entity the entity.
      */

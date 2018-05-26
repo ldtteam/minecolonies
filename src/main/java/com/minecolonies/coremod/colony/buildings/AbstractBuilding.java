@@ -1,50 +1,54 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.requester.IRequester;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
+import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
-import com.minecolonies.coremod.inventory.api.CombinedItemHandler;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.tileentities.TileEntityRack;
 import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.StructureWrapper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
+
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -60,33 +64,19 @@ import static com.minecolonies.api.util.constant.Suppression.*;
  * to their views and blocks.
  */
 @SuppressWarnings("squid:S2390")
-public abstract class AbstractBuilding extends AbstractRequestingBuilding implements ICapabilityProvider
+public abstract class AbstractBuilding extends AbstractBuildingContainer
 {
     /**
-     * The tileEntity of the building.
+     * The data store id for request system related data.
      */
-    private TileEntityColonyBuilding tileEntity;
+    @NotNull
+    private IToken<?> rsDataStoreToken;
 
     /**
-     * List of workers assosiated to the building.
+     * The ID of the building. Needed in the request system to identify it.
      */
-    private final List<CitizenData> assignedCitizen = new ArrayList();
+    private IRequester requester;
 
-    /**
-     * List of items the worker should keep.
-     */
-    protected final Map<Predicate<ItemStack>, Integer> keepX = new HashMap<>();
-
-    /**
-     * A list which contains the position of all containers which belong to the
-     * worker building.
-     */
-    private final List<BlockPos> containerList = new ArrayList<>();
-
-    /**
-     * Priority of the building in the pickUpList.
-     */
-    private int pickUpPriority = 1;
     /**
      * Is being gathered right now
      */
@@ -101,31 +91,16 @@ public abstract class AbstractBuilding extends AbstractRequestingBuilding implem
     protected AbstractBuilding(@NotNull final Colony colony, final BlockPos pos)
     {
         super(pos, colony);
+
+        this.requester = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(BuildingBasedRequester.class), this);
+        setupRsDataStore();
     }
 
-    /**
-     * Load data from NBT compound.
-     * Writes to {@link #buildingLevel}, {@link #rotation} and {@link #style}.
-     *
-     * @param compound {@link net.minecraft.nbt.NBTTagCompound} to read data from.
-     */
+    @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-
-        final NBTTagList containerTagList = compound.getTagList(TAG_CONTAINERS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < containerTagList.tagCount(); ++i)
-        {
-            final NBTTagCompound containerCompound = containerTagList.getCompoundTagAt(i);
-            containerList.add(NBTUtil.getPosFromTag(containerCompound));
-        }
-
-        if (compound.hasKey(TAG_PRIO))
-        {
-            this.pickUpPriority = compound.getInteger(TAG_PRIO);
-        }
-
-        assignedCitizen.clear();
+        loadRequestSystemFromNBT(compound);
     }
 
     /**
@@ -150,23 +125,11 @@ public abstract class AbstractBuilding extends AbstractRequestingBuilding implem
         return getClass().equals(c);
     }
 
-    /**
-     * Save data to NBT compound.
-     * Writes the {@link #buildingLevel}, {@link #rotation}, {@link #style}, {@link #location}, and {@link #getClass()} value.
-     *
-     * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to.
-     */
+    @Override
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        @NotNull final NBTTagList containerTagList = new NBTTagList();
-        for (@NotNull final BlockPos pos : containerList)
-        {
-            containerTagList.appendTag(NBTUtil.createPosTag(pos));
-        }
-        compound.setTag(TAG_CONTAINERS, containerTagList);
-
-        compound.setInteger(TAG_PRIO, this.pickUpPriority);
+        writeRequestSystemToNBT(compound);
     }
 
     /**
@@ -179,9 +142,7 @@ public abstract class AbstractBuilding extends AbstractRequestingBuilding implem
         colony.getBuildingManager().removeBuilding(this, colony.getPackageManager().getSubscribers());
     }
 
-    /**
-     * Method to do things when a block is destroyed.
-     */
+    @Override
     public void onDestroyed()
     {
         final TileEntityColonyBuilding tileEntityNew = this.getTileEntity();
@@ -195,72 +156,6 @@ public abstract class AbstractBuilding extends AbstractRequestingBuilding implem
         }
 
         ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
-
-        if (hasAssignedCitizen())
-        {
-            // EntityCitizen will detect the workplace is gone and fix up it's
-            // Entity properly
-            assignedCitizen.clear();
-        }
-    }
-
-    /**
-     * Returns the tile entity that belongs to the colony building.
-     *
-     * @return {@link TileEntityColonyBuilding} object of the building.
-     */
-    public TileEntityColonyBuilding getTileEntity()
-    {
-        if ((tileEntity == null || tileEntity.isInvalid())
-              && colony != null
-              && colony.getWorld() != null
-              && getLocation() != null
-              && colony.getWorld().getBlockState(getLocation())
-                   != null && colony.getWorld().getBlockState(this.getLocation()).getBlock() instanceof AbstractBlockHut)
-        {
-            final TileEntity te = getColony().getWorld().getTileEntity(getLocation());
-            if (te instanceof TileEntityColonyBuilding)
-            {
-                tileEntity = (TileEntityColonyBuilding) te;
-                if (tileEntity.getBuilding() == null)
-                {
-                    tileEntity.setColony(colony);
-                    tileEntity.setBuilding(this);
-                }
-            }
-        }
-
-        return tileEntity;
-    }
-
-    /**
-     * Sets the tile entity for the building.
-     *
-     * @param te {@link TileEntityColonyBuilding} that will fill the {@link #tileEntity} field.
-     */
-    public void setTileEntity(final TileEntityColonyBuilding te)
-    {
-        tileEntity = te;
-    }
-
-    /**
-     * On tick of the server.
-     *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
-     */
-    public void onServerTick(final TickEvent.ServerTickEvent event)
-    {
-        // Can be overridden by other buildings.
-    }
-
-    /**
-     * On tick of the world.
-     *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
-     */
-    public void onWorldTick(final TickEvent.WorldTickEvent event)
-    {
-        // Can be overridden by other buildings.
     }
 
     /**
@@ -373,98 +268,6 @@ public abstract class AbstractBuilding extends AbstractRequestingBuilding implem
     }
 
     /**
-     * Get the pick up priority of the building.
-     *
-     * @return the priority, an integer.
-     */
-    public int getPickUpPriority()
-    {
-        return this.pickUpPriority;
-    }
-
-    /**
-     * Register a blockState and position.
-     * We suppress this warning since this parameter will be used in child classes which override this method.
-     *
-     * @param blockState to be registered
-     * @param pos   of the blockState
-     */
-    public void registerBlockPosition(@NotNull final IBlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
-    {
-        registerBlockPosition(blockState.getBlock(), pos, world);
-    }
-
-    /**
-     * Register a block and position.
-     * We suppress this warning since this parameter will be used in child classes which override this method.
-     *
-     * @param block to be registered
-     * @param pos   of the block
-     */
-    @SuppressWarnings("squid:S1172")
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
-    {
-        if (block instanceof BlockContainer || block instanceof BlockMinecoloniesRack)
-        {
-            addContainerPosition(pos);
-        }
-    }
-
-    /**
-     * Add a new container to the building.
-     *
-     * @param pos position to add.
-     */
-    public void addContainerPosition(@NotNull final BlockPos pos)
-    {
-        if (!containerList.contains(pos))
-        {
-            containerList.add(pos);
-        }
-    }
-
-    /**
-     * Remove a container from the building.
-     *
-     * @param pos position to remove.
-     */
-    public void removeContainerPosition(final BlockPos pos)
-    {
-        containerList.remove(pos);
-    }
-
-    /**
-     * Get all additional containers which belong to the building.
-     *
-     * @return a copy of the list to avoid currentModification exception.
-     */
-    public List<BlockPos> getAdditionalCountainers()
-    {
-        return new ArrayList<>(containerList);
-    }
-
-    /**
-     * Increase or decrease the current pickup priority.
-     *
-     * @param value the new prio to add to.
-     */
-    public void alterPickUpPriority(final int value)
-    {
-        if (this.pickUpPriority + value < 1)
-        {
-            this.pickUpPriority = 1;
-        }
-        else if (this.pickUpPriority + value > MAX_PRIO)
-        {
-            this.pickUpPriority = MAX_PRIO;
-        }
-        else
-        {
-            this.pickUpPriority += value;
-        }
-    }
-
-    /**
      * Check if a building is being gathered.
      *
      * @return true if so.
@@ -497,7 +300,7 @@ public abstract class AbstractBuilding extends AbstractRequestingBuilding implem
         }
         else
         {
-            player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.worker.noUpgrade"));
+            player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.workerbuildings.noUpgrade"));
         }
     }
 
@@ -550,56 +353,11 @@ public abstract class AbstractBuilding extends AbstractRequestingBuilding implem
         this.setHeight(wrapper.getHeight());
         this.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
     }
-
     //------------------------- Starting Required Tools/Item handling -------------------------//
 
-    @Override
-    public int hashCode()
-    {
-        return (int) (31 * this.getID().toLong());
-    }
-
-    @Override
-    public boolean equals(final Object o)
-    {
-        return o instanceof AbstractBuilding && ((AbstractBuilding) o).getID().equals(this.getID());
-    }
-
     /**
-     * Try to transfer a stack to one of the inventories of the building.
-     *
-     * @param stack the stack to transfer.
-     * @param world the world to do it in.
-     * @return The {@link ItemStack} as that is left over, might be {@link ItemStackUtils#EMPTY} if the stack was completely accepted
-     */
-    public ItemStack transferStack(@NotNull final ItemStack stack, @NotNull final World world)
-    {
-        if (tileEntity == null || InventoryUtils.isProviderFull(tileEntity))
-        {
-            final Iterator<BlockPos> posIterator = containerList.iterator();
-            @NotNull ItemStack resultStack = stack.copy();
-
-            while (posIterator.hasNext() && !ItemStackUtils.isEmpty(resultStack))
-            {
-                final BlockPos pos = posIterator.next();
-                final TileEntity tempTileEntity = world.getTileEntity(pos);
-                if (tempTileEntity instanceof TileEntityChest && !InventoryUtils.isProviderFull(tempTileEntity))
-                {
-                    resultStack = InventoryUtils.addItemStackToProviderWithResult(tempTileEntity, stack);
-                }
-            }
-
-            return resultStack;
-        }
-        else
-        {
-            return InventoryUtils.addItemStackToProviderWithResult(tileEntity, stack);
-        }
-    }
-
-    /**
-     * Check if the worker requires a certain amount of that item and the alreadykept list contains it.
-     * Always leave one stack behind if the worker requires a certain amount of it. Just to be sure.
+     * Check if the workerbuildings requires a certain amount of that item and the alreadykept list contains it.
+     * Always leave one stack behind if the workerbuildings requires a certain amount of it. Just to be sure.
      *
      * @param stack            the stack to check it with.
      * @param localAlreadyKept already kept items.
@@ -662,7 +420,7 @@ public abstract class AbstractBuilding extends AbstractRequestingBuilding implem
     @Nullable
     public ItemStack forceTransferStack(final ItemStack stack, final World world)
     {
-        if (tileEntity == null)
+        if (getTileEntity() == null)
         {
             for (final BlockPos pos : containerList)
             {
@@ -675,7 +433,7 @@ public abstract class AbstractBuilding extends AbstractRequestingBuilding implem
         }
         else
         {
-            return forceItemStackToProvider(tileEntity, stack);
+            return forceItemStackToProvider(getTileEntity(), stack);
         }
         return stack;
     }
@@ -689,200 +447,472 @@ public abstract class AbstractBuilding extends AbstractRequestingBuilding implem
 
     //------------------------- Ending Required Tools/Item handling -------------------------//
 
-    //------------------------- Starting Assigned Citizen handling -------------------------//
+    //------------------------- !START! RequestSystem handling for minecolonies buildings -------------------------//
 
-    /**
-     * Get the main worker of the building (the first in the list).
-     *
-     * @return the matching CitizenData.
-     */
-    public CitizenData getMainCitizen()
+    protected void writeRequestSystemToNBT(final NBTTagCompound compound)
     {
-        if (assignedCitizen.isEmpty())
+        compound.setTag(TAG_RS_BUILDING_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
+    }
+
+    protected void setupRsDataStore()
+    {
+        this.rsDataStoreToken = colony.getRequestManager()
+                .getDataStoreManager()
+                .get(
+                        StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                        TypeConstants.REQUEST_SYSTEM_BUILDING_DATA_STORE
+                )
+                .getId();
+    }
+
+    private void loadRequestSystemFromNBT(final NBTTagCompound compound)
+    {
+        if (compound.hasKey(TAG_REQUESTOR_ID))
         {
-            return null;
+            this.requester = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(TAG_REQUESTOR_ID));
         }
-        return assignedCitizen.get(0);
-    }
-
-    /**
-     * Returns the worker of the current building.
-     *
-     * @return {@link CitizenData} of the current building
-     */
-    public List<CitizenData> getAssignedCitizen()
-    {
-        return new ArrayList<>(assignedCitizen);
-    }
-
-    /**
-     * Method to remove a citizen.
-     *
-     * @param citizen Citizen to be removed.
-     */
-    public void removeCitizen(final CitizenData citizen)
-    {
-        if (isCitizenAssigned(citizen))
+        else
         {
-            assignedCitizen.remove(citizen);
-            citizen.setWorkBuilding(null);
-            markDirty();
+            this.requester = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(BuildingBasedRequester.class), this);
+        }
+
+        if (compound.hasKey(TAG_RS_BUILDING_DATASTORE))
+        {
+            this.rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(TAG_RS_BUILDING_DATASTORE));
+        }
+        else
+        {
+            setupRsDataStore();
         }
     }
 
-    /**
-     * Returns if the {@link CitizenData} is the same as the worker.
-     *
-     * @param citizen {@link CitizenData} you want to compare
-     * @return true if same citizen, otherwise false
-     */
-    public boolean isCitizenAssigned(final CitizenData citizen)
+    private IRequestSystemBuildingDataStore getDataStore()
     {
-        return assignedCitizen.contains(citizen);
+        return colony.getRequestManager().getDataStoreManager().get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_BUILDING_DATA_STORE);
+    }
+
+    private Map<TypeToken<?>, Collection<IToken<?>>> getOpenRequestsByRequestableType()
+    {
+        return getDataStore().getOpenRequestsByRequestableType();
+    }
+
+    protected Map<Integer, Collection<IToken<?>>> getOpenRequestsByCitizen()
+    {
+        return getDataStore().getOpenRequestsByCitizen();
+    }
+
+    private Map<Integer, Collection<IToken<?>>> getCompletedRequestsByCitizen()
+    {
+        return getDataStore().getCompletedRequestsByCitizen();
+    }
+
+    private Map<IToken<?>, Integer> getCitizensByRequest()
+    {
+        return getDataStore().getCitizensByRequest();
+    }
+
+    public <R extends IRequestable> IToken<?> createRequest(@NotNull final CitizenData citizenData, @NotNull final R requested)
+    {
+        final IToken requestToken = colony.getRequestManager().createRequest(requester, requested);
+
+        addRequestToMaps(citizenData.getId(), requestToken, TypeToken.of(requested.getClass()));
+
+        colony.getRequestManager().assignRequest(requestToken);
+
+        markDirty();
+
+        return requestToken;
     }
 
     /**
-     * Returns the first worker in the list.
+     * Internal method used to register a new Request to the request maps.
+     * Helper method.
      *
-     * @return the EntityCitizen of that worker.
+     * @param citizenId    The id of the citizen.
+     * @param requestToken The {@link IToken} that is used to represent the request.
+     * @param requested    The class of the type that has been requested eg. {@code ItemStack.class}
      */
-    public Optional<EntityCitizen> getMainCitizenEntity()
+    private void addRequestToMaps(@NotNull final Integer citizenId, @NotNull final IToken requestToken, @NotNull final TypeToken requested)
     {
-        if (assignedCitizen.isEmpty())
+        if (!getOpenRequestsByRequestableType().containsKey(requested))
         {
-            return Optional.empty();
+            getOpenRequestsByRequestableType().put(requested, new ArrayList<>());
         }
-        return assignedCitizen.get(0).getCitizenEntity();
+        getOpenRequestsByRequestableType().get(requested).add(requestToken);
+
+        getCitizensByRequest().put(requestToken, citizenId);
+
+        if (!getOpenRequestsByCitizen().containsKey(citizenId))
+        {
+            getOpenRequestsByCitizen().put(citizenId, new ArrayList<>());
+        }
+        getOpenRequestsByCitizen().get(citizenId).add(requestToken);
+    }
+
+    public boolean hasWorkerOpenRequests(@NotNull final CitizenData citizen)
+    {
+        return !getOpenRequests(citizen).isEmpty();
+    }
+
+    @SuppressWarnings(RAWTYPES)
+    public ImmutableList<IRequest> getOpenRequests(@NotNull final CitizenData data)
+    {
+        if (!getOpenRequestsByCitizen().containsKey(data.getId()))
+        {
+            return ImmutableList.of();
+        }
+
+        return ImmutableList.copyOf(getOpenRequestsByCitizen().get(data.getId())
+                .stream()
+                .map(getColony().getRequestManager()::getRequestForToken)
+                .filter(Objects::nonNull)
+                .iterator());
+    }
+
+    @SuppressWarnings(RAWTYPES)
+    public boolean hasWorkerOpenRequestsFiltered(@NotNull final CitizenData citizen, @NotNull final Predicate<IRequest> selectionPredicate)
+    {
+        return getOpenRequests(citizen).stream().anyMatch(selectionPredicate);
+    }
+
+    public <R> boolean hasWorkerOpenRequestsOfType(@NotNull final CitizenData citizenData, final TypeToken<R> requestType)
+    {
+        return !getOpenRequestsOfType(citizenData, requestType).isEmpty();
+    }
+
+    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
+    public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(
+            @NotNull final CitizenData citizenData,
+            final TypeToken<R> requestType)
+    {
+        return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
+                .filter(request -> {
+                    final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                    return requestTypes.contains(requestType);
+                })
+                .map(request -> (IRequest<? extends R>) request)
+                .iterator());
+    }
+
+    public boolean hasCitizenCompletedRequests(@NotNull final CitizenData data)
+    {
+        return !getCompletedRequests(data).isEmpty();
+    }
+
+    @SuppressWarnings(RAWTYPES)
+    public ImmutableList<IRequest> getCompletedRequests(@NotNull final CitizenData data)
+    {
+        if (!getCompletedRequestsByCitizen().containsKey(data.getId()))
+        {
+            return ImmutableList.of();
+        }
+
+        return ImmutableList.copyOf(getCompletedRequestsByCitizen().get(data.getId()).stream()
+                .map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
+    }
+
+    @SuppressWarnings({GENERIC_WILDCARD, RAWTYPES, UNCHECKED})
+    public <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfType(@NotNull final CitizenData citizenData, final TypeToken<R> requestType)
+    {
+        return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
+                .filter(request -> {
+                    final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                    return requestTypes.contains(requestType);
+                })
+                .map(request -> (IRequest<? extends R>) request)
+                .iterator());
+    }
+
+    @SuppressWarnings({GENERIC_WILDCARD, RAWTYPES, UNCHECKED})
+    public <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfTypeFiltered(
+            @NotNull final CitizenData citizenData,
+            final TypeToken<R> requestType,
+            final Predicate<IRequest<? extends R>> filter)
+    {
+        return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
+                .filter(request -> {
+                    final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                    return requestTypes.contains(requestType);
+                })
+                .map(request -> (IRequest<? extends R>) request)
+                .filter(filter)
+                .iterator());
+    }
+
+    public void markRequestAsAccepted(@NotNull final CitizenData data, @NotNull final IToken<?> token)
+    {
+        if (!getCompletedRequestsByCitizen().containsKey(data.getId()) || !getCompletedRequestsByCitizen().get(data.getId()).contains(token))
+        {
+            throw new IllegalArgumentException("The given token " + token + " is not known as a completed request waiting for acceptance by the citizen.");
+        }
+
+        getCompletedRequestsByCitizen().get(data.getId()).remove(token);
+        if (getCompletedRequestsByCitizen().get(data.getId()).isEmpty())
+        {
+            getCompletedRequestsByCitizen().remove(data.getId());
+        }
+
+        getColony().getRequestManager().updateRequestState(token, RequestState.RECEIVED);
+        markDirty();
+    }
+
+    public void cancelAllRequestsOfCitizen(@NotNull final CitizenData data)
+    {
+        getOpenRequests(data).forEach(request ->
+        {
+            getColony().getRequestManager().updateRequestState(request.getToken(), RequestState.CANCELLED);
+
+            if (getOpenRequestsByRequestableType().containsKey(TypeToken.of(request.getRequest().getClass())))
+            {
+                getOpenRequestsByRequestableType().get(TypeToken.of(request.getRequest().getClass())).remove(request.getToken());
+                if (getOpenRequestsByRequestableType().get(TypeToken.of(request.getRequest().getClass())).isEmpty())
+                {
+                    getOpenRequestsByRequestableType().remove(TypeToken.of(request.getRequest().getClass()));
+                }
+            }
+
+            getCitizensByRequest().remove(request.getToken());
+        });
+
+        getCompletedRequests(data).forEach(request -> getColony().getRequestManager().updateRequestState(request.getToken(), RequestState.RECEIVED));
+
+        if (getOpenRequestsByCitizen().containsKey(data.getId()))
+        {
+            getOpenRequestsByCitizen().remove(data.getId());
+        }
+
+        if (getCompletedRequestsByCitizen().containsKey(data.getId()))
+        {
+            getCompletedRequestsByCitizen().remove(data.getId());
+        }
+
+        markDirty();
     }
 
     /**
-     * Returns whether or not the building has a worker.
+     * Overrule the next open request with a give stack.
+     * <p>
+     * We squid:s135 which takes care that there are not too many continue statements in a loop since it makes sense here
+     * out of performance reasons.
      *
-     * @return true if building has worker, otherwise false.
+     * @param stack the stack.
      */
-    public boolean hasAssignedCitizen()
+    @SuppressWarnings("squid:S135")
+    public void overruleNextOpenRequestWithStack(@NotNull final ItemStack stack)
     {
-        return !assignedCitizen.isEmpty();
+        if (ItemStackUtils.isEmpty(stack))
+        {
+            return;
+        }
+
+        for (final int citizenId : getOpenRequestsByCitizen().keySet())
+        {
+            final CitizenData data = getColony().getCitizenManager().getCitizen(citizenId);
+
+            if (data == null)
+            {
+                continue;
+            }
+
+            final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(getOpenRequestsOfType(data, TypeConstants.DELIVERABLE), stack);
+
+            if (target == null)
+            {
+                continue;
+            }
+
+            getColony().getRequestManager().overruleRequest(target.getToken(), stack.copy());
+            return;
+        }
     }
 
-    /**
-     * Returns the {@link net.minecraft.entity.Entity} of the worker.
-     *
-     * @return {@link net.minecraft.entity.Entity} of the worker
-     */
-    @Nullable
-    public List<Optional<EntityCitizen>> getAssignedEntities()
+    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
+    public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
+            @NotNull final CitizenData citizenData,
+            final TypeToken<R> requestType,
+            final Predicate<IRequest<? extends R>> filter)
     {
-        return assignedCitizen.stream().filter(Objects::nonNull).map(CitizenData::getCitizenEntity).collect(Collectors.toList());
+        return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
+                .filter(request -> {
+                    final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                    return requestTypes.contains(requestType);
+                })
+                .map(request -> (IRequest<? extends R>) request)
+                .filter(filter)
+                .iterator());
     }
 
-    /**
-     * Assign the citizen to the current building.
-     *
-     * @param citizen {@link CitizenData} of the worker
-     */
-    public boolean assignCitizen(final CitizenData citizen)
+    public boolean overruleNextOpenRequestOfCitizenWithStack(@NotNull final CitizenData citizenData, @NotNull final ItemStack stack)
     {
-        if (assignedCitizen.contains(citizen))
+        if (ItemStackUtils.isEmpty(stack))
         {
             return false;
         }
 
-        // If we set a worker, inform it of such
-        if (citizen != null)
+        final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(getOpenRequestsOfType(citizenData, TypeConstants.DELIVERABLE),stack);
+
+        if (target == null)
         {
-            assignedCitizen.add(citizen);
+            return false;
         }
 
-        markDirty();
+        getColony().getRequestManager().overruleRequest(target.getToken(), stack.copy());
         return true;
     }
 
-    /**
-     * Assign the citizen after loading it from NBT.
-     * @param data the citizen data.
-     */
-    public void assignCitizenFromNBtAction(final CitizenData data)
+    private IRequest<? extends IDeliverable> getFirstOverullingRequestFromInputList(@NotNull final Collection<IRequest<? extends IDeliverable>> queue, @NotNull final ItemStack stack)
     {
-        /**
-         * Specific classes will override this.
-         */
-    }
-
-    /**
-     * Returns whether the citizen has this as home or not.
-     *
-     * @param citizen Citizen to check.
-     * @return True if citizen lives here, otherwise false.
-     */
-    public boolean hasAssignedCitizen(final CitizenData citizen)
-    {
-        return assignedCitizen.contains(citizen);
-    }
-
-
-    /**
-     * Checks if the building is full.
-     *
-     * @return true if so.
-     */
-    public boolean isFull()
-    {
-        return assignedCitizen.size() >= getMaxInhabitants();
-    }
-
-    /**
-     * Returns the max amount of inhabitants.
-     *
-     * @return Max inhabitants.
-     */
-    public int getMaxInhabitants()
-    {
-        return 1;
-    }
-
-
-    //------------------------- Ending Assigned Citizen handling -------------------------//
-    //------------------------- !Start! Capabilities handling for minecolonies buildings -------------------------//
-
-    @Override
-    public boolean hasCapability(
-      @Nonnull final Capability<?> capability, @Nullable final EnumFacing facing)
-    {
-        return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null;
-    }
-
-    @Nullable
-    @Override
-    public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final EnumFacing facing)
-    {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null)
+        if (queue.isEmpty())
         {
-            final Set<ICapabilityProvider> providers = new HashSet<>();
-
-            //Add myself
-            providers.add(getTileEntity());
-
-            //Add additional containers
-            providers.addAll(getAdditionalCountainers().stream()
-                               .map(getTileEntity().getWorld()::getTileEntity)
-                               .filter(entity -> (entity instanceof TileEntityChest) || (entity instanceof TileEntityRack))
-                               .collect(Collectors.toSet()));
-            providers.removeIf(Objects::isNull);
-
-            //Map all providers to IItemHandlers.
-            final Set<IItemHandlerModifiable> modifiables = providers
-                                                              .stream()
-                                                              .flatMap(provider -> InventoryUtils.getItemHandlersFromProvider(provider).stream())
-                                                              .filter(handler -> handler instanceof IItemHandlerModifiable)
-                                                              .map(handler -> (IItemHandlerModifiable) handler)
-                                                              .collect(Collectors.toSet());
-
-            return (T) new CombinedItemHandler(getSchematicName(), modifiables.toArray(new IItemHandlerModifiable[modifiables.size()]));
+            return null;
         }
 
-        return null;
+        return queue
+                .stream()
+                .filter(request -> request.getRequest().matches(stack))
+                .findFirst()
+                .orElseGet(() ->
+                        getFirstOverullingRequestFromInputList(queue
+                                        .stream()
+                                        .flatMap(r -> flattenDeliverableChildRequests(r).stream())
+                                        .collect(Collectors.toList()),
+                                stack));
     }
 
-    //------------------------- !End! Capabilities handling for minecolonies buildings -------------------------//
+    private Collection<IRequest<? extends IDeliverable>> flattenDeliverableChildRequests(@NotNull final IRequest<? extends IDeliverable> request)
+    {
+        if (!request.hasChildren())
+        {
+            return ImmutableList.of();
+        }
+
+        return request.getChildren()
+                .stream()
+                .map(getColony().getRequestManager()::getRequestForToken)
+                .filter(Objects::nonNull)
+                .filter(request1 -> request1.getRequest() instanceof IDeliverable)
+                .map(request1 -> (IRequest<? extends IDeliverable>) request1)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public IToken<?> getRequesterId()
+    {
+        return getToken();
+    }
+
+    @Override
+    public IToken<?> getToken()
+    {
+        return requester.getRequesterId();
+    }
+
+    @Override
+    public ImmutableCollection<IRequestResolver<?>> getResolvers()
+    {
+        return ImmutableList.of(new BuildingRequestResolver(getRequester().getRequesterLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(
+                TypeConstants.ITOKEN)));
+    }
+
+    public IRequester getRequester()
+    {
+        return requester;
+    }
+
+    @NotNull
+    @Override
+    public ILocation getRequesterLocation()
+    {
+        return getRequester().getRequesterLocation();
+    }
+
+    @Override
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    {
+        final Integer citizenThatRequested = getCitizensByRequest().remove(token);
+        getOpenRequestsByCitizen().get(citizenThatRequested).remove(token);
+
+        if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
+        {
+            getOpenRequestsByCitizen().remove(citizenThatRequested);
+        }
+
+        final IRequest<?> requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
+        getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).remove(token);
+
+        if (getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).isEmpty())
+        {
+            getOpenRequestsByRequestableType().remove(TypeToken.of(requestThatCompleted.getRequest().getClass()));
+        }
+
+        if (!getCompletedRequestsByCitizen().containsKey(citizenThatRequested))
+        {
+            getCompletedRequestsByCitizen().put(citizenThatRequested, new ArrayList<>());
+        }
+        getCompletedRequestsByCitizen().get(citizenThatRequested).add(token);
+
+        markDirty();
+    }
+
+    @Override
+    @NotNull
+    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken token)
+    {
+        final int citizenThatRequested = getCitizensByRequest().remove(token);
+        getOpenRequestsByCitizen().get(citizenThatRequested).remove(token);
+
+        if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
+        {
+            getOpenRequestsByCitizen().remove(citizenThatRequested);
+        }
+
+        final IRequest<?> requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
+        if (requestThatCompleted != null && getOpenRequestsByRequestableType().containsKey(TypeToken.of(requestThatCompleted.getRequest().getClass())))
+        {
+            getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).remove(token);
+            if (getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).isEmpty())
+            {
+                getOpenRequestsByRequestableType().remove(TypeToken.of(requestThatCompleted.getRequest().getClass()));
+            }
+        }
+
+        //Check if the citizen did not die.
+        if (getColony().getCitizenManager().getCitizen(citizenThatRequested) != null)
+        {
+            getColony().getCitizenManager().getCitizen(citizenThatRequested).onRequestCancelled(token);
+        }
+        markDirty();
+    }
+
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    {
+        if (!getCitizensByRequest().containsKey(token))
+        {
+            return new TextComponentString("<UNKNOWN>");
+        }
+
+        final Integer citizenData = getCitizensByRequest().get(token);
+        return new TextComponentString(this.getSchematicName() + " " + getColony().getCitizenManager().getCitizen(citizenData).getName());
+    }
+
+    public Optional<CitizenData> getCitizenForRequest(@NotNull final IToken token)
+    {
+        if (!getCitizensByRequest().containsKey(token) || getColony() == null)
+        {
+            return Optional.empty();
+        }
+
+        final int citizenID = getCitizensByRequest().get(token);
+        if(getColony().getCitizenManager().getCitizen(citizenID) == null)
+        {
+            return Optional.empty();
+        }
+
+        return Optional.of(getColony().getCitizenManager().getCitizen(citizenID));
+    }
+
+
+    //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//
 }

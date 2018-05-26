@@ -9,9 +9,8 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.BuildingRegistry;
-import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.permissions.PermissionsView;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
@@ -55,12 +54,12 @@ public final class ColonyView implements IColony
     private BlockPos center = BlockPos.ORIGIN;
 
     /**
-     * Defines if workers are hired manually or automatically.
+     * Defines if workerbuildings are hired manually or automatically.
      */
     private boolean manualHiring = false;
 
     /**
-     * Defines if workers are housed manually or automatically.
+     * Defines if workerbuildings are housed manually or automatically.
      */
     private boolean manualHousing = false;
 
@@ -271,7 +270,7 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Sets if workers should be hired manually.
+     * Sets if workerbuildings should be hired manually.
      *
      * @param manualHiring true if manually.
      */

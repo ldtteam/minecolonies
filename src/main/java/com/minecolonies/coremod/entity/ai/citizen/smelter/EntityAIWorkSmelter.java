@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.BuildingSmeltery;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSmeltery;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
@@ -42,7 +42,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     private static final int INTELLIGENCE_MULTIPLIER = 1;
 
     /**
-     * Time the worker delays until the next hit.
+     * Time the workerbuildings delays until the next hit.
      */
     private static final int HIT_DELAY = 20;
 
@@ -52,7 +52,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     private static final int PROGRESS_MULTIPLIER = 50;
 
     /**
-     * Max level which should have an effect on the speed of the worker.
+     * Max level which should have an effect on the speed of the workerbuildings.
      */
     private static final int MAX_LEVEL = 50;
 

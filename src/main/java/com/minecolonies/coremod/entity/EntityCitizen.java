@@ -15,7 +15,7 @@ import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
@@ -400,7 +400,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * calculate this workers building.
+     * calculate this workerbuildings building.
      *
      * @return the building or null if none present.
      */
@@ -501,12 +501,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Checks if a worker is at his working site.
+     * Checks if a workerbuildings is at his working site.
      * If he isn't, sets it's path to the location
      *
      * @param site  the place where he should walk to
      * @param range Range to check in
-     * @return True if worker is at site, otherwise false.
+     * @return True if workerbuildings is at site, otherwise false.
      */
     public boolean isWorkerAtSiteWithMove(@NotNull final BlockPos site, final int range)
     {
@@ -2291,7 +2291,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Get the amount the worker should decrease its saturation by each action done or x blocks traveled.
+     * Get the amount the workerbuildings should decrease its saturation by each action done or x blocks traveled.
      * @return the double describing it.
      */
     private double getPerBuildingFoodCost()

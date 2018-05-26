@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * This is the base class of all worker AIs.
+ * This is the base class of all workerbuildings AIs.
  * Every AI implements this class with it's job type.
  * There are some utilities within the class:
  * - The AI will clear a full inventory at the building chest.
@@ -48,7 +48,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     private static final int MIN_WORKING_RANGE = 12;
 
     /**
-     * Range around the worker to pickup items.
+     * Range around the workerbuildings to pickup items.
      */
     private static final int ITEM_PICKUP_RANGE = 3;
 
@@ -63,23 +63,23 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     private static final int WAIT_WHILE_WALKING = 5;
 
     /**
-     * Horizontal range in which the worker picks up items.
+     * Horizontal range in which the workerbuildings picks up items.
      */
     public static final float RANGE_HORIZONTAL_PICKUP = 45.0F;
 
     /**
-     * Vertical range in which the worker picks up items.
+     * Vertical range in which the workerbuildings picks up items.
      */
     public static final float RANGE_VERTICAL_PICKUP   = 3.0F;
 
     /**
-     * Number of ticks the worker is standing still.
+     * Number of ticks the workerbuildings is standing still.
      */
     private int stillTicks = 0;
 
     /**
      * Used to store the path index
-     * to check if the worker is still walking.
+     * to check if the workerbuildings is still walking.
      */
     private int previousIndex = 0;
 
@@ -282,7 +282,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     }
 
     /**
-     * Search for all items around the worker.
+     * Search for all items around the workerbuildings.
      * and store them in the items list.
      *
      * @param boundingBox the area to search.

@@ -45,7 +45,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     private BlockPos location;
 
     /**
-     * Has the field be taken by any worker?
+     * Has the field be taken by any workerbuildings?
      */
     private boolean taken = false;
 

@@ -208,7 +208,7 @@ public final class ItemStackUtils
 
     /**
      * Verifies if there is one tool with an acceptable level
-     * in a worker's inventory.
+     * in a workerbuildings's inventory.
      *
      * @param stack        the stack to test.
      * @param toolType     the type of tool needed
@@ -336,7 +336,7 @@ public final class ItemStackUtils
      * @param itemStack    the type of tool needed
      * @param toolLevel    the tool level
      * @param minimalLevel the minimum level needed
-     * @param maximumLevel the maximum level needed (usually the worker's hut level)
+     * @param maximumLevel the maximum level needed (usually the workerbuildings's hut level)
      * @return true if tool is acceptable
      */
     public static boolean verifyToolLevel(@NotNull final ItemStack itemStack, final int toolLevel, final int minimalLevel, final int maximumLevel)

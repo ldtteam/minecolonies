@@ -153,7 +153,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     private List<Entity> entityList;
 
     /**
-     * Last position the worker has been seen.
+     * Last position the workerbuildings has been seen.
      */
     private BlockPos lastPos = null;
 
@@ -184,7 +184,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     }
 
     /**
-     * Checks if the worker is in a state where he can execute well.
+     * Checks if the workerbuildings is in a state where he can execute well.
      *
      * @return true if so.
      */
@@ -597,7 +597,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     }
 
     /**
-     * Checks if the the worker is too far from his patrol/guard/follow target.
+     * Checks if the the workerbuildings is too far from his patrol/guard/follow target.
      *
      * @param target an attack target.
      * @param range  the range allowed to be from the patrol/guard/follow target.

@@ -12,6 +12,10 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.*;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -41,7 +45,7 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliveryman>
 {
     /**
-     * Min distance the worker should have to the warehouse to make any decisions.
+     * Min distance the workerbuildings should have to the warehouse to make any decisions.
      */
     private static final int MIN_DISTANCE_TO_WAREHOUSE = 5;
 
@@ -61,7 +65,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private static final int DUMP_AND_GATHER_DELAY = 3;
 
     /**
-     * Wait 10 seconds for the worker to gather.
+     * Wait 10 seconds for the workerbuildings to gather.
      */
     private static final int WAIT_DELAY = TICKS_SECOND * 10;
 
@@ -96,7 +100,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private int currentSlot = 0;
 
     /**
-     * Amount of stacks the worker already kept in the current gathering process.
+     * Amount of stacks the workerbuildings already kept in the current gathering process.
      */
     private List<ItemStorage> alreadyKept = new ArrayList<>();
 
@@ -312,7 +316,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Check if the worker can hold that much items.
+     * Check if the workerbuildings can hold that much items.
      * It depends on his building level.
      * Level 1: 1 stack Level 2: 2 stacks, 4 stacks, 8, unlimited.
      * That's 2^buildingLevel-1.
@@ -359,7 +363,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Check if worker of a certain building requires the item now.
+     * Check if workerbuildings of a certain building requires the item now.
      * Or the builder for the current task.
      *
      * @param building         the building to check for.
@@ -485,7 +489,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
             if (tileEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) tileEntity).getBuilding() instanceof AbstractBuildingWorker)
             {
-                final AbstractBuilding building = ((TileEntityColonyBuilding) tileEntity).getBuilding();
+                final AbstractBuildingContainer building = ((TileEntityColonyBuilding) tileEntity).getBuilding();
                 building.alterPickUpPriority(1);
                 insertionResultStack = InventoryUtils.forceItemStackToItemHandler(
                   new InvWrapper((TileEntityColonyBuilding) tileEntity), stack, ((AbstractBuildingWorker) building)::isItemStackInRequest);

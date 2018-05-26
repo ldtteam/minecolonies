@@ -4,7 +4,7 @@ import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.BuildingLumberjack;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -449,7 +449,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     /**
-     * Check if the worker is standing on a sapling.
+     * Check if the workerbuildings is standing on a sapling.
      *
      * @return true if so.
      */
@@ -468,7 +468,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     private void tryGettingUnstuckFromLeaves()
     {
         @Nullable final BlockPos nextLeaves = findNearLeaves();
-        //If the worker gets too stuck he moves around a bit
+        //If the workerbuildings gets too stuck he moves around a bit
         if (nextLeaves == null || stillTicks > WALKING_BACK_WAIT_TIME)
         {
             worker.getNavigator().moveAwayFromXYZ(worker.getPosition(), WALK_BACK_RANGE, WALK_BACK_SPEED);

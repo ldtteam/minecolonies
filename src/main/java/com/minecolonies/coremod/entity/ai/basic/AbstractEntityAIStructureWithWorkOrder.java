@@ -56,7 +56,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     }
 
     /**
-     * Takes the existing workorder, loads the structure and tests the worker order if it is valid.
+     * Takes the existing workorder, loads the structure and tests the workerbuildings order if it is valid.
      */
     public void initiate()
     {

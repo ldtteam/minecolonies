@@ -22,7 +22,7 @@ import java.util.List;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Window for the hiring or firing of a worker.
+ * Window for the hiring or firing of a workerbuildings.
  */
 public class WindowListRecipes extends Window implements ButtonHandler
 {
@@ -62,7 +62,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
     private final ScrollingList recipeList;
 
     /**
-     * Constructor for the window when the player wants to assign a worker for a certain home building.
+     * Constructor for the window when the player wants to assign a workerbuildings for a certain home building.
      *
      * @param c          the colony view.
      * @param buildingId the building position.

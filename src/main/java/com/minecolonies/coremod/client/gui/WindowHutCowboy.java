@@ -4,8 +4,8 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.blockout.controls.Button;
-import com.minecolonies.coremod.colony.buildings.BuildingCowboy;
-import com.minecolonies.coremod.colony.buildings.BuildingFisherman;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCowboy;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFisherman;
 import org.jetbrains.annotations.NotNull;
 
 /**

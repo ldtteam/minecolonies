@@ -38,23 +38,23 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE               = "entity.builder.messageBuildComplete";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST           = "entity.worker.inventoryFullChestFull";
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST           = "entity.workerbuildings.inventoryFullChestFull";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUEST               = "entity.worker.pickaxeRequest";
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUEST               = "entity.workerbuildings.pickaxeRequest";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_ONEPICKAXEREQUEST            = "entity.worker.onePickaxeRequest";
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_ONEPICKAXEREQUEST            = "entity.workerbuildings.onePickaxeRequest";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUESTBETTERHUT      = "entity.worker.pickaxeRequestBetterHut";
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUESTBETTERHUT      = "entity.workerbuildings.pickaxeRequestBetterHut";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST                  = "entity.worker.toolRequest";
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST                  = "entity.workerbuildings.toolRequest";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_SIMPLETOOLREQUEST            = "entity.worker.simpleToolRequest";
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_SIMPLETOOLREQUEST            = "entity.workerbuildings.simpleToolRequest";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_ENCHTOOLREQUEST              = "entity.worker.enchantedToolRequest";
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_ENCHTOOLREQUEST              = "entity.workerbuildings.enchantedToolRequest";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_SPECIFICTOOLREQUEST          = "entity.worker.specificToolRequest";
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_SPECIFICTOOLREQUEST          = "entity.workerbuildings.specificToolRequest";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLATLEASTREQUEST           = "entity.worker.toolAtLeastRequest";
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLATLEASTREQUEST           = "entity.workerbuildings.toolAtLeastRequest";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL                  = "com.minecolonies.coremod.job.deliveryman.workerChestFull";
     @NonNls

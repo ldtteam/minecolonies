@@ -11,7 +11,7 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.buildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.AssignUnassignMessage;
 import net.minecraft.util.math.BlockPos;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Window for the hiring or firing of a worker.
+ * Window for the hiring or firing of a workerbuildings.
  */
 public class WindowAssignCitizen extends Window implements ButtonHandler
 {
@@ -79,7 +79,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
     private List<CitizenDataView> citizens = new ArrayList<>();
 
     /**
-     * Constructor for the window when the player wants to assign a worker for a certain home building.
+     * Constructor for the window when the player wants to assign a workerbuildings for a certain home building.
      *
      * @param c          the colony view.
      * @param buildingId the building position.

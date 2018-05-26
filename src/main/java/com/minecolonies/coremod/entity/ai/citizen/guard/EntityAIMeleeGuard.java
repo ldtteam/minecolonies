@@ -56,7 +56,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     private static final double MOVE_MINIMAL = 0.01D;
 
     /**
-     * Quantity the worker should turn around all at once.
+     * Quantity the workerbuildings should turn around all at once.
      */
     private static final double TURN_AROUND = 180D;
 

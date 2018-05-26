@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.ai.minimal;
 
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.state.IBlockState;

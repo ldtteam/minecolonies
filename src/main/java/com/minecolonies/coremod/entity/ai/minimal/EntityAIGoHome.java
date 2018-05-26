@@ -105,7 +105,7 @@ public class EntityAIGoHome extends EntityAIBase
     }
 
     /**
-     * While going home play a goHome sound for the specific worker by chance.
+     * While going home play a goHome sound for the specific workerbuildings by chance.
      */
     private void playGoHomeSounds()
     {
@@ -114,7 +114,7 @@ public class EntityAIGoHome extends EntityAIBase
         if (chance <= 1 && citizen.getWorkBuilding() != null && citizen.getColonyJob() != null)
         {
             SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorld(citizen), citizen.getPosition(), citizen.getColonyJob().getBedTimeSound(), 1);
-            //add further workers as soon as available.
+            //add further workerbuildings as soon as available.
         }
     }
 }

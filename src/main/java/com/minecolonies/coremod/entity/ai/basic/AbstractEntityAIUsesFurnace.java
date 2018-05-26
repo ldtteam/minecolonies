@@ -25,7 +25,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
- * AI class for all workers which use a furnace and require fuel and a block to smelt in it.
+ * AI class for all workerbuildings which use a furnace and require fuel and a block to smelt in it.
  * @param <J>
  */
 public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends AbstractEntityAISkill<J>
@@ -51,7 +51,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
     protected Predicate<ItemStack> needsCurrently = null;
 
     /**
-     * The current position the worker should walk to.
+     * The current position the workerbuildings should walk to.
      */
     protected BlockPos walkTo = null;
 
@@ -115,7 +115,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
 
     /**
      * Central method of the furnace user, he decides about what to do next from here.
-     * First check if any of the workers has important tasks to handle first.
+     * First check if any of the workerbuildings has important tasks to handle first.
      * If not check if there is an oven with an item which has to be retrieved.
      * If not check if fuel and smeltable are available and request if necessary and get into inventory.
      * Then check if able to smelt already.
@@ -170,10 +170,10 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
     }
 
     /**
-     * Checks if the worker has enough fuel and/or smeltable to start smelting.
+     * Checks if the workerbuildings has enough fuel and/or smeltable to start smelting.
      * @param amountOfFuel the total amount of fuel.
      * @param amountOfSmeltable the total amount of smeltables.
-     * @return START_USING_FURNACE if enough, else check for additional worker specific jobs.
+     * @return START_USING_FURNACE if enough, else check for additional workerbuildings specific jobs.
      */
     private AIState checkIfAbleToSmelt(final int amountOfFuel, final int amountOfSmeltable)
     {
@@ -289,7 +289,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
      * Retrieve ready bars from the furnaces.
      * If no position has been set return.
      * Else navigate to the position of the furnace.
-     * On arrival execute the extract method of the specialized worker.
+     * On arrival execute the extract method of the specialized workerbuildings.
      * @return the next state to go to.
      */
     private AIState retrieveSmeltableFromFurnace()
@@ -409,8 +409,8 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
     }
 
     /**
-     * Smeltabel the worker requires.
-     * Each worker has to override this.
+     * Smeltabel the workerbuildings requires.
+     * Each workerbuildings has to override this.
      * @return the type of it.
      */
     protected abstract IRequestable getSmeltAbleClass();

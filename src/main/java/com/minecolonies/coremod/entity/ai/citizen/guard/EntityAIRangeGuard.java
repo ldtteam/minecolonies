@@ -88,7 +88,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     private static final double MOVE_MINIMAL = 0.01D;
 
     /**
-     * Quantity the worker should turn around all at once.
+     * Quantity the workerbuildings should turn around all at once.
      */
     private static final double TURN_AROUND = 180D;
 
@@ -108,7 +108,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     private static final double AIM_HEIGHT = 3.0D;
 
     /**
-     * Used to calculate the chance that an arrow hits, if the worker levels is higher than 15 the chance gets worse again.
+     * Used to calculate the chance that an arrow hits, if the workerbuildings levels is higher than 15 the chance gets worse again.
      * Because of the rising fire speed.
      */
     private static final double HIT_CHANCE_DIVIDER = 15.0D;

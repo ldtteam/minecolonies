@@ -5,6 +5,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
+import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
 import com.minecolonies.coremod.util.BuildingUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Tuple;
@@ -63,6 +64,18 @@ public abstract class AbstractSchematicProvider
     public AbstractSchematicProvider(final BlockPos pos)
     {
         location = pos;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return (int) (31 * this.getID().toLong());
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        return o instanceof AbstractBuilding && ((AbstractBuilding) o).getID().equals(this.getID());
     }
 
     /**

@@ -208,7 +208,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Can be overridden in implementations to return the exact building type.
      *
-     * @return the building associated with this AI's worker.
+     * @return the building associated with this AI's workerbuildings.
      */
     @Nullable
     public AbstractBuildingWorker getOwnBuilding()
@@ -219,7 +219,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Can be overridden in implementations to return the exact building type.
      *
-     * @return the building associated with this AI's worker.
+     * @return the building associated with this AI's workerbuildings.
      */
     @Nullable
     public <W extends AbstractBuildingWorker> W getOwnBuilding(@NotNull final Class<W> type)
@@ -304,7 +304,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Check if we need to dump the workers inventory.
+     * Check if we need to dump the workerbuildings inventory.
      * <p>
      * This will also ask the implementing ai
      * if we need to dump on custom reasons.
@@ -370,7 +370,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Updates the visual state of the worker.
+     * Updates the visual state of the workerbuildings.
      * Updates render meta data.
      * Updates the current state on the nametag.
      *
@@ -378,7 +378,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private AIState updateVisualState()
     {
-        //Update the current state the worker is in.
+        //Update the current state the workerbuildings is in.
         job.setNameTag(this.getState().toString());
         //Update torch, seeds etc. in chestbelt etc.
         updateRenderMetaData();
@@ -399,7 +399,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * This method will return true if the AI is waiting for something.
      * In that case, don't execute any more AI code, until it returns false.
      * Call this exactly once per tick to get the delay right.
-     * The worker will move and animate correctly while he waits.
+     * The workerbuildings will move and animate correctly while he waits.
      *
      * @return true if we have to wait for something
      *
@@ -438,7 +438,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * If the worker has open requests their results will be queried until they all are completed
+     * If the workerbuildings has open requests their results will be queried until they all are completed
      * Also waits for DELAY_RECHECK.
      *
      * @return NEEDS_ITEM
@@ -551,21 +551,21 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Walk the worker to it's building chest.
+     * Walk the workerbuildings to it's building chest.
      * Please return immediately if this returns true.
      *
-     * @return false if the worker is at his building
+     * @return false if the workerbuildings is at his building
      */
     protected final boolean walkToBuilding()
     {
         @Nullable final AbstractBuildingWorker ownBuilding = getOwnBuilding();
-        //Return true if the building is null to stall the worker
+        //Return true if the building is null to stall the workerbuildings
         return ownBuilding == null
                  || walkToBlock(ownBuilding.getLocation());
     }
 
     /**
-     * Check all chests in the worker hut for a required item matching a certain predicate
+     * Check all chests in the workerbuildings hut for a required item matching a certain predicate
      *
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
@@ -603,7 +603,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Check all chests in the worker hut for a required item.
+     * Check all chests in the workerbuildings hut for a required item.
      *
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
@@ -653,8 +653,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Finds the first @see ItemStack the type of {@code is}.
-     * It will be taken from the chest and placed in the workers inventory.
-     * Make sure that the worker stands next the chest to not break immersion.
+     * It will be taken from the chest and placed in the workerbuildings inventory.
+     * Make sure that the workerbuildings stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
      * @param entity the tileEntity chest or building or rack.
@@ -698,7 +698,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * This block will receive animation hits on delay.
      *
      * @param target  the block that will be hit
-     * @param stand   the block the worker will walk to
+     * @param stand   the block the workerbuildings will walk to
      * @param timeout the time in ticks to hit the block
      */
     private void workOnBlock(@Nullable final BlockPos target, @Nullable final BlockPos stand, final int timeout)
@@ -710,8 +710,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Finds the first @see ItemStack the type of {@code is}.
-     * It will be taken from the chest and placed in the workers inventory.
-     * Make sure that the worker stands next the chest to not break immersion.
+     * It will be taken from the chest and placed in the workerbuildings inventory.
+     * Make sure that the workerbuildings stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
      * @param entity                      the tileEntity chest or building.
@@ -740,8 +740,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Finds the first @see ItemStack the type of {@code is}.
-     * It will be taken from the chest and placed in the workers inventory.
-     * Make sure that the worker stands next the chest to not break immersion.
+     * It will be taken from the chest and placed in the workerbuildings inventory.
+     * Make sure that the workerbuildings stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
      * @param entity   the tileEntity chest or building.
@@ -764,7 +764,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Takes whatever is in that slot of the workers chest and puts it in his inventory.
+     * Takes whatever is in that slot of the workerbuildings chest and puts it in his inventory.
      * If the inventory is full, only the fitting part will be moved.
      * Beware this method shouldn't be private, because the generic access won't work within a lambda won't work else.
      *
@@ -837,7 +837,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Check all chests in the worker hut for a required tool.
+     * Check all chests in the workerbuildings hut for a required tool.
      *
      * @param toolType     the type of tool requested (amount is ignored)
      * @param minimalLevel the minimal level the tool should have.
@@ -921,11 +921,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Can be overridden by implementations to specify items useful for the worker.
-     * When the workers inventory is full, he will try to keep these items.
+     * Can be overridden by implementations to specify items useful for the workerbuildings.
+     * When the workerbuildings inventory is full, he will try to keep these items.
      * ItemStack amounts are ignored, the first stack found will be taken.
      *
-     * @return a list with items nice to have for the worker
+     * @return a list with items nice to have for the workerbuildings
      */
     @NotNull
     protected List<ItemStack> itemsNiceToHave()
@@ -1095,7 +1095,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Calculates the working position.
      * <p>
-     * Takes the position where the worker would like to work on and return the most appropriate position for it.
+     * Takes the position where the workerbuildings would like to work on and return the most appropriate position for it.
      * <p>
      *
      * @param targetPosition the position to work at.

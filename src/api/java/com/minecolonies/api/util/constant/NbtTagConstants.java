@@ -217,9 +217,9 @@ public final class NbtTagConstants
     public static final String TAG_SPEED = "speed";
 
     /**
-     * Tag used to store the worker to nbt.
+     * Tag used to store the workerbuildings to nbt.
      */
-    public static final String TAG_WORKER = "worker";
+    public static final String TAG_WORKER = "workerbuildings";
 
     /**
      * NBTTag to store the recipes list.

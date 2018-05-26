@@ -9,7 +9,7 @@ import com.minecolonies.blockout.controls.ItemIcon;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
-import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -58,9 +58,9 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     private static final String LIST_FIELDS = "fields";
 
     /**
-     * Id of the the worker label inside the GUI.
+     * Id of the the workerbuildings label inside the GUI.
      */
-    private static final String TAG_WORKER = "worker";
+    private static final String TAG_WORKER = "workerbuildings";
 
     /**
      * Id of the the distance label inside the GUI.
@@ -125,7 +125,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     /**
      * Constructor for the window of the farmer.
      *
-     * @param building {@link com.minecolonies.coremod.colony.buildings.BuildingFarmer.View}.
+     * @param building {@link BuildingFarmer.View}.
      */
     public WindowHutFarmer(final BuildingFarmer.View building)
     {

@@ -17,7 +17,7 @@ import java.util.Arrays;
 import static com.minecolonies.coremod.entity.EntityCitizen.Status.IDLE;
 
 /**
- * Skeleton class for worker ai.
+ * Skeleton class for workerbuildings ai.
  * Here general target execution will be handled.
  * No utility on this level!
  * That's what {@link AbstractEntityAIInteract} is for.

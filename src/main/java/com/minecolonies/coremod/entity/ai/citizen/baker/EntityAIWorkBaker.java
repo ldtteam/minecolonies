@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.ai.citizen.baker;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.buildings.BuildingBaker;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
@@ -54,7 +54,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     private static final int KNEADING_TIME = 5;
 
     /**
-     * Time the worker delays until the next hit.
+     * Time the workerbuildings delays until the next hit.
      */
     private static final int HIT_DELAY = 20;
 
@@ -74,7 +74,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     private static final int PROGRESS_MULTIPLIER = 50;
 
     /**
-     * Max level which should have an effect on the speed of the worker.
+     * Max level which should have an effect on the speed of the workerbuildings.
      */
     private static final int MAX_LEVEL = 50;
 
@@ -476,7 +476,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     }
 
     /**
-     * Returns the fisherman's worker instance. Called from outside this class.
+     * Returns the fisherman's workerbuildings instance. Called from outside this class.
      *
      * @return citizen object.
      */
