@@ -150,7 +150,6 @@ public class BuildingRegistry
 
     /**
      * Create and load a AbstractBuilding given it's saved NBTTagCompound.
-     * Calls {@link #readFromNBT(net.minecraft.nbt.NBTTagCompound)}.
      *
      * @param colony   The owning colony.
      * @param compound The saved data.
