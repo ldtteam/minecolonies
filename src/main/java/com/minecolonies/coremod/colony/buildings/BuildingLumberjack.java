@@ -267,11 +267,18 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         }
     }
 
+    /**
+     * Whether or not the LJ should replant saplings
+     */
     public boolean shouldReplant()
     {
         return replant;
     }
 
+    /**
+     * Set whether or not LJ should replant saplings
+     * @param shouldReplant
+     */
     public void setShouldReplant(final boolean shouldReplant)
     {
         this.replant = shouldReplant;
@@ -305,6 +312,9 @@ public class BuildingLumberjack extends AbstractBuildingWorker
          */
         public final Map<ItemStorage, Boolean> treesToFell = new LinkedHashMap<>();
 
+        /**
+         * Whether or not the LJ should replant saplings
+         */
         public boolean shouldReplant = true;
 
         /**
@@ -318,9 +328,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             super(c, l);
         }
 
-        /**
-         * Whether or not the LJ should replant saplings
-         */
+
 
 
         @Override
