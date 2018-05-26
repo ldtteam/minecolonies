@@ -45,7 +45,7 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliveryman>
 {
     /**
-     * Min distance the workerbuildings should have to the warehouse to make any decisions.
+     * Min distance the worker should have to the warehouse to make any decisions.
      */
     private static final int MIN_DISTANCE_TO_WAREHOUSE = 5;
 
@@ -65,7 +65,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private static final int DUMP_AND_GATHER_DELAY = 3;
 
     /**
-     * Wait 10 seconds for the workerbuildings to gather.
+     * Wait 10 seconds for the worker to gather.
      */
     private static final int WAIT_DELAY = TICKS_SECOND * 10;
 
@@ -100,7 +100,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private int currentSlot = 0;
 
     /**
-     * Amount of stacks the workerbuildings already kept in the current gathering process.
+     * Amount of stacks the worker already kept in the current gathering process.
      */
     private List<ItemStorage> alreadyKept = new ArrayList<>();
 
@@ -316,7 +316,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Check if the workerbuildings can hold that much items.
+     * Check if the worker can hold that much items.
      * It depends on his building level.
      * Level 1: 1 stack Level 2: 2 stacks, 4 stacks, 8, unlimited.
      * That's 2^buildingLevel-1.
@@ -363,7 +363,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Check if workerbuildings of a certain building requires the item now.
+     * Check if worker of a certain building requires the item now.
      * Or the builder for the current task.
      *
      * @param building         the building to check for.

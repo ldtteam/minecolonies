@@ -82,7 +82,7 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
     /**
      * Updates the task.
      * Decrease the time the door is open already.
-     * Door has to stay open enough to let the workerbuildings go through it.
+     * Door has to stay open enough to let the worker go through it.
      */
     @Override
     public void updateTask()

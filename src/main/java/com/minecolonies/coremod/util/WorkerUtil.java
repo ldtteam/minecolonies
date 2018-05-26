@@ -42,7 +42,7 @@ public final class WorkerUtil
     }
 
     /**
-     * Checks if a workerbuildings is at his working site.
+     * Checks if a worker is at his working site.
      * If he isn't, sets it's path to the location.
      *
      * @param worker Worker to check
@@ -50,7 +50,7 @@ public final class WorkerUtil
      * @param y      Y-coordinate
      * @param z      Z-coordinate
      * @param range  Range to check in
-     * @return True if workerbuildings is at site, otherwise false.
+     * @return True if worker is at site, otherwise false.
      */
     public static boolean isWorkerAtSiteWithMove(@NotNull final EntityCitizen worker, final int x, final int y, final int z, final int range)
     {

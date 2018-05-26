@@ -44,7 +44,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_M
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
- * The abstract class for each workerbuildings building.
+ * The abstract class for each worker building.
  */
 public abstract class AbstractBuildingWorker extends AbstractBuilding
 {
@@ -54,7 +54,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     public static final int WOOD_HUT_LEVEL = 0;
 
     /**
-     * The list of recipes the workerbuildings knows, correspond to a subset of the recipes in the colony.
+     * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
      */
     private final List<IToken> recipes = new ArrayList<>();
 
@@ -82,7 +82,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
 
 
     /**
-     * Check if a certain ItemStack is in the request of a workerbuildings.
+     * Check if a certain ItemStack is in the request of a worker.
      *
      * @param stack the stack to chest.
      * @return true if so.
@@ -108,7 +108,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     }
 
     /**
-     * Method to check if the workerbuildings assigned to this building can craft an input stack.
+     * Method to check if the worker assigned to this building can craft an input stack.
      * Checks a) if he knows the recipe and
      *        b) if he has the required items in his inventory or in the hut.
      * @param stack the stack which shall be crafted.
@@ -127,7 +127,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     }
 
     /**
-     * Check if is the workerbuildings has the knowledge to craft something.
+     * Check if is the worker has the knowledge to craft something.
      * @param stack the stack to craft.
      * @return the recipe storage if so.
      */
@@ -243,7 +243,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
             return false;
         }
 
-        // If we set a workerbuildings, inform it of such
+        // If we set a worker, inform it of such
         if (citizen != null)
         {
             citizen.getCitizenEntity().ifPresent(tempCitizen -> {
@@ -367,7 +367,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     {
         super.onWorldTick(event);
 
-        // If we have no active workerbuildings, grab one from the Colony
+        // If we have no active worker, grab one from the Colony
         // TODO Maybe the Colony should assign jobs out, instead?
         if (!hasAssignedCitizen()
               && (getBuildingLevel() > 0 || this instanceof BuildingBuilder)
@@ -432,7 +432,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     }
 
     /**
-     * Get the max tool level useable by the workerbuildings.
+     * Get the max tool level useable by the worker.
      *
      * @return the integer.
      */
@@ -478,7 +478,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     public static class View extends AbstractBuildingView
     {
         /**
-         * List of the workerbuildings ids.
+         * List of the worker ids.
          */
         private final List<Integer> workerIDs = new ArrayList<>();
 
@@ -499,9 +499,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
         }
 
         /**
-         * Returns the id of the workerbuildings.
+         * Returns the id of the worker.
          *
-         * @return 0 if there is no workerbuildings else the correct citizen id.
+         * @return 0 if there is no worker else the correct citizen id.
          */
         public List<Integer> getWorkerId()
         {
@@ -509,7 +509,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
         }
 
         /**
-         * Sets the id of the workerbuildings.
+         * Sets the id of the worker.
          *
          * @param workerId the id to set.
          */
@@ -591,7 +591,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
         }
 
         /**
-         * Remove a workerbuildings from the list.
+         * Remove a worker from the list.
          *
          * @param id the id to remove.
          */
@@ -608,7 +608,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
         }
 
         /**
-         * Check if it has enough workerbuildings.
+         * Check if it has enough worker.
          *
          * @return true if so.
          */

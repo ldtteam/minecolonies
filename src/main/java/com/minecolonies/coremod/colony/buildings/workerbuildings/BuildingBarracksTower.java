@@ -161,7 +161,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         }
 
         /**
-         * Check if it has enough workerbuildings.
+         * Check if it has enough worker.
          *
          * @return true if so.
          */

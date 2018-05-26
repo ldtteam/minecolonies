@@ -41,7 +41,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
     private static final int MAX_BUILDING_LEVEL = 5;
 
     /**
-     * Amount of swords and armor to keep at the workerbuildings.
+     * Amount of swords and armor to keep at the worker.
      */
     private static final int STUFF_TO_KEEP = 10;
 

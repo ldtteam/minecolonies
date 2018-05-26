@@ -30,7 +30,7 @@ public class ChatSpamFilter
     protected static final int MAX_TIMEOUT = 20 * 60 * 10;
 
     /**
-     * The workerbuildings we send chats from.
+     * The worker we send chats from.
      */
     private final CitizenData citizenData;
 
@@ -51,9 +51,9 @@ public class ChatSpamFilter
     private int speechRepeat = 0;
 
     /**
-     * Create a new ChatSpamFilter for the workerbuildings.
+     * Create a new ChatSpamFilter for the worker.
      *
-     * @param citizenData the workerbuildings who will sends chats through this filter.
+     * @param citizenData the worker who will sends chats through this filter.
      */
     public ChatSpamFilter(final CitizenData citizenData)
     {

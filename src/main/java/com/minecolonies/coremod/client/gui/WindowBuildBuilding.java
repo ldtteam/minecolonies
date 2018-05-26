@@ -85,7 +85,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     private List<String> styles = new ArrayList<>();
 
     /**
-     * Constructor for the window when the player wants to hire a workerbuildings for a certain job.
+     * Constructor for the window when the player wants to hire a worker for a certain job.
      *
      * @param c          the colony view.
      * @param buildingId the building position.

@@ -54,7 +54,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     private static final int KNEADING_TIME = 5;
 
     /**
-     * Time the workerbuildings delays until the next hit.
+     * Time the worker delays until the next hit.
      */
     private static final int HIT_DELAY = 20;
 
@@ -74,7 +74,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     private static final int PROGRESS_MULTIPLIER = 50;
 
     /**
-     * Max level which should have an effect on the speed of the workerbuildings.
+     * Max level which should have an effect on the speed of the worker.
      */
     private static final int MAX_LEVEL = 50;
 
@@ -476,7 +476,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     }
 
     /**
-     * Returns the fisherman's workerbuildings instance. Called from outside this class.
+     * Returns the fisherman's worker instance. Called from outside this class.
      *
      * @return citizen object.
      */

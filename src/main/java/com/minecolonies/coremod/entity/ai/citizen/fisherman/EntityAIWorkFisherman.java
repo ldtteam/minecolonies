@@ -628,7 +628,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     }
 
     /**
-     * Returns the fisherman's workerbuildings instance. Called from outside this class.
+     * Returns the fisherman's worker instance. Called from outside this class.
      *
      * @return citizen object.
      */

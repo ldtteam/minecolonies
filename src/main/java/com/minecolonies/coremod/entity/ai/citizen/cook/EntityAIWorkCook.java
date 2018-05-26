@@ -51,7 +51,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     private static final int SERVE_DELAY = 30;
 
     /**
-     * The citizen the workerbuildings is currently trying to serve.
+     * The citizen the worker is currently trying to serve.
      */
     private final List<EntityCitizen> citizenToServe = new ArrayList<>();
 

@@ -26,7 +26,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
     protected final Colony colony;
 
     /**
-     * List of workerbuildings assosiated to the building.
+     * List of worker assosiated to the building.
      */
     private final List<CitizenData> assignedCitizen = new ArrayList();
 
@@ -101,7 +101,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
     //------------------------- Starting Assigned Citizen handling -------------------------//
 
     /**
-     * Get the main workerbuildings of the building (the first in the list).
+     * Get the main worker of the building (the first in the list).
      *
      * @return the matching CitizenData.
      */
@@ -115,7 +115,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
     }
 
     /**
-     * Returns the workerbuildings of the current building.
+     * Returns the worker of the current building.
      *
      * @return {@link CitizenData} of the current building
      */
@@ -140,7 +140,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
     }
 
     /**
-     * Returns if the {@link CitizenData} is the same as the workerbuildings.
+     * Returns if the {@link CitizenData} is the same as the worker.
      *
      * @param citizen {@link CitizenData} you want to compare
      * @return true if same citizen, otherwise false
@@ -151,9 +151,9 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
     }
 
     /**
-     * Returns the first workerbuildings in the list.
+     * Returns the first worker in the list.
      *
-     * @return the EntityCitizen of that workerbuildings.
+     * @return the EntityCitizen of that worker.
      */
     public Optional<EntityCitizen> getMainCitizenEntity()
     {
@@ -165,9 +165,9 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
     }
 
     /**
-     * Returns whether or not the building has a workerbuildings.
+     * Returns whether or not the building has a worker.
      *
-     * @return true if building has workerbuildings, otherwise false.
+     * @return true if building has worker, otherwise false.
      */
     public boolean hasAssignedCitizen()
     {
@@ -175,9 +175,9 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
     }
 
     /**
-     * Returns the {@link net.minecraft.entity.Entity} of the workerbuildings.
+     * Returns the {@link net.minecraft.entity.Entity} of the worker.
      *
-     * @return {@link net.minecraft.entity.Entity} of the workerbuildings
+     * @return {@link net.minecraft.entity.Entity} of the worker
      */
     @Nullable
     public List<Optional<EntityCitizen>> getAssignedEntities()
@@ -188,7 +188,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
     /**
      * Assign the citizen to the current building.
      *
-     * @param citizen {@link CitizenData} of the workerbuildings
+     * @param citizen {@link CitizenData} of the worker
      */
     public boolean assignCitizen(final CitizenData citizen)
     {
@@ -197,7 +197,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
             return false;
         }
 
-        // If we set a workerbuildings, inform it of such
+        // If we set a worker, inform it of such
         if (citizen != null)
         {
             assignedCitizen.add(citizen);

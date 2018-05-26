@@ -74,7 +74,7 @@ public class BuildingBaker extends AbstractBuildingWorker
      */
     private static final int WAIT_TICKS = 320;
     /**
-     * Always try to keep at least 2 stacks of wheat in the inventory and in the workerbuildings chest.
+     * Always try to keep at least 2 stacks of wheat in the inventory and in the worker chest.
      */
     private static final int WHEAT_TO_KEEP = 128;
     /**

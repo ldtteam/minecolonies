@@ -45,12 +45,12 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
 {
     /**
      * A list which contains the position of all containers which belong to the
-     * workerbuildings building.
+     * worker building.
      */
     protected final List<BlockPos> containerList = new ArrayList<>();
 
     /**
-     * List of items the workerbuildings should keep.
+     * List of items the worker should keep.
      */
     protected final Map<Predicate<ItemStack>, Integer> keepX = new HashMap<>();
 

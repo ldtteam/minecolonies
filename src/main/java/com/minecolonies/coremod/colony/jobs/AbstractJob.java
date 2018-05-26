@@ -104,7 +104,7 @@ public abstract class AbstractJob
     private final Set<IToken> asyncRequests = new HashSet<>();
 
     /**
-     * Check if the workerbuildings has searched for food today.
+     * Check if the worker has searched for food today.
      */
     private boolean searchedForFoodToday;
 
@@ -327,7 +327,7 @@ public abstract class AbstractJob
     }
 
     /**
-     * Override this to let the workerbuildings return a bedTimeSound.
+     * Override this to let the worker return a bedTimeSound.
      *
      * @return soundEvent to be played.
      */
@@ -337,7 +337,7 @@ public abstract class AbstractJob
     }
 
     /**
-     * Override this to let the workerbuildings return a badWeatherSound.
+     * Override this to let the worker return a badWeatherSound.
      *
      * @return soundEvent to be played.
      */
@@ -347,7 +347,7 @@ public abstract class AbstractJob
     }
 
     /**
-     * Override this to let the workerbuildings return a hostile move away sound.
+     * Override this to let the worker return a hostile move away sound.
      *
      * @return soundEvent to be played.
      */

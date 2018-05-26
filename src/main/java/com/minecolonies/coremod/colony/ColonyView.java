@@ -54,12 +54,12 @@ public final class ColonyView implements IColony
     private BlockPos center = BlockPos.ORIGIN;
 
     /**
-     * Defines if workerbuildings are hired manually or automatically.
+     * Defines if workers are hired manually or automatically.
      */
     private boolean manualHiring = false;
 
     /**
-     * Defines if workerbuildings are housed manually or automatically.
+     * Defines if workers are housed manually or automatically.
      */
     private boolean manualHousing = false;
 
@@ -270,7 +270,7 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Sets if workerbuildings should be hired manually.
+     * Sets if workers should be hired manually.
      *
      * @param manualHiring true if manually.
      */

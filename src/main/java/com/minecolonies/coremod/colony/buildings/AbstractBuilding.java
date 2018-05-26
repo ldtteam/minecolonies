@@ -356,8 +356,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     //------------------------- Starting Required Tools/Item handling -------------------------//
 
     /**
-     * Check if the workerbuildings requires a certain amount of that item and the alreadykept list contains it.
-     * Always leave one stack behind if the workerbuildings requires a certain amount of it. Just to be sure.
+     * Check if the worker requires a certain amount of that item and the alreadykept list contains it.
+     * Always leave one stack behind if the worker requires a certain amount of it. Just to be sure.
      *
      * @param stack            the stack to check it with.
      * @param localAlreadyKept already kept items.

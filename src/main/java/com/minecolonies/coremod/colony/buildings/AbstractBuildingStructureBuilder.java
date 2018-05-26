@@ -323,7 +323,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     }
 
     /**
-     * Search a workOrder for the workerbuildings.
+     * Search a workOrder for the worker.
      */
     public abstract void searchWorkOrder();
 }

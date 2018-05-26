@@ -589,7 +589,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-     * Returns the farmer's workerbuildings instance. Called from outside this class.
+     * Returns the farmer's worker instance. Called from outside this class.
      *
      * @return citizen object
      */

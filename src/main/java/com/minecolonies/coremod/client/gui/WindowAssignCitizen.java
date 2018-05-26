@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Window for the hiring or firing of a workerbuildings.
+ * Window for the hiring or firing of a worker.
  */
 public class WindowAssignCitizen extends Window implements ButtonHandler
 {
@@ -79,7 +79,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
     private List<CitizenDataView> citizens = new ArrayList<>();
 
     /**
-     * Constructor for the window when the player wants to assign a workerbuildings for a certain home building.
+     * Constructor for the window when the player wants to assign a worker for a certain home building.
      *
      * @param c          the colony view.
      * @param buildingId the building position.

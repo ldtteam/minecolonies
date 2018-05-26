@@ -4,7 +4,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 /**
- * I workerbuildings sounds interface which contains all methods workerbuildings sounds should have.
+ * I worker sounds interface which contains all methods worker sounds should have.
  */
 public abstract class AbstractWorkerSounds
 {
@@ -19,7 +19,7 @@ public abstract class AbstractWorkerSounds
     private static final int BASIC_SOUND_CHANCE = 100;
 
     /**
-     * Plays the sounds for a certain workerbuildings.
+     * Plays the sounds for a certain worker.
      *
      * @param worldIn    the world to play the sound in.
      * @param position   the position to play the sound at.
@@ -29,9 +29,9 @@ public abstract class AbstractWorkerSounds
     public abstract void playSound(final World worldIn, final BlockPos position, final boolean isFemale, final double saturation);
 
     /**
-     * Get the string describing the workerbuildings of the sound event.
+     * Get the string describing the worker of the sound event.
      *
-     * @return a string describing the workerbuildings.
+     * @return a string describing the worker.
      */
     public abstract String getWorkerString();
 
@@ -56,7 +56,7 @@ public abstract class AbstractWorkerSounds
     }
 
     /**
-     * Play an interaction sound for a certain workerbuildings.
+     * Play an interaction sound for a certain worker.
      *
      * @param world    the world.
      * @param position the positon.

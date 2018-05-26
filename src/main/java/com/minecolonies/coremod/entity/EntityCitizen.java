@@ -400,7 +400,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * calculate this workerbuildings building.
+     * calculate this worker building.
      *
      * @return the building or null if none present.
      */
@@ -501,12 +501,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Checks if a workerbuildings is at his working site.
+     * Checks if a worker is at his working site.
      * If he isn't, sets it's path to the location
      *
      * @param site  the place where he should walk to
      * @param range Range to check in
-     * @return True if workerbuildings is at site, otherwise false.
+     * @return True if worker is at site, otherwise false.
      */
     public boolean isWorkerAtSiteWithMove(@NotNull final BlockPos site, final int range)
     {
@@ -2291,7 +2291,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Get the amount the workerbuildings should decrease its saturation by each action done or x blocks traveled.
+     * Get the amount the worker should decrease its saturation by each action done or x blocks traveled.
      * @return the double describing it.
      */
     private double getPerBuildingFoodCost()

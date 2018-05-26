@@ -24,12 +24,12 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
     private static final int OTHER_SIDE_OF_SHAFT = 6;
 
     /**
-     * The workerbuildings entity associated with the proxy.
+     * The worker entity associated with the proxy.
      */
     private final EntityCitizen citizen;
 
     /**
-     * Creates a walkToProxy for a certain workerbuildings.
+     * Creates a walkToProxy for a certain worker.
      *
      * @param entity the citizen entity.
      */

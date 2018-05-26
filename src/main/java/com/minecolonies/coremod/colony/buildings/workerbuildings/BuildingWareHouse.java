@@ -99,7 +99,7 @@ public class BuildingWareHouse extends AbstractBuilding
     /**
      * Register deliveryman with the warehouse.
      *
-     * @param buildingWorker the building of the workerbuildings.
+     * @param buildingWorker the building of the worker.
      * @return true if able to register or already registered
      */
     public boolean registerWithWareHouse(final BuildingDeliveryman buildingWorker)

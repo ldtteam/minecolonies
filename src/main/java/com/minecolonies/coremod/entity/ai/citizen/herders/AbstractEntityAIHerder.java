@@ -32,12 +32,12 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends EntityAnimal> extends AbstractEntityAIInteract<J>
 {
     /**
-     * How many animals per hut level the workerbuildings should max have.
+     * How many animals per hut level the worker should max have.
      */
     private static final int ANIMAL_MULTIPLIER = 2;
 
     /**
-     * Tools and Items needed by the workerbuildings.
+     * Tools and Items needed by the worker.
      */
     public final List<ToolType>  toolsNeeded = new ArrayList<>();
     public final List<ItemStack> itemsNeeded = new ArrayList<>();
@@ -71,7 +71,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     private static final int ACTIONS_FOR_DUMP = 10;
 
     /**
-     * Area the workerbuildings targets.
+     * Area the worker targets.
      */
     private AxisAlignedBB targetArea = null;
 
@@ -282,7 +282,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     }
 
     /**
-     * Allows the workerbuildings to pickup any stray items around Hut.
+     * Allows the worker to pickup any stray items around Hut.
      * Specifically useful when he possibly leaves Butchered
      * drops OR with chickens (that drop feathers and etc)!
      *

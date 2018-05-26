@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
- * Window for the hiring or firing of a workerbuildings.
+ * Window for the hiring or firing of a worker.
  */
 public class WindowHireWorker extends Window implements ButtonHandler
 {
@@ -87,7 +87,7 @@ public class WindowHireWorker extends Window implements ButtonHandler
     private List<CitizenDataView> citizens = new ArrayList<>();
 
     /**
-     * Constructor for the window when the player wants to hire a workerbuildings for a certain job.
+     * Constructor for the window when the player wants to hire a worker for a certain job.
      *
      * @param c          the colony view.
      * @param buildingId the building position.

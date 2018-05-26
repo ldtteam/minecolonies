@@ -459,7 +459,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     /**
-     * Check if the workerbuildings is standing on a sapling.
+     * Check if the worker is standing on a sapling.
      *
      * @return true if so.
      */
@@ -478,7 +478,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     private void tryGettingUnstuckFromLeaves()
     {
         @Nullable final BlockPos nextLeaves = findNearLeaves();
-        //If the workerbuildings gets too stuck he moves around a bit
+        //If the worker gets too stuck he moves around a bit
         if (nextLeaves == null || stillTicks > WALKING_BACK_WAIT_TIME)
         {
             worker.getNavigator().moveAwayFromXYZ(worker.getPosition(), WALK_BACK_RANGE, WALK_BACK_SPEED);

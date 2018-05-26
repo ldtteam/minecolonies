@@ -91,7 +91,7 @@ public final class CitizenConstants
      */
     public static final double RENDER_DISTANCE_WEIGHT     = 2.0D;
     /**
-     * Building level at which the workerbuildings work even if it is raining.
+     * Building level at which the worker work even if it is raining.
      */
     public static final int    BONUS_BUILDING_LEVEL       = 5;
     /**
@@ -151,7 +151,7 @@ public final class CitizenConstants
      */
     public static final double SATURATION_DECREASE_FACTOR = 0.02;
     /**
-     * Minimum stuck time for the workerbuildings to react.
+     * Minimum stuck time for the worker to react.
      */
     public static final int MIN_STUCK_TIME = 5;
 }

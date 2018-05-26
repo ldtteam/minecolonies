@@ -73,7 +73,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     private static final double XP_EACH_BLOCK                 = 0.1D;
     /**
      * Increase this value to make the building speed slower.
-     * Used to balance workerbuildings level speed increase.
+     * Used to balance worker level speed increase.
      */
     private static final int    PROGRESS_MULTIPLIER           = 10;
     /**
@@ -699,7 +699,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
-     * Get the current working position for the workerbuildings. If workFrom is null calculate a new one.
+     * Get the current working position for the worker. If workFrom is null calculate a new one.
      */
     private BlockPos getCurrentWorkingPosition()
     {
@@ -906,7 +906,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
-     * Get the workerbuildings of the AI.
+     * Get the worker of the AI.
      *
      * @return the EntityCitizen object.
      */

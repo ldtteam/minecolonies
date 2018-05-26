@@ -22,7 +22,7 @@ import java.util.Optional;
 import static com.minecolonies.api.util.RSConstants.CONST_CRAFTING_RESOLVER_PRIORITY;
 
 /**
- * A crafting resolver which takes care of 2x2 crafts which are crafted by the requesting workerbuildings.
+ * A crafting resolver which takes care of 2x2 crafts which are crafted by the requesting worker.
  */
 public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingRequestResolver
 {
