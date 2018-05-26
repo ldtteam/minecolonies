@@ -5,45 +5,39 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
+import com.minecolonies.coremod.colony.buildings.BuildingLumberjack;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Class used for setting which trees the lj should cut.
+ * Class used for setting whether saplings should be planted after lj chops a tree.
  */
-public class LumberjackSaplingSelectorMessage extends AbstractMessage<LumberjackSaplingSelectorMessage, IMessage>
+public class LumberjackReplantSaplingToggleMessage extends AbstractMessage<LumberjackReplantSaplingToggleMessage, IMessage>
 {
+
     /**
-     * The colony id.
+     * The colony id
      */
     private int colonyId;
 
     /**
-     * The lumberjacks building id.
+     * The lumberjack's building id.
      */
     private BlockPos buildingId;
 
     /**
-     * The ItemStack of the sapling.
+     * Whether the lumberjack should replant a sapling or not.
      */
-    private ItemStack stack;
-
-    /**
-     * Whether the lumberjack should cut or not.
-     */
-    private boolean shouldCut;
+    private boolean shouldReplant;
 
     /**
      * Empty standard constructor.
      */
-    public LumberjackSaplingSelectorMessage()
+    public LumberjackReplantSaplingToggleMessage()
     {
         super();
         /*
@@ -52,20 +46,17 @@ public class LumberjackSaplingSelectorMessage extends AbstractMessage<Lumberjack
     }
 
     /**
-     * Creates a message which will be sent to set the new settings in the lumberjack.
+     * Creates a message which will be sent to set the replant setting in the lumberjack.
      *
-     * @param building     the building view of the lumberjack.
-     * @param saplingStack the stack to set.
-     * @param shouldCut    whether or not the tree should be cut.
+     * @param building      the building view of the lumberjack
+     * @param shouldReplant whether or not the sapling should be replanted.
      */
-    public LumberjackSaplingSelectorMessage(final BuildingLumberjack.View building, final ItemStack saplingStack, final boolean shouldCut)
+    public LumberjackReplantSaplingToggleMessage(final BuildingLumberjack.View building, final boolean shouldReplant)
     {
-
         super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
-        this.stack = saplingStack;
-        this.shouldCut = shouldCut;
+        this.shouldReplant = shouldReplant;
     }
 
     @Override
@@ -73,8 +64,7 @@ public class LumberjackSaplingSelectorMessage extends AbstractMessage<Lumberjack
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
-        stack = ByteBufUtils.readItemStack(buf);
-        shouldCut = buf.readBoolean();
+        shouldReplant = buf.readBoolean();
     }
 
     @Override
@@ -82,17 +72,16 @@ public class LumberjackSaplingSelectorMessage extends AbstractMessage<Lumberjack
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
-        ByteBufUtils.writeItemStack(buf, stack);
-        buf.writeBoolean(shouldCut);
+        buf.writeBoolean(shouldReplant);
     }
 
     @Override
-    public void messageOnServerThread(final LumberjackSaplingSelectorMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final LumberjackReplantSaplingToggleMessage message, final EntityPlayerMP player)
     {
         final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
-            //Verify player has permission to change this huts settings
+            //Verify player has permission to change this hut's settings
             if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
             {
                 return;
@@ -101,8 +90,9 @@ public class LumberjackSaplingSelectorMessage extends AbstractMessage<Lumberjack
             @Nullable final AbstractBuildingWorker building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingWorker.class);
             if (building instanceof BuildingLumberjack)
             {
-                ((BuildingLumberjack) building).setTreeToCut(message.stack, message.shouldCut);
+                ((BuildingLumberjack) building).setShouldReplant(message.shouldReplant);
             }
+
         }
     }
 }

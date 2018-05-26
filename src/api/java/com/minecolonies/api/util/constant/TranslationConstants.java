@@ -198,6 +198,10 @@ public final class TranslationConstants
     @NonNls
     public static final String TOGGLE_ALL_OPTIONS_ON                                               = "com.minecolonies.coremod.gui.workerHuts.toggleAllOn";
     @NonNls
+    public static final String TOGGLE_REPLANT_SAPLINGS_ON                                          = "com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOn";
+    @NonNls
+    public static final String TOGGLE_REPLANT_SAPLINGS_OFF                                          = "com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOff";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_COMPAT_JEI_CRAFTIN_TEACHING_UNKNOWN_RECIPE = "com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe";
     @NonNls
     public static final String DO_REALLY_WANNA_TP                                                  = "com.minecolonies.coremod.gui.townHall.tp";
