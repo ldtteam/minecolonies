@@ -271,7 +271,8 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         return shouldReplant;
     }
 
-    public void setShouldReplant(boolean shouldReplant){
+    public void setShouldReplant(boolean shouldReplant)
+    {
         this.shouldReplant = shouldReplant;
         markDirty();
     }
