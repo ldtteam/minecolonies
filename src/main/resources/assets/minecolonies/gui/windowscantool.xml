@@ -19,6 +19,7 @@
 
     <buttonimage label="$(com.minecolonies.coremod.gui.scanTool.showRes)" id="showRes" pos="140 80" size="129 17"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
+    <input id="filter" size="129 17" pos="140 80" maxlength="25" visible="false"/>
 
     <list id="resources" size="200 120" pos="10 100">
         <box size="100% 30" linewidth="2">
