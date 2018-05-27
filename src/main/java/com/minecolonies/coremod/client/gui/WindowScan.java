@@ -15,6 +15,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.RemoveBlockMessage;
 import com.minecolonies.coremod.network.messages.RemoveEntityMessage;
 import com.minecolonies.coremod.network.messages.ScanOnServerMessage;
+import com.minecolonies.structures.helpers.Settings;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -24,6 +25,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -76,6 +78,11 @@ public class WindowScan extends AbstractWindowSkeleton
     private BlockPos pos2;
 
     /**
+     * Filter for the block and entity lists.
+     */
+    private String filter = "";
+
+    /**
      * Pos 1 text fields.
      */
     private final TextField pos1x;
@@ -111,12 +118,10 @@ public class WindowScan extends AbstractWindowSkeleton
         this.pos2 = pos2;
         registerButton(BUTTON_CONFIRM, this::confirmClicked);
         registerButton(BUTTON_CANCEL, this::discardClicked);
-        registerButton(BUTTON_SHOW_RES, this::updateResources);
-        registerButton(BUTTON_SHOW_RES, this::updateResources);
+        registerButton(BUTTON_SHOW_RES, this::showResClicked);
         registerButton(BUTTON_REMOVE_ENTITY, this::removeEntity);
         registerButton(BUTTON_REMOVE_BLOCK, this::removeBlock);
         registerButton(BUTTON_REPLACE_BLOCK, this::replaceBlock);
-
 
         pos1x = findPaneOfTypeByID(POS1X_LABEL, TextField.class);
         pos1y = findPaneOfTypeByID(POS1Y_LABEL, TextField.class);
@@ -128,6 +133,16 @@ public class WindowScan extends AbstractWindowSkeleton
 
         resourceList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         entityList = findPaneOfTypeByID(LIST_ENTITIES, ScrollingList.class);
+    }
+
+    /**
+     * Method called when show resources has been clicked.
+     */
+    private void showResClicked()
+    {
+        findPaneOfTypeByID(FILTER_NAME, TextField.class).show();
+        findPaneOfTypeByID(BUTTON_SHOW_RES, Button.class).hide();
+        updateResources();
     }
 
     private void removeEntity(final Button button)
@@ -198,6 +213,8 @@ public class WindowScan extends AbstractWindowSkeleton
         pos2x.setText(String.valueOf(pos2.getX()));
         pos2y.setText(String.valueOf(pos2.getY()));
         pos2z.setText(String.valueOf(pos2.getZ()));
+
+        Settings.instance.setBox(new Tuple<>(pos1, pos2));
     }
 
     /**
@@ -205,6 +222,7 @@ public class WindowScan extends AbstractWindowSkeleton
      */
     private void discardClicked()
     {
+        Settings.instance.setBox(null);
         close();
     }
 
@@ -224,17 +242,22 @@ public class WindowScan extends AbstractWindowSkeleton
         final int z2 = Integer.parseInt(pos2z.getText());
 
         MineColonies.getNetwork().sendToServer(new ScanOnServerMessage(new BlockPos(x1, y1, z1), new BlockPos(x2, y2, z2), name));
+        Settings.instance.setBox(null);
         close();
     }
 
     @Override
     public boolean onKeyTyped(final char ch, final int key)
     {
-        if (key == ENTER_KEY)
+        final boolean result = super.onKeyTyped(ch, key);
+        final String name = findPaneOfTypeByID(FILTER_NAME, TextField.class).getText();
+        if (!name.isEmpty())
         {
-            updateResources();
+            filter = name;
         }
-        return super.onKeyTyped(ch, key);
+
+        updateResources();
+        return result;
     }
 
     /**
@@ -277,7 +300,9 @@ public class WindowScan extends AbstractWindowSkeleton
 
                     for (final Entity entity : list)
                     {
-                        if (!entities.containsKey(entity.getName()))
+                        if (!entities.containsKey(entity.getName())
+                                && (filter.isEmpty() || (entity.getName().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+                                    || (entity.toString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))))))
                         {
                             entities.put(entity.getName(), entity);
                         }
@@ -348,7 +373,13 @@ public class WindowScan extends AbstractWindowSkeleton
         {
             resource.setAmount(resource.getAmount() + amount);
         }
-        resources.put(res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + hashCode, resource);
+
+        if (filter.isEmpty()
+                || res.getUnlocalizedName().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+                || res.getDisplayName().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US)))
+        {
+            resources.put(res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + hashCode, resource);
+        }
     }
 
     public void updateEntitylist()

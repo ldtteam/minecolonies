@@ -578,6 +578,11 @@ public final class WindowConstants
     public static final String POS2Z_LABEL = "pos2z";
 
     /**
+     * The filter field of the scan tool window.
+     */
+    public static final String FILTER_NAME = "filter";
+
+    /**
      * public constructor to hide implicit public one.
      */
     private WindowConstants()

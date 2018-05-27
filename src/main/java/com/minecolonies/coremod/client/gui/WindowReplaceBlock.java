@@ -121,7 +121,9 @@ public class WindowReplaceBlock extends Window implements ButtonHandler
         specialBlockList.add(new ItemStack(Items.MILK_BUCKET));
 
         allItems.addAll(specialBlockList.stream().filter(
-                stack -> filter.isEmpty() || stack.getUnlocalizedName().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US)))
+                stack -> filter.isEmpty()
+                        || stack.getUnlocalizedName().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+                        || stack.getDisplayName().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US)))
                 .collect(Collectors.toList()));
         updateResourceList();
     }
