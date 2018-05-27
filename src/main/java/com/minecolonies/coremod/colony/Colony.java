@@ -701,11 +701,10 @@ public class Colony implements IColony
      */
     private void updateWayPoints()
     {
-        final Random rand = new Random();
-        if (rand.nextInt(CHECK_WAYPOINT_EVERY) <= 1 && wayPoints.size() > 0)
+        if (world != null && world.rand.nextInt(CHECK_WAYPOINT_EVERY) <= 1 && wayPoints.size() > 0)
         {
             final Object[] entries = wayPoints.entrySet().toArray();
-            final int stopAt = rand.nextInt(entries.length);
+            final int stopAt = world.rand.nextInt(entries.length);
             final Object obj = entries[stopAt];
 
             if (obj instanceof Map.Entry && ((Map.Entry) obj).getKey() instanceof BlockPos && ((Map.Entry) obj).getValue() instanceof IBlockState)
@@ -714,7 +713,7 @@ public class Colony implements IColony
                 if (world.isBlockLoaded(key))
                 {
                     @NotNull final IBlockState value = (IBlockState) ((Map.Entry) obj).getValue();
-                    if (world != null && world.getBlockState(key).getBlock() != (value.getBlock()))
+                    if (world.getBlockState(key).getBlock() != (value.getBlock()))
                     {
                         wayPoints.remove(key);
                         markDirty();
