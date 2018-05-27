@@ -25,9 +25,6 @@ repositories {
         name = "ModMaven"
         url = "modmaven.k-4u.nl"
     }
-}
-
-repositories {
     maven {
         url 'http://dogforce-games.com/maven'
     }

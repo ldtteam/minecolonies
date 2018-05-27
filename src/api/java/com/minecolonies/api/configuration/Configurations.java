@@ -36,6 +36,9 @@ public class Configurations
         @Config.Comment("Padding between colonies in chunks")
         public int townHallPaddingChunk = 1;
 
+        @Config.Comment("Should player get one guidebook on first join to a new world?")
+        public boolean playerGetsGuidebookOnFirstJoin = true;
+
         @Config.Comment("Should supply chests be craftable on this server?")
         public boolean supplyChests = true;
 
