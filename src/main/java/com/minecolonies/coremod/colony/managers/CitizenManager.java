@@ -347,6 +347,11 @@ public class CitizenManager implements ICitizenManager
     @Override
     public void checkCitizensForHappiness()
     {
+        if (colony.getPackageManager().getSubscribers().isEmpty())
+        {
+            return;
+        }
+
         int guards = 1;
         int housing = 0;
         int workers = 1;
