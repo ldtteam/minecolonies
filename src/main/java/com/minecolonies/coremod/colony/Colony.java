@@ -701,7 +701,7 @@ public class Colony implements IColony
      */
     private void updateWayPoints()
     {
-        if (world != null && world.rand.nextInt(CHECK_WAYPOINT_EVERY) <= 1 && wayPoints.size() > 0)
+        if (world != null && world.rand.nextInt(CHECK_WAYPOINT_EVERY) <= 1 && !wayPoints.isEmpty())
         {
             final Object[] entries = wayPoints.entrySet().toArray();
             final int stopAt = world.rand.nextInt(entries.length);
