@@ -647,7 +647,10 @@ public class Colony implements IColony
         {
             isDay = false;
             nightsSinceLastRaid++;
-            citizenManager.checkCitizensForHappiness();
+            if (!packageManager.getSubscribers().isEmpty())
+            {
+                citizenManager.checkCitizensForHappiness();
+            }
         }
         else if (!isDay && world.isDaytime())
         {
@@ -708,11 +711,14 @@ public class Colony implements IColony
             if (obj instanceof Map.Entry && ((Map.Entry) obj).getKey() instanceof BlockPos && ((Map.Entry) obj).getValue() instanceof IBlockState)
             {
                 @NotNull final BlockPos key = (BlockPos) ((Map.Entry) obj).getKey();
-                @NotNull final IBlockState value = (IBlockState) ((Map.Entry) obj).getValue();
-                if (world != null && world.getBlockState(key).getBlock() != (value.getBlock()))
+                if (world.isBlockLoaded(key))
                 {
-                    wayPoints.remove(key);
-                    markDirty();
+                    @NotNull final IBlockState value = (IBlockState) ((Map.Entry) obj).getValue();
+                    if (world != null && world.getBlockState(key).getBlock() != (value.getBlock()))
+                    {
+                        wayPoints.remove(key);
+                        markDirty();
+                    }
                 }
             }
         }
