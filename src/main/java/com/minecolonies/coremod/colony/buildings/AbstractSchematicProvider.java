@@ -138,7 +138,7 @@ public abstract class AbstractSchematicProvider
      */
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        final String s = BuildingRegistry.classToNameMap.get(this.getClass());
+        final String s = BuildingRegistry.getNameToClassMap().inverse().get(this.getClass());
 
         if (s == null)
         {

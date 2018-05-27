@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.*;
@@ -64,7 +65,7 @@ import static com.minecolonies.api.util.constant.Suppression.*;
  * to their views and blocks.
  */
 @SuppressWarnings("squid:S2390")
-public abstract class AbstractBuilding extends AbstractBuildingContainer
+public abstract class AbstractBuilding extends AbstractBuildingContainer implements IRequestResolverProvider, IRequester
 {
     /**
      * The data store id for request system related data.
@@ -121,7 +122,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      */
     public boolean isMatchingBlock(@NotNull final Block block)
     {
-        final Class<?> c = BuildingRegistry.blockClassToBuildingClassMap.get(block.getClass());
+        final Class<?> c = BuildingRegistry.getBlockClassToBuildingClassMap().get(block.getClass());
         return getClass().equals(c);
     }
 

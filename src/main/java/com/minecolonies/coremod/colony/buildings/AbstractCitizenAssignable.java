@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.minecolonies.api.colony.requestsystem.requester.IRequester;
-import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -17,7 +15,7 @@ import java.util.stream.Collectors;
 /**
  * Abstract class handling requests from the building side.
  */
-public abstract class AbstractCitizenAssignable extends AbstractSchematicProvider implements IRequestResolverProvider, IRequester
+public abstract class AbstractCitizenAssignable extends AbstractSchematicProvider
 {
     /**
      * The colony the building belongs to.

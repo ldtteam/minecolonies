@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.registry;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.*;
@@ -24,7 +26,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TYPE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LOCATION;
@@ -38,25 +39,19 @@ public class BuildingRegistry
      * Map to resolve names to class.
      */
     @NotNull
-    public static final Map<String, Class<?>>   nameToClassMap               = new TreeMap<>();
-
-    /**
-     * Map to resolve classes to name.
-     */
-    @NotNull
-    public static final Map<Class<?>, String>   classToNameMap               = new HashMap<>();
+    private static final BiMap<String, Class<?>> nameToClassMap = HashBiMap.create();
 
     /**
      * Map to resolve block to building class.
      */
     @NotNull
-    public static final Map<Class<?>, Class<?>> blockClassToBuildingClassMap = new HashMap<>();
+    private static final Map<Class<?>, Class<?>> blockClassToBuildingClassMap = new HashMap<>();
 
     /**
      * Map to resolve classNameHash to class.
      */
     @NotNull
-    public static final Map<Integer, Class<?>>  classNameHashToViewClassMap  = new HashMap<>();
+    private static final Map<Integer, Class<?>>  classNameHashToViewClassMap  = new HashMap<>();
 
     /*
      * Add all the mappings of the default buildings..
@@ -128,7 +123,6 @@ public class BuildingRegistry
                 if (buildingClass.getDeclaredConstructor(Colony.class, BlockPos.class) != null)
                 {
                     nameToClassMap.put(name, buildingClass);
-                    classToNameMap.put(buildingClass, name);
                     classNameHashToViewClassMap.put(buildingHashCode, viewClass);
                 }
             }
@@ -297,7 +291,21 @@ public class BuildingRegistry
         return view;
     }
 
+    @NotNull
+    public static BiMap<String, Class<?>> getNameToClassMap()
+    {
+        return nameToClassMap;
+    }
 
+    @NotNull
+    public static Map<Class<?>, Class<?>> getBlockClassToBuildingClassMap()
+    {
+        return blockClassToBuildingClassMap;
+    }
 
-
+    @NotNull
+    public static Map<Integer, Class<?>> getClassNameHashToViewClassMap()
+    {
+        return classNameHashToViewClassMap;
+    }
 }
