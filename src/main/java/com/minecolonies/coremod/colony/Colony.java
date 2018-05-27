@@ -48,8 +48,7 @@ import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
-import static com.minecolonies.coremod.colony.ColonyManager.FILENAME_COLONY;
-import static com.minecolonies.coremod.colony.ColonyManager.FILENAME_MINECOLONIES_PATH;
+import static com.minecolonies.coremod.colony.ColonyManager.*;
 
 /**
  * This class describes a colony and contains all the data and methods for
@@ -160,7 +159,7 @@ public class Colony implements IColony
     private BlockPos center;
 
     /**
-     * Th
+     * The amount of nights since the last raid.
      */
     private int nightsSinceLastRaid = 0;
 
@@ -648,7 +647,10 @@ public class Colony implements IColony
         {
             isDay = false;
             nightsSinceLastRaid++;
-            citizenManager.checkCitizensForHappiness();
+            if (!packageManager.getSubscribers().isEmpty())
+            {
+                citizenManager.checkCitizensForHappiness();
+            }
         }
         else if (!isDay && world.isDaytime())
         {
@@ -699,21 +701,23 @@ public class Colony implements IColony
      */
     private void updateWayPoints()
     {
-        final Random rand = new Random();
-        if (rand.nextInt(CHECK_WAYPOINT_EVERY) <= 1 && wayPoints.size() > 0)
+        if (world != null && world.rand.nextInt(CHECK_WAYPOINT_EVERY) <= 1 && !wayPoints.isEmpty())
         {
             final Object[] entries = wayPoints.entrySet().toArray();
-            final int stopAt = rand.nextInt(entries.length);
+            final int stopAt = world.rand.nextInt(entries.length);
             final Object obj = entries[stopAt];
 
             if (obj instanceof Map.Entry && ((Map.Entry) obj).getKey() instanceof BlockPos && ((Map.Entry) obj).getValue() instanceof IBlockState)
             {
                 @NotNull final BlockPos key = (BlockPos) ((Map.Entry) obj).getKey();
-                @NotNull final IBlockState value = (IBlockState) ((Map.Entry) obj).getValue();
-                if (world != null && world.getBlockState(key).getBlock() != (value.getBlock()))
+                if (world.isBlockLoaded(key))
                 {
-                    wayPoints.remove(key);
-                    markDirty();
+                    @NotNull final IBlockState value = (IBlockState) ((Map.Entry) obj).getValue();
+                    if (world.getBlockState(key).getBlock() != (value.getBlock()))
+                    {
+                        wayPoints.remove(key);
+                        markDirty();
+                    }
                 }
             }
         }
