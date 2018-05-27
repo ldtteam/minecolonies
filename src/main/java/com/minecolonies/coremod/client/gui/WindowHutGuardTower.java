@@ -231,15 +231,17 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         {
             final Button buttonNextPage = findPaneOfTypeByID(GUI_BUTTON_NEXT_PAGE, Button.class);
             final Button buttonPrevPage = findPaneOfTypeByID(GUI_BUTTON_PREV_PAGE, Button.class);
-            final String currentPage = currentPane.getID();
             switch (button.getID())
             {
                 case GUI_BUTTON_NEXT_PAGE:
                     findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).nextView();
                     buttonPrevPage.setEnabled(true);
                     buttonPrevPage.show();
+                    final Pane newCurrentPane = findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).getCurrentView();
 
-                    if (currentPage.equals(GUI_PAGE_MOB_ACTIONS))
+                    //System.out.println("Current Page:" + )
+                    if (newCurrentPane != null
+                          && newCurrentPane.getID().equals(GUI_PAGE_MOB_ACTIONS))
                     {
                         buttonNextPage.setEnabled(false);
                         buttonNextPage.hide();
@@ -249,8 +251,10 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
                     findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).previousView();
                     buttonNextPage.setEnabled(true);
                     buttonNextPage.show();
+                    final Pane otherCurrentPane = findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).getCurrentView();
 
-                    if (currentPage.equals(GUI_PAGE_PAGE_ACTIONS))
+                    if (otherCurrentPane != null
+                          && otherCurrentPane.getID().equals(GUI_PAGE_PAGE_ACTIONS))
                     {
                         buttonPrevPage.setEnabled(false);
                         buttonPrevPage.hide();
