@@ -37,7 +37,7 @@ public class GbookEventHandler
     // Give one gbook per player on first join
     @SubscribeEvent
     @Optional.Method(modid = GBOOK_ID)
-    public static void checkGbookGiven(EntityJoinWorldEvent event)
+    public static void checkGbookGiven(final EntityJoinWorldEvent event)
     {
         final Entity entity = event.getEntity();
         final String bookPlayerTag = Constants.MOD_ID + ":gbookGiven";
