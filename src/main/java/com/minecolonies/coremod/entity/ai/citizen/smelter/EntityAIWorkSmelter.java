@@ -10,14 +10,22 @@ import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentData;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.*;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
+import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Constants.RESULT_SLOT;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
@@ -59,7 +67,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     /**
      * Times the dough needs to be kneaded.
      */
-    private static final int HITTING_TIME     = 5;
+    private static final int HITTING_TIME = 5;
 
     /**
      * The materials for certain armor body parts.
@@ -72,12 +80,17 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     /**
      * Base xp gain for the smelter.
      */
-    private static final double BASE_XP_GAIN     = 5;
+    private static final double BASE_XP_GAIN = 5;
 
     /**
      * Progress in hitting the product.
      */
     private int progress = 0;
+
+    /**
+     * Percentage to loot an enchanted book from stuff item
+     */
+    private static final int[] ENCHANTED_BOOK_CHANCE = new int[] {0, 10, 25, 40, 60};
 
     /**
      * Constructor for the Smelter.
@@ -89,15 +102,16 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     {
         super(job);
         super.registerTargets(
-                new AITarget(SMELTER_SMELTING_ITEMS, this::smeltStuff)
+          new AITarget(SMELTER_SMELTING_ITEMS, this::smeltStuff)
         );
         worker.setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
-                + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
+                                  + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);
     }
 
     /**
      * He will smelt down armor, weapons and tools to smaller pieces here.
+     *
      * @return the next state to go to.
      */
     private AIState smeltStuff()
@@ -108,24 +122,24 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
             return getState();
         }
 
-        if(ItemStackUtils.isEmpty(worker.getHeldItem(EnumHand.MAIN_HAND)))
+        if (ItemStackUtils.isEmpty(worker.getHeldItem(EnumHand.MAIN_HAND)))
         {
             progress = 0;
-            if(InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableToolOrWeapon) <= 0)
+            if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableToolOrWeapon) <= 0)
             {
-                if(InventoryUtils.hasItemInProvider(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableToolOrWeapon))
+                if (InventoryUtils.hasItemInProvider(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableToolOrWeapon))
                 {
                     return START_WORKING;
                 }
                 InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(
-                        getOwnBuilding(),
-                        InventoryUtils.findFirstSlotInProviderWith(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableToolOrWeapon),
-                        new InvWrapper(worker.getInventoryCitizen()));
+                  getOwnBuilding(),
+                  InventoryUtils.findFirstSlotInProviderWith(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableToolOrWeapon),
+                  new InvWrapper(worker.getInventoryCitizen()));
             }
 
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableToolOrWeapon);
 
-            if(slot == -1)
+            if (slot == -1)
             {
                 return START_WORKING;
             }
@@ -141,7 +155,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
 
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableToolOrWeapon);
 
-            if(slot == -1)
+            if (slot == -1)
             {
                 worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
                 return START_WORKING;
@@ -150,11 +164,19 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
             final ItemStack stack = new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, 1, false);
             final Tuple<ItemStack, Integer> materialTuple = getMaterialAndAmount(stack);
             final ItemStack material = materialTuple.getFirst();
-            if(!ItemStackUtils.isEmpty(material))
+            if (!ItemStackUtils.isEmpty(material))
             {
                 material.setCount(materialTuple.getSecond());
                 material.setItemDamage(0);
                 new InvWrapper(worker.getInventoryCitizen()).setStackInSlot(slot, material);
+                if (stack.isItemEnchanted())
+                {
+                    if (ENCHANTED_BOOK_CHANCE[getOwnBuilding().getBuildingLevel() - 1] < new Random().nextInt(100))
+                    {
+                        final ItemStack book = extractEnchantFromItem(stack);
+                        new InvWrapper(worker.getInventoryCitizen()).insertItem(InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),ItemStack::isEmpty),book,false);
+                    }
+                }
                 incrementActionsDoneAndDecSaturation();
             }
             else
@@ -174,6 +196,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
 
     /**
      * Get the material and amount of a certain stack.
+     *
      * @param stack the stack.
      * @return a tuple of the stack and the amount.
      */
@@ -181,31 +204,31 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     {
         int amount = 1;
         ItemStack material = ItemStackUtils.EMPTY;
-        if(stack.getItem() instanceof ItemSword)
+        if (stack.getItem() instanceof ItemSword)
         {
             material = Item.ToolMaterial.valueOf(((ItemSword) stack.getItem()).getToolMaterialName()).getRepairItemStack();
         }
-        else if(stack.getItem() instanceof ItemTool)
+        else if (stack.getItem() instanceof ItemTool)
         {
             material = Item.ToolMaterial.valueOf(((ItemTool) stack.getItem()).getToolMaterialName()).getRepairItemStack();
         }
-        else if(stack.getItem() instanceof ItemArmor)
+        else if (stack.getItem() instanceof ItemArmor)
         {
             material = ((ItemArmor) stack.getItem()).getArmorMaterial().getRepairItemStack();
             final EntityEquipmentSlot eq = ((ItemArmor) stack.getItem()).armorType;
-            if(eq == EntityEquipmentSlot.CHEST)
+            if (eq == EntityEquipmentSlot.CHEST)
             {
                 amount = CHEST_MAT_AMOUNT;
             }
-            else if(eq == EntityEquipmentSlot.LEGS)
+            else if (eq == EntityEquipmentSlot.LEGS)
             {
                 amount = LEGS_MAT_AMOUNT;
             }
-            else if(eq == EntityEquipmentSlot.HEAD)
+            else if (eq == EntityEquipmentSlot.HEAD)
             {
                 amount = HEAD_MAT_AMOUNT;
             }
-            else if(eq == EntityEquipmentSlot.FEET)
+            else if (eq == EntityEquipmentSlot.FEET)
             {
                 amount = FEET_MAT_AMOUNT;
             }
@@ -215,6 +238,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
 
     /**
      * Gather bars from the furnace and double or triple them by chance.
+     *
      * @param furnace the furnace to retrieve from.
      */
     protected void extractFromFurnace(final TileEntityFurnace furnace)
@@ -223,10 +247,10 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
         final int multiplier = ((BuildingSmeltery) getOwnBuilding()).ingotMultiplier(worker.getCitizenData().getLevel(), worker.getRandom());
         int amount = ingots.getCount() * multiplier;
 
-        while(amount > 0)
+        while (amount > 0)
         {
             final ItemStack copyStack = ingots.copy();
-            if(amount < ingots.getMaxStackSize())
+            if (amount < ingots.getMaxStackSize())
             {
                 copyStack.setCount(amount);
             }
@@ -237,7 +261,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
             amount -= copyStack.getCount();
 
             final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(worker.getInventoryCitizen()), copyStack);
-            if(!ItemStackUtils.isEmpty(resultStack))
+            if (!ItemStackUtils.isEmpty(resultStack))
             {
                 resultStack.setCount(resultStack.getCount() + amount / multiplier);
                 new InvWrapper(furnace).setStackInSlot(RESULT_SLOT, resultStack);
@@ -249,16 +273,17 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
 
     /**
      * If no clear tasks are given, check if something else is to do.
+     *
      * @return the next AIState to traverse to.
      */
     @Override
     protected AIState checkForAdditionalJobs()
     {
         final int amountOfTools = InventoryUtils.getItemCountInProvider(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableToolOrWeapon)
-                + InventoryUtils.getItemCountInItemHandler(
-                new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableToolOrWeapon);
+                                    + InventoryUtils.getItemCountInItemHandler(
+          new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableToolOrWeapon);
 
-        if(amountOfTools > 0)
+        if (amountOfTools > 0)
         {
             return SMELTER_SMELTING_ITEMS;
         }
@@ -283,8 +308,8 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     protected boolean isSmeltable(final ItemStack stack)
     {
         return !ItemStackUtils.isEmpty(stack) && ItemStackUtils.IS_SMELTABLE.and(
-                itemStack -> itemStack.getItem() instanceof ItemBlock
-                        && ColonyManager.getCompatabilityManager().isOre(((ItemBlock) itemStack.getItem()).getBlock().getDefaultState())).test(stack);
+          itemStack -> itemStack.getItem() instanceof ItemBlock
+                         && ColonyManager.getCompatabilityManager().isOre(((ItemBlock) itemStack.getItem()).getBlock().getDefaultState())).test(stack);
     }
 
     /**
@@ -296,17 +321,29 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     private static boolean isSmeltableToolOrWeapon(final ItemStack stack)
     {
         return !ItemStackUtils.isEmpty(stack) && (stack.getItem() instanceof ItemSword
-                || stack.getItem() instanceof ItemTool
-                || stack.getItem() instanceof ItemArmor)
-                && !stack.getItem().isDamaged(stack);
+                                                    || stack.getItem() instanceof ItemTool
+                                                    || stack.getItem() instanceof ItemArmor)
+                 && !stack.getItem().isDamaged(stack);
     }
 
     /**
      * Get the required progress to make an ingot out of a tool or weapon or armor.
+     *
      * @return the amount of hits required.
      */
     private int getRequiredProgressForMakingRawMaterial()
     {
         return PROGRESS_MULTIPLIER / Math.min(worker.getLevel() + 1, MAX_LEVEL) * HITTING_TIME;
+    }
+
+    private ItemStack extractEnchantFromItem(ItemStack item)
+    {
+        final Map<Enchantment,Integer> enchants = EnchantmentHelper.getEnchantments(item);
+        final ItemStack books = new ItemStack(Items.ENCHANTED_BOOK);
+        for(final Map.Entry<Enchantment,Integer> entry : enchants.entrySet())
+        {
+            ItemEnchantedBook.addEnchantment(books,new EnchantmentData(entry.getKey(),entry.getValue()));
+        }
+        return books;
     }
 }
