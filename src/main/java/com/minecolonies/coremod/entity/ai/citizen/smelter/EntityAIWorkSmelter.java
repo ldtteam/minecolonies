@@ -16,7 +16,6 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.*;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Tuple;
@@ -171,7 +170,10 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
                 new InvWrapper(worker.getInventoryCitizen()).setStackInSlot(slot, material);
                 if (stack.isItemEnchanted())
                 {
-                    if (ENCHANTED_BOOK_CHANCE[getOwnBuilding().getBuildingLevel() - 1] < new Random().nextInt(100))
+                    final int chance =
+                      Math.round(ENCHANTED_BOOK_CHANCE[getOwnBuilding().getBuildingLevel() - 1] * (stack.getMaxDamage() - stack.getItemDamage()) / (float) stack.getMaxDamage());
+                    final int random = new Random().nextInt(100);
+                    if (chance < random)
                     {
                         final ItemStack book = extractEnchantFromItem(stack);
                         new InvWrapper(worker.getInventoryCitizen()).insertItem(InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),ItemStack::isEmpty),book,false);
@@ -336,14 +338,24 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
         return PROGRESS_MULTIPLIER / Math.min(worker.getLevel() + 1, MAX_LEVEL) * HITTING_TIME;
     }
 
+    /**
+     * Extract a book of enchants form an object
+     *
+     * @param item The item to extract echants from
+     * @return The book
+     */
     private ItemStack extractEnchantFromItem(ItemStack item)
     {
-        final Map<Enchantment,Integer> enchants = EnchantmentHelper.getEnchantments(item);
-        final ItemStack books = new ItemStack(Items.ENCHANTED_BOOK);
-        for(final Map.Entry<Enchantment,Integer> entry : enchants.entrySet())
+        if (item.isItemEnchanted())
         {
-            ItemEnchantedBook.addEnchantment(books,new EnchantmentData(entry.getKey(),entry.getValue()));
+            final Map<Enchantment, Integer> enchants = EnchantmentHelper.getEnchantments(item);
+            final ItemStack books = new ItemStack(Items.ENCHANTED_BOOK);
+            for (final Map.Entry<Enchantment, Integer> entry : enchants.entrySet())
+            {
+                ItemEnchantedBook.addEnchantment(books, new EnchantmentData(entry.getKey(), entry.getValue()));
+            }
+            return books;
         }
-        return books;
+        return null;
     }
 }
