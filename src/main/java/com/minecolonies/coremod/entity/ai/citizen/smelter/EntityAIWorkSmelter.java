@@ -92,6 +92,11 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     private static final int[] ENCHANTED_BOOK_CHANCE = new int[] {0, 10, 25, 40, 60};
 
     /**
+     * Max looting chance
+     */
+    private static final int MAX_ENCHANTED_BOOK_CHANCE = 100;
+
+    /**
      * Constructor for the Smelter.
      * Defines the tasks the cook executes.
      *
@@ -168,13 +173,13 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
                 material.setCount(materialTuple.getSecond());
                 material.setItemDamage(0);
                 new InvWrapper(worker.getInventoryCitizen()).setStackInSlot(slot, material);
-                if (stack.isItemEnchanted())
+                if (getOwnBuilding().getBuildingLevel() > 0 && stack.isItemEnchanted() &&
+                      ENCHANTED_BOOK_CHANCE[getOwnBuilding().getBuildingLevel() - 1] < new Random().nextInt(MAX_ENCHANTED_BOOK_CHANCE))
                 {
-                    if (ENCHANTED_BOOK_CHANCE[getOwnBuilding().getBuildingLevel() - 1] < new Random().nextInt(100))
-                    {
-                        final ItemStack book = extractEnchantFromItem(stack);
-                        new InvWrapper(worker.getInventoryCitizen()).insertItem(InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),ItemStack::isEmpty),book,false);
-                    }
+                    final ItemStack book = extractEnchantFromItem(stack);
+                    new InvWrapper(worker.getInventoryCitizen()).insertItem(InventoryUtils.findFirstSlotInItemHandlerWith(
+                      new InvWrapper(worker.getInventoryCitizen()),
+                      ItemStack::isEmpty), book, false);
                 }
                 incrementActionsDoneAndDecSaturation();
             }
