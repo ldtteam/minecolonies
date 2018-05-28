@@ -156,7 +156,10 @@ public class WindowScan extends AbstractWindowSkeleton
         final int z2 = Integer.parseInt(pos2z.getText());
 
         final int row = entityList.getListElementIndexByPane(button);
-        MineColonies.getNetwork().sendToServer(new RemoveEntityMessage(new BlockPos(x1, y1, z1), new BlockPos(x2, y2, z2), new ArrayList<>(entities.values()).get(row).getName()));
+        final Entity entity = new ArrayList<>(entities.values()).get(row);
+        MineColonies.getNetwork().sendToServer(new RemoveEntityMessage(new BlockPos(x1, y1, z1), new BlockPos(x2, y2, z2), entity.getName()));
+        entities.remove(entity.getName());
+        updateEntitylist();
     }
 
     private void removeBlock(final Button button)
@@ -171,7 +174,11 @@ public class WindowScan extends AbstractWindowSkeleton
 
         final int row = resourceList.getListElementIndexByPane(button);
         final List<ItemStorage> tempRes = new ArrayList<>(resources.values());
-        MineColonies.getNetwork().sendToServer(new RemoveBlockMessage(new BlockPos(x1, y1, z1), new BlockPos(x2, y2, z2), tempRes.get(row).getItemStack()));
+        final ItemStack stack = tempRes.get(row).getItemStack();
+        MineColonies.getNetwork().sendToServer(new RemoveBlockMessage(new BlockPos(x1, y1, z1), new BlockPos(x2, y2, z2), stack));
+        final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
+        resources.remove(stack.getUnlocalizedName() + ":" + stack.getItemDamage() + "-" + hashCode);
+        updateResourceList();
     }
 
     private void replaceBlock(final Button button)

@@ -15,7 +15,7 @@ import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
@@ -400,7 +400,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * calculate this workers building.
+     * calculate this worker building.
      *
      * @return the building or null if none present.
      */

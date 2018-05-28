@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.buildings.BuildingBaker;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BAKER;
@@ -14,7 +14,7 @@ public class WindowHutBaker extends AbstractWindowWorkerBuilding<BuildingBaker.V
     /**
      * Constructor for the window of the fisherman.
      *
-     * @param building {@link com.minecolonies.coremod.colony.buildings.BuildingBaker.View}.
+     * @param building {@link BuildingBaker.View}.
      */
     public WindowHutBaker(final BuildingBaker.View building)
     {

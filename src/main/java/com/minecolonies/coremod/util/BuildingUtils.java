@@ -2,7 +2,7 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractSchematicProvider;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -27,7 +27,7 @@ public final class BuildingUtils
      * @param building the building.
      * @return the AxisAlignedBB box.
      */
-    public static AxisAlignedBB getTargetAbleArea(final World world, final AbstractBuilding building)
+    public static AxisAlignedBB getTargetAbleArea(final World world, final AbstractSchematicProvider building)
     {
         final BlockPos location = building.getLocation();
         final int x1;

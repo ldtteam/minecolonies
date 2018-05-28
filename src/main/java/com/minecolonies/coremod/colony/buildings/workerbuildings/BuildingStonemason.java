@@ -1,41 +1,43 @@
-package com.minecolonies.coremod.colony.buildings;
+package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.JobSwineHerder;
+import com.minecolonies.coremod.colony.jobs.JobPlaceholder;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Creates a new building for the Swine Herder.
+ * Creates a new building for the stonemason.
  */
-public class BuildingSwineHerder extends AbstractBuildingWorker
+public class BuildingStonemason extends AbstractBuildingWorker
 {
     /**
      * Description of the job executed in the hut.
      */
-    private static final String JOB          = "SwineHerder";
+    private static final String STONEMASON = "Stonemason";
 
     /**
      * Description of the block used to set this block.
      */
-    private static final String HUT_NAME = "swineHerderHut";
+    private static final String STONEMASON_HUT_NAME = "stonemasonHut";
 
     /**
      * Max building level of the hut.
      */
-    private static final int MAX_BUILDING_LEVEL = 5;
+    private static final int MAX_BUILDING_LEVEL = 3;
 
     /**
      * Instantiates the building.
+     *
      * @param c the colony.
      * @param l the location.
      */
-    public BuildingSwineHerder(final Colony c, final BlockPos l)
+    public BuildingStonemason(final Colony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -44,7 +46,7 @@ public class BuildingSwineHerder extends AbstractBuildingWorker
     @Override
     public String getSchematicName()
     {
-        return JOB;
+        return STONEMASON;
     }
 
     @Override
@@ -53,18 +55,19 @@ public class BuildingSwineHerder extends AbstractBuildingWorker
         return MAX_BUILDING_LEVEL;
     }
 
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return JOB;
-    }
-
+    //TODO Implement Later
     @NotNull
     @Override
     public AbstractJob createJob(final CitizenData citizen)
     {
-        return new JobSwineHerder(citizen);
+        return new JobPlaceholder(citizen);
+    }
+
+    @NotNull
+    @Override
+    public String getJobName()
+    {
+        return STONEMASON;
     }
 
     /**
@@ -74,6 +77,7 @@ public class BuildingSwineHerder extends AbstractBuildingWorker
     {
         /**
          * Instantiates the view of the building.
+         *
          * @param c the colonyView.
          * @param l the location of the block.
          */
@@ -86,7 +90,7 @@ public class BuildingSwineHerder extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<AbstractBuildingWorker.View>(this, HUT_NAME);
+            return new WindowHutWorkerPlaceholder<>(this, STONEMASON_HUT_NAME);
         }
 
         @NotNull
