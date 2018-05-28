@@ -335,13 +335,13 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
         return PROGRESS_MULTIPLIER / Math.min(worker.getLevel() + 1, MAX_LEVEL) * HITTING_TIME;
     }
 
-    private ItemStack extractEnchantFromItem(ItemStack item)
+    private ItemStack extractEnchantFromItem(final ItemStack item)
     {
-        final Map<Enchantment,Integer> enchants = EnchantmentHelper.getEnchantments(item);
+        final Map<Enchantment, Integer> enchants = EnchantmentHelper.getEnchantments(item);
         final ItemStack books = new ItemStack(Items.ENCHANTED_BOOK);
-        for(final Map.Entry<Enchantment,Integer> entry : enchants.entrySet())
+        for (final Map.Entry<Enchantment, Integer> entry : enchants.entrySet())
         {
-            ItemEnchantedBook.addEnchantment(books,new EnchantmentData(entry.getKey(),entry.getValue()));
+            ItemEnchantedBook.addEnchantment(books, new EnchantmentData(entry.getKey(), entry.getValue()));
         }
         return books;
     }
