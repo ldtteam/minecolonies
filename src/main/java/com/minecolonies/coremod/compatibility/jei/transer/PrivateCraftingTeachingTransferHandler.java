@@ -2,6 +2,7 @@ package com.minecolonies.coremod.compatibility.jei.transer;
 
 import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.inventory.CraftingGUIBuilding;
@@ -19,7 +20,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.stats.RecipeBook;
-import net.minecraft.util.text.translation.I18n;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -71,7 +71,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
                 {
                     if (badIndexes.contains(inputIndex))
                     {
-                        final String tooltipMessage = I18n.translateToLocal("jei.tooltip.error.recipe.transfer.too.large.player.inventory");
+                        final String tooltipMessage = LanguageHandler.format("jei.tooltip.error.recipe.transfer.too.large.player.inventory");
                         return handlerHelper.createUserErrorForSlots(tooltipMessage, badIndexes);
                     }
                     guiIngredients.put(inputIndex, ingredient.getDisplayedIngredient());
@@ -103,7 +103,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
         final RecipeBook book = MineColonies.proxy.getRecipeBookFromPlayer(entityPlayer);
         if (craftingGUIBuilding.getWorldObj().getGameRules().getBoolean("doLimitedCrafting") && !craftingGUIBuilding.getPlayer().isCreative()  && !book.isUnlocked(recipe))
         {
-            final String tooltipMessage = I18n.translateToLocal(TranslationConstants.COM_MINECOLONIES_COREMOD_COMPAT_JEI_CRAFTIN_TEACHING_UNKNOWN_RECIPE);
+            final String tooltipMessage = LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_COMPAT_JEI_CRAFTIN_TEACHING_UNKNOWN_RECIPE);
             return handlerHelper.createUserErrorWithTooltip(tooltipMessage);
         }
 

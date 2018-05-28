@@ -9,6 +9,8 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.*;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveCitizenMessage;

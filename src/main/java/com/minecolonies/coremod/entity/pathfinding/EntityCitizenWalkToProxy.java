@@ -4,7 +4,7 @@ import com.minecolonies.api.entity.ai.pathfinding.AbstractWalkToProxy;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.BuildingMiner;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.EntityCitizen;

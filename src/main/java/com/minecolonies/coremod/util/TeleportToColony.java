@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;

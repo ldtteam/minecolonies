@@ -8,6 +8,7 @@ import com.minecolonies.coremod.blocks.BlockHutTownHall;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;

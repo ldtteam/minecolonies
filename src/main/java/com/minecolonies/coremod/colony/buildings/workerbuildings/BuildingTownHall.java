@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.buildings;
+package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;

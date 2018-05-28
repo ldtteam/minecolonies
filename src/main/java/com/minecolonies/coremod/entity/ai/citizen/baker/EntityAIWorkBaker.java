@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.ai.citizen.baker;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.buildings.BuildingBaker;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;

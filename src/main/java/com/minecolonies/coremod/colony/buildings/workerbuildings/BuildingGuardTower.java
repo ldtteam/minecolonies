@@ -1,7 +1,8 @@
-package com.minecolonies.coremod.colony.buildings;
+package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
