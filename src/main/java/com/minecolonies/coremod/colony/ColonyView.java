@@ -9,8 +9,8 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.permissions.PermissionsView;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
@@ -608,7 +608,7 @@ public final class ColonyView implements IColony
     @Nullable
     public IMessage handleColonyBuildingViewMessage(final BlockPos buildingId, @NotNull final ByteBuf buf)
     {
-        @Nullable final AbstractBuildingView building = AbstractBuilding.createBuildingView(this, buildingId, buf);
+        @Nullable final AbstractBuildingView building = BuildingRegistry.createBuildingView(this, buildingId, buf);
         if (building != null)
         {
             buildings.put(building.getID(), building);

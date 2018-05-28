@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.buildings;
+package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.views.Window;
@@ -7,6 +7,7 @@ import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowBarracksBuilding;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.init.Blocks;

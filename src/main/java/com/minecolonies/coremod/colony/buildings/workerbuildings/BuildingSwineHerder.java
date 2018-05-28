@@ -1,29 +1,30 @@
-package com.minecolonies.coremod.colony.buildings;
+package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.JobChickenHerder;
+import com.minecolonies.coremod.colony.jobs.JobSwineHerder;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Creates a new building for the Chicken Herder.
+ * Creates a new building for the Swine Herder.
  */
-public class BuildingChickenHerder extends AbstractBuildingWorker
+public class BuildingSwineHerder extends AbstractBuildingWorker
 {
     /**
      * Description of the job executed in the hut.
      */
-    private static final String JOB          = "ChickenHerder";
+    private static final String JOB          = "SwineHerder";
 
     /**
      * Description of the block used to set this block.
      */
-    private static final String HUT_NAME = "chickenHerderHut";
+    private static final String HUT_NAME = "swineHerderHut";
 
     /**
      * Max building level of the hut.
@@ -35,7 +36,7 @@ public class BuildingChickenHerder extends AbstractBuildingWorker
      * @param c the colony.
      * @param l the location.
      */
-    public BuildingChickenHerder(final Colony c, final BlockPos l)
+    public BuildingSwineHerder(final Colony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -64,7 +65,7 @@ public class BuildingChickenHerder extends AbstractBuildingWorker
     @Override
     public AbstractJob createJob(final CitizenData citizen)
     {
-        return new JobChickenHerder(citizen);
+        return new JobSwineHerder(citizen);
     }
 
     /**

@@ -6,7 +6,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingContainer;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -46,7 +46,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     /**
      * The building the tileEntity belongs to.
      */
-    private AbstractBuilding building;
+    private AbstractBuildingContainer building;
 
     /**
      * Check if the building has a mirror.
@@ -144,7 +144,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     @Nullable
     public BlockPos getPositionOfChestWithItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        @Nullable final AbstractBuilding theBuilding = getBuilding();
+        @Nullable final AbstractBuildingContainer theBuilding = getBuilding();
 
         if (theBuilding != null)
         {
@@ -170,7 +170,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
 
     /**
      * Finds the first @see ItemStack the type of {@code is}.
-     * It will be taken from the chest and placed in the workers inventory.
+     * It will be taken from the chest and placed in the worker inventory.
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
@@ -239,9 +239,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     /**
      * Returns the building associated with the tile entity.
      *
-     * @return {@link AbstractBuilding} associated with the tile entity.
+     * @return {@link AbstractBuildingContainer} associated with the tile entity.
      */
-    public AbstractBuilding getBuilding()
+    public AbstractBuildingContainer getBuilding()
     {
         if (building == null)
         {
@@ -253,9 +253,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     /**
      * Sets the building associated with the tile entity.
      *
-     * @param b {@link AbstractBuilding} to associate with the tile entity.
+     * @param b {@link AbstractBuildingContainer} to associate with the tile entity.
      */
-    public void setBuilding(final AbstractBuilding b)
+    public void setBuilding(final AbstractBuildingContainer b)
     {
         building = b;
     }

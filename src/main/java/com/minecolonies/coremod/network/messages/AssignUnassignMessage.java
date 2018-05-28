@@ -6,7 +6,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;

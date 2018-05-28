@@ -17,6 +17,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
@@ -607,7 +608,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
         }
 
         /**
-         * Check if it has enough workers.
+         * Check if it has enough worker.
          *
          * @return true if so.
          */

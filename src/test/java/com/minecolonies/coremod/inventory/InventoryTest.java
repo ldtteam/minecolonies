@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -10,7 +9,6 @@ import net.minecraft.item.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 
 import static org.junit.Assert.*;
 

@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.BuildingSmeltery;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSmeltery;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;

@@ -4,7 +4,7 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.Group;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.ai.citizen.fisherman;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.buildings.BuildingFisherman;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFisherman;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;

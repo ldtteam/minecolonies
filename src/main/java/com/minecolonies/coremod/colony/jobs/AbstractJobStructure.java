@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.nbt.NBTTagCompound;

@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.buildings;
+package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
@@ -14,6 +14,8 @@ import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowWareHouseBuilding;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
