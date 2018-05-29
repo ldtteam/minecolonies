@@ -238,7 +238,6 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         super.onUpdate();
 
         pullInfoFromHut();
-        //handleButtons();
 
         if (!task.equals(GuardTask.PATROL))
         {

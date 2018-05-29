@@ -111,4 +111,14 @@ public final class GuardConstants
 
     // -- Guard Movement -- \\
 
+    /**
+     * Private constructor to hide the implicit one.
+     */
+    private GuardConstants()
+    {
+        /**
+         * Intentionally left empty.
+         */
+    }
+
 }

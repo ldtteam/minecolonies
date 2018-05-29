@@ -81,7 +81,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
           new AITarget(PREPARING, this::prepare),
           new AITarget(DECIDE, this::decide),
           new AITarget(GUARD_ATTACK_PROTECT, this::attackProtect),
-          new AITarget(GUARD_ATTACK_PHYSICAL, this::attackPhyisical),
+          new AITarget(GUARD_ATTACK_PHYSICAL, this::attackPhysical),
           new AITarget(GUARD_ATTACK_RANGED, this::attackRanged)
         );
         worker.setCanPickUpLoot(true);
@@ -327,7 +327,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         return GUARD_ATTACK_PHYSICAL;
     }
 
-    protected AIState attackPhyisical()
+    protected AIState attackPhysical()
     {
 
         if (worker.getLastAttackedEntity() != null
