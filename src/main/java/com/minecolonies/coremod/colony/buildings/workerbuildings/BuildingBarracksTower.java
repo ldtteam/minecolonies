@@ -1,8 +1,10 @@
-package com.minecolonies.coremod.colony.buildings;
+package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -79,7 +81,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         }
         else
         {
-            player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.worker.needBarracks"));
+            player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.workerbuildings.needBarracks"));
         }
     }
 

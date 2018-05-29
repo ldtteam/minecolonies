@@ -32,9 +32,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RS_BUILDING_DATASTORE;
 import static com.minecolonies.api.util.constant.Suppression.*;
-import static com.minecolonies.coremod.colony.buildings.AbstractBuilding.NO_WORK_ORDER;
 
 /**
  * The AbstractBuilding View is the client-side representation of a AbstractBuilding.

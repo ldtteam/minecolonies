@@ -58,7 +58,7 @@ public class Configurations
         @Config.Comment("Delay modifier to mine a block (Decreasing it, decreases the delay)")
         public int blockMiningDelayModifier = 500;
 
-        @Config.Comment("Should worker work during the rain?")
+        @Config.Comment("Should workers work during the rain?")
         public boolean workersAlwaysWorkInRain = false;
 
         @Config.Comment("Should the colony protection be enabled?")

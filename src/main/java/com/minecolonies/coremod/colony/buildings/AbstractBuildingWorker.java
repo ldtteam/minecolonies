@@ -17,6 +17,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
@@ -276,11 +277,25 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
                 final NBTTagList workersTagList = compound.getTagList(TAG_WORKER, Constants.NBT.TAG_COMPOUND);
                 for (int i = 0; i < workersTagList.tagCount(); ++i)
                 {
-                    final CitizenData data = getColony().getCitizenManager().getCitizen(workersTagList.getCompoundTagAt(i).getInteger(TAG_WORKER_ID));
-                    if (data != null)
+                    if (workersTagList.getCompoundTagAt(i).hasKey(TAG_ID))
                     {
-                        assignCitizen(data);
-                        assignCitizenFromNBtAction(data);
+                        final CitizenData data = getColony().getCitizenManager().getCitizen(workersTagList.getCompoundTagAt(i).getInteger(TAG_ID));
+                        if (data != null)
+                        {
+                            data.setWorkBuilding(this);
+                            assignCitizen(data);
+                            assignCitizenFromNBtAction(data);
+                        }
+                    }
+                    else if (workersTagList.getCompoundTagAt(i).hasKey(TAG_WORKER_ID))
+                    {
+                        final CitizenData data = getColony().getCitizenManager().getCitizen(workersTagList.getCompoundTagAt(i).getInteger(TAG_WORKER_ID));
+                        if (data != null)
+                        {
+                            data.setWorkBuilding(this);
+                            assignCitizen(data);
+                            assignCitizenFromNBtAction(data);
+                        }
                     }
                 }
             }
@@ -607,7 +622,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
         }
 
         /**
-         * Check if it has enough workers.
+         * Check if it has enough worker.
          *
          * @return true if so.
          */

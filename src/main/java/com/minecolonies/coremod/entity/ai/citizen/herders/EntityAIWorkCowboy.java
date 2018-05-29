@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.herders;
 
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.colony.buildings.BuildingCowboy;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCowboy;
 import com.minecolonies.coremod.colony.jobs.JobCowboy;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;

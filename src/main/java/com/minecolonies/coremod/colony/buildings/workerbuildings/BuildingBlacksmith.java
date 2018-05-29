@@ -1,55 +1,52 @@
-package com.minecolonies.coremod.colony.buildings;
+package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.JobCook;
-import net.minecraft.tileentity.TileEntityFurnace;
+import com.minecolonies.coremod.colony.jobs.JobPlaceholder;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
-
 /**
- * Class of the cook building.
+ * Creates a new building for the blacksmith.
  */
-@SuppressWarnings(OVERRIDE_EQUALS)
-public class BuildingCook extends AbstractBuildingFurnaceUser
+public class BuildingBlacksmith extends AbstractBuildingWorker
 {
     /**
-     * The cook string.
+     * Description of the job executed in the hut.
      */
-    private static final String COOK_DESC = "Cook";
+    private static final String BLACKSMITH = "Blacksmith";
 
     /**
-     * Max building level of the cook.
+     * Description of the block used to set this block.
      */
-    private static final int MAX_BUILDING_LEVEL = 5;
+    private static final String BLACKSMITH_HUT_NAME = "blacksmithHut";
 
     /**
-     * Instantiates a new cook building.
+     * Max building level of the hut.
+     */
+    private static final int MAX_BUILDING_LEVEL = 3;
+
+    /**
+     * Instantiates the building.
      *
      * @param c the colony.
-     * @param l the location
+     * @param l the location.
      */
-    public BuildingCook(final Colony c, final BlockPos l)
+    public BuildingBlacksmith(final Colony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(ItemStackUtils.ISFOOD, STACKSIZE);
-        keepX.put(ItemStackUtils.ISCOOKABLE, STACKSIZE);
-        keepX.put(TileEntityFurnace::isItemFuel, STACKSIZE);
     }
 
     @NotNull
     @Override
     public String getSchematicName()
     {
-        return COOK_DESC;
+        return BLACKSMITH;
     }
 
     @Override
@@ -58,30 +55,31 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         return MAX_BUILDING_LEVEL;
     }
 
+    //TODO Implement Later
     @NotNull
     @Override
     public AbstractJob createJob(final CitizenData citizen)
     {
-        return new JobCook(citizen);
+        return new JobPlaceholder(citizen);
     }
 
     @NotNull
     @Override
     public String getJobName()
     {
-        return COOK_DESC;
+        return BLACKSMITH;
     }
 
     /**
-     * BuildingCook View.
+     * ClientSide representation of the building.
      */
     public static class View extends AbstractBuildingWorker.View
     {
         /**
-         * Instantiate the cook view.
+         * Instantiates the view of the building.
          *
-         * @param c the colonyview to put it in
-         * @param l the positon
+         * @param c the colonyView.
+         * @param l the location of the block.
          */
         public View(final ColonyView c, final BlockPos l)
         {
@@ -89,24 +87,23 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         }
 
         @NotNull
-        @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<>(this, COOK_DESC);
+            return new WindowHutWorkerPlaceholder<AbstractBuildingWorker.View>(this, BLACKSMITH_HUT_NAME);
         }
 
         @NotNull
         @Override
         public Skill getPrimarySkill()
         {
-            return Skill.CHARISMA;
+            return Skill.DEXTERITY;
         }
 
         @NotNull
         @Override
         public Skill getSecondarySkill()
         {
-            return Skill.INTELLIGENCE;
+            return Skill.STRENGTH;
         }
     }
 }

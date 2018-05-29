@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
 import com.minecolonies.api.util.Vec2i;
-import com.minecolonies.coremod.colony.buildings.BuildingMiner;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.MathHelper;

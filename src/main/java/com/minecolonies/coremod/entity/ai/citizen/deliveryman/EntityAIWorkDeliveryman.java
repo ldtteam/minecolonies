@@ -12,6 +12,10 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.*;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -486,7 +490,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
             if (tileEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) tileEntity).getBuilding() instanceof AbstractBuildingWorker)
             {
-                final AbstractBuilding building = ((TileEntityColonyBuilding) tileEntity).getBuilding();
+                final AbstractBuildingContainer building = ((TileEntityColonyBuilding) tileEntity).getBuilding();
                 building.alterPickUpPriority(1);
                 insertionResultStack = InventoryUtils.forceItemStackToItemHandler(
                   new InvWrapper((TileEntityColonyBuilding) tileEntity), stack, ((AbstractBuildingWorker) building)::isItemStackInRequest);
