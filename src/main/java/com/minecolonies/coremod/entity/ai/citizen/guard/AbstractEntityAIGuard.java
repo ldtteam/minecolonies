@@ -5,6 +5,7 @@ import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
@@ -38,60 +39,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.citizen.guard.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends AbstractEntityAIInteract<J>
 {
-
-    /**
-     * The pitch will be divided by this to calculate it for the arrow sound.
-     */
-    private static final double PITCH_DIVIDER = 1.0D;
-
-    /**
-     * Range a guard should be within of GuardPos.
-     */
-    private static final int GUARD_POS_RANGE = 0;
-
-    /**
-     * The base pitch, add more to this to change the sound.
-     */
-    private static final double BASE_PITCH = 0.8D;
-
-    /**
-     * Random is multiplied by this to get a random sound.
-     */
-    private static final double PITCH_MULTIPLIER = 0.4D;
-
-    /**
-     * Ranged attack velocity
-     */
-    private static final float RANGED_VELOCITY = (float) 1.6D;
-
-    /**
-     * Quantity the worker should turn around all at once.
-     */
-    private static final double TURN_AROUND = 180D;
-
-    /**
-     * Normal volume at which sounds are played at.
-     */
-    private static final double BASIC_VOLUME = 1.0D;
-
-    /**
-     * Experience to add when a mob is killed
-     */
-    private static final int EXP_PER_MOD_DEATH = 5;
-
-    /**
-     * How many ticks are in a second
-     */
-    private static final int TICKS_PER_SECOND = 20;
-
-    /**
-     * Base physical damage.
-     */
-    private static final int BASE_PHYSICAL_DAMAGE = 3;
 
     /**
      * Tools and Items needed by the worker.
@@ -105,49 +57,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     protected int currentAttackDelay = 0;
 
     /**
-     * Physical Attack delay in ticks.
-     */
-    protected static final int RANGED_ATTACK_DELAY_BASE = 20;
-
-    /**
-     * Ranged hit chance devider.
-     */
-    private static final double HIT_CHANCE_DIVIDER = 15.0D;
-
-    /**
-     * Have to aim that bit higher to hit the target.
-     */
-    private static final double RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER = 0.20000000298023224D;
-
-    /**
-     * Quantity to be moved to rotate the entity without actually moving.
-     */
-    private static final double MOVE_MINIMAL = 0.01D;
-
-    /**
-     * double damage threshold
-     */
-    private static final int DOUBLE_DAMAGE_THRESHOLD = 2;
-
-    /**
-     * Seconds to delay after prepare AI State.
-     */
-    private static final int PREPARE_DELAY_SECONDS = 5;
-
-    /**
      * The current target for our guard.
      */
     protected EntityLivingBase target = null;
-
-    /**
-     * Default vision range.
-     */
-    private static final int DEFAULT_VISION = 10;
-
-    /**
-     * Y search range.
-     */
-    private static final int Y_VISION = 10;
 
     /**
      * The current blockPos we're patrolling at.
@@ -210,7 +122,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private AIState prepare()
     {
-        setDelay(TICKS_PER_SECOND * PREPARE_DELAY_SECONDS);
+        setDelay(Constants.TICKS_SECOND * PREPARE_DELAY_SECONDS);
 
         for (final ToolType tool : toolsNeeded)
         {
@@ -261,7 +173,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     protected AIState decide()
     {
-        setDelay(TICKS_PER_SECOND);
+        setDelay(Constants.TICKS_SECOND);
         for (final ToolType toolType : toolsNeeded)
         {
             if (getOwnBuilding() != null && !InventoryUtils.hasItemHandlerToolWithLevel(new InvWrapper(getInventory()),
@@ -286,7 +198,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 case PATROL:
                     if (currentPatrolPoint == null)
                     {
-                        currentPatrolPoint = guardBuilding.getNextPatrolTarget(currentPatrolPoint);
+                        currentPatrolPoint = guardBuilding.getNextPatrolTarget(null);
                     }
                     if (currentPatrolPoint != null
                       && worker.isWorkerAtSiteWithMove(currentPatrolPoint, 1))

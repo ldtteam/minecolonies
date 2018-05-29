@@ -52,24 +52,24 @@ public class CitizenData
     /**
      * Tags.
      */
-    private static final String TAG_ID                  = "id";
-    private static final String TAG_NAME                = "name";
-    private static final String TAG_FEMALE              = "female";
-    private static final String TAG_TEXTURE             = "texture";
-    private static final String TAG_LEVEL               = "level";
-    private static final String TAG_EXPERIENCE          = "experience";
-    private static final String TAG_HEALTH              = "health";
-    private static final String TAG_MAX_HEALTH          = "maxHealth";
-    private static final String TAG_SKILLS              = "skills";
-    private static final String TAG_SKILL_STRENGTH      = "strength";
-    private static final String TAG_SKILL_STAMINA       = "endurance";
-    private static final String TAG_SKILL_SPEED         = "charisma";
-    private static final String TAG_SKILL_INTELLIGENCE  = "intelligence";
-    private static final String TAG_SKILL_DEXTERITY     = "dexterity";
-    private static final String TAG_SATURATION          = "saturation";
-    private static final String TAG_HELD_ITEM_SLOT      = "HeldItemSlot";
-    public static final String TAG_OFFHAND_HELD_ITEM_SLOT        = "OffhandHeldItemSlot";
-    private static final String TAG_INVENTORY           = "inventory";
+    private static final String TAG_ID                     = "id";
+    private static final String TAG_NAME                   = "name";
+    private static final String TAG_FEMALE                 = "female";
+    private static final String TAG_TEXTURE                = "texture";
+    private static final String TAG_LEVEL                  = "level";
+    private static final String TAG_EXPERIENCE             = "experience";
+    private static final String TAG_HEALTH                 = "health";
+    private static final String TAG_MAX_HEALTH             = "maxHealth";
+    private static final String TAG_SKILLS                 = "skills";
+    private static final String TAG_SKILL_STRENGTH         = "strength";
+    private static final String TAG_SKILL_STAMINA          = "endurance";
+    private static final String TAG_SKILL_SPEED            = "charisma";
+    private static final String TAG_SKILL_INTELLIGENCE     = "intelligence";
+    private static final String TAG_SKILL_DEXTERITY        = "dexterity";
+    private static final String TAG_SATURATION             = "saturation";
+    private static final String TAG_HELD_ITEM_SLOT         = "HeldItemSlot";
+    private static final String TAG_OFFHAND_HELD_ITEM_SLOT = "OffhandHeldItemSlot";
+    private static final String TAG_INVENTORY              = "inventory";
 
     /**
      * Minimum saturation of a citizen.

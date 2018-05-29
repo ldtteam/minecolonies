@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Pane;
@@ -10,7 +11,6 @@ import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.GuardJob;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.GuardTask;
 import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import com.minecolonies.coremod.network.messages.GuardRecalculateMessage;
 import com.minecolonies.coremod.network.messages.GuardScepterMessage;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Our building hut view.
@@ -33,42 +33,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
  */
 public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBuildingGuards.View>
 {
-    //// ---- GUI Constants ---- \\\\
-    //GUI Lists
-    private static final String  GUI_ELEMENT_LIST_LEVELS    = "positions";
-    private static final String  GUI_ELEMENT_LIST_MOBS      = "mobs";
-    //GUI List Elements
-    private static final String  GUI_LIST_ELEMENT_NAME      = "name";
-    private static final String  GUI_LIST_BUTTON_SWITCH     = "switch";
-    private static final String  GUI_LIST_BUTTON_UP         = "prioUp";
-    private static final String  GUI_LIST_BUTTON_DOWN       = "prioDown";
-    //GUI Buttons
-    private static final String  GUI_BUTTON_JOB             = "job";
-    private static final String  GUI_BUTTON_ASSIGNMENT_MODE = "assign";
-    private static final String  GUI_BUTTON_PATROL_MODE     = "patrol";
-    private static final String  GUI_BUTTON_RETRIEVAL_MODE  = "retrieve";
-    private static final String  GUI_BUTTON_SET_TARGET      = "setTarget";
-    private static final String  GUI_BUTTON_NEXT_PAGE       = "nextPage";
-    private static final String  GUI_BUTTON_PREV_PAGE       = "prevPage";
-    private static final String  GUI_BUTTON_RECALCULATE     = "recalculate";
-    //GUI Switches
-    private static final String  GUI_SWITCH_VIEW_PAGES      = "pages";
-    private static final String  GUI_SWITCH_TASK_PATROL     = "patrolling";
-    private static final String  GUI_SWITCH_TASK_FOLLOW     = "following";
-    private static final String  GUI_SWITCH_TASK_GUARD      = "guarding";
-    private static final String  GUI_SWITCH_AUTO            = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_AUTO);
-    private static final String  GUI_SWITCH_MANUAL          = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_MANUAL);
-    private static final String  GUI_SWITCH_ON              = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON);
-    private static final String  GUI_SWITCH_OFF             = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF);
-    //GUI Pages
-    private static final String  GUI_PAGE_PAGE_ACTIONS      = "pageActions";
-    private static final String  GUI_PAGE_LEVEL_ACTIONS     = "levelActions";
-    private static final String  GUI_PAGE_MOB_ACTIONS       = "mobActions";
-    //GUI Resource
-    private static final String  GUI_RESOURCE               = ":gui/windowHutGuardTower.xml";
-    //GUI Other
-    private static final Integer GUI_LIST_ELEMENT_NAME_POS  = 2;
-    //// ---- GUI Constants ---- \\\\
 
     /**
      * GUI Buttons.
@@ -81,7 +45,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     /**
      * GUI Lists.
      */
-    private ScrollingList patrolList;
+    private ScrollingList listOfPoints;
 
     /**
      * Whether to assign the job manually.
@@ -155,10 +119,10 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
 
         pullInfoFromHut();
 
-        patrolList = findPaneOfTypeByID(GUI_ELEMENT_LIST_LEVELS, ScrollingList.class);
+        listOfPoints = findPaneOfTypeByID(GUI_ELEMENT_LIST_LEVELS, ScrollingList.class);
         if (task.equals(GuardTask.PATROL))
         {
-            patrolList.setDataProvider(new ScrollingList.DataProvider()
+            listOfPoints.setDataProvider(new ScrollingList.DataProvider()
             {
                 @Override
                 public int getElementCount()
@@ -176,7 +140,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         }
         else if (task.equals(GuardTask.GUARD))
         {
-            patrolList.setDataProvider(new ScrollingList.DataProvider()
+            listOfPoints.setDataProvider(new ScrollingList.DataProvider()
             {
                 @Override
                 public int getElementCount()
@@ -265,6 +229,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
                     break;
             }
         }
+        handleButtons();
     }
 
     @Override
@@ -273,11 +238,11 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         super.onUpdate();
 
         pullInfoFromHut();
-        handleButtons();
+        //handleButtons();
 
         if (!task.equals(GuardTask.PATROL))
         {
-            patrolList.hide();
+            listOfPoints.hide();
         }
         final Pane currentPane = findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).getCurrentView();
         if (currentPane != null)
@@ -486,7 +451,6 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         }
         pullInfoFromHut();
         sendChangesToServer();
-        handleButtons();
     }
 
     /**
@@ -554,7 +518,6 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         building.setPatrolManually(!building.isPatrolManually());
         pullInfoFromHut();
         sendChangesToServer();
-        handleButtons();
     }
 
     /**

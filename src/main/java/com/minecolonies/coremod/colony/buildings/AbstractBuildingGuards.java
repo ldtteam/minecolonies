@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
@@ -56,15 +57,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     private static final String NBT_MOBS           = "mobs";
     private static final String NBT_MOB_VIEW       = "mobview";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
-
-    ////// --------------------------- GuardTask Enum --------------------------- \\\\\\
-    public enum GuardTask
-    {
-        FOLLOW,
-        GUARD,
-        PATROL
-    }
-    ////// --------------------------- GuardTask Enum --------------------------- \\\\\\
 
     ////// --------------------------- GuardJob Enum --------------------------- \\\\\\
     public enum GuardJob
@@ -337,7 +329,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             }
             else
             {
-                return getRandomBuilding(currentPatrolTarget);
+                return getRandomPosition(currentPatrolTarget);
             }
         }
 
@@ -370,7 +362,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      *
      * @return a random blockPos.
      */
-    private BlockPos getRandomBuilding(final BlockPos currentPosition)
+    private BlockPos getRandomPosition(final BlockPos currentPosition)
     {
         if (getColony() == null)
         {
