@@ -408,8 +408,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         {
             @NotNull final NBTTagCompound wayPointCompound = new NBTTagCompound();
             BlockPosUtil.writeToNBT(wayPointCompound, TAG_TARGET, pos);
-
-
             wayPointTagList.appendTag(wayPointCompound);
         }
         compound.setTag(TAG_PATROL_TARGETS, wayPointTagList);

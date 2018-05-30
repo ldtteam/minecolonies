@@ -301,7 +301,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
         else
         {
-            player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.workerbuildings.noUpgrade"));
+            player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.worker.noUpgrade"));
         }
     }
 

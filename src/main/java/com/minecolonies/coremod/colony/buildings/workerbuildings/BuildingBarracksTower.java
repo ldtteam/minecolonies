@@ -71,7 +71,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         }
         else
         {
-            player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.workerbuildings.needBarracks"));
+            player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.worker.needBarracks"));
         }
     }
 
@@ -86,10 +86,10 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     public boolean assignCitizen(final CitizenData citizen)
     {
         final boolean assignalResult = super.assignCitizen(citizen);
-        if (citizen != null)
+        if (citizen != null && assignalResult)
         {
             final AbstractBuilding building = citizen.getHomeBuilding();
-            if (building instanceof BuildingHome)
+            if (!(building instanceof AbstractBuildingGuards))
             {
                 building.removeCitizen(citizen);
             }

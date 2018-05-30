@@ -631,7 +631,7 @@ public class Colony implements IColony
         // Clean up or spawn citizens.
         if (!packageManager.getSubscribers().isEmpty())
         {
-            citizenManager.onWorldTick(event);;
+            citizenManager.onWorldTick(event);
         }
         
         if (shallUpdate(world, TICKS_SECOND)
@@ -848,6 +848,7 @@ public class Colony implements IColony
      */
     public void markDirty()
     {
+        Log.getLogger().warn(Arrays.toString(Thread.currentThread().getStackTrace()));
         packageManager.setDirty();
         colonyTag = null;
         this.isDirty = true;
