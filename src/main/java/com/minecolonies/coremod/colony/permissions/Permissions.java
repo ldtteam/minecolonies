@@ -428,7 +428,6 @@ public class Permissions implements IPermissions
                 players.put(ownerUUID, new Player(ownerUUID, player.getName(), Rank.OWNER));
             }
         }
-        markDirty();
     }
 
     /**
