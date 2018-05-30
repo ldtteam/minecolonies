@@ -629,8 +629,11 @@ public class Colony implements IColony
         buildingManager.cleanUpBuildings(event);
 
         // Clean up or spawn citizens.
-        citizenManager.onWorldTick(event);
-
+        if (!packageManager.getSubscribers().isEmpty())
+        {
+            citizenManager.onWorldTick(event);;
+        }
+        
         if (shallUpdate(world, TICKS_SECOND)
                 && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
                 && Configurations.gameplay.doBarbariansSpawn
