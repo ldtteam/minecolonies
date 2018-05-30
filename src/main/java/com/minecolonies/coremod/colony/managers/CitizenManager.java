@@ -121,8 +121,9 @@ public class CitizenManager implements ICitizenManager
                     }
                     else if (list.isEmpty() && colony.getWorld().isBlockLoaded(citizen.getLastPosition()))
                     {
-                        citizen.setCitizenEntity(null);
-                        citizen.updateCitizenEntityIfNecessary();
+                        //TODO: let this disabled for now, we run into this too often.
+                        //citizen.setCitizenEntity(null);
+                        //citizen.updateCitizenEntityIfNecessary();
                         Log.getLogger().warn("Citizen went MIA, updating him!");
                     }
                     
