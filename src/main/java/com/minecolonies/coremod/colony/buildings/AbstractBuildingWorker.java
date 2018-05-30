@@ -11,6 +11,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -78,8 +79,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
      */
     @NotNull
     public abstract AbstractJob createJob(CitizenData citizen);
-
-
 
     /**
      * Check if a certain ItemStack is in the request of a worker.
@@ -240,6 +239,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     {
         if (!super.assignCitizen(citizen))
         {
+            Log.getLogger().warn("Ohoohohoohoh, wasn't abel to assign citizen to work building!!!");
             return false;
         }
 
@@ -260,12 +260,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     }
 
     @Override
-    public void assignCitizenFromNBtAction(final CitizenData data)
-    {
-        data.setWorkBuilding(this);
-    }
-
-    @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
@@ -277,25 +271,23 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
                 final NBTTagList workersTagList = compound.getTagList(TAG_WORKER, Constants.NBT.TAG_COMPOUND);
                 for (int i = 0; i < workersTagList.tagCount(); ++i)
                 {
+                    final CitizenData data;
                     if (workersTagList.getCompoundTagAt(i).hasKey(TAG_ID))
                     {
-                        final CitizenData data = getColony().getCitizenManager().getCitizen(workersTagList.getCompoundTagAt(i).getInteger(TAG_ID));
-                        if (data != null)
-                        {
-                            data.setWorkBuilding(this);
-                            assignCitizen(data);
-                            assignCitizenFromNBtAction(data);
-                        }
+                        data = getColony().getCitizenManager().getCitizen(workersTagList.getCompoundTagAt(i).getInteger(TAG_ID));
                     }
                     else if (workersTagList.getCompoundTagAt(i).hasKey(TAG_WORKER_ID))
                     {
-                        final CitizenData data = getColony().getCitizenManager().getCitizen(workersTagList.getCompoundTagAt(i).getInteger(TAG_WORKER_ID));
-                        if (data != null)
-                        {
-                            data.setWorkBuilding(this);
-                            assignCitizen(data);
-                            assignCitizenFromNBtAction(data);
-                        }
+                        data = getColony().getCitizenManager().getCitizen(workersTagList.getCompoundTagAt(i).getInteger(TAG_WORKER_ID));
+                    }
+                    else
+                    {
+                        data = null;
+                    }
+
+                    if (data != null)
+                    {
+                        assignCitizen(data);
                     }
                 }
             }
@@ -304,10 +296,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
                 MineColonies.getLogger().warn("Warning: Updating data structures:", e);
                 final CitizenData worker = getColony().getCitizenManager().getCitizen(compound.getInteger(TAG_WORKER));
                 assignCitizen(worker);
-                if (worker != null)
-                {
-                    assignCitizenFromNBtAction(worker);
-                }
             }
         }
 
