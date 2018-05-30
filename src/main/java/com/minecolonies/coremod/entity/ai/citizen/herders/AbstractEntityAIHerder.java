@@ -88,7 +88,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
           new AITarget(IDLE, START_WORKING),
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
           new AITarget(PREPARING, this::prepareForHerding),
-          new AITarget(HERDER_DECIDE, this::decideWhatToDo),
+          new AITarget(DECIDE, this::decideWhatToDo),
           new AITarget(HERDER_BREED, this::breedAnimals),
           new AITarget(HERDER_BUTCHER, this::butcherAnimals),
           new AITarget(HERDER_PICKUP, this::pickupItems)
@@ -125,7 +125,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         if (animals.isEmpty())
         {
             setDelay(NO_ANIMALS_DELAY);
-            return HERDER_DECIDE;
+            return DECIDE;
         }
 
         worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
@@ -158,7 +158,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      */
     private AIState startWorkingAtOwnBuilding()
     {
-        worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOHUT));
+        worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT));
         if (walkToBuilding())
         {
             return getState();
@@ -189,7 +189,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             checkIfRequestForItemExistOrCreateAsynch(item);
         }
         setDelay(DECIDING_DELAY);
-        return HERDER_DECIDE;
+        return DECIDE;
     }
 
     /**
@@ -203,10 +203,10 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         if (!maxAnimals())
         {
-            return HERDER_DECIDE;
+            return DECIDE;
         }
 
-        if (!equipTool(ToolType.AXE))
+        if (!equipTool(EnumHand.MAIN_HAND, ToolType.AXE))
         {
             return START_WORKING;
         }
@@ -252,7 +252,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         if (animalOne == null)
         {
-            return HERDER_DECIDE;
+            return DECIDE;
         }
 
         final EntityAnimal animalTwo = animals.stream().filter(animal ->
@@ -265,10 +265,10 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         if (animalTwo == null)
         {
-            return HERDER_DECIDE;
+            return DECIDE;
         }
 
-        if (!equipItem(getBreedingItems()))
+        if (!equipItem(EnumHand.MAIN_HAND, getBreedingItems()))
         {
             return START_WORKING;
         }
@@ -278,7 +278,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         breedTwoAnimals(animalOne, animalTwo);
         incrementActionsDoneAndDecSaturation();
         worker.addExperience(1.0);
-        return HERDER_DECIDE;
+        return DECIDE;
     }
 
     /**
@@ -299,7 +299,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         incrementActionsDoneAndDecSaturation();
 
-        return HERDER_DECIDE;
+        return DECIDE;
     }
 
     /**
@@ -432,11 +432,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      * @param toolType the {@link ToolType} we want to equip
      * @return true if the tool was equipped.
      */
-    public boolean equipTool(final ToolType toolType)
+    public boolean equipTool(final EnumHand hand, final ToolType toolType)
     {
         if (getToolSlot(toolType) != -1)
         {
-            worker.setHeldItem(getToolSlot(toolType));
+            worker.setHeldItem(hand, getToolSlot(toolType));
             return true;
         }
         return false;
@@ -469,11 +469,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      * @param itemStack the {@link ItemStack} to equip.
      * @return true if the item was equipped.
      */
-    public boolean equipItem(final ItemStack itemStack)
+    public boolean equipItem(final EnumHand hand, final ItemStack itemStack)
     {
         if (checkIfRequestForItemExistOrCreateAsynch(itemStack))
         {
-            worker.setHeldItem(getItemSlot(itemStack.getItem()));
+            worker.setHeldItem(hand, getItemSlot(itemStack.getItem()));
             return true;
         }
         return false;
