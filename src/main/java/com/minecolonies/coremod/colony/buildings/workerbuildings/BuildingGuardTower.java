@@ -7,36 +7,31 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Building class of the BarracksTower.
+ * Guard Tower building.
+ *
+ * @author Asherslab
  */
+@SuppressWarnings("squid:MaximumInheritanceDepth")
 public class BuildingGuardTower extends AbstractBuildingGuards
 {
 
     /**
-     * Name description of the guard hat.
+     * Our constants. The Schematic names, Defence bonus, and Offence bonus.
      */
-    private static final String GUARD_TOWER = "GuardTower";
+    private static final String SCHEMATIC_NAME = "GuardTower";
+    private static final int    DEFENCE_BONUS  = 5;
+    private static final int    OFFENCE_BONUS  = 0;
+    private static final int    MAX_LEVEL      = 5;
 
     /**
-     * Defence bonus related to this building.
-     */
-    private static final int DEFENCE_BONUS = 5;
-
-    /**
-     * Constructor for the BarracksTower building.
+     * The abstract constructor of the building.
      *
-     * @param c Colony the building is in.
-     * @param l Location of the building.
+     * @param c the colony
+     * @param l the position
      */
-    public BuildingGuardTower(final Colony c, final BlockPos l)
+    public BuildingGuardTower(@NotNull final Colony c, final BlockPos l)
     {
         super(c, l);
-    }
-
-    @Override
-    public int getOffenceBonus()
-    {
-        return 0;
     }
 
     @Override
@@ -45,16 +40,22 @@ public class BuildingGuardTower extends AbstractBuildingGuards
         return DEFENCE_BONUS;
     }
 
-    /**
-     * Gets the name of the schematic.
-     *
-     * @return Guard schematic name.
-     */
-    @NotNull
+    @Override
+    public int getOffenceBonus()
+    {
+        return OFFENCE_BONUS;
+    }
+
     @Override
     public String getSchematicName()
     {
-        return GUARD_TOWER;
+        return SCHEMATIC_NAME;
+    }
+
+    @Override
+    public int getMaxBuildingLevel()
+    {
+        return MAX_LEVEL;
     }
 
     /**
@@ -63,15 +64,14 @@ public class BuildingGuardTower extends AbstractBuildingGuards
     public static class View extends AbstractBuildingGuards.View
     {
         /**
-         * The client view constructor for the baker building.
+         * The client view constructor for the AbstractGuardBuilding.
          *
-         * @param c The ColonyView the building is in.
-         * @param l The location of the building.
+         * @param c the colony.
+         * @param l the location.
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final ColonyView c, @NotNull final BlockPos l)
         {
             super(c, l);
         }
     }
 }
-

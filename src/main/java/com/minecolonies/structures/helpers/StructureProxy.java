@@ -290,9 +290,12 @@ public class StructureProxy
             if (info.tileentityData != null)
             {
                 final TileEntity entity = TileEntity.create(world, info.tileentityData);
-                entity.rotate(rotation);
-                entity.mirror(mirror);
-                this.blocks[x][y][z] = new Template.BlockInfo(info.pos, info.blockState, entity.writeToNBT(new NBTTagCompound()));
+                if (entity != null)
+                {
+                    entity.rotate(rotation);
+                    entity.mirror(mirror);
+                    this.blocks[x][y][z] = new Template.BlockInfo(info.pos, info.blockState, entity.writeToNBT(new NBTTagCompound()));
+                }
             }
         }
 
