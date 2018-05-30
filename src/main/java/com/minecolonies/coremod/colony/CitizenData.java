@@ -682,7 +682,7 @@ public class CitizenData
      */
     public void updateCitizenEntityIfNecessary()
     {
-        if (!getCitizenEntity().isPresent() && colony.getWorld().isBlockLoaded(lastPosition))
+        if (!getCitizenEntity().isPresent() && colony.getWorld().isBlockLoaded(lastPosition) && colony.getWorld().getChunkFromBlockCoords(lastPosition).isLoaded())
         {
             final List<EntityCitizen> list = colony.getWorld()
                     .getEntities(EntityCitizen.class,
