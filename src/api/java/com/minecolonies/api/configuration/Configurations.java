@@ -61,7 +61,7 @@ public class Configurations
         @Config.Comment("Delay modifier to mine a block (Decreasing it, decreases the delay)")
         public int blockMiningDelayModifier = 500;
 
-        @Config.Comment("Should worker work during the rain?")
+        @Config.Comment("Should workers work during the rain?")
         public boolean workersAlwaysWorkInRain = false;
 
         @Config.Comment("Should the colony protection be enabled?")
@@ -195,7 +195,16 @@ public class Configurations
                                                  };
         @Config.Comment("Should colonies in other dimensions be allowed (Default = false)?")
         public boolean allowOtherDimColonies = false;
-    }
+
+        @Config.Comment("ResourceLocations for extra entities for the GuardHut's list. \n"
+                          + "once done you'll need to recalculate the list."
+                          + "EntityMob's already calculated in list.")
+        public String[] guardResourceLocations = new String[]
+                                                           {
+                                                             "minecraft:slime",
+                                                             "tconstruct:blueslime"
+                                                           };
+     }
 
     public static class Pathfinding
     {

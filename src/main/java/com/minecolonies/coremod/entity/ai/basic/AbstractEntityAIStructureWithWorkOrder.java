@@ -23,6 +23,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityFlowerPot;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
@@ -385,8 +386,15 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         if (job.getStructure().getBlockInfo().tileentityData != null)
         {
             final TileEntity tileentityflowerpot = world.getTileEntity(pos);
-            tileentityflowerpot.readFromNBT(job.getStructure().getBlockInfo().tileentityData);
-            world.setTileEntity(pos, tileentityflowerpot);
+            if (tileentityflowerpot == null)
+            {
+                TileEntity.create(world, job.getStructure().getBlockInfo().tileentityData);
+            }
+            else
+            {
+                tileentityflowerpot.readFromNBT(job.getStructure().getBlockInfo().tileentityData);
+                world.setTileEntity(pos, tileentityflowerpot);
+            }
         }
     }
 

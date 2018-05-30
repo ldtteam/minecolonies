@@ -8,6 +8,7 @@ import com.minecolonies.coremod.blocks.BlockHutTownHall;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
@@ -224,12 +225,12 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
 
             if (oldBuilding instanceof AbstractBuildingWorker)
             {
-                final List<CitizenData> workers = ((AbstractBuildingWorker) oldBuilding).getWorker();
+                final List<CitizenData> workers = ((AbstractBuildingWorker) oldBuilding).getAssignedCitizen();
                 for(final CitizenData citizen : workers)
                 {
                     citizen.setWorkBuilding(null);
                     citizen.setWorkBuilding((AbstractBuildingWorker) building);
-                    ((AbstractBuildingWorker) building).setWorker(citizen);
+                    ((AbstractBuildingWorker) building).assignCitizen(citizen);
                 }
             }
 
@@ -250,11 +251,11 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
 
             if (oldBuilding instanceof BuildingHome)
             {
-                final List<CitizenData> residents = ((BuildingHome) oldBuilding).getResidents();
+                final List<CitizenData> residents = ((BuildingHome) oldBuilding).getAssignedCitizen();
                 for(final CitizenData citizen : residents)
                 {
                     citizen.setHomeBuilding(building);
-                    ((BuildingHome) building).addResident(citizen);
+                    ((BuildingHome) building).assignCitizen(citizen);
                 }
             }
 

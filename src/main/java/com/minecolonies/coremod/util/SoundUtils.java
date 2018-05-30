@@ -162,7 +162,7 @@ public final class SoundUtils
                 prefix = citizen.getWorkBuilding().getJobName();
             }
 
-            if ("GuardTower".equals(prefix) && citizen.getWorkBuilding() instanceof AbstractBuildingGuards)
+            if (GUARD_TOWER.equals(prefix) && citizen.getWorkBuilding() instanceof AbstractBuildingGuards)
             {
                 if (((AbstractBuildingGuards) citizen.getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
                 {

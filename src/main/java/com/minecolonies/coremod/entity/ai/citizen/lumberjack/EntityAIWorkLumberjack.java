@@ -4,7 +4,7 @@ import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.BuildingLumberjack;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -17,6 +17,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -323,7 +324,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * First find your way to the tree trunk.
      * Then chop away
      * and wait for saplings to drop
-     * then place a sapling
+     * then place a sapling if shouldReplant is true
      *
      * @return LUMBERJACK_GATHERING if tree is done
      */
@@ -347,8 +348,18 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             {
                 return getState();
             }
-            plantSapling();
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("trees");
+
+            final BuildingLumberjack building = getOwnBuilding(BuildingLumberjack.class);
+            if ( building.shouldReplant())
+            {
+                plantSapling();
+            }
+            else
+            {
+                job.tree = null;
+                checkedInHut = false;
+            }
+            building.getColony().getStatsManager().incrementStatistic("trees");
             workFrom = null;
             return LUMBERJACK_GATHERING;
         }
@@ -507,7 +518,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         {
             final ItemStack stack = getInventory().getStackInSlot(saplingSlot);
             final Block block = ((ItemBlock) stack.getItem()).getBlock();
-            worker.setHeldItem(saplingSlot);
+            worker.setHeldItem(EnumHand.MAIN_HAND, saplingSlot);
 
             placeSaplings(saplingSlot, stack, block);
             final SoundType soundType = block.getSoundType(world.getBlockState(location), world, location, worker);

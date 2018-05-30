@@ -5,7 +5,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.BuildingLumberjack;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -36,7 +36,7 @@ public class LumberjackSaplingSelectorMessage extends AbstractMessage<Lumberjack
     private ItemStack stack;
 
     /**
-     * Wether the lumberjack should cut or not.
+     * Whether the lumberjack should cut or not.
      */
     private boolean shouldCut;
 
@@ -56,7 +56,7 @@ public class LumberjackSaplingSelectorMessage extends AbstractMessage<Lumberjack
      *
      * @param building     the building view of the lumberjack.
      * @param saplingStack the stack to set.
-     * @param shouldCut    wether or not the tree should be cut.
+     * @param shouldCut    whether or not the tree should be cut.
      */
     public LumberjackSaplingSelectorMessage(final BuildingLumberjack.View building, final ItemStack saplingStack, final boolean shouldCut)
     {

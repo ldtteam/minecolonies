@@ -2,13 +2,14 @@ package com.minecolonies.coremod.entity.ai.citizen.herders;
 
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.colony.buildings.BuildingCowboy;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCowboy;
 import com.minecolonies.coremod.colony.jobs.JobCowboy;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -103,7 +104,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
             }
             else
             {
-                return HERDER_DECIDE;
+                return DECIDE;
             }
         }
 
@@ -111,16 +112,16 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
 
         if (cow == null)
         {
-            return HERDER_DECIDE;
+            return DECIDE;
         }
 
-        if (!walkingToAnimal(cow) && equipItem(new ItemStack(Items.BUCKET, 1)))
+        if (!walkingToAnimal(cow) && equipItem(EnumHand.MAIN_HAND, new ItemStack(Items.BUCKET, 1)))
         {
 
             if (!worker.getInventoryCitizen().addItemStackToInventory(new ItemStack(Items.MILK_BUCKET)))
             {
                 worker.removeHeldItem();
-                equipItem(new ItemStack(Items.MILK_BUCKET));
+                equipItem(EnumHand.MAIN_HAND, new ItemStack(Items.MILK_BUCKET));
                 InventoryUtils.removeStackFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(Items.BUCKET, 1));
             }
 
@@ -128,6 +129,6 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
             worker.addExperience(1.0);
         }
 
-        return HERDER_DECIDE;
+        return DECIDE;
     }
 }

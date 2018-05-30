@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.ai.citizen.fisherman;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.buildings.BuildingFisherman;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFisherman;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
@@ -18,6 +18,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemFishingRod;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -576,7 +577,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private void equipRod()
     {
-        worker.setHeldItem(getRodSlot());
+        worker.setHeldItem(EnumHand.MAIN_HAND, getRodSlot());
     }
 
     /**
@@ -623,7 +624,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         worker.swingArm(worker.getActiveHand());
         final int i = entityFishHook.getDamage(this.getCitizen());
-        worker.damageItemInHand(i);
+        worker.damageItemInHand(EnumHand.MAIN_HAND, i);
         entityFishHook = null;
     }
 

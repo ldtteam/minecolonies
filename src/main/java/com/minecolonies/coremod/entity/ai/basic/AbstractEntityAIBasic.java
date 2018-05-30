@@ -29,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -42,12 +43,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
 import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATION;
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.TranslationConstants.BUILDING_LEVEL_TOO_LOW;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
-import static com.minecolonies.coremod.colony.buildings.AbstractBuilding.MAX_PRIO;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -305,7 +305,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Check if we need to dump the workers inventory.
+     * Check if we need to dump the worker inventory.
      * <p>
      * This will also ask the implementing ai
      * if we need to dump on custom reasons.
@@ -566,7 +566,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Check all chests in the worker hut for a required item matching a certain predicate
+     * Check all chests in the workers hut for a required item matching a certain predicate
      *
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
@@ -604,7 +604,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Check all chests in the worker hut for a required item.
+     * Check all chests in the workers hut for a required item.
      *
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
@@ -654,7 +654,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Finds the first @see ItemStack the type of {@code is}.
-     * It will be taken from the chest and placed in the workers inventory.
+     * It will be taken from the chest and placed in the worker inventory.
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
@@ -711,7 +711,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Finds the first @see ItemStack the type of {@code is}.
-     * It will be taken from the chest and placed in the workers inventory.
+     * It will be taken from the chest and placed in the worker inventory.
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
@@ -741,7 +741,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Finds the first @see ItemStack the type of {@code is}.
-     * It will be taken from the chest and placed in the workers inventory.
+     * It will be taken from the chest and placed in the worker inventory.
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
@@ -765,7 +765,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Takes whatever is in that slot of the workers chest and puts it in his inventory.
+     * Takes whatever is in that slot of the worker chest and puts it in his inventory.
      * If the inventory is full, only the fitting part will be moved.
      * Beware this method shouldn't be private, because the generic access won't work within a lambda won't work else.
      *
@@ -838,7 +838,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Check all chests in the worker hut for a required tool.
+     * Check all chests in the workers hut for a required tool.
      *
      * @param toolType     the type of tool requested (amount is ignored)
      * @param minimalLevel the minimal level the tool should have.
@@ -923,7 +923,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Can be overridden by implementations to specify items useful for the worker.
-     * When the workers inventory is full, he will try to keep these items.
+     * When the worker inventory is full, he will try to keep these items.
      * ItemStack amounts are ignored, the first stack found will be taken.
      *
      * @return a list with items nice to have for the worker
@@ -968,7 +968,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         final int bestSlot = getMostEfficientTool(target);
         if (bestSlot >= 0)
         {
-            worker.setHeldItem(bestSlot);
+            worker.setHeldItem(EnumHand.MAIN_HAND, bestSlot);
             return true;
         }
         requestTool(target, pos);

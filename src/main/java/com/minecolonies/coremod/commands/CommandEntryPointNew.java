@@ -413,7 +413,15 @@ public class CommandEntryPointNew extends CommandBase
         if (treeNode.getData().getMenuType().isNavigationMenu())
         {
             final Map<String, TreeNode<IMenu>> childs = getNavigationCommands(treeNode);
-            final String lowerCaseArg0 = args[0].toLowerCase(Locale.ROOT);
+            String lowerCaseArg0;
+            if (args.length != 0)
+            {
+                lowerCaseArg0 = args[0].toLowerCase(Locale.ROOT);
+            }
+            else
+            {
+                lowerCaseArg0 = root.toString();
+            }
             if (args.length <= 1
                   || !childs.containsKey(lowerCaseArg0))
             {
