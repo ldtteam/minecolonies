@@ -129,6 +129,7 @@ public class CitizenManager implements ICitizenManager
                     
                     for (int i = 1; i < list.size(); i++)
                     {
+                        Log.getLogger().warn("Removing duplicate entity now!");
                         colony.getWorld().removeEntity(list.get(i));
                     }
 
