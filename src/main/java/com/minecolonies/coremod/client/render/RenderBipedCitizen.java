@@ -75,9 +75,9 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     @Override
     protected void renderLivingAt(final EntityCitizen entityLivingBaseIn, final double x, final double y, final double z)
     {
-        if (entityLivingBaseIn.isEntityAlive() && entityLivingBaseIn.isAsleep())
+        if (entityLivingBaseIn.isEntityAlive() && entityLivingBaseIn.getCitizenSleepHandler().isAsleep())
         {
-            super.renderLivingAt(entityLivingBaseIn, x + (double)entityLivingBaseIn.getRenderOffsetX(), y, z + (double)entityLivingBaseIn.getRenderOffsetZ());
+            super.renderLivingAt(entityLivingBaseIn, x + (double)entityLivingBaseIn.getCitizenSleepHandler().getRenderOffsetX(), y, z + (double)entityLivingBaseIn.getCitizenSleepHandler().getRenderOffsetZ());
         }
         else
         {
@@ -88,9 +88,9 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     @Override
     protected void applyRotations(final EntityCitizen entityLiving, final float p_77043_2_, final float rotationYaw, final float partialTicks)
     {
-        if (entityLiving.isEntityAlive() && entityLiving.isAsleep())
+        if (entityLiving.isEntityAlive() && entityLiving.getCitizenSleepHandler().isAsleep())
         {
-            GlStateManager.rotate(entityLiving.getBedOrientationInDegrees(), 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotate(entityLiving.getCitizenSleepHandler().getBedOrientationInDegrees(), 0.0F, 1.0F, 0.0F);
             GlStateManager.rotate(this.getDeathMaxRotation(entityLiving), 0.0F, 0.0F, 1.0F);
             GlStateManager.rotate(THREE_QUARTERS, 0.0F, 1.0F, 0.0F);
         }

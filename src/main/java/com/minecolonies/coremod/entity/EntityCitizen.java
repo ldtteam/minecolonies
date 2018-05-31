@@ -29,14 +29,12 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -92,19 +90,9 @@ public class EntityCitizen extends AbstractEntityCitizen
     private BlockPos currentPosition = null;
 
     /**
-     * Time the entity is at the same position already.
-     */
-    private int stuckTime = 0;
-
-    /**
      * Variable to check what time it is for the citizen.
      */
     private boolean isDay = true;
-
-    /**
-     * Field to try moving away from a location in order to pass it.
-     */
-    private boolean triedMovingAway = false;
 
     /**
      * Backup of the citizen.
@@ -127,29 +115,34 @@ public class EntityCitizen extends AbstractEntityCitizen
     private final CitizenStatusHandler citizenStatusHandler;
 
     /**
-     * The citizen status handler.
+     * The citizen item handler.
      */
     private final CitizenItemHandler citizenItemHandler;
 
     /**
-     * The citizen status handler.
+     * The citizen inv handler.
      */
     private final CitizenInventoryHandler citizenInventoryHandler;
 
     /**
-     * The citizen status handler.
+     * The citizen colony handler.
      */
     private final CitizenColonyHandler citizenColonyHandler;
 
     /**
-     * The citizen status handler.
+     * The citizen job handler.
      */
     private final CitizenJobHandler citizenJobHandler;
 
     /**
-     * The citizen status handler.
+     * The citizen sleep handler.
      */
     private final CitizenSleepHandler citizenSleepHandler;
+
+    /**
+     * The citizen stuck handler.
+     */
+    private final CitizenStuckHandler citizenStuckHandler;
 
     /**
      * Citizen constructor.
@@ -167,6 +160,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.citizenColonyHandler = new CitizenColonyHandler(this);
         this.citizenJobHandler = new CitizenJobHandler(this);
         this.citizenSleepHandler = new CitizenSleepHandler(this);
+        this.citizenStuckHandler = new CitizenStuckHandler(this);
 
         setSize((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT);
         this.enablePersistence();
@@ -532,15 +526,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
             if (citizenJobHandler.getColonyJob() != null || !CompatibilityUtils.getWorld(this).isDaytime())
             {
-                if (ticksExisted % TICKS_20 == 0)
-                {
-                    checkIfStuck();
-
-                    if (ticksExisted % (MAX_STUCK_TIME * TICKS_SECOND) == 0)
-                    {
-                        triedMovingAway = false;
-                    }
-                }
+                citizenStuckHandler.onUpdate();
             }
             else
             {
@@ -640,67 +626,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
     }
 
-    private void checkIfStuck()
-    {
-        if (this.currentPosition == null || newNavigator == null)
-        {
-            this.currentPosition = this.getPosition();
-            return;
-        }
 
-        if (newNavigator.getDestination() == null || newNavigator.getDestination().distanceSq(posX, posY, posZ) < MOVE_AWAY_RANGE)
-        {
-            return;
-        }
-
-        if (!new AxisAlignedBB(this.currentPosition).expand(1, 1, 1)
-               .intersects(new AxisAlignedBB(this.getPosition())) && !triedMovingAway)
-        {
-            stuckTime = 0;
-            this.currentPosition = this.getPosition();
-            return;
-        }
-
-        stuckTime++;
-
-        if (stuckTime >= MIN_STUCK_TIME + getRandom().nextInt(MIN_STUCK_TIME) && !triedMovingAway)
-        {
-            triedMovingAway = true;
-            newNavigator.moveAwayFromXYZ(currentPosition, getRandom().nextInt(MOVE_AWAY_RANGE), 1);
-            return;
-        }
-
-        if (stuckTime >= MAX_STUCK_TIME)
-        {
-            if (newNavigator.getDestination().distanceSq(posX, posY, posZ) < MOVE_AWAY_RANGE)
-            {
-                stuckTime = 0;
-                return;
-            }
-
-            triedMovingAway = false;
-
-            final BlockPos destination = BlockPosUtil.getFloor(newNavigator.getDestination().up(), CompatibilityUtils.getWorld(this));
-            @Nullable final BlockPos spawnPoint =
-              Utils.scanForBlockNearPoint
-                      (CompatibilityUtils.getWorld(this), destination, 1, 1, 1, 3,
-                        Blocks.AIR,
-                        Blocks.SNOW_LAYER,
-                        Blocks.TALLGRASS,
-                        Blocks.RED_FLOWER,
-                        Blocks.YELLOW_FLOWER,
-                        Blocks.CARPET);
-
-            WorkerUtil.setSpawnPoint(spawnPoint, this);
-            if (citizenColonyHandler.getColony() != null)
-            {
-                Log.getLogger().info("Teleported stuck citizen " + this.getName() + " from colony: " + citizenColonyHandler.getColonyId() + " to target location");
-            }
-            stuckTime = 0;
-        }
-
-        this.currentPosition = this.getPosition();
-    }
 
     /**
      * Lets the citizen tryToEat to replentish saturation.
@@ -963,6 +889,24 @@ public class EntityCitizen extends AbstractEntityCitizen
     public void setCitizenData(@Nullable final CitizenData data)
     {
         this.citizenData = data;
+    }
+
+    /**
+     * Getter for the current position.
+     * @return the current position.
+     */
+    public BlockPos getCurrentPosition()
+    {
+        return currentPosition;
+    }
+
+    /**
+     * Setter for the current position.
+     * @param currentPosition the position to set.
+     */
+    public void setCurrentPosition(final BlockPos currentPosition)
+    {
+        this.currentPosition = currentPosition;
     }
 
     ///////// -------------------- The Handlers -------------------- /////////
