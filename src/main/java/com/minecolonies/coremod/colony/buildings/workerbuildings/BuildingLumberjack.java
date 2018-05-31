@@ -223,7 +223,14 @@ public class BuildingLumberjack extends AbstractBuildingWorker
                 treesToFell.put(new ItemStorage(stack), cut);
             }
         }
-        replant = compound.getBoolean(TAG_REPLANT);
+        if (compound.hasKey(TAG_REPLANT))
+        {
+            replant = compound.getBoolean(TAG_REPLANT);
+        }
+        else
+        {
+            replant = true;
+        }
         checkTreesToFell();
 
     }
@@ -270,16 +277,17 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     }
 
     /**
-     * Whether or not the LJ should replant saplings
+     * Whether or not the LJ should replant saplings.
      */
     public boolean shouldReplant()
     {
+
         return replant;
     }
 
     /**
      * Set whether or not LJ should replant saplings
-     * @param shouldReplant
+     * @param shouldReplant whether or not the LJ should replant
      */
     public void setShouldReplant(final boolean shouldReplant)
     {
