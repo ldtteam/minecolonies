@@ -17,7 +17,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.JobGuard;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
@@ -626,6 +626,22 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return result;
     }
 
+    @Override
+    public boolean isActiveItemStackBlocking()
+    {
+        return getActiveItemStack().getItem() instanceof ItemShield;
+    }
+
+    @Override
+    protected void damageShield(final float damage)
+    {
+        if (getHeldItem(getActiveHand()).getItem() instanceof ItemShield)
+        {
+            damageItemInHand(this.getActiveHand(), (int) damage);
+        }
+        super.damageShield(damage);
+    }
+
     /**
      * Called when the mob's health reaches 0.
      *
@@ -654,7 +670,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             colony.decreaseOverallHappiness(penalty);
             triggerDeathAchievement(damageSource, getColonyJob());
-            if (getColonyJob() instanceof JobGuard)
+            if (getColonyJob() instanceof AbstractJobGuard)
             {
                 LanguageHandler.sendPlayersMessage(
                   colony.getMessageEntityPlayers(),
@@ -884,7 +900,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         lastJob = compound.getString(TAG_LAST_JOB);
         isDay = compound.getBoolean(TAG_DAY);
 
-        if (compound.hasKey(TAG_HELD_ITEM_SLOT))
+        if (compound.hasKey(TAG_HELD_ITEM_SLOT) || compound.hasKey(TAG_OFFHAND_HELD_ITEM_SLOT))
         {
             this.dataBackup = compound;
         }
@@ -982,7 +998,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             final NBTTagList nbttaglist = dataBackup.getTagList("Inventory", 10);
             this.getCitizenData().getInventory().readFromNBT(nbttaglist);
-            this.getCitizenData().getInventory().setHeldItem(dataBackup.getInteger(TAG_HELD_ITEM_SLOT));
+            if (dataBackup.hasKey(TAG_HELD_ITEM_SLOT))
+            {
+                this.getCitizenData().getInventory().setHeldItem(EnumHand.MAIN_HAND, dataBackup.getInteger(TAG_HELD_ITEM_SLOT));
+            }
+
+            if (dataBackup.hasKey(TAG_OFFHAND_HELD_ITEM_SLOT))
+            {
+                this.getCitizenData().getInventory().setHeldItem(EnumHand.OFF_HAND, dataBackup.getInteger(TAG_OFFHAND_HELD_ITEM_SLOT));
+            }
+
             dataBackup = null;
         }
 
@@ -1265,7 +1290,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 return;
             }
 
-            double localXp = xp * skillModifier / EXP_DIVIDER;
+            double currenSkillModifier = skillModifier;
+            if ((int) currenSkillModifier == 0)
+            {
+                currenSkillModifier = (double) 1;
+            }
+            double localXp = xp * currenSkillModifier / EXP_DIVIDER;
             final double workBuildingLevel = getWorkBuilding() == null ? 0 : getWorkBuilding().getBuildingLevel();
             final double bonusXp = (workBuildingLevel * (1 + citizenHutLevel) / Math.log(this.citizenData.getLevel() + 2.0D)) / 2;
             localXp = localXp * bonusXp;
@@ -1744,12 +1774,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @NotNull
     public DesiredActivity getDesiredActivity()
     {
-        if (this.getColonyJob() instanceof JobGuard)
+        if (this.getColonyJob() instanceof AbstractJobGuard)
         {
             return DesiredActivity.WORK;
         }
 
-        if (BarbarianUtils.getClosestBarbarianToEntity(this, AVOID_BARBARIAN_RANGE) != null && !(this.getColonyJob() instanceof JobGuard))
+        if (BarbarianUtils.getClosestBarbarianToEntity(this, AVOID_BARBARIAN_RANGE) != null && !(this.getColonyJob() instanceof AbstractJobGuard))
         {
             return DesiredActivity.SLEEP;
         }
@@ -1792,7 +1822,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private boolean shouldWorkWhileRaining()
     {
-        return (this.getWorkBuilding() != null && (this.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL)) || Configurations.gameplay.workersAlwaysWorkInRain;
+        return (this.getWorkBuilding() != null && (this.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL))
+                 || Configurations.gameplay.workersAlwaysWorkInRain
+                 || (getColonyJob() instanceof AbstractJobGuard);
     }
 
     /**
@@ -1951,11 +1983,30 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Sets the currently held item.
      *
+     * @param hand what hand we're setting
      * @param slot from the inventory slot.
      */
-    public void setHeldItem(final int slot)
+    public void setHeldItem(final EnumHand hand, final int slot)
     {
-        getCitizenData().getInventory().setHeldItem(slot);
+        getCitizenData().getInventory().setHeldItem(hand, slot);
+        if (hand.equals(EnumHand.MAIN_HAND))
+        {
+            setItemStackToSlot(EntityEquipmentSlot.MAINHAND, getCitizenData().getInventory().getStackInSlot(slot));
+        }
+        else if (hand.equals(EnumHand.OFF_HAND))
+        {
+            setItemStackToSlot(EntityEquipmentSlot.OFFHAND, getCitizenData().getInventory().getStackInSlot(slot));
+        }
+    }
+
+    /**
+     * Sets the currently held for mainHand item.
+     *
+     * @param slot from the inventory slot.
+     */
+    public void setMainHeldItem(final int slot)
+    {
+        getCitizenData().getInventory().setHeldItem(EnumHand.MAIN_HAND, slot);
         setItemStackToSlot(EntityEquipmentSlot.MAINHAND, getCitizenData().getInventory().getStackInSlot(slot));
     }
 
@@ -2014,7 +2065,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
               block.getSoundType(blockState, CompatibilityUtils.getWorld(this), blockPos, this).getPitch());
             CompatibilityUtils.getWorld(this).setBlockToAir(blockPos);
 
-            damageItemInHand(1);
+            damageItemInHand(this.getActiveHand(), 1);
         }
         else
         {
@@ -2042,9 +2093,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param damage amount of damage.
      */
-    public void damageItemInHand(final int damage)
+    public void damageItemInHand(final EnumHand hand, final int damage)
     {
-        final ItemStack heldItem = getCitizenData().getInventory().getHeldItemMainhand();
+        final ItemStack heldItem = getCitizenData().getInventory().getHeldItem(hand);
         //If we hit with bare hands, ignore
         if (heldItem == null)
         {
@@ -2055,7 +2106,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         //check if tool breaks
         if (ItemStackUtils.getSize(heldItem) < 1)
         {
-            getInventoryCitizen().setInventorySlotContents(getInventoryCitizen().getHeldItemSlot(), ItemStackUtils.EMPTY);
+            getInventoryCitizen().setInventorySlotContents(getInventoryCitizen().getHeldItemSlot(hand), ItemStackUtils.EMPTY);
             this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
         }
     }

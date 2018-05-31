@@ -180,7 +180,7 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_WAITING_FOR                         = "com.minecolonies.coremod.status.waiting";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOHUT                   = "com.minecolonies.coremod.status.herder.goingToHut";
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT                   = "com.minecolonies.coremod.status.worker.goingToHut";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_BREEDING                     = "com.minecolonies.coremod.status.herder.breeding";
     @NonNls
@@ -235,6 +235,10 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_COLLECT                         = "com.minecolonies.coremod.gui.cowboy.collect";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_NOTCOLLECT                      = "com.minecolonies.coremod.gui.cowboy.notcollect";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_AUTO                   = "com.minecolonies.coremod.gui.workerHuts.modeA";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_MANUAL                 = "com.minecolonies.coremod.gui.workerHuts.modeM";
     @NonNls
     public static final String RAID_EVENT_MESSAGE                                                  = "event.minecolonies.raidMessage";
     @NonNls
