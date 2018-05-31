@@ -120,7 +120,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
           new AITarget(MINER_BUILDING_SHAFT, this::doShaftBuilding),
           new AITarget(MINER_MINING_NODE, this::executeNodeMining)
         );
-        worker.setSkillModifier(
+        worker.getCitizenExperienceHandler().setSkillModifier(
           2 * worker.getCitizenData().getStrength()
             + worker.getCitizenData().getEndurance());
         worker.setCanPickUpLoot(true);
@@ -168,7 +168,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @NotNull
     private String getRenderMetaTorch()
     {
-        if (worker.hasItemInInventory(Blocks.TORCH, -1))
+        if (worker.getCitizenInventoryHandler().hasItemInInventory(Blocks.TORCH, -1))
         {
             return RENDER_META_TORCH;
         }
@@ -732,11 +732,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         final int slot;
         if (block instanceof BlockLadder)
         {
-            slot = worker.findFirstSlotInInventoryWith(block, -1);
+            slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(block, -1);
         }
         else
         {
-            slot = worker.findFirstSlotInInventoryWith(block, block.getMetaFromState(metadata));
+            slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(block, block.getMetaFromState(metadata));
         }
         if (slot != -1)
         {

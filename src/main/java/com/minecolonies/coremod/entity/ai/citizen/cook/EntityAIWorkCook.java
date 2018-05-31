@@ -72,7 +72,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
         super.registerTargets(
                 new AITarget(COOK_SERVE_FOOD_TO_CITIZEN, this::serveFoodToCitizen)
         );
-        worker.setSkillModifier(CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma()
+        worker.getCitizenExperienceHandler().setSkillModifier(CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma()
                 + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);
     }
@@ -161,7 +161,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 
         citizenToServe.clear();
         final List<EntityCitizen> citizenList = world.getEntitiesWithinAABB(EntityCitizen.class,
-                range, cit -> !(cit.getColonyJob() instanceof JobCook) && cit.getCitizenData() != null && cit.getCitizenData().getSaturation() <= 0);
+                range, cit -> !(cit.getCitizenJobHandler().getColonyJob() instanceof JobCook) && cit.getCitizenData() != null && cit.getCitizenData().getSaturation() <= 0);
         if (!citizenList.isEmpty())
         {
             citizenToServe.addAll(citizenList);

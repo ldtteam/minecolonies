@@ -456,7 +456,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     public void entityInit()
     {
         super.entityInit();
-        dataManager.register(DATA_COLONY_ID, citizenColonyHandler.getColonyId());
+        dataManager.register(DATA_COLONY_ID, citizenColonyHandler == null ? 0 : citizenColonyHandler.getColonyId());
         dataManager.register(DATA_CITIZEN_ID, citizenId);
     }
 

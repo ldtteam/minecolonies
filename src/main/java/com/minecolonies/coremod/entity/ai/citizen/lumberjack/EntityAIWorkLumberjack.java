@@ -177,7 +177,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
           new AITarget(LUMBERJACK_GATHERING, this::gathering),
           new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain)
         );
-        worker.setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
+        worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
                                   + CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma());
         worker.setCanPickUpLoot(true);
     }
@@ -518,7 +518,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         {
             final ItemStack stack = getInventory().getStackInSlot(saplingSlot);
             final Block block = ((ItemBlock) stack.getItem()).getBlock();
-            worker.setHeldItem(EnumHand.MAIN_HAND, saplingSlot);
+            worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, saplingSlot);
 
             placeSaplings(saplingSlot, stack, block);
             final SoundType soundType = block.getSoundType(world.getBlockState(location), world, location, worker);

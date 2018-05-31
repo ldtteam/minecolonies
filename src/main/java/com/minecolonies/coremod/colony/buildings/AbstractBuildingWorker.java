@@ -247,11 +247,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
         if (citizen != null)
         {
             citizen.getCitizenEntity().ifPresent(tempCitizen -> {
-                if(!tempCitizen.getLastJob().isEmpty() && !tempCitizen.getLastJob().equals(getJobName()))
+                if(!tempCitizen.getCitizenJobHandler().getLastJob().isEmpty() && !tempCitizen.getCitizenJobHandler().getLastJob().equals(getJobName()))
                 {
                     citizen.resetExperienceAndLevel();
                 }
-                tempCitizen.setLastJob(getJobName());
+                tempCitizen.getCitizenJobHandler().setLastJob(getJobName());
             });
 
             citizen.setWorkBuilding(this);

@@ -436,7 +436,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     {
         if (getToolSlot(toolType) != -1)
         {
-            worker.setHeldItem(hand, getToolSlot(toolType));
+            worker.getCitizenItemHandler().setHeldItem(hand, getToolSlot(toolType));
             return true;
         }
         return false;
@@ -473,7 +473,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     {
         if (checkIfRequestForItemExistOrCreateAsynch(itemStack))
         {
-            worker.setHeldItem(hand, getItemSlot(itemStack.getItem()));
+            worker.getCitizenItemHandler().setHeldItem(hand, getItemSlot(itemStack.getItem()));
             return true;
         }
         return false;

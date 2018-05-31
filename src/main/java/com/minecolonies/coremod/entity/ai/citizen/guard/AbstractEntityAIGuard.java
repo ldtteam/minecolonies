@@ -136,7 +136,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                   stack -> !ItemStackUtils.isEmpty(stack)
                              && ItemStackUtils.doesItemServeAsWeapon(stack)
                              && ItemStackUtils.hasToolLevel(stack, tool, 0, getOwnBuilding().getMaxToolLevel()),
-                  worker::setMainHeldItem);
+                  itemStack -> worker.getCitizenItemHandler().setMainHeldItem(itemStack));
             }
         }
 
@@ -311,7 +311,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
               && target != null
               && !target.isDead)
         {
-            worker.setHeldItem(EnumHand.OFF_HAND, shieldSlot);
+            worker.getCitizenItemHandler().setHeldItem(EnumHand.OFF_HAND, shieldSlot);
             worker.setActiveHand(EnumHand.OFF_HAND);
 
             worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
@@ -369,7 +369,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
             if (swordSlot != -1)
             {
-                worker.setHeldItem(EnumHand.MAIN_HAND, swordSlot);
+                worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, swordSlot);
 
                 worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
                 worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
@@ -402,7 +402,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 target.attackEntityFrom(new DamageSource(worker.getName()), (float) damageToBeDealt);
                 target.setRevengeTarget(worker);
 
-                worker.damageItemInHand(EnumHand.MAIN_HAND, 1);
+                worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
             }
         }
         return GUARD_ATTACK_PHYSICAL;
@@ -449,7 +449,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
             if (bowslot != -1)
             {
-                worker.setHeldItem(EnumHand.MAIN_HAND, bowslot);
+                worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, bowslot);
 
                 worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
                 worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
@@ -483,7 +483,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
                 target.setRevengeTarget(worker);
 
-                worker.damageItemInHand(EnumHand.MAIN_HAND, 1);
+                worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
             }
         }
         return GUARD_ATTACK_RANGED;

@@ -74,14 +74,14 @@ public final class SoundUtils
         {
             String prefix = "";
 
-            if (citizen.getWorkBuilding() != null)
+            if (citizen.getCitizenColonyHandler().getWorkBuilding() != null)
             {
-                prefix = citizen.getWorkBuilding().getJobName();
+                prefix = citizen.getCitizenColonyHandler().getWorkBuilding().getJobName();
             }
 
-            if (GUARD_TOWER.equals(prefix) && citizen.getWorkBuilding() instanceof AbstractBuildingGuards)
+            if (GUARD_TOWER.equals(prefix) && citizen.getCitizenColonyHandler().getWorkBuilding() instanceof AbstractBuildingGuards)
             {
-                if (((AbstractBuildingGuards) citizen.getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
+                if (((AbstractBuildingGuards) citizen.getCitizenColonyHandler().getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
                 {
                     prefix = "archer";
                 }
@@ -157,20 +157,23 @@ public final class SoundUtils
         {
             String prefix = "";
 
-            if (citizen.getWorkBuilding() != null)
+            if (citizen instanceof EntityCitizen)
             {
-                prefix = citizen.getWorkBuilding().getJobName();
-            }
-
-            if (GUARD_TOWER.equals(prefix) && citizen.getWorkBuilding() instanceof AbstractBuildingGuards)
-            {
-                if (((AbstractBuildingGuards) citizen.getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
+                if (((EntityCitizen) citizen).getCitizenColonyHandler().getWorkBuilding() != null)
                 {
-                    prefix = "archer";
+                    prefix = ((EntityCitizen) citizen).getCitizenColonyHandler().getWorkBuilding().getJobName();
                 }
-                else
+
+                if (GUARD_TOWER.equals(prefix) && ((EntityCitizen) citizen).getCitizenColonyHandler().getWorkBuilding() instanceof AbstractBuildingGuards)
                 {
-                    prefix = "knight";
+                    if (((AbstractBuildingGuards) ((EntityCitizen) citizen).getCitizenColonyHandler().getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
+                    {
+                        prefix = "archer";
+                    }
+                    else
+                    {
+                        prefix = "knight";
+                    }
                 }
             }
 

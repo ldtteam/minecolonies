@@ -84,7 +84,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                     return;
                 }
 
-                worker.sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, job.getStructure().getName());
+                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, job.getStructure().getName());
 
                 //Don't go through the CLEAR stage for repairs and upgrades
                 if (building.getBuildingLevel() > 0)
@@ -94,7 +94,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
             else if(!(wo instanceof WorkOrderBuildMiner))
             {
-                worker.sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, wo.getName());
+                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, wo.getName());
             }
         }
     }
@@ -264,7 +264,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
         if (wo instanceof WorkOrderBuildBuilding)
         {
-            worker.sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, structureName);
+            worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, structureName);
         }
 
         if (wo == null)

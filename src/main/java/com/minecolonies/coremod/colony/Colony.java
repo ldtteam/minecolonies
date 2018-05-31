@@ -848,14 +848,13 @@ public class Colony implements IColony
      */
     public void markDirty()
     {
-        Log.getLogger().warn(Arrays.toString(Thread.currentThread().getStackTrace()));
         packageManager.setDirty();
         colonyTag = null;
         this.isDirty = true;
     }
 
     @Override
-    public boolean canBeAutoDeleted()
+    public boolean ()
     {
         return canColonyBeAutoDeleted;
     }

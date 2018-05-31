@@ -96,7 +96,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING));
 
-        if (!worker.hasItemInInventory(getBreedingItem().getItem(), 0) && isInHut(new ItemStack(Items.BUCKET, 1)))
+        if (!worker.getCitizenInventoryHandler().hasItemInInventory(getBreedingItem().getItem(), 0) && isInHut(new ItemStack(Items.BUCKET, 1)))
         {
             if (!walkToBuilding() && getOwnBuilding() != null)
             {
@@ -120,7 +120,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
 
             if (!worker.getInventoryCitizen().addItemStackToInventory(new ItemStack(Items.MILK_BUCKET)))
             {
-                worker.removeHeldItem();
+                worker.getCitizenItemHandler().removeHeldItem();
                 equipItem(EnumHand.MAIN_HAND, new ItemStack(Items.MILK_BUCKET));
                 InventoryUtils.removeStackFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(Items.BUCKET, 1));
             }
