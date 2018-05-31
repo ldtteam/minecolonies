@@ -474,7 +474,7 @@ public class Permissions implements IPermissions
      *
      * @return UUID of the owner.
      */
-    @Nullable
+    @NotNull
     public UUID getOwner()
     {
         if (ownerUUID == null)

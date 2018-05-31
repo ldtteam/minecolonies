@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.entity.AbstractEntityCitizen;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.sounds.AbstractWorkerSounds;
 import com.minecolonies.coremod.sounds.ModSoundEvents;
@@ -145,13 +146,12 @@ public final class SoundUtils
 
     /**
      * Play an interaction sound with chance at the citizen.
-     *
-     * @param world    the world.
+     *  @param world    the world.
      * @param position the position.
      * @param chance   the chance.
      * @param citizen  the citizen.
      */
-    public static void playInteractionSoundAtCitizenWithChance(@NotNull final World world, @NotNull final BlockPos position, final int chance, @NotNull final EntityCitizen citizen)
+    public static void playInteractionSoundAtCitizenWithChance(@NotNull final World world, @NotNull final BlockPos position, final int chance, @NotNull final AbstractEntityCitizen citizen)
     {
         if (chance > rand.nextInt(ONE_HUNDRED))
         {
