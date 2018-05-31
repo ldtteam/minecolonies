@@ -141,7 +141,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @Override
     public BuildingMiner getOwnBuilding()
     {
-        return (BuildingMiner) worker.getWorkBuilding();
+        return (BuildingMiner) worker.getCitizenColonyHandler().getWorkBuilding();
     }
 
     /**
@@ -317,7 +317,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     private AIState doShaftMining()
     {
-        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.mining"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.mining"));
 
         minerWorkingLocation = getNextBlockInShaftToMine();
         if (minerWorkingLocation == null)
@@ -631,7 +631,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         if (requiredName != null)
         {
             final WorkOrderBuildMiner wo = new WorkOrderBuildMiner(requiredName, requiredName, rotateCount, structurePos, false, getOwnBuilding().getLocation());
-            worker.getColony().getWorkManager().addWorkOrder(wo, false);
+            worker.getCitizenColonyHandler().getColony().getWorkManager().addWorkOrder(wo, false);
             job.setWorkOrder(wo);
             initiate();
         }

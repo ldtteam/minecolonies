@@ -68,7 +68,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             {
                 Log.getLogger().error(
                   String.format("Worker (%d:%d) ERROR - Starting and missing work order(%d)",
-                    worker.getColony().getID(),
+                    worker.getCitizenColonyHandler().getColony().getID(),
                     worker.getCitizenData().getId(), job.getWorkOrderId()));
                 return;
             }
@@ -80,7 +80,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 {
                     Log.getLogger().error(
                       String.format("Worker (%d:%d) ERROR - Starting and missing building(%s)",
-                        worker.getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingLocation()));
+                        worker.getCitizenColonyHandler().getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingLocation()));
                     return;
                 }
 
@@ -112,10 +112,10 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
 
         final BlockPos pos = workOrder.getBuildingLocation();
-        if (workOrder instanceof WorkOrderBuildBuilding && worker.getColony().getBuildingManager().getBuilding(pos) == null)
+        if (workOrder instanceof WorkOrderBuildBuilding && worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(pos) == null)
         {
             Log.getLogger().warn("AbstractBuilding does not exist - removing build request");
-            worker.getColony().getWorkManager().removeWorkOrder(workOrder);
+            worker.getCitizenColonyHandler().getColony().getWorkManager().removeWorkOrder(workOrder);
             return;
         }
 
@@ -270,7 +270,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         if (wo == null)
         {
             Log.getLogger().error(String.format("Worker (%d:%d) ERROR - Finished, but missing work order(%d)",
-              worker.getColony().getID(),
+              worker.getCitizenColonyHandler().getColony().getID(),
               worker.getCitizenData().getId(),
               job.getWorkOrderId()));
         }
@@ -283,7 +283,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 if (building == null)
                 {
                     Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
-                            worker.getColony().getID(),
+                            worker.getCitizenColonyHandler().getColony().getID(),
                             worker.getCitizenData().getId(),
                             woh.getBuildingLocation()));
                 }

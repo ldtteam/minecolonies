@@ -385,7 +385,7 @@ public class BuildingManager implements IBuildingManager
     {
         double distance = Double.MAX_VALUE;
         BlockPos goodCook = null;
-        for (final AbstractBuilding building : citizen.getColony().getBuildingManager().getBuildings().values())
+        for (final AbstractBuilding building : citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values())
         {
             if (building instanceof BuildingCook && building.getBuildingLevel() > 0)
             {

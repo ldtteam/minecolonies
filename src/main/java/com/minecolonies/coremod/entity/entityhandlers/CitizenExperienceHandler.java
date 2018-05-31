@@ -19,7 +19,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.BIG_SATURATION_FACTOR;
 import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION_FACTOR;
 import static com.minecolonies.api.util.constant.Constants.XP_PARTICLE_EXPLOSION_SIZE;
-import static com.minecolonies.coremod.entity.entityhandlers.EntityCitizenConstants.DATA_LEVEL;
+import static com.minecolonies.coremod.entity.AbstractEntityCitizen.DATA_LEVEL;
 
 /**
  * Handles all experience related things of the citizen.
@@ -79,7 +79,7 @@ public class CitizenExperienceHandler
      */
     public void addExperience(final double xp)
     {
-        final AbstractBuilding home = citizen.getHomeBuilding();
+        final AbstractBuilding home = citizen.getCitizenColonyHandler().getHomeBuilding();
 
         final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
         final double citizenHutMaxLevel = home == null ? 1 : home.getMaxBuildingLevel();
@@ -92,7 +92,7 @@ public class CitizenExperienceHandler
             }
 
             double localXp = xp * skillModifier / EXP_DIVIDER;
-            final double workBuildingLevel = citizen.getWorkBuilding() == null ? 0 : citizen.getWorkBuilding().getBuildingLevel();
+            final double workBuildingLevel = citizen.getCitizenColonyHandler().getWorkBuilding() == null ? 0 : citizen.getCitizenColonyHandler().getWorkBuilding().getBuildingLevel();
             final double bonusXp = (workBuildingLevel * (1 + citizenHutLevel) / Math.log(citizen.getCitizenData().getLevel() + 2.0D)) / 2;
             localXp = localXp * bonusXp;
             final double saturation = citizen.getCitizenData().getSaturation();
@@ -173,7 +173,7 @@ public class CitizenExperienceHandler
     {
         int experience;
 
-        if (!CompatibilityUtils.getWorld(citizen).isRemote && citizen.recentlyHit > 0 && citizen.canDropLoot() && CompatibilityUtils.getWorld(citizen).getGameRules().getBoolean("doMobLoot"))
+        if (!CompatibilityUtils.getWorld(citizen).isRemote && citizen.getRecentlyHit() > 0 && citizen.checkCanDropLoot() && CompatibilityUtils.getWorld(citizen).getGameRules().getBoolean("doMobLoot"))
         {
             experience = (int) (citizen.getCitizenData().getExperience());
 

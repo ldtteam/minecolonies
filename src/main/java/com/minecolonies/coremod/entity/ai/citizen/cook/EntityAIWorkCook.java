@@ -111,7 +111,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
      */
     private AIState serveFoodToCitizen()
     {
-        worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SERVING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SERVING));
 
         if (citizenToServe.isEmpty())
         {

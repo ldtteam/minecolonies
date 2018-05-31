@@ -324,4 +324,22 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements INp
     {
         return this.textureId;
     }
+
+    /**
+     * Check if recently hit.
+     * @return the count of how often.
+     */
+    public int getRecentlyHit()
+    {
+        return recentlyHit;
+    }
+
+    /**
+     * Check if can drop loot.
+     * @return true if so.
+     */
+    public boolean checkCanDropLoot()
+    {
+        return canDropLoot();
+    }
 }

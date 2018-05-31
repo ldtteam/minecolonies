@@ -687,7 +687,7 @@ public class CitizenData
     {
         final List<EntityCitizen> list = colony.getWorld()
                 .getEntities(EntityCitizen.class,
-                        entityCitizen -> entityCitizen.getColony().getID() == colony.getID() && entityCitizen.getCitizenData().getId() == getId());
+                        entityCitizen -> entityCitizen.getCitizenColonyHandler().getColonyId() == colony.getID() && entityCitizen.getCitizenData().getId() == getId());
 
         if (!list.isEmpty())
         {
@@ -742,7 +742,7 @@ public class CitizenData
     {
         this.job = job;
 
-        getCitizenEntity().ifPresent(entityCitizen -> entityCitizen.onJobChanged(job));
+        getCitizenEntity().ifPresent(entityCitizen -> entityCitizen.getCitizenJobHandler().onJobChanged(job));
 
         markDirty();
     }
@@ -864,10 +864,10 @@ public class CitizenData
     private void writeStatusToBuffer(@NotNull final ByteBuf buf)
     {
         final Optional<EntityCitizen> optionalEntityCitizen = getCitizenEntity();
-        buf.writeInt(optionalEntityCitizen.map(entityCitizen -> entityCitizen.getLatestStatus().length).orElse(0));
+        buf.writeInt(optionalEntityCitizen.map(entityCitizen -> entityCitizen.getCitizenStatusHandler().getLatestStatus().length).orElse(0));
 
         optionalEntityCitizen.ifPresent(entityCitizen -> {
-            final ITextComponent[] latestStatus = entityCitizen.getLatestStatus();
+            final ITextComponent[] latestStatus = entityCitizen.getCitizenStatusHandler().getLatestStatus();
             for (int i = 0; i < latestStatus.length; i++)
             {
                 ByteBufUtils.writeUTF8String(buf, latestStatus[i] == null ? "" : latestStatus[i].getUnformattedText());

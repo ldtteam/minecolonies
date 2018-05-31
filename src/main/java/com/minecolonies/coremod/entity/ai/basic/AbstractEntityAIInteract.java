@@ -164,7 +164,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         triggerMinedBlock(blockToMine);
 
         //Break the block
-        worker.breakBlockWithToolInHand(blockToMine);
+        worker.getCitizenItemHandler().breakBlockWithToolInHand(blockToMine);
 
         //add the drops to the citizen
         for (final ItemStack item : localItems)
@@ -174,9 +174,9 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
 
         if (tool != null)
         {
-            tool.getItem().onUpdate(tool, world, worker, worker.findFirstSlotInInventoryWith(tool.getItem(), tool.getItemDamage()), true);
+            tool.getItem().onUpdate(tool, world, worker, worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(tool.getItem(), tool.getItemDamage()), true);
         }
-        worker.addExperience(XP_PER_BLOCK);
+        worker.getCitizenExperienceHandler().addExperience(XP_PER_BLOCK);
         this.incrementActionsDone();
         return true;
     }
@@ -264,7 +264,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         }
 
         return (int) ((Configurations.gameplay.blockMiningDelayModifier
-                         * Math.pow(LEVEL_MODIFIER, worker.getLevel()))
+                         * Math.pow(LEVEL_MODIFIER, worker.getCitizenExperienceHandler().getLevel()))
                         * (double) world.getBlockState(pos).getBlockHardness(world, pos)
                         / (double) (worker.getHeldItemMainhand().getItem()
                                       .getDestroySpeed(worker.getHeldItemMainhand(),

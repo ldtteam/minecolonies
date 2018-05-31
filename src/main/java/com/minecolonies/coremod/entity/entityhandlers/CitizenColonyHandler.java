@@ -69,7 +69,7 @@ public class CitizenColonyHandler
      * @param c    the colony.
      * @param data the data of the new citizen.
      */
-    private void setColony(@Nullable final Colony c, @Nullable final CitizenData data)
+    public void setColony(@Nullable final Colony c, @Nullable final CitizenData data)
     {
         if (c == null)
         {

@@ -71,6 +71,7 @@ public class PathNavigate extends PathNavigateGround
         return true;
     }
 
+    @NotNull
     @Override
     protected Vec3d getEntityPosition()
     {
@@ -79,7 +80,7 @@ public class PathNavigate extends PathNavigateGround
 
     @Nullable
     @Override
-    public Path getPathToPos(final BlockPos pos)
+    public Path getPathToPos(@NotNull final BlockPos pos)
     {
         //Because this directly returns Path we can't do it async.
         return null;
@@ -409,7 +410,7 @@ public class PathNavigate extends PathNavigateGround
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
         return (PathJobFindTree.TreePathResult) setPathJob(
-          new PathJobFindTree(CompatibilityUtils.getWorld(entity), start, ((EntityCitizen) entity).getWorkBuilding().getLocation(), range, treesToCut, colony), null, speed);
+          new PathJobFindTree(CompatibilityUtils.getWorld(entity), start, ((EntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding().getLocation(), range, treesToCut, colony), null, speed);
     }
 
     /**
@@ -425,7 +426,7 @@ public class PathNavigate extends PathNavigateGround
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
         return (PathJobFindWater.WaterPathResult) setPathJob(
-          new PathJobFindWater(CompatibilityUtils.getWorld(ourEntity), start, ((EntityCitizen) ourEntity).getWorkBuilding().getLocation(), range, ponds), null, speed);
+          new PathJobFindWater(CompatibilityUtils.getWorld(ourEntity), start, ((EntityCitizen) ourEntity).getCitizenColonyHandler().getWorkBuilding().getLocation(), range, ponds), null, speed);
     }
 
     /**

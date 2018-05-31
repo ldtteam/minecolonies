@@ -107,7 +107,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private AIState startWorkingAtOwnBuilding()
     {
-        worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT));
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT));
         if (walkToBuilding())
         {
             return getState();
@@ -185,7 +185,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             }
         }
 
-        if (worker.getWorkBuilding() != null
+        if (worker.getCitizenColonyHandler().getWorkBuilding() != null
               && !(worker.getLastAttackedEntity() != null
               && !worker.getLastAttackedEntity().isDead)
               && getOwnBuilding() instanceof AbstractBuildingGuards
@@ -213,7 +213,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     worker.isWorkerAtSiteWithMove(guardBuilding.getPlayerToFollow(), GUARD_POS_RANGE);
                     break;
                 default:
-                    worker.isWorkerAtSiteWithMove(worker.getWorkBuilding().getLocation(), GUARD_POS_RANGE);
+                    worker.isWorkerAtSiteWithMove(worker.getCitizenColonyHandler().getWorkBuilding().getLocation(), GUARD_POS_RANGE);
                     break;
             }
         }
@@ -225,7 +225,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         if (target != null && target.isDead)
         {
-            worker.addExperience(EXP_PER_MOD_DEATH);
+            worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOD_DEATH);
             target = null;
         }
 
@@ -251,7 +251,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 {
                     final EntityPlayer player = (EntityPlayer) entity;
 
-                    if (worker.getColony() != null && worker.getColony().getPermissions().hasPermission(player, Action.GUARDS_ATTACK))
+                    if (worker.getCitizenColonyHandler().getColony() != null && worker.getCitizenColonyHandler().getColony().getPermissions().hasPermission(player, Action.GUARDS_ATTACK))
                     {
                         return entity;
                     }
@@ -339,7 +339,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         if (target == null || target.isDead)
         {
-            worker.addExperience(EXP_PER_MOD_DEATH);
+            worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOD_DEATH);
             return DECIDE;
         }
 
@@ -419,7 +419,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         if (target == null || target.isDead)
         {
-            worker.addExperience(EXP_PER_MOD_DEATH);
+            worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOD_DEATH);
             return DECIDE;
         }
 

@@ -403,6 +403,13 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Nullable
     public CitizenData getCitizenData()
     {
+        if (citizenData == null)
+        {
+            if (citizenColonyHandler.getColony() == null)
+            {
+
+            }
+        }
         //todo if null then get it from colony is colony is null, search colony!
         return citizenData;
     }

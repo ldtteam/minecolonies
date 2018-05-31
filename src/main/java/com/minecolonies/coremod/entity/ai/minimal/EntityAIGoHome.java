@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
@@ -57,7 +58,7 @@ public class EntityAIGoHome extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        return citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP && !citizen.isAtHome();
+        return citizen.getDesiredActivity() == DesiredActivity.SLEEP && !citizen.getCitizenColonyHandler().isAtHome();
     }
 
 
@@ -69,7 +70,7 @@ public class EntityAIGoHome extends EntityAIBase
     @Override
     public boolean shouldContinueExecuting()
     {
-        return !citizen.getNavigator().noPath() && (citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP);
+        return !citizen.getNavigator().noPath() && (citizen.getDesiredActivity() == DesiredActivity.SLEEP);
     }
 
     @Override
@@ -79,14 +80,14 @@ public class EntityAIGoHome extends EntityAIBase
         if (pos == null)
         {
             //If the citizen has no colony as well, remove the citizen.
-            if (citizen.getColony() == null)
+            if (citizen.getCitizenColonyHandler().getColony() == null)
             {
                 citizen.onDeath(CLEANUP_DAMAGE);
             }
             else
             {
                 //If he has no homePosition strangely then try to  move to the colony.
-                citizen.isWorkerAtSiteWithMove(citizen.getColony().getCenter(), 2);
+                citizen.isWorkerAtSiteWithMove(citizen.getCitizenColonyHandler().getColony().getCenter(), 2);
             }
             return;
         }
@@ -111,9 +112,9 @@ public class EntityAIGoHome extends EntityAIBase
     {
         final int chance = citizen.getRandom().nextInt(CHANCE);
 
-        if (chance <= 1 && citizen.getWorkBuilding() != null && citizen.getColonyJob() != null)
+        if (chance <= 1 && citizen.getCitizenColonyHandler().getWorkBuilding() != null && citizen.getCitizenJobHandler().getColonyJob() != null)
         {
-            SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorld(citizen), citizen.getPosition(), citizen.getColonyJob().getBedTimeSound(), 1);
+            SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorld(citizen), citizen.getPosition(), citizen.getCitizenJobHandler().getColonyJob().getBedTimeSound(), 1);
             //add further workers as soon as available.
         }
     }

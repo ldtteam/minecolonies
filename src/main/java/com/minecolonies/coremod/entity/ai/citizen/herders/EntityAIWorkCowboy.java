@@ -68,7 +68,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
 
         final boolean hasBucket = InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), Items.BUCKET, 0);
 
-        final BuildingCowboy building = (BuildingCowboy) worker.getWorkBuilding();
+        final BuildingCowboy building = (BuildingCowboy) worker.getCitizenColonyHandler().getWorkBuilding();
 
         if (building != null && building.isMilkCows() && result.equals(START_WORKING) && hasBucket)
         {
@@ -94,7 +94,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
      */
     private AIState milkCows()
     {
-        worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING));
 
         if (!worker.hasItemInInventory(getBreedingItem().getItem(), 0) && isInHut(new ItemStack(Items.BUCKET, 1)))
         {
@@ -126,7 +126,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
             }
 
             incrementActionsDoneAndDecSaturation();
-            worker.addExperience(1.0);
+            worker.getCitizenExperienceHandler().addExperience(1.0);
         }
 
         return DECIDE;

@@ -112,7 +112,7 @@ public class CitizenManager implements ICitizenManager
                 {
                     final List<EntityCitizen> list = colony.getWorld()
                             .getEntities(EntityCitizen.class,
-                                    entityCitizen -> entityCitizen.getColony().getID() == colony.getID() && entityCitizen.getCitizenData().getId() == citizen.getId());
+                                    entityCitizen -> entityCitizen.getCitizenColonyHandler().getColony().getID() == colony.getID() && entityCitizen.getCitizenData().getId() == citizen.getId());
 
                     if (!list.isEmpty() && citizen.getCitizenEntity().get().getEntityId() != list.get(0).getEntityId())
                     {
@@ -189,7 +189,7 @@ public class CitizenManager implements ICitizenManager
                 citizenData.setCitizenEntity(entity);
             }
 
-            entity.setColony(colony, citizenData);
+            entity.getCitizenColonyHandler().setColony(colony, citizenData);
 
             entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
             world.spawnEntity(entity);
