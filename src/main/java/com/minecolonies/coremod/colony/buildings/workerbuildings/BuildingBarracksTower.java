@@ -89,7 +89,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         if (citizen != null && assignalResult)
         {
             final AbstractBuilding building = citizen.getHomeBuilding();
-            if (!(building instanceof AbstractBuildingGuards))
+            if (building != null && !(building instanceof AbstractBuildingGuards))
             {
                 building.removeCitizen(citizen);
             }

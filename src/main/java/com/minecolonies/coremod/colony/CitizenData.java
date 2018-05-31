@@ -682,45 +682,42 @@ public class CitizenData
      */
     public void updateCitizenEntityIfNecessary()
     {
-        if (!getCitizenEntity().isPresent() && colony.getWorld().isBlockLoaded(lastPosition) && colony.getWorld().getChunkFromBlockCoords(lastPosition).isLoaded())
-        {
-            final List<EntityCitizen> list = colony.getWorld()
-                    .getEntities(EntityCitizen.class,
-                            entityCitizen -> entityCitizen.getColony().getID() == colony.getID() && entityCitizen.getCitizenData().getId() == getId());
+        final List<EntityCitizen> list = colony.getWorld()
+                .getEntities(EntityCitizen.class,
+                        entityCitizen -> entityCitizen.getColony().getID() == colony.getID() && entityCitizen.getCitizenData().getId() == getId());
 
-            if (!list.isEmpty())
+        if (!list.isEmpty())
+        {
+            setCitizenEntity(list.get(0));
+            return;
+        }
+
+        //The current citizen entity seems to be gone (either on purpose or the game unloaded the entity)
+        //No biggy lets respawn an entity.
+        colony.getCitizenManager().spawnCitizen(this, colony.getWorld());
+
+        //Since we might have respawned an entity in an unloaded chunk (Townhall is not loaded)
+        //We check if we created one or not.
+        getCitizenEntity().ifPresent(entityCitizen -> {
+
+            BlockPos location = null;
+            if (getWorkBuilding() == null)
             {
-                setCitizenEntity(list.get(0));
-                return;
+                if (colony.hasTownHall())
+                {
+                    location = colony.getBuildingManager().getTownHall().getLocation();
+                }
+            }
+            else
+            {
+                location = getWorkBuilding().getLocation();
             }
 
-            //The current citizen entity seems to be gone (either on purpose or the game unloaded the entity)
-            //No biggy lets respawn an entity.
-            colony.getCitizenManager().spawnCitizen(this, colony.getWorld());
-
-            //Since we might have respawned an entity in an unloaded chunk (Townhall is not loaded)
-            //We check if we created one or not.
-            getCitizenEntity().ifPresent(entityCitizen -> {
-
-                BlockPos location = null;
-                if (getWorkBuilding() == null)
-                {
-                    if (colony.hasTownHall())
-                    {
-                        location = colony.getBuildingManager().getTownHall().getLocation();
-                    }
-                }
-                else
-                {
-                    location = getWorkBuilding().getLocation();
-                }
-
-                if (location != null)
-                {
-                    TeleportHelper.teleportCitizen(entityCitizen, colony.getWorld(), location);
-                }
-            });
-        }
+            if (location != null)
+            {
+                TeleportHelper.teleportCitizen(entityCitizen, colony.getWorld(), location);
+            }
+        });
     }
 
     /**
