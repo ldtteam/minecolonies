@@ -179,7 +179,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final ExplosionEvent.Detonate event)
     {
-        if (!Configurations.gameplay.enableColonyProtection || !Configurations.gameplay.turnOffExplosionsInColonies)
+        if (!Configurations.gameplay.turnOffExplosionsInColonies)
         {
             return;
         }
