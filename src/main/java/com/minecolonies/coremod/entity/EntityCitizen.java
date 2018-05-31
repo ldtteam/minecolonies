@@ -118,7 +118,12 @@ public class EntityCitizen extends AbstractEntityCitizen
      * The citizen item handler.
      */
     private final CitizenItemHandler citizenItemHandler;
-    
+
+    /**
+     * The citizen inv handler.
+     */
+    private final CitizenInventoryHandler citizenInventoryHandler;
+
     /**
      * The citizen colony handler.
      */
@@ -151,6 +156,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.citizenChatHandler = new CitizenChatHandler(this);
         this.citizenStatusHandler = new CitizenStatusHandler(this);
         this.citizenItemHandler = new CitizenItemHandler(this);
+        this.citizenInventoryHandler = new CitizenInventoryHandler(this);
         this.citizenColonyHandler = new CitizenColonyHandler(this);
         this.citizenJobHandler = new CitizenJobHandler(this);
         this.citizenSleepHandler = new CitizenSleepHandler(this);
@@ -939,6 +945,15 @@ public class EntityCitizen extends AbstractEntityCitizen
     public CitizenItemHandler getCitizenItemHandler()
     {
         return citizenItemHandler;
+    }
+
+    /**
+     * The Handler for all inventory related methods.
+     * @return the instance of the handler.
+     */
+    public CitizenInventoryHandler getCitizenInventoryHandler()
+    {
+        return citizenInventoryHandler;
     }
 
     /**
