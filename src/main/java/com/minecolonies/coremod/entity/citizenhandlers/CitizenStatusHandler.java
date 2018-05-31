@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.entityhandlers;
+package com.minecolonies.coremod.entity.citizenhandlers;
 
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.coremod.entity.EntityCitizen;

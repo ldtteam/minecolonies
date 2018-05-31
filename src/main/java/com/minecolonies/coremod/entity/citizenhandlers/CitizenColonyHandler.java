@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.entityhandlers;
+package com.minecolonies.coremod.entity.citizenhandlers;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
@@ -116,7 +116,16 @@ public class CitizenColonyHandler
     {
         if (colonyId == 0)
         {
-            citizen.setDead();
+            final Colony colony = ColonyManager.getColony(citizen.getEntityWorld(), citizen.getPosition());
+            if (colony == null)
+            {
+                citizen.setDead();
+            }
+            else
+            {
+                this.colonyId = colony.getID();
+                handleNullColony();
+            }
             return;
         }
 

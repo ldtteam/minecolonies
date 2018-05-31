@@ -18,7 +18,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
-import com.minecolonies.coremod.entity.entityhandlers.*;
+import com.minecolonies.coremod.entity.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
@@ -400,17 +400,25 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
     }
 
+    /**
+     * Getter for the citizendata.
+     * Tries to get it from the colony is the data is null.
+     * @return the data.
+     */
     @Nullable
     public CitizenData getCitizenData()
     {
         if (citizenData == null)
-        {
-            if (citizenColonyHandler.getColony() == null)
-            {
 
+            if (citizenColonyHandler.getColony() != null)
+            {
+                final CitizenData data = citizenColonyHandler.getColony().getCitizenManager().getCitizen(citizenId);
+                if (data != null)
+                {
+                    citizenData = data;
+                }
             }
         }
-        //todo if null then get it from colony is colony is null, search colony!
         return citizenData;
     }
 

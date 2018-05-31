@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.entityhandlers;
+package com.minecolonies.coremod.entity.citizenhandlers;
 
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;

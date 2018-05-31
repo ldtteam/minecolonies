@@ -109,7 +109,7 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
     }
 
     @Override
-    public void playEvent(@NotNull final EntityPlayer player, final int type, @NotNull final BlockPos blockPosIn, final int data)
+    public void playEvent(final EntityPlayer player, final int type, @NotNull final BlockPos blockPosIn, final int data)
     {
         //Not needed
 
