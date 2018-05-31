@@ -53,7 +53,7 @@ public class BuildingBarracks extends AbstractBuilding
      * @param colony Colony the building belongs to.
      * @param pos    Location of the building (it's Hut Block).
      */
-    protected BuildingBarracks(@NotNull final Colony colony, final BlockPos pos)
+    public BuildingBarracks(@NotNull final Colony colony, final BlockPos pos)
     {
         super(colony, pos);
     }

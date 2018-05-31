@@ -666,7 +666,6 @@ public class Colony implements IColony
 
         if(this.isDirty && shallUpdate(world, CLEANUP_TICK_INCREMENT))
         {
-            Log.getLogger().warn("World tick - saving colony " + getID() + " to path!");
             this.isDirty = false;
             @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
             ColonyManager.saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, this.getID())), this.getColonyTag());
