@@ -265,6 +265,10 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
     }
 
+    /**
+     * Get the ILocation of the citizen.
+     * @return an ILocation object which contains the dimension and is unique.
+     */
     public ILocation getLocation()
     {
         return StandardFactoryController.getInstance().getNewInstance(TypeConstants.ILOCATION, this);
@@ -638,8 +642,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
     }
 
-
-
     /**
      * Lets the citizen tryToEat to replentish saturation.
      */
@@ -850,6 +852,9 @@ public class EntityCitizen extends AbstractEntityCitizen
         return proxy;
     }
 
+    /**
+     * Decrease the saturation of the citizen for 1 action.
+     */
     public void decreaseSaturationForAction()
     {
         if (citizenData != null)
