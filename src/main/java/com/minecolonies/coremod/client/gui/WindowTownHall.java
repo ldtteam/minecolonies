@@ -127,9 +127,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      * The ScrollingList of all allies.
      */
     private final        ScrollingList alliesList;
-    private static final String        RED_BUTTON    = "minecolonies:texture/gui/red_button.png";
-    private static final String        YELLOW_BUTTON = "minecolonies:texture/gui/yellow_button.png";
-    private static final String        GREEN_BUTTON  = "minecolonies:texture/gui/green_button.png";
+    private static final String        RED_BUTTON    = "minecolonies:textures/gui/red_button.png";
+    private static final String        YELLOW_BUTTON = "minecolonies:textures/gui/yellow_button.png";
+    private static final String        GREEN_BUTTON  = "minecolonies:textures/gui/green_button.png";
     /**
      * The ScrollingList of all feuds.
      */
@@ -191,7 +191,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_TRIGGER, this::trigger);
         registerButton(BUTTON_ADD_BLOCK, this::addBlock);
         registerButton(BUTTON_REMOVE_BLOCK, this::removeBlock);
-
         if (findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class) == null)
         {
             return;

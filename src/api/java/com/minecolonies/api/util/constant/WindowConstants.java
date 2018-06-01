@@ -183,7 +183,7 @@ public final class WindowConstants
     /**
      * Id of the current specializations label in the GUI.
      */
-    public static final String HAPPINESS_LABEL = "happiness";
+    public static final String HAPPINESS_LABEL = "happinessLevel";
 
     /**
      * Id of the name label in the GUI.
