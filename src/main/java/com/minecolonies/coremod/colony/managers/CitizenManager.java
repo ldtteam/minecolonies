@@ -8,7 +8,9 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.*;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -79,8 +81,8 @@ public class CitizenManager implements ICitizenManager
 
         //  Citizens before Buildings, because Buildings track the Citizens
         citizens.putAll(NBTUtils.streamCompound(compound.getTagList(TAG_CITIZENS, Constants.NBT.TAG_COMPOUND))
-                .map(this::deserializeCitizen)
-                .collect(Collectors.toMap(CitizenData::getId, Function.identity())));
+                          .map(this::deserializeCitizen)
+                          .collect(Collectors.toMap(CitizenData::getId, Function.identity())));
     }
 
     private CitizenData deserializeCitizen(@NotNull final NBTTagCompound compound)
@@ -101,9 +103,9 @@ public class CitizenManager implements ICitizenManager
 
     @Override
     public void sendPackets(
-            @NotNull final Set<EntityPlayerMP> oldSubscribers,
-            final boolean hasNewSubscribers,
-            @NotNull final Set<EntityPlayerMP> subscribers)
+      @NotNull final Set<EntityPlayerMP> oldSubscribers,
+      final boolean hasNewSubscribers,
+      @NotNull final Set<EntityPlayerMP> subscribers)
     {
         if (isCitizensDirty || hasNewSubscribers)
         {
@@ -112,8 +114,9 @@ public class CitizenManager implements ICitizenManager
                 if (citizen.getCitizenEntity().isPresent())
                 {
                     final List<EntityCitizen> list = colony.getWorld()
-                            .getEntities(EntityCitizen.class,
-                                    entityCitizen -> entityCitizen.getColony().getID() == colony.getID() && entityCitizen.getCitizenData().getId() == citizen.getId());
+                                                       .getEntities(EntityCitizen.class,
+                                                         entityCitizen -> entityCitizen.getColony().getID() == colony.getID()
+                                                                            && entityCitizen.getCitizenData().getId() == citizen.getId());
 
                     if (!list.isEmpty() && citizen.getCitizenEntity().get().getEntityId() != list.get(0).getEntityId())
                     {
@@ -125,7 +128,7 @@ public class CitizenManager implements ICitizenManager
                         citizen.updateCitizenEntityIfNecessary();
                         Log.getLogger().warn("Citizen went MIA, updating him!");
                     }
-                    
+
                     for (int i = 1; i < list.size(); i++)
                     {
                         colony.getWorld().removeEntity(list.get(i));
@@ -134,8 +137,8 @@ public class CitizenManager implements ICitizenManager
                     if (citizen.isDirty() || hasNewSubscribers)
                     {
                         subscribers.stream()
-                                .filter(player -> citizen.isDirty() || !oldSubscribers.contains(player))
-                                .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewCitizenViewMessage(colony, citizen), player));
+                          .filter(player -> citizen.isDirty() || !oldSubscribers.contains(player))
+                          .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewCitizenViewMessage(colony, citizen), player));
                     }
                 }
                 else
@@ -199,9 +202,9 @@ public class CitizenManager implements ICitizenManager
                 if (getMaxCitizens() == getCitizens().size())
                 {
                     LanguageHandler.sendPlayersMessage(
-                            colony.getMessageEntityPlayers(),
-                            "tile.blockHutTownHall.messageMaxSize",
-                            colony.getName());
+                      colony.getMessageEntityPlayers(),
+                      "tile.blockHutTownHall.messageMaxSize",
+                      colony.getName());
                 }
             }
             else
@@ -382,16 +385,31 @@ public class CitizenManager implements ICitizenManager
         if (averageHousing > 1)
         {
             colony.increaseOverallHappiness(averageHousing * HAPPINESS_FACTOR);
+            happinessFactor.setHousing(1);
+        }
+        else if (averageHousing < 1)
+        {
+            happinessFactor.setHousing(-1);
+        }
+        else
+        {
+            happinessFactor.setHousing(0);
         }
 
         final int averageSaturation = (int) (saturation / getCitizens().size());
         if (averageSaturation < WELL_SATURATED_LIMIT)
         {
             colony.decreaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * -HAPPINESS_FACTOR);
+            happinessFactor.setSaturation(-1);
         }
         else if (averageSaturation > WELL_SATURATED_LIMIT)
         {
             colony.increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
+            happinessFactor.setSaturation(1);
+        }
+        else
+        {
+            happinessFactor.setSaturation(0);
         }
 
         final int relation = workers / guards;
@@ -399,6 +417,60 @@ public class CitizenManager implements ICitizenManager
         if (relation > 1)
         {
             colony.decreaseOverallHappiness(relation * HAPPINESS_FACTOR);
+            happinessFactor.setGuards(-1);
+        }
+        else if (relation < 1)
+        {
+            happinessFactor.setGuards(1);
+        }
+        else
+        {
+            happinessFactor.setGuards(0);
+        }
+    }
+
+    private HappinessFactor happinessFactor = new HappinessFactor();
+
+    public HappinessFactor getHappinessFactor()
+    {
+        return happinessFactor;
+    }
+
+    public class HappinessFactor
+    {
+        // -1 -> Bad/Decrease 0 -> Stable 1 -> Great/Increasing
+        private int guards;
+        private int housing;
+        private int saturation;
+
+        public int getGuards()
+        {
+            return guards;
+        }
+
+        private void setGuards(final int guards)
+        {
+            this.guards = guards;
+        }
+
+        public int getHousing()
+        {
+            return housing;
+        }
+
+        private void setHousing(final int housing)
+        {
+            this.housing = housing;
+        }
+
+        public int getSaturation()
+        {
+            return saturation;
+        }
+
+        private void setSaturation(final int saturation)
+        {
+            this.saturation = saturation;
         }
     }
 
@@ -408,9 +480,9 @@ public class CitizenManager implements ICitizenManager
         //  Detect CitizenData whose EntityCitizen no longer exist in world, and clear the mapping
         //  Consider handing this in an ChunkUnload Event instead?
         getCitizens()
-                .stream()
-                .filter(ColonyUtils::isCitizenMissingFromWorld)
-                .forEach(CitizenData::updateCitizenEntityIfNecessary);
+          .stream()
+          .filter(ColonyUtils::isCitizenMissingFromWorld)
+          .forEach(CitizenData::updateCitizenEntityIfNecessary);
 
         //  Cleanup disappeared citizens
         //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
