@@ -428,7 +428,6 @@ public class Permissions implements IPermissions
                 players.put(ownerUUID, new Player(ownerUUID, player.getName(), Rank.OWNER));
             }
         }
-        markDirty();
     }
 
     /**
@@ -475,7 +474,7 @@ public class Permissions implements IPermissions
      *
      * @return UUID of the owner.
      */
-    @Nullable
+    @NotNull
     public UUID getOwner()
     {
         if (ownerUUID == null)

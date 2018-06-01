@@ -83,14 +83,12 @@ public class BarbarianManager implements IBarbarianManager
     public void setCanHaveBarbEvents(final boolean canHave)
     {
         this.haveBarbEvents = canHave;
-        colony.markDirty();
     }
 
     @Override
     public void addBarbarianSpawnPoint(final BlockPos pos)
     {
         lastSpawnPoints.add(pos);
-        colony.markDirty();
     }
 
     @Override

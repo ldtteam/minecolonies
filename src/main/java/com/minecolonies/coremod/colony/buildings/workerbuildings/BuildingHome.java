@@ -72,7 +72,6 @@ public class BuildingHome extends AbstractBuilding
                 {
                     // Bypass assignCitizen (which marks dirty)
                     assignCitizen(citizen);
-                    assignCitizenFromNBtAction(citizen);
                 }
             }
         }
@@ -87,12 +86,6 @@ public class BuildingHome extends AbstractBuilding
                 bedList.add(bedPos);
             }
         }
-    }
-
-    @Override
-    public void assignCitizenFromNBtAction(final CitizenData data)
-    {
-        data.setHomeBuilding(this);
     }
 
     @Override

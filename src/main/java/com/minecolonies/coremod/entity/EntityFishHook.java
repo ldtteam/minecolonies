@@ -699,7 +699,7 @@ public final class EntityFishHook extends Entity
     {
         //Reduce random to get more fish drops
         final int random = CompatibilityUtils.getWorld(this).rand.nextInt(INCREASE_RARENESS_MODIFIER);
-        final int buildingLevel = citizen.getWorkBuilding().getBuildingLevel();
+        final int buildingLevel = citizen.getCitizenColonyHandler().getWorkBuilding().getBuildingLevel();
         //Cut to minimum value of 0.
         final int lootBonus = MathHelper.clamp(fishingLootEnchantment - fishingSpeedEnchantment, 0, Integer.MAX_VALUE);
 

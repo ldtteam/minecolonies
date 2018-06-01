@@ -9,6 +9,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Allows us to respond to entity addition and removal events.
@@ -17,14 +18,14 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
 {
 
     @Override
-    public void notifyBlockUpdate(final World worldIn, final BlockPos pos, final IBlockState oldState, final IBlockState newState, final int flags)
+    public void notifyBlockUpdate(@NotNull final World worldIn, @NotNull final BlockPos pos, @NotNull final IBlockState oldState, @NotNull final IBlockState newState, final int flags)
     {
         //Not needed
 
     }
 
     @Override
-    public void notifyLightSet(final BlockPos pos)
+    public void notifyLightSet(@NotNull final BlockPos pos)
     {
         //Not needed
 
@@ -39,7 +40,7 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
 
     @Override
     public void playSoundToAllNearExcept(
-                                          final EntityPlayer player, final SoundEvent soundIn, final SoundCategory category, final double x,
+                                          final EntityPlayer player, @NotNull final SoundEvent soundIn, @NotNull final SoundCategory category, final double x,
                                           final double y, final double z, final float volume, final float pitch)
     {
         //Not needed
@@ -47,7 +48,7 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
     }
 
     @Override
-    public void playRecord(final SoundEvent soundIn, final BlockPos pos)
+    public void playRecord(@NotNull final SoundEvent soundIn, @NotNull final BlockPos pos)
     {
         //Not needed
 
@@ -56,7 +57,7 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
     @Override
     public void spawnParticle(
                                final int particleID, final boolean ignoreRange, final double xCoord, final double yCoord, final double zCoord,
-                               final double xSpeed, final double ySpeed, final double zSpeed, final int... parameters)
+                               final double xSpeed, final double ySpeed, final double zSpeed, @NotNull final int... parameters)
     {
         //Not needed
     }
@@ -72,49 +73,50 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
                                final double xSpeed,
                                final double ySpeed,
                                final double zSpeed,
-                               final int... parameters)
+                               @NotNull final int... parameters)
     {
         //Not needed
     }
 
     @Override
-    public void onEntityAdded(final Entity entity)
+    public void onEntityAdded(@NotNull final Entity entity)
     {
         if (entity instanceof EntityCitizen)
         {
-            ((EntityCitizen) entity).updateColonyServer();
+            ((EntityCitizen) entity).getCitizenColonyHandler().updateColonyServer();
         }
     }
 
     @Override
-    public void onEntityRemoved(final Entity entity)
+    public void onEntityRemoved(@NotNull final Entity entity)
     {
         if (entity instanceof EntityCitizen)
         {
             final CitizenData citizen = ((EntityCitizen) entity).getCitizenData();
             if (citizen != null)
             {
+                citizen.setLastPosition(((EntityCitizen) entity).getCurrentPosition());
                 citizen.setCitizenEntity(null);
             }
         }
     }
 
     @Override
-    public void broadcastSound(final int soundID, final BlockPos pos, final int data)
+    public void broadcastSound(final int soundID, @NotNull final BlockPos pos, final int data)
     {
         //Not needed
 
     }
 
     @Override
-    public void playEvent(final EntityPlayer player, final int type, final BlockPos blockPosIn, final int data)
+    public void playEvent(final EntityPlayer player, final int type, @NotNull final BlockPos blockPosIn, final int data)
     {
         //Not needed
 
     }
 
     @Override
-    public void sendBlockBreakProgress(final int breakerId, final BlockPos pos, final int progress)
+    public void sendBlockBreakProgress(final int breakerId, @NotNull final BlockPos pos, final int progress)
     {
         //Not needed
 

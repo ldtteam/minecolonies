@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -41,7 +42,7 @@ public class EntityAICitizenWander extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        if (isTooOld() || checkForRandom() || citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP)
+        if (isTooOld() || checkForRandom() || citizen.getDesiredActivity() == DesiredActivity.SLEEP)
         {
             return false;
         }
@@ -49,7 +50,7 @@ public class EntityAICitizenWander extends EntityAIBase
         Vec3d vec3d = null;
         if(citizen.getCitizenData().getSaturation() <= 0)
         {
-            final BlockPos pos = citizen.getColony().getBuildingManager().getBestRestaurant(citizen);
+            final BlockPos pos = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestRestaurant(citizen);
             if(pos != null)
             {
                 vec3d = new Vec3d(pos);

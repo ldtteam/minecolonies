@@ -163,6 +163,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
 
         sender.sendMessage(new TextComponentString(REFRESH));
         colony.getPermissions().restoreOwnerIfNull();
+        colony.markDirty();
     }
 
     @NotNull

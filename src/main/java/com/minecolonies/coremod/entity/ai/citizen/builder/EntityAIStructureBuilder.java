@@ -65,7 +65,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
           new AITarget(this::checkIfExecute, this::getState),
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding)
         );
-        worker.setSkillModifier(INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
+        worker.getCitizenExperienceHandler().setSkillModifier(INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
                                   + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
         worker.setCanPickUpLoot(true);
     }
@@ -174,7 +174,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
 
         if (blockState.getBlock() == ModBlocks.blockWayPoint)
         {
-            worker.getColony().addWayPoint(pos, world.getBlockState(pos));
+            worker.getCitizenColonyHandler().getColony().addWayPoint(pos, world.getBlockState(pos));
         }
     }
 

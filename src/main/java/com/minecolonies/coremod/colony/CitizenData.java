@@ -685,45 +685,42 @@ public class CitizenData
      */
     public void updateCitizenEntityIfNecessary()
     {
-        if (!getCitizenEntity().isPresent() && colony.getWorld().isBlockLoaded(lastPosition))
-        {
-            final List<EntityCitizen> list = colony.getWorld()
-                    .getEntities(EntityCitizen.class,
-                            entityCitizen -> entityCitizen.getColony().getID() == colony.getID() && entityCitizen.getCitizenData().getId() == getId());
+        final List<EntityCitizen> list = colony.getWorld()
+                .getEntities(EntityCitizen.class,
+                        entityCitizen -> entityCitizen.getCitizenColonyHandler().getColonyId() == colony.getID() && entityCitizen.getCitizenData().getId() == getId());
 
-            if (!list.isEmpty())
+        if (!list.isEmpty())
+        {
+            setCitizenEntity(list.get(0));
+            return;
+        }
+
+        //The current citizen entity seems to be gone (either on purpose or the game unloaded the entity)
+        //No biggy lets respawn an entity.
+        colony.getCitizenManager().spawnCitizen(this, colony.getWorld());
+
+        //Since we might have respawned an entity in an unloaded chunk (Townhall is not loaded)
+        //We check if we created one or not.
+        getCitizenEntity().ifPresent(entityCitizen -> {
+
+            BlockPos location = null;
+            if (getWorkBuilding() == null)
             {
-                setCitizenEntity(list.get(0));
-                return;
+                if (colony.hasTownHall())
+                {
+                    location = colony.getBuildingManager().getTownHall().getLocation();
+                }
+            }
+            else
+            {
+                location = getWorkBuilding().getLocation();
             }
 
-            //The current citizen entity seems to be gone (either on purpose or the game unloaded the entity)
-            //No biggy lets respawn an entity.
-            colony.getCitizenManager().spawnCitizen(this, colony.getWorld());
-
-            //Since we might have respawned an entity in an unloaded chunk (Townhall is not loaded)
-            //We check if we created one or not.
-            getCitizenEntity().ifPresent(entityCitizen -> {
-
-                BlockPos location = null;
-                if (getWorkBuilding() == null)
-                {
-                    if (colony.hasTownHall())
-                    {
-                        location = colony.getBuildingManager().getTownHall().getLocation();
-                    }
-                }
-                else
-                {
-                    location = getWorkBuilding().getLocation();
-                }
-
-                if (location != null)
-                {
-                    TeleportHelper.teleportCitizen(entityCitizen, colony.getWorld(), location);
-                }
-            });
-        }
+            if (location != null)
+            {
+                TeleportHelper.teleportCitizen(entityCitizen, colony.getWorld(), location);
+            }
+        });
     }
 
     /**
@@ -745,7 +742,7 @@ public class CitizenData
     {
         this.job = job;
 
-        getCitizenEntity().ifPresent(entityCitizen -> entityCitizen.onJobChanged(job));
+        getCitizenEntity().ifPresent(entityCitizen -> entityCitizen.getCitizenJobHandler().onJobChanged(job));
 
         markDirty();
     }
@@ -867,10 +864,10 @@ public class CitizenData
     private void writeStatusToBuffer(@NotNull final ByteBuf buf)
     {
         final Optional<EntityCitizen> optionalEntityCitizen = getCitizenEntity();
-        buf.writeInt(optionalEntityCitizen.map(entityCitizen -> entityCitizen.getLatestStatus().length).orElse(0));
+        buf.writeInt(optionalEntityCitizen.map(entityCitizen -> entityCitizen.getCitizenStatusHandler().getLatestStatus().length).orElse(0));
 
         optionalEntityCitizen.ifPresent(entityCitizen -> {
-            final ITextComponent[] latestStatus = entityCitizen.getLatestStatus();
+            final ITextComponent[] latestStatus = entityCitizen.getCitizenStatusHandler().getLatestStatus();
             for (int i = 0; i < latestStatus.length; i++)
             {
                 ByteBufUtils.writeUTF8String(buf, latestStatus[i] == null ? "" : latestStatus[i].getUnformattedText());

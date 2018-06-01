@@ -147,7 +147,7 @@ public final class PlacementHandlers
 
                         if (foundStacks.isEmpty())
                         {
-                            if (citizen.getWorkBuilding()
+                            if (citizen.getCitizenColonyHandler().getWorkBuilding()
                                   .getOpenRequestsOfTypeFiltered(citizen.getCitizenData(), TypeToken.of(Stack.class), (IRequest<? extends Stack> s) ->
                                                                                                                         s.getRequest().getStack().getItem()
                                                                                                                           == Items.FLINT_AND_STEEL)
