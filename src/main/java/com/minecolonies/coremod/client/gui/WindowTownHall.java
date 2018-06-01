@@ -755,12 +755,14 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 case HappinessData.INCREASE:
                     image.setImage(GREEN_BUTTON);
                     break;
-                case HappinessData.DECREASE:
-                    image.setImage(RED_BUTTON);
-                    break;
                 case HappinessData.STABLE:
                     image.setImage(YELLOW_BUTTON);
                     break;
+                case HappinessData.DECREASE:
+                    image.setImage(RED_BUTTON);
+                    break;
+                default:
+                    throw new IllegalStateException(str + "isn't in [" + HappinessData.INCREASE + "," + HappinessData.STABLE + "," + HappinessData.DECREASE + "] range.");
             }
         }
     }

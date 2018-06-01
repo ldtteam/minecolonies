@@ -350,7 +350,10 @@ public class CitizenManager implements ICitizenManager
         this.maxCitizens = newMaxCitizens;
     }
 
-    private HappinessData happinessData = new HappinessData();
+    /**
+     * Datas about the happiness of a colony
+     */
+    private final HappinessData happinessData = new HappinessData();
 
     @Override
     public void checkCitizensForHappiness()
@@ -432,6 +435,11 @@ public class CitizenManager implements ICitizenManager
         }
     }
 
+    /**
+     * Get all the data indices about happiness
+     *
+     * @return An instance of {@link HappinessData} containing all the datas
+     */
     public HappinessData getHappiness()
     {
         return happinessData;
