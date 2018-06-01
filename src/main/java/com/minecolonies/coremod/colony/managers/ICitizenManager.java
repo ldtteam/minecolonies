@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.HappinessData;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -134,4 +135,11 @@ public interface ICitizenManager
      * @param event the event.
      */
     void onWorldTick(final TickEvent.WorldTickEvent event);
+
+    /**
+     * Get every happiness factor for a colony
+     *
+     * @return Class with every happiness data
+     */
+    HappinessData getHappiness();
 }
