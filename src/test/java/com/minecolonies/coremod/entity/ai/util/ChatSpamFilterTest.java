@@ -2,6 +2,8 @@ package com.minecolonies.coremod.entity.ai.util;
 
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.citizenhandlers.CitizenChatHandler;
+import com.minecolonies.coremod.entity.citizenhandlers.CitizenColonyHandler;
 import com.minecolonies.coremod.test.AbstractMockStaticsTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +24,10 @@ public class ChatSpamFilterTest extends AbstractMockStaticsTest
     private EntityCitizen  citizen;
     @Mock
     private CitizenData data;
+    @Mock
+    private CitizenColonyHandler citizenColonyHandler;
+    @Mock
+    private CitizenChatHandler citizenChatHandler;
 
     private ChatSpamFilter filter;
 
@@ -31,7 +37,8 @@ public class ChatSpamFilterTest extends AbstractMockStaticsTest
         when(citizen.getCitizenData()).thenReturn(data);
         when(data.getCitizenEntity()).thenReturn(Optional.of(citizen));
         when(citizen.getOffsetTicks()).thenReturn(0);
-
+        when(citizen.getCitizenChatHandler()).thenReturn(citizenChatHandler);
+        when(citizen.getCitizenColonyHandler()).thenReturn(citizenColonyHandler);
         filter = new ChatSpamFilter(citizen.getCitizenData());
     }
 
@@ -39,7 +46,7 @@ public class ChatSpamFilterTest extends AbstractMockStaticsTest
     public void testFilterFirst()
     {
         filter.requestTextStringWithoutSpam(MESSAGE_1);
-        verify(citizen).sendLocalizedChat(any(), any());
+        verify(citizen.getCitizenChatHandler()).sendLocalizedChat(any(), any());
     }
 
     @Test
@@ -47,7 +54,7 @@ public class ChatSpamFilterTest extends AbstractMockStaticsTest
     {
         filter.requestTextStringWithoutSpam(MESSAGE_1);
         filter.requestTextStringWithoutSpam(MESSAGE_1);
-        verify(citizen).sendLocalizedChat(any(), any());
+        verify(citizen.getCitizenChatHandler()).sendLocalizedChat(any(), any());
     }
 
     @Test
@@ -55,7 +62,7 @@ public class ChatSpamFilterTest extends AbstractMockStaticsTest
     {
         filter.requestTextStringWithoutSpam(MESSAGE_1);
         filter.requestTextStringWithoutSpam(MESSAGE_2);
-        verify(citizen, times(2)).sendLocalizedChat(any(), any());
+        verify(citizen.getCitizenChatHandler(), times(2)).sendLocalizedChat(any(), any());
     }
 
     @Test
@@ -65,7 +72,7 @@ public class ChatSpamFilterTest extends AbstractMockStaticsTest
         filter.requestTextStringWithoutSpam(MESSAGE_2);
         filter.requestTextStringWithoutSpam(MESSAGE_2);
         filter.requestTextStringWithoutSpam(MESSAGE_1);
-        verify(citizen, times(3)).sendLocalizedChat(any(), any());
+        verify(citizen.getCitizenChatHandler(), times(3)).sendLocalizedChat(any(), any());
     }
 
     @Test
@@ -75,7 +82,7 @@ public class ChatSpamFilterTest extends AbstractMockStaticsTest
         when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT);
         filter.requestTextStringWithoutSpam(MESSAGE_1);
 
-        verify(citizen, times(2)).sendLocalizedChat(any(), any());
+        verify(citizen.getCitizenChatHandler(), times(2)).sendLocalizedChat(any(), any());
     }
 
     @Test
@@ -89,7 +96,7 @@ public class ChatSpamFilterTest extends AbstractMockStaticsTest
         when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT * 7);
         filter.requestTextStringWithoutSpam(MESSAGE_1);
 
-        verify(citizen, times(4)).sendLocalizedChat(any(), any());
+        verify(citizen.getCitizenChatHandler(), times(4)).sendLocalizedChat(any(), any());
     }
 
     @Test
@@ -105,13 +112,13 @@ public class ChatSpamFilterTest extends AbstractMockStaticsTest
         when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT * 15);
         filter.requestTextStringWithoutSpam(MESSAGE_1);
 
-        verify(citizen, times(5)).sendLocalizedChat(any(), any());
+        verify(citizen.getCitizenChatHandler(), times(5)).sendLocalizedChat(any(), any());
 
         when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT * 15 + MAX_TIMEOUT);
         filter.requestTextStringWithoutSpam(MESSAGE_1);
         when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT * 15 + MAX_TIMEOUT * 2);
         filter.requestTextStringWithoutSpam(MESSAGE_1);
 
-        verify(citizen, times(7)).sendLocalizedChat(any(), any());
+        verify(citizen.getCitizenChatHandler(), times(7)).sendLocalizedChat(any(), any());
     }
 }

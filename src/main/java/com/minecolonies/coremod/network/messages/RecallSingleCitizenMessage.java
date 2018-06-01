@@ -97,7 +97,6 @@ public class RecallSingleCitizenMessage extends AbstractMessage<RecallSingleCiti
 
             if (optionalEntityCitizen.isPresent() && optionalEntityCitizen.get().ticksExisted == 0)
             {
-                citizenData.setCitizenEntity(null);
                 citizenData.updateCitizenEntityIfNecessary();
             }
 

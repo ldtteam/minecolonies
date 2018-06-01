@@ -104,7 +104,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
           new AITarget(FARMER_PLANT, this::workAtField),
           new AITarget(FARMER_HARVEST, this::workAtField)
         );
-        worker.setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
+        worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
         worker.setCanPickUpLoot(true);
     }
 
@@ -189,7 +189,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     @Override
     public BuildingFarmer getOwnBuilding()
     {
-        return (BuildingFarmer) worker.getWorkBuilding();
+        return (BuildingFarmer) worker.getCitizenColonyHandler().getWorkBuilding();
     }
 
     /**
@@ -197,7 +197,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private void searchAndAddFields()
     {
-        final Colony colony = worker.getColony();
+        final Colony colony = worker.getCitizenColonyHandler().getColony();
         if (colony != null)
         {
             @Nullable final ScarecrowTileEntity newField = colony.getBuildingManager().getFreeField(worker.getCitizenData().getId(), world);
@@ -245,7 +245,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      *
      * @param currentField   the field to plant.
      * @param buildingFarmer the farmer building.
-     * @param checkField     check if the field has been planted.
      * @return true if he is ready.
      */
     private AIState canGoPlanting(@NotNull final ScarecrowTileEntity currentField, @NotNull final BuildingFarmer buildingFarmer)
@@ -258,7 +257,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
 
         final ItemStack seeds = currentField.getSeed();
-        final int slot = worker.findFirstSlotInInventoryWith(seeds.getItem(), seeds.getItemDamage());
+        final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(seeds.getItem(), seeds.getItemDamage());
         if (slot != -1)
         {
             return FARMER_PLANT;
@@ -366,7 +365,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 switch (getState())
                 {
                     case FARMER_HOE:
-                        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.hoeing"));
+                        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.hoeing"));
 
                         if (!hoeIfAble(position))
                         {
@@ -374,14 +373,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                         }
                         break;
                     case FARMER_PLANT:
-                        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.planting"));
+                        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.planting"));
                         if (!tryToPlant((ScarecrowTileEntity) entity, position))
                         {
                             return PREPARING;
                         }
                         break;
                     case FARMER_HARVEST:
-                        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.harvesting"));
+                        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.harvesting"));
                         if (!harvestIfAble(position))
                         {
                             return getState();
@@ -420,7 +419,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 equipHoe();
                 worker.swingArm(worker.getActiveHand());
                 world.setBlockState(position, Blocks.FARMLAND.getDefaultState());
-                worker.damageItemInHand(EnumHand.MAIN_HAND, 1);
+                worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
                 return true;
             }
             return false;
@@ -449,7 +448,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         if (shouldHarvest(position))
         {
-            worker.addExperience(XP_PER_HARVEST);
+            worker.getCitizenExperienceHandler().addExperience(XP_PER_HARVEST);
             if (Compatibility.isPamsInstalled())
             {
                 harvestCrop(position.up());
@@ -464,7 +463,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     @Override
     protected int getLevelDelay()
     {
-        return (int) Math.max(SMALLEST_DELAY, STANDARD_DELAY - (this.worker.getLevel() * DELAY_DIVIDER));
+        return (int) Math.max(SMALLEST_DELAY, STANDARD_DELAY - (this.worker.getCitizenExperienceHandler().getLevel() * DELAY_DIVIDER));
     }
 
     /**
@@ -485,7 +484,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private void equipHoe()
     {
-        worker.setHeldItem(EnumHand.MAIN_HAND, getHoeSlot());
+        worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, getHoeSlot());
     }
 
     /**
@@ -511,7 +510,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean plantCrop(final ItemStack item, @NotNull final BlockPos position)
     {
-        final int slot = worker.findFirstSlotInInventoryWith(item.getItem(), item.getItemDamage());
+        final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(item.getItem(), item.getItemDamage());
         if (slot == -1)
         {
             return false;
@@ -576,7 +575,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             world.setBlockState(pos, crops.withAge(0));
         }
 
-        worker.addExperience(XP_PER_BLOCK);
+        worker.getCitizenExperienceHandler().addExperience(XP_PER_BLOCK);
     }
 
     /**

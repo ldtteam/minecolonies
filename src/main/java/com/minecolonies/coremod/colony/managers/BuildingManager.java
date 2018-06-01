@@ -161,7 +161,10 @@ public class BuildingManager implements IBuildingManager
         //  Tick Buildings
         for (@NotNull final AbstractBuilding building : buildings.values())
         {
-            building.onWorldTick(event);
+            if (event.world.isBlockLoaded(building.getLocation()))
+            {
+                building.onWorldTick(event);
+            }
         }
     }
 
@@ -176,7 +179,7 @@ public class BuildingManager implements IBuildingManager
     {
         @Nullable final List<AbstractBuilding> removedBuildings = new ArrayList<>();
 
-        //Need this list, we may enter he while we add a building in the real world.
+        //Need this list, we may enter here while we add a building in the real world.
         final List<AbstractBuilding> tempBuildings = new ArrayList<>(buildings.values());
 
         for (@NotNull final AbstractBuilding building : tempBuildings)
@@ -382,7 +385,7 @@ public class BuildingManager implements IBuildingManager
     {
         double distance = Double.MAX_VALUE;
         BlockPos goodCook = null;
-        for (final AbstractBuilding building : citizen.getColony().getBuildingManager().getBuildings().values())
+        for (final AbstractBuilding building : citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values())
         {
             if (building instanceof BuildingCook && building.getBuildingLevel() > 0)
             {

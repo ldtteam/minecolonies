@@ -65,7 +65,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
         {
             return false;
         }
-        return closestLivingEntity != null && !(theEntity.getColonyJob() instanceof AbstractJobGuard) && this.theEntity.canEntityBeSeen(closestLivingEntity);
+        return closestLivingEntity != null && !(theEntity.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard) && this.theEntity.canEntityBeSeen(closestLivingEntity);
     }
 
     /**
@@ -154,7 +154,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
         {
             closestLivingEntity = newClosest;
             performMoveAway();
-            theEntity.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.avoiding"));
+            theEntity.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.avoiding"));
             return;
         }
 

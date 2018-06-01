@@ -37,7 +37,7 @@ public class GuardArrow extends EntityTippedArrow
     public GuardArrow(final World worldIn, final EntityCitizen shooter)
     {
         super(worldIn, shooter);
-        this.colony = shooter.getColony();
+        this.colony = shooter.getCitizenColonyHandler().getColony();
     }
 
     @Override

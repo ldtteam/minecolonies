@@ -4,9 +4,11 @@ import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
@@ -18,6 +20,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static com.minecolonies.api.util.constant.CitizenConstants.MOVE_MINIMAL;
+import static com.minecolonies.api.util.constant.CitizenConstants.ROTATION_MOVEMENT;
 
 /**
  * Entity related utilities.
@@ -128,6 +133,33 @@ public final class EntityUtils
         return ids.stream()
                  .map(world::getEntityByID)
                  .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns the new rotation degree calculated from the current and intended
+     * rotation up to a max.
+     *
+     * @param currentRotation  the current rotation the citizen has.
+     * @param intendedRotation the wanted rotation he should have after applying
+     *                         this.
+     * @param maxIncrement     the 'movement speed.
+     * @return a rotation value he should move.
+     */
+    public static double updateRotation(final double currentRotation, final double intendedRotation, final double maxIncrement)
+    {
+        double wrappedAngle = MathHelper.wrapDegrees(intendedRotation - currentRotation);
+
+        if (wrappedAngle > maxIncrement)
+        {
+            wrappedAngle = maxIncrement;
+        }
+
+        if (wrappedAngle < -maxIncrement)
+        {
+            wrappedAngle = -maxIncrement;
+        }
+
+        return currentRotation + wrappedAngle;
     }
 
     /**

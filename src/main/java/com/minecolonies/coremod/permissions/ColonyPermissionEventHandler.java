@@ -179,7 +179,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final ExplosionEvent.Detonate event)
     {
-        if (!Configurations.gameplay.enableColonyProtection || !Configurations.gameplay.turnOffExplosionsInColonies)
+        if (!Configurations.gameplay.turnOffExplosionsInColonies)
         {
             return;
         }
@@ -478,7 +478,7 @@ public class ColonyPermissionEventHandler
             if (event.getTarget() instanceof EntityCitizen)
             {
                 final EntityCitizen citizen = (EntityCitizen) event.getTarget();
-                if (citizen.getColonyJob() instanceof AbstractJobGuard && perms.hasPermission(event.getEntityPlayer(), Action.GUARDS_ATTACK))
+                if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && perms.hasPermission(event.getEntityPlayer(), Action.GUARDS_ATTACK))
                 {
                     return;
                 }
