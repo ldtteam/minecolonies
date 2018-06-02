@@ -747,10 +747,12 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private void updateHappiness()
     {
         final HappinessData happiness = ColonyManager.getColony(building.getColony().getID()).getCitizenManager().getHappiness();
-        for (final String str : new String[] {GUARD_HAPPINESS_LEVEL, HOUSE_HAPPINESS_LEVEL, SATURATION_HAPPINESS_LEVEL})
+        final String[] imagesIds = new String[] {GUARD_HAPPINESS_LEVEL, HOUSE_HAPPINESS_LEVEL, SATURATION_HAPPINESS_LEVEL};
+        final int[] levels = new int[] {happiness.getGuards(), happiness.getHousing(), happiness.getSaturation()};
+        for (int i = 0; i < imagesIds.length; i++)
         {
-            final Image image = findPaneOfTypeByID(str, Image.class);
-            switch (happiness.getGuards())
+            final Image image = findPaneOfTypeByID(imagesIds[i], Image.class);
+            switch (levels[i])
             {
                 case HappinessData.INCREASE:
                     image.setImage(GREEN_BUTTON);
@@ -762,7 +764,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                     image.setImage(RED_BUTTON);
                     break;
                 default:
-                    throw new IllegalStateException(str + "isn't in [" + HappinessData.INCREASE + "," + HappinessData.STABLE + "," + HappinessData.DECREASE + "] range.");
+                    throw new IllegalStateException(imagesIds[i] + "isn't in [" + HappinessData.INCREASE + "," + HappinessData.STABLE + "," + HappinessData.DECREASE + "] range.");
             }
         }
     }
