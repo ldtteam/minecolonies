@@ -262,6 +262,7 @@ public class Colony implements IColony
         c.center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
         c.setRequestManager();
         c.readFromNBT(compound);
+        c.citizenManager.checkCitizensForHappiness();
         return c;
     }
 
