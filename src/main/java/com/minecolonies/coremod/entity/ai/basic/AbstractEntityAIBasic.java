@@ -225,7 +225,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @Nullable
     public <W extends AbstractBuildingWorker> W getOwnBuilding(@NotNull final Class<W> type)
     {
-        return (W) worker.getCitizenColonyHandler().getWorkBuilding();
+        if (type.isInstance(worker.getCitizenColonyHandler().getWorkBuilding()))
+        {
+            return (W) worker.getCitizenColonyHandler().getWorkBuilding();
+        }
+        else
+        {
+            if (worker.getCitizenData() != null)
+            {
+                worker.getCitizenData().setJob(null);
+            }
+        }
+        return null;
     }
 
     @Override

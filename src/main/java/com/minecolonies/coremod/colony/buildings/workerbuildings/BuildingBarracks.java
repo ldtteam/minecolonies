@@ -78,9 +78,14 @@ public class BuildingBarracks extends AbstractBuilding
 
         if (world != null)
         {
-            for (final Tuple<BlockPos, EnumFacing> tower : getBarracksTowers())
+            for (int i = 1; i <= getBuildingLevel() && i < BARRACKS_HUT_MAX_LEVEL; i++)
             {
-                world.setBlockState(tower.getFirst(), Blocks.AIR.getDefaultState());
+                final Tuple<BlockPos, EnumFacing> tuple = getPositionAndFacingForLevel(i);
+
+                if (world.getBlockState(tuple.getFirst()).getBlock() instanceof BlockHutBarracksTower)
+                {
+                    world.setBlockState(tuple.getFirst(), Blocks.AIR.getDefaultState());
+                }
             }
         }
 
