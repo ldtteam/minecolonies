@@ -107,7 +107,7 @@ public class ChatSpamFilter
             speechRepeat = 0;
         }
 
-        worker.sendLocalizedChat(key, chat);
+        worker.getCitizenChatHandler().sendLocalizedChat(key, chat);
         speechDelayString = key + getStringOfChat(chat);
 
         // (BASE_TIMEOUT << speechRepeat) is the same as BASE_TIMEOUT * pow(2, speachRepeat), but uses integers

@@ -206,17 +206,6 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
     }
 
     /**
-     * Assign the citizen after loading it from NBT.
-     * @param data the citizen data.
-     */
-    public void assignCitizenFromNBtAction(final CitizenData data)
-    {
-        /**
-         * Specific classes will override this.
-         */
-    }
-
-    /**
      * Returns whether the citizen has this as home or not.
      *
      * @param citizen Citizen to check.

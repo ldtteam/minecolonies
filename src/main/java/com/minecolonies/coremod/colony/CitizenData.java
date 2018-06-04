@@ -21,6 +21,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -51,23 +52,24 @@ public class CitizenData
     /**
      * Tags.
      */
-    private static final String TAG_ID                  = "id";
-    private static final String TAG_NAME                = "name";
-    private static final String TAG_FEMALE              = "female";
-    private static final String TAG_TEXTURE             = "texture";
-    private static final String TAG_LEVEL               = "level";
-    private static final String TAG_EXPERIENCE          = "experience";
-    private static final String TAG_HEALTH              = "health";
-    private static final String TAG_MAX_HEALTH          = "maxHealth";
-    private static final String TAG_SKILLS              = "skills";
-    private static final String TAG_SKILL_STRENGTH      = "strength";
-    private static final String TAG_SKILL_STAMINA       = "endurance";
-    private static final String TAG_SKILL_SPEED         = "charisma";
-    private static final String TAG_SKILL_INTELLIGENCE  = "intelligence";
-    private static final String TAG_SKILL_DEXTERITY     = "dexterity";
-    private static final String TAG_SATURATION          = "saturation";
-    private static final String TAG_HELD_ITEM_SLOT      = "HeldItemSlot";
-    private static final String TAG_INVENTORY           = "inventory";
+    private static final String TAG_ID                     = "id";
+    private static final String TAG_NAME                   = "name";
+    private static final String TAG_FEMALE                 = "female";
+    private static final String TAG_TEXTURE                = "texture";
+    private static final String TAG_LEVEL                  = "level";
+    private static final String TAG_EXPERIENCE             = "experience";
+    private static final String TAG_HEALTH                 = "health";
+    private static final String TAG_MAX_HEALTH             = "maxHealth";
+    private static final String TAG_SKILLS                 = "skills";
+    private static final String TAG_SKILL_STRENGTH         = "strength";
+    private static final String TAG_SKILL_STAMINA          = "endurance";
+    private static final String TAG_SKILL_SPEED            = "charisma";
+    private static final String TAG_SKILL_INTELLIGENCE     = "intelligence";
+    private static final String TAG_SKILL_DEXTERITY        = "dexterity";
+    private static final String TAG_SATURATION             = "saturation";
+    private static final String TAG_HELD_ITEM_SLOT         = "HeldItemSlot";
+    private static final String TAG_OFFHAND_HELD_ITEM_SLOT = "OffhandHeldItemSlot";
+    private static final String TAG_INVENTORY              = "inventory";
 
     /**
      * Minimum saturation of a citizen.
@@ -230,7 +232,8 @@ public class CitizenData
         {
             final NBTTagList nbttaglist = compound.getTagList(TAG_INVENTORY, 10);
             this.inventory.readFromNBT(nbttaglist);
-            this.inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
+            this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInteger(TAG_HELD_ITEM_SLOT));
+            this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInteger(TAG_OFFHAND_HELD_ITEM_SLOT));
         }
     }
 
@@ -682,45 +685,42 @@ public class CitizenData
      */
     public void updateCitizenEntityIfNecessary()
     {
-        if (!getCitizenEntity().isPresent() && colony.getWorld().isBlockLoaded(lastPosition))
-        {
-            final List<EntityCitizen> list = colony.getWorld()
-                    .getEntities(EntityCitizen.class,
-                            entityCitizen -> entityCitizen.getColony().getID() == colony.getID() && entityCitizen.getCitizenData().getId() == getId());
+        final List<EntityCitizen> list = colony.getWorld()
+                .getEntities(EntityCitizen.class,
+                        entityCitizen -> entityCitizen.getCitizenColonyHandler().getColonyId() == colony.getID() && entityCitizen.getCitizenData().getId() == getId());
 
-            if (!list.isEmpty())
+        if (!list.isEmpty())
+        {
+            setCitizenEntity(list.get(0));
+            return;
+        }
+
+        //The current citizen entity seems to be gone (either on purpose or the game unloaded the entity)
+        //No biggy lets respawn an entity.
+        colony.getCitizenManager().spawnCitizen(this, colony.getWorld());
+
+        //Since we might have respawned an entity in an unloaded chunk (Townhall is not loaded)
+        //We check if we created one or not.
+        getCitizenEntity().ifPresent(entityCitizen -> {
+
+            BlockPos location = null;
+            if (getWorkBuilding() == null)
             {
-                setCitizenEntity(list.get(0));
-                return;
+                if (colony.hasTownHall())
+                {
+                    location = colony.getBuildingManager().getTownHall().getLocation();
+                }
+            }
+            else
+            {
+                location = getWorkBuilding().getLocation();
             }
 
-            //The current citizen entity seems to be gone (either on purpose or the game unloaded the entity)
-            //No biggy lets respawn an entity.
-            colony.getCitizenManager().spawnCitizen(this, colony.getWorld());
-
-            //Since we might have respawned an entity in an unloaded chunk (Townhall is not loaded)
-            //We check if we created one or not.
-            getCitizenEntity().ifPresent(entityCitizen -> {
-
-                BlockPos location = null;
-                if (getWorkBuilding() == null)
-                {
-                    if (colony.hasTownHall())
-                    {
-                        location = colony.getBuildingManager().getTownHall().getLocation();
-                    }
-                }
-                else
-                {
-                    location = getWorkBuilding().getLocation();
-                }
-
-                if (location != null)
-                {
-                    TeleportHelper.teleportCitizen(entityCitizen, colony.getWorld(), location);
-                }
-            });
-        }
+            if (location != null)
+            {
+                TeleportHelper.teleportCitizen(entityCitizen, colony.getWorld(), location);
+            }
+        });
     }
 
     /**
@@ -742,7 +742,7 @@ public class CitizenData
     {
         this.job = job;
 
-        getCitizenEntity().ifPresent(entityCitizen -> entityCitizen.onJobChanged(job));
+        getCitizenEntity().ifPresent(entityCitizen -> entityCitizen.getCitizenJobHandler().onJobChanged(job));
 
         markDirty();
     }
@@ -801,7 +801,8 @@ public class CitizenData
         }
 
         compound.setTag(TAG_INVENTORY, inventory.writeToNBT(new NBTTagList()));
-        compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot());
+        compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.MAIN_HAND));
+        compound.setInteger(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.OFF_HAND));
         return compound;
     }
 
@@ -863,10 +864,10 @@ public class CitizenData
     private void writeStatusToBuffer(@NotNull final ByteBuf buf)
     {
         final Optional<EntityCitizen> optionalEntityCitizen = getCitizenEntity();
-        buf.writeInt(optionalEntityCitizen.map(entityCitizen -> entityCitizen.getLatestStatus().length).orElse(0));
+        buf.writeInt(optionalEntityCitizen.map(entityCitizen -> entityCitizen.getCitizenStatusHandler().getLatestStatus().length).orElse(0));
 
         optionalEntityCitizen.ifPresent(entityCitizen -> {
-            final ITextComponent[] latestStatus = entityCitizen.getLatestStatus();
+            final ITextComponent[] latestStatus = entityCitizen.getCitizenStatusHandler().getLatestStatus();
             for (int i = 0; i < latestStatus.length; i++)
             {
                 ByteBufUtils.writeUTF8String(buf, latestStatus[i] == null ? "" : latestStatus[i].getUnformattedText());

@@ -10,6 +10,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Suppression;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.managers.*;
@@ -628,8 +629,11 @@ public class Colony implements IColony
         buildingManager.cleanUpBuildings(event);
 
         // Clean up or spawn citizens.
-        citizenManager.onWorldTick(event);
-
+        if (!packageManager.getSubscribers().isEmpty())
+        {
+            citizenManager.onWorldTick(event);
+        }
+        
         if (shallUpdate(world, TICKS_SECOND)
                 && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
                 && Configurations.gameplay.doBarbariansSpawn

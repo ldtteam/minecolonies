@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.util;
 
-import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.coremod.colony.CitizenData;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
@@ -14,20 +12,16 @@ import java.util.Set;
 /**
  * Contains colony specific utility.
  */
-public class ColonyUtils
+public final class ColonyUtils
 {
     /**
-     * Checks if a citizen is missing from the world.
-     *
-     * @param citizen the citizen to check.
-     * @return true if so.
+     * Private constructor to hide implicit one.
      */
-    public static boolean isCitizenMissingFromWorld(@NotNull final CitizenData citizen)
+    private ColonyUtils()
     {
-        return citizen.getCitizenEntity()
-                 .map(entityCitizen -> entityCitizen.getEntityWorld().getMinecraftServer()
-                         .getWorld(entityCitizen.dimension).getEntityFromUuid(entityCitizen.getUniqueID()) == null)
-                .orElse(false);
+        /**
+         * Intentionally left empty.
+         */
     }
 
     /**

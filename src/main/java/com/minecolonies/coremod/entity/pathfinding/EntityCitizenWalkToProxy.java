@@ -42,25 +42,25 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
     @Override
     public Set<BlockPos> getWayPoints()
     {
-        if (citizen.getColony() == null)
+        if (citizen.getCitizenColonyHandler().getColony() == null)
         {
             return Collections.emptySet();
         }
 
-        return citizen.getColony().getWayPoints().keySet();
+        return citizen.getCitizenColonyHandler().getColony().getWayPoints().keySet();
     }
 
     @Override
     public boolean careAboutY()
     {
-        return citizen.getColonyJob() instanceof JobBuilder;
+        return citizen.getCitizenJobHandler().getColonyJob() instanceof JobBuilder;
     }
 
     @Override
     public BlockPos getSpecializedProxy(final BlockPos target, final double distanceToPath)
     {
-        final AbstractBuildingWorker building = citizen.getWorkBuilding();
-        if (citizen.getColonyJob() != null && citizen.getColonyJob() instanceof JobMiner && building instanceof BuildingMiner)
+        final AbstractBuildingWorker building = citizen.getCitizenColonyHandler().getWorkBuilding();
+        if (citizen.getCitizenJobHandler().getColonyJob() != null && citizen.getCitizenJobHandler().getColonyJob() instanceof JobMiner && building instanceof BuildingMiner)
         {
             return getMinerProxy(target, distanceToPath, (BuildingMiner) building);
         }

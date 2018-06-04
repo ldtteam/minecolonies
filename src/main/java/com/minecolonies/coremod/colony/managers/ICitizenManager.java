@@ -62,14 +62,6 @@ public interface ICitizenManager
     CitizenData getCitizen(final int citizenId);
 
     /**
-     * Spawn a citizen if his entity is null.
-     *
-     * @param data Data to use to spawn citizen.
-     * @param world the world to spawn it in.
-     */
-    void spawnCitizenIfNull(@Nullable final CitizenData data, @Nullable final World world);
-
-    /**
      * Spawn a citizen with specific citizen data.
      *
      * @param data Data to use to spawn citizen.

@@ -29,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -59,7 +60,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * The maximum range to keep from the current building place.
      */
-    public static final    int EXCEPTION_TIMEOUT             = 100;
+    private static final    int EXCEPTION_TIMEOUT             = 100;
     /**
      * Buffer time in ticks he will accept a last attacker as valid.
      */
@@ -213,7 +214,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @Nullable
     public AbstractBuildingWorker getOwnBuilding()
     {
-        return worker.getWorkBuilding();
+        return worker.getCitizenColonyHandler().getWorkBuilding();
     }
 
     /**
@@ -224,7 +225,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @Nullable
     public <W extends AbstractBuildingWorker> W getOwnBuilding(@NotNull final Class<W> type)
     {
-        return (W) worker.getWorkBuilding();
+        if (type.isInstance(worker.getCitizenColonyHandler().getWorkBuilding()))
+        {
+            return (W) worker.getCitizenColonyHandler().getWorkBuilding();
+        }
+        else
+        {
+            if (worker.getCitizenData() != null)
+            {
+                worker.getCitizenData().setJob(null);
+            }
+        }
+        return null;
     }
 
     @Override
@@ -240,7 +252,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 final String name = this.worker.getName();
                 final BlockPos workerPosition = worker.getPosition();
-                final AbstractJob colonyJob = worker.getColonyJob();
+                final AbstractJob colonyJob = worker.getCitizenJobHandler().getColonyJob();
                 final String jobName = colonyJob == null ? "null" : colonyJob.getName();
                 Log.getLogger().error("Pausing Entity " + name + " (" + jobName + ") at " + workerPosition + " for " + timeout + " Seconds because of error:");
             }
@@ -279,7 +291,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (restaurant == null)
         {
-            final BlockPos goodCook = worker.getColony().getBuildingManager().getBestRestaurant(worker);
+            final BlockPos goodCook = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBestRestaurant(worker);
 
             if (goodCook == null)
             {
@@ -314,7 +326,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean inventoryNeedsDump()
     {
-        return (worker.isInventoryFull()
+        return (worker.getCitizenInventoryHandler().isInventoryFull()
                   || actionsDone >= getActionsDoneUntilDumping()
                   || wantInventoryDumped())
                  && !(job instanceof JobDeliveryman);
@@ -418,7 +430,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
             if (delay % HIT_EVERY_X_TICKS == 0)
             {
-                worker.hitBlockWithToolInHand(currentWorkingLocation);
+                worker.getCitizenItemHandler().hitBlockWithToolInHand(currentWorkingLocation);
             }
             delay--;
             return true;
@@ -455,7 +467,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         if (!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()) && !getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
-            worker.setLatestStatus();
+            worker.getCitizenStatusHandler().setLatestStatus();
             return;
         }
 
@@ -465,7 +477,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             request = getOwnBuilding().getOpenRequests(worker.getCitizenData()).stream().findFirst().orElse(null);
         }
 
-        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"), request.getShortDisplayString());
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"), request.getShortDisplayString());
     }
 
     /**
@@ -825,7 +837,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean checkForNeededTool(@NotNull final IToolType toolType, final int minimalLevel)
     {
-        final int maxToolLevel = worker.getWorkBuilding().getMaxToolLevel();
+        final int maxToolLevel = worker.getCitizenColonyHandler().getWorkBuilding().getMaxToolLevel();
         final InventoryCitizen inventory = worker.getInventoryCitizen();
         if (InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), toolType, minimalLevel, maxToolLevel))
         {
@@ -967,7 +979,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         final int bestSlot = getMostEfficientTool(target);
         if (bestSlot >= 0)
         {
-            worker.setHeldItem(bestSlot);
+            worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, bestSlot);
             return true;
         }
         requestTool(target, pos);
@@ -1024,7 +1036,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         int bestSlot = -1;
         int bestLevel = Integer.MAX_VALUE;
         @NotNull final InventoryCitizen inventory = worker.getInventoryCitizen();
-        final int maxToolLevel = worker.getWorkBuilding().getMaxToolLevel();
+        final int maxToolLevel = worker.getCitizenColonyHandler().getWorkBuilding().getMaxToolLevel();
 
         for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
         {

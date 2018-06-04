@@ -13,51 +13,61 @@ import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Building class of the BarracksTower.
+ * Building class for the Barracks Tower.
  */
+@SuppressWarnings("squid:MaximumInheritanceDepth")
 public class BuildingBarracksTower extends AbstractBuildingGuards
 {
-    /**
-     * Name description of the guard hat.
-     */
-    private static final String GUARD_TOWER = "BarracksTower";
-
-    /**
-     * Offence bonus related to this building.
-     */
-    private static final int OFFENCE_BONUS = 5;
-
-    /**
-     * Tag to store the barracks pos to NBT.
-     */
+    ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String TAG_POS = "pos";
+    ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     /**
-     * Position of the barracks.
+     * Our constants. The Schematic names, Defence bonus, and Offence bonus.
+     */
+    private static final String SCHEMATIC_NAME = "BarracksTower";
+    private static final int    DEFENCE_BONUS  = 0;
+    private static final int    OFFENCE_BONUS  = 5;
+
+    /**
+     * Position of the barracks for this tower.
      */
     private BlockPos barracks = null;
 
     /**
-     * Constructor for the BarracksTower building.
+     * The abstract constructor of the building.
      *
-     * @param c Colony the building is in.
-     * @param l Location of the building.
+     * @param c the colony
+     * @param l the position
      */
-    public BuildingBarracksTower(final Colony c, final BlockPos l)
+    public BuildingBarracksTower(@NotNull final Colony c, final BlockPos l)
     {
         super(c, l);
     }
 
-    /**
-     * Gets the name of the schematic.
-     *
-     * @return Guard schematic name.
-     */
-    @NotNull
+    @Override
+    public int getDefenceBonus()
+    {
+        return DEFENCE_BONUS;
+    }
+
+    @Override
+    public int getOffenceBonus()
+    {
+        return OFFENCE_BONUS;
+    }
+
     @Override
     public String getSchematicName()
     {
-        return GUARD_TOWER;
+        return SCHEMATIC_NAME;
+    }
+
+    @SuppressWarnings("squid:S109")
+    @Override
+    public int getMaxBuildingLevel()
+    {
+        return 5;
     }
 
     @Override
@@ -71,7 +81,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         }
         else
         {
-            player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.workerbuildings.needBarracks"));
+            player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.worker.needBarracks"));
         }
     }
 
@@ -86,10 +96,10 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     public boolean assignCitizen(final CitizenData citizen)
     {
         final boolean assignalResult = super.assignCitizen(citizen);
-        if (citizen != null)
+        if (citizen != null && assignalResult)
         {
             final AbstractBuilding building = citizen.getHomeBuilding();
-            if (building instanceof BuildingHome)
+            if (building != null && !(building instanceof AbstractBuildingGuards))
             {
                 building.removeCitizen(citizen);
             }
@@ -97,18 +107,6 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
             citizen.setWorkBuilding(this);
         }
         return assignalResult;
-    }
-
-    @Override
-    public int getOffenceBonus()
-    {
-        return OFFENCE_BONUS;
-    }
-
-    @Override
-    public int getDefenceBonus()
-    {
-        return 0;
     }
 
     @Override
@@ -150,18 +148,18 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     public static class View extends AbstractBuildingGuards.View
     {
         /**
-         * The client view constructor for the baker building.
+         * The client view constructor for the AbstractGuardBuilding.
          *
-         * @param c The ColonyView the building is in.
-         * @param l The location of the building.
+         * @param c the colony.
+         * @param l the location.
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final ColonyView c, @NotNull final BlockPos l)
         {
             super(c, l);
         }
 
         /**
-         * Check if it has enough worker.
+         * Check if it has enough workers.
          *
          * @return true if so.
          */
@@ -172,5 +170,3 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         }
     }
 }
-
-

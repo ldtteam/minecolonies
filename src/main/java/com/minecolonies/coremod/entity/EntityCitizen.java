@@ -6,64 +6,39 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.ai.DesiredActivity;
+import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.JobGuard;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
+import com.minecolonies.coremod.entity.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
-import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.util.*;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockBed;
-import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Enchantments;
-import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -75,36 +50,18 @@ import java.util.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
-import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
-import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_NOT_ALLOWED;
-import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_SAME;
+import static com.minecolonies.api.util.constant.Suppression.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * The Class used to represent the citizen entities.
  */
-public class EntityCitizen extends EntityAgeable implements INpc
+public class EntityCitizen extends AbstractEntityCitizen
 {
-    private static final DataParameter<Integer>  DATA_TEXTURE         = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
-    private static final DataParameter<Integer>  DATA_LEVEL           = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
-    private static final DataParameter<Integer>  DATA_IS_FEMALE       = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
-    private static final DataParameter<Integer>  DATA_COLONY_ID       = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
-    private static final DataParameter<Integer>  DATA_CITIZEN_ID      = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
-    private static final DataParameter<String>   DATA_MODEL           = EntityDataManager.<String>createKey(EntityCitizen.class, DataSerializers.STRING);
-    private static final DataParameter<String>   DATA_RENDER_METADATA = EntityDataManager.<String>createKey(EntityCitizen.class, DataSerializers.STRING);
-    private static final DataParameter<Boolean>  DATA_IS_ASLEEP       = EntityDataManager.createKey(EntityCitizen.class, DataSerializers.BOOLEAN);
-    private static final DataParameter<BlockPos> DATA_BED_POS         = EntityDataManager.createKey(EntityCitizen.class, DataSerializers.BLOCK_POS);
-
     /**
      * The navigator field of the citizen.
      */
     private static Field navigatorField;
-
-    /**
-     * The Status message of the citizen. (What he is up to currently).
-     */
-    @NotNull
-    private final Map<String, Integer> statusMessages = new HashMap<>();
 
     /**
      * The New PathNavigate navigator.
@@ -112,75 +69,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private final PathNavigate newNavigator;
 
     /**
-     * The 4 lines of the latest status.
-     */
-    private final ITextComponent[] latestStatus = new ITextComponent[MAX_LINES_OF_LATEST_LOG];
-
-    /**
-     * The Current Status.
-     */
-    protected Status status = Status.IDLE;
-
-    /**
-     * The last job of the citizen.
-     */
-    private String lastJob = "";
-
-    /**
-     * The default model.
-     */
-    private RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
-
-    /**
-     * Additional render data.
-     */
-    private String renderMetadata;
-
-    /**
-     * The texture.
-     */
-    private ResourceLocation texture;
-
-    /**
-     * It's colony id.
-     */
-    private int colonyId;
-
-    /**
      * It's citizen Id.
      */
     private int citizenId = 0;
 
     /**
-     * The current level.
-     */
-    private int level;
-
-    /**
-     * The texture id.
-     */
-    private int textureId;
-
-    /**
      * The Walk to proxy (Shortest path through intermediate blocks).
      */
     private IWalkToProxy proxy;
-
-    /**
-     * Skill modifier defines how fast a citizen levels in a certain skill.
-     */
-    private double skillModifier = 0;
-
-    /**
-     * The gender, true if female.
-     */
-    private boolean female;
-
-    /**
-     * The colony reference.
-     */
-    @Nullable
-    private Colony colony;
 
     /**
      * Reference to the data representation inside the colony.
@@ -194,24 +90,59 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private BlockPos currentPosition = null;
 
     /**
-     * Time the entity is at the same position already.
-     */
-    private int stuckTime = 0;
-
-    /**
      * Variable to check what time it is for the citizen.
      */
     private boolean isDay = true;
 
     /**
-     * Field to try moving away from a location in order to pass it.
-     */
-    private boolean triedMovingAway = false;
-
-    /**
      * Backup of the citizen.
      */
     private NBTTagCompound dataBackup = null;
+
+    /**
+     * The citizen experience handler.
+     */
+    private final CitizenExperienceHandler citizenExperienceHandler;
+
+    /**
+     * The citizen chat handler.
+     */
+    private final CitizenChatHandler citizenChatHandler;
+
+    /**
+     * The citizen status handler.
+     */
+    private final CitizenStatusHandler citizenStatusHandler;
+
+    /**
+     * The citizen item handler.
+     */
+    private final CitizenItemHandler citizenItemHandler;
+
+    /**
+     * The citizen inv handler.
+     */
+    private final CitizenInventoryHandler citizenInventoryHandler;
+
+    /**
+     * The citizen colony handler.
+     */
+    private final CitizenColonyHandler citizenColonyHandler;
+
+    /**
+     * The citizen job handler.
+     */
+    private final CitizenJobHandler citizenJobHandler;
+
+    /**
+     * The citizen sleep handler.
+     */
+    private final CitizenSleepHandler citizenSleepHandler;
+
+    /**
+     * The citizen stuck handler.
+     */
+    private final CitizenStuckHandler citizenStuckHandler;
 
     /**
      * Citizen constructor.
@@ -221,6 +152,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public EntityCitizen(final World world)
     {
         super(world);
+        this.citizenExperienceHandler = new CitizenExperienceHandler(this);
+        this.citizenChatHandler = new CitizenChatHandler(this);
+        this.citizenStatusHandler = new CitizenStatusHandler(this);
+        this.citizenItemHandler = new CitizenItemHandler(this);
+        this.citizenInventoryHandler = new CitizenInventoryHandler(this);
+        this.citizenColonyHandler = new CitizenColonyHandler(this);
+        this.citizenJobHandler = new CitizenJobHandler(this);
+        this.citizenSleepHandler = new CitizenSleepHandler(this);
+        this.citizenStuckHandler = new CitizenStuckHandler(this);
+
         setSize((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT);
         this.enablePersistence();
         this.setAlwaysRenderNameTag(Configurations.gameplay.alwaysRenderNameTag);
@@ -232,7 +173,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
         this.newNavigator.setCanSwim(true);
         this.newNavigator.setEnterDoors(true);
-
         initTasks();
     }
 
@@ -283,7 +223,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         int priority = 0;
         this.tasks.addTask(priority, new EntityAISwimming(this));
 
-        if (this.getColonyJob() == null || !"com.minecolonies.coremod.job.Guard".equals(this.getColonyJob().getName()))
+        if (citizenJobHandler.getColonyJob() == null || !"com.minecolonies.coremod.job.Guard".equals(citizenJobHandler.getColonyJob().getName()))
         {
             this.tasks.addTask(++priority, new EntityAICitizenAvoidEntity(this, EntityMob.class, (float) DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
         }
@@ -296,82 +236,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         this.tasks.addTask(++priority, new EntityAICitizenWander(this, DEFAULT_SPEED));
         this.tasks.addTask(++priority, new EntityAIWatchClosest(this, EntityLiving.class, WATCH_CLOSEST));
 
-        onJobChanged(getColonyJob());
-    }
-
-    /**
-     * Gets the job of the entity.
-     * @return the job or els enull.
-     */
-    @Nullable
-    public AbstractJob getColonyJob()
-    {
-        return citizenData == null ? null : citizenData.getJob();
-    }
-
-    /**
-     * Defines job changes and state changes of the citizen.
-     *
-     * @param job the set job.
-     */
-    public void onJobChanged(@Nullable final AbstractJob job)
-    {
-        //  Model
-        if (job == null)
-        {
-            switch (getLevel())
-            {
-                case 1:
-                    modelId = RenderBipedCitizen.Model.CITIZEN;
-                    break;
-                case 2:
-                    modelId = RenderBipedCitizen.Model.NOBLE;
-                    break;
-                case 3:
-                    modelId = RenderBipedCitizen.Model.ARISTOCRAT;
-                    break;
-                default:
-                    modelId = RenderBipedCitizen.Model.SETTLER;
-                    break;
-            }
-        }
-        else
-        {
-            modelId = job.getModel();
-        }
-
-        dataManager.set(DATA_MODEL, modelId.name());
-        setRenderMetadata("");
-
-
-        //  AI Tasks
-        @NotNull final Object[] currentTasks = this.tasks.taskEntries.toArray();
-        for (@NotNull final Object task : currentTasks)
-        {
-            if (((EntityAITasks.EntityAITaskEntry) task).action instanceof AbstractEntityAIInteract)
-            {
-                this.tasks.removeTask(((EntityAITasks.EntityAITaskEntry) task).action);
-            }
-        }
-
-        if (job != null)
-        {
-            job.addTasks(this.tasks);
-            if (ticksExisted > 0 && getWorkBuilding() != null)
-            {
-                BlockPosUtil.tryMoveLivingToXYZ(this, getWorkBuilding().getLocation());
-            }
-        }
-    }
-
-    /**
-     * Get the level of the citizen.
-     *
-     * @return the level of the citizen.
-     */
-    public int getLevel()
-    {
-        return level;
+        citizenJobHandler.onJobChanged(citizenJobHandler.getColonyJob());
     }
 
     /**
@@ -379,18 +244,19 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param metadata the metadata required.
      */
+    @Override
     public void setRenderMetadata(final String metadata)
     {
-        renderMetadata = metadata;
-        dataManager.set(DATA_RENDER_METADATA, renderMetadata);
+        super.setRenderMetadata(metadata);
+        dataManager.set(DATA_RENDER_METADATA, getRenderMetadata());
         //Display some debug info always available while testing
         //tofo: remove this when in Beta!
         //Will help track down some hard to find bugs (Pathfinding etc.)
         if (citizenData != null)
         {
-            if (this.getColonyJob() != null && Configurations.gameplay.enableInDevelopmentFeatures)
+            if (citizenJobHandler.getColonyJob() != null && Configurations.gameplay.enableInDevelopmentFeatures)
             {
-                setCustomNameTag(citizenData.getName() + " (" + getStatus() + ")[" + this.getColonyJob().getNameTagDescription() + "]");
+                setCustomNameTag(citizenData.getName() + " (" + citizenStatusHandler.getStatus() + ")[" + citizenJobHandler.getColonyJob().getNameTagDescription() + "]");
             }
             else
             {
@@ -400,104 +266,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * calculate this worker building.
-     *
-     * @return the building or null if none present.
+     * Get the ILocation of the citizen.
+     * @return an ILocation object which contains the dimension and is unique.
      */
-    @Nullable
-    public AbstractBuildingWorker getWorkBuilding()
-    {
-        return (citizenData == null) ? null : citizenData.getWorkBuilding();
-    }
-
-    public Status getStatus()
-    {
-        return status;
-    }
-
-    public void setStatus(final Status status)
-    {
-        this.status = status;
-    }
-
     public ILocation getLocation()
     {
         return StandardFactoryController.getInstance().getNewInstance(TypeConstants.ILOCATION, this);
-    }
-
-    /**
-     * Get the latest status of the citizen.
-     *
-     * @return a ITextComponent with the length 4 describing it.
-     */
-    public ITextComponent[] getLatestStatus()
-    {
-        return latestStatus.clone();
-    }
-
-    /**
-     * Set the latest status of the citizen and clear the existing status
-     *
-     * @param status the new status to set.
-     */
-    public void setLatestStatus(final ITextComponent... status)
-    {
-        boolean hasChanged = false;
-        for (int i = 0; i < latestStatus.length; i++)
-        {
-            final ITextComponent newStatus;
-            if (i >= status.length)
-            {
-                newStatus = null;
-            }
-            else
-            {
-                newStatus = status[i];
-            }
-
-            if (!Objects.equals(latestStatus[i], newStatus))
-            {
-                latestStatus[i] = newStatus;
-                hasChanged = true;
-            }
-        }
-
-        if (hasChanged)
-        {
-            citizenData.markDirty();
-        }
-    }
-
-    /**
-     * Append to the existing latestStatus list.
-     * This will override the oldest one if full and move the others one down in the array.
-     *
-     * @param status the latest status to append
-     */
-    public void addLatestStatus(final ITextComponent status)
-    {
-        for (int i = latestStatus.length - 1; i > 0; i--)
-        {
-            latestStatus[i] = latestStatus[i - 1];
-        }
-
-        latestStatus[0] = status;
-        citizenData.markDirty();
-    }
-
-    /**
-     * On Inventory change, mark the building dirty.
-     */
-    public void onInventoryChanged()
-    {
-        if (citizenData != null)
-        {
-            final AbstractBuildingWorker building = citizenData.getWorkBuilding();
-            if (building != null)
-            {
-                building.markDirty();
-            }
-        }
     }
 
     /**
@@ -517,101 +291,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return proxy.walkToBlock(site, range, true);
     }
 
-    /**
-     * Get the job of the citizen.
-     *
-     * @param type of the type.
-     * @param <J>  wildcard.
-     * @return the job.
-     */
-    @Nullable
-    public <J extends AbstractJob> J getColonyJob(@NotNull final Class<J> type)
-    {
-        return citizenData == null ? null : citizenData.getJob(type);
-    }
-
-    /**
-     * Change the citizens Rotation to look at said block.
-     *
-     * @param block the block he should look at.
-     */
-    public void faceBlock(@Nullable final BlockPos block)
-    {
-        if (block == null)
-        {
-            return;
-        }
-
-        final double xDifference = block.getX() - this.posX;
-        final double zDifference = block.getZ() - this.posZ;
-        final double yDifference = block.getY() - (this.posY + (double) this.getEyeHeight());
-
-        final double squareDifference = Math.sqrt(xDifference * xDifference + zDifference * zDifference);
-        final double intendedRotationYaw = (Math.atan2(zDifference, xDifference) * 180.0D / Math.PI) - 90.0;
-        final double intendedRotationPitch = -(Math.atan2(yDifference, squareDifference) * 180.0D / Math.PI);
-        this.setRotation((float) updateRotation(this.rotationYaw, intendedRotationYaw, ROTATION_MOVEMENT),
-          (float) updateRotation(this.rotationPitch, intendedRotationPitch, ROTATION_MOVEMENT));
-
-        final double goToX = xDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
-        final double goToZ = zDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
-
-        //Have to move the entity minimally into the direction to render his new rotation.
-        move(MoverType.SELF, (float) goToX, 0, (float) goToZ);
-    }
-
-    /**
-     * Returns the new rotation degree calculated from the current and intended
-     * rotation up to a max.
-     *
-     * @param currentRotation  the current rotation the citizen has.
-     * @param intendedRotation the wanted rotation he should have after applying
-     *                         this.
-     * @param maxIncrement     the 'movement speed.
-     * @return a rotation value he should move.
-     */
-    private static double updateRotation(final double currentRotation, final double intendedRotation, final double maxIncrement)
-    {
-        double wrappedAngle = MathHelper.wrapDegrees(intendedRotation - currentRotation);
-
-        if (wrappedAngle > maxIncrement)
-        {
-            wrappedAngle = maxIncrement;
-        }
-
-        if (wrappedAngle < -maxIncrement)
-        {
-            wrappedAngle = -maxIncrement;
-        }
-
-        return currentRotation + wrappedAngle;
-    }
-
-    /**
-     * Entities treat being on ladders as not on ground; this breaks navigation
-     * logic.
-     */
-    @Override
-    protected void updateFallState(final double y, final boolean onGroundIn, final IBlockState state, final BlockPos pos)
-    {
-        if (!onGround)
-        {
-            final int px = MathHelper.floor(posX);
-            final int py = (int) posY;
-            final int pz = MathHelper.floor(posZ);
-
-            this.onGround =
-              CompatibilityUtils.getWorld(this).getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(world.getBlockState(
-                new BlockPos(px, py, pz)), world, new BlockPos(px, py, pz), this);
-        }
-
-        super.updateFallState(y, onGroundIn, state, pos);
-    }
-
     @Override
     public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
     {
         final Entity sourceEntity = damageSource.getTrueSource();
-        if (sourceEntity instanceof EntityCitizen && ((EntityCitizen) sourceEntity).colonyId == this.colonyId)
+        if (sourceEntity instanceof EntityCitizen && ((EntityCitizen) sourceEntity).citizenColonyHandler.getColonyId() == citizenColonyHandler.getColonyId())
         {
             return false;
         }
@@ -623,118 +307,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return result;
         }
 
-        updateArmorDamage(damage);
+        citizenItemHandler.updateArmorDamage(damage);
 
         return result;
     }
 
-    /**
-     * Called when the mob's health reaches 0.
-     *
-     * @param damageSource the attacking entity.
-     */
-    @Override
-    public void onDeath(final DamageSource damageSource)
-    {
-        double penalty = CITIZEN_DEATH_PENALTY;
-        if (damageSource.getTrueSource() instanceof EntityPlayer)
-        {
-            for (final Player player : PermissionUtils.getPlayersWithAtLeastRank(colony, Rank.OFFICER))
-            {
-                if (player.getID().equals(damageSource.getTrueSource().getUniqueID()))
-                {
-                    penalty = CITIZEN_KILL_PENALTY;
-                    break;
-                }
-            }
-        }
-
-        dropExperience();
-        this.setDead();
-
-        if (colony != null)
-        {
-            colony.decreaseOverallHappiness(penalty);
-            triggerDeathAchievement(damageSource, getColonyJob());
-            if (getColonyJob() instanceof JobGuard)
-            {
-                LanguageHandler.sendPlayersMessage(
-                  colony.getMessageEntityPlayers(),
-                  "tile.blockHutTownHall.messageGuardDead",
-                  citizenData.getName(), (int) posX, (int) posY, (int) posZ, damageSource.damageType);
-            }
-            else
-            {
-                LanguageHandler.sendPlayersMessage(
-                  colony.getMessageEntityPlayers(),
-                  "tile.blockHutTownHall.messageColonistDead",
-                  citizenData.getName(), (int) posX, (int) posY, (int) posZ, damageSource.damageType);
-            }
-            colony.getCitizenManager().removeCitizen(getCitizenData());
-        }
-        super.onDeath(damageSource);
-    }
-
-    /**
-     * Drop some experience share depending on the experience and
-     * experienceLevel.
-     */
-    private void dropExperience()
-    {
-        int experience;
-
-        if (!CompatibilityUtils.getWorld(this).isRemote && this.recentlyHit > 0 && this.canDropLoot() && CompatibilityUtils.getWorld(this).getGameRules().getBoolean("doMobLoot"))
-        {
-            experience = (int) (this.citizenData.getExperience());
-
-            while (experience > 0)
-            {
-                final int j = EntityXPOrb.getXPSplit(experience);
-                experience -= j;
-                CompatibilityUtils.getWorld(this).spawnEntity(new EntityXPOrb(CompatibilityUtils.getWorld(this), this.posX, this.posY, this.posZ, j));
-            }
-        }
-
-        //Spawn particle explosion of xp orbs on death
-        for (int i = 0; i < XP_PARTICLE_EXPLOSION_SIZE; ++i)
-        {
-            final double d2 = this.rand.nextGaussian() * 0.02D;
-            final double d0 = this.rand.nextGaussian() * 0.02D;
-            final double d1 = this.rand.nextGaussian() * 0.02D;
-            CompatibilityUtils.getWorld(this).spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
-              this.posX + (this.rand.nextDouble() * this.width * 2.0F) - (double) this.width,
-              this.posY + (this.rand.nextDouble() * this.height),
-              this.posZ + (this.rand.nextDouble() * this.width * 2.0F) - (double) this.width,
-              d2,
-              d0,
-              d1);
-        }
-    }
-
-    /**
-     * Trigger the corresponding death achievement.
-     *
-     * @param source The damage source.
-     * @param job    The job of the citizen.
-     */
-    public void triggerDeathAchievement(final DamageSource source, final AbstractJob job)
-    {
-        // If the job is null, then we can trigger jobless citizen achievement
-        if (job != null)
-        {
-            job.triggerDeathAchievement(source, this);
-        }
-    }
-
-    @Nullable
-    public CitizenData getCitizenData()
-    {
-        return citizenData;
-    }
-
     @SuppressWarnings(UNCHECKED)
     @Override
-    public <T> T getCapability(final Capability<T> capability, final EnumFacing facing)
+    public <T> T getCapability(@NotNull final Capability<T> capability, final EnumFacing facing)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
@@ -751,7 +331,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     @Override
-    public boolean hasCapability(final Capability<?> capability, final EnumFacing facing)
+    public boolean hasCapability(@NotNull final Capability<?> capability, final EnumFacing facing)
     {
         if (getCitizenData() == null)
         {
@@ -766,39 +346,81 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return super.hasCapability(capability, facing);
     }
 
-    /**
-     * Updates the armour damage after being hit.
-     *
-     * @param damage damage dealt.
-     */
-    private void updateArmorDamage(final double damage)
+    @Override
+    protected void damageShield(final float damage)
     {
-        for (final ItemStack stack : this.getArmorInventoryList())
+        if (getHeldItem(getActiveHand()).getItem() instanceof ItemShield)
         {
-            if (ItemStackUtils.isEmpty(stack) || !(stack.getItem() instanceof ItemArmor))
-            {
-                continue;
-            }
-            stack.damageItem((int) (damage / 2), this);
+            citizenItemHandler.damageItemInHand(this.getActiveHand(), (int) damage);
+        }
+        super.damageShield(damage);
+    }
 
-            if (ItemStackUtils.getSize(stack) < 1)
+    /**
+     * Called when the mob's health reaches 0.
+     *
+     * @param damageSource the attacking entity.
+     */
+    @Override
+    public void onDeath(@NotNull final DamageSource damageSource)
+    {
+        double penalty = CITIZEN_DEATH_PENALTY;
+        if (citizenColonyHandler.getColony() != null && getCitizenData()  != null)
+        {
+            if (damageSource.getTrueSource() instanceof EntityPlayer)
             {
-                setItemStackToSlot(getSlotForItemStack(stack), ItemStackUtils.EMPTY);
+                for (final Player player : PermissionUtils.getPlayersWithAtLeastRank(citizenColonyHandler.getColony(), Rank.OFFICER))
+                {
+                    if (player.getID().equals(damageSource.getTrueSource().getUniqueID()))
+                    {
+                        penalty = CITIZEN_KILL_PENALTY;
+                        break;
+                    }
+                }
             }
-            setItemStackToSlot(getSlotForItemStack(stack), stack);
+
+            citizenExperienceHandler.dropExperience();
+            this.setDead();
+            citizenColonyHandler.getColony().decreaseOverallHappiness(penalty);
+            triggerDeathAchievement(damageSource, citizenJobHandler.getColonyJob());
+            citizenChatHandler.notifyDeath(damageSource);
+            citizenColonyHandler.getColony().getCitizenManager().removeCitizen(getCitizenData());
+        }
+        super.onDeath(damageSource);
+    }
+
+    /**
+     * Trigger the corresponding death achievement.
+     *
+     * @param source The damage source.
+     * @param job    The job of the citizen.
+     */
+    private void triggerDeathAchievement(final DamageSource source, final AbstractJob job)
+    {
+        // If the job is null, then we can trigger jobless citizen achievement
+        if (job != null)
+        {
+            job.triggerDeathAchievement(source, this);
         }
     }
 
     /**
-     * For the time being we don't want any childrens of our colonists.
-     *
-     * @param var1 the ageable entity.
-     * @return the child.
+     * Getter for the citizendata.
+     * Tries to get it from the colony is the data is null.
+     * @return the data.
      */
-    @Override
-    public EntityAgeable createChild(final EntityAgeable var1)
+    @Nullable
+    public CitizenData getCitizenData()
     {
-        return null;
+        if (citizenData == null && citizenColonyHandler.getColony() != null)
+        {
+            final CitizenData data = citizenColonyHandler.getColony().getCitizenManager().getCitizen(citizenId);
+            if (data != null)
+            {
+                citizenData = data;
+            }
+        }
+        return citizenData;
     }
 
     /**
@@ -808,15 +430,15 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @return If citizen should interact or not.
      */
     @Override
-    public boolean processInteract(final EntityPlayer player, final EnumHand hand)
+    public boolean processInteract(final EntityPlayer player, @NotNull final EnumHand hand)
     {
-        final ColonyView colonyView = ColonyManager.getColonyView(colonyId);
+        final ColonyView colonyView = ColonyManager.getColonyView(citizenColonyHandler.getColonyId());
         if (colonyView != null && !colonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
             return false;
         }
 
-        if (player.getHeldItem(hand) != null && player.getHeldItem(hand).getItem() instanceof ItemNameTag)
+        if (!ItemStackUtils.isEmpty(player.getHeldItem(hand)) && player.getHeldItem(hand).getItem() instanceof ItemNameTag)
         {
             return super.processInteract(player, hand);
         }
@@ -843,29 +465,22 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public void entityInit()
     {
         super.entityInit();
-        dataManager.register(DATA_COLONY_ID, colonyId);
+        dataManager.register(DATA_COLONY_ID, citizenColonyHandler == null ? 0 : citizenColonyHandler.getColonyId());
         dataManager.register(DATA_CITIZEN_ID, citizenId);
-        dataManager.register(DATA_TEXTURE, 0);
-        dataManager.register(DATA_LEVEL, 0);
-        dataManager.register(DATA_IS_FEMALE, 0);
-        dataManager.register(DATA_MODEL, RenderBipedCitizen.Model.SETTLER.name());
-        dataManager.register(DATA_RENDER_METADATA, "");
-        dataManager.register(DATA_IS_ASLEEP, false);
-        dataManager.register(DATA_BED_POS, new BlockPos(0, 0, 0));
     }
 
     @Override
     public void writeEntityToNBT(final NBTTagCompound compound)
     {
         super.writeEntityToNBT(compound);
-        compound.setInteger(TAG_STATUS, status.ordinal());
-        if (colony != null && citizenData != null)
+        compound.setInteger(TAG_STATUS, citizenStatusHandler.getStatus().ordinal());
+        if (citizenColonyHandler.getColony() != null && citizenData != null)
         {
-            compound.setInteger(TAG_COLONY_ID, colony.getID());
+            compound.setInteger(TAG_COLONY_ID, citizenColonyHandler.getColony().getID());
             compound.setInteger(TAG_CITIZEN, citizenData.getId());
         }
 
-        compound.setString(TAG_LAST_JOB, lastJob);
+        compound.setString(TAG_LAST_JOB, citizenJobHandler.getLastJob());
         compound.setBoolean(TAG_DAY, isDay);
     }
 
@@ -874,19 +489,19 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         super.readEntityFromNBT(compound);
 
-        status = Status.values()[compound.getInteger(TAG_STATUS)];
-        colonyId = compound.getInteger(TAG_COLONY_ID);
+        citizenStatusHandler.setStatus(Status.values()[compound.getInteger(TAG_STATUS)]);
+        citizenColonyHandler.setColonyId(compound.getInteger(TAG_COLONY_ID));
         citizenId = compound.getInteger(TAG_CITIZEN);
 
         if (isServerWorld())
         {
-            updateColonyServer();
+            citizenColonyHandler.updateColonyServer();
         }
 
-        lastJob = compound.getString(TAG_LAST_JOB);
+        citizenJobHandler.setLastJob(compound.getString(TAG_LAST_JOB));
         isDay = compound.getBoolean(TAG_DAY);
 
-        if (compound.hasKey(TAG_HELD_ITEM_SLOT))
+        if (compound.hasKey(TAG_HELD_ITEM_SLOT) || compound.hasKey(TAG_OFFHAND_HELD_ITEM_SLOT))
         {
             this.dataBackup = compound;
         }
@@ -904,20 +519,20 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (recentlyHit > 0)
         {
-            citizenData.markDirty();
+            markDirty();
         }
         if (CompatibilityUtils.getWorld(this).isRemote)
         {
-            updateColonyClient();
+            citizenColonyHandler.updateColonyClient();
         }
         else
         {
             if (getOffsetTicks() % TICKS_20 == 0)
             {
                 this.setAlwaysRenderNameTag(Configurations.gameplay.alwaysRenderNameTag);
-                pickupItems();
-                cleanupChatMessages();
-                updateColonyServer();
+                citizenItemHandler.pickupItems();
+                citizenChatHandler.cleanupChatMessages();
+                citizenColonyHandler.updateColonyServer();
 
                 if (citizenData != null)
                 {
@@ -925,30 +540,22 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 }
             }
 
-            if (getColonyJob() != null || !CompatibilityUtils.getWorld(this).isDaytime())
+            if (citizenJobHandler.getColonyJob() != null || !CompatibilityUtils.getWorld(this).isDaytime())
             {
-                if (ticksExisted % TICKS_20 == 0)
-                {
-                    checkIfStuck();
-
-                    if (ticksExisted % (MAX_STUCK_TIME * TICKS_SECOND) == 0)
-                    {
-                        triedMovingAway = false;
-                    }
-                }
+                citizenStuckHandler.onUpdate();
             }
             else
             {
-                setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waitingForWork"));
+                citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waitingForWork"));
             }
 
             if (CompatibilityUtils.getWorld(this).isDaytime() && !CompatibilityUtils.getWorld(this).isRaining() && citizenData != null)
             {
                 SoundUtils.playRandomSound(CompatibilityUtils.getWorld(this), this, citizenData.getSaturation());
             }
-            else if (CompatibilityUtils.getWorld(this).isRaining() && 1 >= rand.nextInt(RANT_ABOUT_WEATHER_CHANCE) && this.getColonyJob() != null)
+            else if (CompatibilityUtils.getWorld(this).isRaining() && 1 >= rand.nextInt(RANT_ABOUT_WEATHER_CHANCE) && citizenJobHandler.getColonyJob() != null)
             {
-                SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorld(this), this.getPosition(), this.getColonyJob().getBadWeatherSound(), 1);
+                SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorld(this), this.getPosition(), citizenJobHandler.getColonyJob().getBadWeatherSound(), 1);
             }
         }
 
@@ -957,7 +564,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             getNavigator().moveAwayFromXYZ(this.getPosition(), MOVE_AWAY_RANGE, MOVE_AWAY_SPEED);
         }
 
-        gatherXp();
+        citizenExperienceHandler.gatherXp();
         if (citizenData != null)
         {
             if (citizenData.getSaturation() <= 0)
@@ -984,106 +591,44 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             final NBTTagList nbttaglist = dataBackup.getTagList("Inventory", 10);
             this.getCitizenData().getInventory().readFromNBT(nbttaglist);
-            this.getCitizenData().getInventory().setHeldItem(dataBackup.getInteger(TAG_HELD_ITEM_SLOT));
+            if (dataBackup.hasKey(TAG_HELD_ITEM_SLOT))
+            {
+                this.getCitizenData().getInventory().setHeldItem(EnumHand.MAIN_HAND, dataBackup.getInteger(TAG_HELD_ITEM_SLOT));
+            }
+
+            if (dataBackup.hasKey(TAG_OFFHAND_HELD_ITEM_SLOT))
+            {
+                this.getCitizenData().getInventory().setHeldItem(EnumHand.OFF_HAND, dataBackup.getInteger(TAG_OFFHAND_HELD_ITEM_SLOT));
+            }
+
             dataBackup = null;
         }
 
         checkHeal();
     }
 
-    private void updateColonyClient()
-    {
-        if (dataManager.isDirty())
-        {
-            if (colonyId == 0)
-            {
-                colonyId = dataManager.get(DATA_COLONY_ID);
-            }
-
-            if (citizenId == 0)
-            {
-                citizenId = dataManager.get(DATA_CITIZEN_ID);
-            }
-
-            female = dataManager.get(DATA_IS_FEMALE) != 0;
-            level = dataManager.get(DATA_LEVEL);
-            modelId = RenderBipedCitizen.Model.valueOf(dataManager.get(DATA_MODEL));
-            textureId = dataManager.get(DATA_TEXTURE);
-            renderMetadata = dataManager.get(DATA_RENDER_METADATA);
-            setTexture();
-            dataManager.setClean();
-        }
-        updateArmSwingProgress();
-    }
-
-    public int getOffsetTicks()
-    {
-        return this.ticksExisted + OFFSET_TICK_MULTIPLIER * this.getEntityId();
-    }
-
-    /**
-     * Pick up all items in a range around the citizen.
-     */
-    private void pickupItems()
-    {
-        @NotNull final List<EntityItem> retList = new ArrayList<>();
-        //I know streams look better but they are flawed in type erasure
-        for (final Object o :
-          CompatibilityUtils.getWorld(this).
-                                             getEntitiesWithinAABB(EntityItem.class,
-                                               new AxisAlignedBB(getPosition()).expand(2.0F, 1.0F, 2.0F).expand(-2.0F, -1.0F, -2.0F)))
-        {
-            if (o instanceof EntityItem)
-            {
-                retList.add((EntityItem) o);
-            }
-        }
-
-        retList.stream()
-          .filter(Objects::nonNull)
-          .filter(item -> !item.isDead)
-          .filter(item -> canPickUpLoot())
-          .forEach(this::tryPickupEntityItem);
-    }
-
-    private void cleanupChatMessages()
-    {
-        //Only check if there are messages and once a second
-        if (statusMessages.size() > 0 && ticksExisted % TICKS_20 == 0)
-        {
-            @NotNull final Iterator<Map.Entry<String, Integer>> it = statusMessages.entrySet().iterator();
-            while (it.hasNext())
-            {
-                if (ticksExisted - it.next().getValue() > TICKS_20 * Configurations.gameplay.chatFrequency)
-                {
-                    it.remove();
-                }
-            }
-        }
-    }
-
     @Override
-    public void setCustomNameTag(final String name)
+    public void setCustomNameTag(@NotNull final String name)
     {
-        if (citizenData != null && name != null)
+        if (citizenData != null && citizenColonyHandler.getColony() != null)
         {
             if (!name.contains(citizenData.getName()) && Configurations.gameplay.allowGlobalNameChanges >= 0)
             {
                 if (Configurations.gameplay.allowGlobalNameChanges == 0 &&
-                      Arrays.stream(Configurations.gameplay.specialPermGroup).noneMatch(owner -> owner.equals(colony.getPermissions().getOwnerName())))
+                      Arrays.stream(Configurations.gameplay.specialPermGroup).noneMatch(owner -> owner.equals(citizenColonyHandler.getColony().getPermissions().getOwnerName())))
                 {
-                    LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), CITIZEN_RENAME_NOT_ALLOWED);
+                    LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessageEntityPlayers(), CITIZEN_RENAME_NOT_ALLOWED);
                     return;
                 }
 
 
-                if (colony != null)
+                if (citizenColonyHandler.getColony() != null)
                 {
-                    for (final CitizenData citizen : colony.getCitizenManager().getCitizens())
+                    for (final CitizenData citizen : citizenColonyHandler.getColony().getCitizenManager().getCitizens())
                     {
                         if (citizen.getName().equals(name))
                         {
-                            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), CITIZEN_RENAME_SAME);
+                            LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessageEntityPlayers(), CITIZEN_RENAME_SAME);
                             return;
                         }
                     }
@@ -1097,84 +642,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
     }
 
-    private void checkIfStuck()
-    {
-        if (this.currentPosition == null || newNavigator == null)
-        {
-            this.currentPosition = this.getPosition();
-            return;
-        }
-
-        if (newNavigator.getDestination() == null || newNavigator.getDestination().distanceSq(posX, posY, posZ) < MOVE_AWAY_RANGE)
-        {
-            return;
-        }
-
-        if (!new AxisAlignedBB(this.currentPosition).expand(1, 1, 1)
-               .intersects(new AxisAlignedBB(this.getPosition())) && !triedMovingAway)
-        {
-            stuckTime = 0;
-            this.currentPosition = this.getPosition();
-            return;
-        }
-
-        stuckTime++;
-
-        if (stuckTime >= MIN_STUCK_TIME + getRandom().nextInt(MIN_STUCK_TIME) && !triedMovingAway)
-        {
-            triedMovingAway = true;
-            newNavigator.moveAwayFromXYZ(currentPosition, getRandom().nextInt(MOVE_AWAY_RANGE), 1);
-            return;
-        }
-
-        if (stuckTime >= MAX_STUCK_TIME)
-        {
-            if (newNavigator.getDestination().distanceSq(posX, posY, posZ) < MOVE_AWAY_RANGE)
-            {
-                stuckTime = 0;
-                return;
-            }
-
-            triedMovingAway = false;
-
-            final BlockPos destination = BlockPosUtil.getFloor(newNavigator.getDestination().up(), CompatibilityUtils.getWorld(this));
-            @Nullable final BlockPos spawnPoint =
-              Utils.scanForBlockNearPoint
-                      (CompatibilityUtils.getWorld(this), destination, 1, 1, 1, 3,
-                        Blocks.AIR,
-                        Blocks.SNOW_LAYER,
-                        Blocks.TALLGRASS,
-                        Blocks.RED_FLOWER,
-                        Blocks.YELLOW_FLOWER,
-                        Blocks.CARPET);
-
-            WorkerUtil.setSpawnPoint(spawnPoint, this);
-            if (colony != null)
-            {
-                Log.getLogger().info("Teleported stuck citizen " + this.getName() + " from colony: " + colony.getID() + " to target location");
-            }
-            stuckTime = 0;
-        }
-
-        this.currentPosition = this.getPosition();
-    }
-
-    /**
-     * Collect exp orbs around the entity.
-     */
-    public void gatherXp()
-    {
-        for (@NotNull final EntityXPOrb orb : getXPOrbsOnGrid())
-        {
-            addExperience(orb.getXpValue() / 2.0D);
-            orb.setDead();
-        }
-    }
-
     /**
      * Lets the citizen tryToEat to replentish saturation.
      */
-    public void tryToEat()
+    private void tryToEat()
     {
         final int slot = InventoryUtils.findFirstSlotInProviderWith(this,
           itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
@@ -1217,267 +688,15 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Sets the textures of all citizens and distinguishes between male and
-     * female.
-     */
-    private void setTexture()
-    {
-        if (!CompatibilityUtils.getWorld(this).isRemote)
-        {
-            return;
-        }
-
-        final RenderBipedCitizen.Model model = getModelID();
-
-        final String textureBase = "textures/entity/" + model.textureBase + (female ? "Female" : "Male");
-        final int moddedTextureId = (textureId % model.numTextures) + 1;
-        texture = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + renderMetadata + ".png");
-    }
-
-    /**
-     * Defines the area in which the citizen automatically gathers experience.
-     *
-     * @return a list of xp orbs around the entity.
-     */
-    private List<EntityXPOrb> getXPOrbsOnGrid()
-    {
-        @NotNull final AxisAlignedBB bb = new AxisAlignedBB(posX - 2, posY - 2, posZ - 2, posX + 2, posY + 2, posZ + 2);
-
-        return CompatibilityUtils.getWorld(this).getEntitiesWithinAABB(EntityXPOrb.class, bb);
-    }
-
-    /**
-     * Add experience points to citizen.
-     * Increases the citizen level if he has sufficient experience.
-     * This will reset the experience.
-     *
-     * @param xp the amount of points added.
-     */
-    public void addExperience(final double xp)
-    {
-        final AbstractBuilding home = getHomeBuilding();
-
-        final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
-        final double citizenHutMaxLevel = home == null ? 1 : home.getMaxBuildingLevel();
-        if (citizenData != null)
-        {
-            if (citizenHutLevel < citizenHutMaxLevel
-                  && Math.pow(2.0, citizenHutLevel + 1.0) <= this.citizenData.getLevel())
-            {
-                return;
-            }
-
-            double localXp = xp * skillModifier / EXP_DIVIDER;
-            final double workBuildingLevel = getWorkBuilding() == null ? 0 : getWorkBuilding().getBuildingLevel();
-            final double bonusXp = (workBuildingLevel * (1 + citizenHutLevel) / Math.log(this.citizenData.getLevel() + 2.0D)) / 2;
-            localXp = localXp * bonusXp;
-            final double saturation = citizenData.getSaturation();
-
-            if (saturation < AVERAGE_SATURATION)
-            {
-                if (saturation <= 0)
-                {
-                    return;
-                }
-
-                if (saturation < LOW_SATURATION)
-                {
-                    localXp -= localXp * BIG_SATURATION_FACTOR * saturation;
-                }
-                else
-                {
-                    localXp -= localXp * LOW_SATURATION_FACTOR * saturation;
-                }
-            }
-            else if (saturation > AVERAGE_SATURATION)
-            {
-                if (saturation > HIGH_SATURATION)
-                {
-                    localXp += localXp * BIG_SATURATION_FACTOR * saturation;
-                }
-                else
-                {
-                    localXp += localXp * LOW_SATURATION_FACTOR * saturation;
-                }
-            }
-
-            final double maxValue = Integer.MAX_VALUE - citizenData.getExperience();
-            if (localXp > maxValue)
-            {
-                localXp = maxValue;
-            }
-
-            localXp = applyMending(localXp);
-            citizenData.addExperience(localXp);
-
-            while (ExperienceUtils.getXPNeededForNextLevel(citizenData.getLevel()) < citizenData.getExperience())
-            {
-                citizenData.increaseLevel();
-            }
-            this.updateLevel();
-            citizenData.markDirty();
-        }
-    }
-
-    public RenderBipedCitizen.Model getModelID()
-    {
-        return modelId;
-    }
-
-    @Nullable
-    private AbstractBuilding getHomeBuilding()
-    {
-        return (citizenData == null) ? null : citizenData.getHomeBuilding();
-    }
-
-    /**
-     * repair random equipped/held item with mending enchant.
-     *
-     * @param xp amount of xp available to mend with
-     * @return xp left after mending
-     */
-    private double applyMending(final double xp)
-    {
-        double localXp = xp;
-        final ItemStack tool = EnchantmentHelper.getEnchantedItem(Enchantments.MENDING, this);
-
-        if (tool != null && tool.isItemDamaged())
-        {
-            //2 xp to heal 1 dmg
-            final double dmgHealed = Math.min(localXp / 2, tool.getItemDamage());
-            localXp -= dmgHealed * 2;
-            tool.setItemDamage(tool.getItemDamage() - (int) Math.ceil(dmgHealed));
-        }
-
-        return localXp;
-    }
-
-    /**
-     * Server-specific update for the EntityCitizen.
-     */
-    public void updateColonyServer()
-    {
-        if (colonyId == 0)
-        {
-            setDead();
-            return;
-        }
-
-        if (colony == null)
-        {
-            handleNullColony();
-        }
-    }
-
-    /**
-     * Handles extreme cases like colony or citizen is null.
-     */
-    private void handleNullColony()
-    {
-        final Colony c = ColonyManager.getColony(colonyId);
-
-        if (c == null)
-        {
-            Log.getLogger().warn(String.format("EntityCitizen '%s' unable to find Colony #%d", getUniqueID(), colonyId));
-            setDead();
-            return;
-        }
-
-        final CitizenData data = c.getCitizenManager().getCitizen(citizenId);
-        if (data == null)
-        {
-            //  Citizen does not exist in the Colony
-            Log.getLogger().warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen %d, but not known to colony",
-              getUniqueID(),
-              colonyId,
-              citizenId));
-            setDead();
-            return;
-        }
-
-        final Optional<EntityCitizen> entityCitizenOptional = data.getCitizenEntity();
-        entityCitizenOptional.filter(entityCitizen -> !this.getUniqueID().equals(entityCitizen.getUniqueID()))
-          .ifPresent(entityCitizen -> handleExistingCitizen(data, entityCitizen));
-
-        setColony(c, data);
-    }
-
-    private void handleExistingCitizen(@NotNull final CitizenData data, @NotNull final EntityCitizen existingCitizen)
-    {
-        Log.getLogger().warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen #%d, but already have a citizen ('%s')",
-          getUniqueID(),
-          colonyId,
-          citizenId,
-          existingCitizen.getUniqueID()));
-        if (existingCitizen.getUniqueID().equals(this.getUniqueID()))
-        {
-            data.setCitizenEntity(this);
-        }
-        else
-        {
-            setDead();
-        }
-    }
-
-    /**
-     * Assigns a citizen to a colony.
-     *
-     * @param c    the colony.
-     * @param data the data of the new citizen.
-     */
-    public void setColony(@Nullable final Colony c, @Nullable final CitizenData data)
-    {
-        if (c == null)
-        {
-            colony = null;
-            colonyId = 0;
-            citizenId = 0;
-            citizenData = null;
-            setDead();
-            return;
-        }
-
-        colony = c;
-        colonyId = colony.getID();
-        citizenId = data.getId();
-        citizenData = data;
-
-        setCustomNameTag(citizenData.getName());
-
-        female = citizenData.isFemale();
-        textureId = citizenData.getTextureId();
-
-        dataManager.set(DATA_COLONY_ID, colonyId);
-        dataManager.set(DATA_CITIZEN_ID, citizenId);
-        dataManager.set(DATA_IS_FEMALE, female ? 1 : 0);
-        dataManager.set(DATA_TEXTURE, textureId);
-        updateLevel();
-
-        citizenData.setCitizenEntity(this);
-        citizenData.setLastPosition(getPosition());
-
-        onJobChanged(getColonyJob());
-    }
-
-    /**
-     * Updates the level of the citizen.
-     */
-    private void updateLevel()
-    {
-        level = citizenData == null ? 0 : citizenData.getLevel();
-        dataManager.set(DATA_LEVEL, level);
-    }
-
-    /**
      * Getter of the dataview, the clientside representation of the citizen.
      *
      * @return the view.
      */
     private CitizenDataView getCitizenDataView()
     {
-        if (colonyId != 0 && citizenId != 0)
+        if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0)
         {
-            final ColonyView colonyView = ColonyManager.getColonyView(colonyId);
+            final ColonyView colonyView = ColonyManager.getColonyView(citizenColonyHandler.getColonyId());
             if (colonyView != null)
             {
                 return colonyView.getCitizen(citizenId);
@@ -1487,63 +706,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return null;
     }
 
-    /**
-     * Getter for the last job.
-     *
-     * @return the last job he had.
-     */
-    @NotNull
-    public String getLastJob()
-    {
-        return this.lastJob;
-    }
-
-    /**
-     * Sets the last job of the citizen.
-     *
-     * @param jobName the job he last had.
-     */
-    public void setLastJob(@NotNull final String jobName)
-    {
-        this.lastJob = jobName;
-    }
-
-    /**
-     * Getter of the citizens random object.
-     *
-     * @return random object.
-     */
-    public Random getRandom()
-    {
-        return rand;
-    }
-
-    /**
-     * Applies attributes like health, charisma etc to the citizens.
-     */
-    @Override
-    protected void applyEntityAttributes()
-    {
-        super.applyEntityAttributes();
-
-        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
-        getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED);
-
-        //path finding search range
-        getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(BASE_PATHFINDING_RANGE);
-    }
-
     @NotNull
     @Override
     public PathNavigate getNavigator()
     {
         return newNavigator;
-    }
-
-    @Override
-    protected void updateEquipmentIfNeeded(final EntityItem itemEntity)
-    {
-        //Just do nothing!
     }
 
     /**
@@ -1558,89 +725,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
             final ItemStack itemstack = getCitizenData().getInventory().getStackInSlot(i);
             if (ItemStackUtils.getSize(itemstack) > 0)
             {
-                entityDropItem(itemstack);
+                citizenItemHandler.entityDropItem(itemstack);
             }
         }
-    }
-
-    /**
-     * Attempts a sleep interaction with the citizen and the given bed.
-     *
-     * @param bedLocation The possible location to sleep.
-     */
-    public void trySleep(final BlockPos bedLocation)
-    {
-        final IBlockState state = this.world.isBlockLoaded(bedLocation) ? this.world.getBlockState(bedLocation) : null;
-        final boolean isBed = state != null && state.getBlock().isBed(state, this.world, bedLocation, this);
-
-        if (!isBed)
-        {
-            return;
-        }
-
-        this.setPosition((double) ((float) bedLocation.getX() + HALF_BLOCK),
-          (double) ((float) bedLocation.getY() + BED_HEIGHT),
-          (double) ((float) bedLocation.getZ() + HALF_BLOCK));
-
-        this.motionX = 0.0D;
-        this.motionY = 0.0D;
-        this.motionZ = 0.0D;
-
-        setIsAsleep(true);
-
-        dataManager.set(DATA_BED_POS, bedLocation);
-    }
-
-    public BlockPos getBedLocation()
-    {
-        return dataManager.get(DATA_BED_POS);
-    }
-
-    public float getRenderOffsetX()
-    {
-        if (!isAsleep())
-        {
-            return 0;
-        }
-
-        final IBlockState state = this.world.isBlockLoaded(getBedLocation()) ? this.world.getBlockState(getBedLocation()) : null;
-        final boolean isBed = state != null && state.getBlock().isBed(state, this.world, getBedLocation(), this);
-        final EnumFacing enumfacing = isBed && state.getBlock() instanceof BlockHorizontal ? state.getValue(BlockHorizontal.FACING) : null;
-
-        if (enumfacing == null)
-        {
-            return 0;
-        }
-
-        return SLEEPING_RENDER_OFFSET * (float) enumfacing.getFrontOffsetX();
-    }
-
-    public float getRenderOffsetZ()
-    {
-        if (!isAsleep())
-        {
-            return 0;
-        }
-
-        final IBlockState state = this.world.isBlockLoaded(getBedLocation()) ? this.world.getBlockState(getBedLocation()) : null;
-        final boolean isBed = state != null && state.getBlock().isBed(state, this.world, getBedLocation(), this);
-        final EnumFacing enumfacing = isBed && state.getBlock() instanceof BlockHorizontal ? state.getValue(BlockHorizontal.FACING) : null;
-
-        if (enumfacing == null)
-        {
-            return 0;
-        }
-
-        return SLEEPING_RENDER_OFFSET * (float) enumfacing.getFrontOffsetZ();
-    }
-
-    /**
-     * Returns false if the newer Entity AI code should be run.
-     */
-    @Override
-    public boolean isAIDisabled()
-    {
-        return false;
     }
 
     /**
@@ -1655,103 +742,47 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Handles the dropping of items from the entity.
-     *
-     * @param itemstack to drop.
-     * @return the dropped item.
-     */
-    private EntityItem entityDropItem(@NotNull final ItemStack itemstack)
-    {
-        return entityDropItem(itemstack, 0.0F);
-    }
-
-    /**
-     * Getter of the resource location of the texture.
-     *
-     * @return location of the texture.
-     */
-    public ResourceLocation getTexture()
-    {
-        return texture;
-    }
-
-    /**
-     * Getter which checks if the citizen is female.
-     *
-     * @return true if female.
-     */
-    public boolean isFemale()
-    {
-        return female;
-    }
-
-    /**
-     * Clears the colony of the citizen.
-     */
-    public void clearColony()
-    {
-        setColony(null, null);
-    }
-
-    public boolean isAtHome()
-    {
-        @Nullable final AbstractBuilding homeBuilding = getHomeBuilding();
-
-        if (homeBuilding instanceof BuildingHome)
-        {
-            final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = homeBuilding.getCorners();
-            return new AxisAlignedBB(corners.getFirst().getFirst(), posY - 1, corners.getSecond().getFirst(),
-              corners.getFirst().getSecond(),
-              posY + 1,
-              corners.getSecond().getSecond()).intersectsWithXZ(new Vec3d(this.getPosition()));
-        }
-
-        @Nullable final BlockPos homePosition = getHomePosition();
-        return homePosition != null && homePosition.distanceSq((int) Math.floor(posX), (int) posY, (int) Math.floor(posZ)) <= RANGE_TO_BE_HOME;
-    }
-
-    /**
      * Returns the home position of each citizen (His house or town hall).
      *
      * @return location
      */
-    @Nullable
+    @NotNull
     @Override
     public BlockPos getHomePosition()
     {
-        @Nullable final AbstractBuilding homeBuilding = getHomeBuilding();
+        @Nullable final AbstractBuilding homeBuilding = citizenColonyHandler.getHomeBuilding();
         if (homeBuilding != null)
         {
             return homeBuilding.getLocation();
         }
-        else if (getColony() != null && getColony().getBuildingManager().getTownHall() != null)
+        else if (citizenColonyHandler.getColony() != null && citizenColonyHandler.getColony().getBuildingManager().getTownHall() != null)
         {
-            return getColony().getBuildingManager().getTownHall().getLocation();
+            return citizenColonyHandler.getColony().getBuildingManager().getTownHall().getLocation();
         }
 
         return super.getHomePosition();
     }
 
-    @Nullable
-    public Colony getColony()
+    /**
+     * Mark the citizen dirty to synch the data with the client.
+     */
+    public void markDirty()
     {
-        return colony;
-    }
-
-    public boolean isInventoryFull()
-    {
-        return InventoryUtils.isProviderFull(this);
+        if (citizenData != null)
+        {
+            citizenData.markDirty();
+        }
     }
 
     @NotNull
     public DesiredActivity getDesiredActivity()
     {
-        if (this.getColonyJob() instanceof JobGuard)
+        if (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard)
         {
             return DesiredActivity.WORK;
         }
 
-        if (BarbarianUtils.getClosestBarbarianToEntity(this, AVOID_BARBARIAN_RANGE) != null && !(this.getColonyJob() instanceof JobGuard))
+        if (BarbarianUtils.getClosestBarbarianToEntity(this, AVOID_BARBARIAN_RANGE) != null && !(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
         {
             return DesiredActivity.SLEEP;
         }
@@ -1761,12 +792,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
             if (isDay && citizenData != null)
             {
                 isDay = false;
-                final double decreaseBy = getPerBuildingFoodCost();
+                final double decreaseBy = citizenColonyHandler.getPerBuildingFoodCost();
                 citizenData.decreaseSaturation(decreaseBy);
                 citizenData.markDirty();
             }
 
-            setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.sleeping"));
+            citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.sleeping"));
             return DesiredActivity.SLEEP;
         }
 
@@ -1774,12 +805,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (CompatibilityUtils.getWorld(this).isRaining() && !shouldWorkWhileRaining())
         {
-            setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"), new TextComponentTranslation("com.minecolonies.coremod.status.rainStop"));
+            citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"), new TextComponentTranslation("com.minecolonies.coremod.status.rainStop"));
             return DesiredActivity.IDLE;
         }
         else
         {
-            if (this.getNavigator() != null && (this.getNavigator().getPath() != null && this.getNavigator().getPath().getCurrentPathLength() == 0))
+            if (this.getNavigator().getPath() != null && this.getNavigator().getPath().getCurrentPathLength() == 0)
             {
                 this.getNavigator().clearPath();
             }
@@ -1794,449 +825,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private boolean shouldWorkWhileRaining()
     {
-        return (this.getWorkBuilding() != null && (this.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL)) || Configurations.gameplay.workersAlwaysWorkInRain;
-    }
-
-    /**
-     * We override this method and execute no code to avoid citizens travelling
-     * to the nether.
-     *
-     * @param dimensionIn dimension to travel to.
-     */
-    @Override
-    @Nullable
-    public Entity changeDimension(final int dimensionIn)
-    {
-        return null;
-    }
-
-    @NotNull
-    @Override
-    public BlockPos getPosition()
-    {
-        return new BlockPos(posX, posY, posZ);
-    }
-
-    @Override
-    public EnumActionResult applyPlayerInteraction(final EntityPlayer player, final Vec3d vec, final EnumHand hand)
-    {
-        SoundUtils.playInteractionSoundAtCitizenWithChance(CompatibilityUtils.getWorld(this), this.getPosition(), ONE_HUNDRED_PERCENT, this);
-        return super.applyPlayerInteraction(player, vec, hand);
-    }
-
-    /**
-     * Returns the first slot in the inventory with a specific item.
-     *
-     * @param targetItem the item.
-     * @param itemDamage the damage value
-     * @return the slot.
-     */
-    public int findFirstSlotInInventoryWith(final Item targetItem, final int itemDamage)
-    {
-        return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventoryCitizen()), targetItem, itemDamage);
-    }
-
-    /**
-     * Returns the first slot in the inventory with a specific block.
-     *
-     * @param block      the block.
-     * @param itemDamage the damage value
-     * @return the slot.
-     */
-    public int findFirstSlotInInventoryWith(final Block block, final int itemDamage)
-    {
-        return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventoryCitizen()), block, itemDamage);
-    }
-
-    /**
-     * Returns the amount of a certain block in the inventory.
-     *
-     * @param block      the block.
-     * @param itemDamage the damage value
-     * @return the quantity.
-     */
-    public int getItemCountInInventory(final Block block, final int itemDamage)
-    {
-        return InventoryUtils.getItemCountInItemHandler(new InvWrapper(getInventoryCitizen()), block, itemDamage);
-    }
-
-    /**
-     * Returns the amount of a certain item in the inventory.
-     *
-     * @param targetItem the block.
-     * @param itemDamage the damage value.
-     * @return the quantity.
-     */
-    public int getItemCountInInventory(final Item targetItem, final int itemDamage)
-    {
-        return InventoryUtils.getItemCountInItemHandler(new InvWrapper(getInventoryCitizen()), targetItem, itemDamage);
-    }
-
-    /**
-     * Checks if citizen has a certain block in the inventory.
-     *
-     * @param block      the block.
-     * @param itemDamage the damage value
-     * @return true if so.
-     */
-    public boolean hasItemInInventory(final Block block, final int itemDamage)
-    {
-        return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventoryCitizen()), block, itemDamage);
-    }
-
-    /**
-     * Checks if citizen has a certain item in the inventory.
-     *
-     * @param item       the item.
-     * @param itemDamage the damage value
-     * @return true if so.
-     */
-    public boolean hasItemInInventory(final Item item, final int itemDamage)
-    {
-        return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventoryCitizen()), item, itemDamage);
-    }
-
-    /**
-     * Citizen will try to pick up a certain item.
-     *
-     * @param entityItem the item he wants to pickup.
-     */
-    private void tryPickupEntityItem(@NotNull final EntityItem entityItem)
-    {
-        if (!CompatibilityUtils.getWorld(this).isRemote)
-        {
-            if (entityItem.cannotPickup())
-            {
-                return;
-            }
-
-            final ItemStack itemStack = entityItem.getItem();
-            final ItemStack compareStack = itemStack.copy();
-
-            final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(getInventoryCitizen()), itemStack);
-            final int resultingStackSize = ItemStackUtils.isEmpty(resultStack) ? 0 : ItemStackUtils.getSize(resultStack);
-
-            if (ItemStackUtils.isEmpty(resultStack) || ItemStackUtils.getSize(resultStack) != ItemStackUtils.getSize(compareStack))
-            {
-                CompatibilityUtils.getWorld(this).playSound((EntityPlayer) null,
-                  this.getPosition(),
-                  SoundEvents.ENTITY_ITEM_PICKUP,
-                  SoundCategory.AMBIENT,
-                        (float) DEFAULT_VOLUME,
-                  (float) ((this.rand.nextGaussian() * DEFAULT_PITCH_MULTIPLIER + 1.0D) * 2.0D));
-                this.onItemPickup(entityItem, ItemStackUtils.getSize(itemStack) - resultingStackSize);
-
-                final ItemStack overrulingStack = itemStack.copy();
-                overrulingStack.setCount(ItemStackUtils.getSize(itemStack) - resultingStackSize);
-
-                if (getColonyJob() != null)
-                {
-                    getColonyJob().onStackPickUp(overrulingStack);
-                }
-
-                if (ItemStackUtils.isEmpty(resultStack))
-                {
-                    entityItem.setDead();
-                }
-            }
-        }
-    }
-
-    /**
-     * Removes the currently held item.
-     */
-    public void removeHeldItem()
-    {
-        setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
-    }
-
-    /**
-     * Sets the currently held item.
-     *
-     * @param slot from the inventory slot.
-     */
-    public void setHeldItem(final int slot)
-    {
-        getCitizenData().getInventory().setHeldItem(slot);
-        setItemStackToSlot(EntityEquipmentSlot.MAINHAND, getCitizenData().getInventory().getStackInSlot(slot));
-    }
-
-    /**
-     * Swing entity arm, create sound and particle effects.
-     * <p>
-     * Will not break the block.
-     *
-     * @param blockPos Block position.
-     */
-    public void hitBlockWithToolInHand(@Nullable final BlockPos blockPos)
-    {
-        if (blockPos == null)
-        {
-            return;
-        }
-        hitBlockWithToolInHand(blockPos, false);
-    }
-
-    /**
-     * Swing entity arm, create sound and particle effects.
-     * <p>
-     * If breakBlock is true then it will break the block (different sound and
-     * particles), and damage the tool in the citizens hand.
-     *
-     * @param blockPos   Block position.
-     * @param breakBlock if we want to break this block.
-     */
-    private void hitBlockWithToolInHand(@Nullable final BlockPos blockPos, final boolean breakBlock)
-    {
-        if (blockPos == null)
-        {
-            return;
-        }
-
-        this.getLookHelper().setLookPosition(blockPos.getX(), blockPos.getY(), blockPos.getZ(), FACING_DELTA_YAW, getVerticalFaceSpeed());
-
-        this.swingArm(this.getActiveHand());
-
-        final IBlockState blockState = CompatibilityUtils.getWorld(this).getBlockState(blockPos);
-        final Block block = blockState.getBlock();
-        if (breakBlock)
-        {
-            if (!CompatibilityUtils.getWorld(this).isRemote)
-            {
-                MineColonies.getNetwork().sendToAllAround(
-                  new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorld(this).getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
-                  new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorld(this).provider.getDimension(),
-                    blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE));
-            }
-            CompatibilityUtils.getWorld(this).playSound(null,
-              blockPos,
-              block.getSoundType(blockState, CompatibilityUtils.getWorld(this), blockPos, this).getBreakSound(),
-              SoundCategory.BLOCKS,
-              block.getSoundType(blockState, CompatibilityUtils.getWorld(this), blockPos, this).getVolume(),
-              block.getSoundType(blockState, CompatibilityUtils.getWorld(this), blockPos, this).getPitch());
-            CompatibilityUtils.getWorld(this).setBlockToAir(blockPos);
-
-            damageItemInHand(1);
-        }
-        else
-        {
-            if (!CompatibilityUtils.getWorld(this).isRemote)
-            {
-                final BlockPos vector = blockPos.subtract(this.getPosition());
-                final EnumFacing facing = EnumFacing.getFacingFromVector(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
-
-                MineColonies.getNetwork().sendToAllAround(
-                  new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorld(this).getBlockState(blockPos), facing.ordinal()),
-                  new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorld(this).provider.getDimension(), blockPos.getX(),
-                    blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE));
-            }
-            CompatibilityUtils.getWorld(this).playSound((EntityPlayer) null,
-              blockPos,
-              block.getSoundType(blockState, CompatibilityUtils.getWorld(this), blockPos, this).getBreakSound(),
-              SoundCategory.BLOCKS,
-              block.getSoundType(blockState, CompatibilityUtils.getWorld(this), blockPos, this).getVolume(),
-              block.getSoundType(blockState, CompatibilityUtils.getWorld(this), blockPos, this).getPitch());
-        }
-    }
-
-    /**
-     * Damage the current held item.
-     *
-     * @param damage amount of damage.
-     */
-    public void damageItemInHand(final int damage)
-    {
-        final ItemStack heldItem = getCitizenData().getInventory().getHeldItemMainhand();
-        //If we hit with bare hands, ignore
-        if (heldItem == null)
-        {
-            return;
-        }
-        heldItem.damageItem(damage, this);
-
-        //check if tool breaks
-        if (ItemStackUtils.getSize(heldItem) < 1)
-        {
-            getInventoryCitizen().setInventorySlotContents(getInventoryCitizen().getHeldItemSlot(), ItemStackUtils.EMPTY);
-            this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
-        }
-    }
-
-    /**
-     * Swing entity arm, create sound and particle effects.
-     * <p>
-     * This will break the block (different sound and particles),
-     * and damage the tool in the citizens hand.
-     *
-     * @param blockPos Block position.
-     */
-    public void breakBlockWithToolInHand(@Nullable final BlockPos blockPos)
-    {
-        if (blockPos == null)
-        {
-            return;
-        }
-        hitBlockWithToolInHand(blockPos, true);
-    }
-
-    /**
-     * Sends a localized message from the citizen containing a language string
-     * with a key and arguments.
-     *
-     * @param key  the key to retrieve the string.
-     * @param args additional arguments.
-     */
-    public void sendLocalizedChat(final String key, final Object... args)
-    {
-        sendChat(key, args);
-    }
-
-    /**
-     * Sends a chat string close to the citizen.
-     *
-     * @param msg the message string.
-     */
-    private void sendChat(final String key, @Nullable final Object... msg)
-    {
-        if (msg == null || statusMessages.containsKey(key))
-        {
-            return;
-        }
-
-        final TextComponentTranslation requiredItem;
-
-        if (msg.length == 0)
-        {
-            requiredItem = new TextComponentTranslation(key);
-        }
-        else
-        {
-            statusMessages.put(key + msg[0], ticksExisted);
-            requiredItem = new TextComponentTranslation(key, msg);
-        }
-
-        final TextComponentString citizenDescription = new TextComponentString(" ");
-        citizenDescription.appendText(this.getCustomNameTag()).appendText(": ");
-        final TextComponentString colonyDescription = new TextComponentString(" at " + this.getColony().getName() + ":");
-
-        final List<EntityPlayer> players = new ArrayList<>(colony.getMessageEntityPlayers());
-        final EntityPlayer owner = ServerUtils.getPlayerFromUUID(CompatibilityUtils.getWorld(this), this.getColony().getPermissions().getOwner());
-        if (owner != null)
-        {
-            players.remove(owner);
-            LanguageHandler.sendPlayerMessage(owner,
-              this.getColonyJob() == null ? "" : this.getColonyJob().getName(), citizenDescription, requiredItem);
-        }
-
-        LanguageHandler.sendPlayersMessage(players,
-          this.getColonyJob() == null ? "" : this.getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
-    }
-
-    /**
-     * Set the skill modifier which defines how fast a citizen levels in a
-     * certain skill.
-     *
-     * @param modifier input modifier.
-     */
-    public void setSkillModifier(final int modifier)
-    {
-        skillModifier = modifier;
-    }
-
-    /**
-     * Called when the citizen wakes up.
-     */
-    public void onWakeUp()
-    {
-        if (this.getWorkBuilding() != null)
-        {
-            setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.working"));
-            this.getWorkBuilding().onWakeUp();
-        }
-        if (this.getColonyJob() != null)
-        {
-            this.getColonyJob().onWakeUp();
-        }
-
-        final AbstractBuilding homeBuilding = this.getHomeBuilding();
-        if (homeBuilding != null)
-        {
-            homeBuilding.onWakeUp();
-        }
-
-        //Only do this if he really sleeps
-        if (!isAsleep())
-        {
-            return;
-        }
-        
-        final BlockPos spawn;
-        if (!getBedLocation().equals(BlockPos.ORIGIN))
-        {
-            spawn = BlockBed.getSafeExitLocation(world, getBedLocation(), 0);
-        }
-        else
-        {
-            spawn = getPosition();
-        }
-
-        if (spawn != null && !spawn.equals(BlockPos.ORIGIN))
-        {
-            setPosition(spawn.getX() + Constants.HALF_BLOCK, spawn.getY() + Constants.HALF_BLOCK, spawn.getZ() + Constants.HALF_BLOCK);
-        }
-
-        setIsAsleep(false);
-        dataManager.set(DATA_BED_POS, new BlockPos(0, 0, 0));
-    }
-
-    /**
-     * Is the citizen a sleep?
-     *
-     * @return true when a sleep.
-     */
-    public boolean isAsleep()
-    {
-        return dataManager.get(DATA_IS_ASLEEP);
-    }
-
-    /**
-     * Sets if the citizen is a sleep.
-     * Caution: Use trySleep(BlockPos) for better control
-     *
-     * @param isAsleep True to make the citizen sleep.
-     */
-    public void setIsAsleep(final boolean isAsleep)
-    {
-        dataManager.set(DATA_IS_ASLEEP, isAsleep);
-    }
-
-    /**
-     * Returns the orientation of the bed in degrees.
-     */
-    @SideOnly(Side.CLIENT)
-    public float getBedOrientationInDegrees()
-    {
-        final IBlockState state = this.getBedLocation() == null ? null : this.world.getBlockState(getBedLocation());
-        if (state != null && state.getBlock().isBed(state, world, getBedLocation(), this))
-        {
-            final EnumFacing enumfacing = state.getBlock().getBedDirection(state, world, getBedLocation());
-
-            switch (enumfacing)
-            {
-                case SOUTH:
-                    return NINETY_DEGREE;
-                case WEST:
-                    return 0.0F;
-                case NORTH:
-                    return THREE_QUARTERS;
-                case EAST:
-                    return HALF_ROTATION;
-                default:
-                    return 0F;
-            }
-        }
-
-        return 0.0F;
+        return (citizenColonyHandler.getWorkBuilding() != null && (citizenColonyHandler.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL))
+                 || Configurations.gameplay.workersAlwaysWorkInRain
+                 || (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard);
     }
 
     /**
@@ -2244,10 +835,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void playMoveAwaySound()
     {
-        if (getColonyJob() != null)
+        if (citizenJobHandler.getColonyJob() != null)
         {
             SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorld(this), getPosition(),
-              getColonyJob().getMoveAwaySound(), 1);
+              citizenJobHandler.getColonyJob().getMoveAwaySound(), 1);
         }
     }
 
@@ -2261,11 +852,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return proxy;
     }
 
+    /**
+     * Decrease the saturation of the citizen for 1 action.
+     */
     public void decreaseSaturationForAction()
     {
         if (citizenData != null)
         {
-            citizenData.decreaseSaturation(getPerBuildingFoodCost());
+            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost());
             citizenData.markDirty();
         }
     }
@@ -2276,10 +870,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         if (obj instanceof EntityCitizen)
         {
             final EntityCitizen citizen = (EntityCitizen) obj;
-            if (citizen.colonyId == this.colonyId && citizen.citizenId == this.citizenId)
-            {
-                return true;
-            }
+            return citizen.citizenColonyHandler.getColonyId() == this.citizenColonyHandler.getColonyId() && citizen.citizenId == this.citizenId;
         }
         return false;
     }
@@ -2287,42 +878,125 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public int hashCode()
     {
-        return Objects.hash(super.hashCode(), citizenId, colonyId);
+        return Objects.hash(super.hashCode(), citizenId, citizenColonyHandler.getColonyId());
     }
 
     /**
-     * Get the amount the worker should decrease its saturation by each action done or x blocks traveled.
-     * @return the double describing it.
+     * Getter for the citizen id.
+     * @return the id.
      */
-    private double getPerBuildingFoodCost()
+    public int getCitizenId()
     {
-        return getWorkBuilding() == null || getWorkBuilding().getBuildingLevel() == 0 ? 1
-                : (SATURATION_DECREASE_FACTOR * Math.pow(2, getWorkBuilding().getBuildingLevel() - 1.0));
+        return citizenId;
     }
 
     /**
-     * Enum describing the citizens activity.
+     * Setter for the citizen id.
+     * @param id the id to set.
      */
-    public enum DesiredActivity
+    public void setCitizenId(final int id)
     {
-        SLEEP,
-        IDLE,
-        WORK
+        this.citizenId = id;
     }
 
     /**
-     * Used for chat messages, sounds, and other need based interactions.
-     * Created: June 20, 2014
-     *
-     * @author Colton
+     * Setter for the citizen data.
+     * @param data the data to set.
      */
-    public enum Status
+    public void setCitizenData(@Nullable final CitizenData data)
     {
-        IDLE,
-        SLEEPING,
-        WORKING,
-        GETTING_ITEMS,
-        NEED_ASSISTANCE,
-        PATHFINDING_ERROR
+        this.citizenData = data;
+    }
+
+    /**
+     * Getter for the current position.
+     * @return the current position.
+     */
+    public BlockPos getCurrentPosition()
+    {
+        return currentPosition;
+    }
+
+    /**
+     * Setter for the current position.
+     * @param currentPosition the position to set.
+     */
+    public void setCurrentPosition(final BlockPos currentPosition)
+    {
+        this.currentPosition = currentPosition;
+    }
+
+    ///////// -------------------- The Handlers -------------------- /////////
+
+    /**
+     * The Handler for all experience related methods.
+     * @return the instance of the handler.
+     */
+    public CitizenExperienceHandler getCitizenExperienceHandler()
+    {
+        return citizenExperienceHandler;
+    }
+
+    /**
+     * The Handler for all chat related methods.
+     * @return the instance of the handler.
+     */
+    public CitizenChatHandler getCitizenChatHandler()
+    {
+        return citizenChatHandler;
+    }
+
+    /**
+     * The Handler for all status related methods.
+     * @return the instance of the handler.
+     */
+    public CitizenStatusHandler getCitizenStatusHandler()
+    {
+        return citizenStatusHandler;
+    }
+
+    /**
+     * The Handler for all item related methods.
+     * @return the instance of the handler.
+     */
+    public CitizenItemHandler getCitizenItemHandler()
+    {
+        return citizenItemHandler;
+    }
+
+    /**
+     * The Handler for all inventory related methods.
+     * @return the instance of the handler.
+     */
+    public CitizenInventoryHandler getCitizenInventoryHandler()
+    {
+        return citizenInventoryHandler;
+    }
+
+    /**
+     * The Handler for all colony related methods.
+     * @return the instance of the handler.
+     */
+    public CitizenColonyHandler getCitizenColonyHandler()
+    {
+        return citizenColonyHandler;
+    }
+
+    /**
+     * The Handler for all job related methods.
+     * @return the instance of the handler.
+     */
+    public CitizenJobHandler getCitizenJobHandler()
+    {
+        return citizenJobHandler;
+    }
+
+    /**
+     * The Handler for all job related methods.
+     * @return the instance of the handler.
+     */
+    public CitizenSleepHandler getCitizenSleepHandler()
+    {
+        return citizenSleepHandler;
     }
 }

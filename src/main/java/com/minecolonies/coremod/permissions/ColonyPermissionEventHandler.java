@@ -7,7 +7,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.jobs.JobGuard;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.permissions.PermissionEvent;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -179,7 +179,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final ExplosionEvent.Detonate event)
     {
-        if (!Configurations.gameplay.enableColonyProtection || !Configurations.gameplay.turnOffExplosionsInColonies)
+        if (!Configurations.gameplay.turnOffExplosionsInColonies)
         {
             return;
         }
@@ -478,7 +478,7 @@ public class ColonyPermissionEventHandler
             if (event.getTarget() instanceof EntityCitizen)
             {
                 final EntityCitizen citizen = (EntityCitizen) event.getTarget();
-                if (citizen.getColonyJob() instanceof JobGuard && perms.hasPermission(event.getEntityPlayer(), Action.GUARDS_ATTACK))
+                if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && perms.hasPermission(event.getEntityPlayer(), Action.GUARDS_ATTACK))
                 {
                     return;
                 }

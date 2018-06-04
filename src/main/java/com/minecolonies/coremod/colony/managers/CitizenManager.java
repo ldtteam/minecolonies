@@ -17,7 +17,6 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveCitizenMessage;
-import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -82,8 +81,8 @@ public class CitizenManager implements ICitizenManager
 
         //  Citizens before Buildings, because Buildings track the Citizens
         citizens.putAll(NBTUtils.streamCompound(compound.getTagList(TAG_CITIZENS, Constants.NBT.TAG_COMPOUND))
-                          .map(this::deserializeCitizen)
-                          .collect(Collectors.toMap(CitizenData::getId, Function.identity())));
+                .map(this::deserializeCitizen)
+                .collect(Collectors.toMap(CitizenData::getId, Function.identity())));
     }
 
     private CitizenData deserializeCitizen(@NotNull final NBTTagCompound compound)
@@ -115,23 +114,17 @@ public class CitizenManager implements ICitizenManager
                 if (citizen.getCitizenEntity().isPresent())
                 {
                     final List<EntityCitizen> list = colony.getWorld()
-                                                       .getEntities(EntityCitizen.class,
-                                                         entityCitizen -> entityCitizen.getColony().getID() == colony.getID()
-                                                                            && entityCitizen.getCitizenData().getId() == citizen.getId());
+                            .getEntities(EntityCitizen.class,
+                                    entityCitizen -> entityCitizen.getCitizenColonyHandler().getColony().getID() == colony.getID() && entityCitizen.getCitizenData().getId() == citizen.getId());
 
                     if (!list.isEmpty() && citizen.getCitizenEntity().get().getEntityId() != list.get(0).getEntityId())
                     {
                         citizen.setCitizenEntity(list.get(0));
                     }
-                    else if (list.isEmpty() && colony.getWorld().isBlockLoaded(citizen.getLastPosition()))
-                    {
-                        citizen.setCitizenEntity(null);
-                        citizen.updateCitizenEntityIfNecessary();
-                        Log.getLogger().warn("Citizen went MIA, updating him!");
-                    }
 
                     for (int i = 1; i < list.size(); i++)
                     {
+                        Log.getLogger().warn("Removing duplicate entity now!");
                         colony.getWorld().removeEntity(list.get(i));
                     }
 
@@ -142,21 +135,7 @@ public class CitizenManager implements ICitizenManager
                           .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewCitizenViewMessage(colony, citizen), player));
                     }
                 }
-                else
-                {
-                    citizen.updateCitizenEntityIfNecessary();
-                }
             }
-        }
-    }
-
-    @Override
-    public void spawnCitizenIfNull(@NotNull final CitizenData data, @NotNull final World world)
-    {
-        if (!data.getCitizenEntity().isPresent())
-        {
-            Log.getLogger().warn("Citizen went AWOL: Citizen: " + data.getId() + " colony: " + colony.getID());
-            data.updateCitizenEntityIfNecessary();
         }
     }
 
@@ -213,14 +192,13 @@ public class CitizenManager implements ICitizenManager
                 citizenData.setCitizenEntity(entity);
             }
 
-            entity.setColony(colony, citizenData);
+            entity.getCitizenColonyHandler().setColony(colony, citizenData);
 
             entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
             world.spawnEntity(entity);
 
             colony.getStatsManager().checkAchievements();
             markCitizensDirty();
-            colony.markDirty();
         }
     }
 
@@ -316,6 +294,7 @@ public class CitizenManager implements ICitizenManager
     @Override
     public void markCitizensDirty()
     {
+        colony.markDirty();
         isCitizensDirty = true;
     }
 
@@ -448,13 +427,6 @@ public class CitizenManager implements ICitizenManager
     @Override
     public void onWorldTick(final TickEvent.WorldTickEvent event)
     {
-        //  Detect CitizenData whose EntityCitizen no longer exist in world, and clear the mapping
-        //  Consider handing this in an ChunkUnload Event instead?
-        getCitizens()
-          .stream()
-          .filter(ColonyUtils::isCitizenMissingFromWorld)
-          .forEach(CitizenData::updateCitizenEntityIfNecessary);
-
         //  Cleanup disappeared citizens
         //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
         //  Every CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
@@ -462,7 +434,7 @@ public class CitizenManager implements ICitizenManager
         {
             //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
             //  If we don't have any references to them, destroy the citizen
-            getCitizens().stream().filter(Objects::nonNull).forEach(citizenData -> spawnCitizenIfNull(citizenData, colony.getWorld()));
+            getCitizens().stream().filter(Objects::nonNull).forEach(CitizenData::updateCitizenEntityIfNecessary);
         }
 
         //  Spawn Citizens

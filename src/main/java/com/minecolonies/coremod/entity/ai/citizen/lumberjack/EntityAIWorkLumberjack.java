@@ -17,6 +17,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -176,7 +177,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
           new AITarget(LUMBERJACK_GATHERING, this::gathering),
           new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain)
         );
-        worker.setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
+        worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
                                   + CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma());
         worker.setCanPickUpLoot(true);
     }
@@ -245,7 +246,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     {
         if (job.tree == null)
         {
-            worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.searchingtree"));
+            worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.searchingtree"));
 
             return findTree();
         }
@@ -263,7 +264,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
         if (pathResult == null || pathResult.treeLocation == null)
         {
-            pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE + searchIncrement, 1.0D, ((BuildingLumberjack) building).getTreesToCut(), worker.getColony());
+            pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE + searchIncrement, 1.0D, ((BuildingLumberjack) building).getTreesToCut(), worker.getCitizenColonyHandler().getColony());
             return getState();
         }
         if (pathResult.isPathReachingDestination())
@@ -329,7 +330,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private AIState chopTree()
     {
-        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.chopping"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.chopping"));
 
         if(job.tree.hasLogs() || checkedInHut)
         {
@@ -441,7 +442,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             return;
         }
         //now we seem to be stuck!
-        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.stuckinleaves"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.stuckinleaves"));
 
         tryGettingUnstuckFromLeaves();
     }
@@ -506,7 +507,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             return false;
         }
 
-        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.planting"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.planting"));
 
         final int saplingSlot = findSaplingSlot();
         final BlockPos dirtLocation = new BlockPos(location.getX(), location.getY() - 1, location.getZ());
@@ -517,7 +518,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         {
             final ItemStack stack = getInventory().getStackInSlot(saplingSlot);
             final Block block = ((ItemBlock) stack.getItem()).getBlock();
-            worker.setHeldItem(saplingSlot);
+            worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, saplingSlot);
 
             placeSaplings(saplingSlot, stack, block);
             final SoundType soundType = block.getSoundType(world.getBlockState(location), world, location, worker);
@@ -679,7 +680,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private AIState gathering()
     {
-        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.gathering"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.gathering"));
 
         if (getItemsForPickUp() == null)
         {

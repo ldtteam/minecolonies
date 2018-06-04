@@ -25,6 +25,7 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -135,7 +136,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
           new AITarget(DUMPING, this::dump)
 
         );
-        worker.setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
+        worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
         worker.setCanPickUpLoot(true);
     }
 
@@ -172,7 +173,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return START_WORKING;
         }
 
-        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.gathering"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.gathering"));
 
         if (!worker.isWorkerAtSiteWithMove(gatherTarget, MIN_DISTANCE_TO_WAREHOUSE))
         {
@@ -229,7 +230,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     @Nullable
     private BlockPos getRandomBuilding()
     {
-        if (worker.getColony() == null || getOwnBuilding() == null)
+        if (worker.getCitizenColonyHandler().getColony() == null || getOwnBuilding() == null)
         {
             return null;
         }
@@ -262,7 +263,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private AbstractBuilding returnRandomBuilding()
     {
-        final Collection<AbstractBuilding> buildingList = worker.getColony().getBuildingManager().getBuildings().values();
+        final Collection<AbstractBuilding> buildingList = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values();
         final Object[] buildingArray = buildingList.toArray();
 
         final int random = worker.getRandom().nextInt(buildingArray.length);
@@ -311,7 +312,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(building.getTileEntity().getSingleChestHandler(), currentSlot, new InvWrapper(worker.getInventoryCitizen()));
         building.markDirty();
         setDelay(DUMP_AND_GATHER_DELAY);
-        worker.setHeldItem(SLOT_HAND);
+        worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, SLOT_HAND);
         return false;
     }
 
@@ -333,7 +334,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private BlockPos getWeightedRandom()
     {
         double completeWeight = 0.0;
-        for (final AbstractBuilding building : worker.getColony().getBuildingManager().getBuildings().values())
+        for (final AbstractBuilding building : worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values())
         {
             if (!building.isBeingGathered())
             {
@@ -342,7 +343,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
         final double r = Math.random() * completeWeight;
         double countWeight = 0.0;
-        for (final AbstractBuilding building : worker.getColony().getBuildingManager().getBuildings().values())
+        for (final AbstractBuilding building : worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values())
         {
             if (!building.isBeingGathered())
             {
@@ -383,7 +384,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     public AIState dump()
     {
-        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.dumping"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.dumping"));
 
         if (!worker.isWorkerAtSiteWithMove(getWareHouse().getLocation(), MIN_DISTANCE_TO_WAREHOUSE))
         {
@@ -392,12 +393,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         getWareHouse().getTileEntity().dumpInventoryIntoWareHouse(worker.getInventoryCitizen());
         gatherTarget = null;
-        worker.setHeldItem(SLOT_HAND);
+        worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, SLOT_HAND);
 
-        final Set<IToken> finallyAssignedTokens = worker.getColony().getRequestManager().getPlayerResolver()
+        final Set<IToken> finallyAssignedTokens = worker.getCitizenColonyHandler().getColony().getRequestManager().getPlayerResolver()
                 .getAllAssignedRequests().stream().collect(Collectors.toSet());
 
-        finallyAssignedTokens.forEach(iToken -> worker.getColony().getRequestManager().reassignRequest(iToken, ImmutableList.of()));
+        finallyAssignedTokens.forEach(iToken -> worker.getCitizenColonyHandler().getColony().getRequestManager().reassignRequest(iToken, ImmutableList.of()));
 
         if (job.isReturning())
         {
@@ -421,7 +422,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
 
             final Colony buildingColony = building.getColony();
-            final Colony ownColony = worker.getColony();
+            final Colony ownColony = worker.getCitizenColonyHandler().getColony();
             if (building instanceof BuildingWareHouse && ownColony != null && buildingColony != null && buildingColony.getID() == ownColony.getID()
                   && ((BuildingWareHouse) building).registerWithWareHouse((BuildingDeliveryman) this.getOwnBuilding()))
             {
@@ -461,11 +462,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return START_WORKING;
         }
 
-        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.delivering"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.delivering"));
 
         if (!buildingToDeliver.isReachableFromLocation(worker.getLocation()))
         {
-            Log.getLogger().info(worker.getColony().getName() + ": " + worker.getName() + ": Can't inter dimension yet: ");
+            Log.getLogger().info(worker.getCitizenColonyHandler().getColony().getName() + ": " + worker.getName() + ": Can't inter dimension yet: ");
             return START_WORKING;
         }
 
@@ -527,8 +528,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         lastDelivery = deliveryHut.getBuildingToDeliver();
-        worker.addExperience(1.0D);
-        worker.setHeldItem(SLOT_HAND);
+        worker.getCitizenExperienceHandler().addExperience(1.0D);
+        worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, SLOT_HAND);
         deliveryHut.setBuildingToDeliver(null);
         job.finishRequest(true);
 
@@ -653,7 +654,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean checkIfExecute()
     {
-        worker.setAIMoveSpeed((float) (BASE_MOVEMENT_SPEED + BASE_MOVEMENT_SPEED * worker.getLevel() / WALKING_SPEED_MULTIPLIER));
+        worker.setAIMoveSpeed((float) (BASE_MOVEMENT_SPEED + BASE_MOVEMENT_SPEED * worker.getCitizenExperienceHandler().getLevel() / WALKING_SPEED_MULTIPLIER));
 
         if (getWareHouse() != null && getWareHouse().getTileEntity() != null)
         {
@@ -669,7 +670,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
 
             final Colony buildingColony = building.getColony();
-            final Colony ownColony = worker.getColony();
+            final Colony ownColony = worker.getCitizenColonyHandler().getColony();
             if (building instanceof BuildingWareHouse && ownColony != null && buildingColony != null && buildingColony.getID() == ownColony.getID()
                   && ((BuildingWareHouse) building).registerWithWareHouse((BuildingDeliveryman) this.getOwnBuilding()))
             {

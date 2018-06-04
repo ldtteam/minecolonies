@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.entity.AbstractEntityCitizen;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.sounds.AbstractWorkerSounds;
 import com.minecolonies.coremod.sounds.ModSoundEvents;
@@ -73,14 +74,14 @@ public final class SoundUtils
         {
             String prefix = "";
 
-            if (citizen.getWorkBuilding() != null)
+            if (citizen.getCitizenColonyHandler().getWorkBuilding() != null)
             {
-                prefix = citizen.getWorkBuilding().getJobName();
+                prefix = citizen.getCitizenColonyHandler().getWorkBuilding().getJobName();
             }
 
-            if (GUARD_TOWER.equals(prefix) && citizen.getWorkBuilding() instanceof AbstractBuildingGuards)
+            if (GUARD_TOWER.equals(prefix) && citizen.getCitizenColonyHandler().getWorkBuilding() instanceof AbstractBuildingGuards)
             {
-                if (((AbstractBuildingGuards) citizen.getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
+                if (((AbstractBuildingGuards) citizen.getCitizenColonyHandler().getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
                 {
                     prefix = "archer";
                 }
@@ -145,32 +146,34 @@ public final class SoundUtils
 
     /**
      * Play an interaction sound with chance at the citizen.
-     *
-     * @param world    the world.
+     *  @param world    the world.
      * @param position the position.
      * @param chance   the chance.
      * @param citizen  the citizen.
      */
-    public static void playInteractionSoundAtCitizenWithChance(@NotNull final World world, @NotNull final BlockPos position, final int chance, @NotNull final EntityCitizen citizen)
+    public static void playInteractionSoundAtCitizenWithChance(@NotNull final World world, @NotNull final BlockPos position, final int chance, @NotNull final AbstractEntityCitizen citizen)
     {
         if (chance > rand.nextInt(ONE_HUNDRED))
         {
             String prefix = "";
 
-            if (citizen.getWorkBuilding() != null)
+            if (citizen instanceof EntityCitizen)
             {
-                prefix = citizen.getWorkBuilding().getJobName();
-            }
-
-            if ("GuardTower".equals(prefix) && citizen.getWorkBuilding() instanceof AbstractBuildingGuards)
-            {
-                if (((AbstractBuildingGuards) citizen.getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
+                if (((EntityCitizen) citizen).getCitizenColonyHandler().getWorkBuilding() != null)
                 {
-                    prefix = "archer";
+                    prefix = ((EntityCitizen) citizen).getCitizenColonyHandler().getWorkBuilding().getJobName();
                 }
-                else
+
+                if (GUARD_TOWER.equals(prefix) && ((EntityCitizen) citizen).getCitizenColonyHandler().getWorkBuilding() instanceof AbstractBuildingGuards)
                 {
-                    prefix = "knight";
+                    if (((AbstractBuildingGuards) ((EntityCitizen) citizen).getCitizenColonyHandler().getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
+                    {
+                        prefix = "archer";
+                    }
+                    else
+                    {
+                        prefix = "knight";
+                    }
                 }
             }
 

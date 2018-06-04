@@ -155,14 +155,14 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     private static void doCitizenInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
     {
         @Nullable final EntityCitizen citizen = (EntityCitizen) CompatibilityUtils.getWorld(player).getEntityByID(message.entityID);
-        if (citizen != null && checkPermissions(citizen.getColony(), player))
+        if (citizen != null && checkPermissions(citizen.getCitizenColonyHandler().getColony(), player))
         {
             if (!StringUtils.isNullOrEmpty(message.name))
             {
                 citizen.getInventoryCitizen().setCustomName(message.name);
             }
 
-            player.openGui(MineColonies.instance, GuiHandler.ID.CITIZEN_INVENTORY.ordinal(), player.world, citizen.getColony().getID(), citizen.getCitizenData().getId(), 0);
+            player.openGui(MineColonies.instance, GuiHandler.ID.CITIZEN_INVENTORY.ordinal(), player.world, citizen.getCitizenColonyHandler().getColony().getID(), citizen.getCitizenData().getId(), 0);
         }
     }
 

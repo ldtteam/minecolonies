@@ -108,7 +108,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
         super.registerTargets(
           new AITarget(SMELTER_SMELTING_ITEMS, this::smeltStuff)
         );
-        worker.setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
+        worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
                                   + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);
     }
@@ -120,7 +120,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
      */
     private AIState smeltStuff()
     {
-        worker.setLatestStatus(new TextComponentTranslation(SMELTING_DOWN));
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(SMELTING_DOWN));
         if (walkToBuilding())
         {
             return getState();
@@ -148,10 +148,10 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
                 return START_WORKING;
             }
 
-            worker.setHeldItem(slot);
+            worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, slot);
         }
 
-        worker.hitBlockWithToolInHand(getOwnBuilding().getLocation());
+        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getLocation());
 
         if (progress >= getRequiredProgressForMakingRawMaterial())
         {
@@ -188,7 +188,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
                 new InvWrapper(worker.getInventoryCitizen()).setStackInSlot(slot, stack);
             }
 
-            worker.addExperience(BASE_XP_GAIN);
+            worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
             worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
             return START_WORKING;
         }
@@ -271,7 +271,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
                 new InvWrapper(furnace).setStackInSlot(RESULT_SLOT, resultStack);
                 return;
             }
-            worker.addExperience(BASE_XP_GAIN);
+            worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         }
     }
 
@@ -291,7 +291,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
         {
             return SMELTER_SMELTING_ITEMS;
         }
-        worker.setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
         setDelay(WAIT_AFTER_REQUEST);
         walkToBuilding();
         return START_WORKING;
@@ -337,7 +337,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
      */
     private int getRequiredProgressForMakingRawMaterial()
     {
-        return PROGRESS_MULTIPLIER / Math.min(worker.getLevel() + 1, MAX_LEVEL) * HITTING_TIME;
+        return PROGRESS_MULTIPLIER / Math.min(worker.getCitizenExperienceHandler().getLevel() + 1, MAX_LEVEL) * HITTING_TIME;
     }
 
     private ItemStack extractEnchantFromItem(final ItemStack item)
