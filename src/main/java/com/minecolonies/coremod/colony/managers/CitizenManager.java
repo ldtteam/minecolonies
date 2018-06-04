@@ -65,6 +65,11 @@ public class CitizenManager implements ICitizenManager
     private final Colony colony;
 
     /**
+     * Datas about the happiness of a colony
+     */
+    private final HappinessData happinessData = new HappinessData();
+
+    /**
      * Creates the Citizenmanager for a colony.
      *
      * @param colony the colony.
@@ -328,11 +333,6 @@ public class CitizenManager implements ICitizenManager
     {
         this.maxCitizens = newMaxCitizens;
     }
-
-    /**
-     * Datas about the happiness of a colony
-     */
-    private final HappinessData happinessData = new HappinessData();
 
     @Override
     public void checkCitizensForHappiness()
