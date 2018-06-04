@@ -598,6 +598,14 @@ public final class WindowConstants
     public static final String GUARD_HAPPINESS_LEVEL      = "guardsLevel";
     public static final String HOUSE_HAPPINESS_LEVEL      = "houseLevel";
     public static final String SATURATION_HAPPINESS_LEVEL = "saturationLevel";
+
+    /**
+     * Icons used to display the happiness
+     */
+    public static final String RED_ICON    = "minecolonies:textures/gui/red_icon.png";
+    public static final String YELLOW_ICON = "minecolonies:textures/gui/yellow_icon.png";
+    public static final String GREEN_ICON  = "minecolonies:textures/gui/green_icon.png";
+
     /**
      * public constructor to hide implicit public one.
      */

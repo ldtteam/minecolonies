@@ -127,9 +127,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      * The ScrollingList of all allies.
      */
     private final        ScrollingList alliesList;
-    private static final String        RED_BUTTON    = "minecolonies:textures/gui/red_button.png";
-    private static final String        YELLOW_BUTTON = "minecolonies:textures/gui/yellow_button.png";
-    private static final String        GREEN_BUTTON  = "minecolonies:textures/gui/green_button.png";
+
     /**
      * The ScrollingList of all feuds.
      */
@@ -755,13 +753,13 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             switch (levels[i])
             {
                 case HappinessData.INCREASE:
-                    image.setImage(GREEN_BUTTON);
+                    image.setImage(GREEN_ICON);
                     break;
                 case HappinessData.STABLE:
-                    image.setImage(YELLOW_BUTTON);
+                    image.setImage(YELLOW_ICON);
                     break;
                 case HappinessData.DECREASE:
-                    image.setImage(RED_BUTTON);
+                    image.setImage(RED_ICON);
                     break;
                 default:
                     throw new IllegalStateException(imagesIds[i] + "isn't in [" + HappinessData.INCREASE + "," + HappinessData.STABLE + "," + HappinessData.DECREASE + "] range.");
