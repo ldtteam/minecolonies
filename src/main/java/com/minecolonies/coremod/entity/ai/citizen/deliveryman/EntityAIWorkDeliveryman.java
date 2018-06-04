@@ -11,7 +11,9 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.*;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingContainer;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
@@ -258,25 +260,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Calculates a random building and returns it.
-     * @return
-     */
-    private AbstractBuilding returnRandomBuilding()
-    {
-        final Collection<AbstractBuilding> buildingList = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values();
-        final Object[] buildingArray = buildingList.toArray();
-
-        final int random = worker.getRandom().nextInt(buildingArray.length);
-        final AbstractBuilding building = (AbstractBuilding) buildingArray[random];
-
-        if (building instanceof BuildingWareHouse || building instanceof BuildingTownHall)
-        {
-            return null;
-        }
-        return building;
-    }
-
-    /**
      * Gather not needed Items from building.
      *
      * @param building building to gather it from.
@@ -316,21 +299,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         return false;
     }
 
-    /**
-     * Check if the worker can hold that much items.
-     * It depends on his building level.
-     * Level 1: 1 stack Level 2: 2 stacks, 4 stacks, 8, unlimited.
-     * That's 2^buildingLevel-1.
-     */
-    private boolean cannotHoldMoreItems()
-    {
-        if (getOwnBuilding().getBuildingLevel() >= getOwnBuilding().getMaxBuildingLevel())
-        {
-            return false;
-        }
-        return InventoryUtils.getAmountOfStacksInItemHandler(new InvWrapper(worker.getInventoryCitizen())) >= Math.pow(2, getOwnBuilding().getBuildingLevel() - 1.0D);
-    }
-
     private BlockPos getWeightedRandom()
     {
         double completeWeight = 0.0;
@@ -361,6 +329,39 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
         }
         return null;
+    }
+
+    /**
+     * Check if the worker can hold that much items.
+     * It depends on his building level.
+     * Level 1: 1 stack Level 2: 2 stacks, 4 stacks, 8, unlimited.
+     * That's 2^buildingLevel-1.
+     */
+    private boolean cannotHoldMoreItems()
+    {
+        if (getOwnBuilding().getBuildingLevel() >= getOwnBuilding().getMaxBuildingLevel())
+        {
+            return false;
+        }
+        return InventoryUtils.getAmountOfStacksInItemHandler(new InvWrapper(worker.getInventoryCitizen())) >= Math.pow(2, getOwnBuilding().getBuildingLevel() - 1.0D);
+    }
+
+    /**
+     * Calculates a random building and returns it.
+     */
+    private AbstractBuilding returnRandomBuilding()
+    {
+        final Collection<AbstractBuilding> buildingList = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values();
+        final Object[] buildingArray = buildingList.toArray();
+
+        final int random = worker.getRandom().nextInt(buildingArray.length);
+        final AbstractBuilding building = (AbstractBuilding) buildingArray[random];
+
+        if (building instanceof BuildingWareHouse || building instanceof BuildingTownHall)
+        {
+            return null;
+        }
+        return building;
     }
 
     /**
@@ -396,7 +397,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, SLOT_HAND);
 
         final Set<IToken> finallyAssignedTokens = worker.getCitizenColonyHandler().getColony().getRequestManager().getPlayerResolver()
-                .getAllAssignedRequests().stream().collect(Collectors.toSet());
+                                                    .getAllAssignedRequests().stream().collect(Collectors.toSet());
 
         finallyAssignedTokens.forEach(iToken -> worker.getCitizenColonyHandler().getColony().getRequestManager().reassignRequest(iToken, ImmutableList.of()));
 

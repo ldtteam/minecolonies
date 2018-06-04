@@ -200,11 +200,11 @@ public class Configurations
                           + "once done you'll need to recalculate the list."
                           + "EntityMob's already calculated in list.")
         public String[] guardResourceLocations = new String[]
-                                                           {
-                                                             "minecraft:slime",
-                                                             "tconstruct:blueslime"
-                                                           };
-     }
+                                                   {
+                                                     "minecraft:slime",
+                                                     "tconstruct:blueslime"
+                                                   };
+    }
 
     public static class Pathfinding
     {

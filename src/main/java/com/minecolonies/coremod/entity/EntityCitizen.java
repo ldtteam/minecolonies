@@ -12,7 +12,10 @@ import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.CitizenDataView;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
@@ -23,18 +26,28 @@ import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
-import com.minecolonies.coremod.util.*;
+import com.minecolonies.coremod.util.PermissionUtils;
+import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.*;
-import net.minecraft.entity.ai.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.ai.EntityAIOpenDoor;
+import net.minecraft.entity.ai.EntityAISwimming;
+import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.EntityAIWatchClosest2;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.*;
+import net.minecraft.item.ItemFood;
+import net.minecraft.item.ItemNameTag;
+import net.minecraft.item.ItemShield;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.*;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -45,13 +58,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Objects;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.Suppression.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
+import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_NOT_ALLOWED;
+import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_SAME;
 
 /**
  * The Class used to represent the citizen entities.
@@ -240,55 +256,12 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
-     * Set the metadata for rendering.
-     *
-     * @param metadata the metadata required.
-     */
-    @Override
-    public void setRenderMetadata(final String metadata)
-    {
-        super.setRenderMetadata(metadata);
-        dataManager.set(DATA_RENDER_METADATA, getRenderMetadata());
-        //Display some debug info always available while testing
-        //tofo: remove this when in Beta!
-        //Will help track down some hard to find bugs (Pathfinding etc.)
-        if (citizenData != null)
-        {
-            if (citizenJobHandler.getColonyJob() != null && Configurations.gameplay.enableInDevelopmentFeatures)
-            {
-                setCustomNameTag(citizenData.getName() + " (" + citizenStatusHandler.getStatus() + ")[" + citizenJobHandler.getColonyJob().getNameTagDescription() + "]");
-            }
-            else
-            {
-                setCustomNameTag(citizenData.getName());
-            }
-        }
-    }
-
-    /**
      * Get the ILocation of the citizen.
      * @return an ILocation object which contains the dimension and is unique.
      */
     public ILocation getLocation()
     {
         return StandardFactoryController.getInstance().getNewInstance(TypeConstants.ILOCATION, this);
-    }
-
-    /**
-     * Checks if a worker is at his working site.
-     * If he isn't, sets it's path to the location
-     *
-     * @param site  the place where he should walk to
-     * @param range Range to check in
-     * @return True if worker is at site, otherwise false.
-     */
-    public boolean isWorkerAtSiteWithMove(@NotNull final BlockPos site, final int range)
-    {
-        if (proxy == null)
-        {
-            proxy = new EntityCitizenWalkToProxy(this);
-        }
-        return proxy.walkToBlock(site, range, true);
     }
 
     @Override
@@ -310,6 +283,66 @@ public class EntityCitizen extends AbstractEntityCitizen
         citizenItemHandler.updateArmorDamage(damage);
 
         return result;
+    }
+
+    /**
+     * Checks if a worker is at his working site.
+     * If he isn't, sets it's path to the location
+     *
+     * @param site  the place where he should walk to
+     * @param range Range to check in
+     * @return True if worker is at site, otherwise false.
+     */
+    public boolean isWorkerAtSiteWithMove(@NotNull final BlockPos site, final int range)
+    {
+        if (proxy == null)
+        {
+            proxy = new EntityCitizenWalkToProxy(this);
+        }
+        return proxy.walkToBlock(site, range, true);
+    }
+
+    /**
+     * Called when the mob's health reaches 0.
+     *
+     * @param damageSource the attacking entity.
+     */
+    @Override
+    public void onDeath(@NotNull final DamageSource damageSource)
+    {
+        double penalty = CITIZEN_DEATH_PENALTY;
+        if (citizenColonyHandler.getColony() != null && getCitizenData() != null)
+        {
+            if (damageSource.getTrueSource() instanceof EntityPlayer)
+            {
+                for (final Player player : PermissionUtils.getPlayersWithAtLeastRank(citizenColonyHandler.getColony(), Rank.OFFICER))
+                {
+                    if (player.getID().equals(damageSource.getTrueSource().getUniqueID()))
+                    {
+                        penalty = CITIZEN_KILL_PENALTY;
+                        break;
+                    }
+                }
+            }
+
+            citizenExperienceHandler.dropExperience();
+            this.setDead();
+            citizenColonyHandler.getColony().decreaseOverallHappiness(penalty);
+            triggerDeathAchievement(damageSource, citizenJobHandler.getColonyJob());
+            citizenChatHandler.notifyDeath(damageSource);
+            citizenColonyHandler.getColony().getCitizenManager().removeCitizen(getCitizenData());
+        }
+        super.onDeath(damageSource);
+    }
+
+    @Override
+    protected void damageShield(final float damage)
+    {
+        if (getHeldItem(getActiveHand()).getItem() instanceof ItemShield)
+        {
+            citizenItemHandler.damageItemInHand(this.getActiveHand(), (int) damage);
+        }
+        super.damageShield(damage);
     }
 
     @SuppressWarnings(UNCHECKED)
@@ -346,47 +379,23 @@ public class EntityCitizen extends AbstractEntityCitizen
         return super.hasCapability(capability, facing);
     }
 
-    @Override
-    protected void damageShield(final float damage)
-    {
-        if (getHeldItem(getActiveHand()).getItem() instanceof ItemShield)
-        {
-            citizenItemHandler.damageItemInHand(this.getActiveHand(), (int) damage);
-        }
-        super.damageShield(damage);
-    }
-
     /**
-     * Called when the mob's health reaches 0.
-     *
-     * @param damageSource the attacking entity.
+     * Getter for the citizendata.
+     * Tries to get it from the colony is the data is null.
+     * @return the data.
      */
-    @Override
-    public void onDeath(@NotNull final DamageSource damageSource)
+    @Nullable
+    public CitizenData getCitizenData()
     {
-        double penalty = CITIZEN_DEATH_PENALTY;
-        if (citizenColonyHandler.getColony() != null && getCitizenData()  != null)
+        if (citizenData == null && citizenColonyHandler.getColony() != null)
         {
-            if (damageSource.getTrueSource() instanceof EntityPlayer)
+            final CitizenData data = citizenColonyHandler.getColony().getCitizenManager().getCitizen(citizenId);
+            if (data != null)
             {
-                for (final Player player : PermissionUtils.getPlayersWithAtLeastRank(citizenColonyHandler.getColony(), Rank.OFFICER))
-                {
-                    if (player.getID().equals(damageSource.getTrueSource().getUniqueID()))
-                    {
-                        penalty = CITIZEN_KILL_PENALTY;
-                        break;
-                    }
-                }
+                citizenData = data;
             }
-
-            citizenExperienceHandler.dropExperience();
-            this.setDead();
-            citizenColonyHandler.getColony().decreaseOverallHappiness(penalty);
-            triggerDeathAchievement(damageSource, citizenJobHandler.getColonyJob());
-            citizenChatHandler.notifyDeath(damageSource);
-            citizenColonyHandler.getColony().getCitizenManager().removeCitizen(getCitizenData());
         }
-        super.onDeath(damageSource);
+        return citizenData;
     }
 
     /**
@@ -405,22 +414,13 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
-     * Getter for the citizendata.
-     * Tries to get it from the colony is the data is null.
-     * @return the data.
+     * Setter for the citizen data.
+     *
+     * @param data the data to set.
      */
-    @Nullable
-    public CitizenData getCitizenData()
+    public void setCitizenData(@Nullable final CitizenData data)
     {
-        if (citizenData == null && citizenColonyHandler.getColony() != null)
-        {
-            final CitizenData data = citizenColonyHandler.getColony().getCitizenManager().getCitizen(citizenId);
-            if (data != null)
-            {
-                citizenData = data;
-            }
-        }
-        return citizenData;
+        this.citizenData = data;
     }
 
     /**
@@ -459,14 +459,6 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
         }
         return true;
-    }
-
-    @Override
-    public void entityInit()
-    {
-        super.entityInit();
-        dataManager.register(DATA_COLONY_ID, citizenColonyHandler == null ? 0 : citizenColonyHandler.getColonyId());
-        dataManager.register(DATA_CITIZEN_ID, citizenId);
     }
 
     @Override
@@ -607,38 +599,14 @@ public class EntityCitizen extends AbstractEntityCitizen
         checkHeal();
     }
 
-    @Override
-    public void setCustomNameTag(@NotNull final String name)
+    /**
+     * Mark the citizen dirty to synch the data with the client.
+     */
+    public void markDirty()
     {
-        if (citizenData != null && citizenColonyHandler.getColony() != null)
+        if (citizenData != null)
         {
-            if (!name.contains(citizenData.getName()) && Configurations.gameplay.allowGlobalNameChanges >= 0)
-            {
-                if (Configurations.gameplay.allowGlobalNameChanges == 0 &&
-                      Arrays.stream(Configurations.gameplay.specialPermGroup).noneMatch(owner -> owner.equals(citizenColonyHandler.getColony().getPermissions().getOwnerName())))
-                {
-                    LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessageEntityPlayers(), CITIZEN_RENAME_NOT_ALLOWED);
-                    return;
-                }
-
-
-                if (citizenColonyHandler.getColony() != null)
-                {
-                    for (final CitizenData citizen : citizenColonyHandler.getColony().getCitizenManager().getCitizens())
-                    {
-                        if (citizen.getName().equals(name))
-                        {
-                            LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessageEntityPlayers(), CITIZEN_RENAME_SAME);
-                            return;
-                        }
-                    }
-                    this.citizenData.setName(name);
-                    this.citizenData.markDirty();
-                    super.setCustomNameTag(name);
-                }
-                return;
-            }
-            super.setCustomNameTag(name);
+            citizenData.markDirty();
         }
     }
 
@@ -661,6 +629,18 @@ public class EntityCitizen extends AbstractEntityCitizen
             final int heal = ((ItemFood) stack.getItem()).getHealAmount(stack);
             citizenData.increaseSaturation(heal);
             getCitizenData().getInventory().decrStackSize(slot, 1);
+            citizenData.markDirty();
+        }
+    }
+
+    /**
+     * Decrease the saturation of the citizen for 1 action.
+     */
+    public void decreaseSaturationForAction()
+    {
+        if (citizenData != null)
+        {
+            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost());
             citizenData.markDirty();
         }
     }
@@ -713,6 +693,75 @@ public class EntityCitizen extends AbstractEntityCitizen
         return newNavigator;
     }
 
+    @Override
+    public void entityInit()
+    {
+        super.entityInit();
+        dataManager.register(DATA_COLONY_ID, citizenColonyHandler == null ? 0 : citizenColonyHandler.getColonyId());
+        dataManager.register(DATA_CITIZEN_ID, citizenId);
+    }
+
+    /**
+     * Set the metadata for rendering.
+     *
+     * @param metadata the metadata required.
+     */
+    @Override
+    public void setRenderMetadata(final String metadata)
+    {
+        super.setRenderMetadata(metadata);
+        dataManager.set(DATA_RENDER_METADATA, getRenderMetadata());
+        //Display some debug info always available while testing
+        //tofo: remove this when in Beta!
+        //Will help track down some hard to find bugs (Pathfinding etc.)
+        if (citizenData != null)
+        {
+            if (citizenJobHandler.getColonyJob() != null && Configurations.gameplay.enableInDevelopmentFeatures)
+            {
+                setCustomNameTag(citizenData.getName() + " (" + citizenStatusHandler.getStatus() + ")[" + citizenJobHandler.getColonyJob().getNameTagDescription() + "]");
+            }
+            else
+            {
+                setCustomNameTag(citizenData.getName());
+            }
+        }
+    }
+
+    @Override
+    public void setCustomNameTag(@NotNull final String name)
+    {
+        if (citizenData != null && citizenColonyHandler.getColony() != null)
+        {
+            if (!name.contains(citizenData.getName()) && Configurations.gameplay.allowGlobalNameChanges >= 0)
+            {
+                if (Configurations.gameplay.allowGlobalNameChanges == 0 &&
+                      Arrays.stream(Configurations.gameplay.specialPermGroup).noneMatch(owner -> owner.equals(citizenColonyHandler.getColony().getPermissions().getOwnerName())))
+                {
+                    LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessageEntityPlayers(), CITIZEN_RENAME_NOT_ALLOWED);
+                    return;
+                }
+
+
+                if (citizenColonyHandler.getColony() != null)
+                {
+                    for (final CitizenData citizen : citizenColonyHandler.getColony().getCitizenManager().getCitizens())
+                    {
+                        if (citizen.getName().equals(name))
+                        {
+                            LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessageEntityPlayers(), CITIZEN_RENAME_SAME);
+                            return;
+                        }
+                    }
+                    this.citizenData.setName(name);
+                    this.citizenData.markDirty();
+                    super.setCustomNameTag(name);
+                }
+                return;
+            }
+            super.setCustomNameTag(name);
+        }
+    }
+
     /**
      * Drop the equipment for this entity.
      */
@@ -728,17 +777,6 @@ public class EntityCitizen extends AbstractEntityCitizen
                 citizenItemHandler.entityDropItem(itemstack);
             }
         }
-    }
-
-    /**
-     * Return this citizens inventory.
-     *
-     * @return the inventory this citizen has.
-     */
-    @NotNull
-    public InventoryCitizen getInventoryCitizen()
-    {
-        return getCitizenData().getInventory();
     }
 
     /**
@@ -764,14 +802,26 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
-     * Mark the citizen dirty to synch the data with the client.
+     * Return this citizens inventory.
+     *
+     * @return the inventory this citizen has.
      */
-    public void markDirty()
+    @NotNull
+    public InventoryCitizen getInventoryCitizen()
     {
-        if (citizenData != null)
-        {
-            citizenData.markDirty();
-        }
+        return getCitizenData().getInventory();
+    }
+
+    /**
+     * Checks if the citizen should work even when it rains.
+     *
+     * @return true if his building level is bigger than 5.
+     */
+    private boolean shouldWorkWhileRaining()
+    {
+        return (citizenColonyHandler.getWorkBuilding() != null && (citizenColonyHandler.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL))
+                 || Configurations.gameplay.workersAlwaysWorkInRain
+                 || (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard);
     }
 
     @NotNull
@@ -805,7 +855,8 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (CompatibilityUtils.getWorld(this).isRaining() && !shouldWorkWhileRaining())
         {
-            citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"), new TextComponentTranslation("com.minecolonies.coremod.status.rainStop"));
+            citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"),
+              new TextComponentTranslation("com.minecolonies.coremod.status.rainStop"));
             return DesiredActivity.IDLE;
         }
         else
@@ -819,18 +870,6 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
-     * Checks if the citizen should work even when it rains.
-     *
-     * @return true if his building level is bigger than 5.
-     */
-    private boolean shouldWorkWhileRaining()
-    {
-        return (citizenColonyHandler.getWorkBuilding() != null && (citizenColonyHandler.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL))
-                 || Configurations.gameplay.workersAlwaysWorkInRain
-                 || (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard);
-    }
-
-    /**
      * Play move away sound when running from an entity.
      */
     public void playMoveAwaySound()
@@ -839,28 +878,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorld(this), getPosition(),
               citizenJobHandler.getColonyJob().getMoveAwaySound(), 1);
-        }
-    }
-
-    /**
-     * Get the path proxy of the citizen.
-     *
-     * @return the proxy.
-     */
-    public IWalkToProxy getProxy()
-    {
-        return proxy;
-    }
-
-    /**
-     * Decrease the saturation of the citizen for 1 action.
-     */
-    public void decreaseSaturationForAction()
-    {
-        if (citizenData != null)
-        {
-            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost());
-            citizenData.markDirty();
         }
     }
 
@@ -882,7 +899,18 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
+     * Get the path proxy of the citizen.
+     *
+     * @return the proxy.
+     */
+    public IWalkToProxy getProxy()
+    {
+        return proxy;
+    }
+
+    /**
      * Getter for the citizen id.
+     *
      * @return the id.
      */
     public int getCitizenId()
@@ -892,20 +920,12 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     /**
      * Setter for the citizen id.
+     *
      * @param id the id to set.
      */
     public void setCitizenId(final int id)
     {
         this.citizenId = id;
-    }
-
-    /**
-     * Setter for the citizen data.
-     * @param data the data to set.
-     */
-    public void setCitizenData(@Nullable final CitizenData data)
-    {
-        this.citizenData = data;
     }
 
     /**
@@ -939,6 +959,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     /**
      * The Handler for all chat related methods.
+     *
      * @return the instance of the handler.
      */
     public CitizenChatHandler getCitizenChatHandler()
@@ -948,6 +969,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     /**
      * The Handler for all status related methods.
+     *
      * @return the instance of the handler.
      */
     public CitizenStatusHandler getCitizenStatusHandler()
@@ -957,6 +979,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     /**
      * The Handler for all item related methods.
+     *
      * @return the instance of the handler.
      */
     public CitizenItemHandler getCitizenItemHandler()
@@ -966,6 +989,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     /**
      * The Handler for all inventory related methods.
+     *
      * @return the instance of the handler.
      */
     public CitizenInventoryHandler getCitizenInventoryHandler()
@@ -975,6 +999,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     /**
      * The Handler for all colony related methods.
+     *
      * @return the instance of the handler.
      */
     public CitizenColonyHandler getCitizenColonyHandler()
@@ -984,6 +1009,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     /**
      * The Handler for all job related methods.
+     *
      * @return the instance of the handler.
      */
     public CitizenJobHandler getCitizenJobHandler()
@@ -993,6 +1019,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     /**
      * The Handler for all job related methods.
+     *
      * @return the instance of the handler.
      */
     public CitizenSleepHandler getCitizenSleepHandler()

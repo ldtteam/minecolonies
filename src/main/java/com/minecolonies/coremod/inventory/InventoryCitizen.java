@@ -58,8 +58,8 @@ public class InventoryCitizen implements IInventory
     /**
      * The index of the currently held items (0-8).
      */
-    private        int mainItem;
-    private        int offhandItem;
+    private int mainItem;
+    private int offhandItem;
 
     private ItemStack itemStack = ItemStackUtils.EMPTY;
 

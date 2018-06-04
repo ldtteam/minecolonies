@@ -46,18 +46,6 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     }
 
     @Override
-    public int getDefenceBonus()
-    {
-        return DEFENCE_BONUS;
-    }
-
-    @Override
-    public int getOffenceBonus()
-    {
-        return OFFENCE_BONUS;
-    }
-
-    @Override
     public String getSchematicName()
     {
         return SCHEMATIC_NAME;
@@ -86,13 +74,6 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     }
 
     @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-        getColony().getCitizenManager().calculateMaxCitizens();
-    }
-
-    @Override
     public boolean assignCitizen(final CitizenData citizen)
     {
         final boolean assignalResult = super.assignCitizen(citizen);
@@ -107,6 +88,25 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
             citizen.setWorkBuilding(this);
         }
         return assignalResult;
+    }
+
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+        getColony().getCitizenManager().calculateMaxCitizens();
+    }
+
+    @Override
+    public int getOffenceBonus()
+    {
+        return OFFENCE_BONUS;
+    }
+
+    @Override
+    public int getDefenceBonus()
+    {
+        return DEFENCE_BONUS;
     }
 
     @Override

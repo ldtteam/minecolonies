@@ -47,7 +47,8 @@ import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
 import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATION;
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.BUILDING_LEVEL_TOO_LOW;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -60,7 +61,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * The maximum range to keep from the current building place.
      */
-    private static final    int EXCEPTION_TIMEOUT             = 100;
+    private static final   int EXCEPTION_TIMEOUT             = 100;
     /**
      * Buffer time in ticks he will accept a last attacker as valid.
      */
@@ -212,17 +213,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @return the building associated with this AI's worker.
      */
     @Nullable
-    public AbstractBuildingWorker getOwnBuilding()
-    {
-        return worker.getCitizenColonyHandler().getWorkBuilding();
-    }
-
-    /**
-     * Can be overridden in implementations to return the exact building type.
-     *
-     * @return the building associated with this AI's worker.
-     */
-    @Nullable
     public <W extends AbstractBuildingWorker> W getOwnBuilding(@NotNull final Class<W> type)
     {
         if (type.isInstance(worker.getCitizenColonyHandler().getWorkBuilding()))
@@ -306,16 +296,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Set a delay in ticks.
-     *
-     * @param timeout the delay to wait after this tick.
-     */
-    protected final void setDelay(final int timeout)
-    {
-        this.delay = timeout;
-    }
-
-    /**
      * Check if we need to dump the worker inventory.
      * <p>
      * This will also ask the implementing ai
@@ -330,6 +310,48 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                   || actionsDone >= getActionsDoneUntilDumping()
                   || wantInventoryDumped())
                  && !(job instanceof JobDeliveryman);
+    }
+
+    /**
+     * Set a delay in ticks.
+     *
+     * @param timeout the delay to wait after this tick.
+     */
+    protected final void setDelay(final int timeout)
+    {
+        this.delay = timeout;
+    }
+
+    /**
+     * This method will return true if the AI is waiting for something.
+     * In that case, don't execute any more AI code, until it returns false.
+     * Call this exactly once per tick to get the delay right.
+     * The worker will move and animate correctly while he waits.
+     *
+     * @return true if we have to wait for something
+     *
+     * @see #currentStandingLocation @see #currentWorkingLocation
+     * @see #DEFAULT_RANGE_FOR_DELAY @see #delay
+     */
+    private boolean waitingForSomething()
+    {
+        if (delay > 0)
+        {
+            if (currentStandingLocation != null
+                  && !worker.isWorkerAtSiteWithMove(currentStandingLocation, DEFAULT_RANGE_FOR_DELAY))
+            {
+                //Don't decrease delay as we are just walking...
+                return true;
+            }
+            if (delay % HIT_EVERY_X_TICKS == 0)
+            {
+                worker.getCitizenItemHandler().hitBlockWithToolInHand(currentWorkingLocation);
+            }
+            delay--;
+            return true;
+        }
+        clearWorkTarget();
+        return false;
     }
 
     /**
@@ -407,36 +429,21 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         worker.setRenderMetadata("");
     }
 
-    /**
-     * This method will return true if the AI is waiting for something.
-     * In that case, don't execute any more AI code, until it returns false.
-     * Call this exactly once per tick to get the delay right.
-     * The worker will move and animate correctly while he waits.
-     *
-     * @return true if we have to wait for something
-     *
-     * @see #currentStandingLocation @see #currentWorkingLocation
-     * @see #DEFAULT_RANGE_FOR_DELAY @see #delay
-     */
-    private boolean waitingForSomething()
+    private void updateWorkerStatusFromRequests()
     {
-        if (delay > 0)
+        if (!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()) && !getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
-            if (currentStandingLocation != null
-                  && !worker.isWorkerAtSiteWithMove(currentStandingLocation, DEFAULT_RANGE_FOR_DELAY))
-            {
-                //Don't decrease delay as we are just walking...
-                return true;
-            }
-            if (delay % HIT_EVERY_X_TICKS == 0)
-            {
-                worker.getCitizenItemHandler().hitBlockWithToolInHand(currentWorkingLocation);
-            }
-            delay--;
-            return true;
+            worker.getCitizenStatusHandler().setLatestStatus();
+            return;
         }
-        clearWorkTarget();
-        return false;
+
+        IRequest<?> request = getOwnBuilding().getCompletedRequests(worker.getCitizenData()).stream().findFirst().orElse(null);
+        if (request == null)
+        {
+            request = getOwnBuilding().getOpenRequests(worker.getCitizenData()).stream().findFirst().orElse(null);
+        }
+
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"), request.getShortDisplayString());
     }
 
     /**
@@ -463,21 +470,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return lookForRequests();
     }
 
-    private void updateWorkerStatusFromRequests()
+    /**
+     * Can be overridden in implementations to return the exact building type.
+     *
+     * @return the building associated with this AI's worker.
+     */
+    @Nullable
+    public AbstractBuildingWorker getOwnBuilding()
     {
-        if (!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()) && !getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
-        {
-            worker.getCitizenStatusHandler().setLatestStatus();
-            return;
-        }
-
-        IRequest<?> request = getOwnBuilding().getCompletedRequests(worker.getCitizenData()).stream().findFirst().orElse(null);
-        if (request == null)
-        {
-            request = getOwnBuilding().getOpenRequests(worker.getCitizenData()).stream().findFirst().orElse(null);
-        }
-
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"), request.getShortDisplayString());
+        return worker.getCitizenColonyHandler().getWorkBuilding();
     }
 
     /**

@@ -36,6 +36,7 @@ public class CitizenStuckHandler
 
     /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
     public CitizenStuckHandler(final EntityCitizen citizen)

@@ -86,34 +86,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
     protected abstract boolean isSmeltable(final ItemStack stack);
 
     /**
-     * Get the furnace which has finished smeltables.
-     * For this check each furnace which has been registered to the building.
-     * Check if the furnace is turned off and has something in the result slot
-     * or check if the furnace has more than x results.
-     * @return the position of the furnace.
-     */
-    protected BlockPos getPositionOfOvenToRetrieveFrom()
-    {
-        for (final BlockPos pos : ((AbstractBuildingFurnaceUser) getOwnBuilding()).getFurnaces())
-        {
-            final TileEntity entity = world.getTileEntity(pos);
-            if (entity instanceof TileEntityFurnace)
-            {
-                final TileEntityFurnace furnace = (TileEntityFurnace) entity;
-                final int countInResultSlot =
-                        ItemStackUtils.isEmpty(furnace.getStackInSlot(RESULT_SLOT)) ? 0 : furnace.getStackInSlot(RESULT_SLOT).getCount();
-                if ((!furnace.isBurning() && countInResultSlot > 0)
-                        || countInResultSlot > RETRIEVE_SMELTABLE_IF_MORE_THAN)
-                {
-                    worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
-                    return pos;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Central method of the furnace user, he decides about what to do next from here.
      * First check if any of the workers has important tasks to handle first.
      * If not check if there is an oven with an item which has to be retrieved.
@@ -167,6 +139,35 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         }
 
         return checkIfAbleToSmelt(amountOfFuelInBuilding + amountOfFuelInInv, amountOfSmeltableInBuilding + amountOfSmeltableInInv);
+    }
+
+    /**
+     * Get the furnace which has finished smeltables.
+     * For this check each furnace which has been registered to the building.
+     * Check if the furnace is turned off and has something in the result slot
+     * or check if the furnace has more than x results.
+     *
+     * @return the position of the furnace.
+     */
+    protected BlockPos getPositionOfOvenToRetrieveFrom()
+    {
+        for (final BlockPos pos : ((AbstractBuildingFurnaceUser) getOwnBuilding()).getFurnaces())
+        {
+            final TileEntity entity = world.getTileEntity(pos);
+            if (entity instanceof TileEntityFurnace)
+            {
+                final TileEntityFurnace furnace = (TileEntityFurnace) entity;
+                final int countInResultSlot =
+                  ItemStackUtils.isEmpty(furnace.getStackInSlot(RESULT_SLOT)) ? 0 : furnace.getStackInSlot(RESULT_SLOT).getCount();
+                if ((!furnace.isBurning() && countInResultSlot > 0)
+                      || countInResultSlot > RETRIEVE_SMELTABLE_IF_MORE_THAN)
+                {
+                    worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
+                    return pos;
+                }
+            }
+        }
+        return null;
     }
 
     /**

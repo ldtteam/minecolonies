@@ -18,16 +18,16 @@ import static org.mockito.Mockito.*;
 
 public class ChatSpamFilterTest extends AbstractMockStaticsTest
 {
-    private static final String MESSAGE_1 = "Whatever";
-    private static final String MESSAGE_2 = "Whatever2";
+    private static final String               MESSAGE_1 = "Whatever";
+    private static final String               MESSAGE_2 = "Whatever2";
     @Mock
-    private EntityCitizen  citizen;
+    private              EntityCitizen        citizen;
     @Mock
-    private CitizenData data;
+    private              CitizenData          data;
     @Mock
-    private CitizenColonyHandler citizenColonyHandler;
+    private              CitizenColonyHandler citizenColonyHandler;
     @Mock
-    private CitizenChatHandler citizenChatHandler;
+    private              CitizenChatHandler   citizenChatHandler;
 
     private ChatSpamFilter filter;
 

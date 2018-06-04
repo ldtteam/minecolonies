@@ -13,8 +13,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.Constants.BED_HEIGHT;
-import static com.minecolonies.api.util.constant.Constants.HALF_BLOCK;
 import static com.minecolonies.coremod.entity.AbstractEntityCitizen.DATA_BED_POS;
 import static com.minecolonies.coremod.entity.AbstractEntityCitizen.DATA_IS_ASLEEP;
 
@@ -30,32 +28,12 @@ public class CitizenSleepHandler
 
     /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
     public CitizenSleepHandler(final EntityCitizen citizen)
     {
         this.citizen = citizen;
-    }
-
-    /**
-     * Is the citizen a sleep?
-     *
-     * @return true when a sleep.
-     */
-    public boolean isAsleep()
-    {
-        return citizen.getDataManager().get(DATA_IS_ASLEEP);
-    }
-
-    /**
-     * Sets if the citizen is a sleep.
-     * Caution: Use trySleep(BlockPos) for better control
-     *
-     * @param isAsleep True to make the citizen sleep.
-     */
-    private void setIsAsleep(final boolean isAsleep)
-    {
-        citizen.getDataManager().set(DATA_IS_ASLEEP, isAsleep);
     }
 
     /**
@@ -102,7 +80,7 @@ public class CitizenSleepHandler
             return;
         }
 
-        citizen.setPosition( ((float) bedLocation.getX() + HALF_BLOCK),
+        citizen.setPosition(((float) bedLocation.getX() + HALF_BLOCK),
           (double) ((float) bedLocation.getY() + BED_HEIGHT),
           ((float) bedLocation.getZ() + HALF_BLOCK));
 
@@ -113,6 +91,41 @@ public class CitizenSleepHandler
         setIsAsleep(true);
 
         citizen.getDataManager().set(DATA_BED_POS, bedLocation);
+    }
+
+    /**
+     * Sets if the citizen is a sleep.
+     * Caution: Use trySleep(BlockPos) for better control
+     *
+     * @param isAsleep True to make the citizen sleep.
+     */
+    private void setIsAsleep(final boolean isAsleep)
+    {
+        citizen.getDataManager().set(DATA_IS_ASLEEP, isAsleep);
+    }
+
+    /**
+     * Get the X render offset.
+     *
+     * @return the offset.
+     */
+    public float getRenderOffsetX()
+    {
+        if (!isAsleep())
+        {
+            return 0;
+        }
+
+        final IBlockState state = citizen.world.isBlockLoaded(getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
+        final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, getBedLocation(), citizen);
+        final EnumFacing enumfacing = isBed && state.getBlock() instanceof BlockHorizontal ? state.getValue(BlockHorizontal.FACING) : null;
+
+        if (enumfacing == null)
+        {
+            return 0;
+        }
+
+        return SLEEPING_RENDER_OFFSET * (float) enumfacing.getFrontOffsetX();
     }
 
     /**
@@ -162,7 +175,18 @@ public class CitizenSleepHandler
     }
 
     /**
+     * Is the citizen a sleep?
+     *
+     * @return true when a sleep.
+     */
+    public boolean isAsleep()
+    {
+        return citizen.getDataManager().get(DATA_IS_ASLEEP);
+    }
+
+    /**
      * Get the bed location of the citizen.
+     *
      * @return the bed location.
      */
     public BlockPos getBedLocation()
@@ -171,30 +195,8 @@ public class CitizenSleepHandler
     }
 
     /**
-     * Get the X render offset.
-     * @return the offset.
-     */
-    public float getRenderOffsetX()
-    {
-        if (!isAsleep())
-        {
-            return 0;
-        }
-
-        final IBlockState state = citizen.world.isBlockLoaded(getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
-        final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, getBedLocation(), citizen);
-        final EnumFacing enumfacing = isBed && state.getBlock() instanceof BlockHorizontal ? state.getValue(BlockHorizontal.FACING) : null;
-
-        if (enumfacing == null)
-        {
-            return 0;
-        }
-
-        return SLEEPING_RENDER_OFFSET * (float) enumfacing.getFrontOffsetX();
-    }
-
-    /**
      * Get the z render offset.
+     *
      * @return the offset.
      */
     public float getRenderOffsetZ()

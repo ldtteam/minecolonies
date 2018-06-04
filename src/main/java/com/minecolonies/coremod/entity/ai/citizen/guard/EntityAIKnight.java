@@ -9,7 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.util.AIState.DECIDE;
+import static com.minecolonies.coremod.entity.ai.util.AIState.GUARD_ATTACK_PHYSICAL;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
@@ -38,22 +39,6 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
         itemsNeeded.add(new ItemStack(Items.SHIELD, 1));
     }
 
-    @Override
-    protected int getAttackRange()
-    {
-        return (int) MAX_DISTANCE_FOR_ATTACK;
-    }
-
-    @Override
-    protected int getAttackDelay()
-    {
-        if (worker.getCitizenData() != null)
-        {
-            return BASE_RELOAD_TIME / (worker.getCitizenData().getLevel() + 1);
-        }
-        return BASE_RELOAD_TIME;
-    }
-
     @NotNull
     @Override
     protected List<ItemStack> itemsNiceToHave()
@@ -74,5 +59,21 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
         }
 
         return GUARD_ATTACK_PHYSICAL;
+    }
+
+    @Override
+    protected int getAttackRange()
+    {
+        return (int) MAX_DISTANCE_FOR_ATTACK;
+    }
+
+    @Override
+    protected int getAttackDelay()
+    {
+        if (worker.getCitizenData() != null)
+        {
+            return BASE_RELOAD_TIME / (worker.getCitizenData().getLevel() + 1);
+        }
+        return BASE_RELOAD_TIME;
     }
 }

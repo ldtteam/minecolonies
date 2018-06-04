@@ -234,72 +234,35 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     }
 
     /**
-     * Breed some animals together.
+     * Sets the tool as held item.
      *
-     * @return The next {@link AIState}.
+     * @param toolType the {@link ToolType} we want to equip
+     * @return true if the tool was equipped.
      */
-    private AIState breedAnimals()
+    public boolean equipTool(final EnumHand hand, final ToolType toolType)
     {
-        setDelay(BREEDING_DELAY);
-
-        final List<T> animals = searchForAnimals();
-
-        final EntityAnimal animalOne = animals
-                                         .stream()
-                                         .filter(animal -> animal.getGrowingAge() == 0)
-                                         .findAny()
-                                         .orElse(null);
-
-        if (animalOne == null)
+        if (getToolSlot(toolType) != -1)
         {
-            return DECIDE;
+            worker.getCitizenItemHandler().setHeldItem(hand, getToolSlot(toolType));
+            return true;
         }
-
-        final EntityAnimal animalTwo = animals.stream().filter(animal ->
-          {
-              final float range = animal.getDistance(animalOne);
-              final boolean isAnimalOne = animalOne.equals(animal);
-              return animal.getGrowingAge() == 0 && range <= DISTANCE_TO_BREED && !isAnimalOne;
-          }
-        ).findAny().orElse(null);
-
-        if (animalTwo == null)
-        {
-            return DECIDE;
-        }
-
-        if (!equipItem(EnumHand.MAIN_HAND, getBreedingItems()))
-        {
-            return START_WORKING;
-        }
-
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BREEDING));
-
-        breedTwoAnimals(animalOne, animalTwo);
-        incrementActionsDoneAndDecSaturation();
-        worker.getCitizenExperienceHandler().addExperience(1.0);
-        return DECIDE;
+        return false;
     }
 
     /**
-     * Allows the worker to pickup any stray items around Hut.
-     * Specifically useful when he possibly leaves Butchered
-     * drops OR with chickens (that drop feathers and etc)!
+     * Butcher an animal.
      *
-     * @return The next {@link AIState}.
+     * @param animal the {@link EntityAnimal} we are butchering
      */
-    private AIState pickupItems()
+    private void butcherAnimal(@Nullable final EntityAnimal animal)
     {
-        final List<EntityItem> items = new ArrayList<>(searchForItemsInArea());
-
-        for (final EntityItem item : items)
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING));
+        if (animal != null && !walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getHeldItemMainhand()))
         {
-            walkToBlock(item.getPosition());
+            worker.swingArm(EnumHand.MAIN_HAND);
+            animal.attackEntityFrom(new DamageSource(worker.getName()), (float) BUTCHERING_ATTACK_DAMAGE);
+            worker.getHeldItemMainhand().damageItem(1, animal);
         }
-
-        incrementActionsDoneAndDecSaturation();
-
-        return DECIDE;
     }
 
     /**
@@ -427,19 +390,51 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     }
 
     /**
-     * Sets the tool as held item.
+     * Breed some animals together.
      *
-     * @param toolType the {@link ToolType} we want to equip
-     * @return true if the tool was equipped.
+     * @return The next {@link AIState}.
      */
-    public boolean equipTool(final EnumHand hand, final ToolType toolType)
+    private AIState breedAnimals()
     {
-        if (getToolSlot(toolType) != -1)
+        setDelay(BREEDING_DELAY);
+
+        final List<T> animals = searchForAnimals();
+
+        final EntityAnimal animalOne = animals
+                                         .stream()
+                                         .filter(animal -> animal.getGrowingAge() == 0)
+                                         .findAny()
+                                         .orElse(null);
+
+        if (animalOne == null)
         {
-            worker.getCitizenItemHandler().setHeldItem(hand, getToolSlot(toolType));
-            return true;
+            return DECIDE;
         }
-        return false;
+
+        final EntityAnimal animalTwo = animals.stream().filter(animal ->
+          {
+              final float range = animal.getDistance(animalOne);
+              final boolean isAnimalOne = animalOne.equals(animal);
+              return animal.getGrowingAge() == 0 && range <= DISTANCE_TO_BREED && !isAnimalOne;
+          }
+        ).findAny().orElse(null);
+
+        if (animalTwo == null)
+        {
+            return DECIDE;
+        }
+
+        if (!equipItem(EnumHand.MAIN_HAND, getBreedingItems()))
+        {
+            return START_WORKING;
+        }
+
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BREEDING));
+
+        breedTwoAnimals(animalOne, animalTwo);
+        incrementActionsDoneAndDecSaturation();
+        worker.getCitizenExperienceHandler().addExperience(1.0);
+        return DECIDE;
     }
 
     /**
@@ -491,19 +486,24 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     }
 
     /**
-     * Butcher an animal.
+     * Allows the worker to pickup any stray items around Hut.
+     * Specifically useful when he possibly leaves Butchered
+     * drops OR with chickens (that drop feathers and etc)!
      *
-     * @param animal the {@link EntityAnimal} we are butchering
+     * @return The next {@link AIState}.
      */
-    private void butcherAnimal(@Nullable final EntityAnimal animal)
+    private AIState pickupItems()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING));
-        if (animal != null && !walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getHeldItemMainhand()))
+        final List<EntityItem> items = new ArrayList<>(searchForItemsInArea());
+
+        for (final EntityItem item : items)
         {
-            worker.swingArm(EnumHand.MAIN_HAND);
-            animal.attackEntityFrom(new DamageSource(worker.getName()), (float) BUTCHERING_ATTACK_DAMAGE);
-            worker.getHeldItemMainhand().damageItem(1, animal);
+            walkToBlock(item.getPosition());
         }
+
+        incrementActionsDoneAndDecSaturation();
+
+        return DECIDE;
     }
 
     /**

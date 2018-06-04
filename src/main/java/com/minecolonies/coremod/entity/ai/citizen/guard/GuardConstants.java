@@ -120,5 +120,4 @@ public final class GuardConstants
          * Intentionally left empty.
          */
     }
-
 }

@@ -37,7 +37,9 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -235,31 +237,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     }
 
     @Override
-    public boolean assignCitizen(final CitizenData citizen)
-    {
-        if (!super.assignCitizen(citizen))
-        {
-            Log.getLogger().warn("Ohoohohoohoh, wasn't abel to assign citizen to work building!!!");
-            return false;
-        }
-
-        // If we set a worker, inform it of such
-        if (citizen != null)
-        {
-            citizen.getCitizenEntity().ifPresent(tempCitizen -> {
-                if(!tempCitizen.getCitizenJobHandler().getLastJob().isEmpty() && !tempCitizen.getCitizenJobHandler().getLastJob().equals(getJobName()))
-                {
-                    citizen.resetExperienceAndLevel();
-                }
-                tempCitizen.getCitizenJobHandler().setLastJob(getJobName());
-            });
-
-            citizen.setWorkBuilding(this);
-        }
-        return true;
-    }
-
-    @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
@@ -304,6 +281,31 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
         recipes.addAll(NBTUtils.streamCompound(recipesTags)
                 .map(recipeCompound -> (IToken) StandardFactoryController.getInstance().deserialize(recipeCompound))
                 .collect(Collectors.toList()));
+    }
+
+    @Override
+    public boolean assignCitizen(final CitizenData citizen)
+    {
+        if (!super.assignCitizen(citizen))
+        {
+            Log.getLogger().warn("Ohoohohoohoh, wasn't abel to assign citizen to work building!!!");
+            return false;
+        }
+
+        // If we set a worker, inform it of such
+        if (citizen != null)
+        {
+            citizen.getCitizenEntity().ifPresent(tempCitizen -> {
+                if (!tempCitizen.getCitizenJobHandler().getLastJob().isEmpty() && !tempCitizen.getCitizenJobHandler().getLastJob().equals(getJobName()))
+                {
+                    citizen.resetExperienceAndLevel();
+                }
+                tempCitizen.getCitizenJobHandler().setLastJob(getJobName());
+            });
+
+            citizen.setWorkBuilding(this);
+        }
+        return true;
     }
 
     @Override

@@ -188,6 +188,56 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     }
 
     @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+
+        pullInfoFromHut();
+
+        if (!task.equals(GuardTask.PATROL))
+        {
+            listOfPoints.hide();
+        }
+        final Pane currentPane = findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).getCurrentView();
+        if (currentPane != null)
+        {
+            final String currentPage = currentPane.getID();
+            if (currentPage.equals(GUI_PAGE_LEVEL_ACTIONS))
+            {
+                pullInfoFromHut();
+                window.findPaneOfTypeByID(GUI_ELEMENT_LIST_LEVELS, ScrollingList.class).refreshElementPanes();
+            }
+            else if (currentPage.equals(GUI_PAGE_MOB_ACTIONS))
+            {
+                pullInfoFromHut();
+                sortMobsToAttack();
+                window.findPaneOfTypeByID(GUI_ELEMENT_LIST_MOBS, ScrollingList.class).refreshElementPanes();
+            }
+        }
+    }
+
+    /**
+     * Retrieve all attributes from the building to display in GUI.
+     */
+    private void pullInfoFromHut()
+    {
+        this.assignManually = building.isAssignManually();
+        this.patrolManually = building.isPatrolManually();
+        this.retrieveOnLowHealth = building.isRetrieveOnLowHealth();
+        this.task = building.getTask();
+        this.job = building.getJob();
+        this.patrolTargets = building.getPatrolTargets();
+        this.mobsToAttack = building.getMobsToAttack();
+    }
+
+    @NotNull
+    @Override
+    public String getBuildingName()
+    {
+        return "com.minecolonies.coremod.gui.workerHuts.GuardTower";
+    }
+
+    @Override
     public void onButtonClicked(@NotNull final Button button)
     {
         final Pane currentPane = findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).getCurrentView();
@@ -232,40 +282,43 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         handleButtons();
     }
 
-    @Override
-    public void onUpdate()
+    /**
+     * Handle the task buttons correctly.
+     */
+    private void handleButtons()
     {
-        super.onUpdate();
+        final Button buttonJob = this.findPaneOfTypeByID(GUI_BUTTON_JOB, Button.class);
 
-        pullInfoFromHut();
-
-        if (!task.equals(GuardTask.PATROL))
+        if (job != null)
         {
-            listOfPoints.hide();
+            buttonJob.setLabel(LanguageHandler.format(job.buttonName));
         }
-        final Pane currentPane = findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).getCurrentView();
-        if (currentPane != null)
-        {
-            final String currentPage = currentPane.getID();
-            if (currentPage.equals(GUI_PAGE_LEVEL_ACTIONS))
-            {
-                pullInfoFromHut();
-                window.findPaneOfTypeByID(GUI_ELEMENT_LIST_LEVELS, ScrollingList.class).refreshElementPanes();
-            }
-            else if (currentPage.equals(GUI_PAGE_MOB_ACTIONS))
-            {
-                pullInfoFromHut();
-                sortMobsToAttack();
-                window.findPaneOfTypeByID(GUI_ELEMENT_LIST_MOBS, ScrollingList.class).refreshElementPanes();
-            }
-        }
-    }
 
-    @NotNull
-    @Override
-    public String getBuildingName()
-    {
-        return "com.minecolonies.coremod.gui.workerHuts.GuardTower";
+        buttonJob.setEnabled(assignManually);
+
+        this.findPaneOfTypeByID(GUI_BUTTON_ASSIGNMENT_MODE, Button.class).setLabel(assignManually ? GUI_SWITCH_MANUAL : GUI_SWITCH_AUTO);
+        this.findPaneOfTypeByID(GUI_BUTTON_PATROL_MODE, Button.class).setLabel(patrolManually ? GUI_SWITCH_MANUAL : GUI_SWITCH_AUTO);
+        this.findPaneOfTypeByID(GUI_BUTTON_RETRIEVAL_MODE, Button.class).setLabel(retrieveOnLowHealth ? GUI_SWITCH_MANUAL : GUI_SWITCH_AUTO);
+
+        if (task.equals(GuardTask.PATROL))
+        {
+            buttonSetTarget.setEnabled(patrolManually);
+
+            if (patrolManually)
+            {
+                buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.targetPatrol"));
+            }
+            buttonTaskPatrol.setEnabled(false);
+        }
+        else if (task.equals(GuardTask.FOLLOW))
+        {
+            buttonTaskFollow.setEnabled(false);
+        }
+        else if (task.equals(GuardTask.GUARD))
+        {
+            buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.targetGuard"));
+            buttonTaskGuard.setEnabled(false);
+        }
     }
 
     /**
@@ -274,29 +327,6 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     private void sortMobsToAttack()
     {
         mobsToAttack.sort(Comparator.comparing(MobEntryView::getPriority, Comparator.reverseOrder()));
-    }
-
-    /**
-     * Retrieve all attributes from the building to display in GUI.
-     */
-    private void pullInfoFromHut()
-    {
-        this.assignManually = building.isAssignManually();
-        this.patrolManually = building.isPatrolManually();
-        this.retrieveOnLowHealth = building.isRetrieveOnLowHealth();
-        this.task = building.getTask();
-        this.job = building.getJob();
-        this.patrolTargets = building.getPatrolTargets();
-        this.mobsToAttack = building.getMobsToAttack();
-    }
-
-    /**
-     * Sends the changes to the server.
-     */
-    private void sendChangesToServer()
-    {
-        final int ordinal = building.getJob() == null ? -1 : job.ordinal();
-        MineColonies.getNetwork().sendToServer(new GuardTaskMessage(building, ordinal, assignManually, patrolManually, retrieveOnLowHealth, task.ordinal()));
     }
 
     /**
@@ -373,45 +403,6 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     }
 
     /**
-     * Handle the task buttons correctly.
-     */
-    private void handleButtons()
-    {
-        final Button buttonJob = this.findPaneOfTypeByID(GUI_BUTTON_JOB, Button.class);
-
-        if (job != null)
-        {
-            buttonJob.setLabel(LanguageHandler.format(job.buttonName));
-        }
-
-        buttonJob.setEnabled(assignManually);
-
-        this.findPaneOfTypeByID(GUI_BUTTON_ASSIGNMENT_MODE, Button.class).setLabel(assignManually ? GUI_SWITCH_MANUAL : GUI_SWITCH_AUTO);
-        this.findPaneOfTypeByID(GUI_BUTTON_PATROL_MODE, Button.class).setLabel(patrolManually ? GUI_SWITCH_MANUAL : GUI_SWITCH_AUTO);
-        this.findPaneOfTypeByID(GUI_BUTTON_RETRIEVAL_MODE, Button.class).setLabel(retrieveOnLowHealth ? GUI_SWITCH_MANUAL : GUI_SWITCH_AUTO);
-
-        if (task.equals(GuardTask.PATROL))
-        {
-            buttonSetTarget.setEnabled(patrolManually);
-
-            if (patrolManually)
-            {
-                buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.targetPatrol"));
-            }
-            buttonTaskPatrol.setEnabled(false);
-        }
-        else if (task.equals(GuardTask.FOLLOW))
-        {
-            buttonTaskFollow.setEnabled(false);
-        }
-        else if (task.equals(GuardTask.GUARD))
-        {
-            buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.targetGuard"));
-            buttonTaskGuard.setEnabled(false);
-        }
-    }
-
-    /**
      * Switch between the different tasks in {@link GuardTask}
      *
      * @param button the button clicked to switch the task.
@@ -453,6 +444,15 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     }
 
     /**
+     * Sends the changes to the server.
+     */
+    private void sendChangesToServer()
+    {
+        final int ordinal = building.getJob() == null ? -1 : job.ordinal();
+        MineColonies.getNetwork().sendToServer(new GuardTaskMessage(building, ordinal, assignManually, patrolManually, retrieveOnLowHealth, task.ordinal()));
+    }
+
+    /**
      * Sets the target for patrolling or guarding of the guard.
      */
     private void setTarget()
@@ -480,15 +480,6 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     }
 
     /**
-     * Recalculates the mob list.
-     */
-    private void recalculate()
-    {
-        MineColonies.getNetwork().sendToServer(new GuardRecalculateMessage(building.getColony().getID(), building.getID()));
-        pullInfoFromHut();
-    }
-
-    /**
      * Send message to player to add scepter to his inventory.
      *
      * @param localTask the task to execute with the scepter.
@@ -496,6 +487,15 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     private void givePlayerScepter(final GuardTask localTask)
     {
         MineColonies.getNetwork().sendToServer(new GuardScepterMessage(localTask.ordinal(), building.getID()));
+    }
+
+    /**
+     * Recalculates the mob list.
+     */
+    private void recalculate()
+    {
+        MineColonies.getNetwork().sendToServer(new GuardRecalculateMessage(building.getColony().getID(), building.getID()));
+        pullInfoFromHut();
     }
 
     /**

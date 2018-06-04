@@ -27,22 +27,22 @@ public abstract class AbstractJobGuard extends AbstractJob
         super(entity);
     }
 
-    protected abstract AbstractEntityAIGuard generateGuardAI();
-
     @Override
     public AbstractAISkeleton<? extends AbstractJob> generateAI()
     {
         return generateGuardAI();
     }
 
+    protected abstract AbstractEntityAIGuard generateGuardAI();
+
     @Override
-    public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
+    public SoundEvent getBedTimeSound()
     {
-        super.triggerDeathAchievement(source, citizen);
-        if (source.getTrueSource() instanceof EntityEnderman && citizen.getCitizenColonyHandler().getColony() != null)
+        if (getCitizen() != null)
         {
-            citizen.getCitizenColonyHandler().getColony().getStatsManager().triggerAchievement(ModAchievements.achievementGuardDeathEnderman);
+            return getCitizen().isFemale() ? ArcherSounds.Female.offToBed : KnightSounds.Male.offToBed;
         }
+        return null;
     }
 
     @Nullable
@@ -57,12 +57,12 @@ public abstract class AbstractJobGuard extends AbstractJob
     }
 
     @Override
-    public SoundEvent getBedTimeSound()
+    public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
     {
-        if (getCitizen() != null)
+        super.triggerDeathAchievement(source, citizen);
+        if (source.getTrueSource() instanceof EntityEnderman && citizen.getCitizenColonyHandler().getColony() != null)
         {
-                return getCitizen().isFemale() ? ArcherSounds.Female.offToBed : KnightSounds.Male.offToBed;
+            citizen.getCitizenColonyHandler().getColony().getStatsManager().triggerAchievement(ModAchievements.achievementGuardDeathEnderman);
         }
-        return null;
     }
 }

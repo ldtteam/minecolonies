@@ -52,13 +52,13 @@ public class CitizenData
     /**
      * Tags.
      */
-    private static final String TAG_ID                     = "id";
-    private static final String TAG_NAME                   = "name";
-    private static final String TAG_FEMALE                 = "female";
-    private static final String TAG_TEXTURE                = "texture";
-    private static final String TAG_LEVEL                  = "level";
-    private static final String TAG_EXPERIENCE             = "experience";
-    private static final String TAG_HEALTH                 = "health";
+    private static final String TAG_ID                  = "id";
+    private static final String TAG_NAME                = "name";
+    private static final String TAG_FEMALE              = "female";
+    private static final String TAG_TEXTURE             = "texture";
+    private static final String TAG_LEVEL               = "level";
+    private static final String TAG_EXPERIENCE          = "experience";
+    private static final String TAG_HEALTH              = "health";
     private static final String TAG_MAX_HEALTH             = "maxHealth";
     private static final String TAG_SKILLS                 = "skills";
     private static final String TAG_SKILL_STRENGTH         = "strength";
@@ -681,13 +681,38 @@ public class CitizenData
     }
 
     /**
+     * Returns the job of the citizen.
+     *
+     * @return Job of the citizen.
+     */
+    public AbstractJob getJob()
+    {
+        return job;
+    }
+
+    /**
+     * Sets the job of this citizen.
+     *
+     * @param job Job of the citizen.
+     */
+    public void setJob(final AbstractJob job)
+    {
+        this.job = job;
+
+        getCitizenEntity().ifPresent(entityCitizen -> entityCitizen.getCitizenJobHandler().onJobChanged(job));
+
+        markDirty();
+    }
+
+    /**
      * Updates {@link EntityCitizen} for the instance.
      */
     public void updateCitizenEntityIfNecessary()
     {
         final List<EntityCitizen> list = colony.getWorld()
-                .getEntities(EntityCitizen.class,
-                        entityCitizen -> entityCitizen.getCitizenColonyHandler().getColonyId() == colony.getID() && entityCitizen.getCitizenData().getId() == getId());
+                                           .getEntities(EntityCitizen.class,
+                                             entityCitizen -> entityCitizen.getCitizenColonyHandler().getColonyId() == colony.getID()
+                                                                && entityCitizen.getCitizenData().getId() == getId());
 
         if (!list.isEmpty())
         {
@@ -721,30 +746,6 @@ public class CitizenData
                 TeleportHelper.teleportCitizen(entityCitizen, colony.getWorld(), location);
             }
         });
-    }
-
-    /**
-     * Returns the job of the citizen.
-     *
-     * @return Job of the citizen.
-     */
-    public AbstractJob getJob()
-    {
-        return job;
-    }
-
-    /**
-     * Sets the job of this citizen.
-     *
-     * @param job Job of the citizen.
-     */
-    public void setJob(final AbstractJob job)
-    {
-        this.job = job;
-
-        getCitizenEntity().ifPresent(entityCitizen -> entityCitizen.getCitizenJobHandler().onJobChanged(job));
-
-        markDirty();
     }
 
     /**

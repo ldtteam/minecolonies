@@ -33,7 +33,7 @@ public final class TeleportHelper
             return false;
         }
 
-        if(citizen.getCitizenSleepHandler().isAsleep())
+        if (citizen.getCitizenSleepHandler().isAsleep())
         {
             citizen.getCitizenSleepHandler().onWakeUp();
         }

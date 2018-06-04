@@ -5,7 +5,8 @@ import com.minecolonies.coremod.colony.jobs.JobRanger;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.util.AIState.DECIDE;
+import static com.minecolonies.coremod.entity.ai.util.AIState.GUARD_ATTACK_RANGED;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
@@ -28,12 +29,6 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     }
 
     @Override
-    protected int getAttackRange()
-    {
-        return (int) MAX_DISTANCE_FOR_ATTACK;
-    }
-
-    @Override
     protected AIState decide()
     {
         final AIState superState = super.decide();
@@ -44,5 +39,11 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
         }
 
         return GUARD_ATTACK_RANGED;
+    }
+
+    @Override
+    protected int getAttackRange()
+    {
+        return (int) MAX_DISTANCE_FOR_ATTACK;
     }
 }

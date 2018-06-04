@@ -16,20 +16,19 @@ public class CitizenStatusHandler
     /**
      * The citizen assigned to this manager.
      */
-    private final EntityCitizen citizen;
-
-    /**
-     * The Current Status.
-     */
-    protected Status status = Status.IDLE;
-
+    private final EntityCitizen    citizen;
     /**
      * The 4 lines of the latest status.
      */
     private final ITextComponent[] latestStatus = new ITextComponent[MAX_LINES_OF_LATEST_LOG];
+    /**
+     * The Current Status.
+     */
+    protected     Status           status       = Status.IDLE;
 
     /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
     public CitizenStatusHandler(final EntityCitizen citizen)
@@ -95,6 +94,7 @@ public class CitizenStatusHandler
 
     /**
      * Getter for the current status.
+     *
      * @return the status.
      */
     public Status getStatus()
@@ -104,6 +104,7 @@ public class CitizenStatusHandler
 
     /**
      * Setter for the current status.
+     *
      * @param status the status to set.
      */
     public void setStatus(final Status status)

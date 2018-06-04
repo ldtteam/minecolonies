@@ -182,17 +182,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-     * Returns the farmer's work building.
-     *
-     * @return building instance
-     */
-    @Override
-    public BuildingFarmer getOwnBuilding()
-    {
-        return (BuildingFarmer) worker.getCitizenColonyHandler().getWorkBuilding();
-    }
-
-    /**
      * Searches and adds a field that has not been taken yet for the farmer and then adds it to the list.
      */
     private void searchAndAddFields()
@@ -210,6 +199,17 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 getOwnBuilding().addFarmerFields(newField.getPos());
             }
         }
+    }
+
+    /**
+     * Returns the farmer's work building.
+     *
+     * @return building instance
+     */
+    @Override
+    public BuildingFarmer getOwnBuilding()
+    {
+        return (BuildingFarmer) worker.getCitizenColonyHandler().getWorkBuilding();
     }
 
     /**
@@ -502,29 +502,29 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-     * Plants the crop at a given location.
+     * Harvest the crop (only if pams is installed).
      *
-     * @param item     the crop.
-     * @param position the location.
-     * @return true if succesful.
+     * @param pos the position to harvest.
      */
-    private boolean plantCrop(final ItemStack item, @NotNull final BlockPos position)
+    private void harvestCrop(@NotNull final BlockPos pos)
     {
-        final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(item.getItem(), item.getItemDamage());
-        if (slot == -1)
+        final ItemStack tool = worker.getHeldItemMainhand();
+
+        final int fortune = ItemStackUtils.getFortuneOf(tool);
+        final IBlockState state = world.getBlockState(pos);
+        final List<ItemStack> drops = state.getBlock().getDrops(world, pos, state, fortune);
+        for (final ItemStack item : drops)
         {
-            return false;
+            InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), item);
         }
 
-        @NotNull final IPlantable seed = (IPlantable) item.getItem();
-        if ((seed == Items.MELON_SEEDS || seed == Items.PUMPKIN_SEEDS) && prevPos != null && !world.isAirBlock(prevPos.up()))
+        if (state.getBlock() instanceof BlockCrops)
         {
-            return true;
+            final BlockCrops crops = (BlockCrops) state.getBlock();
+            world.setBlockState(pos, crops.withAge(0));
         }
 
-        world.setBlockState(position.up(), seed.getPlant(world, position));
-        new InvWrapper(getInventory()).extractItem(slot, 1, false);
-        return true;
+        worker.getCitizenExperienceHandler().addExperience(XP_PER_BLOCK);
     }
 
     /**
@@ -553,29 +553,29 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-     * Harvest the crop (only if pams is installed).
+     * Plants the crop at a given location.
      *
-     * @param pos the position to harvest.
+     * @param item     the crop.
+     * @param position the location.
+     * @return true if succesful.
      */
-    private void harvestCrop(@NotNull final BlockPos pos)
+    private boolean plantCrop(final ItemStack item, @NotNull final BlockPos position)
     {
-        final ItemStack tool = worker.getHeldItemMainhand();
-
-        final int fortune = ItemStackUtils.getFortuneOf(tool);
-        final IBlockState state = world.getBlockState(pos);
-        final List<ItemStack> drops = state.getBlock().getDrops(world, pos, state, fortune);
-        for (final ItemStack item : drops)
+        final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(item.getItem(), item.getItemDamage());
+        if (slot == -1)
         {
-            InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), item);
+            return false;
         }
 
-        if (state.getBlock() instanceof BlockCrops)
+        @NotNull final IPlantable seed = (IPlantable) item.getItem();
+        if ((seed == Items.MELON_SEEDS || seed == Items.PUMPKIN_SEEDS) && prevPos != null && !world.isAirBlock(prevPos.up()))
         {
-            final BlockCrops crops = (BlockCrops) state.getBlock();
-            world.setBlockState(pos, crops.withAge(0));
+            return true;
         }
 
-        worker.getCitizenExperienceHandler().addExperience(XP_PER_BLOCK);
+        world.setBlockState(position.up(), seed.getPlant(world, position));
+        new InvWrapper(getInventory()).extractItem(slot, 1, false);
+        return true;
     }
 
     /**

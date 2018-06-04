@@ -151,7 +151,11 @@ public final class SoundUtils
      * @param chance   the chance.
      * @param citizen  the citizen.
      */
-    public static void playInteractionSoundAtCitizenWithChance(@NotNull final World world, @NotNull final BlockPos position, final int chance, @NotNull final AbstractEntityCitizen citizen)
+    public static void playInteractionSoundAtCitizenWithChance(
+      @NotNull final World world,
+      @NotNull final BlockPos position,
+      final int chance,
+      @NotNull final AbstractEntityCitizen citizen)
     {
         if (chance > rand.nextInt(ONE_HUNDRED))
         {

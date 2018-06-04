@@ -9,7 +9,9 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
@@ -45,133 +47,89 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 @SuppressWarnings({"squid:MaximumInheritanceDepth", "squid:S1448"})
 public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
 {
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_TASK           = "TASK";
-    private static final String NBT_JOB            = "job";
-    private static final String NBT_ASSIGN         = "assign";
-    private static final String NBT_RETRIEVE       = "retrieve";
-    private static final String NBT_PATROL         = "patrol";
-    private static final String NBT_PATROL_TARGETS = "patrol targets";
-    private static final String NBT_TARGET         = "target";
-    private static final String NBT_GUARD          = "guard";
-    private static final String NBT_MOBS           = "mobs";
-    private static final String NBT_MOB_VIEW       = "mobview";
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
-
-    ////// --------------------------- GuardJob Enum --------------------------- \\\\\\
-    public enum GuardJob
-    {
-        RANGER("com.minecolonies.coremod.job.Ranger", "com.minecolonies.coremod.gui.workerHuts.ranger"),
-        KNIGHT("com.minecolonies.coremod.job.Knight", "com.minecolonies.coremod.gui.workerHuts.knight");
-
-        public final String jobName;
-        public final String buttonName;
-
-        GuardJob(final String name, final String buttonName)
-        {
-            this.jobName = name;
-            this.buttonName = buttonName;
-        }
-
-        public AbstractJobGuard getGuardJob(final CitizenData citizen)
-        {
-            if (this == RANGER)
-            {
-                return new JobRanger(citizen);
-            }
-            else if (this == KNIGHT)
-            {
-                return new JobKnight(citizen);
-            }
-            return new JobRanger(citizen);
-        }
-    }
-    ////// --------------------------- GuardJob Enum --------------------------- \\\\\\
     /**
      * Worker gets this distance times building level away from his/her hut to
      * patrol.
      */
-    public static final int PATROL_DISTANCE = 40;
-
+    public static final  int    PATROL_DISTANCE             = 40;
+    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_TASK                    = "TASK";
+    private static final String NBT_JOB                     = "job";
+    private static final String NBT_ASSIGN                  = "assign";
+    private static final String NBT_RETRIEVE                = "retrieve";
+    private static final String NBT_PATROL                  = "patrol";
+    private static final String NBT_PATROL_TARGETS          = "patrol targets";
+    private static final String NBT_TARGET                  = "target";
+    private static final String NBT_GUARD                   = "guard";
+    private static final String NBT_MOBS                    = "mobs";
+    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_MOB_VIEW                = "mobview";
+    ////// --------------------------- GuardJob Enum --------------------------- \\\\\\
     /**
      * The max vision bonus multiplier for the hut.
      */
-    private static final int MAX_VISION_BONUS_MULTIPLIER = 3;
+    private static final int    MAX_VISION_BONUS_MULTIPLIER = 3;
+    /**
+     * Vision bonus per level.
+     */
+    private static final int    VISION_BONUS                = 5;
 
     /**
      * The health multiplier each level after level 4.
      */
-    private static final int HEALTH_MULTIPLIER = 2;
-
-    /**
-     * Vision bonus per level.
-     */
-    private static final int VISION_BONUS = 5;
-
-    /**
-     * Whether the job will be assigned manually.
-     */
-    private boolean assignManually = false;
-
-    /**
-     * Whether to retrieve the guard on low health.
-     */
-    private boolean retrieveOnLowHealth = false;
-
+    private static final int                HEALTH_MULTIPLIER   = 2;
     /**
      * The length range one patrolling operation can have on x or z.
      */
-    private static final int LENGTH_RANGE = 10;
-
+    private static final int                LENGTH_RANGE        = 10;
     /**
      * The length range one patrolling operation can have on y.
      */
-    private static final int UP_DOWN_RANGE = 4;
-
+    private static final int                UP_DOWN_RANGE       = 4;
     /**
      * Max tries to find a position to path to.
      */
-    private static final int MAX_TRIES = 20;
-
+    private static final int                MAX_TRIES           = 20;
     /**
      * The level for getting our achievement
      */
-    private static final int ACHIEVEMENT_LEVEL = 1;
-
+    private static final int                ACHIEVEMENT_LEVEL   = 1;
+    /**
+     * Whether the job will be assigned manually.
+     */
+    private              boolean            assignManually      = false;
+    /**
+     * Whether to retrieve the guard on low health.
+     */
+    private              boolean            retrieveOnLowHealth = false;
     /**
      * Whether to patrol manually or not.
      */
-    private boolean patrolManually = false;
-
+    private              boolean            patrolManually      = false;
     /**
      * The task of the guard, following the {@link GuardTask} enum.
      */
-    private GuardTask task = GuardTask.GUARD;
-
+    private              GuardTask          task                = GuardTask.GUARD;
     /**
      * The position at which the guard should guard at.
      */
-    private BlockPos guardPos = this.getID();
-
+    private              BlockPos           guardPos            = this.getID();
     /**
      * The job of the guard, Any possible {@link GuardJob}.
      */
-    private GuardJob job = GuardJob.KNIGHT;
-
+    private              GuardJob           job                 = GuardJob.KNIGHT;
     /**
      * The list of manual patrol targets.
      */
-    private List<BlockPos> patrolTargets = new ArrayList<>();
-
+    private              List<BlockPos>     patrolTargets       = new ArrayList<>();
     /**
      * Hashmap of mobs we may or may not attack.
      */
-    private List<MobEntryView> mobsToAttack = new ArrayList<>();
-
+    private              List<MobEntryView> mobsToAttack        = new ArrayList<>();
     /**
      * The player the guard has been set to follow.
      */
-    private EntityPlayer followPlayer;
+    private              EntityPlayer       followPlayer;
 
     /**
      * The abstract constructor of the building.
@@ -198,118 +156,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ItemArmor
                                  && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.FEET, 1);
-    }
-
-    //// ---- NBT Overrides ---- \\\\
-
-    @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-        task = GuardTask.values()[compound.getInteger(NBT_TASK)];
-        final int jobId = compound.getInteger(NBT_JOB);
-        job = jobId == -1 ? null : GuardJob.values()[jobId];
-        assignManually = compound.getBoolean(NBT_ASSIGN);
-        retrieveOnLowHealth = compound.getBoolean(NBT_RETRIEVE);
-        patrolManually = compound.getBoolean(NBT_PATROL);
-
-        final NBTTagList wayPointTagList = compound.getTagList(NBT_PATROL_TARGETS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < wayPointTagList.tagCount(); ++i)
-        {
-            final NBTTagCompound blockAtPos = wayPointTagList.getCompoundTagAt(i);
-            final BlockPos pos = BlockPosUtil.readFromNBT(blockAtPos, NBT_TARGET);
-            patrolTargets.add(pos);
-        }
-
-        final NBTTagList mobsTagList = compound.getTagList(NBT_MOBS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < mobsTagList.tagCount(); i++)
-        {
-            final NBTTagCompound mobCompound = mobsTagList.getCompoundTagAt(i);
-            final MobEntryView mobEntry = MobEntryView.readFromNBT(mobCompound, NBT_MOB_VIEW);
-            mobsToAttack.add(mobEntry);
-        }
-
-        guardPos = NBTUtil.getPosFromTag(compound.getCompoundTag(NBT_GUARD));
-    }
-
-    @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
-        compound.setInteger(NBT_TASK, task.ordinal());
-        compound.setInteger(NBT_JOB, job == null ? -1 : job.ordinal());
-        compound.setBoolean(NBT_ASSIGN, assignManually);
-        compound.setBoolean(NBT_RETRIEVE, retrieveOnLowHealth);
-        compound.setBoolean(NBT_PATROL, patrolManually);
-
-        @NotNull final NBTTagList wayPointTagList = new NBTTagList();
-        for (@NotNull final BlockPos pos : patrolTargets)
-        {
-            @NotNull final NBTTagCompound wayPointCompound = new NBTTagCompound();
-            BlockPosUtil.writeToNBT(wayPointCompound, NBT_TARGET, pos);
-
-            wayPointTagList.appendTag(wayPointCompound);
-        }
-        compound.setTag(NBT_PATROL_TARGETS, wayPointTagList);
-
-        @NotNull final NBTTagList mobsTagList = new NBTTagList();
-        for (@NotNull final MobEntryView entry : mobsToAttack)
-        {
-            @NotNull final NBTTagCompound mobCompound = new NBTTagCompound();
-            MobEntryView.writeToNBT(mobCompound, NBT_MOB_VIEW, entry);
-            mobsTagList.appendTag(mobCompound);
-        }
-        compound.setTag(NBT_MOBS, mobsTagList);
-
-        compound.setTag(NBT_GUARD, NBTUtil.createPosTag(guardPos));
-    }
-
-    //// ---- NBT Overrides ---- \\\\
-
-    //// ---- Overrides ---- \\\\
-
-    @Override
-    public void serializeToView(@NotNull final ByteBuf buf)
-    {
-        super.serializeToView(buf);
-        buf.writeBoolean(assignManually);
-        buf.writeBoolean(retrieveOnLowHealth);
-        buf.writeBoolean(patrolManually);
-        buf.writeInt(task.ordinal());
-        buf.writeInt(job == null ? -1 : job.ordinal());
-        buf.writeInt(patrolTargets.size());
-
-        for (final BlockPos pos : patrolTargets)
-        {
-            BlockPosUtil.writeToByteBuf(buf, pos);
-        }
-
-        if (mobsToAttack.isEmpty())
-        {
-            mobsToAttack.addAll(calculateMobs());
-        }
-
-        buf.writeInt(mobsToAttack.size());
-        for (final MobEntryView entry : mobsToAttack)
-        {
-            MobEntryView.writeToByteBuf(buf, entry);
-        }
-
-        BlockPosUtil.writeToByteBuf(buf, guardPos);
-    }
-
-    @NotNull
-    @Override
-    public AbstractJob createJob(final CitizenData citizen)
-    {
-        return job.getGuardJob(citizen);
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return job.jobName;
     }
 
     /**
@@ -356,6 +202,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         }
         return patrolTargets.get(0);
     }
+
+    //// ---- NBT Overrides ---- \\\\
 
     /**
      * Gets a random building from this colony.
@@ -413,6 +261,20 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         return new Tuple<>(EnumFacing.random(random), EnumFacing.random(random));
     }
 
+    //// ---- NBT Overrides ---- \\\\
+
+    //// ---- Overrides ---- \\\\
+
+    /**
+     * Getter for the patrol distance the guard currently has.
+     *
+     * @return The distance in whole numbers.
+     */
+    public int getPatrolDistance()
+    {
+        return this.getBuildingLevel() * PATROL_DISTANCE;
+    }
+
     /**
      * We use this to set possible health multipliers and give achievements.
      *
@@ -444,52 +306,19 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         }
     }
 
-    @Override
-    public void removeCitizen(final CitizenData citizen)
-    {
-        if (citizen != null)
-        {
-            final Optional<EntityCitizen> optCitizen = citizen.getCitizenEntity();
-            if (optCitizen.isPresent())
-            {
-                optCitizen.get().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(SharedMonsterAttributes.MAX_HEALTH.getDefaultValue());
-                optCitizen.get().getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue());
-            }
-        }
-        super.removeCitizen(citizen);
-    }
-
-    @Override
-    public boolean assignCitizen(final CitizenData citizen)
-    {
-        if (citizen != null)
-        {
-            final Optional<EntityCitizen> optCitizen = citizen.getCitizenEntity();
-            if (optCitizen.isPresent())
-            {
-                optCitizen
-                  .get()
-                  .getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
-                  .setBaseValue(SharedMonsterAttributes.MAX_HEALTH.getDefaultValue() + getBonusHealth());
-                optCitizen
-                  .get()
-                  .getEntityAttribute(SharedMonsterAttributes.ARMOR)
-                  .setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue() + getDefenceBonus());
-            }
-        }
-        return super.assignCitizen(citizen);
-    }
-
-    //// ---- Overrides ---- \\\\
-
-    //// ---- Abstract Methods ---- \\\\
-
     /**
-     * Get an Defence bonus related to the building.
+     * If no vision multiplier give health bonus.
      *
-     * @return an Integer.
+     * @return the bonus health.
      */
-    public abstract int getDefenceBonus();
+    private int getBonusHealth()
+    {
+        if (getBuildingLevel() > MAX_VISION_BONUS_MULTIPLIER)
+        {
+            return (getBuildingLevel() - MAX_VISION_BONUS_MULTIPLIER) * HEALTH_MULTIPLIER;
+        }
+        return 0;
+    }
 
     /**
      * Get an Offence bonus related to the building.
@@ -497,18 +326,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      * @return an Integer.
      */
     public abstract int getOffenceBonus();
-
-    //// ---- Abstract Methods ---- \\\\
-
-    /**
-     * Getter for the patrol distance the guard currently has.
-     *
-     * @return The distance in whole numbers.
-     */
-    public int getPatrolDistance()
-    {
-        return this.getBuildingLevel() * PATROL_DISTANCE;
-    }
 
     /**
      * Get the guard's {@link GuardJob}.
@@ -534,6 +351,201 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         }
         this.markDirty();
     }
+
+    @NotNull
+    @Override
+    public AbstractJob createJob(final CitizenData citizen)
+    {
+        return job.getGuardJob(citizen);
+    }
+
+    @Override
+    public boolean assignCitizen(final CitizenData citizen)
+    {
+        if (citizen != null)
+        {
+            final Optional<EntityCitizen> optCitizen = citizen.getCitizenEntity();
+            if (optCitizen.isPresent())
+            {
+                optCitizen
+                  .get()
+                  .getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
+                  .setBaseValue(SharedMonsterAttributes.MAX_HEALTH.getDefaultValue() + getBonusHealth());
+                optCitizen
+                  .get()
+                  .getEntityAttribute(SharedMonsterAttributes.ARMOR)
+                  .setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue() + getDefenceBonus());
+            }
+        }
+        return super.assignCitizen(citizen);
+    }
+
+    @Override
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        task = GuardTask.values()[compound.getInteger(NBT_TASK)];
+        final int jobId = compound.getInteger(NBT_JOB);
+        job = jobId == -1 ? null : GuardJob.values()[jobId];
+        assignManually = compound.getBoolean(NBT_ASSIGN);
+        retrieveOnLowHealth = compound.getBoolean(NBT_RETRIEVE);
+        patrolManually = compound.getBoolean(NBT_PATROL);
+
+        final NBTTagList wayPointTagList = compound.getTagList(NBT_PATROL_TARGETS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < wayPointTagList.tagCount(); ++i)
+        {
+            final NBTTagCompound blockAtPos = wayPointTagList.getCompoundTagAt(i);
+            final BlockPos pos = BlockPosUtil.readFromNBT(blockAtPos, NBT_TARGET);
+            patrolTargets.add(pos);
+        }
+
+        final NBTTagList mobsTagList = compound.getTagList(NBT_MOBS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < mobsTagList.tagCount(); i++)
+        {
+            final NBTTagCompound mobCompound = mobsTagList.getCompoundTagAt(i);
+            final MobEntryView mobEntry = MobEntryView.readFromNBT(mobCompound, NBT_MOB_VIEW);
+            mobsToAttack.add(mobEntry);
+        }
+
+        guardPos = NBTUtil.getPosFromTag(compound.getCompoundTag(NBT_GUARD));
+    }
+
+    //// ---- Overrides ---- \\\\
+
+    //// ---- Abstract Methods ---- \\\\
+
+    @Override
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+        compound.setInteger(NBT_TASK, task.ordinal());
+        compound.setInteger(NBT_JOB, job == null ? -1 : job.ordinal());
+        compound.setBoolean(NBT_ASSIGN, assignManually);
+        compound.setBoolean(NBT_RETRIEVE, retrieveOnLowHealth);
+        compound.setBoolean(NBT_PATROL, patrolManually);
+
+        @NotNull final NBTTagList wayPointTagList = new NBTTagList();
+        for (@NotNull final BlockPos pos : patrolTargets)
+        {
+            @NotNull final NBTTagCompound wayPointCompound = new NBTTagCompound();
+            BlockPosUtil.writeToNBT(wayPointCompound, NBT_TARGET, pos);
+
+            wayPointTagList.appendTag(wayPointCompound);
+        }
+        compound.setTag(NBT_PATROL_TARGETS, wayPointTagList);
+
+        @NotNull final NBTTagList mobsTagList = new NBTTagList();
+        for (@NotNull final MobEntryView entry : mobsToAttack)
+        {
+            @NotNull final NBTTagCompound mobCompound = new NBTTagCompound();
+            MobEntryView.writeToNBT(mobCompound, NBT_MOB_VIEW, entry);
+            mobsTagList.appendTag(mobCompound);
+        }
+        compound.setTag(NBT_MOBS, mobsTagList);
+
+        compound.setTag(NBT_GUARD, NBTUtil.createPosTag(guardPos));
+    }
+
+    @Override
+    public void removeCitizen(final CitizenData citizen)
+    {
+        if (citizen != null)
+        {
+            final Optional<EntityCitizen> optCitizen = citizen.getCitizenEntity();
+            if (optCitizen.isPresent())
+            {
+                optCitizen.get().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(SharedMonsterAttributes.MAX_HEALTH.getDefaultValue());
+                optCitizen.get().getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue());
+            }
+        }
+        super.removeCitizen(citizen);
+    }
+
+    //// ---- Abstract Methods ---- \\\\
+
+    @NotNull
+    @Override
+    public String getJobName()
+    {
+        return job.jobName;
+    }
+
+    @Override
+    public void serializeToView(@NotNull final ByteBuf buf)
+    {
+        super.serializeToView(buf);
+        buf.writeBoolean(assignManually);
+        buf.writeBoolean(retrieveOnLowHealth);
+        buf.writeBoolean(patrolManually);
+        buf.writeInt(task.ordinal());
+        buf.writeInt(job == null ? -1 : job.ordinal());
+        buf.writeInt(patrolTargets.size());
+
+        for (final BlockPos pos : patrolTargets)
+        {
+            BlockPosUtil.writeToByteBuf(buf, pos);
+        }
+
+        if (mobsToAttack.isEmpty())
+        {
+            mobsToAttack.addAll(calculateMobs());
+        }
+
+        buf.writeInt(mobsToAttack.size());
+        for (final MobEntryView entry : mobsToAttack)
+        {
+            MobEntryView.writeToByteBuf(buf, entry);
+        }
+
+        BlockPosUtil.writeToByteBuf(buf, guardPos);
+    }
+
+    /**
+     * Populates the mobs list from the ForgeRegistries.
+     *
+     * @return the list of MobEntrys to attack.
+     */
+    public List<MobEntryView> calculateMobs()
+    {
+        final List<MobEntryView> mobs = new ArrayList<>();
+
+        int i = 0;
+        for (final EntityEntry entry : ForgeRegistries.ENTITIES.getValuesCollection())
+        {
+            if (EntityMob.class.isAssignableFrom(entry.getEntityClass()))
+            {
+                i++;
+                mobs.add(new MobEntryView(entry.getRegistryName(), true, i));
+            }
+            else
+            {
+                for (final String location : Configurations.gameplay.guardResourceLocations)
+                {
+                    if (entry.getRegistryName() != null && entry.getRegistryName().toString().equals(location))
+                    {
+                        i++;
+                        mobs.add(new MobEntryView(entry.getRegistryName(), true, i));
+                    }
+                }
+            }
+        }
+
+        getColony().getPackageManager().getSubscribers().forEach(player -> MineColonies
+                                                                             .getNetwork()
+                                                                             .sendTo(new GuardMobAttackListMessage(getColony().getID(),
+                                                                                 getID(),
+                                                                                 mobsToAttack),
+                                                                               player));
+
+        return mobs;
+    }
+
+    /**
+     * Get an Defence bonus related to the building.
+     *
+     * @return an Integer.
+     */
+    public abstract int getDefenceBonus();
 
     /**
      * Get the guard's {@link GuardTask}.
@@ -689,20 +701,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     /**
-     * If no vision multiplier give health bonus.
-     *
-     * @return the bonus health.
-     */
-    private int getBonusHealth()
-    {
-        if (getBuildingLevel() > MAX_VISION_BONUS_MULTIPLIER)
-        {
-            return (getBuildingLevel() - MAX_VISION_BONUS_MULTIPLIER) * HEALTH_MULTIPLIER;
-        }
-        return 0;
-    }
-
-    /**
      * Adds new patrolTargets.
      *
      * @param target the target to add
@@ -736,44 +734,33 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         return MAX_VISION_BONUS_MULTIPLIER * VISION_BONUS;
     }
 
-    /**
-     * Populates the mobs list from the ForgeRegistries.
-     *
-     * @return the list of MobEntrys to attack.
-     */
-    public List<MobEntryView> calculateMobs()
+    ////// --------------------------- GuardJob Enum --------------------------- \\\\\\
+    public enum GuardJob
     {
-        final List<MobEntryView> mobs = new ArrayList<>();
+        RANGER("com.minecolonies.coremod.job.Ranger", "com.minecolonies.coremod.gui.workerHuts.ranger"),
+        KNIGHT("com.minecolonies.coremod.job.Knight", "com.minecolonies.coremod.gui.workerHuts.knight");
 
-        int i = 0;
-        for (final EntityEntry entry : ForgeRegistries.ENTITIES.getValuesCollection())
+        public final String jobName;
+        public final String buttonName;
+
+        GuardJob(final String name, final String buttonName)
         {
-            if (EntityMob.class.isAssignableFrom(entry.getEntityClass()))
-            {
-                i++;
-                mobs.add(new MobEntryView(entry.getRegistryName(), true, i));
-            }
-            else
-            {
-                for (final String location : Configurations.gameplay.guardResourceLocations)
-                {
-                    if (entry.getRegistryName() != null && entry.getRegistryName().toString().equals(location))
-                    {
-                        i++;
-                        mobs.add(new MobEntryView(entry.getRegistryName(), true, i));
-                    }
-                }
-            }
+            this.jobName = name;
+            this.buttonName = buttonName;
         }
 
-        getColony().getPackageManager().getSubscribers().forEach(player -> MineColonies
-                                                                             .getNetwork()
-                                                                             .sendTo(new GuardMobAttackListMessage(getColony().getID(),
-                                                                               getID(),
-                                                                               mobsToAttack),
-                                                                               player));
-
-        return mobs;
+        public AbstractJobGuard getGuardJob(final CitizenData citizen)
+        {
+            if (this == RANGER)
+            {
+                return new JobRanger(citizen);
+            }
+            else if (this == KNIGHT)
+            {
+                return new JobKnight(citizen);
+            }
+            return new JobRanger(citizen);
+        }
     }
 
     /**
@@ -902,19 +889,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             }
         }
 
-        public void setAssignManually(final boolean assignManually)
-        {
-            this.assignManually = assignManually;
-        }
-
         public boolean isAssignManually()
         {
             return assignManually;
         }
 
-        public void setRetrieveOnLowHealth(final boolean retrieveOnLowHealth)
+        public void setAssignManually(final boolean assignManually)
         {
-            this.retrieveOnLowHealth = retrieveOnLowHealth;
+            this.assignManually = assignManually;
         }
 
         public boolean isRetrieveOnLowHealth()
@@ -922,14 +904,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             return retrieveOnLowHealth;
         }
 
-        public void setPatrolManually(final boolean patrolManually)
+        public void setRetrieveOnLowHealth(final boolean retrieveOnLowHealth)
         {
-            this.patrolManually = patrolManually;
-        }
-
-        public void setMobsToAttack(final List<MobEntryView> mobsToAttack)
-        {
-            this.mobsToAttack = new ArrayList<>(mobsToAttack);
+            this.retrieveOnLowHealth = retrieveOnLowHealth;
         }
 
         public boolean isPatrolManually()
@@ -937,9 +914,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             return patrolManually;
         }
 
-        public void setTask(final GuardTask task)
+        public void setPatrolManually(final boolean patrolManually)
         {
-            this.task = task;
+            this.patrolManually = patrolManually;
         }
 
         public GuardTask getTask()
@@ -947,19 +924,24 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             return task;
         }
 
+        public void setTask(final GuardTask task)
+        {
+            this.task = task;
+        }
+
         public BlockPos getGuardPos()
         {
             return guardPos;
         }
 
-        public void setJob(final GuardJob job)
-        {
-            this.job = job;
-        }
-
         public GuardJob getJob()
         {
             return job;
+        }
+
+        public void setJob(final GuardJob job)
+        {
+            this.job = job;
         }
 
         public List<BlockPos> getPatrolTargets()
@@ -970,6 +952,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         public List<MobEntryView> getMobsToAttack()
         {
             return new ArrayList<>(mobsToAttack);
+        }
+
+        public void setMobsToAttack(final List<MobEntryView> mobsToAttack)
+        {
+            this.mobsToAttack = new ArrayList<>(mobsToAttack);
         }
     }
 }

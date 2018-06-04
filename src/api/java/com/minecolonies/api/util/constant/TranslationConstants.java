@@ -164,37 +164,37 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_GATHERING                           = "com.minecolonies.coremod.status.gathering";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_STATUS_IDLING                              = "com.minecolonies.coremod.status.idling";
+    public static final     String COM_MINECOLONIES_COREMOD_STATUS_IDLING               = "com.minecolonies.coremod.status.idling";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING                          = "com.minecolonies.coremod.status.retrieving";
+    public static final     String COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING           = "com.minecolonies.coremod.status.retrieving";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_STATUS_SERVING                             = "com.minecolonies.coremod.status.serving";
+    public static final     String COM_MINECOLONIES_COREMOD_STATUS_SERVING              = "com.minecolonies.coremod.status.serving";
     @NonNls
-    public static final String ENTERING_COLONY_MESSAGE                                             = "com.minecolonies.coremod.enteringColony";
+    public static final     String ENTERING_COLONY_MESSAGE                              = "com.minecolonies.coremod.enteringColony";
     @NonNls
-    public static final String LEAVING_COLONY_MESSAGE                                              = "com.minecolonies.coremod.leavingColony";
+    public static final     String LEAVING_COLONY_MESSAGE                               = "com.minecolonies.coremod.leavingColony";
     @NonNls
-    public static final String ENTERING_COLONY_MESSAGE_NOTIFY                                      = "com.minecolonies.coremod.enteringColonyNotify";
+    public static final     String ENTERING_COLONY_MESSAGE_NOTIFY                       = "com.minecolonies.coremod.enteringColonyNotify";
     @NonNls
-    public static final String LEAVING_COLONY_MESSAGE_NOTIFY                                       = "com.minecolonies.coremod.leavingColonyNotify";
+    public static final     String LEAVING_COLONY_MESSAGE_NOTIFY                        = "com.minecolonies.coremod.leavingColonyNotify";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_STATUS_WAITING_FOR                         = "com.minecolonies.coremod.status.waiting";
+    public static final     String COM_MINECOLONIES_COREMOD_STATUS_WAITING_FOR          = "com.minecolonies.coremod.status.waiting";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT                   = "com.minecolonies.coremod.status.worker.goingToHut";
+    public static final     String COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT    = "com.minecolonies.coremod.status.worker.goingToHut";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_BREEDING                     = "com.minecolonies.coremod.status.herder.breeding";
+    public static final     String COM_MINECOLONIES_COREMOD_STATUS_HERDER_BREEDING      = "com.minecolonies.coremod.status.herder.breeding";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_SEARCHING                    = "com.minecolonies.coremod.status.herder.searching";
+    public static final     String COM_MINECOLONIES_COREMOD_STATUS_HERDER_SEARCHING     = "com.minecolonies.coremod.status.herder.searching";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOANIMAL                = "com.minecolonies.coremod.status.herder.goingToAnimal";
+    public static final     String COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOANIMAL = "com.minecolonies.coremod.status.herder.goingToAnimal";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING                   = "com.minecolonies.coremod.status.herder.butchering";
+    public static final     String COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING    = "com.minecolonies.coremod.status.herder.butchering";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING                      = "com.minecolonies.coremod.status.cowboy.milking";
+    public static final     String COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING       = "com.minecolonies.coremod.status.cowboy.milking";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_STATUS_SHEPHERD_SHEARING                   = "com.minecolonies.coremod.status.shepherd.shearing";
+    public static final     String COM_MINECOLONIES_COREMOD_STATUS_SHEPHERD_SHEARING    = "com.minecolonies.coremod.status.shepherd.shearing";
     @NonNls
-    public static final String TOGGLE_ALL_OPTIONS_OFF                                              = "com.minecolonies.coremod.gui.workerHuts.toggleAllOff";
+    public static final     String TOGGLE_ALL_OPTIONS_OFF                               = "com.minecolonies.coremod.gui.workerHuts.toggleAllOff";
     @NonNls
     public static final String TOGGLE_ALL_OPTIONS_ON                                               = "com.minecolonies.coremod.gui.workerHuts.toggleAllOn";
     @NonNls
@@ -220,35 +220,35 @@ public final class TranslationConstants
     @NonNls
     public static final String SMELTING_DOWN                                                       = "com.minecolonies.coremod.status.smeltingdown";
     @NonNls
-    public static final String BUILDING_LEVEL_TOO_LOW                                              = "com.minecolonies.coremod.request.toolow";
+    public static final String BUILDING_LEVEL_TOO_LOW                               = "com.minecolonies.coremod.request.toolow";
     @NonNls
-    public static final String CANT_PLACE_COLONY_IN_OTHER_DIM                                      = "com.minecolonies.coremod.dimension.no";
+    public static final     String CANT_PLACE_COLONY_IN_OTHER_DIM                       = "com.minecolonies.coremod.dimension.no";
     @NonNls
-    public static final String MAX_SCHEMATIC_SIZE_REACHED                                          = "com.minecolonies.coremod.max.schematic.reached";
+    public static final     String MAX_SCHEMATIC_SIZE_REACHED                           = "com.minecolonies.coremod.max.schematic.reached";
     @NonNls
-    public static final String QUITE_CLOSE_DESC                                                    = "com.minecolonies.coremod.max.schematic.quiteclose";
+    public static final     String QUITE_CLOSE_DESC                                     = "com.minecolonies.coremod.max.schematic.quiteclose";
     @NonNls
-    public static final String QUITE_FAR_DESC                                                      = "com.minecolonies.coremod.max.schematic.quitefar";
+    public static final     String QUITE_FAR_DESC                                       = "com.minecolonies.coremod.max.schematic.quitefar";
     @NonNls
-    public static final String REALLY_FAR_DESC                                                     = "com.minecolonies.coremod.max.schematic.reallyfar";
+    public static final     String REALLY_FAR_DESC                                      = "com.minecolonies.coremod.max.schematic.reallyfar";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_COLLECT                         = "com.minecolonies.coremod.gui.cowboy.collect";
+    public static final     String COM_MINECOLONIES_COREMOD_GUI_COWBOY_COLLECT          = "com.minecolonies.coremod.gui.cowboy.collect";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_NOTCOLLECT                      = "com.minecolonies.coremod.gui.cowboy.notcollect";
+    public static final     String COM_MINECOLONIES_COREMOD_GUI_COWBOY_NOTCOLLECT       = "com.minecolonies.coremod.gui.cowboy.notcollect";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_AUTO                   = "com.minecolonies.coremod.gui.workerHuts.modeA";
+    public static final     String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_AUTO    = "com.minecolonies.coremod.gui.workerHuts.modeA";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_MANUAL                 = "com.minecolonies.coremod.gui.workerHuts.modeM";
+    public static final     String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_MANUAL  = "com.minecolonies.coremod.gui.workerHuts.modeM";
     @NonNls
-    public static final String RAID_EVENT_MESSAGE                                                  = "event.minecolonies.raidMessage";
+    public static final     String RAID_EVENT_MESSAGE                                   = "event.minecolonies.raidMessage";
     @NonNls
-    public static final String ONLY_X_BARBARIANS_LEFT_MESSAGE                                      = "com.minecolonies.coremod.barbarians.left";
+    public static final     String ONLY_X_BARBARIANS_LEFT_MESSAGE                       = "com.minecolonies.coremod.barbarians.left";
     @NonNls
-    public static final String ALL_BARBARIANS_KILLED_MESSAGE                                       = "com.minecolonies.coremod.barbarians.killed";
+    public static final     String ALL_BARBARIANS_KILLED_MESSAGE                        = "com.minecolonies.coremod.barbarians.killed";
     @NonNls
-    public static final String CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN                                = "com.minecolonies.coremod.tooClose";
+    public static final     String CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN                 = "com.minecolonies.coremod.tooClose";
     @NonNls
-    public static final String CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN                                = "com.minecolonies.coremod.tooFar";
+    public static final     String CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN                 = "com.minecolonies.coremod.tooFar";
 
     private TranslationConstants()
     {

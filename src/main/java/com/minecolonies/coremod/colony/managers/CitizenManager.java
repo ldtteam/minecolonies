@@ -81,8 +81,8 @@ public class CitizenManager implements ICitizenManager
 
         //  Citizens before Buildings, because Buildings track the Citizens
         citizens.putAll(NBTUtils.streamCompound(compound.getTagList(TAG_CITIZENS, Constants.NBT.TAG_COMPOUND))
-                .map(this::deserializeCitizen)
-                .collect(Collectors.toMap(CitizenData::getId, Function.identity())));
+                          .map(this::deserializeCitizen)
+                          .collect(Collectors.toMap(CitizenData::getId, Function.identity())));
     }
 
     private CitizenData deserializeCitizen(@NotNull final NBTTagCompound compound)
@@ -114,8 +114,9 @@ public class CitizenManager implements ICitizenManager
                 if (citizen.getCitizenEntity().isPresent())
                 {
                     final List<EntityCitizen> list = colony.getWorld()
-                            .getEntities(EntityCitizen.class,
-                                    entityCitizen -> entityCitizen.getCitizenColonyHandler().getColony().getID() == colony.getID() && entityCitizen.getCitizenData().getId() == citizen.getId());
+                                                       .getEntities(EntityCitizen.class,
+                                                         entityCitizen -> entityCitizen.getCitizenColonyHandler().getColony().getID() == colony.getID()
+                                                                            && entityCitizen.getCitizenData().getId() == citizen.getId());
 
                     if (!list.isEmpty() && citizen.getCitizenEntity().get().getEntityId() != list.get(0).getEntityId())
                     {
