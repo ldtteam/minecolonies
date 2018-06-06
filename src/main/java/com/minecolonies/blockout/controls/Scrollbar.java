@@ -63,7 +63,7 @@ public class Scrollbar extends Pane
         this(container);
         //  TODO: Parse Scrollbar-specific Params
         
-        PaneParams.SizePair size = params.getSizePairAttribute("scrollbarOffset", null, null);
+        final PaneParams.SizePair size = params.getSizePairAttribute("scrollbarOffset", null, null);
         if (size != null)
         {
             offsetX = size.getX();
