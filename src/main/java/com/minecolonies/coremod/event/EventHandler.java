@@ -17,6 +17,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.items.ItemScanTool;
+import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSilverfish;
@@ -225,7 +226,7 @@ public class EventHandler
             building.destroy();
         }
 
-        if (event.getPlayer().getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemScanTool)
+        if (event.getPlayer() instanceof EntityPlayer && event.getPlayer().getHeldItem(EnumHand.MAIN_HAND).getItem() == ModItems.scanTool)
         {
             final ItemStack itemstack = event.getPlayer().getHeldItem(EnumHand.MAIN_HAND);
             if (!itemstack.hasTagCompound())
