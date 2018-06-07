@@ -23,7 +23,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityFlowerPot;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
@@ -283,7 +282,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 if (building == null)
                 {
                     Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
-                            worker.getCitizenColonyHandler().getColony().getID(),
+                      worker.getCitizenColonyHandler().getColony().getID(),
                             worker.getCitizenData().getId(),
                             woh.getBuildingLocation()));
                 }

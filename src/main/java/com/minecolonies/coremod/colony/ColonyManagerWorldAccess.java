@@ -18,7 +18,12 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
 {
 
     @Override
-    public void notifyBlockUpdate(@NotNull final World worldIn, @NotNull final BlockPos pos, @NotNull final IBlockState oldState, @NotNull final IBlockState newState, final int flags)
+    public void notifyBlockUpdate(
+      @NotNull final World worldIn,
+      @NotNull final BlockPos pos,
+      @NotNull final IBlockState oldState,
+      @NotNull final IBlockState newState,
+      final int flags)
     {
         //Not needed
 
@@ -40,7 +45,7 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
 
     @Override
     public void playSoundToAllNearExcept(
-                                          final EntityPlayer player, @NotNull final SoundEvent soundIn, @NotNull final SoundCategory category, final double x,
+      final EntityPlayer player, @NotNull final SoundEvent soundIn, @NotNull final SoundCategory category, final double x,
                                           final double y, final double z, final float volume, final float pitch)
     {
         //Not needed
@@ -57,7 +62,7 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
     @Override
     public void spawnParticle(
                                final int particleID, final boolean ignoreRange, final double xCoord, final double yCoord, final double zCoord,
-                               final double xSpeed, final double ySpeed, final double zSpeed, @NotNull final int... parameters)
+      final double xSpeed, final double ySpeed, final double zSpeed, @NotNull final int... parameters)
     {
         //Not needed
     }
@@ -73,7 +78,7 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
                                final double xSpeed,
                                final double ySpeed,
                                final double zSpeed,
-                               @NotNull final int... parameters)
+      @NotNull final int... parameters)
     {
         //Not needed
     }

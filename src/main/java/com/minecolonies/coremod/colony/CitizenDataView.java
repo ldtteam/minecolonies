@@ -22,8 +22,8 @@ import org.jetbrains.annotations.Nullable;
 public class CitizenDataView
 {
 
-    private static final String TAG_HELD_ITEM_SLOT = "HeldItemSlot";
-    public static final String TAG_OFFHAND_HELD_ITEM_SLOT        = "OffhandHeldItemSlot";
+    public static final  String TAG_OFFHAND_HELD_ITEM_SLOT = "OffhandHeldItemSlot";
+    private static final String TAG_HELD_ITEM_SLOT         = "HeldItemSlot";
 
     /**
      * The max amount of lines the latest log allows.

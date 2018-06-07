@@ -21,8 +21,8 @@ import java.util.List;
  */
 public class MobEntryChangeMessage extends AbstractMessage<MobEntryChangeMessage, IMessage>
 {
-    private int      colonyId;
-    private BlockPos buildingId;
+    private int                colonyId;
+    private BlockPos           buildingId;
     private List<MobEntryView> mobsToAttack = new ArrayList<>();
 
     /**
@@ -35,26 +35,13 @@ public class MobEntryChangeMessage extends AbstractMessage<MobEntryChangeMessage
 
     public MobEntryChangeMessage(
       @NotNull final AbstractBuildingGuards.View building,
-                                  final List<MobEntryView> mobsToAttack
+      final List<MobEntryView> mobsToAttack
     )
     {
         super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.mobsToAttack = new ArrayList<>(mobsToAttack);
-    }
-
-    @Override
-    public void toBytes(final ByteBuf buf)
-    {
-        buf.writeInt(this.colonyId);
-        BlockPosUtil.writeToByteBuf(buf, this.buildingId);
-
-        buf.writeInt(this.mobsToAttack.size());
-        for (final MobEntryView entry : this.mobsToAttack)
-        {
-            MobEntryView.writeToByteBuf(buf, entry);
-        }
     }
 
     @Override
@@ -68,6 +55,19 @@ public class MobEntryChangeMessage extends AbstractMessage<MobEntryChangeMessage
         {
             final MobEntryView mobEntry = MobEntryView.readFromByteBuf(buf);
             mobsToAttack.add(mobEntry);
+        }
+    }
+
+    @Override
+    public void toBytes(final ByteBuf buf)
+    {
+        buf.writeInt(this.colonyId);
+        BlockPosUtil.writeToByteBuf(buf, this.buildingId);
+
+        buf.writeInt(this.mobsToAttack.size());
+        for (final MobEntryView entry : this.mobsToAttack)
+        {
+            MobEntryView.writeToByteBuf(buf, entry);
         }
     }
 

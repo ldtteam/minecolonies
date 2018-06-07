@@ -162,7 +162,12 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
                 citizen.getInventoryCitizen().setCustomName(message.name);
             }
 
-            player.openGui(MineColonies.instance, GuiHandler.ID.CITIZEN_INVENTORY.ordinal(), player.world, citizen.getCitizenColonyHandler().getColony().getID(), citizen.getCitizenData().getId(), 0);
+            player.openGui(MineColonies.instance,
+              GuiHandler.ID.CITIZEN_INVENTORY.ordinal(),
+              player.world,
+              citizen.getCitizenColonyHandler().getColony().getID(),
+              citizen.getCitizenData().getId(),
+              0);
         }
     }
 

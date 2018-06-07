@@ -16,8 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
-import static com.minecolonies.api.util.constant.CitizenConstants.BIG_SATURATION_FACTOR;
-import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION_FACTOR;
 import static com.minecolonies.api.util.constant.Constants.XP_PARTICLE_EXPLOSION_SIZE;
 import static com.minecolonies.coremod.entity.AbstractEntityCitizen.DATA_LEVEL;
 
@@ -43,20 +41,12 @@ public class CitizenExperienceHandler
 
     /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
     public CitizenExperienceHandler(final EntityCitizen citizen)
     {
         this.citizen = citizen;
-    }
-
-    /**
-     * Updates the level of the citizen.
-     */
-    public void updateLevel()
-    {
-        level = citizen.getCitizenData() == null ? 0 : citizen.getCitizenData().getLevel();
-        citizen.getDataManager().set(DATA_LEVEL, level);
     }
 
     /**
@@ -68,6 +58,68 @@ public class CitizenExperienceHandler
     public void setSkillModifier(final int modifier)
     {
         this.skillModifier = modifier;
+    }
+
+    /**
+     * Drop some experience share depending on the experience and
+     * experienceLevel.
+     */
+    public void dropExperience()
+    {
+        int experience;
+
+        if (!CompatibilityUtils.getWorld(citizen).isRemote && citizen.getRecentlyHit() > 0 && citizen.checkCanDropLoot() && CompatibilityUtils.getWorld(citizen)
+                                                                                                                              .getGameRules()
+                                                                                                                              .getBoolean("doMobLoot"))
+        {
+            experience = (int) (citizen.getCitizenData().getExperience());
+
+            while (experience > 0)
+            {
+                final int j = EntityXPOrb.getXPSplit(experience);
+                experience -= j;
+                CompatibilityUtils.getWorld(citizen).spawnEntity(new EntityXPOrb(CompatibilityUtils.getWorld(citizen), citizen.posX, citizen.posY, citizen.posZ, j));
+            }
+        }
+
+        //Spawn particle explosion of xp orbs on death
+        for (int i = 0; i < XP_PARTICLE_EXPLOSION_SIZE; ++i)
+        {
+            final double d2 = citizen.getRandom().nextGaussian() * 0.02D;
+            final double d0 = citizen.getRandom().nextGaussian() * 0.02D;
+            final double d1 = citizen.getRandom().nextGaussian() * 0.02D;
+            CompatibilityUtils.getWorld(citizen).spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
+              citizen.posX + (citizen.getRandom().nextDouble() * citizen.width * 2.0F) - (double) citizen.width,
+              citizen.posY + (citizen.getRandom().nextDouble() * citizen.height),
+              citizen.posZ + (citizen.getRandom().nextDouble() * citizen.width * 2.0F) - (double) citizen.width,
+              d2,
+              d0,
+              d1);
+        }
+    }
+
+    /**
+     * Collect exp orbs around the entity.
+     */
+    public void gatherXp()
+    {
+        for (@NotNull final EntityXPOrb orb : getXPOrbsOnGrid())
+        {
+            addExperience(orb.getXpValue() / 2.0D);
+            orb.setDead();
+        }
+    }
+
+    /**
+     * Defines the area in which the citizen automatically gathers experience.
+     *
+     * @return a list of xp orbs around the entity.
+     */
+    private List<EntityXPOrb> getXPOrbsOnGrid()
+    {
+        @NotNull final AxisAlignedBB bb = new AxisAlignedBB(citizen.posX - 2, citizen.posY - 2, citizen.posZ - 2, citizen.posX + 2, citizen.posY + 2, citizen.posZ + 2);
+
+        return CompatibilityUtils.getWorld(citizen).getEntitiesWithinAABB(EntityXPOrb.class, bb);
     }
 
     /**
@@ -86,13 +138,14 @@ public class CitizenExperienceHandler
         if (citizen.getCitizenData() != null)
         {
             if (citizenHutLevel < citizenHutMaxLevel
-                    && Math.pow(2.0, citizenHutLevel + 1.0) <= citizen.getCitizenData().getLevel())
+                  && Math.pow(2.0, citizenHutLevel + 1.0) <= citizen.getCitizenData().getLevel())
             {
                 return;
             }
 
             double localXp = xp * skillModifier / EXP_DIVIDER;
-            final double workBuildingLevel = citizen.getCitizenColonyHandler().getWorkBuilding() == null ? 0 : citizen.getCitizenColonyHandler().getWorkBuilding().getBuildingLevel();
+            final double workBuildingLevel =
+              citizen.getCitizenColonyHandler().getWorkBuilding() == null ? 0 : citizen.getCitizenColonyHandler().getWorkBuilding().getBuildingLevel();
             final double bonusXp = (workBuildingLevel * (1 + citizenHutLevel) / Math.log(citizen.getCitizenData().getLevel() + 2.0D)) / 2;
             localXp = localXp * bonusXp;
             final double saturation = citizen.getCitizenData().getSaturation();
@@ -166,67 +219,17 @@ public class CitizenExperienceHandler
     }
 
     /**
-     * Drop some experience share depending on the experience and
-     * experienceLevel.
+     * Updates the level of the citizen.
      */
-    public void dropExperience()
+    public void updateLevel()
     {
-        int experience;
-
-        if (!CompatibilityUtils.getWorld(citizen).isRemote && citizen.getRecentlyHit() > 0 && citizen.checkCanDropLoot() && CompatibilityUtils.getWorld(citizen).getGameRules().getBoolean("doMobLoot"))
-        {
-            experience = (int) (citizen.getCitizenData().getExperience());
-
-            while (experience > 0)
-            {
-                final int j = EntityXPOrb.getXPSplit(experience);
-                experience -= j;
-                CompatibilityUtils.getWorld(citizen).spawnEntity(new EntityXPOrb(CompatibilityUtils.getWorld(citizen), citizen.posX, citizen.posY, citizen.posZ, j));
-            }
-        }
-
-        //Spawn particle explosion of xp orbs on death
-        for (int i = 0; i < XP_PARTICLE_EXPLOSION_SIZE; ++i)
-        {
-            final double d2 = citizen.getRandom().nextGaussian() * 0.02D;
-            final double d0 = citizen.getRandom().nextGaussian() * 0.02D;
-            final double d1 = citizen.getRandom().nextGaussian() * 0.02D;
-            CompatibilityUtils.getWorld(citizen).spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
-              citizen.posX + (citizen.getRandom().nextDouble() * citizen.width * 2.0F) - (double) citizen.width,
-              citizen.posY + (citizen.getRandom().nextDouble() * citizen.height),
-              citizen.posZ + (citizen.getRandom().nextDouble() * citizen.width * 2.0F) - (double) citizen.width,
-              d2,
-              d0,
-              d1);
-        }
-    }
-
-    /**
-     * Collect exp orbs around the entity.
-     */
-    public void gatherXp()
-    {
-        for (@NotNull final EntityXPOrb orb : getXPOrbsOnGrid())
-        {
-            addExperience(orb.getXpValue() / 2.0D);
-            orb.setDead();
-        }
-    }
-
-    /**
-     * Defines the area in which the citizen automatically gathers experience.
-     *
-     * @return a list of xp orbs around the entity.
-     */
-    private List<EntityXPOrb> getXPOrbsOnGrid()
-    {
-        @NotNull final AxisAlignedBB bb = new AxisAlignedBB(citizen.posX - 2, citizen.posY - 2, citizen.posZ - 2, citizen.posX + 2, citizen.posY + 2, citizen.posZ + 2);
-
-        return CompatibilityUtils.getWorld(citizen).getEntitiesWithinAABB(EntityXPOrb.class, bb);
+        level = citizen.getCitizenData() == null ? 0 : citizen.getCitizenData().getLevel();
+        citizen.getDataManager().set(DATA_LEVEL, level);
     }
 
     /**
      * Get the level of the citizen.
+     *
      * @return the level.
      */
     public int getLevel()
@@ -236,6 +239,7 @@ public class CitizenExperienceHandler
 
     /**
      * Setter for the level.
+     *
      * @param level the level.
      */
     public void setLevel(final int level)

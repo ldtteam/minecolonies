@@ -28,6 +28,7 @@ public class CitizenJobHandler
 
     /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
     public CitizenJobHandler(final EntityCitizen citizen)
@@ -129,6 +130,7 @@ public class CitizenJobHandler
 
     /**
      * Gets the job of the entity.
+     *
      * @return the job or els enull.
      */
     @Nullable

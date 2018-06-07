@@ -25,11 +25,11 @@ public class ItemChiefSword extends ItemSword
     private static final Potion LEVITATION_EFFECT = Potion.getPotionById(25);
     private static final Potion GLOW_EFFECT       = Potion.getPotionById(24);
 
-    private static final int GLOW_EFFECT_DURATION   = 20*30;
+    private static final int GLOW_EFFECT_DURATION   = 20 * 30;
     private static final int GLOW_EFFECT_MULTIPLIER = 20;
     private static final int GLOW_EFFECT_DISTANCE   = 60;
 
-    private static final int LEVITATION_EFFECT_DURATION   = 20*10;
+    private static final int LEVITATION_EFFECT_DURATION   = 20 * 10;
     private static final int LEVITATION_EFFECT_MULTIPLIER = 3;
 
     /**

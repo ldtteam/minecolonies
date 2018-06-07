@@ -13,7 +13,10 @@ import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 
@@ -82,7 +85,8 @@ public class CitizenChatHandler
         {
             final TextComponentString colonyDescription = new TextComponentString(" at " + citizen.getCitizenColonyHandler().getColony().getName() + ":");
             final List<EntityPlayer> players = new ArrayList<>(citizen.getCitizenColonyHandler().getColony().getMessageEntityPlayers());
-            final EntityPlayer owner = ServerUtils.getPlayerFromUUID(CompatibilityUtils.getWorld(citizen), citizen.getCitizenColonyHandler().getColony().getPermissions().getOwner());
+            final EntityPlayer owner =
+              ServerUtils.getPlayerFromUUID(CompatibilityUtils.getWorld(citizen), citizen.getCitizenColonyHandler().getColony().getPermissions().getOwner());
 
             if (owner != null)
             {
@@ -92,7 +96,10 @@ public class CitizenChatHandler
             }
 
             LanguageHandler.sendPlayersMessage(players,
-              citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
+              citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getName(),
+              colonyDescription,
+              citizenDescription,
+              requiredItem);
         }
     }
 
@@ -107,6 +114,7 @@ public class CitizenChatHandler
 
     /**
      * Notify about death of citizen.
+     *
      * @param damageSource the damage source.
      */
     public void notifyDeath(final DamageSource damageSource)

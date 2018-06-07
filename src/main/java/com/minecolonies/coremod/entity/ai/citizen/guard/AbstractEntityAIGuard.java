@@ -38,8 +38,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 import static com.minecolonies.coremod.entity.ai.citizen.guard.GuardConstants.*;
+import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends AbstractEntityAIInteract<J>
@@ -97,8 +97,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     {
         updateArmor();
     }
-
-    protected abstract int getAttackRange();
 
     /**
      * Redirects the herder to their building.
@@ -187,7 +185,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         if (worker.getCitizenColonyHandler().getWorkBuilding() != null
               && !(worker.getLastAttackedEntity() != null
-              && !worker.getLastAttackedEntity().isDead)
+                     && !worker.getLastAttackedEntity().isDead)
               && getOwnBuilding() instanceof AbstractBuildingGuards
               && target == null)
         {
@@ -201,7 +199,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                         currentPatrolPoint = guardBuilding.getNextPatrolTarget(null);
                     }
                     if (currentPatrolPoint != null
-                      && worker.isWorkerAtSiteWithMove(currentPatrolPoint, 1))
+                          && worker.isWorkerAtSiteWithMove(currentPatrolPoint, 1))
                     {
                         currentPatrolPoint = guardBuilding.getNextPatrolTarget(currentPatrolPoint);
                     }
@@ -251,11 +249,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 {
                     final EntityPlayer player = (EntityPlayer) entity;
 
-                    if (worker.getCitizenColonyHandler().getColony() != null && worker.getCitizenColonyHandler().getColony().getPermissions().hasPermission(player, Action.GUARDS_ATTACK))
+                    if (worker.getCitizenColonyHandler().getColony() != null && worker.getCitizenColonyHandler()
+                                                                                  .getColony()
+                                                                                  .getPermissions()
+                                                                                  .hasPermission(player, Action.GUARDS_ATTACK))
                     {
                         return entity;
                     }
-
                 }
             }
 
@@ -270,8 +270,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     for (final EntityLivingBase entity : targets)
                     {
                         if (mobEntry.getEntityEntry().getEntityClass().isInstance(entity)
-                              && ( worker.getDistance(entity) < closest
-                              || (int) closest == -1))
+                              && (worker.getDistance(entity) < closest
+                                    || (int) closest == -1))
                         {
                             closest = worker.getDistance(entity);
                             targetEntity = entity;
@@ -282,7 +282,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     {
                         return targetEntity;
                     }
-
                 }
             }
         }
@@ -292,6 +291,30 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         }
 
         return null;
+    }
+
+    /**
+     * Get the {@link AxisAlignedBB} we're searching for targets in.
+     *
+     * @return the {@link AxisAlignedBB}
+     */
+    protected AxisAlignedBB getSearchArea()
+    {
+        final AbstractBuildingGuards building = (AbstractBuildingGuards) getOwnBuilding();
+
+        if (building != null)
+        {
+            final double x1 = worker.posX + (building.getBonusVision() + DEFAULT_VISION);
+            final double x2 = worker.posX - (building.getBonusVision() + DEFAULT_VISION);
+            final double y1 = worker.posY + Y_VISION;
+            final double y2 = worker.posY - Y_VISION;
+            final double z1 = worker.posZ + (building.getBonusVision() + DEFAULT_VISION);
+            final double z2 = worker.posZ - (building.getBonusVision() + DEFAULT_VISION);
+
+            return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
+        }
+
+        return getOwnBuilding().getTargetableArea(world);
     }
 
     /**
@@ -321,7 +344,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             {
                 worker.isWorkerAtSiteWithMove(target.getPosition(), getAttackRange());
             }
-
         }
 
         return GUARD_ATTACK_PHYSICAL;
@@ -388,7 +410,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
                 if (ItemStackUtils.doesItemServeAsWeapon(heldItem))
                 {
-                    if(heldItem.getItem() instanceof ItemSword)
+                    if (heldItem.getItem() instanceof ItemSword)
                     {
                         damageToBeDealt += ((ItemSword) heldItem.getItem()).getAttackDamage();
                     }
@@ -406,6 +428,27 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             }
         }
         return GUARD_ATTACK_PHYSICAL;
+    }
+
+    protected abstract int getAttackRange();
+
+    /**
+     * Gets the reload time for a Range guard attack.
+     *
+     * @return the reload time
+     */
+    protected int getAttackDelay()
+    {
+        if (worker.getCitizenData() != null)
+        {
+            return RANGED_ATTACK_DELAY_BASE / (worker.getCitizenData().getLevel() + 1);
+        }
+        return RANGED_ATTACK_DELAY_BASE;
+    }
+
+    private double getRandomPitch()
+    {
+        return PITCH_DIVIDER / (worker.getRNG().nextDouble() * PITCH_MULTIPLIER + BASE_PITCH);
     }
 
     protected AIState attackRanged()
@@ -490,20 +533,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     }
 
     /**
-     * Gets the reload time for a Range guard attack.
-     * @return the reload time
-     */
-    protected int getAttackDelay()
-    {
-        if (worker.getCitizenData() != null)
-        {
-            return RANGED_ATTACK_DELAY_BASE / (worker.getCitizenData().getLevel() + 1);
-        }
-        return RANGED_ATTACK_DELAY_BASE;
-    }
-
-    /**
      * Gets the aim height for ranged guards.
+     *
      * @return the aim height.
      * Suppression because the method already explains the value.
      */
@@ -511,41 +542,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     protected double getAimHeight()
     {
         return 3.0D;
-    }
-
-    /**
-     * Damage per ranged attack.
-     * @return the attack damage
-     * Suppression because the method already explains the value.
-     */
-    @SuppressWarnings({"squid:S3400", "squid:S109"})
-    protected float getRangedAttackDamage()
-    {
-        return 2;
-    }
-
-    /**
-     * Get the {@link AxisAlignedBB} we're searching for targets in.
-     *
-     * @return the {@link AxisAlignedBB}
-     */
-    protected AxisAlignedBB getSearchArea()
-    {
-        final AbstractBuildingGuards building = (AbstractBuildingGuards) getOwnBuilding();
-
-        if (building != null)
-        {
-            final double x1 = worker.posX + (building.getBonusVision() + DEFAULT_VISION);
-            final double x2 = worker.posX - (building.getBonusVision() + DEFAULT_VISION);
-            final double y1 = worker.posY + Y_VISION;
-            final double y2 = worker.posY - Y_VISION;
-            final double z1 = worker.posZ + (building.getBonusVision() + DEFAULT_VISION);
-            final double z2 = worker.posZ - (building.getBonusVision() + DEFAULT_VISION);
-
-            return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
-        }
-
-        return getOwnBuilding().getTargetableArea(world);
     }
 
     /**
@@ -575,8 +571,15 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         }
     }
 
-    private double getRandomPitch()
+    /**
+     * Damage per ranged attack.
+     *
+     * @return the attack damage
+     * Suppression because the method already explains the value.
+     */
+    @SuppressWarnings({"squid:S3400", "squid:S109"})
+    protected float getRangedAttackDamage()
     {
-        return PITCH_DIVIDER / (worker.getRNG().nextDouble() * PITCH_MULTIPLIER + BASE_PITCH);
+        return 2;
     }
 }

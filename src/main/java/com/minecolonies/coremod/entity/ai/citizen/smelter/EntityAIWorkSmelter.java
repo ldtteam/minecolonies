@@ -241,6 +241,16 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     }
 
     /**
+     * Get the required progress to make an ingot out of a tool or weapon or armor.
+     *
+     * @return the amount of hits required.
+     */
+    private int getRequiredProgressForMakingRawMaterial()
+    {
+        return PROGRESS_MULTIPLIER / Math.min(worker.getCitizenExperienceHandler().getLevel() + 1, MAX_LEVEL) * HITTING_TIME;
+    }
+
+    /**
      * Gather bars from the furnace and double or triple them by chance.
      *
      * @param furnace the furnace to retrieve from.
@@ -273,28 +283,6 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
             }
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         }
-    }
-
-    /**
-     * If no clear tasks are given, check if something else is to do.
-     *
-     * @return the next AIState to traverse to.
-     */
-    @Override
-    protected AIState checkForAdditionalJobs()
-    {
-        final int amountOfTools = InventoryUtils.getItemCountInProvider(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableToolOrWeapon)
-                                    + InventoryUtils.getItemCountInItemHandler(
-          new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableToolOrWeapon);
-
-        if (amountOfTools > 0)
-        {
-            return SMELTER_SMELTING_ITEMS;
-        }
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
-        setDelay(WAIT_AFTER_REQUEST);
-        walkToBuilding();
-        return START_WORKING;
     }
 
     @Override
@@ -331,13 +319,25 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     }
 
     /**
-     * Get the required progress to make an ingot out of a tool or weapon or armor.
+     * If no clear tasks are given, check if something else is to do.
      *
-     * @return the amount of hits required.
+     * @return the next AIState to traverse to.
      */
-    private int getRequiredProgressForMakingRawMaterial()
+    @Override
+    protected AIState checkForAdditionalJobs()
     {
-        return PROGRESS_MULTIPLIER / Math.min(worker.getCitizenExperienceHandler().getLevel() + 1, MAX_LEVEL) * HITTING_TIME;
+        final int amountOfTools = InventoryUtils.getItemCountInProvider(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableToolOrWeapon)
+                                    + InventoryUtils.getItemCountInItemHandler(
+          new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableToolOrWeapon);
+
+        if (amountOfTools > 0)
+        {
+            return SMELTER_SMELTING_ITEMS;
+        }
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
+        setDelay(WAIT_AFTER_REQUEST);
+        walkToBuilding();
+        return START_WORKING;
     }
 
     private ItemStack extractEnchantFromItem(final ItemStack item)

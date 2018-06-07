@@ -59,19 +59,6 @@ public class BuildingBarracks extends AbstractBuilding
     }
 
     @Override
-    public String getSchematicName()
-    {
-        return SCHEMATIC_NAME;
-    }
-
-    @SuppressWarnings("squid:S109")
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return 5;
-    }
-
-    @Override
     public void onDestroyed()
     {
         final World world = getColony().getWorld();
@@ -145,6 +132,68 @@ public class BuildingBarracks extends AbstractBuilding
     }
 
     /**
+     * Return list of all the Barrack's Towers.
+     *
+     * @return a tuple with position and facing.
+     */
+    private List<Tuple<BlockPos, EnumFacing>> getBarracksTowers()
+    {
+        final StructureName sn =
+          new StructureName(
+            Structures.SCHEMATICS_PREFIX,
+            getStyle(),
+            getSchematicName() + getBuildingLevel());
+
+        final String structureName = sn.toString();
+        final StructureWrapper wrapper = new StructureWrapper(getColony().getWorld(), structureName);
+
+        BlockPos barracksPos = null;
+        final List<Template.BlockInfo> barracksTowers = new ArrayList<>();
+
+        for (final Template.BlockInfo block : wrapper.getStructure().getStructure().getTemplate().blocks)
+        {
+            if (block.blockState.getBlock() instanceof BlockHutBarracks)
+            {
+                barracksPos = block.pos;
+            }
+
+            if (block.blockState.getBlock() instanceof BlockBarracksTowerSubstitution)
+            {
+                barracksTowers.add(block);
+            }
+        }
+
+        final List<Tuple<BlockPos, EnumFacing>> towers = new ArrayList<>();
+
+        if (barracksPos != null)
+        {
+            for (final Template.BlockInfo block : barracksTowers)
+            {
+                final int xDif = barracksPos.getX() - block.pos.getX();
+                final int yDif = barracksPos.getY() - block.pos.getY();
+                final int zDif = barracksPos.getZ() - block.pos.getZ();
+
+                final int towerX = getLocation().getX() + xDif;
+                final int towerY = getLocation().getY() - yDif;
+                final int towerZ = getLocation().getZ() + zDif;
+
+                final BlockPos towerPos = new BlockPos(towerX, towerY, towerZ);
+                final EnumFacing towerFacing = block.blockState.getValue(BlockBarracksTowerSubstitution.FACING);
+
+                towers.add(new Tuple<>(towerPos, towerFacing));
+            }
+        }
+
+        return towers;
+    }
+
+    @Override
+    public String getSchematicName()
+    {
+        return SCHEMATIC_NAME;
+    }
+
+    /**
      * Calculate position and facing of the tower to add.
      *
      * @param level the level of the barracks.
@@ -209,60 +258,11 @@ public class BuildingBarracks extends AbstractBuilding
         return new Tuple<>(position, facing);
     }
 
-    /**
-     * Return list of all the Barrack's Towers.
-     *
-     * @return a tuple with position and facing.
-     */
-    private List<Tuple<BlockPos, EnumFacing>> getBarracksTowers()
+    @SuppressWarnings("squid:S109")
+    @Override
+    public int getMaxBuildingLevel()
     {
-        final StructureName sn =
-          new StructureName(
-            Structures.SCHEMATICS_PREFIX,
-            getStyle(),
-            getSchematicName() + getBuildingLevel());
-
-        final String structureName = sn.toString();
-        final StructureWrapper wrapper = new StructureWrapper(getColony().getWorld(), structureName);
-
-        BlockPos barracksPos = null;
-        final List<Template.BlockInfo> barracksTowers = new ArrayList<>();
-
-        for (final Template.BlockInfo block : wrapper.getStructure().getStructure().getTemplate().blocks)
-        {
-            if (block.blockState.getBlock() instanceof BlockHutBarracks)
-            {
-                barracksPos = block.pos;
-            }
-
-            if (block.blockState.getBlock() instanceof BlockBarracksTowerSubstitution)
-            {
-                barracksTowers.add(block);
-            }
-        }
-
-        final List<Tuple<BlockPos, EnumFacing>> towers = new ArrayList<>();
-
-        if (barracksPos != null)
-        {
-            for (final Template.BlockInfo block : barracksTowers)
-            {
-                final int xDif = barracksPos.getX() - block.pos.getX();
-                final int yDif = barracksPos.getY() - block.pos.getY();
-                final int zDif = barracksPos.getZ() - block.pos.getZ();
-
-                final int towerX = getLocation().getX() + xDif;
-                final int towerY = getLocation().getY() - yDif;
-                final int towerZ = getLocation().getZ() + zDif;
-
-                final BlockPos towerPos = new BlockPos(towerX, towerY, towerZ);
-                final EnumFacing towerFacing = block.blockState.getValue(BlockBarracksTowerSubstitution.FACING);
-
-                towers.add(new Tuple<>(towerPos, towerFacing));
-            }
-        }
-
-        return towers;
+        return 5;
     }
 
     /**

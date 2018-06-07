@@ -29,9 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.minecolonies.api.util.constant.CitizenConstants.BLOCK_BREAK_PARTICLE_RANGE;
-import static com.minecolonies.api.util.constant.CitizenConstants.BLOCK_BREAK_SOUND_RANGE;
-import static com.minecolonies.api.util.constant.CitizenConstants.FACING_DELTA_YAW;
+import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_PITCH_MULTIPLIER;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_VOLUME;
 
@@ -47,6 +45,7 @@ public class CitizenItemHandler
 
     /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
     public CitizenItemHandler(final EntityCitizen citizen)
@@ -248,8 +247,8 @@ public class CitizenItemHandler
         //I know streams look better but they are flawed in type erasure
         for (final Object o :
           CompatibilityUtils.getWorld(citizen).
-                                             getEntitiesWithinAABB(EntityItem.class,
-                                               new AxisAlignedBB(citizen.getPosition()).expand(2.0F, 1.0F, 2.0F).expand(-2.0F, -1.0F, -2.0F)))
+                                                getEntitiesWithinAABB(EntityItem.class,
+                                                  new AxisAlignedBB(citizen.getPosition()).expand(2.0F, 1.0F, 2.0F).expand(-2.0F, -1.0F, -2.0F)))
         {
             if (o instanceof EntityItem)
             {

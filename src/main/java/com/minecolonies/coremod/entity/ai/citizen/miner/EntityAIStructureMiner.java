@@ -138,10 +138,14 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         return PREPARING;
     }
 
-    @Override
-    public BuildingMiner getOwnBuilding()
+    @NotNull
+    private String getRenderMetaTorch()
     {
-        return (BuildingMiner) worker.getCitizenColonyHandler().getWorkBuilding();
+        if (worker.getCitizenInventoryHandler().hasItemInInventory(Blocks.TORCH, -1))
+        {
+            return RENDER_META_TORCH;
+        }
+        return "";
     }
 
     /**
@@ -165,14 +169,22 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         worker.setRenderMetadata(renderMetaData);
     }
 
-    @NotNull
-    private String getRenderMetaTorch()
+    private AIState doShaftMining()
     {
-        if (worker.getCitizenInventoryHandler().hasItemInInventory(Blocks.TORCH, -1))
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.mining"));
+
+        minerWorkingLocation = getNextBlockInShaftToMine();
+        if (minerWorkingLocation == null)
         {
-            return RENDER_META_TORCH;
+            return advanceLadder(MINER_MINING_SHAFT);
         }
-        return "";
+
+        //Note for future me:
+        //we have to return; on false of this method
+        //but omitted because end of method.
+        mineBlock(minerWorkingLocation, currentStandingPosition);
+
+        return MINER_MINING_SHAFT;
     }
 
     @NotNull
@@ -315,22 +327,48 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         buildingMiner.setFoundLadder(true);
     }
 
-    private AIState doShaftMining()
+    /**
+     * Initiates structure loading.
+     *
+     * @param mineNode     the node to load it for.
+     * @param rotateTimes  The amount of time to rotate the structure.
+     * @param structurePos The position of the structure.
+     */
+    private void initStructure(final Node mineNode, final int rotateTimes, final BlockPos structurePos)
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.mining"));
+        final String style = getOwnBuilding().getStyle();
+        String requiredName = null;
+        int rotateCount = 0;
 
-        minerWorkingLocation = getNextBlockInShaftToMine();
-        if (minerWorkingLocation == null)
+        if (mineNode == null)
         {
-            return advanceLadder(MINER_MINING_SHAFT);
+            rotateCount = getRotationFromVector();
+            requiredName = getCorrectStyleLocation(style, MAIN_SHAFT_NAME);
+        }
+        else
+        {
+            rotateCount = rotateTimes;
+            if (mineNode.getStyle() == Node.NodeType.CROSSROAD)
+            {
+                requiredName = getCorrectStyleLocation(style, X4_SHAFT_NAME);
+            }
+            else if (mineNode.getStyle() == Node.NodeType.BEND)
+            {
+                requiredName = getCorrectStyleLocation(style, X2_RIGHT_SHAFT_NAME);
+            }
+            else if (mineNode.getStyle() == Node.NodeType.TUNNEL)
+            {
+                requiredName = getCorrectStyleLocation(style, X2_TOP_SHAFT_NAME);
+            }
         }
 
-        //Note for future me:
-        //we have to return; on false of this method
-        //but omitted because end of method.
-        mineBlock(minerWorkingLocation, currentStandingPosition);
-
-        return MINER_MINING_SHAFT;
+        if (requiredName != null)
+        {
+            final WorkOrderBuildMiner wo = new WorkOrderBuildMiner(requiredName, requiredName, rotateCount, structurePos, false, getOwnBuilding().getLocation());
+            worker.getCitizenColonyHandler().getColony().getWorkManager().addWorkOrder(wo, false);
+            job.setWorkOrder(wo);
+            initiate();
+        }
     }
 
     private AIState advanceLadder(final AIState state)
@@ -593,48 +631,10 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         return true;
     }
 
-    /**
-     * Initiates structure loading.
-     *
-     * @param mineNode     the node to load it for.
-     * @param rotateTimes  The amount of time to rotate the structure.
-     * @param structurePos The position of the structure.
-     */
-    private void initStructure(final Node mineNode, final int rotateTimes, final BlockPos structurePos)
+    @Override
+    public BuildingMiner getOwnBuilding()
     {
-        final String style = getOwnBuilding().getStyle();
-        String requiredName = null;
-        int rotateCount = 0;
-
-        if (mineNode == null)
-        {
-            rotateCount = getRotationFromVector();
-            requiredName = getCorrectStyleLocation(style, MAIN_SHAFT_NAME);
-        }
-        else
-        {
-            rotateCount = rotateTimes;
-            if (mineNode.getStyle() == Node.NodeType.CROSSROAD)
-            {
-                requiredName = getCorrectStyleLocation(style, X4_SHAFT_NAME);
-            }
-            else if (mineNode.getStyle() == Node.NodeType.BEND)
-            {
-                requiredName = getCorrectStyleLocation(style, X2_RIGHT_SHAFT_NAME);
-            }
-            else if (mineNode.getStyle() == Node.NodeType.TUNNEL)
-            {
-                requiredName = getCorrectStyleLocation(style, X2_TOP_SHAFT_NAME);
-            }
-        }
-
-        if (requiredName != null)
-        {
-            final WorkOrderBuildMiner wo = new WorkOrderBuildMiner(requiredName, requiredName, rotateCount, structurePos, false, getOwnBuilding().getLocation());
-            worker.getCitizenColonyHandler().getColony().getWorkManager().addWorkOrder(wo, false);
-            job.setWorkOrder(wo);
-            initiate();
-        }
+        return (BuildingMiner) worker.getCitizenColonyHandler().getWorkBuilding();
     }
 
     /**

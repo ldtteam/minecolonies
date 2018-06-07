@@ -23,32 +23,32 @@ public final class ModBlocks
      * References can be made to here.
      */
 
-    private static final List<BlockTimberFrame> timberFrames = new ArrayList<>();
-    public static BlockHutTownHall               blockHutTownHall;
-    public static BlockHutCitizen                blockHutCitizen;
-    public static BlockHutMiner                  blockHutMiner;
-    public static BlockHutLumberjack             blockHutLumberjack;
-    public static BlockHutBaker                  blockHutBaker;
-    public static BlockHutBuilder                blockHutBuilder;
-    public static BlockHutDeliveryman            blockHutDeliveryman;
-    public static BlockHutBlacksmith             blockHutBlacksmith;
-    public static BlockHutStonemason             blockHutStonemason;
-    public static BlockHutFarmer                 blockHutFarmer;
-    public static BlockHutFisherman              blockHutFisherman;
-    public static BlockSubstitution              blockSubstitution;
-    public static BlockBarracksTowerSubstitution blockBarracksTowerSubstitution;
-    public static BlockSolidSubstitution         blockSolidSubstitution;
-    public static BlockHutField                  blockHutField;
-    public static BlockHutGuardTower             blockHutGuardTower;
-    public static BlockHutWareHouse              blockHutWareHouse;
-    public static BlockHutShepherd               blockHutShepherd;
-    public static BlockHutCowboy                 blockHutCowboy;
-    public static BlockHutSwineHerder            blockHutSwineHerder;
-    public static BlockHutChickenHerder          blockHutChickenHerder;
-    public static BlockHutBarracks               blockHutBarracks;
-    public static BlockHutBarracksTower          blockHutBarracksTower;
-    public static BlockHutCook                   blockHutCook;
-    public static BlockHutSmeltery               blockHutSmeltery;
+    private static final List<BlockTimberFrame>         timberFrames = new ArrayList<>();
+    public static        BlockHutTownHall               blockHutTownHall;
+    public static        BlockHutCitizen                blockHutCitizen;
+    public static        BlockHutMiner                  blockHutMiner;
+    public static        BlockHutLumberjack             blockHutLumberjack;
+    public static        BlockHutBaker                  blockHutBaker;
+    public static        BlockHutBuilder                blockHutBuilder;
+    public static        BlockHutDeliveryman            blockHutDeliveryman;
+    public static        BlockHutBlacksmith             blockHutBlacksmith;
+    public static        BlockHutStonemason             blockHutStonemason;
+    public static        BlockHutFarmer                 blockHutFarmer;
+    public static        BlockHutFisherman              blockHutFisherman;
+    public static        BlockSubstitution              blockSubstitution;
+    public static        BlockBarracksTowerSubstitution blockBarracksTowerSubstitution;
+    public static        BlockSolidSubstitution         blockSolidSubstitution;
+    public static        BlockHutField                  blockHutField;
+    public static        BlockHutGuardTower             blockHutGuardTower;
+    public static        BlockHutWareHouse              blockHutWareHouse;
+    public static        BlockHutShepherd               blockHutShepherd;
+    public static        BlockHutCowboy                 blockHutCowboy;
+    public static        BlockHutSwineHerder            blockHutSwineHerder;
+    public static        BlockHutChickenHerder          blockHutChickenHerder;
+    public static        BlockHutBarracks               blockHutBarracks;
+    public static        BlockHutBarracksTower          blockHutBarracksTower;
+    public static        BlockHutCook                   blockHutCook;
+    public static        BlockHutSmeltery               blockHutSmeltery;
 
     /**
      * Utility blocks.

@@ -19,6 +19,7 @@ public class CitizenInventoryHandler
 
     /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
     public CitizenInventoryHandler(final EntityCitizen citizen)

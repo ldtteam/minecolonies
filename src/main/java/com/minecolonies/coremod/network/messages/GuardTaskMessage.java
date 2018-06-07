@@ -50,7 +50,7 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
                              final boolean assignmentMode,
                              final boolean patrollingMode,
                              final boolean retrieval,
-                             final int task
+      final int task
     )
     {
         super();

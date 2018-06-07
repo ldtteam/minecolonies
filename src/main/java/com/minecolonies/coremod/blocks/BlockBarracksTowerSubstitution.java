@@ -120,6 +120,20 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
         return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
     }
 
+    /**
+     * Used to determine ambient occlusion and culling when rebuilding chunks
+     * for render.
+     *
+     * @return true
+     */
+    //todo: remove once we no longer need to support this
+    @SuppressWarnings(DEPRECATION)
+    @Override
+    public boolean isOpaqueCube(final IBlockState state)
+    {
+        return true;
+    }
+
     @SuppressWarnings(DEPRECATION)
     @NotNull
     @Override
@@ -142,19 +156,5 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
     protected BlockStateContainer createBlockState()
     {
         return new BlockStateContainer(this, FACING);
-    }
-
-    /**
-     * Used to determine ambient occlusion and culling when rebuilding chunks
-     * for render.
-     *
-     * @return true
-     */
-    //todo: remove once we no longer need to support this
-    @SuppressWarnings(DEPRECATION)
-    @Override
-    public boolean isOpaqueCube(final IBlockState state)
-    {
-        return true;
     }
 }

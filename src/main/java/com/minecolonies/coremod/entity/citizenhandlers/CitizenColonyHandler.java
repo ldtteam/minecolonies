@@ -45,68 +45,12 @@ public class CitizenColonyHandler
 
     /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
     public CitizenColonyHandler(final EntityCitizen citizen)
     {
         this.citizen = citizen;
-    }
-
-    /**
-     * calculate this worker building.
-     *
-     * @return the building or null if none present.
-     */
-    @Nullable
-    public AbstractBuildingWorker getWorkBuilding()
-    {
-        return (citizen.getCitizenData() == null) ? null : citizen.getCitizenData().getWorkBuilding();
-    }
-
-    /**
-     * Assigns a citizen to a colony.
-     *
-     * @param c    the colony.
-     * @param data the data of the new citizen.
-     */
-    public void setColony(@Nullable final Colony c, @Nullable final CitizenData data)
-    {
-        if (c == null)
-        {
-            colony = null;
-            colonyId = 0;
-            citizen.setCitizenId(0);
-            citizen.setCitizenData(null);
-            citizen.setDead();
-            return;
-        }
-
-        colony = c;
-        colonyId = colony.getID();
-        citizen.setCitizenId(data.getId());
-        citizen.setCitizenData(data);
-
-        citizen.setCustomNameTag(citizen.getCitizenData().getName());
-
-        citizen.setFemale(citizen.getCitizenData().isFemale());
-        citizen.setTextureId(citizen.getCitizenData().getTextureId());
-
-        citizen.getDataManager().set(DATA_COLONY_ID, colonyId);
-        citizen.getDataManager().set(DATA_CITIZEN_ID, citizen.getCitizenId());
-        citizen.getDataManager().set(DATA_IS_FEMALE, citizen.isFemale() ? 1 : 0);
-        citizen.getDataManager().set(DATA_TEXTURE, citizen.getTextureId());
-        citizen.getCitizenExperienceHandler().updateLevel();
-
-        citizen.getCitizenData().setCitizenEntity(citizen);
-        citizen.getCitizenData().setLastPosition(citizen.getPosition());
-
-        citizen.getCitizenJobHandler().onJobChanged(citizen.getCitizenJobHandler().getColonyJob());
-    }
-
-    @Nullable
-    public AbstractBuilding getHomeBuilding()
-    {
-        return (citizen.getCitizenData() == null) ? null : citizen.getCitizenData().getHomeBuilding();
     }
 
     /**
@@ -186,6 +130,46 @@ public class CitizenColonyHandler
     }
 
     /**
+     * Assigns a citizen to a colony.
+     *
+     * @param c    the colony.
+     * @param data the data of the new citizen.
+     */
+    public void setColony(@Nullable final Colony c, @Nullable final CitizenData data)
+    {
+        if (c == null)
+        {
+            colony = null;
+            colonyId = 0;
+            citizen.setCitizenId(0);
+            citizen.setCitizenData(null);
+            citizen.setDead();
+            return;
+        }
+
+        colony = c;
+        colonyId = colony.getID();
+        citizen.setCitizenId(data.getId());
+        citizen.setCitizenData(data);
+
+        citizen.setCustomNameTag(citizen.getCitizenData().getName());
+
+        citizen.setFemale(citizen.getCitizenData().isFemale());
+        citizen.setTextureId(citizen.getCitizenData().getTextureId());
+
+        citizen.getDataManager().set(DATA_COLONY_ID, colonyId);
+        citizen.getDataManager().set(DATA_CITIZEN_ID, citizen.getCitizenId());
+        citizen.getDataManager().set(DATA_IS_FEMALE, citizen.isFemale() ? 1 : 0);
+        citizen.getDataManager().set(DATA_TEXTURE, citizen.getTextureId());
+        citizen.getCitizenExperienceHandler().updateLevel();
+
+        citizen.getCitizenData().setCitizenEntity(citizen);
+        citizen.getCitizenData().setLastPosition(citizen.getPosition());
+
+        citizen.getCitizenJobHandler().onJobChanged(citizen.getCitizenJobHandler().getColonyJob());
+    }
+
+    /**
      * Update the client side of the citizen entitz.
      */
     public void updateColonyClient()
@@ -215,6 +199,7 @@ public class CitizenColonyHandler
 
     /**
      * Get the amount the worker should decrease its saturation by each action done or x blocks traveled.
+     *
      * @return the double describing it.
      */
     public double getPerBuildingFoodCost()
@@ -224,7 +209,19 @@ public class CitizenColonyHandler
     }
 
     /**
+     * calculate this worker building.
+     *
+     * @return the building or null if none present.
+     */
+    @Nullable
+    public AbstractBuildingWorker getWorkBuilding()
+    {
+        return (citizen.getCitizenData() == null) ? null : citizen.getCitizenData().getWorkBuilding();
+    }
+
+    /**
      * Getter for the colony.
+     *
      * @return the colony of the citizen or null.
      */
     @Nullable
@@ -235,6 +232,7 @@ public class CitizenColonyHandler
 
     /**
      * Getter for the colonz id.
+     *
      * @return the colony id.
      */
     public int getColonyId()
@@ -244,6 +242,7 @@ public class CitizenColonyHandler
 
     /**
      * Setter for the colony id.
+     *
      * @param colonyId the new colonyId.
      */
     public void setColonyId(final int colonyId)
@@ -261,6 +260,7 @@ public class CitizenColonyHandler
 
     /**
      * Check if a citizen is at home.
+     *
      * @return true if so.
      */
     public boolean isAtHome()
@@ -277,6 +277,12 @@ public class CitizenColonyHandler
         }
 
         @Nullable final BlockPos homePosition = citizen.getHomePosition();
-        return homePosition.distanceSq((int) Math.floor(citizen.posX), (int)citizen. posY, (int) Math.floor(citizen.posZ)) <= RANGE_TO_BE_HOME;
+        return homePosition.distanceSq((int) Math.floor(citizen.posX), (int) citizen.posY, (int) Math.floor(citizen.posZ)) <= RANGE_TO_BE_HOME;
+    }
+
+    @Nullable
+    public AbstractBuilding getHomeBuilding()
+    {
+        return (citizen.getCitizenData() == null) ? null : citizen.getCitizenData().getHomeBuilding();
     }
 }

@@ -43,7 +43,7 @@ public class MobEntryView
     /**
      * Writes the Location, Attack, and Priority to a {@link ByteBuf}.
      *
-     * @param buf Buf to write to.
+     * @param buf   Buf to write to.
      * @param entry Entry to write.
      */
     public static void writeToByteBuf(@NotNull final ByteBuf buf, @NotNull final MobEntryView entry)
@@ -51,75 +51,6 @@ public class MobEntryView
         ByteBufUtils.writeUTF8String(buf, entry.getLocation().toString());
         buf.writeBoolean(entry.hasAttack());
         buf.writeInt(entry.getPriority());
-    }
-
-    /**
-     * Reads the Location, Attack, and Priority from a {@link ByteBuf} to create a MobEntryView
-     *
-     * @param buf Buf to read from.
-     * @return MobEntryView that was created.
-     */
-    @NotNull
-    public static MobEntryView readFromByteBuf(@NotNull final ByteBuf buf)
-    {
-        final ResourceLocation location = new ResourceLocation(ByteBufUtils.readUTF8String(buf));
-        final Boolean attack = buf.readBoolean();
-        final Integer priority = buf.readInt();
-
-        return new MobEntryView(location, attack, priority);
-    }
-
-    /**
-     * Writes the Location, Attack, and Priority to NBT
-     *
-     * @param compound Compound to write to.
-     * @param name     Name of the tag.
-     * @param entry      the View to write
-     */
-    public static void writeToNBT(@NotNull final NBTTagCompound compound, final String name, @NotNull final MobEntryView entry)
-    {
-        @NotNull final NBTTagCompound coordsCompound = new NBTTagCompound();
-        coordsCompound.setString("location", entry.getLocation().toString());
-        coordsCompound.setBoolean("attack", entry.hasAttack());
-        coordsCompound.setInteger("priority", entry.getPriority());
-        compound.setTag(name, coordsCompound);
-    }
-
-    /**
-     * Reads the Location, Attack, and Priority from nbt to create a MobEntryView
-     *
-     * @param compound Compound to read data from.
-     * @param name     Tag name to read data from.
-     * @return The new MobEntryView
-     */
-    @NotNull
-    public static MobEntryView readFromNBT(@NotNull final NBTTagCompound compound, final String name)
-    {
-        final NBTTagCompound entryCompound = compound.getCompoundTag(name);
-        final ResourceLocation location = new ResourceLocation(entryCompound.getString("location"));
-        final Boolean attack = entryCompound.getBoolean("attack");
-        final Integer priority = entryCompound.getInteger("priority");
-        return new MobEntryView(location, attack, priority);
-    }
-
-    /**
-     * Priority getter.
-     *
-     * @return the priority.
-     */
-    public int getPriority()
-    {
-        return priority;
-    }
-
-    /**
-     * Setter for the priority.
-     *
-     * @param priority the new priority attribute.
-     */
-    public void setPriority(final int priority)
-    {
-        this.priority = priority;
     }
 
     /**
@@ -150,6 +81,75 @@ public class MobEntryView
     public boolean hasAttack()
     {
         return attack;
+    }
+
+    /**
+     * Priority getter.
+     *
+     * @return the priority.
+     */
+    public int getPriority()
+    {
+        return priority;
+    }
+
+    /**
+     * Setter for the priority.
+     *
+     * @param priority the new priority attribute.
+     */
+    public void setPriority(final int priority)
+    {
+        this.priority = priority;
+    }
+
+    /**
+     * Reads the Location, Attack, and Priority from a {@link ByteBuf} to create a MobEntryView
+     *
+     * @param buf Buf to read from.
+     * @return MobEntryView that was created.
+     */
+    @NotNull
+    public static MobEntryView readFromByteBuf(@NotNull final ByteBuf buf)
+    {
+        final ResourceLocation location = new ResourceLocation(ByteBufUtils.readUTF8String(buf));
+        final Boolean attack = buf.readBoolean();
+        final Integer priority = buf.readInt();
+
+        return new MobEntryView(location, attack, priority);
+    }
+
+    /**
+     * Writes the Location, Attack, and Priority to NBT
+     *
+     * @param compound Compound to write to.
+     * @param name     Name of the tag.
+     * @param entry    the View to write
+     */
+    public static void writeToNBT(@NotNull final NBTTagCompound compound, final String name, @NotNull final MobEntryView entry)
+    {
+        @NotNull final NBTTagCompound coordsCompound = new NBTTagCompound();
+        coordsCompound.setString("location", entry.getLocation().toString());
+        coordsCompound.setBoolean("attack", entry.hasAttack());
+        coordsCompound.setInteger("priority", entry.getPriority());
+        compound.setTag(name, coordsCompound);
+    }
+
+    /**
+     * Reads the Location, Attack, and Priority from nbt to create a MobEntryView
+     *
+     * @param compound Compound to read data from.
+     * @param name     Tag name to read data from.
+     * @return The new MobEntryView
+     */
+    @NotNull
+    public static MobEntryView readFromNBT(@NotNull final NBTTagCompound compound, final String name)
+    {
+        final NBTTagCompound entryCompound = compound.getCompoundTag(name);
+        final ResourceLocation location = new ResourceLocation(entryCompound.getString("location"));
+        final Boolean attack = entryCompound.getBoolean("attack");
+        final Integer priority = entryCompound.getInteger("priority");
+        return new MobEntryView(location, attack, priority);
     }
 
     /**

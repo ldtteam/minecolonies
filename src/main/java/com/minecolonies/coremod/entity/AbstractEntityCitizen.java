@@ -22,7 +22,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -110,24 +109,6 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements INp
     }
 
     /**
-     * Returns false if the newer Entity AI code should be run.
-     */
-    @Override
-    public boolean isAIDisabled()
-    {
-        return false;
-    }
-
-    /**
-     * Get the model assigned to the citizen.
-     * @return the model.
-     */
-    public RenderBipedCitizen.Model getModelID()
-    {
-        return modelId;
-    }
-
-    /**
      * Getter of the resource location of the texture.
      *
      * @return location of the texture.
@@ -153,6 +134,16 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements INp
         final String textureBase = "textures/entity/" + model.textureBase + (female ? "Female" : "Male");
         final int moddedTextureId = (textureId % model.numTextures) + 1;
         texture = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + renderMetadata + ".png");
+    }
+
+    /**
+     * Get the model assigned to the citizen.
+     *
+     * @return the model.
+     */
+    public RenderBipedCitizen.Model getModelID()
+    {
+        return modelId;
     }
 
     /**
@@ -192,6 +183,7 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements INp
 
     /**
      * Set the gender.
+     *
      * @param female true if female, false if male.
      */
     public void setFemale(final boolean female)
@@ -200,25 +192,8 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements INp
     }
 
     /**
-     * Set the texture id.
-     * @param textureId the id of the texture.
-     */
-    public void setTextureId(final int textureId)
-    {
-        this.textureId = textureId;
-    }
-
-    /**
-     * Set the render meta data.
-     * @param renderMetadata the metadata to set.
-     */
-    public void setRenderMetadata(final String renderMetadata)
-    {
-        this.renderMetadata = renderMetadata;
-    }
-
-    /**
      * Getter for the render metadata.
+     *
      * @return the meta data.
      */
     public String getRenderMetadata()
@@ -226,10 +201,14 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements INp
         return renderMetadata;
     }
 
-    @Override
-    protected void updateEquipmentIfNeeded(final EntityItem itemEntity)
+    /**
+     * Set the render meta data.
+     *
+     * @param renderMetadata the metadata to set.
+     */
+    public void setRenderMetadata(final String renderMetadata)
     {
-        //Just do nothing!
+        this.renderMetadata = renderMetadata;
     }
 
     /**
@@ -247,6 +226,21 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements INp
         getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(BASE_PATHFINDING_RANGE);
     }
 
+    @Override
+    protected void updateEquipmentIfNeeded(final EntityItem itemEntity)
+    {
+        //Just do nothing!
+    }
+
+    /**
+     * Returns false if the newer Entity AI code should be run.
+     */
+    @Override
+    public boolean isAIDisabled()
+    {
+        return false;
+    }
+
     /**
      * Getter of the citizens random object.
      *
@@ -260,12 +254,6 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements INp
     public int getOffsetTicks()
     {
         return this.ticksExisted + OFFSET_TICK_MULTIPLIER * this.getEntityId();
-    }
-
-    @Override
-    public boolean isActiveItemStackBlocking()
-    {
-        return getActiveItemStack().getItem() instanceof ItemShield;
     }
 
     /**
@@ -289,9 +277,16 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements INp
         super.updateFallState(y, onGroundIn, state, pos);
     }
 
+    @Override
+    public boolean isActiveItemStackBlocking()
+    {
+        return getActiveItemStack().getItem() instanceof ItemShield;
+    }
+
     /**
      * Set the rotation of the citizen.
-     * @param yaw the rotation yaw.
+     *
+     * @param yaw   the rotation yaw.
      * @param pitch the rotation pitch.
      */
     public void setOwnRotation(final float yaw, final float pitch)
@@ -301,6 +296,7 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements INp
 
     /**
      * Set the model id.
+     *
      * @param model the model.
      */
     public void setModelId(final RenderBipedCitizen.Model model)
@@ -318,6 +314,7 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements INp
 
     /**
      * Getter for the texture id.
+     *
      * @return the texture id.
      */
     public int getTextureId()
@@ -326,7 +323,18 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements INp
     }
 
     /**
+     * Set the texture id.
+     *
+     * @param textureId the id of the texture.
+     */
+    public void setTextureId(final int textureId)
+    {
+        this.textureId = textureId;
+    }
+
+    /**
      * Check if recently hit.
+     *
      * @return the count of how often.
      */
     public int getRecentlyHit()
@@ -336,6 +344,7 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements INp
 
     /**
      * Check if can drop loot.
+     *
      * @return true if so.
      */
     public boolean checkCanDropLoot()

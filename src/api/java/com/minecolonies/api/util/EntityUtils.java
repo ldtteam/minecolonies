@@ -4,7 +4,6 @@ import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -20,9 +19,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static com.minecolonies.api.util.constant.CitizenConstants.MOVE_MINIMAL;
-import static com.minecolonies.api.util.constant.CitizenConstants.ROTATION_MOVEMENT;
 
 /**
  * Entity related utilities.

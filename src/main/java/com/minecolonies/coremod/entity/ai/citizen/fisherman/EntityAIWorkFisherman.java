@@ -119,33 +119,33 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     /**
      * Chance to play a specific fisherman sound.
      */
-    private static final int    CHANCE_TO_PLAY_SOUND = 20;
+    private static final int                              CHANCE_TO_PLAY_SOUND = 20;
     @NotNull
-    private final        Random random               = new Random();
+    private final        Random                           random               = new Random();
     /**
      * The number of executed adjusts of the fisherman's rotation.
      */
-    private              int    executedRotations    = 0;
+    private              int                              executedRotations    = 0;
     /**
      * The PathResult when the fisherman searches water.
      */
     @Nullable
-    private PathJobFindWater.WaterPathResult pathResult;
+    private              PathJobFindWater.WaterPathResult pathResult;
     /**
      * The Previous PathResult when the fisherman already found water.
      */
     @Nullable
-    private PathJobFindWater.WaterPathResult lastPathResult;
+    private              PathJobFindWater.WaterPathResult lastPathResult;
     /**
      * The fishingSkill which directly influences the fisherman's chance to throw his rod.
      * May in the future also influence his luck/charisma.
      */
-    private int fishingSkill = worker.getCitizenExperienceHandler().getLevel();
+    private              int                              fishingSkill         = worker.getCitizenExperienceHandler().getLevel();
     /**
      * Connects the citizen with the fishingHook.
      */
     @Nullable
-    private EntityFishHook entityFishHook;
+    private              EntityFishHook                   entityFishHook;
 
     /**
      * Constructor for the Fisherman.
@@ -218,14 +218,14 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     }
 
     /**
-     * Returns the fisherman's work building.
+     * Checks if the fisherman has a rod in his inventory but if he did not equip it.
      *
-     * @return building instance
+     * @return true if so.
      */
-    @Override
-    public BuildingFisherman getOwnBuilding()
+    private boolean hasRodButNotEquipped()
     {
-        return (BuildingFisherman) worker.getCitizenColonyHandler().getWorkBuilding();
+        return worker.getCitizenInventoryHandler().hasItemInInventory(Items.FISHING_ROD, -1) && worker.getHeldItemMainhand() != null && !(worker.getHeldItemMainhand()
+                                                                                                                                            .getItem() instanceof ItemFishingRod);
     }
 
     /**
@@ -274,16 +274,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     }
 
     /**
-     * Checks if the fisherman has a rod in his inventory but if he did not equip it.
-     *
-     * @return true if so.
-     */
-    private boolean hasRodButNotEquipped()
-    {
-        return worker.getCitizenInventoryHandler().hasItemInInventory(Items.FISHING_ROD, -1) && worker.getHeldItemMainhand() != null && !(worker.getHeldItemMainhand().getItem() instanceof ItemFishingRod);
-    }
-
-    /**
      * If the job class has no water object the fisherman should search water.
      *
      * @return the next AIState the fisherman should switch to, after executing this method.
@@ -301,16 +291,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             return getState();
         }
         return FISHERMAN_CHECK_WATER;
-    }
-
-    /**
-     * Let's the fisherman walk to the water if the water object in his job class already has been filled.
-     *
-     * @return true if the fisherman has arrived at the water.
-     */
-    private boolean walkToWater()
-    {
-        return job.getWater() != null && walkToBlock(job.getWater());
     }
 
     /**
@@ -339,6 +319,16 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     }
 
     /**
+     * Let's the fisherman walk to the water if the water object in his job class already has been filled.
+     *
+     * @return true if the fisherman has arrived at the water.
+     */
+    private boolean walkToWater()
+    {
+        return job.getWater() != null && walkToBlock(job.getWater());
+    }
+
+    /**
      * Checks if the fisherman already has found 20 pools, if yes search a water pool out of these 20, else
      * search a new one.
      *
@@ -357,6 +347,39 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             return setRandomWater();
         }
         return findNewWater();
+    }
+
+    /**
+     * Main fishing methods,
+     * let's the fisherman gather xp orbs next to him,
+     * check if all requirements to fish are given.
+     * Actually fish, retrieve his rod if stuck or if a fish bites.
+     *
+     * @return the next AIState the fisherman should switch to, after executing this method.
+     */
+    @Nullable
+    private AIState doFishing()
+    {
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.fishing"));
+
+        @Nullable final AIState notReadyState = isReadyToFish();
+        if (notReadyState != null)
+        {
+            return notReadyState;
+        }
+        if (caughtFish())
+        {
+            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("fish");
+            playCaughtFishSound();
+            if (random.nextDouble() < CHANCE_NEW_POND)
+            {
+                job.setWater(null);
+                return FISHERMAN_SEARCHING_WATER;
+            }
+            return FISHERMAN_WALKING_TO_WATER;
+        }
+
+        return throwOrRetrieveHook();
     }
 
     /**
@@ -418,36 +441,37 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     }
 
     /**
-     * Main fishing methods,
-     * let's the fisherman gather xp orbs next to him,
-     * check if all requirements to fish are given.
-     * Actually fish, retrieve his rod if stuck or if a fish bites.
+     * Checks if the fisherman has his fishingRod in his hand and is close to the water.
      *
-     * @return the next AIState the fisherman should switch to, after executing this method.
+     * @return true if fisherman meets all requirements to fish, else returns false.
      */
-    @Nullable
-    private AIState doFishing()
+    private AIState isReadyToFish()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.fishing"));
-
-        @Nullable final AIState notReadyState = isReadyToFish();
-        if (notReadyState != null)
+        //We really do have our Rod in our inventory?
+        if (!worker.getCitizenInventoryHandler().hasItemInInventory(Items.FISHING_ROD, -1))
         {
-            return notReadyState;
+            return PREPARING;
         }
-        if (caughtFish())
+
+        if (world.getBlockState(worker.getPosition()).getBlock() == Blocks.WATER)
         {
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("fish");
-            playCaughtFishSound();
-            if (random.nextDouble() < CHANCE_NEW_POND)
-            {
-                job.setWater(null);
-                return FISHERMAN_SEARCHING_WATER;
-            }
+            job.removeFromPonds(job.getWater());
+            job.setWater(null);
+            return FISHERMAN_SEARCHING_WATER;
+        }
+        //If there is no close water, try to move closer
+        if (!Utils.isBlockInRange(world, Blocks.WATER, (int) worker.posX, (int) worker.posY, (int) worker.posZ, MIN_DISTANCE_TO_WATER))
+        {
             return FISHERMAN_WALKING_TO_WATER;
         }
 
-        return throwOrRetrieveHook();
+        //Check if Rod is held item if not put it as held item
+        if (worker.getHeldItemMainhand() == null || !worker.getHeldItemMainhand().getItem().equals(Items.FISHING_ROD))
+        {
+            equipRod();
+            return getState();
+        }
+        return null;
     }
 
     /**
@@ -492,24 +516,28 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     }
 
     /**
-     * Let's the fisherman face the water, play the throw sound and create the fishingHook and throw it.
+     * Will be called to check if the fisherman caught a fish. If the hook hasn't noticed a fish it will return false.
+     * Else the method will pick up the loot and call the method to retrieve the rod.
+     *
+     * @return If the fisherman caught a fish.
      */
-    private void throwRod()
+    private boolean caughtFish()
     {
-        if (!world.isRemote)
+        if (entityFishHook == null)
         {
-            WorkerUtil.faceBlock(job.getWater(), worker);
-            world.playSound((EntityPlayer) null,
-              this.worker.getPosition(),
-              SoundEvents.ENTITY_BOBBER_THROW,
-              SoundCategory.NEUTRAL,
-              0.5F,
-              (float) (0.4D / (this.world.rand.nextFloat() * 0.4D + 0.8D)));
-            this.entityFishHook = new EntityFishHook(world, this.getCitizen());
-            world.spawnEntity(this.entityFishHook);
+            return false;
+        }
+        if (!entityFishHook.caughtFish())
+        {
+            return false;
         }
 
-        worker.swingArm(worker.getActiveHand());
+        worker.setCanPickUpLoot(true);
+        worker.captureDrops = true;
+        retrieveRod();
+        fishingSkill = worker.getCitizenExperienceHandler().getLevel();
+        this.incrementActionsDoneAndDecSaturation();
+        return true;
     }
 
     /**
@@ -540,37 +568,14 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     }
 
     /**
-     * Checks if the fisherman has his fishingRod in his hand and is close to the water.
+     * Returns the fisherman's work building.
      *
-     * @return true if fisherman meets all requirements to fish, else returns false.
+     * @return building instance
      */
-    private AIState isReadyToFish()
+    @Override
+    public BuildingFisherman getOwnBuilding()
     {
-        //We really do have our Rod in our inventory?
-        if (!worker.getCitizenInventoryHandler().hasItemInInventory(Items.FISHING_ROD, -1))
-        {
-            return PREPARING;
-        }
-
-        if (world.getBlockState(worker.getPosition()).getBlock() == Blocks.WATER)
-        {
-            job.removeFromPonds(job.getWater());
-            job.setWater(null);
-            return FISHERMAN_SEARCHING_WATER;
-        }
-        //If there is no close water, try to move closer
-        if (!Utils.isBlockInRange(world, Blocks.WATER, (int) worker.posX, (int) worker.posY, (int) worker.posZ, MIN_DISTANCE_TO_WATER))
-        {
-            return FISHERMAN_WALKING_TO_WATER;
-        }
-
-        //Check if Rod is held item if not put it as held item
-        if (worker.getHeldItemMainhand() == null || !worker.getHeldItemMainhand().getItem().equals(Items.FISHING_ROD))
-        {
-            equipRod();
-            return getState();
-        }
-        return null;
+        return (BuildingFisherman) worker.getCitizenColonyHandler().getWorkBuilding();
     }
 
     /**
@@ -593,31 +598,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     }
 
     /**
-     * Will be called to check if the fisherman caught a fish. If the hook hasn't noticed a fish it will return false.
-     * Else the method will pick up the loot and call the method to retrieve the rod.
-     *
-     * @return If the fisherman caught a fish.
-     */
-    private boolean caughtFish()
-    {
-        if (entityFishHook == null)
-        {
-            return false;
-        }
-        if (!entityFishHook.caughtFish())
-        {
-            return false;
-        }
-
-        worker.setCanPickUpLoot(true);
-        worker.captureDrops = true;
-        retrieveRod();
-        fishingSkill = worker.getCitizenExperienceHandler().getLevel();
-        this.incrementActionsDoneAndDecSaturation();
-        return true;
-    }
-
-    /**
      * Retrieves the previously thrown fishingRod.
      * If the fishingRod still has a hook connected to it, destroy the hook object.
      */
@@ -627,6 +607,27 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         final int i = entityFishHook.getDamage(this.getCitizen());
         worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, i);
         entityFishHook = null;
+    }
+
+    /**
+     * Let's the fisherman face the water, play the throw sound and create the fishingHook and throw it.
+     */
+    private void throwRod()
+    {
+        if (!world.isRemote)
+        {
+            WorkerUtil.faceBlock(job.getWater(), worker);
+            world.playSound((EntityPlayer) null,
+              this.worker.getPosition(),
+              SoundEvents.ENTITY_BOBBER_THROW,
+              SoundCategory.NEUTRAL,
+              0.5F,
+              (float) (0.4D / (this.world.rand.nextFloat() * 0.4D + 0.8D)));
+            this.entityFishHook = new EntityFishHook(world, this.getCitizen());
+            world.spawnEntity(this.entityFishHook);
+        }
+
+        worker.swingArm(worker.getActiveHand());
     }
 
     /**
