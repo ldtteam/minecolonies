@@ -87,6 +87,12 @@ public class TextField extends Pane
         setCursorPosition(text.length());
     }
 
+    public void setTextIgnoreLength(@NotNull final String s)
+    {
+        text = s;
+        setCursorPosition(text.length());
+    }
+
     public int getInternalWidth()
     {
         return getWidth();
@@ -497,6 +503,11 @@ public class TextField extends Pane
         final int insertAt = Math.min(cursorPosition, selectionEnd);
         final int insertEnd = Math.max(cursorPosition, selectionEnd);
         final int availableChars = (maxTextLength - text.length()) + (insertEnd - insertAt);
+        
+        if (availableChars < 0)
+        {
+            return;
+        }
 
         @NotNull final StringBuilder resultBuffer = new StringBuilder();
         if (text.length() > 0 && insertAt > 0)
