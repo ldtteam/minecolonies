@@ -49,6 +49,9 @@ public class Configurations
         @Config.Comment("Average citizen respawn interval (in seconds)")
         public int citizenRespawnInterval = 60;
 
+        @Config.Comment("Max citizens in one colony")
+        public int maxCitizenPerColony = 50;
+
         @Config.Comment("Should builder and miner build without resources? (this also turns off what they produce)")
         public boolean builderInfiniteResources = false;
 
