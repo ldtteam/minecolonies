@@ -16,6 +16,7 @@ import org.powermock.reflect.Whitebox;
 
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.WindowConstants.HAPPINESS_LABEL;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -71,7 +72,7 @@ public class WindowTownHallTest {
         when(colony.getMaxCitizens()).thenReturn(4);
         when(townHall.getColony()).thenReturn(colony);
         when(building.getColony()).thenReturn(colony);
-        when(windowTownHall.findPaneOfTypeByID("happiness", Label.class)).thenReturn(new Label());
+        when(windowTownHall.findPaneOfTypeByID(HAPPINESS_LABEL, Label.class)).thenReturn(new Label());
         when(windowTownHall.findPaneOfTypeByID("totalCitizens", Label.class)).thenReturn(new Label());
         when(windowTownHall.findPaneOfTypeByID("citizen-stats", Group.class)).thenReturn(new Group());
 

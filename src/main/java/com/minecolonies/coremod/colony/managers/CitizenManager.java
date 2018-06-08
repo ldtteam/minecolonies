@@ -8,7 +8,10 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.*;
+import com.minecolonies.coremod.colony.HappinessData;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -62,6 +65,11 @@ public class CitizenManager implements ICitizenManager
     private final Colony colony;
 
     /**
+     * Datas about the happiness of a colony
+     */
+    private final HappinessData happinessData = new HappinessData();
+
+    /**
      * Creates the Citizenmanager for a colony.
      *
      * @param colony the colony.
@@ -100,9 +108,9 @@ public class CitizenManager implements ICitizenManager
 
     @Override
     public void sendPackets(
-            @NotNull final Set<EntityPlayerMP> oldSubscribers,
-            final boolean hasNewSubscribers,
-            @NotNull final Set<EntityPlayerMP> subscribers)
+      @NotNull final Set<EntityPlayerMP> oldSubscribers,
+      final boolean hasNewSubscribers,
+      @NotNull final Set<EntityPlayerMP> subscribers)
     {
         if (isCitizensDirty || hasNewSubscribers)
         {
@@ -128,8 +136,8 @@ public class CitizenManager implements ICitizenManager
                     if (citizen.isDirty() || hasNewSubscribers)
                     {
                         subscribers.stream()
-                                .filter(player -> citizen.isDirty() || !oldSubscribers.contains(player))
-                                .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewCitizenViewMessage(colony, citizen), player));
+                          .filter(player -> citizen.isDirty() || !oldSubscribers.contains(player))
+                          .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewCitizenViewMessage(colony, citizen), player));
                     }
                 }
             }
@@ -179,9 +187,9 @@ public class CitizenManager implements ICitizenManager
                 if (getMaxCitizens() == getCitizens().size())
                 {
                     LanguageHandler.sendPlayersMessage(
-                            colony.getMessageEntityPlayers(),
-                            "tile.blockHutTownHall.messageMaxSize",
-                            colony.getName());
+                      colony.getMessageEntityPlayers(),
+                      "tile.blockHutTownHall.messageMaxSize",
+                      colony.getName());
                 }
             }
             else
@@ -362,16 +370,31 @@ public class CitizenManager implements ICitizenManager
         if (averageHousing > 1)
         {
             colony.increaseOverallHappiness(averageHousing * HAPPINESS_FACTOR);
+            happinessData.setHousing(HappinessData.INCREASE);
+        }
+        else if (averageHousing < 1)
+        {
+            happinessData.setHousing(HappinessData.DECREASE);
+        }
+        else
+        {
+            happinessData.setHousing(HappinessData.STABLE);
         }
 
         final int averageSaturation = (int) (saturation / getCitizens().size());
         if (averageSaturation < WELL_SATURATED_LIMIT)
         {
             colony.decreaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * -HAPPINESS_FACTOR);
+            happinessData.setSaturation(HappinessData.DECREASE);
         }
         else if (averageSaturation > WELL_SATURATED_LIMIT)
         {
             colony.increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
+            happinessData.setSaturation(HappinessData.INCREASE);
+        }
+        else
+        {
+            happinessData.setSaturation(HappinessData.STABLE);
         }
 
         final int relation = workers / guards;
@@ -379,7 +402,26 @@ public class CitizenManager implements ICitizenManager
         if (relation > 1)
         {
             colony.decreaseOverallHappiness(relation * HAPPINESS_FACTOR);
+            happinessData.setGuards(HappinessData.DECREASE);
         }
+        else if (relation < 1)
+        {
+            happinessData.setGuards(HappinessData.INCREASE);
+        }
+        else
+        {
+            happinessData.setGuards(HappinessData.STABLE);
+        }
+    }
+
+    /**
+     * Get all the data indices about happiness
+     *
+     * @return An instance of {@link HappinessData} containing all the datas
+     */
+    public HappinessData getHappiness()
+    {
+        return happinessData;
     }
 
     @Override

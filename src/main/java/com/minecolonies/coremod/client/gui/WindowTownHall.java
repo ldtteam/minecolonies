@@ -20,6 +20,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.HappinessData;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.permissions.PermissionEvent;
 import com.minecolonies.coremod.colony.workorders.WorkOrderView;
@@ -50,7 +51,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Black color.
      */
-    public static final int BLACK                     = Color.getByName("black", 0);
+    public static final int BLACK = Color.getByName("black", 0);
 
     /**
      * Min TH level to teleport to another colony.
@@ -125,12 +126,12 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * The ScrollingList of all allies.
      */
-    private final ScrollingList alliesList;
+    private final        ScrollingList alliesList;
 
     /**
      * The ScrollingList of all feuds.
      */
-    private final ScrollingList feudsList;
+    private final        ScrollingList feudsList;
 
     /**
      * Constructor for the town hall window.
@@ -157,7 +158,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         tabsToPages.put(BUTTON_PERMISSIONS, PAGE_PERMISSIONS);
         tabsToPages.put(BUTTON_CITIZENS, PAGE_CITIZENS);
         tabsToPages.put(BUTTON_WORKORDER, PAGE_WORKORDER);
-
+        tabsToPages.put(BUTTON_HAPPINESS, PAGE_HAPPINESS);
 
         tabsToPages.keySet().forEach(key -> registerButton(key, this::onTabClicked));
         registerButton(BUTTON_ADD_PLAYER, this::addPlayerCLicked);
@@ -188,8 +189,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_TRIGGER, this::trigger);
         registerButton(BUTTON_ADD_BLOCK, this::addBlock);
         registerButton(BUTTON_REMOVE_BLOCK, this::removeBlock);
-
-        if(findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class) == null)
+        if (findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class) == null)
         {
             return;
         }
@@ -254,55 +254,63 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Fills the allies and feuds lists.
+     * On Button click teleport to the colony..
+     *
+     * @param button the clicked button.
      */
-    private void fillAlliesAndFeudsList()
+    private void teleportToColony(@NotNull final Button button)
     {
-        alliesList.setDataProvider(new ScrollingList.DataProvider()
+        final int row = alliesList.getListElementIndexByPane(button);
+        final ColonyView ally = allies.get(row);
+        final ITextComponent teleport = new TextComponentString(LanguageHandler.format(DO_REALLY_WANNA_TP, ally.getName()))
+                                          .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+                                            new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + ally.getID())
+                                          ));
+
+        Minecraft.getMinecraft().player.sendMessage(teleport);
+    }
+
+    /**
+     * Executed when <code>WindowTownHall</code> is opened.
+     * Does tasks like setting buttons.
+     */
+    @Override
+    public void onOpened()
+    {
+        super.onOpened();
+
+        if (lastTabButton != null)
         {
-            @Override
-            public int getElementCount()
-            {
-                return allies.size();
-            }
+            return;
+        }
 
-            @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
-                final ColonyView colonyView = allies.get(index);
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(colonyView.getName());
-                final long distance = BlockPosUtil.getDistance2D(colonyView.getCenter(), building.getLocation());
-                rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText((int) distance + "b");
-                final Button button = rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class);
-                if(townHall.getBuildingLevel() < MIN_TH_LEVEL_TO_TELEPORT || Configurations.gameplay.canPlayerUseColonyTPCommand)
-                {
-                    button.setLabel(LanguageHandler.format(TH_TOO_LOW));
-                    button.disable();
-                }
-                else
-                {
-                    button.enable();
-                }
-            }
-        });
+        createAndSetStatistics();
 
-        feudsList.setDataProvider(new ScrollingList.DataProvider()
+        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
+
+        lastTabButton = findPaneOfTypeByID(BUTTON_ACTIONS, Button.class);
+        lastTabButton.setEnabled(false);
+        findPaneOfTypeByID(lastTabButton.getID() + "0", Image.class).setVisible(false);
+        findPaneOfTypeByID(lastTabButton.getID() + "1", ButtonImage.class).setVisible(true);
+        lastTabButton.setPosition(lastTabButton.getX() + RIBBON_OFFSET, findPaneOfTypeByID(lastTabButton.getID() + "1", ButtonImage.class).getY());
+
+        fillUserList();
+        fillCitizensList();
+        fillWorkOrderList();
+        fillFreeBlockList();
+        fillAlliesAndFeudsList();
+        fillPermEventsList();
+        updateHappiness();
+
+        if (townHall.getColony().isManualHiring())
         {
-            @Override
-            public int getElementCount()
-            {
-                return feuds.size();
-            }
+            findPaneOfTypeByID(BUTTON_TOGGLE_JOB, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
+        }
 
-            @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
-                final ColonyView colonyView = feuds.get(index);
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(colonyView.getName());
-                final long distance = BlockPosUtil.getDistance2D(colonyView.getCenter(), building.getLocation());
-                rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText(String.valueOf((int) distance));
-            }
-        });
+        if (townHall.getColony().isManualHousing())
+        {
+            findPaneOfTypeByID(BUTTON_TOGGLE_HOUSING, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
+        }
     }
 
     /**
@@ -560,20 +568,203 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * On Button click teleport to the colony..
-     *
-     * @param button the clicked button.
+     * Creates several statistics and sets them in the townHall GUI.
      */
-    private void teleportToColony(@NotNull final Button button)
+    private void createAndSetStatistics()
     {
-        final int row = alliesList.getListElementIndexByPane(button);
-        final ColonyView ally = allies.get(row);
-        final ITextComponent teleport = new TextComponentString(LanguageHandler.format(DO_REALLY_WANNA_TP, ally.getName()))
-                .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-                        new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + ally.getID())
-                ));
+        final int citizensSize = townHall.getColony().getCitizens().size();
 
-        Minecraft.getMinecraft().player.sendMessage(teleport);
+        final Map<String, Integer> jobCountMap = new HashMap<>();
+        for (@NotNull final CitizenDataView citizen : citizens)
+        {
+            final int length = citizen.getJob().split("\\.").length;
+            final String job = citizen.getJob().split("\\.")[length - 1].toLowerCase(Locale.ENGLISH);
+            jobCountMap.put(job, jobCountMap.get(job) == null ? 1 : (jobCountMap.get(job) + 1));
+        }
+
+        final String numberOfCitizens =
+          LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens",
+            citizensSize, townHall.getColony().getMaxCitizens());
+
+        final DecimalFormat df = new DecimalFormat("#.#");
+        df.setRoundingMode(RoundingMode.CEILING);
+        final String roundedHappiness = df.format(building.getColony().getOverallHappiness());
+
+        findPaneOfTypeByID(HAPPINESS_LABEL, Label.class).setLabelText(roundedHappiness);
+        findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
+
+        final Group group = findPaneOfTypeByID("citizen-stats", Group.class);
+        if (group == null)
+        {
+            return;
+        }
+        final Integer unemployed = jobCountMap.get("") == null ? 0 : jobCountMap.get("");
+        jobCountMap.remove("");
+
+        final Label unemployedLabel = new Label();
+        unemployedLabel.setSize(STATISTICS_LABEL_WIDTH, STATISTICS_LABEL_HEIGHT);
+        unemployedLabel.setTextAlignment(Alignment.MIDDLE_LEFT);
+        unemployedLabel.setColor(BLACK, BLACK);
+        final String numberOfUnemployed = LanguageHandler.format(
+          "com.minecolonies.coremod.gui.townHall.population.unemployed", unemployed);
+        unemployedLabel.setLabelText(numberOfUnemployed);
+        group.addChild(unemployedLabel);
+
+        for (final Map.Entry<String, Integer> entry : jobCountMap.entrySet())
+        {
+            final Label workerLabel = new Label();
+            workerLabel.setSize(STATISTICS_LABEL_WIDTH, STATISTICS_LABEL_HEIGHT);
+            workerLabel.setTextAlignment(Alignment.MIDDLE_LEFT);
+            workerLabel.setColor(BLACK, BLACK);
+            final String job = entry.getKey();
+            final String labelJobKey = job.endsWith("man") ? job.replace("man", "men") : (job + "s");
+            final String numberOfWorkers = LanguageHandler.format(
+              "com.minecolonies.coremod.gui.townHall.population." + labelJobKey, entry.getValue());
+            workerLabel.setLabelText(numberOfWorkers);
+            group.addChild(workerLabel);
+        }
+    }
+
+    /**
+     * Fills the userList in the GUI.
+     */
+    private void fillUserList()
+    {
+        userList = findPaneOfTypeByID(LIST_USERS, ScrollingList.class);
+        userList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return users.size();
+            }
+
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                final Player player = users.get(index);
+                String rank = player.getRank().name();
+                rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase(Locale.ENGLISH).substring(1);
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(player.getName());
+                rowPane.findPaneOfTypeByID("rank", Label.class).setLabelText(rank);
+            }
+        });
+    }
+
+    /**
+     * Fills the allies and feuds lists.
+     */
+    private void fillAlliesAndFeudsList()
+    {
+        alliesList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return allies.size();
+            }
+
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                final ColonyView colonyView = allies.get(index);
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(colonyView.getName());
+                final long distance = BlockPosUtil.getDistance2D(colonyView.getCenter(), building.getLocation());
+                rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText((int) distance + "b");
+                final Button button = rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class);
+                if (townHall.getBuildingLevel() < MIN_TH_LEVEL_TO_TELEPORT || Configurations.gameplay.canPlayerUseColonyTPCommand)
+                {
+                    button.setLabel(LanguageHandler.format(TH_TOO_LOW));
+                    button.disable();
+                }
+                else
+                {
+                    button.enable();
+                }
+            }
+        });
+
+        feudsList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return feuds.size();
+            }
+
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                final ColonyView colonyView = feuds.get(index);
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(colonyView.getName());
+                final long distance = BlockPosUtil.getDistance2D(colonyView.getCenter(), building.getLocation());
+                rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText(String.valueOf((int) distance));
+            }
+        });
+    }
+
+    private void fillPermEventsList()
+    {
+        permEventList = findPaneOfTypeByID(LIST_PERM_EVENT, ScrollingList.class);
+        permEventList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return building.getPermissionEvents().size();
+            }
+
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                final PermissionEvent event = building.getPermissionEvents().get(index);
+
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(event.getName() + (event.getId() == null ? " <fake>" : ""));
+                rowPane.findPaneOfTypeByID(POS_LABEL, Label.class).setLabelText(event.getPosition().getX() + " " + event.getPosition().getY() + " " + event.getPosition().getZ());
+
+                if (event.getId() == null)
+                {
+                    rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).hide();
+                }
+
+                final String name = LanguageHandler.format(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US));
+
+                if (name.contains(KEY_TO_PERMISSIONS))
+                {
+                    Log.getLogger().warn("Didn't work for:" + name);
+                    return;
+                }
+                rowPane.findPaneOfTypeByID(ACTION_LABEL, Label.class).setLabelText(name);
+            }
+        });
+    }
+
+    /**
+     * Update the display for the happiness
+     */
+    private void updateHappiness()
+    {
+        final HappinessData happiness = ColonyManager.getColony(building.getColony().getID()).getCitizenManager().getHappiness();
+        final String[] imagesIds = new String[] {GUARD_HAPPINESS_LEVEL, HOUSE_HAPPINESS_LEVEL, SATURATION_HAPPINESS_LEVEL};
+        final int[] levels = new int[] {happiness.getGuards(), happiness.getHousing(), happiness.getSaturation()};
+        for (int i = 0; i < imagesIds.length; i++)
+        {
+            final Image image = findPaneOfTypeByID(imagesIds[i], Image.class);
+            switch (levels[i])
+            {
+                case HappinessData.INCREASE:
+                    image.setImage(GREEN_ICON);
+                    break;
+                case HappinessData.STABLE:
+                    image.setImage(YELLOW_ICON);
+                    break;
+                case HappinessData.DECREASE:
+                    image.setImage(RED_ICON);
+                    break;
+                default:
+                    throw new IllegalStateException(imagesIds[i] + "isn't in [" + HappinessData.INCREASE + "," + HappinessData.STABLE + "," + HappinessData.DECREASE + "] range.");
+            }
+        }
     }
 
     /**
@@ -632,176 +823,14 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Executed when <code>WindowTownHall</code> is opened.
-     * Does tasks like setting buttons.
-     */
-    @Override
-    public void onOpened()
-    {
-        super.onOpened();
-
-        if (lastTabButton != null)
-        {
-            return;
-        }
-
-        createAndSetStatistics();
-
-        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
-
-        lastTabButton = findPaneOfTypeByID(BUTTON_ACTIONS, Button.class);
-        lastTabButton.setEnabled(false);
-        findPaneOfTypeByID(lastTabButton.getID() + "0", Image.class).setVisible(false);
-        findPaneOfTypeByID(lastTabButton.getID() + "1", ButtonImage.class).setVisible(true);
-        lastTabButton.setPosition(lastTabButton.getX() + RIBBON_OFFSET, findPaneOfTypeByID(lastTabButton.getID() + "1", ButtonImage.class).getY());
-
-        fillUserList();
-        fillCitizensList();
-        fillWorkOrderList();
-        fillFreeBlockList();
-        fillAlliesAndFeudsList();
-        fillPermEventsList();
-
-        if (townHall.getColony().isManualHiring())
-        {
-            findPaneOfTypeByID(BUTTON_TOGGLE_JOB, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
-        }
-
-        if (townHall.getColony().isManualHousing())
-        {
-            findPaneOfTypeByID(BUTTON_TOGGLE_HOUSING, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
-        }
-    }
-
-    /**
-     * Creates several statistics and sets them in the townHall GUI.
-     */
-    private void createAndSetStatistics()
-    {
-        final int citizensSize = townHall.getColony().getCitizens().size();
-
-        final Map<String, Integer> jobCountMap = new HashMap<>();
-        for (@NotNull final CitizenDataView citizen : citizens)
-        {
-            final int length = citizen.getJob().split("\\.").length;
-            final String job = citizen.getJob().split("\\.")[length  - 1].toLowerCase(Locale.ENGLISH);
-            jobCountMap.put(job, jobCountMap.get(job) == null ? 1 : (jobCountMap.get(job) + 1));
-        }
-
-        final String numberOfCitizens =
-                LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens",
-                        citizensSize, townHall.getColony().getMaxCitizens());
-
-        final DecimalFormat df = new DecimalFormat("#.#");
-        df.setRoundingMode(RoundingMode.CEILING);
-        final String roundedHappiness = df.format(building.getColony().getOverallHappiness());
-
-        findPaneOfTypeByID(HAPPINESS_LABEL, Label.class).setLabelText(roundedHappiness);
-        findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
-
-        final Group group = findPaneOfTypeByID("citizen-stats", Group.class);
-        if (group == null)
-        {
-            return;
-        }
-        final Integer unemployed = jobCountMap.get("") == null ? 0 : jobCountMap.get("");
-        jobCountMap.remove("");
-
-        final Label unemployedLabel = new Label();
-        unemployedLabel.setSize(STATISTICS_LABEL_WIDTH, STATISTICS_LABEL_HEIGHT);
-        unemployedLabel.setTextAlignment(Alignment.MIDDLE_LEFT);
-        unemployedLabel.setColor(BLACK, BLACK);
-        final String numberOfUnemployed = LanguageHandler.format(
-                "com.minecolonies.coremod.gui.townHall.population.unemployed", unemployed);
-        unemployedLabel.setLabelText(numberOfUnemployed);
-        group.addChild(unemployedLabel);
-
-        for (final Map.Entry<String, Integer> entry : jobCountMap.entrySet())
-        {
-            final Label workerLabel = new Label();
-            workerLabel.setSize(STATISTICS_LABEL_WIDTH, STATISTICS_LABEL_HEIGHT);
-            workerLabel.setTextAlignment(Alignment.MIDDLE_LEFT);
-            workerLabel.setColor(BLACK, BLACK);
-            final String job = entry.getKey();
-            final String labelJobKey = job.endsWith("man") ? job.replace("man", "men") : (job + "s");
-            final String numberOfWorkers = LanguageHandler.format(
-                    "com.minecolonies.coremod.gui.townHall.population." + labelJobKey, entry.getValue());
-            workerLabel.setLabelText(numberOfWorkers);
-            group.addChild(workerLabel);
-        }
-
-    }
-
-    /**
-     * Fills the userList in the GUI.
-     */
-    private void fillUserList()
-    {
-        userList = findPaneOfTypeByID(LIST_USERS, ScrollingList.class);
-        userList.setDataProvider(new ScrollingList.DataProvider()
-        {
-            @Override
-            public int getElementCount()
-            {
-                return users.size();
-            }
-
-            @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
-                final Player player = users.get(index);
-                String rank = player.getRank().name();
-                rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase(Locale.ENGLISH).substring(1);
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(player.getName());
-                rowPane.findPaneOfTypeByID("rank", Label.class).setLabelText(rank);
-            }
-        });
-    }
-
-    private void fillPermEventsList()
-    {
-        permEventList = findPaneOfTypeByID(LIST_PERM_EVENT, ScrollingList.class);
-        permEventList.setDataProvider(new ScrollingList.DataProvider()
-        {
-            @Override
-            public int getElementCount()
-            {
-                return building.getPermissionEvents().size();
-            }
-
-            @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
-                final PermissionEvent event = building.getPermissionEvents().get(index);
-
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(event.getName() + (event.getId() == null ? " <fake>" : ""));
-                rowPane.findPaneOfTypeByID(POS_LABEL, Label.class).setLabelText(event.getPosition().getX() + " " + event.getPosition().getY() + " " + event.getPosition().getZ());
-
-                if(event.getId() == null)
-                {
-                    rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).hide();
-                }
-
-                final String name = LanguageHandler.format(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US));
-
-                if (name.contains(KEY_TO_PERMISSIONS))
-                {
-                    Log.getLogger().warn("Didn't work for:" + name);
-                    return;
-                }
-                rowPane.findPaneOfTypeByID(ACTION_LABEL, Label.class).setLabelText(name);
-            }
-        });
-    }
-
-    /**
      * Executed when fill citizen is clicked.
+     *
      * @param button the clicked button.
      */
     private void fillCitizenInfo(final Button button)
     {
         final ScrollingList citizenList = findPaneOfTypeByID(LIST_CITIZENS, ScrollingList.class);
-        for (final Pane pane: citizenList.getContainer().getChildren())
+        for (final Pane pane : citizenList.getContainer().getChildren())
         {
             pane.findPaneOfTypeByID(NAME_LABEL, ButtonImage.class).enable();
         }
@@ -818,6 +847,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Executed when the recall one button has been clicked.
      * Recalls one specific citizen.
+     *
      * @param button the clicked button.
      */
     private void recallOneClicked(final Button button)
@@ -994,18 +1024,24 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         super.onUpdate();
 
         final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
-        if (currentPage.equals(PAGE_PERMISSIONS))
+        switch (currentPage)
         {
-            updateUsers();
-            window.findPaneOfTypeByID(LIST_USERS, ScrollingList.class).refreshElementPanes();
+            case PAGE_PERMISSIONS:
+                updateUsers();
+                window.findPaneOfTypeByID(LIST_USERS, ScrollingList.class).refreshElementPanes();
+                break;
+            case PAGE_CITIZENS:
+                updateCitizens();
+                window.findPaneOfTypeByID(LIST_CITIZENS, ScrollingList.class).refreshElementPanes();
+                break;
+            case PAGE_HAPPINESS:
+                updateHappiness();
+                break;
+            case PAGE_WORKORDER:
+                updateWorkOrders();
+                window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
+                break;
         }
-        else if (currentPage.equals(PAGE_CITIZENS))
-        {
-            updateCitizens();
-            window.findPaneOfTypeByID(LIST_CITIZENS, ScrollingList.class).refreshElementPanes();
-        }
-        updateWorkOrders();
-        window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
     }
 
     /**

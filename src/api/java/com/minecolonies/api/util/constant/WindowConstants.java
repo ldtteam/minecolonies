@@ -40,6 +40,11 @@ public final class WindowConstants
     public static final String BUTTON_WORKORDER = "workOrder";
 
     /**
+     * Id of the button displaying the Happiness in the GUI
+     */
+    public static final String BUTTON_HAPPINESS = "happiness";
+
+    /**
      * Id of the recall button in the GUI.
      */
     public static final String BUTTON_RECALL = "recall";
@@ -145,6 +150,11 @@ public final class WindowConstants
     public static final String PAGE_WORKORDER = "pageWorkOrder";
 
     /**
+     * Id of the happiness page in the GUI.
+     */
+    public static final String PAGE_HAPPINESS = "pageHappiness";
+
+    /**
      * Id of the user list in the GUI.
      */
     public static final String LIST_USERS = "users";
@@ -172,12 +182,12 @@ public final class WindowConstants
     /**
      * Id of the workOrder list in the GUI.
      */
-    public static final String LIST_WORKORDER  = "workOrderList";
+    public static final String LIST_WORKORDER = "workOrderList";
 
     /**
      * Id of the current specializations label in the GUI.
      */
-    public static final String HAPPINESS_LABEL = "happiness";
+    public static final String HAPPINESS_LABEL = "happinessLevel";
 
     /**
      * Id of the name label in the GUI.
@@ -577,7 +587,7 @@ public final class WindowConstants
     /**
      * Id of the speed input field.
      */
-    public static final String INPUT_SPEED     = "speed";
+    public static final String INPUT_SPEED = "speed";
 
     /**
      * This button will remove the currently rendered structure.
@@ -623,6 +633,20 @@ public final class WindowConstants
      * The filter field of the scan tool window.
      */
     public static final String FILTER_NAME = "filter";
+
+    /**
+     * The fields used into the happiness
+     */
+    public static final String GUARD_HAPPINESS_LEVEL      = "guardsLevel";
+    public static final String HOUSE_HAPPINESS_LEVEL      = "houseLevel";
+    public static final String SATURATION_HAPPINESS_LEVEL = "saturationLevel";
+
+    /**
+     * Icons used to display the happiness
+     */
+    public static final String RED_ICON    = "minecolonies:textures/gui/red_icon.png";
+    public static final String YELLOW_ICON = "minecolonies:textures/gui/yellow_icon.png";
+    public static final String GREEN_ICON  = "minecolonies:textures/gui/green_icon.png";
 
     /**
      * public constructor to hide implicit public one.
