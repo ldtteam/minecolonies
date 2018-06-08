@@ -204,6 +204,8 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutSwineHerder);
         createCustomModel(ModBlocks.blockHutChickenHerder);
         createCustomModel(ModBlocks.blockHutSmeltery);
+        createCustomModel(ModBlocks.blockCactusPlank);
+        createCustomModel(ModBlocks.blockCactusTrapdoor);
 
         createCustomModel(ModBlocks.blockSolidSubstitution);
         createCustomModel(ModBlocks.blockConstructionTape);
@@ -228,7 +230,9 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModItems.itemAchievementProxyMetropolis);
         createCustomModel(ModBlocks.blockShingleSlab);
         createCustomModel(ModBlocks.multiBlock);
+        createCustomModel(ModItems.itemCactusDoor);
 
+        ModelLoader.setCustomStateMapper(ModBlocks.blockCactusDoor, new StateMap.Builder().ignore(BlockCactusDoor.POWERED).build());
         ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());
 
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleOak), 0,

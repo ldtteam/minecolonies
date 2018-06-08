@@ -2,8 +2,6 @@ package com.minecolonies.coremod.blocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPlanks;
-import net.minecraft.block.material.MapColor;
-import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -52,6 +50,8 @@ public final class ModBlocks
     public static BlockHutCook                   blockHutCook;
     public static BlockHutSmeltery               blockHutSmeltery;
     public static BlockCactusPlank               blockCactusPlank;
+    public static BlockCactusDoor                blockCactusDoor;
+    public static BlockCactusTrapdoor            blockCactusTrapdoor;
 
     /**
      * Utility blocks.
@@ -121,6 +121,8 @@ public final class ModBlocks
         blockHutCook = new BlockHutCook().registerBlock(registry);
         blockHutSmeltery = new BlockHutSmeltery().registerBlock(registry);
         blockCactusPlank = new BlockCactusPlank().registerBlock(registry);
+        blockCactusDoor = new BlockCactusDoor(blockCactusDoor).registerBlock(registry);
+        blockCactusTrapdoor = new BlockCactusTrapdoor().registerBlock(registry);
 
         blockShingleOak = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK),
           BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.OAK.getName()).registerBlock(registry);
@@ -187,6 +189,7 @@ public final class ModBlocks
         blockHutSmeltery.registerItemBlock(registry);
         multiBlock.registerItemBlock(registry);
         blockCactusPlank.registerItemBlock(registry);
+        blockCactusTrapdoor.registerItemBlock(registry);
 
         for (final BlockTimberFrame frame : timberFrames)
         {

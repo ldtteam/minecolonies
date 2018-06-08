@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north,half=bottom,open=false": { "model": "minecolonies:blockcactustrapdoor_bottom" },
+    "facing=south,half=bottom,open=false": { "model": "minecolonies:blockcactustrapdoor_bottom" },
+    "facing=east,half=bottom,open=false": { "model": "minecolonies:blockcactustrapdoor_bottom" },
+    "facing=west,half=bottom,open=false": { "model": "minecolonies:blockcactustrapdoor_bottom" },
+    "facing=north,half=top,open=false": { "model": "minecolonies:blockcactustrapdoor_top" },
+    "facing=south,half=top,open=false": { "model": "minecolonies:blockcactustrapdoor_top" },
+    "facing=east,half=top,open=false": { "model": "minecolonies:blockcactustrapdoor_top" },
+    "facing=west,half=top,open=false": { "model": "minecolonies:blockcactustrapdoor_top" },
+    "facing=north,half=bottom,open=true": { "model": "minecolonies:blockcactustrapdoor_open" },
+    "facing=south,half=bottom,open=true": { "model": "minecolonies:blockcactustrapdoor_open", "y": 180 },
+    "facing=east,half=bottom,open=true": { "model": "minecolonies:blockcactustrapdoor_open", "y": 90 },
+    "facing=west,half=bottom,open=true": { "model": "minecolonies:blockcactustrapdoor_open", "y": 270 },
+    "facing=north,half=top,open=true": { "model": "minecolonies:blockcactustrapdoor_open" },
+    "facing=south,half=top,open=true": { "model": "minecolonies:blockcactustrapdoor_open", "y": 180 },
+    "facing=east,half=top,open=true": { "model": "minecolonies:blockcactustrapdoor_open", "y": 90 },
+    "facing=west,half=top,open=true": { "model": "minecolonies:blockcactustrapdoor_open", "y": 270 }
+  }
+}

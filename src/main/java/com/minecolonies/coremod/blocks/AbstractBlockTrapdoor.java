@@ -2,20 +2,16 @@ package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.constant.Suppression;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.MapColor;
+import net.minecraft.block.BlockDoor;
+import net.minecraft.block.BlockTrapDoor;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.registries.IForgeRegistry;
 
-public abstract class AbstractBlockMinecolonies<B extends AbstractBlockMinecolonies<B>> extends Block implements IBlockMinecolonies<B>
+public class AbstractBlockTrapdoor<B extends AbstractBlockTrapdoor<B>> extends BlockTrapDoor implements IBlockMinecolonies<B>
 {
-    public AbstractBlockMinecolonies(final Material blockMaterialIn, final MapColor blockMapColorIn)
-    {
-        super(blockMaterialIn, blockMapColorIn);
-    }
-
-    public AbstractBlockMinecolonies(final Material materialIn)
+    public AbstractBlockTrapdoor(final Material materialIn)
     {
         super(materialIn);
     }
@@ -33,6 +29,7 @@ public abstract class AbstractBlockMinecolonies<B extends AbstractBlockMinecolon
         registry.register(this);
         return (B) this;
     }
+
     /**
      * Registery block at gameregistry.
      *

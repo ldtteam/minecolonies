@@ -1,0 +1,18 @@
+{
+    "textures": {
+        "particle": "minecolonies:blocks/door_cactus_upper"
+    },
+    "elements": [
+        {   "from": [ 0, 13, 0 ],
+            "to": [ 16, 16, 16 ],
+            "faces": {
+                "down":  { "uv": [ 0,  0, 16, 16 ], "texture": "minecolonies:blocks/door_cactus_upper" },
+                "up":    { "uv": [ 0,  0, 16, 16 ], "texture": "minecolonies:blocks/door_cactus_upper", "cullface": "up" },
+                "north": { "uv": [ 0, 16, 16, 13 ], "texture": "minecolonies:blocks/door_cactus_upper", "cullface": "north" },
+                "south": { "uv": [ 0, 16, 16, 13 ], "texture": "minecolonies:blocks/door_cactus_upper", "cullface": "south" },
+                "west":  { "uv": [ 0, 16, 16, 13 ], "texture": "minecolonies:blocks/door_cactus_upper", "cullface": "west" },
+                "east":  { "uv": [ 0, 16, 16, 13 ], "texture": "minecolonies:blocks/door_cactus_upper", "cullface": "east" }
+            }
+        }
+    ]
+}
