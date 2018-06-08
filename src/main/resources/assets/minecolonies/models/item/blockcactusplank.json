@@ -1,1 +1,3 @@
- "parent": "minecolonies:block/blockcactusplank"
+{
+  "parent": "minecolonies:blockcactusplank"
+}

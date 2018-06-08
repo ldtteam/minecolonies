@@ -186,6 +186,7 @@ public final class ModBlocks
         blockShingleSlab.registerItemBlock(registry);
         blockHutSmeltery.registerItemBlock(registry);
         multiBlock.registerItemBlock(registry);
+        blockCactusPlank.registerItemBlock(registry);
 
         for (final BlockTimberFrame frame : timberFrames)
         {

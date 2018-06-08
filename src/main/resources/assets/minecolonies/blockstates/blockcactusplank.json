@@ -1,5 +1,6 @@
 {
-  "parent": "builtin/generated",
-  "textures": {
-    "layer0": "minecolonies:blocks/blockcactusplank.png"
+  "variants": {
+    "normal": { "model": "minecolonies:blockcactusplank" },
+    "inventory": { "model": "minecolonies:blockcactusplank" }
   }
+}
