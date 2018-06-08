@@ -984,6 +984,7 @@ public final class ColonyManager
                             if (colonyData != null)
                             {
                                 @NotNull final Colony colony = Colony.loadColony(colonyData, world);
+                                colony.getCitizenManager().checkCitizensForHappiness();
                                 colonies.add(colony);
                                 ColonyManager.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
                                 addColonyByWorld(colony);
