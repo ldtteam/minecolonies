@@ -126,6 +126,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         worker.setCanPickUpLoot(true);
     }
 
+    @Override
+    public Class getExpectedBuildingClass()
+    {
+        return BuildingMiner.class;
+    }
+
     //Miner wants to work but is not at building
     @NotNull
     private AIState startWorkingAtOwnBuilding()

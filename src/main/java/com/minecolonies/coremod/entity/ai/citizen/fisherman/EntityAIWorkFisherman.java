@@ -171,6 +171,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         worker.setCanPickUpLoot(true);
     }
 
+    @Override
+    public Class getExpectedBuildingClass()
+    {
+        return BuildingFisherman.class;
+    }
+
     /**
      * Redirects the fisherman to his building.
      *

@@ -44,6 +44,12 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
     }
 
     @Override
+    public Class getExpectedBuildingClass()
+    {
+        return BuildingCowboy.class;
+    }
+
+    @Override
     public ItemStack getBreedingItem()
     {
         return new ItemStack(Items.WHEAT);
