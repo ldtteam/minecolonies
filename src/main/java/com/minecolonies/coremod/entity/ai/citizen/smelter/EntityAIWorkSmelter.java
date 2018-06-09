@@ -113,6 +113,12 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
         worker.setCanPickUpLoot(true);
     }
 
+    @Override
+    public Class getExpectedBuildingClass()
+    {
+        return BuildingSmeltery.class;
+    }
+
     /**
      * He will smelt down armor, weapons and tools to smaller pieces here.
      *

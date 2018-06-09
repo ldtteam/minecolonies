@@ -108,6 +108,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         worker.setCanPickUpLoot(true);
     }
 
+    @Override
+    public Class getExpectedBuildingClass()
+    {
+        return BuildingFarmer.class;
+    }
+
     /**
      * Redirects the farmer to his building.
      *

@@ -87,6 +87,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         worker.setCanPickUpLoot(true);
     }
 
+    @Override
+    public Class getExpectedBuildingClass()
+    {
+        return AbstractBuildingGuards.class;
+    }
+
     /**
      * Can be overridden in implementations.
      * <p>

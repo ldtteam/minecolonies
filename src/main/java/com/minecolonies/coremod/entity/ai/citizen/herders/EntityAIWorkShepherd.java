@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.herders;
 
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingShepherd;
 import com.minecolonies.coremod.colony.jobs.JobShepherd;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -52,6 +53,12 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
         super.registerTargets(
           new AITarget(SHEPHERD_SHEAR, this::shearSheep)
         );
+    }
+
+    @Override
+    public Class getExpectedBuildingClass()
+    {
+        return BuildingShepherd.class;
     }
 
     @Override
