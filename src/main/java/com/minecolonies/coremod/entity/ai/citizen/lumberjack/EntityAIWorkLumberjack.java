@@ -182,6 +182,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         worker.setCanPickUpLoot(true);
     }
 
+    @Override
+    public Class getExpectedBuildingClass()
+    {
+        return BuildingLumberjack.class;
+    }
+
     /**
      * Checks if a stack is a type of log.
      *

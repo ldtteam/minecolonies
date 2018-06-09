@@ -140,6 +140,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         worker.setCanPickUpLoot(true);
     }
 
+    @Override
+    public Class getExpectedBuildingClass()
+    {
+        return BuildingDeliveryman.class;
+    }
+
     /**
      * Gather items from a random hut which the hut doesn't need.
      *

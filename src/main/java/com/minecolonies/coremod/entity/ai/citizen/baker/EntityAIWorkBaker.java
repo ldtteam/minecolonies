@@ -122,6 +122,12 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         worker.setCanPickUpLoot(true);
     }
 
+    @Override
+    public Class getExpectedBuildingClass()
+    {
+        return BuildingBaker.class;
+    }
+
     private AIState finishing()
     {
         if (currentBakingProduct == null || currentBakingProduct.getState() != ProductState.BAKED)

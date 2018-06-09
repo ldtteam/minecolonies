@@ -23,7 +23,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityFlowerPot;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
@@ -53,6 +52,12 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     {
         super(job);
         worker.setCanPickUpLoot(true);
+    }
+
+    @Override
+    public Class getExpectedBuildingClass()
+    {
+        return AbstractBuildingStructureBuilder.class;
     }
 
     /**
