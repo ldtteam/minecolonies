@@ -23,7 +23,7 @@ public class ScrollingView extends View
     public ScrollingView()
     {
         super();
-        setup();
+        setup(null);
     }
 
     /**
@@ -34,17 +34,24 @@ public class ScrollingView extends View
     public ScrollingView(final PaneParams params)
     {
         super(params);
-        setup();
+        setup(params);
     }
 
-    private void setup()
+    private void setup(final PaneParams params)
     {
         container = createScrollingContainer();
         container.setPosition(0, 0);
         container.setSize(getInteriorWidth() - scrollbarWidth, getInteriorHeight());
         container.putInside(this);
 
-        scrollbar = new Scrollbar(container);
+        if (params != null)
+        {
+            scrollbar = new Scrollbar(container, params);
+        }
+        else
+        {
+            scrollbar = new Scrollbar(container);
+        }
         scrollbar.setPosition(getInteriorWidth() - scrollbarWidth, 0);
         scrollbar.setSize(scrollbarWidth, getInteriorHeight());
         scrollbar.putInside(this);
