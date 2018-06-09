@@ -5,6 +5,7 @@ import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
@@ -165,7 +166,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     public void connectBlockToBuildingIfNecessary(@NotNull final IBlockState blockState, @NotNull final BlockPos pos)
     {
         final BlockPos buildingLocation = job.getWorkOrder().getBuildingLocation();
-        final AbstractBuilding building = this.getOwnBuilding().getColony().getBuildingManager().getBuilding(buildingLocation);
+        final AbstractBuilding building = this.getOwnBuilding(AbstractBuildingStructureBuilder.class).getColony().getBuildingManager().getBuilding(buildingLocation);
 
         if (building != null)
         {

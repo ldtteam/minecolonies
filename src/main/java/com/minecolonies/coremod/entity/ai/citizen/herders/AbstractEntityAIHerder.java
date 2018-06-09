@@ -4,6 +4,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -354,14 +355,14 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      */
     private AxisAlignedBB getTargetableArea()
     {
-        if (getOwnBuilding() == null)
+        if (getOwnBuilding(AbstractBuildingWorker.class) == null)
         {
             return null;
         }
 
         if(targetArea == null)
         {
-            targetArea = getOwnBuilding().getTargetableArea(world);
+            targetArea = getOwnBuilding(AbstractBuildingWorker.class).getTargetableArea(world);
         }
         return targetArea;
     }
@@ -416,10 +417,10 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      */
     public boolean maxAnimals()
     {
-        if (getOwnBuilding() != null)
+        if (getOwnBuilding(AbstractBuildingWorker.class) != null)
         {
             final int numOfAnimals = searchForAnimals().size();
-            final int maxAnimals = getOwnBuilding().getBuildingLevel() * getMaxAnimalMultiplier();
+            final int maxAnimals = getOwnBuilding(AbstractBuildingWorker.class).getBuildingLevel() * getMaxAnimalMultiplier();
 
             return numOfAnimals > maxAnimals;
         }
@@ -449,10 +450,10 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      */
     private int getToolSlot(final ToolType toolType)
     {
-        if (getOwnBuilding() != null)
+        if (getOwnBuilding(AbstractBuildingWorker.class) != null)
         {
             final int slot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), toolType,
-              TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding().getMaxToolLevel());
+              TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding(AbstractBuildingWorker.class).getMaxToolLevel());
 
             if (slot == -1)
             {

@@ -212,7 +212,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @return the building associated with this AI's worker.
      */
     @Nullable
-    public AbstractBuildingWorker getOwnBuilding()
+    private AbstractBuildingWorker getOwnBuilding()
     {
         return worker.getCitizenColonyHandler().getWorkBuilding();
     }

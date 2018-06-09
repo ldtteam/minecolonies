@@ -401,7 +401,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     public void handleSpecificCancelActions()
     {
-        getOwnBuilding().getColony().getWorkManager().removeWorkOrder(job.getWorkOrderId());
+        getOwnBuilding(AbstractBuildingStructureBuilder.class).getColony().getWorkManager().removeWorkOrder(job.getWorkOrderId());
         job.setWorkOrder(null);
     }
 }

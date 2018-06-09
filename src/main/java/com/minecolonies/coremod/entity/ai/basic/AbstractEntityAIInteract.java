@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -229,23 +230,23 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
               || world.getBlockState(blockToMine).getBlock() == (Blocks.REDSTONE_ORE)
               || world.getBlockState(blockToMine).getBlock() == (Blocks.EMERALD_ORE))
         {
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("ores");
+            this.getOwnBuilding(AbstractBuildingWorker.class).getColony().getStatsManager().incrementStatistic("ores");
         }
         if (world.getBlockState(blockToMine).getBlock().equals(Blocks.DIAMOND_ORE))
         {
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("diamonds");
+            this.getOwnBuilding(AbstractBuildingWorker.class).getColony().getStatsManager().incrementStatistic("diamonds");
         }
         if (world.getBlockState(blockToMine).getBlock().equals(Blocks.CARROTS))
         {
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("carrots");
+            this.getOwnBuilding(AbstractBuildingWorker.class).getColony().getStatsManager().incrementStatistic("carrots");
         }
         if (world.getBlockState(blockToMine).getBlock().equals(Blocks.POTATOES))
         {
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("potatoes");
+            this.getOwnBuilding(AbstractBuildingWorker.class).getColony().getStatsManager().incrementStatistic("potatoes");
         }
         if (world.getBlockState(blockToMine).getBlock().equals(Blocks.WHEAT))
         {
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("wheat");
+            this.getOwnBuilding(AbstractBuildingWorker.class).getColony().getStatsManager().incrementStatistic("wheat");
         }
     }
 

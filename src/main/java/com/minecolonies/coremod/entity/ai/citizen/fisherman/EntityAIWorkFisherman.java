@@ -218,17 +218,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     }
 
     /**
-     * Returns the fisherman's work building.
-     *
-     * @return building instance
-     */
-    @Override
-    public BuildingFisherman getOwnBuilding()
-    {
-        return (BuildingFisherman) worker.getCitizenColonyHandler().getWorkBuilding();
-    }
-
-    /**
      * Calculates after how many actions the ai should dump it's inventory.
      * <p>
      * Override this to change the value.
@@ -437,7 +426,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
         if (caughtFish())
         {
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("fish");
+            this.getOwnBuilding(BuildingFisherman.class).getColony().getStatsManager().incrementStatistic("fish");
             playCaughtFishSound();
             if (random.nextDouble() < CHANCE_NEW_POND)
             {
@@ -589,7 +578,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     private int getRodSlot()
     {
         return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.FISHINGROD,
-          TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding().getMaxToolLevel());
+          TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding(BuildingFisherman.class).getMaxToolLevel());
     }
 
     /**
