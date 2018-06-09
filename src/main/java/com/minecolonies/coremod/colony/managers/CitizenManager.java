@@ -375,31 +375,31 @@ public class CitizenManager implements ICitizenManager
         if (averageHousing > 1)
         {
             colony.increaseOverallHappiness(averageHousing * HAPPINESS_FACTOR);
-            colony.setHousing(HappinessData.INCREASE);
+            colony.getHappinessData().setHousing(HappinessData.INCREASE);
         }
         else if (averageHousing < 1)
         {
-            colony.setHousing(HappinessData.DECREASE);
+            colony.getHappinessData().setHousing(HappinessData.DECREASE);
         }
         else
         {
-            colony.setHousing(HappinessData.STABLE);
+            colony.getHappinessData().setHousing(HappinessData.STABLE);
         }
 
         final int averageSaturation = (int) (saturation / getCitizens().size());
         if (averageSaturation < WELL_SATURATED_LIMIT)
         {
             colony.decreaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * -HAPPINESS_FACTOR);
-            colony.setSaturation(HappinessData.DECREASE);
+            colony.getHappinessData().setSaturation(HappinessData.DECREASE);
         }
         else if (averageSaturation > WELL_SATURATED_LIMIT)
         {
             colony.increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
-            colony.setSaturation(HappinessData.INCREASE);
+            colony.getHappinessData().setSaturation(HappinessData.INCREASE);
         }
         else
         {
-            colony.setSaturation(HappinessData.STABLE);
+            colony.getHappinessData().setSaturation(HappinessData.STABLE);
         }
 
         final int relation = workers / guards;
@@ -407,15 +407,15 @@ public class CitizenManager implements ICitizenManager
         if (relation > 1)
         {
             colony.decreaseOverallHappiness(relation * HAPPINESS_FACTOR);
-            colony.setGuards(HappinessData.DECREASE);
+            colony.getHappinessData().setGuards(HappinessData.DECREASE);
         }
         else if (relation < 1)
         {
-            colony.setGuards(HappinessData.INCREASE);
+            colony.getHappinessData().setGuards(HappinessData.INCREASE);
         }
         else
         {
-            colony.setGuards(HappinessData.STABLE);
+            colony.getHappinessData().setGuards(HappinessData.STABLE);
         }
     }
 
