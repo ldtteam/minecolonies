@@ -10,7 +10,6 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Suppression;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.managers.*;
@@ -194,6 +193,11 @@ public class Colony implements IColony
      * List of players visiting the colony.
      */
     private final List<EntityPlayer> visitingPlayers = new ArrayList<>();
+
+    /**
+     * Datas about the happiness of a colony
+     */
+    private       HappinessData                happinessData          = new HappinessData();
 
     /**
      * Constructor for a newly created Colony.
@@ -608,6 +612,16 @@ public class Colony implements IColony
     }
 
     /**
+     * Get all the data indices about happiness
+     *
+     * @return An instance of {@link HappinessData} containing all the datas
+     */
+    public HappinessData getHappinessData()
+    {
+        return happinessData;
+    }
+
+    /**
      * Any per-world-tick logic should be performed here.
      * NOTE: If the Colony's world isn't loaded, it won't have a world tick.
      * Use onServerTick for logic that should _always_ run.
@@ -633,7 +647,7 @@ public class Colony implements IColony
         {
             citizenManager.onWorldTick(event);
         }
-        
+
         if (shallUpdate(world, TICKS_SECOND)
                 && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
                 && Configurations.gameplay.doBarbariansSpawn
@@ -644,7 +658,7 @@ public class Colony implements IColony
         {
             MobEventsUtils.barbarianEvent(event.world, this);
         }
-        
+
         buildingManager.onWorldTick(event);
 
         if (isDay && !world.isDaytime())

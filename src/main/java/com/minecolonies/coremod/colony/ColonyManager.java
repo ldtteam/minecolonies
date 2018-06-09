@@ -1390,6 +1390,21 @@ public final class ColonyManager
     }
 
     /**
+     *
+     * @param colonyId
+     * @param data
+     * @return
+     */
+    public static IMessage handleHappinessDataMessage(final int colonyId, final HappinessData data)
+    {
+        final ColonyView view = getColonyView(colonyId);
+        if (view != null)
+        {
+            return view.handleHappinessDataMessage(data);
+        }
+        return null;
+    }
+    /**
      * Whether or not a new schematic have been downloaded.
      *
      * @return True if a new schematic have been received.

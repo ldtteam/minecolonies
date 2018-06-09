@@ -17,6 +17,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveCitizenMessage;
+import com.minecolonies.coremod.network.messages.HappinessDataMessage;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -141,6 +142,10 @@ public class CitizenManager implements ICitizenManager
                     }
                 }
             }
+
+            subscribers.stream()
+              .filter(player -> !oldSubscribers.contains(player))
+              .forEach(player -> MineColonies.getNetwork().sendTo(new HappinessDataMessage(colony, colony.getHappinessData()), player));
         }
     }
 
@@ -370,31 +375,31 @@ public class CitizenManager implements ICitizenManager
         if (averageHousing > 1)
         {
             colony.increaseOverallHappiness(averageHousing * HAPPINESS_FACTOR);
-            happinessData.setHousing(HappinessData.INCREASE);
+            colony.setHousing(HappinessData.INCREASE);
         }
         else if (averageHousing < 1)
         {
-            happinessData.setHousing(HappinessData.DECREASE);
+            colony.setHousing(HappinessData.DECREASE);
         }
         else
         {
-            happinessData.setHousing(HappinessData.STABLE);
+            colony.setHousing(HappinessData.STABLE);
         }
 
         final int averageSaturation = (int) (saturation / getCitizens().size());
         if (averageSaturation < WELL_SATURATED_LIMIT)
         {
             colony.decreaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * -HAPPINESS_FACTOR);
-            happinessData.setSaturation(HappinessData.DECREASE);
+            colony.setSaturation(HappinessData.DECREASE);
         }
         else if (averageSaturation > WELL_SATURATED_LIMIT)
         {
             colony.increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
-            happinessData.setSaturation(HappinessData.INCREASE);
+            colony.setSaturation(HappinessData.INCREASE);
         }
         else
         {
-            happinessData.setSaturation(HappinessData.STABLE);
+            colony.setSaturation(HappinessData.STABLE);
         }
 
         final int relation = workers / guards;
@@ -402,26 +407,16 @@ public class CitizenManager implements ICitizenManager
         if (relation > 1)
         {
             colony.decreaseOverallHappiness(relation * HAPPINESS_FACTOR);
-            happinessData.setGuards(HappinessData.DECREASE);
+            colony.setGuards(HappinessData.DECREASE);
         }
         else if (relation < 1)
         {
-            happinessData.setGuards(HappinessData.INCREASE);
+            colony.setGuards(HappinessData.INCREASE);
         }
         else
         {
-            happinessData.setGuards(HappinessData.STABLE);
+            colony.setGuards(HappinessData.STABLE);
         }
-    }
-
-    /**
-     * Get all the data indices about happiness
-     *
-     * @return An instance of {@link HappinessData} containing all the datas
-     */
-    public HappinessData getHappiness()
-    {
-        return happinessData;
     }
 
     @Override

@@ -744,7 +744,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void updateHappiness()
     {
-        final HappinessData happiness = ColonyManager.getColony(building.getColony().getID()).getCitizenManager().getHappiness();
+        final HappinessData happiness = building.getColony().getHappinessData();
         final String[] imagesIds = new String[] {GUARD_HAPPINESS_LEVEL, HOUSE_HAPPINESS_LEVEL, SATURATION_HAPPINESS_LEVEL};
         final int[] levels = new int[] {happiness.getGuards(), happiness.getHousing(), happiness.getSaturation()};
         for (int i = 0; i < imagesIds.length; i++)
