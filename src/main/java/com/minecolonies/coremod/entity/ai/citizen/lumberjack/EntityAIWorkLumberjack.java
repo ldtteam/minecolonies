@@ -260,11 +260,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private AIState findTree()
     {
-        final AbstractBuilding building = getOwnBuilding();
+        final BuildingLumberjack building = getOwnBuilding(BuildingLumberjack.class);
 
-        if (pathResult == null || pathResult.treeLocation == null)
+        if (pathResult == null || pathResult.treeLocation == null && building != null)
         {
-            pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE + searchIncrement, 1.0D, ((BuildingLumberjack) building).getTreesToCut(), worker.getCitizenColonyHandler().getColony());
+            pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE + searchIncrement, 1.0D, building.getTreesToCut(), worker.getCitizenColonyHandler().getColony());
             return getState();
         }
         if (pathResult.isPathReachingDestination())
@@ -529,7 +529,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
               soundType.getVolume(),
               soundType.getPitch());
             worker.swingArm(worker.getActiveHand());
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("saplings");
+            this.getOwnBuilding(BuildingLumberjack.class).getColony().getStatsManager().incrementStatistic("saplings");
         }
 
         if(timeWaited >= MAX_WAITING_TIME/2 && !checkedInHut && !walkToBuilding())

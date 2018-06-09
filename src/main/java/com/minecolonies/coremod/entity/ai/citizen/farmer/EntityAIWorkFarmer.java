@@ -131,14 +131,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     @NotNull
     private AIState prepareForFarming()
     {
-        @Nullable final BuildingFarmer building = getOwnBuilding();
+        @Nullable final BuildingFarmer building = getOwnBuilding(BuildingFarmer.class);
         if (building == null || building.getBuildingLevel() < 1)
         {
             return PREPARING;
         }
 
         building.syncWithColony(world);
-        if (building.getFarmerFields().size() < getOwnBuilding().getBuildingLevel() && !building.assignManually())
+        if (building.getFarmerFields().size() < getOwnBuilding(BuildingFarmer.class).getBuildingLevel() && !building.assignManually())
         {
             searchAndAddFields();
         }
@@ -176,20 +176,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
         else
         {
-            getOwnBuilding().setCurrentField(null);
+            getOwnBuilding(BuildingFarmer.class).setCurrentField(null);
         }
         return PREPARING;
-    }
-
-    /**
-     * Returns the farmer's work building.
-     *
-     * @return building instance
-     */
-    @Override
-    public BuildingFarmer getOwnBuilding()
-    {
-        return (BuildingFarmer) worker.getCitizenColonyHandler().getWorkBuilding();
     }
 
     /**
@@ -202,12 +191,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             @Nullable final ScarecrowTileEntity newField = colony.getBuildingManager().getFreeField(worker.getCitizenData().getId(), world);
 
-            if (newField != null && getOwnBuilding() != null)
+            if (newField != null && getOwnBuilding(BuildingFarmer.class) != null)
             {
                 newField.setOwner(worker.getCitizenData().getId());
                 newField.setTaken(true);
                 newField.markDirty();
-                getOwnBuilding().addFarmerFields(newField.getPos());
+                getOwnBuilding(BuildingFarmer.class).addFarmerFields(newField.getPos());
             }
         }
     }
@@ -343,7 +332,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private AIState workAtField()
     {
-        @Nullable final BuildingFarmer buildingFarmer = getOwnBuilding();
+        @Nullable final BuildingFarmer buildingFarmer = getOwnBuilding(BuildingFarmer.class);
 
         if (buildingFarmer == null || checkForToolOrWeapon(ToolType.HOE) || buildingFarmer.getCurrentField() == null)
         {
@@ -585,7 +574,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private int getHoeSlot()
     {
-        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding().getMaxToolLevel());
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding(BuildingFarmer.class).getMaxToolLevel());
     }
 
     /**

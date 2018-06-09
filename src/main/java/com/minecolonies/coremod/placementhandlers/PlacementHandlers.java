@@ -14,6 +14,8 @@ import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
 import com.minecolonies.coremod.blocks.BlockWaypoint;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
@@ -102,7 +104,7 @@ public final class PlacementHandlers
                 return true;
             }
 
-            if (placer.getOwnBuilding()
+            if (placer.getOwnBuilding(AbstractBuildingWorker.class)
                   .getOpenRequestsOfTypeFiltered(
                     placer.getWorker().getCitizenData(),
                           TypeConstants.DELIVERABLE,

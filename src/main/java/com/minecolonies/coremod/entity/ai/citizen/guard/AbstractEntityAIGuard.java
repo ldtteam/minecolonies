@@ -130,12 +130,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             {
                 return getState();
             }
-            else if (getOwnBuilding() != null)
+            else if (getOwnBuilding(AbstractBuildingGuards.class) != null)
             {
                 InventoryFunctions.matchFirstInProviderWithSimpleAction(worker,
                   stack -> !ItemStackUtils.isEmpty(stack)
                              && ItemStackUtils.doesItemServeAsWeapon(stack)
-                             && ItemStackUtils.hasToolLevel(stack, tool, 0, getOwnBuilding().getMaxToolLevel()),
+                             && ItemStackUtils.hasToolLevel(stack, tool, 0, getOwnBuilding(AbstractBuildingGuards.class).getMaxToolLevel()),
                   itemStack -> worker.getCitizenItemHandler().setMainHeldItem(itemStack));
             }
         }
@@ -145,10 +145,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             checkIfRequestForItemExistOrCreateAsynch(item);
         }
 
-        if (getOwnBuilding() != null)
+        if (getOwnBuilding(AbstractBuildingGuards.class) != null)
         {
-            final TileEntityColonyBuilding chest = getOwnBuilding().getTileEntity();
-            for (int i = 0; i < getOwnBuilding().getTileEntity().getSizeInventory(); i++)
+            final TileEntityColonyBuilding chest = getOwnBuilding(AbstractBuildingGuards.class).getTileEntity();
+            for (int i = 0; i < getOwnBuilding(AbstractBuildingGuards.class).getTileEntity().getSizeInventory(); i++)
             {
                 final ItemStack stack = chest.getStackInSlot(i);
 
@@ -156,7 +156,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                   itemStack -> itemStack.getItem() instanceof ItemArmor) != -1)
                 {
                     InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
-                      getOwnBuilding(), itemStack -> itemStack.getItem() instanceof ItemArmor,
+                      getOwnBuilding(AbstractBuildingGuards.class), itemStack -> itemStack.getItem() instanceof ItemArmor,
                       stack.getCount(),
                       new InvWrapper(worker.getInventoryCitizen()));
                 }
@@ -176,10 +176,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         setDelay(Constants.TICKS_SECOND);
         for (final ToolType toolType : toolsNeeded)
         {
-            if (getOwnBuilding() != null && !InventoryUtils.hasItemHandlerToolWithLevel(new InvWrapper(getInventory()),
+            if (getOwnBuilding(AbstractBuildingGuards.class) != null && !InventoryUtils.hasItemHandlerToolWithLevel(new InvWrapper(getInventory()),
               toolType,
               0,
-              getOwnBuilding().getMaxToolLevel()))
+              getOwnBuilding(AbstractBuildingGuards.class).getMaxToolLevel()))
             {
                 return START_WORKING;
             }
@@ -188,10 +188,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         if (worker.getCitizenColonyHandler().getWorkBuilding() != null
               && !(worker.getLastAttackedEntity() != null
               && !worker.getLastAttackedEntity().isDead)
-              && getOwnBuilding() instanceof AbstractBuildingGuards
+              && getOwnBuilding(AbstractBuildingGuards.class) != null
               && target == null)
         {
-            final AbstractBuildingGuards guardBuilding = (AbstractBuildingGuards) getOwnBuilding();
+            final AbstractBuildingGuards guardBuilding = getOwnBuilding(AbstractBuildingGuards.class);
 
             switch (guardBuilding.getTask())
             {
@@ -239,7 +239,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     protected EntityLivingBase getTarget()
     {
-        final AbstractBuildingGuards building = (AbstractBuildingGuards) getOwnBuilding();
+        final AbstractBuildingGuards building = getOwnBuilding(AbstractBuildingGuards.class);
 
         if (building != null && target == null)
         {
@@ -353,7 +353,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             currentAttackDelay = getAttackDelay();
         }
 
-        if (getOwnBuilding() != null)
+        if (getOwnBuilding(AbstractBuildingGuards.class) != null)
         {
 
             if (worker.getDistance(target) > getAttackRange())
@@ -365,7 +365,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             final int swordSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()),
               ToolType.SWORD,
               0,
-              getOwnBuilding().getMaxToolLevel());
+              getOwnBuilding(AbstractBuildingGuards.class).getMaxToolLevel());
 
             if (swordSlot != -1)
             {
@@ -433,7 +433,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             currentAttackDelay = getAttackDelay();
         }
 
-        if (getOwnBuilding() != null && worker.getCitizenData() != null)
+        if (getOwnBuilding(AbstractBuildingGuards.class) != null && worker.getCitizenData() != null)
         {
 
             if (worker.getDistance(target) > getAttackRange())
@@ -445,7 +445,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             final int bowslot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()),
               ToolType.BOW,
               0,
-              getOwnBuilding().getMaxToolLevel());
+              getOwnBuilding(AbstractBuildingGuards.class).getMaxToolLevel());
 
             if (bowslot != -1)
             {
@@ -531,7 +531,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     protected AxisAlignedBB getSearchArea()
     {
-        final AbstractBuildingGuards building = (AbstractBuildingGuards) getOwnBuilding();
+        final AbstractBuildingGuards building = getOwnBuilding(AbstractBuildingGuards.class);
 
         if (building != null)
         {
@@ -545,7 +545,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
         }
 
-        return getOwnBuilding().getTargetableArea(world);
+        return getOwnBuilding(AbstractBuildingGuards.class).getTargetableArea(world);
     }
 
     /**

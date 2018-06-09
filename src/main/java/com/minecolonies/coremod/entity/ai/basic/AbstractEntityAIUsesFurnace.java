@@ -94,7 +94,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
      */
     protected BlockPos getPositionOfOvenToRetrieveFrom()
     {
-        for (final BlockPos pos : ((AbstractBuildingFurnaceUser) getOwnBuilding()).getFurnaces())
+        for (final BlockPos pos : ((AbstractBuildingFurnaceUser) getOwnBuilding(AbstractBuildingFurnaceUser.class)).getFurnaces())
         {
             final TileEntity entity = world.getTileEntity(pos);
             if (entity instanceof TileEntityFurnace)
@@ -139,18 +139,18 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
             return RETRIEVING_END_PRODUCT_FROM_FURNACE;
         }
 
-        final int amountOfSmeltableInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), this::isSmeltable);
+        final int amountOfSmeltableInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(AbstractBuildingFurnaceUser.class), this::isSmeltable);
         final int amountOfSmeltableInInv = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), this::isSmeltable);
 
-        final int amountOfFuelInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), TileEntityFurnace::isItemFuel);
+        final int amountOfFuelInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(AbstractBuildingFurnaceUser.class), TileEntityFurnace::isItemFuel);
         final int amountOfFuelInInv = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel);
 
         if (amountOfSmeltableInBuilding + amountOfSmeltableInInv <= 0
-                && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(getSmeltAbleClass().getClass())))
+                && !getOwnBuilding(AbstractBuildingFurnaceUser.class).hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(getSmeltAbleClass().getClass())))
         {
             worker.getCitizenData().createRequestAsync(getSmeltAbleClass());
         }
-        else if (amountOfFuelInBuilding + amountOfFuelInInv <= 0 && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Burnable.class)))
+        else if (amountOfFuelInBuilding + amountOfFuelInInv <= 0 && !getOwnBuilding(AbstractBuildingFurnaceUser.class).hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Burnable.class)))
         {
             worker.getCitizenData().createRequestAsync(new Burnable(STACKSIZE));
         }
@@ -177,7 +177,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
      */
     private AIState checkIfAbleToSmelt(final int amountOfFuel, final int amountOfSmeltable)
     {
-        for (final BlockPos pos : ((AbstractBuildingFurnaceUser) getOwnBuilding()).getFurnaces())
+        for (final BlockPos pos : ((AbstractBuildingFurnaceUser) getOwnBuilding(AbstractBuildingFurnaceUser.class)).getFurnaces())
         {
             final TileEntity entity = world.getTileEntity(pos);
 
@@ -248,7 +248,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
             return getState();
         }
 
-        if (needsCurrently == null || !InventoryUtils.hasItemInProvider(getOwnBuilding(), needsCurrently))
+        if (needsCurrently == null || !InventoryUtils.hasItemInProvider(getOwnBuilding(AbstractBuildingFurnaceUser.class), needsCurrently))
         {
             setDelay(STANDARD_DELAY);
             return START_WORKING;
@@ -257,7 +257,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         {
             if (walkTo == null)
             {
-                final BlockPos pos = getOwnBuilding().getTileEntity().getPositionOfChestWithItemStack(needsCurrently);
+                final BlockPos pos = getOwnBuilding(AbstractBuildingFurnaceUser.class).getTileEntity().getPositionOfChestWithItemStack(needsCurrently);
                 if (pos == null)
                 {
                     setDelay(STANDARD_DELAY);
@@ -329,7 +329,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
      */
     private AIState fillUpFurnace()
     {
-        if (((AbstractBuildingFurnaceUser) getOwnBuilding()).getFurnaces().isEmpty())
+        if (((AbstractBuildingFurnaceUser) getOwnBuilding(AbstractBuildingFurnaceUser.class)).getFurnaces().isEmpty())
         {
             chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_STATUS_COOKING);
             setDelay(STANDARD_DELAY);
