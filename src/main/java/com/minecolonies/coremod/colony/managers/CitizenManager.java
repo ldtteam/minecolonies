@@ -276,7 +276,7 @@ public class CitizenManager implements ICitizenManager
         newMaxCitizens = Math.max(Configurations.gameplay.maxCitizens, newMaxCitizens);
         if (getMaxCitizens() != newMaxCitizens)
         {
-            setMaxCitizens(newMaxCitizens);
+            setMaxCitizens(Math.min(newMaxCitizens,Configurations.gameplay.maxCitizenPerColony));
         }
         colony.markDirty();
     }
