@@ -1390,6 +1390,25 @@ public final class ColonyManager
     }
 
     /**
+     * Handle a message about the hapiness.
+     * if {@link #getColonyView(int)} gives a not-null result. If {@link
+     * #getColonyView(int)} is null, returns null.
+     *
+     * @param colonyId Id of the colony.
+     * @param data     Datas about the hapiness
+     * @return result of {@link ColonyView#handleHappinessDataMessage(HappinessData)} or null
+     */
+    public static IMessage handleHappinessDataMessage(final int colonyId, final HappinessData data)
+    {
+        final ColonyView view = getColonyView(colonyId);
+        if (view != null)
+        {
+            return view.handleHappinessDataMessage(data);
+        }
+        return null;
+    }
+
+    /**
      * Whether or not a new schematic have been downloaded.
      *
      * @return True if a new schematic have been received.
