@@ -97,6 +97,10 @@ public class HappinessData implements IMessage
         this.saturation = saturation;
     }
 
+    /**
+     * {@inheritDoc}
+     * @param byteBuf
+     */
     @Override
     public void fromBytes(final ByteBuf byteBuf)
     {
@@ -105,6 +109,10 @@ public class HappinessData implements IMessage
         this.saturation = byteBuf.readInt();
     }
 
+    /**
+     * {@inheritDoc}
+     * @param byteBuf
+     */
     @Override
     public void toBytes(final ByteBuf byteBuf)
     {
@@ -113,6 +121,10 @@ public class HappinessData implements IMessage
         byteBuf.writeInt(saturation);
     }
 
+    /**
+     * Copying the values of the happinessdata into this object
+     * @param data The values to copy
+     */
     public void setValues(HappinessData data)
     {
         this.guards = data.guards;

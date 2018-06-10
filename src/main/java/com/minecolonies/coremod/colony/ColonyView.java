@@ -628,9 +628,9 @@ public final class ColonyView implements IColony
     }
 
     /**
-     *
-     * @param happinessData
-     * @return
+     * Update the happiness values for a colony
+     * @param happinessData The new values for happiness
+     * @return null == no response.
      */
     public IMessage handleHappinessDataMessage(final HappinessData happinessData)
     {
