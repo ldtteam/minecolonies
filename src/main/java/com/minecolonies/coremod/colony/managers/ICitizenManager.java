@@ -127,11 +127,4 @@ public interface ICitizenManager
      * @param event the event.
      */
     void onWorldTick(final TickEvent.WorldTickEvent event);
-
-    /**
-     * Get every happiness factor for a colony
-     *
-     * @return Class with every happiness data
-     */
-    HappinessData getHappiness();
 }

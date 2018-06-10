@@ -160,6 +160,7 @@ public class MineColonies
         getNetwork().registerMessage(ColonyViewRemoveWorkOrderMessage.class, ColonyViewRemoveWorkOrderMessage.class, ++id, Side.CLIENT);
         getNetwork().registerMessage(UpdateChunkCapabilityMessage.class, UpdateChunkCapabilityMessage.class, ++id, Side.CLIENT);
         getNetwork().registerMessage(GuardMobAttackListMessage.class, GuardMobAttackListMessage.class, ++id, Side.CLIENT);
+        getNetwork().registerMessage(HappinessDataMessage.class,HappinessDataMessage.class,++id,Side.CLIENT);
 
         //  Permission Request messages
         getNetwork().registerMessage(PermissionsMessage.Permission.class, PermissionsMessage.Permission.class, ++id, Side.SERVER);
