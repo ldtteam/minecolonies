@@ -197,7 +197,7 @@ public class Colony implements IColony
     /**
      * Datas about the happiness of a colony
      */
-    private       HappinessData                happinessData          = new HappinessData();
+    private final HappinessData happinessData = new HappinessData();
 
     /**
      * Constructor for a newly created Colony.

@@ -125,7 +125,7 @@ public class HappinessData implements IMessage
      * Copying the values of the happinessdata into this object
      * @param data The values to copy
      */
-    public void setValues(HappinessData data)
+    public void setValues(final HappinessData data)
     {
         this.guards = data.guards;
         this.saturation = data.saturation;
