@@ -591,7 +591,60 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         final String roundedHappiness = df.format(building.getColony().getOverallHappiness());
 
         findPaneOfTypeByID(HAPPINESS_LABEL, Label.class).setLabelText(roundedHappiness);
-        findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
+
+        final ScrollingList list = findPaneOfTypeByID("citizen-stats", ScrollingList.class);
+        if (list == null)
+        {
+            return;
+        }
+        final Integer unemployed = jobCountMap.get("") == null ? 0 : jobCountMap.get("");
+        final String numberOfUnemployed = LanguageHandler.format(
+            "com.minecolonies.coremod.gui.townHall.population.unemployed", unemployed);
+        jobCountMap.remove("");
+        final Integer maxJobs = jobCountMap.size();
+
+        list.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return maxJobs + 3;
+            }
+
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                if (jobCountMap.size() < 1)
+                {
+                    return;
+                }
+
+                final Label label = rowPane.findPaneOfTypeByID(CITIZENS_AMOUNT_LABEL, Label.class);
+                if (index == 0)
+                {
+                    label.setLabelText(numberOfCitizens);
+                }
+                if (index == 2)
+                {
+                    label.setLabelText(numberOfUnemployed);
+                }
+                if (index < 3)
+                {
+                    return;
+                }
+
+                final Map.Entry<String, Integer> entry = jobCountMap.entrySet().iterator().next();
+                final String job = entry.getKey();
+                final String labelJobKey = job.endsWith("man") ? job.replace("man", "men") : (job + "s");
+                final String numberOfWorkers = LanguageHandler.format(
+                    "com.minecolonies.coremod.gui.townHall.population." + labelJobKey, entry.getValue());
+                label.setLabelText(numberOfWorkers);
+                jobCountMap.remove(entry.getKey());
+            }
+        });
+
+        /* OLD WAY OF FILLING citizen-stats
+        findPaneOfTypeByID("totalCitizens", Label.class).setLabelText(numberOfCitizens);
 
         final Group group = findPaneOfTypeByID("citizen-stats", Group.class);
         if (group == null)
@@ -623,6 +676,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             workerLabel.setLabelText(numberOfWorkers);
             group.addChild(workerLabel);
         }
+        */
     }
 
     /**
