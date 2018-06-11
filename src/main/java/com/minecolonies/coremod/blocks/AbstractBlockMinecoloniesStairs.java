@@ -13,7 +13,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 public abstract class AbstractBlockMinecoloniesStairs<B extends AbstractBlockMinecoloniesStairs<B>> extends BlockStairs implements IBlockMinecolonies<B>
 {
-    protected AbstractBlockMinecoloniesStairs(final IBlockState modelState)
+    public AbstractBlockMinecoloniesStairs(final IBlockState modelState)
     {
         super(modelState);
     }

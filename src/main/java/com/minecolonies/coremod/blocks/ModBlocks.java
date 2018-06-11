@@ -1,5 +1,9 @@
 package com.minecolonies.coremod.blocks;
 
+import com.minecolonies.coremod.blocks.cactus.BlockCactusDoor;
+import com.minecolonies.coremod.blocks.cactus.BlockCactusPlank;
+import com.minecolonies.coremod.blocks.cactus.BlockCactusStair;
+import com.minecolonies.coremod.blocks.cactus.BlockCactusTrapdoor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.item.Item;
@@ -49,9 +53,10 @@ public final class ModBlocks
     public static BlockHutBarracksTower          blockHutBarracksTower;
     public static BlockHutCook                   blockHutCook;
     public static BlockHutSmeltery               blockHutSmeltery;
-    public static BlockCactusPlank               blockCactusPlank;
-    public static BlockCactusDoor                blockCactusDoor;
-    public static BlockCactusTrapdoor            blockCactusTrapdoor;
+    public static BlockCactusPlank blockCactusPlank;
+    public static BlockCactusDoor blockCactusDoor;
+    public static BlockCactusTrapdoor blockCactusTrapdoor;
+    public static BlockCactusStair blockCactusStair;
 
     /**
      * Utility blocks.
@@ -123,6 +128,7 @@ public final class ModBlocks
         blockCactusPlank = new BlockCactusPlank().registerBlock(registry);
         blockCactusDoor = new BlockCactusDoor(blockCactusDoor).registerBlock(registry);
         blockCactusTrapdoor = new BlockCactusTrapdoor().registerBlock(registry);
+        blockCactusStair = new BlockCactusStair(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK)).registerBlock(registry);
 
         blockShingleOak = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK),
           BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.OAK.getName()).registerBlock(registry);
@@ -190,6 +196,7 @@ public final class ModBlocks
         multiBlock.registerItemBlock(registry);
         blockCactusPlank.registerItemBlock(registry);
         blockCactusTrapdoor.registerItemBlock(registry);
+        blockCactusStair.registerItemBlock(registry);
 
         for (final BlockTimberFrame frame : timberFrames)
         {

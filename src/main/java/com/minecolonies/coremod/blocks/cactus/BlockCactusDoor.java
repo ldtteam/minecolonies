@@ -1,6 +1,7 @@
-package com.minecolonies.coremod.blocks;
+package com.minecolonies.coremod.blocks.cactus;
 
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.blocks.AbstractBlockDoor;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;

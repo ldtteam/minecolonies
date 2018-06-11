@@ -3,6 +3,7 @@ package com.minecolonies.coremod.proxy;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.*;
+import com.minecolonies.coremod.blocks.cactus.BlockCactusDoor;
 import com.minecolonies.coremod.client.gui.*;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
@@ -21,7 +22,6 @@ import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import com.minecolonies.structures.client.TemplateBlockAccessTransformHandler;
-import com.minecolonies.structures.client.TemplateRenderHandler;
 import com.minecolonies.structures.event.RenderEventHandler;
 import com.minecolonies.structures.helpers.Settings;
 import net.minecraft.block.Block;
@@ -206,6 +206,7 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutSmeltery);
         createCustomModel(ModBlocks.blockCactusPlank);
         createCustomModel(ModBlocks.blockCactusTrapdoor);
+        createCustomModel(ModBlocks.blockCactusStair);
 
         createCustomModel(ModBlocks.blockSolidSubstitution);
         createCustomModel(ModBlocks.blockConstructionTape);
