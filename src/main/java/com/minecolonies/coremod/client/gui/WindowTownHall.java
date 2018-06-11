@@ -9,11 +9,9 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.Alignment;
 import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.*;
-import com.minecolonies.blockout.views.Group;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
@@ -582,10 +580,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             jobCountMap.put(job, jobCountMap.get(job) == null ? 1 : (jobCountMap.get(job) + 1));
         }
 
-        final String numberOfCitizens =
-          LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens",
-            citizensSize, townHall.getColony().getMaxCitizens());
-
         final DecimalFormat df = new DecimalFormat("#.#");
         df.setRoundingMode(RoundingMode.CEILING);
         final String roundedHappiness = df.format(building.getColony().getOverallHappiness());
@@ -597,29 +591,37 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         {
             return;
         }
+
+        final String numberOfCitizens =
+            LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens",
+                citizensSize, townHall.getColony().getMaxCitizens());
+
         final Integer unemployed = jobCountMap.get("") == null ? 0 : jobCountMap.get("");
         final String numberOfUnemployed = LanguageHandler.format(
             "com.minecolonies.coremod.gui.townHall.population.unemployed", unemployed);
         jobCountMap.remove("");
+
         final Integer maxJobs = jobCountMap.size();
+        final Integer preJobsHeaders = 3;
 
         list.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
             public int getElementCount()
             {
-                return maxJobs + 3;
+                return maxJobs + preJobsHeaders;
             }
 
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                if (jobCountMap.size() < 1)
+                if (jobCountMap.isEmpty())
                 {
                     return;
                 }
 
                 final Label label = rowPane.findPaneOfTypeByID(CITIZENS_AMOUNT_LABEL, Label.class);
+                // preJobsHeaders = number of all citizens + empty row + number of all unemployed citizens
                 if (index == 0)
                 {
                     label.setLabelText(numberOfCitizens);
@@ -628,7 +630,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 {
                     label.setLabelText(numberOfUnemployed);
                 }
-                if (index < 3)
+                if (index < preJobsHeaders)
                 {
                     return;
                 }
