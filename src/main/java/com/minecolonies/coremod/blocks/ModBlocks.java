@@ -1,9 +1,6 @@
 package com.minecolonies.coremod.blocks;
 
-import com.minecolonies.coremod.blocks.cactus.BlockCactusDoor;
-import com.minecolonies.coremod.blocks.cactus.BlockCactusPlank;
-import com.minecolonies.coremod.blocks.cactus.BlockCactusStair;
-import com.minecolonies.coremod.blocks.cactus.BlockCactusTrapdoor;
+import com.minecolonies.coremod.blocks.cactus.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.item.Item;
@@ -53,10 +50,11 @@ public final class ModBlocks
     public static BlockHutBarracksTower          blockHutBarracksTower;
     public static BlockHutCook                   blockHutCook;
     public static BlockHutSmeltery               blockHutSmeltery;
-    public static BlockCactusPlank blockCactusPlank;
-    public static BlockCactusDoor blockCactusDoor;
-    public static BlockCactusTrapdoor blockCactusTrapdoor;
-    public static BlockCactusStair blockCactusStair;
+    public static BlockCactusPlank               blockCactusPlank;
+    public static BlockCactusDoor                blockCactusDoor;
+    public static BlockCactusTrapdoor            blockCactusTrapdoor;
+    public static BlockCactusStair               blockCactusStair;
+    public static BlockCactusSlab                blockCactusSlab;
 
     /**
      * Utility blocks.
@@ -128,6 +126,7 @@ public final class ModBlocks
         blockCactusPlank = new BlockCactusPlank().registerBlock(registry);
         blockCactusDoor = new BlockCactusDoor(blockCactusDoor).registerBlock(registry);
         blockCactusTrapdoor = new BlockCactusTrapdoor().registerBlock(registry);
+        blockCactusSlab = new BlockCactusSlab().registerBlock(registry);
         blockCactusStair = new BlockCactusStair(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK)).registerBlock(registry);
 
         blockShingleOak = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK),
@@ -197,6 +196,7 @@ public final class ModBlocks
         blockCactusPlank.registerItemBlock(registry);
         blockCactusTrapdoor.registerItemBlock(registry);
         blockCactusStair.registerItemBlock(registry);
+        blockCactusSlab.registerItemBlock(registry);
 
         for (final BlockTimberFrame frame : timberFrames)
         {
