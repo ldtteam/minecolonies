@@ -225,9 +225,9 @@ public final class WindowConstants
     public static final String DIST_LABEL = "dist";
 
     /**
-     * Id of the total citizens label in the GUI.
+     * Id of the label of an amount of citizens per job in the townhall GUI.
      */
-    public static final String TOTAL_CITIZENS_LABEL = "totalCitizens";
+    public static final String CITIZENS_AMOUNT_LABEL = "citizensAmount";
 
     /**
      * Id of the hidden citizen id in the GUI.
