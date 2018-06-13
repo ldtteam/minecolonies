@@ -73,8 +73,7 @@ public class WindowTownHallTest {
         when(townHall.getColony()).thenReturn(colony);
         when(building.getColony()).thenReturn(colony);
         when(windowTownHall.findPaneOfTypeByID(HAPPINESS_LABEL, Label.class)).thenReturn(new Label());
-        //when(windowTownHall.findPaneOfTypeByID("totalCitizens", Label.class)).thenReturn(new Label());
-        when(windowTownHall.findPaneOfTypeByID("citizen-stats", ScrollingList.class)).thenReturn(new ScrollingList());
+        when(windowTownHall.findPaneOfTypeByID("citizen-stats", ScrollingList.class)).thenReturn(null);
 
         Whitebox.setInternalState(windowTownHall, "townHall", townHall);
         Whitebox.setInternalState(windowTownHall, "citizens", citizensArray);

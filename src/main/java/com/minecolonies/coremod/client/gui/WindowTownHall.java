@@ -644,41 +644,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 jobCountMap.remove(entry.getKey());
             }
         });
-
-        /* OLD WAY OF FILLING citizen-stats
-        findPaneOfTypeByID("totalCitizens", Label.class).setLabelText(numberOfCitizens);
-
-        final Group group = findPaneOfTypeByID("citizen-stats", Group.class);
-        if (group == null)
-        {
-            return;
-        }
-        final Integer unemployed = jobCountMap.get("") == null ? 0 : jobCountMap.get("");
-        jobCountMap.remove("");
-
-        final Label unemployedLabel = new Label();
-        unemployedLabel.setSize(STATISTICS_LABEL_WIDTH, STATISTICS_LABEL_HEIGHT);
-        unemployedLabel.setTextAlignment(Alignment.MIDDLE_LEFT);
-        unemployedLabel.setColor(BLACK, BLACK);
-        final String numberOfUnemployed = LanguageHandler.format(
-          "com.minecolonies.coremod.gui.townHall.population.unemployed", unemployed);
-        unemployedLabel.setLabelText(numberOfUnemployed);
-        group.addChild(unemployedLabel);
-
-        for (final Map.Entry<String, Integer> entry : jobCountMap.entrySet())
-        {
-            final Label workerLabel = new Label();
-            workerLabel.setSize(STATISTICS_LABEL_WIDTH, STATISTICS_LABEL_HEIGHT);
-            workerLabel.setTextAlignment(Alignment.MIDDLE_LEFT);
-            workerLabel.setColor(BLACK, BLACK);
-            final String job = entry.getKey();
-            final String labelJobKey = job.endsWith("man") ? job.replace("man", "men") : (job + "s");
-            final String numberOfWorkers = LanguageHandler.format(
-              "com.minecolonies.coremod.gui.townHall.population." + labelJobKey, entry.getValue());
-            workerLabel.setLabelText(numberOfWorkers);
-            group.addChild(workerLabel);
-        }
-        */
     }
 
     /**
