@@ -127,10 +127,18 @@
                 </box>
             </list>
 
+            <list id="citizen-stats" align="TOP_LEFT" size="140 150" pos="30 60">
+                <box size="100% 11" linewidth="0">
+                    <label id="citizensAmount" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
+                </box>
+            </list>
+
+            <!-- OLD WAY OF FILLING citizen-stats
             <group id="citizen-stats" align="TOP_LEFT" size="140 150" pos="30 60">
                 <label id="totalCitizens" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
                 <label size="100% 11"/>
             </group>
+            -->
         </view>
         <view id="pagePermissions">
             <!-- label size="80 12" pos="20 7" textalign="MIDDLE_LEFT" color="black" label="§n§4NAME"/>

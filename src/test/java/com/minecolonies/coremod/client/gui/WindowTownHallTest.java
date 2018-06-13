@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.blockout.controls.Label;
-import com.minecolonies.blockout.views.Group;
+import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
@@ -73,8 +73,7 @@ public class WindowTownHallTest {
         when(townHall.getColony()).thenReturn(colony);
         when(building.getColony()).thenReturn(colony);
         when(windowTownHall.findPaneOfTypeByID(HAPPINESS_LABEL, Label.class)).thenReturn(new Label());
-        when(windowTownHall.findPaneOfTypeByID("totalCitizens", Label.class)).thenReturn(new Label());
-        when(windowTownHall.findPaneOfTypeByID("citizen-stats", Group.class)).thenReturn(new Group());
+        when(windowTownHall.findPaneOfTypeByID("citizen-stats", ScrollingList.class)).thenReturn(null);
 
         Whitebox.setInternalState(windowTownHall, "townHall", townHall);
         Whitebox.setInternalState(windowTownHall, "citizens", citizensArray);
@@ -84,6 +83,6 @@ public class WindowTownHallTest {
         Whitebox.invokeMethod(windowTownHall, "createAndSetStatistics");
         assertEquals(1L, citizensMap.get(1).getId());
 
-        verify(windowTownHall, times(1)).findPaneOfTypeByID("citizen-stats", Group.class);
+        verify(windowTownHall, times(1)).findPaneOfTypeByID("citizen-stats", ScrollingList.class);
     }
 }
