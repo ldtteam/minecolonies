@@ -159,7 +159,7 @@ public class CommandEntryPointTest
         permissionsChecker = mock(PermissionsChecker.class);
         when(permissionsChecker.hasPermission(any(), any())).thenReturn(true);
 
-        MineColonyDataProvider mineColonyDataProvider = mock(MineColonyDataProvider.class);
+        final MineColonyDataProvider mineColonyDataProvider = mock(MineColonyDataProvider.class);
         when(mineColonyDataProvider.getColonies()).thenReturn(colonyList);
         when(mineColonyDataProvider.getColony(1)).thenReturn(colony1);
         when(mineColonyDataProvider.getColony(2)).thenReturn(colony2);

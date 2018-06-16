@@ -31,20 +31,6 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractCommandParser extends CommandBase
 {
-    public interface PermissionsChecker
-    {
-        boolean hasPermission(ForgePermissionNodes forgePermissionNode, EntityPlayer player);
-        boolean canUseCommands(MinecraftServer server, ICommandSender sender);
-    }
-
-    public interface ModuleContext
-    {
-        /**
-         * @return the object that is known in this context for this type.
-         */
-        <T> T get(Class<? extends T> type);
-    }
-    
     /**
      * Effectively final but cannot be initialized in a constructor
      *  as it depends on a subclass method and the subclass may not be initialized yet.
@@ -68,6 +54,20 @@ public abstract class AbstractCommandParser extends CommandBase
     @NotNull
     protected abstract ModuleContext getModuleContext();
 
+    public interface PermissionsChecker
+    {
+        boolean hasPermission(ForgePermissionNodes forgePermissionNode, EntityPlayer player);
+        boolean canUseCommands(MinecraftServer server, ICommandSender sender);
+    }
+
+    public interface ModuleContext
+    {
+        /**
+         * @return the object that is known in this context for this type.
+         */
+        <T> T get(Class<? extends T> type);
+    }
+    
     private static class ParsingResult
     {
         @NotNull private final List<String> tabCompletions;
@@ -479,7 +479,7 @@ public abstract class AbstractCommandParser extends CommandBase
     {
         try
         {
-            TreeNode<IMenu> rootTreeNode = getRoot();
+            final TreeNode<IMenu> rootTreeNode = getRoot();
             final ParsingResult parsingResult = getTabCompletionsAndParsingHolders(rootTreeNode, server, sender, args, pos, moduleContext);
             return parsingResult.getTabCompletions();
         }
@@ -623,12 +623,9 @@ public abstract class AbstractCommandParser extends CommandBase
                 if (null == parsedObject)
                 {
                     final List<String> tabCompletions = actionArgumentType.getTabCompletions(server, pos, moduleContext, actionMenuState, potentialArgumentValue);
-                    if (!tabCompletions.isEmpty())
+                    if (!tabCompletions.isEmpty() && (!requiresExactMatch || (1 == tabCompletions.size())))
                     {
-                        if (!requiresExactMatch || (1 == tabCompletions.size()))
-                        {
-                            return new ParsingResult(tabCompletions, actionMenuTreeNode, parsedActionArgumentList, actionMenuState, potentialArgumentValue);
-                        }
+                        return new ParsingResult(tabCompletions, actionMenuTreeNode, parsedActionArgumentList, actionMenuState, potentialArgumentValue);
                     }
                 }
                 else
