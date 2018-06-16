@@ -27,12 +27,12 @@ public class CommandEntryPointNew extends AbstractCommandParser
             return ColonyManager.getColonies();
         }
 
-        public IColony getIColonyByOwner(World entityWorld, EntityPlayer sender)
+        public IColony getIColonyByOwner(final World entityWorld, final EntityPlayer sender)
         {
             return ColonyManager.getIColonyByOwner(entityWorld, sender);
         }
 
-        public Colony getColony(int colonyNumber)
+        public Colony getColony(final int colonyNumber)
         {
             return ColonyManager.getColony(colonyNumber);
         }
@@ -71,7 +71,7 @@ public class CommandEntryPointNew extends AbstractCommandParser
         return new ModuleContext()
         {
             @Override
-            public <T> T get(Class<? extends T> type)
+            public <T> T get(final Class<? extends T> type)
             {
                 if (MineColonyDataProvider.class == type)
                 {

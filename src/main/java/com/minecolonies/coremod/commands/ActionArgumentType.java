@@ -407,25 +407,32 @@ public enum ActionArgumentType
 
     private List<String> getBooleanTabCompletions(String potentialArgumentValue)
     {
-        if (potentialArgumentValue.isEmpty()) {
-            return Arrays.asList(new String[] {"true", "false"});
+        if (potentialArgumentValue.isEmpty())
+        {
+            return Arrays.asList(new String[] {"true", "false" });
         }
-        if ("true".startsWith(potentialArgumentValue)) {
+        if ("true".startsWith(potentialArgumentValue))
+        {
             return Collections.singletonList("true");
         }
-        if ("yes".startsWith(potentialArgumentValue)) {
+        if ("yes".startsWith(potentialArgumentValue))
+        {
             return Collections.singletonList("yes");
         }
-        if ("1".startsWith(potentialArgumentValue)) {
+        if ("1".startsWith(potentialArgumentValue))
+        {
             return Collections.singletonList("0");
         }
-        if ("false".startsWith(potentialArgumentValue)) {
+        if ("false".startsWith(potentialArgumentValue))
+        {
             return Collections.singletonList("true");
         }
-        if ("no".startsWith(potentialArgumentValue)) {
+        if ("no".startsWith(potentialArgumentValue))
+        {
             return Collections.singletonList("yes");
         }
-        if ("0".startsWith(potentialArgumentValue)) {
+        if ("0".startsWith(potentialArgumentValue))
+        {
             return Collections.singletonList("0");
         }
         

@@ -121,14 +121,6 @@ public abstract class AbstractCommandParser extends CommandBase
      * private static final int OP_PERMISSION_LEVEL = 3;
      */
 
-    /**
-     * Create our entry point once.
-     */
-    public AbstractCommandParser()
-    {
-        super();
-    }
-
     @NotNull
     private TreeNode<IMenu> getRoot()
     {
@@ -400,7 +392,7 @@ public abstract class AbstractCommandParser extends CommandBase
     @Override
     public boolean checkPermission(final MinecraftServer server, final ICommandSender sender)
     {
-        PermissionsChecker permissionsChecker = getPermissionsChecker();
+        final PermissionsChecker permissionsChecker = getPermissionsChecker();
         return permissionsChecker.canUseCommands(server, sender);
     }
 
@@ -484,8 +476,8 @@ public abstract class AbstractCommandParser extends CommandBase
             final Map<String, TreeNode<IMenu>> childs = getNavigationCommands(treeNode);
             if (0 == args.length) {
                 final List<String> tabCompletions = childs.keySet().stream().collect(Collectors.toList());
-                ActionMenuState actionMenuState = null;
-                String badArgument = null;
+                final ActionMenuState actionMenuState = null;
+                final String badArgument = null;
                 return new ParsingResult(tabCompletions, treeNode, Collections.emptyList(), actionMenuState , badArgument);
             }
 
@@ -647,52 +639,6 @@ public abstract class AbstractCommandParser extends CommandBase
 
             final List<String> tabCompletions = Collections.emptyList();
             return new ParsingResult(tabCompletions, actionMenuTreeNode, parsedActionArgumentList, actionMenuState, args[1]);
-
-//            final int allowedSpaceCount = actionArgumentType.allowedSpaceCount();
-//            int wordCount = 1;
-//            final StringBuilder sb = new StringBuilder(args[1]);
-//            while ((wordCount <= allowedSpaceCount) && ((wordCount + 1) < args.length))
-//            {
-//                final String nextPotentialWord = args[1 + wordCount];
-//                if (null == possibleActionCommands.get(nextPotentialWord.toLowerCase(Locale.ROOT)))
-//                {
-//                    sb.append(' ').append(nextPotentialWord);
-//                    ++wordCount;
-//                }
-//                else
-//                {
-//                    break;
-//                }
-//            }
-//            final String potentialArgumentValue = sb.toString();
-//            newArgsStartPos = 1 + wordCount;
-//            final Object parsedObject = actionArgumentType.parse(server, sender, pos, parsedHolders, potentialArgumentValue);
-//            if (null == parsedObject)
-//            {
-//                final List<String> tabCompletions = actionArgumentType.getTabCompletions(server, pos, actionMenuState, potentialArgumentValue);
-//                return new ParsingResult(tabCompletions, actionMenuTreeNode, parsedActionArgumentList, actionMenuState, potentialArgumentValue);
-//            }
-//            else
-//            {
-//                final ActionArgument actionArgument = holder.getActionArgument();
-//                actionMenuState.setValue(actionArgument, parsedObject);
-//                parsedHolders.add(holder);
-//
-//                // add any subArguments
-//                final TreeNode<IMenu> treeNode = holder.getTreeNode();
-//                final List<ActionArgument> subActionArgumentList = actionArgument.getActionArgumentList();
-//                for (final ActionArgument subActionArgument : subActionArgumentList)
-//                {
-//                    possibleActionCommands.put(subActionArgument.getName().toLowerCase(Locale.ROOT) + ":", new ActionMenuHolder(treeNode, subActionArgument));
-//                }
-//
-//
-//                if (newArgsStartPos == args.length)
-//                {
-//                    final List<String> tabCompletions = Collections.emptyList();
-//                    return new ParsingResult(tabCompletions, actionMenuTreeNode, parsedActionArgumentList, actionMenuState, (String) null);
-//                }
-//            }
         }
 
         final String[] newArgs = new String[args.length - newArgsStartPos];
