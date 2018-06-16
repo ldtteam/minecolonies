@@ -37,7 +37,8 @@ public abstract class AbstractCommandParser extends CommandBase
         boolean canUseCommands(MinecraftServer server, ICommandSender sender);
     }
 
-    public interface ModuleContext {
+    public interface ModuleContext
+    {
         /**
          * @return the object that is known in this context for this type.
          */
@@ -55,17 +56,17 @@ public abstract class AbstractCommandParser extends CommandBase
      * Check permissions for executing commands
      */
     @NotNull
-    abstract protected PermissionsChecker getPermissionsChecker();
+    protected abstract PermissionsChecker getPermissionsChecker();
     /**
      * Provide the root navigation menu
      */
     @NotNull
-    abstract protected NavigationMenuType getRootNavigationMenuType();
+    protected abstract NavigationMenuType getRootNavigationMenuType();
     /**
      * Provide module-specific data used for parsing commands
      */
     @NotNull
-    abstract protected ModuleContext getModuleContext();
+    protected abstract ModuleContext getModuleContext();
 
     private static class ParsingResult
     {
@@ -118,14 +119,19 @@ public abstract class AbstractCommandParser extends CommandBase
     /**
      * The level required to execute /mc commands.
      * private static final int OP_PERMISSION_LEVEL = 3;
+     * @throws CommandException 
      */
 
     @NotNull
-    private TreeNode<IMenu> getRoot()
+    private TreeNode<IMenu> getRoot() throws CommandException
     {
         if (null == root)
         {
             root = buildMenu(getRootNavigationMenuType());
+        }
+        if (null == root)
+        {
+            throw new CommandException("No navigation menus");
         }
         return root;
     }
@@ -181,14 +187,28 @@ public abstract class AbstractCommandParser extends CommandBase
     @Override
     public String getName()
     {
-        return getRoot().getData().getMenuItemName();
+        try
+        {
+            return getRoot().getData().getMenuItemName();
+        }
+        catch (CommandException e)
+        {
+            return "ERROR building navigation menu";
+        }
     }
     
     @NotNull
     @Override
     public String getUsage(final ICommandSender sender)
     {
-        return getCommandUsage(sender, getRoot());
+        try
+        {
+            return getCommandUsage(sender, getRoot());
+        }
+        catch (CommandException e)
+        {
+            return "ERROR building navigation menu";
+        }
     }
 
     @NotNull
@@ -457,8 +477,16 @@ public abstract class AbstractCommandParser extends CommandBase
                                            @Nullable final BlockPos pos,
                                            @NotNull final ModuleContext moduleContext)
     {
-        final ParsingResult parsingResult = getTabCompletionsAndParsingHolders(getRoot(), server, sender, args, pos, moduleContext);
-        return parsingResult.getTabCompletions();
+        try
+        {
+            TreeNode<IMenu> rootTreeNode = getRoot();
+            final ParsingResult parsingResult = getTabCompletionsAndParsingHolders(rootTreeNode, server, sender, args, pos, moduleContext);
+            return parsingResult.getTabCompletions();
+        }
+        catch (CommandException e)
+        {
+            return Collections.emptyList();
+        }
     }
 
     @NotNull
@@ -473,7 +501,8 @@ public abstract class AbstractCommandParser extends CommandBase
         if (treeNode.getData().getMenuType().isNavigationMenu())
         {
             final Map<String, TreeNode<IMenu>> childs = getNavigationCommands(treeNode);
-            if (0 == args.length) {
+            if (0 == args.length)
+            {
                 final List<String> tabCompletions = childs.keySet().stream().collect(Collectors.toList());
                 final ActionMenuState actionMenuState = null;
                 final String badArgument = null;
@@ -596,7 +625,8 @@ public abstract class AbstractCommandParser extends CommandBase
                     final List<String> tabCompletions = actionArgumentType.getTabCompletions(server, pos, moduleContext, actionMenuState, potentialArgumentValue);
                     if (!tabCompletions.isEmpty())
                     {
-                        if (!requiresExactMatch || (1 == tabCompletions.size())) {
+                        if (!requiresExactMatch || (1 == tabCompletions.size()))
+                        {
                             return new ParsingResult(tabCompletions, actionMenuTreeNode, parsedActionArgumentList, actionMenuState, potentialArgumentValue);
                         }
                     }
