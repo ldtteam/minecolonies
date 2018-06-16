@@ -2,6 +2,7 @@ package com.minecolonies.coremod.commands;
 
 import com.minecolonies.coremod.colony.permissions.ForgePermissionNodes;
 
+import jline.internal.Log;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -131,6 +132,7 @@ public abstract class AbstractCommandParser extends CommandBase
         }
         if (null == root)
         {
+            // This won't happen, but an NPE above might.
             throw new CommandException("No navigation menus");
         }
         return root;
@@ -479,8 +481,7 @@ public abstract class AbstractCommandParser extends CommandBase
     {
         try
         {
-            final TreeNode<IMenu> rootTreeNode = getRoot();
-            final ParsingResult parsingResult = getTabCompletionsAndParsingHolders(rootTreeNode, server, sender, args, pos, moduleContext);
+            final ParsingResult parsingResult = getTabCompletionsAndParsingHolders(getRoot(), server, sender, args, pos, moduleContext);
             return parsingResult.getTabCompletions();
         }
         catch (CommandException e)
