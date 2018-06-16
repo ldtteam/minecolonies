@@ -13,6 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.text.ITextComponent;
@@ -53,10 +54,12 @@ public class InventoryCitizen implements IInventory
      */
     private final        NonNullList<ItemStack> offHandInventory = NonNullList.<ItemStack>withSize(1, ItemStackUtils.EMPTY);
     private final List<NonNullList<ItemStack>> allInventories;
+
     /**
-     * The index of the currently held item (0-8).
+     * The index of the currently held items (0-8).
      */
-    public        int                          currentItem;
+    private        int mainItem;
+    private        int offhandItem;
 
     private ItemStack itemStack = ItemStackUtils.EMPTY;
 
@@ -154,9 +157,14 @@ public class InventoryCitizen implements IInventory
      *
      * @return {@link ItemStack} currently being held by citizen.
      */
-    public ItemStack getHeldItemMainhand()
+    public ItemStack getHeldItem(final EnumHand hand)
     {
-        return getStackInSlot(currentItem);
+        if (hand.equals(EnumHand.MAIN_HAND))
+        {
+            return getStackInSlot(mainItem);
+        }
+
+        return getStackInSlot(offhandItem);
     }
 
     /**
@@ -164,20 +172,29 @@ public class InventoryCitizen implements IInventory
      *
      * @param slot Slot index with item to be held by citizen.
      */
-    public void setHeldItem(final int slot)
+    public void setHeldItem(final EnumHand hand, final int slot)
     {
-        this.currentItem = slot;
+        if (hand.equals(EnumHand.MAIN_HAND))
+        {
+            this.mainItem = slot;
+        }
+
+        this.offhandItem = slot;
     }
 
     /**
      * Gets slot that hold item that is being held by citizen.
-     * {@link #getHeldItemMainhand()}.
      *
      * @return Slot index of held item
      */
-    public int getHeldItemSlot()
+    public int getHeldItemSlot(final EnumHand hand)
     {
-        return currentItem;
+        if (hand.equals(EnumHand.MAIN_HAND))
+        {
+            return mainItem;
+        }
+
+        return offhandItem;
     }
 
     /**
@@ -651,9 +668,13 @@ public class InventoryCitizen implements IInventory
      */
     private int storeItemStack(final ItemStack itemStackIn)
     {
-        if (this.canMergeStacks(this.getStackInSlot(this.currentItem), itemStackIn))
+        if (this.canMergeStacks(this.getStackInSlot(this.mainItem), itemStackIn))
         {
-            return this.currentItem;
+            return this.mainItem;
+        }
+        else if (this.canMergeStacks(this.getStackInSlot(this.offhandItem), itemStackIn))
+        {
+            return this.offhandItem;
         }
         else if (this.canMergeStacks(this.getStackInSlot(40), itemStackIn))
         {
@@ -705,13 +726,21 @@ public class InventoryCitizen implements IInventory
      * @param state the block.
      * @return the float value.
      */
-    public float getStrVsBlock(final IBlockState state)
+    public float getStrVsBlock(final EnumHand hand, final IBlockState state)
     {
         float f = 1.0F;
 
-        if (!(this.mainInventory.get(this.currentItem)).isEmpty())
+        if (hand.equals(EnumHand.MAIN_HAND))
         {
-            f *= (this.mainInventory.get(this.currentItem)).getDestroySpeed(state);
+            if (!(this.mainInventory.get(this.mainItem)).isEmpty())
+            {
+                f *= (this.mainInventory.get(this.mainItem)).getDestroySpeed(state);
+            }
+        }
+        else if (hand.equals(EnumHand.OFF_HAND)
+                   && !(this.mainInventory.get(this.offhandItem)).isEmpty())
+        {
+            f *= (this.mainInventory.get(this.offhandItem)).getDestroySpeed(state);
         }
 
         return f;

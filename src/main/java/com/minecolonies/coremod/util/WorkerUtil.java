@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
@@ -7,11 +8,15 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.pathfinding.PathResult;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.MoverType;
 import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.minecolonies.api.util.constant.CitizenConstants.MOVE_MINIMAL;
+import static com.minecolonies.api.util.constant.CitizenConstants.ROTATION_MOVEMENT;
 
 /**
  * Utility methods for BlockPos.
@@ -59,7 +64,7 @@ public final class WorkerUtil
             //If not moving the try setting the point where the entity should move to
             if (worker.getNavigator().noPath() && !EntityUtils.tryMoveLivingToXYZ(worker, x, y, z))
             {
-                worker.setStatus(EntityCitizen.Status.PATHFINDING_ERROR);
+                worker.getCitizenStatusHandler().setStatus(Status.PATHFINDING_ERROR);
             }
             return false;
         }
@@ -156,5 +161,34 @@ public final class WorkerUtil
     {
         final PathPoint pathpoint = citizen.getNavigator().getPath().getFinalPathPoint();
         return pathpoint != null && pathpoint.x == x && pathpoint.z == z;
+    }
+
+    /**
+     * Change the citizens Rotation to look at said block.
+     *
+     * @param block the block he should look at.
+     */
+    public static void faceBlock(@Nullable final BlockPos block, final EntityCitizen citizen)
+    {
+        if (block == null)
+        {
+            return;
+        }
+
+        final double xDifference = block.getX() - citizen.posX;
+        final double zDifference = block.getZ() - citizen.posZ;
+        final double yDifference = block.getY() - (citizen.posY + (double) citizen.getEyeHeight());
+
+        final double squareDifference = Math.sqrt(xDifference * xDifference + zDifference * zDifference);
+        final double intendedRotationYaw = (Math.atan2(zDifference, xDifference) * 180.0D / Math.PI) - 90.0;
+        final double intendedRotationPitch = -(Math.atan2(yDifference, squareDifference) * 180.0D / Math.PI);
+        citizen.setOwnRotation((float) EntityUtils.updateRotation(citizen.rotationYaw, intendedRotationYaw, ROTATION_MOVEMENT),
+          (float) EntityUtils.updateRotation(citizen.rotationPitch, intendedRotationPitch, ROTATION_MOVEMENT));
+
+        final double goToX = xDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
+        final double goToZ = zDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
+
+        //Have to move the entity minimally into the direction to render his new rotation.
+        citizen.move(MoverType.SELF, (float) goToX, 0, (float) goToZ);
     }
 }

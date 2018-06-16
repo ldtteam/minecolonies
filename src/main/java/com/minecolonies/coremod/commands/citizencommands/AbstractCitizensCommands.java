@@ -7,7 +7,6 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
-
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -120,7 +119,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
             final EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, getCommand(), colonyId))
             {
-                player.sendMessage(new TextComponentString(NOT_PERMITTED));
+                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }

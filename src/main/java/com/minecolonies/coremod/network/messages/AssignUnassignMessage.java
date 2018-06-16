@@ -6,7 +6,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -113,9 +113,9 @@ public class AssignUnassignMessage extends AbstractMessage<AssignUnassignMessage
             final CitizenData citizen = colony.getCitizenManager().getCitizen(message.citizenID);
             if (message.assign && !((BuildingHome) building).isFull() && citizen.getHomeBuilding() == null)
             {
-                ((BuildingHome) building).addResident(citizen);
+                ((BuildingHome) building).assignCitizen(citizen);
             }
-            else if (((BuildingHome) building).hasResident(citizen))
+            else if (((BuildingHome) building).hasAssignedCitizen(citizen))
             {
                 building.removeCitizen(citizen);
             }

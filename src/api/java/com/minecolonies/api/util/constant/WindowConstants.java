@@ -1,5 +1,9 @@
 package com.minecolonies.api.util.constant;
 
+import com.minecolonies.api.util.LanguageHandler;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
+
 /**
  * Class which contains all constants required for windows.
  */
@@ -34,6 +38,11 @@ public final class WindowConstants
      * Id of the citizens button in the GUI.
      */
     public static final String BUTTON_WORKORDER = "workOrder";
+
+    /**
+     * Id of the button displaying the Happiness in the GUI
+     */
+    public static final String BUTTON_HAPPINESS = "happiness";
 
     /**
      * Id of the recall button in the GUI.
@@ -141,6 +150,11 @@ public final class WindowConstants
     public static final String PAGE_WORKORDER = "pageWorkOrder";
 
     /**
+     * Id of the happiness page in the GUI.
+     */
+    public static final String PAGE_HAPPINESS = "pageHappiness";
+
+    /**
      * Id of the user list in the GUI.
      */
     public static final String LIST_USERS = "users";
@@ -168,12 +182,12 @@ public final class WindowConstants
     /**
      * Id of the workOrder list in the GUI.
      */
-    public static final String LIST_WORKORDER  = "workOrderList";
+    public static final String LIST_WORKORDER = "workOrderList";
 
     /**
      * Id of the current specializations label in the GUI.
      */
-    public static final String HAPPINESS_LABEL = "happiness";
+    public static final String HAPPINESS_LABEL = "happinessLevel";
 
     /**
      * Id of the name label in the GUI.
@@ -191,14 +205,34 @@ public final class WindowConstants
     public static final String ACTION_LABEL = "action";
 
     /**
+     * Id of the citizen info box.
+     */
+    public static final String CITIZEN_INFO = "citizenInfoBox";
+
+    /**
+     * The button id to recall one specific citizen.
+     */
+    public static final String RECALL_ONE = "recallone";
+
+    /**
+     * The job of the citizen.
+     */
+    public static final String JOB_LABEL = "job";
+
+    /**
      * Id of the distance label in the GUI.
      */
     public static final String DIST_LABEL = "dist";
 
     /**
-     * Id of the total citizens label in the GUI.
+     * Id of the label of an amount of citizens per job in the townhall GUI.
      */
-    public static final String TOTAL_CITIZENS_LABEL = "totalCitizens";
+    public static final String CITIZENS_AMOUNT_LABEL = "citizensAmount";
+
+    /**
+     * Id of the hidden citizen id in the GUI.
+     */
+    public static final String HIDDEN_CITIZEN_ID = "hiddenCitizenId";
 
     /**
      * Statistics label width.
@@ -351,6 +385,21 @@ public final class WindowConstants
     public static final String BUTTON_REMOVE_BLOCK = "removeBlock";
 
     /**
+     * Button to remove a entity or position of the list.
+     */
+    public static final String BUTTON_REMOVE_ENTITY = "removeEntity";
+
+    /**
+     * Button to replace a block or position in th eworld..
+     */
+    public static final String BUTTON_REPLACE_BLOCK = "replaceBlock";
+
+    /**
+     * Button to select a block for a replacement.
+     */
+    public static final String BUTTON_SELECT = "select";
+
+    /**
      * This button is used to set the previous available building type.
      */
     public static final String BUTTON_PREVIOUS_TYPE_ID = "previousBuildingType";
@@ -460,6 +509,7 @@ public final class WindowConstants
      */
     public static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutbuilder.xml";
     public static final String LIST_RESOURCES              = "resources";
+    public static final String LIST_ENTITIES               = "entities";
     public static final String PAGE_RESOURCES              = "resourceActions";
     public static final String RESOURCE_NAME               = "resourceName";
     public static final String RESOURCE_AVAILABLE_NEEDED   = "resourceAvailableNeeded";
@@ -482,6 +532,44 @@ public final class WindowConstants
     public static final String BUTTON_NEXTPAGE     = "nextPage";
 
     /**
+     * The GuardTower GUI file.
+     */
+    //GUI Lists
+    public static final String  GUI_ELEMENT_LIST_LEVELS    = "positions";
+    public static final String  GUI_ELEMENT_LIST_MOBS      = "mobs";
+    //GUI List Elements
+    public static final String  GUI_LIST_ELEMENT_NAME      = "name";
+    public static final String  GUI_LIST_BUTTON_SWITCH     = "switch";
+    public static final String  GUI_LIST_BUTTON_UP         = "prioUp";
+    public static final String  GUI_LIST_BUTTON_DOWN       = "prioDown";
+    //GUI Buttons
+    public static final String  GUI_BUTTON_JOB             = "job";
+    public static final String  GUI_BUTTON_ASSIGNMENT_MODE = "assign";
+    public static final String  GUI_BUTTON_PATROL_MODE     = "patrol";
+    public static final String  GUI_BUTTON_RETRIEVAL_MODE  = "retrieve";
+    public static final String  GUI_BUTTON_SET_TARGET      = "setTarget";
+    public static final String  GUI_BUTTON_NEXT_PAGE       = "nextPage";
+    public static final String  GUI_BUTTON_PREV_PAGE       = "prevPage";
+    public static final String  GUI_BUTTON_RECALCULATE     = "recalculate";
+    //GUI Switches
+    public static final String  GUI_SWITCH_VIEW_PAGES      = "pages";
+    public static final String  GUI_SWITCH_TASK_PATROL     = "patrolling";
+    public static final String  GUI_SWITCH_TASK_FOLLOW     = "following";
+    public static final String  GUI_SWITCH_TASK_GUARD      = "guarding";
+    public static final String  GUI_SWITCH_AUTO            = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_AUTO);
+    public static final String  GUI_SWITCH_MANUAL          = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_MANUAL);
+    public static final String  GUI_SWITCH_ON              = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON);
+    public static final String  GUI_SWITCH_OFF             = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF);
+    //GUI Pages
+    public static final String  GUI_PAGE_PAGE_ACTIONS      = "pageActions";
+    public static final String  GUI_PAGE_LEVEL_ACTIONS     = "levelActions";
+    public static final String  GUI_PAGE_MOB_ACTIONS       = "mobActions";
+    //GUI Resource
+    public static final String  GUI_RESOURCE               = ":gui/windowHutGuardTower.xml";
+    //GUI Other
+    public static final Integer GUI_LIST_ELEMENT_NAME_POS  = 2;
+
+    /**
      * Name of the input range field.
      */
     public static final String INPUT_RANGE_NAME = "range";
@@ -499,12 +587,66 @@ public final class WindowConstants
     /**
      * Id of the speed input field.
      */
-    public static final String INPUT_SPEED     = "speed";
+    public static final String INPUT_SPEED = "speed";
 
     /**
      * This button will remove the currently rendered structure.
      */
     public static final String BUTTON_MOVE_BUILDING = "reposition";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String BUTTON_SHOW_RES = "showRes";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String POS1X_LABEL = "pos1x";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String POS1Y_LABEL = "pos1y";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String POS1Z_LABEL = "pos1z";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String POS2X_LABEL = "pos2x";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String POS2Y_LABEL = "pos2y";
+
+    /**
+     * This button will remove the currently rendered structure.
+     */
+    public static final String POS2Z_LABEL = "pos2z";
+
+    /**
+     * The filter field of the scan tool window.
+     */
+    public static final String FILTER_NAME = "filter";
+
+    /**
+     * The fields used into the happiness
+     */
+    public static final String GUARD_HAPPINESS_LEVEL      = "guardsLevel";
+    public static final String HOUSE_HAPPINESS_LEVEL      = "houseLevel";
+    public static final String SATURATION_HAPPINESS_LEVEL = "saturationLevel";
+
+    /**
+     * Icons used to display the happiness
+     */
+    public static final String RED_ICON    = "minecolonies:textures/gui/red_icon.png";
+    public static final String YELLOW_ICON = "minecolonies:textures/gui/yellow_icon.png";
+    public static final String GREEN_ICON  = "minecolonies:textures/gui/green_icon.png";
 
     /**
      * public constructor to hide implicit public one.

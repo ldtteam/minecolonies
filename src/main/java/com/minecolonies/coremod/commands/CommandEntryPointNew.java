@@ -84,5 +84,4 @@ public class CommandEntryPointNew extends AbstractCommandParser
             }
         };
     }
-    
 }

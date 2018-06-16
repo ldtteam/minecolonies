@@ -15,8 +15,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
-import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.Constants.HALF_A_CIRCLE;
+import static com.minecolonies.api.util.constant.Constants.WHOLE_CIRCLE;
+import static com.minecolonies.api.util.constant.TranslationConstants.ALL_BARBARIANS_KILLED_MESSAGE;
+import static com.minecolonies.api.util.constant.TranslationConstants.ONLY_X_BARBARIANS_LEFT_MESSAGE;
 
 public class BarbarianManager implements IBarbarianManager
 {
@@ -81,14 +83,12 @@ public class BarbarianManager implements IBarbarianManager
     public void setCanHaveBarbEvents(final boolean canHave)
     {
         this.haveBarbEvents = canHave;
-        colony.markDirty();
     }
 
     @Override
     public void addBarbarianSpawnPoint(final BlockPos pos)
     {
         lastSpawnPoints.add(pos);
-        colony.markDirty();
     }
 
     @Override

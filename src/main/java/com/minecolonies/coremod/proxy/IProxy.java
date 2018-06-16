@@ -2,7 +2,6 @@ package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.colony.CitizenDataView;
-import net.minecraft.client.util.RecipeBookClient;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.math.BlockPos;
@@ -63,6 +62,13 @@ public interface IProxy
      * @param pos coordinates.
      */
     void openBuildToolWindow(final BlockPos pos);
+
+    /**
+     * Opens a scan tool window.
+     * @param pos1 first pos.
+     * @param pos2 second pos.
+     */
+    void openScanToolWindow(final BlockPos pos1, final BlockPos pos2);
 
     /**
      * Opens a build tool window.

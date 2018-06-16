@@ -32,8 +32,6 @@ import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static com.minecolonies.api.compatibility.CompatabilityManager.ORE_STRING;
-
 /**
  * Final class holding all the requests for requestables inside minecolonie
  */

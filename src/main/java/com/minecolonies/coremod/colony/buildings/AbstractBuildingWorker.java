@@ -11,15 +11,17 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
@@ -38,13 +40,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
  * The abstract class for each worker building.
  */
-public abstract class AbstractBuildingWorker extends AbstractBuildingHut
+public abstract class AbstractBuildingWorker extends AbstractBuilding
 {
     /**
      * Minimal level to ask for wood tools. (WOOD_HUT_LEVEL + 1 == stone)
@@ -52,29 +55,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     public static final int WOOD_HUT_LEVEL = 0;
 
     /**
-     * Tag used to store the worker to nbt.
-     */
-    private static final String TAG_WORKER = "worker";
-
-    /**
-     * NBTTag to store the recipes list.
-     */
-    private static final String TAG_RECIPES = "recipes";
-
-    /**
      * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
      */
     private final List<IToken> recipes = new ArrayList<>();
-
-    /** 
-     * Tag to store the id to NBT.
-     */
-    private static final String TAG_ID = "workerId";
-
-    /**
-     * List of workers assosiated to the building.
-     */
-    private final List<CitizenData> workers = new ArrayList();
 
     /**
      * The abstract constructor of the building.
@@ -98,20 +81,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     public abstract AbstractJob createJob(CitizenData citizen);
 
     /**
-     * Get the main worker of the building (the first in the list).
-     *
-     * @return the matching CitizenData.
-     */
-    public CitizenData getMainWorker()
-    {
-        if (workers.isEmpty())
-        {
-            return null;
-        }
-        return workers.get(0);
-    }
-
-    /**
      * Check if a certain ItemStack is in the request of a worker.
      *
      * @param stack the stack to chest.
@@ -124,7 +93,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             return false;
         }
 
-        for (final CitizenData data : getWorker())
+        for (final CitizenData data : getAssignedCitizen())
         {
             for (final IRequest request : getOpenRequests(data))
             {
@@ -242,13 +211,13 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     public List<IItemHandler> getHandlers()
     {
         final Colony colony = getColony();
-        if(this.getWorkerEntities().isEmpty() || colony == null || colony.getWorld() == null)
+        if(this.getAssignedEntities().isEmpty() || colony == null || colony.getWorld() == null)
         {
             return Collections.emptyList();
         }
 
         final List<IItemHandler> handlers = new ArrayList<>();
-        for(final CitizenData workerEntity: this.getWorker())
+        for(final CitizenData workerEntity: this.getAssignedCitizen())
         {
             handlers.add(new InvWrapper(workerEntity.getInventory()));
         }
@@ -265,61 +234,36 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         return handlers;
     }
 
-    /**
-     * Returns the worker of the current building.
-     *
-     * @return {@link CitizenData} of the current building
-     */
-    public List<CitizenData> getWorker()
+    @Override
+    public boolean assignCitizen(final CitizenData citizen)
     {
-        return new ArrayList<>(workers);
-    }
-
-    /**
-     * Set the worker of the current building.
-     *
-     * @param citizen {@link CitizenData} of the worker
-     */
-    public void setWorker(final CitizenData citizen)
-    {
-        if (workers.contains(citizen))
+        if (!super.assignCitizen(citizen))
         {
-            return;
+            Log.getLogger().warn("Ohoohohoohoh, wasn't abel to assign citizen to work building!!!");
+            return false;
         }
 
         // If we set a worker, inform it of such
         if (citizen != null)
         {
             citizen.getCitizenEntity().ifPresent(tempCitizen -> {
-                if(!tempCitizen.getLastJob().isEmpty() && !tempCitizen.getLastJob().equals(getJobName()))
+                if(!tempCitizen.getCitizenJobHandler().getLastJob().isEmpty() && !tempCitizen.getCitizenJobHandler().getLastJob().equals(getJobName()))
                 {
                     citizen.resetExperienceAndLevel();
                 }
-                tempCitizen.setLastJob(getJobName());
+                tempCitizen.getCitizenJobHandler().setLastJob(getJobName());
             });
 
-            workers.add(citizen);
             citizen.setWorkBuilding(this);
         }
-
-        markDirty();
-    }
-
-    /**
-     * Returns the {@link net.minecraft.entity.Entity} of the worker.
-     *
-     * @return {@link net.minecraft.entity.Entity} of the worker
-     */
-    @Nullable
-    public List<Optional<EntityCitizen>> getWorkerEntities()
-    {
-        return workers.stream().filter(Objects::nonNull).map(CitizenData::getCitizenEntity).collect(Collectors.toList());
+        return true;
     }
 
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
+
         if (compound.hasKey(TAG_WORKER))
         {
             try
@@ -327,11 +271,23 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
                 final NBTTagList workersTagList = compound.getTagList(TAG_WORKER, Constants.NBT.TAG_COMPOUND);
                 for (int i = 0; i < workersTagList.tagCount(); ++i)
                 {
-                    final CitizenData data = getColony().getCitizenManager().getCitizen(workersTagList.getCompoundTagAt(i).getInteger(TAG_ID));
+                    final CitizenData data;
+                    if (workersTagList.getCompoundTagAt(i).hasKey(TAG_ID))
+                    {
+                        data = getColony().getCitizenManager().getCitizen(workersTagList.getCompoundTagAt(i).getInteger(TAG_ID));
+                    }
+                    else if (workersTagList.getCompoundTagAt(i).hasKey(TAG_WORKER_ID))
+                    {
+                        data = getColony().getCitizenManager().getCitizen(workersTagList.getCompoundTagAt(i).getInteger(TAG_WORKER_ID));
+                    }
+                    else
+                    {
+                        data = null;
+                    }
+
                     if (data != null)
                     {
-                        data.setWorkBuilding(this);
-                        workers.add(data);
+                        assignCitizen(data);
                     }
                 }
             }
@@ -339,11 +295,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             {
                 MineColonies.getLogger().warn("Warning: Updating data structures:", e);
                 final CitizenData worker = getColony().getCitizenManager().getCitizen(compound.getInteger(TAG_WORKER));
-                workers.add(worker);
-                if (worker != null)
-                {
-                    worker.setWorkBuilding(this);
-                }
+                assignCitizen(worker);
             }
         }
 
@@ -358,16 +310,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-
-        if (!workers.isEmpty())
+        if (hasAssignedCitizen())
         {
             @NotNull final NBTTagList workersTagList = new NBTTagList();
-            for (@NotNull final CitizenData data : workers)
+            for (@NotNull final CitizenData data : getAssignedCitizen())
             {
                 if (data != null)
                 {
                     final NBTTagCompound idCompound = new NBTTagCompound();
-                    idCompound.setInteger(TAG_ID, data.getId());
+                    idCompound.setInteger(TAG_WORKER_ID, data.getId());
                     workersTagList.appendTag(idCompound);
                 }
             }
@@ -380,19 +331,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         compound.setTag(TAG_RECIPES, recipesTagList);
     }
 
-    @Override
-    public void onDestroyed()
-    {
-        if (hasEnoughWorkers())
-        {
-            // EntityCitizen will detect the workplace is gone and fix up it's
-            // Entity properly
-            workers.clear();
-        }
-
-        super.onDestroyed();
-    }
-
     /**
      * Executed when a new day start.
      */
@@ -400,27 +338,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     public void onWakeUp()
     {
 
-    }
-
-    /**
-     * Returns whether or not the building has a worker.
-     *
-     * @return true if building has worker, otherwise false.
-     */
-    public boolean hasEnoughWorkers()
-    {
-        return !workers.isEmpty();
-    }
-
-    @Override
-    public void removeCitizen(final CitizenData citizen)
-    {
-        if (isWorker(citizen))
-        {
-            citizen.setWorkBuilding(null);
-            workers.remove(citizen);
-        }
-        markDirty();
     }
 
     /**
@@ -445,17 +362,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     }
 
     /**
-     * Returns if the {@link CitizenData} is the same as the worker.
-     *
-     * @param citizen {@link CitizenData} you want to compare
-     * @return true if same citizen, otherwise false
-     */
-    public boolean isWorker(final CitizenData citizen)
-    {
-        return workers.contains(citizen);
-    }
-
-    /**
      * @see AbstractBuilding#onUpgradeComplete(int)
      */
     @Override
@@ -465,15 +371,25 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
 
         // If we have no active worker, grab one from the Colony
         // TODO Maybe the Colony should assign jobs out, instead?
-        if (!hasEnoughWorkers()
+        if (!hasAssignedCitizen()
               && (getBuildingLevel() > 0 || this instanceof BuildingBuilder)
               && !this.getColony().isManualHiring())
         {
             final CitizenData joblessCitizen = getColony().getCitizenManager().getJoblessCitizen();
             if (joblessCitizen != null)
             {
-                setWorker(joblessCitizen);
+                assignCitizen(joblessCitizen);
             }
+        }
+    }
+
+    @Override
+    public void removeCitizen(final CitizenData citizen)
+    {
+        if (isCitizenAssigned(citizen))
+        {
+            super.removeCitizen(citizen);
+            citizen.setWorkBuilding(null);
         }
     }
 
@@ -490,8 +406,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     {
         super.serializeToView(buf);
 
-        buf.writeInt(workers.size());
-        for (final CitizenData data : workers)
+        buf.writeInt(getAssignedCitizen().size());
+        for (final CitizenData data : getAssignedCitizen())
         {
             buf.writeInt(data == null ? 0 : data.getId());
         }
@@ -515,20 +431,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         {
             ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(storage));
         }
-    }
-
-    /**
-     * Returns the first worker in the list.
-     *
-     * @return the EntityCitizen of that worker.
-     */
-    public Optional<EntityCitizen> getMainWorkerEntity()
-    {
-        if (workers.isEmpty())
-        {
-            return Optional.empty();
-        }
-        return workers.get(0).getCitizenEntity();
     }
 
     /**
@@ -575,7 +477,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     /**
      * AbstractBuildingWorker View for clients.
      */
-    public static class View extends AbstractBuildingHut.View
+    public static class View extends AbstractBuildingView
     {
         /**
          * List of the worker ids.
@@ -708,7 +610,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         }
 
         /**
-         * Check if it has enough workers.
+         * Check if it has enough worker.
          *
          * @return true if so.
          */

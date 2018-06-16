@@ -1,15 +1,5 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
-import static com.minecolonies.api.util.constant.CommandConstants.*;
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.*;
-
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.util.CompatibilityUtils;
@@ -18,7 +8,6 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
-
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -30,6 +19,14 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
+
+import static com.minecolonies.api.util.constant.CommandConstants.*;
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.DELETECOLONY;
 
 /**
  * List all colonies.
@@ -160,14 +157,14 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
             final EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, DELETECOLONY, colony.getID()))
             {
-                senderEntity.sendMessage(new TextComponentString(NOT_PERMITTED));
+                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }
         final boolean shouldDestroy = canDestroy;
         // TODO: pass in sender and notify when the delete task finishes.
         server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID(), shouldDestroy));
-        senderEntity.sendMessage(new TextComponentString(DELETE_COLONY_TASK_SCHEDULED));
+        sender.sendMessage(new TextComponentString(DELETE_COLONY_TASK_SCHEDULED));
     }
 
     @NotNull

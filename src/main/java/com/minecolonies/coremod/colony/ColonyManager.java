@@ -8,8 +8,11 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.compatibility.CompatabilityManager;
 import com.minecolonies.api.compatibility.ICompatabilityManager;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.*;
 import com.minecolonies.api.crafting.IRecipeManager;
+import com.minecolonies.api.util.ChunkLoadStorage;
+import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
@@ -38,16 +41,20 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
+import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
+import static com.minecolonies.api.util.constant.Constants.HALF_A_CIRCLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COMPATABILITY_MANAGER;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MISSING_CHUNKS;
+import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
  * Singleton class that links colonies to minecraft.
@@ -977,6 +984,7 @@ public final class ColonyManager
                             if (colonyData != null)
                             {
                                 @NotNull final Colony colony = Colony.loadColony(colonyData, world);
+                                colony.getCitizenManager().checkCitizensForHappiness();
                                 colonies.add(colony);
                                 ColonyManager.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
                                 addColonyByWorld(colony);
@@ -1378,6 +1386,25 @@ public final class ColonyManager
             return view.handleColonyViewRemoveWorkOrderMessage(workOrderId);
         }
 
+        return null;
+    }
+
+    /**
+     * Handle a message about the hapiness.
+     * if {@link #getColonyView(int)} gives a not-null result. If {@link
+     * #getColonyView(int)} is null, returns null.
+     *
+     * @param colonyId Id of the colony.
+     * @param data     Datas about the hapiness
+     * @return result of {@link ColonyView#handleHappinessDataMessage(HappinessData)} or null
+     */
+    public static IMessage handleHappinessDataMessage(final int colonyId, final HappinessData data)
+    {
+        final ColonyView view = getColonyView(colonyId);
+        if (view != null)
+        {
+            return view.handleHappinessDataMessage(data);
+        }
         return null;
     }
 

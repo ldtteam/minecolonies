@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -79,12 +80,12 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
             @Nullable final AbstractBuildingWorker building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingWorker.class);
             if (building != null)
             {
-                for (int i = 0; i < building.getWorkerEntities().size(); i++)
+                for (int i = 0; i < building.getAssignedEntities().size(); i++)
                 {
-                    Optional<EntityCitizen> optionalEntityCitizen = building.getWorkerEntities().get(i);
+                    Optional<EntityCitizen> optionalEntityCitizen = building.getAssignedEntities().get(i);
+                    final CitizenData citizenData = building.getAssignedCitizen().get(i);
                     if (!optionalEntityCitizen.isPresent())
                     {
-                        final CitizenData citizenData = building.getWorker().get(i);
                         if (citizenData != null)
                         {
                             Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
@@ -97,6 +98,22 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                             return;
                         }
                     }
+                    else if (optionalEntityCitizen.get().ticksExisted == 0)
+                    {
+                        final EntityCitizen oldCitizen = optionalEntityCitizen.get();
+                        final List<EntityCitizen> list = player.getServerWorld().getEntities(EntityCitizen.class, e -> e.equals(oldCitizen));
+                        if (list.isEmpty())
+                        {
+                            citizenData.setCitizenEntity(null);
+                            citizenData.updateCitizenEntityIfNecessary();
+                        }
+                        else
+                        {
+                            citizenData.setCitizenEntity(list.get(0));
+                        }
+                    }
+
+
                     final BlockPos loc = building.getLocation();
                     if (optionalEntityCitizen.isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), colony.getWorld(), loc))
                     {

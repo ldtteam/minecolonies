@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -49,7 +50,8 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
                              final boolean assignmentMode,
                              final boolean patrollingMode,
                              final boolean retrieval,
-                             final int task)
+                             final int task
+    )
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -107,9 +109,9 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
                 building.setAssignManually(message.assignmentMode);
                 building.setPatrolManually(message.patrollingMode);
                 building.setRetrieveOnLowHealth(message.retrieval);
-                building.setTask(AbstractBuildingGuards.Task.values()[message.task]);
+                building.setTask(GuardTask.values()[message.task]);
 
-                if (building.getTask().equals(AbstractBuildingGuards.Task.FOLLOW))
+                if (building.getTask().equals(GuardTask.FOLLOW))
                 {
                     building.setPlayerToFollow(player);
                 }

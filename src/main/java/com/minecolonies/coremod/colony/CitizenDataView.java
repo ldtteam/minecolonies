@@ -5,6 +5,7 @@ import com.minecolonies.coremod.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -22,6 +23,7 @@ public class CitizenDataView
 {
 
     private static final String TAG_HELD_ITEM_SLOT = "HeldItemSlot";
+    public static final String TAG_OFFHAND_HELD_ITEM_SLOT        = "OffhandHeldItemSlot";
 
     /**
      * The max amount of lines the latest log allows.
@@ -310,7 +312,8 @@ public class CitizenDataView
         inventory = new InventoryCitizen(this.name, true);
         final NBTTagList nbttaglist = compound.getTagList("inventory", 10);
         this.inventory.readFromNBT(nbttaglist);
-        this.inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
+        this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInteger(TAG_HELD_ITEM_SLOT));
+        this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInteger(TAG_OFFHAND_HELD_ITEM_SLOT));
     }
 
     /**

@@ -1,14 +1,12 @@
 package com.minecolonies.coremod.commands;
 
+import com.minecolonies.coremod.colony.permissions.ForgePermissionNodes;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Nullable;
-
-import org.jetbrains.annotations.NotNull;
-
-import com.minecolonies.coremod.colony.permissions.ForgePermissionNodes;
 
 public class ActionMenu extends AbstractMenu
 {

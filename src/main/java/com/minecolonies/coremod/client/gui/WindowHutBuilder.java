@@ -12,9 +12,9 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -30,7 +30,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Window for the builder hut.
  */
-public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuilderView>
+public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuilder.View>
 {
     private static final String LABEL_CONSTRUCTION_NAME =  "constructionName";
     private static final String LABEL_CONSTRUCTION_POS =  "constructionPos";
@@ -39,7 +39,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     private static final int DARKGREEN = Color.getByName("darkgreen", 0);
     private static final int BLACK     = Color.getByName("black", 0);
 
-    private final BuildingBuilderView builder;
+    private final BuildingBuilder.View builder;
 
     /**
      * List of resources needed.
@@ -50,9 +50,9 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     /**
      * Constructor for window builder hut.
      *
-     * @param building {@link com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView}.
+     * @param building {@link BuildingBuilder.View}.
      */
-    public WindowHutBuilder(final BuildingBuilderView building)
+    public WindowHutBuilder(final BuildingBuilder.View building)
     {
         super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
         this.builder = building;
@@ -66,9 +66,9 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     private void pullResourcesFromHut()
     {
         final AbstractBuildingView newView = builder.getColony().getBuilding(builder.getID());
-        if (newView instanceof BuildingBuilderView)
+        if (newView instanceof BuildingBuilder.View)
         {
-            final BuildingBuilderView updatedView = (BuildingBuilderView) newView;
+            final BuildingBuilder.View updatedView = (BuildingBuilder.View) newView;
             final InventoryPlayer inventory = this.mc.player.inventory;
             final boolean isCreative = this.mc.player.capabilities.isCreativeMode;
 

@@ -4,7 +4,7 @@ import com.minecolonies.api.entity.ai.pathfinding.AbstractWalkToProxy;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.BuildingMiner;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -42,25 +42,25 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
     @Override
     public Set<BlockPos> getWayPoints()
     {
-        if (citizen.getColony() == null)
+        if (citizen.getCitizenColonyHandler().getColony() == null)
         {
             return Collections.emptySet();
         }
 
-        return citizen.getColony().getWayPoints().keySet();
+        return citizen.getCitizenColonyHandler().getColony().getWayPoints().keySet();
     }
 
     @Override
     public boolean careAboutY()
     {
-        return citizen.getColonyJob() instanceof JobBuilder;
+        return citizen.getCitizenJobHandler().getColonyJob() instanceof JobBuilder;
     }
 
     @Override
     public BlockPos getSpecializedProxy(final BlockPos target, final double distanceToPath)
     {
-        final AbstractBuildingWorker building = citizen.getWorkBuilding();
-        if (citizen.getColonyJob() != null && citizen.getColonyJob() instanceof JobMiner && building instanceof BuildingMiner)
+        final AbstractBuildingWorker building = citizen.getCitizenColonyHandler().getWorkBuilding();
+        if (citizen.getCitizenJobHandler().getColonyJob() != null && citizen.getCitizenJobHandler().getColonyJob() instanceof JobMiner && building instanceof BuildingMiner)
         {
             return getMinerProxy(target, distanceToPath, (BuildingMiner) building);
         }

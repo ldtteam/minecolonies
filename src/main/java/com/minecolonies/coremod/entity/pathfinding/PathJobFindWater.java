@@ -27,7 +27,7 @@ public class PathJobFindWater extends AbstractPathJob
      *
      * @param world the world within which to path.
      * @param start the start position from which to path from.
-     * @param home  the position of the workers hut.
+     * @param home  the position of the worker hut.
      * @param range maximum path range.
      * @param ponds already visited fishing places.
      */

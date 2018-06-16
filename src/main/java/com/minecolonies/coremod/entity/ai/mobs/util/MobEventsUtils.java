@@ -63,6 +63,7 @@ public final class MobEventsUtils
               "Horde Spawn Point: " + targetSpawnPoint);
         }
         colony.getBarbManager().addBarbarianSpawnPoint(targetSpawnPoint);
+        colony.markDirty();
 
         int raidNumber = HUGE_HORDE_MESSAGE_ID;
         if(hordeSize < SMALL_HORDE_SIZE)
@@ -79,7 +80,7 @@ public final class MobEventsUtils
         }
         LanguageHandler.sendPlayersMessage(
                 colony.getMessageEntityPlayers(),
-                RAID_EVENT_MESSAGE + raidNumber);
+                RAID_EVENT_MESSAGE + raidNumber, colony.getName());
 
         colony.setNightsSinceLastRaid(0);
 

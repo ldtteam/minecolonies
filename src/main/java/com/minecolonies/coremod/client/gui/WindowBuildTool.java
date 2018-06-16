@@ -35,7 +35,10 @@ import org.jetbrains.annotations.Nullable;
 import scala.Array;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static com.minecolonies.api.util.constant.Constants.MAX_MESSAGE_SIZE;
 import static com.minecolonies.api.util.constant.WindowConstants.*;

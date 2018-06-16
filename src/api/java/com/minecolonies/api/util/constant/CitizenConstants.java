@@ -1,5 +1,13 @@
 package com.minecolonies.api.util.constant;
 
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.math.BlockPos;
+
+/**
+ * Constants regarding citizens.
+ */
 public final class CitizenConstants
 {
     /**
@@ -34,9 +42,6 @@ public final class CitizenConstants
      * Number of ticks to heal the citizens.
      */
     public static final int    HEAL_CITIZENS_AFTER = 100;
-    /**
-     * Tag's to save data to NBT.
-     */
 
     /**
      * Distance to avoid Barbarian.
@@ -110,7 +115,7 @@ public final class CitizenConstants
     /**
      * If the entitiy is stuck for 2 minutes do something.
      */
-    public static final int    MAX_STUCK_TIME             = 60;
+    public static final int    MAX_STUCK_TIME             = 120;
     /**
      * The max amount of lines the latest log allows.
      */

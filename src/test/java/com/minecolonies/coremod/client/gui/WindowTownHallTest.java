@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.blockout.controls.Label;
-import com.minecolonies.blockout.views.Group;
+import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +16,7 @@ import org.powermock.reflect.Whitebox;
 
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.WindowConstants.HAPPINESS_LABEL;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -71,9 +72,8 @@ public class WindowTownHallTest {
         when(colony.getMaxCitizens()).thenReturn(4);
         when(townHall.getColony()).thenReturn(colony);
         when(building.getColony()).thenReturn(colony);
-        when(windowTownHall.findPaneOfTypeByID("happiness", Label.class)).thenReturn(new Label());
-        when(windowTownHall.findPaneOfTypeByID("totalCitizens", Label.class)).thenReturn(new Label());
-        when(windowTownHall.findPaneOfTypeByID("citizen-stats", Group.class)).thenReturn(new Group());
+        when(windowTownHall.findPaneOfTypeByID(HAPPINESS_LABEL, Label.class)).thenReturn(new Label());
+        when(windowTownHall.findPaneOfTypeByID("citizen-stats", ScrollingList.class)).thenReturn(null);
 
         Whitebox.setInternalState(windowTownHall, "townHall", townHall);
         Whitebox.setInternalState(windowTownHall, "citizens", citizensArray);
@@ -83,6 +83,6 @@ public class WindowTownHallTest {
         Whitebox.invokeMethod(windowTownHall, "createAndSetStatistics");
         assertEquals(1L, citizensMap.get(1).getId());
 
-        verify(windowTownHall, times(1)).findPaneOfTypeByID("citizen-stats", Group.class);
+        verify(windowTownHall, times(1)).findPaneOfTypeByID("citizen-stats", ScrollingList.class);
     }
 }

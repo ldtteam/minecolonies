@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.colony.permissions;
 
-import org.jetbrains.annotations.NotNull;
-
 import net.minecraftforge.server.permission.DefaultPermissionLevel;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Available forge Permission nodes that can be checked for access.

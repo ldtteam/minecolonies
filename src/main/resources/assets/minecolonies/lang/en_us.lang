@@ -13,6 +13,7 @@ tile.minecolonies.blockHutMiner.name=Mine
 tile.minecolonies.blockHutStonemason.name=Quarry
 tile.minecolonies.blockHutTownHall.name=Town Hall
 tile.minecolonies.blockSubstitution.name=Placeholderblock
+tile.minecolonies.blockBarracksTowerSubstitution.name=BarracksTower Placeholder
 tile.minecolonies.blockconstructiontape.name=Construction tape
 tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
 tile.blockHut.messageNoPermissionPlace=You don't have permission to place hutes in %s.
@@ -32,8 +33,8 @@ item.minecolonies.scepterGold.name=Building Tool
 item.minecolonies.scepterSteel.name=Scan Tool
 item.minecolonies.caliper.name=Caliper
 
-item.scepterSteel.point=Point one saved
-item.scepterSteel.point2=Point two saved, right click again to save the schematic
+item.scepterSteel.point=Point one saved: %d %d %d
+item.scepterSteel.point2=Point two saved: %d %d %d.
 item.scepterSteel.samePoint=That was the same point
 item.scepterSteel.scanFormat=SCAN_%s-%s
 item.scepterSteel.scanSuccess=Scan successfully saved as %s
@@ -113,7 +114,7 @@ item.minecolonies.scepterGuard.name=Guard-scepter
 
 com.minecolonies.configgui.title=MineColonies Config
 
-com.minecolonies.coremod.status.herder.goingToHut=Going to Hut
+com.minecolonies.coremod.status.worker.goingToHut=Going to Hut
 com.minecolonies.coremod.status.herder.breeding=Breeding
 com.minecolonies.coremod.status.herder.searching=Searching
 com.minecolonies.coremod.status.herder.goingToAnimal=Going to Animal
@@ -179,6 +180,10 @@ com.minecolonies.coremod.gui.townHall.addPlayer=Add Player:
 com.minecolonies.coremod.gui.townHall.addBlock=Add Block/Position:
 
 com.minecolonies.coremod.gui.warehouse.visitCitizenChests=Visit Citizen Chests:
+com.minecolonies.coremod.gui.workerHuts.mobsList=Mob Attack List
+com.minecolonies.coremod.job.Ranger=Knight
+com.minecolonies.coremod.job.Knight=Ranger
+com.minecolonies.coremod.gui.warehouse.visitCitizenChests=Visit Citizenchests:
 com.minecolonies.coremod.gui.townHall.population.unemployed=Unemployed: %d
 com.minecolonies.coremod.gui.workerHuts.minerNode=Node
 com.minecolonies.coremod.gui.hiring.off=Automatic
@@ -199,6 +204,7 @@ com.minecolonies.coremod.gui.buildtool.nohut=No Huts
 com.minecolonies.coremod.gui.citizen.skills=Skills
 com.minecolonies.coremod.gui.townHall.repair=Repair Town Hall
 com.minecolonies.coremod.gui.townHall.recall=Recall Citizens
+com.minecolonies.coremod.gui.townHall.recallOne=Recall Citizen
 com.minecolonies.coremod.gui.workerHuts.minerNodeList=Levels
 com.minecolonies.coremod.gui.workerHuts.resourceList=Required Resources
 com.minecolonies.coremod.gui.warehouse.toBlacksmith=Deliver to Blacksmith:
@@ -243,6 +249,7 @@ com.minecolonies.coremod.gui.workerHuts.retrieveOff=Off
 com.minecolonies.coremod.gui.workerHuts.retrieveOn=On
 com.minecolonies.coremod.gui.workerHuts.task.guard=Guard
 com.minecolonies.coremod.gui.workerHuts.task.patrol=Patrol
+com.minecolonies.coremod.gui.workerHuts.calculate=Recalculate List
 com.minecolonies.coremod.gui.workerHuts.task.follow=Follow
 com.minecolonies.coremod.gui.workerHuts.targetPatrol=Set patrol positions.
 com.minecolonies.coremod.gui.workerHuts.targetGuard=Set guarding target.
@@ -584,10 +591,11 @@ com.minecolonies.coremod.leavingColony=Farewell, you're leaving %s's colony.
 com.minecolonies.coremod.enteringColonyNotify=Beware, %s just entered your colony.
 com.minecolonies.coremod.leavingColonyNotify=Farewell %s, they just left your colony.
 
-event.minecolonies.raidMessage1=§4Mysterious warriors have been spotted near the encampment.
-event.minecolonies.raidMessage2=§4Citizens report rumors of raiders nearby!
-event.minecolonies.raidMessage3=§4Buckle up cowboy! There's some darn raiders comin' for you tonight!
-event.minecolonies.raidMessage4=§4A huge horde of raiders is comin' your way, and they're not here to play!
+event.minecolonies.raidMessage1=§4Mysterious warriors have been spotted close to %s.
+event.minecolonies.raidMessage2=§4Citizens report rumors of raiders close to %s!
+event.minecolonies.raidMessage3=§4Buckle up cowboy! There's some darn raiders comin' for %s tonight!
+event.minecolonies.raidMessage4=§4A huge horde of raiders is comin' to %s, and they're not here to play!
+
 com.minecolonies.coremod.gui.workerHuts.toggleAllOn=Toggle all (on)
 com.minecolonies.coremod.gui.workerHuts.toggleAllOff=Toggle all (off)
 com.minecolonies.coremod.gui.recipe.remove=Remove
@@ -595,6 +603,8 @@ com.minecolonies.coremod.gui.workerHuts.crafting=Teach recipe
 com.minecolonies.coremod.gui.recipe.done=Successfully saved recipe!
 com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
 com.minecolonies.coremod.resolvers.crafter.private=Crafting
+com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOn=Replant (on)
+com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOff=Replant (off)
 
 com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe=You have not learned this recipe yet!
 
@@ -679,4 +689,24 @@ com.minecolonies.coremod.gui.workerHuts.barbpoints=Last Barbarian Spawns:
 com.minecolonies.coremod.barbarians.left=Only %d barbarians left!
 com.minecolonies.coremod.barbarians.killed=You succesfully defended your colony against the Barbarian intruders!
 com.minecolonies.coremod.gui.workerHuts.reposition=Reposition
+tile.minecolonies.multiBlock.name=MultiBlock
 
+com.minecolonies.coremod.tooClose=Too close to world spawn, needs to be at least %d blocks away.
+com.minecolonies.coremod.tooFar=Too far away from the world spawn, needs to be max %d blocks away.
+
+com.minecolonies.coremod.gui.scanTool.showRes=Show Resources
+com.minecolonies.coremod.gui.scanTool.to=To:
+com.minecolonies.coremod.gui.scanTool.from=From:
+com.minecolonies.coremod.gui.scanTool.name=Scan Name:
+com.minecolonies.coremod.gui.scanTool.remove=Remove
+com.minecolonies.coremod.gui.scanTool.replace=Replace
+com.minecolonies.coremod.gui.scan.replace.title=Block Replacement GUI
+com.minecolonies.coremod.gui.scanTool.select=Select
+
+com.minecolonies.coremod.gui.townHall.guards=Number of guards:
+com.minecolonies.coremod.gui.townHall.house=Number of houses:
+com.minecolonies.coremod.gui.townHall.saturation=Saturation of citizens:
+com.minecolonies.coremod.gui.workerHuts.happiness=Happiness indices
+
+com.minecolonies.coremod.gui.townHall.population.rangers=Rangers: %d
+com.minecolonies.coremod.gui.townHall.population.knights=Knights: %d

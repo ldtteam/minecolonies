@@ -4,6 +4,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.Pane;
@@ -12,7 +13,6 @@ import com.minecolonies.blockout.controls.ItemIcon;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.DropDownList;
 import com.minecolonies.blockout.views.ScrollingList;
-import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -22,8 +22,10 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.network.messages.BuildRequestMessage;
 import com.minecolonies.coremod.network.messages.BuildingSetStyleMessage;
+import com.minecolonies.coremod.network.messages.SchematicRequestMessage;
 import com.minecolonies.coremod.util.StructureWrapper;
 import com.minecolonies.structures.helpers.Settings;
+import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDoor;
@@ -35,6 +37,7 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.Template;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,7 +46,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -187,6 +189,31 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, styles.get(stylesDropDownList.getSelectedIndex()) ,
                 building.getSchematicName() + nextLevel);
         final StructureWrapper wrapper = new StructureWrapper(world, sn.toString());
+        final Structure structure = wrapper.getStructure().getStructure();
+        final String md5 = Structures.getMD5(sn.toString());
+        if (structure.isTemplateMissing() || !structure.isCorrectMD5(md5))
+        {
+            if (structure.isTemplateMissing())
+            {
+                Log.getLogger().info("Template structure " + sn + " missing");
+            }
+            else
+            {
+                Log.getLogger().info("structure " + sn + " md5 error");
+            }
+
+            Log.getLogger().info("Request To Server for structure " + sn);
+            if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+            {
+                MineColonies.getNetwork().sendToServer(new SchematicRequestMessage(sn.toString()));
+                return;
+            }
+            else
+            {
+                Log.getLogger().error("WindowBuildTool: Need to download schematic on a standalone client/server. This should never happen");
+            }
+        }
+
         wrapper.setPosition(building.getLocation());
         wrapper.rotate(building.getRotation(), world, building.getLocation(), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
         while (wrapper.findNextBlock())
@@ -196,7 +223,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
 
             if (entityInfo != null)
             {
-                for (final ItemStack stack : ItemStackUtils.getListOfStackForEntity(entityInfo, world, Minecraft.getMinecraft().player))
+                for (final ItemStack stack : ItemStackUtils.getListOfStackForEntityInfo(entityInfo, world, Minecraft.getMinecraft().player))
                 {
                     if (!ItemStackUtils.isEmpty(stack))
                     {

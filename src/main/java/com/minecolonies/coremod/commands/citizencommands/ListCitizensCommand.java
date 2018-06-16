@@ -1,15 +1,5 @@
 package com.minecolonies.coremod.commands.citizencommands;
 
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.LISTCITIZENS;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -17,7 +7,6 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
-
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,6 +17,14 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.LISTCITIZENS;
 
 /**
  * List all colonies.
@@ -120,7 +117,7 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
             final EntityPlayer player = (EntityPlayer) sender;
             if ((null != colony) && !canPlayerUseCommand(player, LISTCITIZENS, colony.getID()))
             {
-                player.sendMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
+                sender.sendMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
                 return;
             }
         }

@@ -1,15 +1,5 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
-import static com.minecolonies.api.util.constant.CommandConstants.*;
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.ADDOFFICER;
-
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.Colony;
@@ -17,7 +7,6 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
-
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -25,6 +14,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
+
+import static com.minecolonies.api.util.constant.CommandConstants.*;
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.ADDOFFICER;
 
 /**
  * List all colonies.
@@ -84,7 +81,7 @@ public class AddOfficerCommand extends AbstractSingleCommand implements IActionC
             final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
             if (colony == null)
             {
-                senderEntity.sendMessage(new TextComponentString(COLONY_X_NULL));
+                sender.sendMessage(new TextComponentString(COLONY_X_NULL));
                 return;
             }
             colonyId = colony.getID();
@@ -121,7 +118,7 @@ public class AddOfficerCommand extends AbstractSingleCommand implements IActionC
             final EntityPlayer senderPlayer = (EntityPlayer) sender;
             if (!canPlayerUseCommand(senderPlayer, ADDOFFICER, colony.getID()))
             {
-                senderEntity.sendMessage(new TextComponentString(NOT_PERMITTED));
+                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }

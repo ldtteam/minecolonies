@@ -25,9 +25,6 @@ repositories {
         name = "ModMaven"
         url = "modmaven.k-4u.nl"
     }
-}
-
-repositories {
     maven {
         url 'http://dogforce-games.com/maven'
     }
@@ -110,6 +107,8 @@ configFile.withReader {
 dependencies {
     deobfCompile "slimeknights.mantle:Mantle:1.12-${config.mantle_version}"
     deobfCompile "slimeknights:TConstruct:1.12-${config.tinker_version}"
+    deobfCompile "gigaherz.guidebook:Guidebook-1.12.2:${config.guidebook_version}"
+    deobfCompile "gigaherz.commons:gigaherz.commons-1.12.1:${config.guidebook_core_version}"
     compile "mod.chiselsandbits:chiselsandbits:${config.c_b_version}"
 
     structuresCompile sourceSets.api.output

@@ -28,6 +28,6 @@ public final class WrappedStaticStateRequestManager extends AbstractWrappedReque
      */
     public void updateRequestState(@NotNull final IToken token, @NotNull final RequestState state) throws IllegalArgumentException
     {
-        //TODO: implement when link is created with workers
+        //TODO: implement when link is created with worker
     }
 }

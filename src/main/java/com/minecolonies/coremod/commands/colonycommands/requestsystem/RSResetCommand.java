@@ -1,21 +1,11 @@
 package com.minecolonies.coremod.commands.colonycommands.requestsystem;
 
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.RSRESET;
-
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
-
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -23,6 +13,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
+
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.RSRESET;
 
 public class RSResetCommand extends AbstractSingleCommand implements IActionCommand
 {
@@ -87,7 +84,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
             final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
             if (colony == null)
             {
-                senderEntity.sendMessage(new TextComponentString(COLONY_NULL));
+                sender.sendMessage(new TextComponentString(COLONY_NULL));
                 return;
             }
             colonyId = colony.getID();
@@ -113,7 +110,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
             final EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, RSRESET, colony.getID()))
             {
-                senderEntity.sendMessage(new TextComponentString(NOT_PERMITTED));
+                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }

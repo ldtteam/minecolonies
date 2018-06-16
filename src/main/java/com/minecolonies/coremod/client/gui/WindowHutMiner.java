@@ -9,7 +9,7 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.BuildingMiner;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.network.messages.MinerSetLevelMessage;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +30,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     /**
      * Constructor for the window of the miner hut.
      *
-     * @param building {@link com.minecolonies.coremod.colony.buildings.BuildingMiner.View}.
+     * @param building {@link BuildingMiner.View}.
      */
     public WindowHutMiner(final BuildingMiner.View building)
     {

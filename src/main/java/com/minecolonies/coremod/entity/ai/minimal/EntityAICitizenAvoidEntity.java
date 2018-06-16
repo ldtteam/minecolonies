@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.coremod.colony.jobs.JobGuard;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
 import net.minecraft.entity.Entity;
@@ -65,7 +65,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
         {
             return false;
         }
-        return closestLivingEntity != null && !(theEntity.getColonyJob() instanceof JobGuard) && this.theEntity.canEntityBeSeen(closestLivingEntity);
+        return closestLivingEntity != null && !(theEntity.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard) && this.theEntity.canEntityBeSeen(closestLivingEntity);
     }
 
     /**
@@ -154,7 +154,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
         {
             closestLivingEntity = newClosest;
             performMoveAway();
-            theEntity.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.avoiding"));
+            theEntity.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.avoiding"));
             return;
         }
 

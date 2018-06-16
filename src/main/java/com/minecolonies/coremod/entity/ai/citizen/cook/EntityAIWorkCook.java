@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
@@ -22,7 +23,7 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.RESULT_SLOT;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.HUNGRY_INV_FULL;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -72,9 +73,15 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
         super.registerTargets(
                 new AITarget(COOK_SERVE_FOOD_TO_CITIZEN, this::serveFoodToCitizen)
         );
-        worker.setSkillModifier(CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma()
+        worker.getCitizenExperienceHandler().setSkillModifier(CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma()
                 + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);
+    }
+
+    @Override
+    public Class getExpectedBuildingClass()
+    {
+        return BuildingCook.class;
     }
 
     /**
@@ -111,7 +118,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
      */
     private AIState serveFoodToCitizen()
     {
-        worker.setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SERVING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SERVING));
 
         if (citizenToServe.isEmpty())
         {
@@ -161,7 +168,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 
         citizenToServe.clear();
         final List<EntityCitizen> citizenList = world.getEntitiesWithinAABB(EntityCitizen.class,
-                range, cit -> !(cit.getColonyJob() instanceof JobCook) && cit.getCitizenData() != null && cit.getCitizenData().getSaturation() <= 0);
+                range, cit -> !(cit.getCitizenJobHandler().getColonyJob() instanceof JobCook) && cit.getCitizenData() != null && cit.getCitizenData().getSaturation() <= 0);
         if (!citizenList.isEmpty())
         {
             citizenToServe.addAll(citizenList);
