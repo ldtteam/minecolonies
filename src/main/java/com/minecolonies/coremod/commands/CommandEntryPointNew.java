@@ -2,6 +2,8 @@ package com.minecolonies.coremod.commands;
 
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.colony.Colony;
@@ -46,7 +48,7 @@ public class CommandEntryPointNew extends AbstractCommandParser
         }
 
         @Override
-        public boolean canUseCommands(MinecraftServer server, ICommandSender sender)
+        public boolean canUseCommands(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender)
         {
             if (sender instanceof EntityPlayer)
             {

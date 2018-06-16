@@ -35,7 +35,7 @@ public abstract class AbstractMenu implements IMenu
     }
 
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
         {

@@ -47,7 +47,6 @@ public class CommandEntryPointTest
     @Nullable private BlockPos pos;
     @NotNull private PermissionsChecker permissionsChecker;
     @NotNull private ModuleContext moduleContext;
-    @NotNull private MineColonyDataProvider mineColonyDataProvider;
 
     @Before
     public void setUp()
@@ -160,7 +159,7 @@ public class CommandEntryPointTest
         permissionsChecker = mock(PermissionsChecker.class);
         when(permissionsChecker.hasPermission(any(), any())).thenReturn(true);
 
-        mineColonyDataProvider = mock(MineColonyDataProvider.class);
+        MineColonyDataProvider mineColonyDataProvider = mock(MineColonyDataProvider.class);
         when(mineColonyDataProvider.getColonies()).thenReturn(colonyList);
         when(mineColonyDataProvider.getColony(1)).thenReturn(colony1);
         when(mineColonyDataProvider.getColony(2)).thenReturn(colony2);

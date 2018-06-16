@@ -45,6 +45,13 @@ public abstract class AbstractCommandParser extends CommandBase
     }
     
     /**
+     * Effectively final but cannot be initialized in a constructor
+     *  as it depends on a subclass method and the subclass may not be initialized yet.
+     */
+    @NotNull
+    private TreeNode<IMenu> root;
+
+    /**
      * Check permissions for executing commands
      */
     @NotNull
@@ -59,14 +66,6 @@ public abstract class AbstractCommandParser extends CommandBase
      */
     @NotNull
     abstract protected ModuleContext getModuleContext();
-
-
-    /**
-     * Effectively final but cannot be initialized in a constructor
-     *  as it depends on a subclass method and the subclass may not be initialized yet.
-     */
-    @NotNull
-    private TreeNode<IMenu> root;
 
     private static class ParsingResult
     {

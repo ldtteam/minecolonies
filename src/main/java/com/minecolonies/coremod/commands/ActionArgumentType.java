@@ -405,7 +405,7 @@ public enum ActionArgumentType
         return null;
     }
 
-    private List<String> getBooleanTabCompletions(String potentialArgumentValue)
+    private List<String> getBooleanTabCompletions(final String potentialArgumentValue)
     {
         if (potentialArgumentValue.isEmpty())
         {
