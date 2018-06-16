@@ -411,29 +411,17 @@ public enum ActionArgumentType
         {
             return Arrays.asList(new String[] {"true", "false" });
         }
-        if ("true".startsWith(potentialArgumentValue))
+        if (("true".startsWith(potentialArgumentValue))
+            || ("yes".startsWith(potentialArgumentValue))
+            || ("1".startsWith(potentialArgumentValue)))
         {
             return Collections.singletonList("true");
         }
-        if ("yes".startsWith(potentialArgumentValue))
+        if (("false".startsWith(potentialArgumentValue))
+            || ("no".startsWith(potentialArgumentValue))
+            || ("0".startsWith(potentialArgumentValue)))
         {
-            return Collections.singletonList("yes");
-        }
-        if ("1".startsWith(potentialArgumentValue))
-        {
-            return Collections.singletonList("0");
-        }
-        if ("false".startsWith(potentialArgumentValue))
-        {
-            return Collections.singletonList("true");
-        }
-        if ("no".startsWith(potentialArgumentValue))
-        {
-            return Collections.singletonList("yes");
-        }
-        if ("0".startsWith(potentialArgumentValue))
-        {
-            return Collections.singletonList("0");
+            return Collections.singletonList("false");
         }
         
         return Collections.emptyList();
