@@ -85,7 +85,7 @@ public class ActionMenu extends AbstractMenu
         {
             return false;
         }
-        ActionMenu other = (ActionMenu) obj;
+        final ActionMenu other = (ActionMenu) obj;
         if (actionArgumentList == null)
         {
             if (other.actionArgumentList != null)

@@ -241,7 +241,7 @@ public class ActionMenuState
         {
             return false;
         }
-        ActionMenuState other = (ActionMenuState) obj;
+        final ActionMenuState other = (ActionMenuState) obj;
         if (actionMenu == null)
         {
             if (other.actionMenu != null)

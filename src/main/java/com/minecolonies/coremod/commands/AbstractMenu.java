@@ -49,7 +49,7 @@ public abstract class AbstractMenu implements IMenu
         {
             return false;
         }
-        AbstractMenu other = (AbstractMenu) obj;
+        final AbstractMenu other = (AbstractMenu) obj;
         if (menuItemName == null)
         {
             if (other.menuItemName != null)

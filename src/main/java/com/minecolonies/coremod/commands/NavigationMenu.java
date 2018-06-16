@@ -51,7 +51,7 @@ public class NavigationMenu extends AbstractMenu
         {
             return false;
         }
-        NavigationMenu other = (NavigationMenu) obj;
+        final NavigationMenu other = (NavigationMenu) obj;
         if (childrenMenuList == null)
         {
             if (other.childrenMenuList != null)

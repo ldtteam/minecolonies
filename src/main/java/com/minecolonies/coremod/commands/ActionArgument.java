@@ -97,7 +97,7 @@ public class ActionArgument
         {
             return false;
         }
-        ActionArgument other = (ActionArgument) obj;
+        final ActionArgument other = (ActionArgument) obj;
         if (actionArgumentList == null)
         {
             if (other.actionArgumentList != null)
