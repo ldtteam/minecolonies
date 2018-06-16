@@ -222,7 +222,7 @@ public class ActionMenuState
         final int prime = 31;
         int result = 1;
         result = prime * result + ((actionMenu == null) ? 0 : actionMenu.hashCode());
-        result = prime * result + ((argumentStateByActionArgumentNameMap == null) ? 0 : argumentStateByActionArgumentNameMap.hashCode());
+        result = prime * result + argumentStateByActionArgumentNameMap.hashCode();
         return result;
     }
 
@@ -253,14 +253,7 @@ public class ActionMenuState
         {
             return false;
         }
-        if (argumentStateByActionArgumentNameMap == null)
-        {
-            if (other.argumentStateByActionArgumentNameMap != null)
-            {
-                return false;
-            }
-        }
-        else if (!argumentStateByActionArgumentNameMap.equals(other.argumentStateByActionArgumentNameMap))
+        if (!argumentStateByActionArgumentNameMap.equals(other.argumentStateByActionArgumentNameMap))
         {
             return false;
         }
