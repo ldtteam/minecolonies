@@ -99,7 +99,7 @@ public class ActionMenu extends AbstractMenu
         }
         if (actionCommandClass != other.actionCommandClass)
         {
-                return false;
+            return false;
         }
         if (description == null)
         {
