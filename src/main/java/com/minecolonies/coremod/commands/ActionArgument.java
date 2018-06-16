@@ -86,30 +86,48 @@ public class ActionArgument
     public boolean equals(Object obj)
     {
         if (this == obj)
+        {
             return true;
+        }
         if (obj == null)
+        {
             return false;
+        }
         if (getClass() != obj.getClass())
+        {
             return false;
+        }
         ActionArgument other = (ActionArgument) obj;
         if (actionArgumentList == null)
         {
             if (other.actionArgumentList != null)
+            {
                 return false;
+            }
         }
         else if (!actionArgumentList.equals(other.actionArgumentList))
+        {
             return false;
+        }
         if (name == null)
         {
             if (other.name != null)
+            {
                 return false;
+            }
         }
         else if (!name.equals(other.name))
+        {
             return false;
+        }
         if (required != other.required)
+        {
             return false;
+        }
         if (type != other.type)
+        {
             return false;
+        }
         return true;
     }
 

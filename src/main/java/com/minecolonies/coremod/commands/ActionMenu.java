@@ -74,19 +74,29 @@ public class ActionMenu extends AbstractMenu
     public boolean equals(Object obj)
     {
         if (this == obj)
+        {
             return true;
+        }
         if (obj == null)
+        {
             return false;
+        }
         if (getClass() != obj.getClass())
+        {
             return false;
+        }
         ActionMenu other = (ActionMenu) obj;
         if (actionArgumentList == null)
         {
             if (other.actionArgumentList != null)
+            {
                 return false;
+            }
         }
         else if (!actionArgumentList.equals(other.actionArgumentList))
+        {
             return false;
+        }
         if (actionCommandClass != other.actionCommandClass)
         {
                 return false;
@@ -94,12 +104,18 @@ public class ActionMenu extends AbstractMenu
         if (description == null)
         {
             if (other.description != null)
+            {
                 return false;
+            }
         }
         else if (!description.equals(other.description))
+        {
             return false;
+        }
         if (forgePermissionNode != other.forgePermissionNode)
+        {
             return false;
+        }
         return true;
     }
 

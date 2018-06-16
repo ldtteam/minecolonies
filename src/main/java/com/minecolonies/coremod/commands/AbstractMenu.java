@@ -38,26 +38,40 @@ public abstract class AbstractMenu implements IMenu
     public boolean equals(Object obj)
     {
         if (this == obj)
+        {
             return true;
+        }
         if (obj == null)
+        {
             return false;
+        }
         if (getClass() != obj.getClass())
+        {
             return false;
+        }
         AbstractMenu other = (AbstractMenu) obj;
         if (menuItemName == null)
         {
             if (other.menuItemName != null)
+            {
                 return false;
+            }
         }
         else if (!menuItemName.equals(other.menuItemName))
+        {
             return false;
+        }
         if (menuType == null)
         {
             if (other.menuType != null)
+            {
                 return false;
+            }
         }
         else if (!menuType.equals(other.menuType))
+        {
             return false;
+        }
         return true;
     }
 

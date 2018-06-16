@@ -40,19 +40,29 @@ public class NavigationMenu extends AbstractMenu
     public boolean equals(Object obj)
     {
         if (this == obj)
+        {
             return true;
+        }
         if (!super.equals(obj))
+        {
             return false;
+        }
         if (getClass() != obj.getClass())
+        {
             return false;
+        }
         NavigationMenu other = (NavigationMenu) obj;
         if (childrenMenuList == null)
         {
             if (other.childrenMenuList != null)
+            {
                 return false;
+            }
         }
         else if (!childrenMenuList.equals(other.childrenMenuList))
+        {
             return false;
+        }
         return true;
     }
 

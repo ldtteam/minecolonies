@@ -230,26 +230,40 @@ public class ActionMenuState
     public boolean equals(Object obj)
     {
         if (this == obj)
+        {
             return true;
+        }
         if (obj == null)
+        {
             return false;
+        }
         if (getClass() != obj.getClass())
+        {
             return false;
+        }
         ActionMenuState other = (ActionMenuState) obj;
         if (actionMenu == null)
         {
             if (other.actionMenu != null)
+            {
                 return false;
+            }
         }
         else if (!actionMenu.equals(other.actionMenu))
+        {
             return false;
+        }
         if (argumentStateByActionArgumentNameMap == null)
         {
             if (other.argumentStateByActionArgumentNameMap != null)
+            {
                 return false;
+            }
         }
         else if (!argumentStateByActionArgumentNameMap.equals(other.argumentStateByActionArgumentNameMap))
+        {
             return false;
+        }
         return true;
     }
 
