@@ -215,4 +215,47 @@ public class ActionMenuState
             return defaultValue;
         }
     }
+
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((actionMenu == null) ? 0 : actionMenu.hashCode());
+        result = prime * result + ((argumentStateByActionArgumentNameMap == null) ? 0 : argumentStateByActionArgumentNameMap.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ActionMenuState other = (ActionMenuState) obj;
+        if (actionMenu == null)
+        {
+            if (other.actionMenu != null)
+                return false;
+        }
+        else if (!actionMenu.equals(other.actionMenu))
+            return false;
+        if (argumentStateByActionArgumentNameMap == null)
+        {
+            if (other.argumentStateByActionArgumentNameMap != null)
+                return false;
+        }
+        else if (!argumentStateByActionArgumentNameMap.equals(other.argumentStateByActionArgumentNameMap))
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "ActionMenuState [actionMenu=" + actionMenu + ", argumentStateByActionArgumentNameMap=" + argumentStateByActionArgumentNameMap + "]";
+    }
 }

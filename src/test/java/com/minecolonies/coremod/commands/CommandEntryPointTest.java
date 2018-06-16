@@ -1,10 +1,8 @@
 package com.minecolonies.coremod.commands;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.any;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -12,26 +10,21 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.minecolonies.coremod.commands.colonycommands.ClaimChunksCommand;
 import org.assertj.core.api.Fail;
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.BDDMockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.managers.ICitizenManager;
+import com.minecolonies.coremod.commands.AbstractCommandParser.ModuleContext;
+import com.minecolonies.coremod.commands.AbstractCommandParser.PermissionsChecker;
+import com.minecolonies.coremod.commands.CommandEntryPointNew.MineColonyDataProvider;
 import com.minecolonies.coremod.commands.citizencommands.CitizenInfoCommand;
 import com.minecolonies.coremod.commands.colonycommands.ChangeColonyOwnerCommand;
+import com.minecolonies.coremod.commands.colonycommands.ClaimChunksCommand;
 import com.minecolonies.coremod.commands.colonycommands.DeleteColonyCommand;
 import com.minecolonies.coremod.commands.colonycommands.ListColoniesCommand;
 import com.minecolonies.coremod.commands.generalcommands.CheckForAutoDeletesCommand;
@@ -43,18 +36,18 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.server.permission.PermissionAPI;
 import scala.actors.threadpool.Arrays;
 
 @SuppressWarnings({"PMD.MethodNamingConventions", "PMD.JUnitTestsShouldIncludeAssert", "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveImports"})
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore("javax.management.*")
 public class CommandEntryPointTest
 {
     @NotNull private MinecraftServer server;
     @NotNull private ICommandSender sender;
     @NotNull private CommandEntryPointNew instance;
     @Nullable private BlockPos pos;
+    @NotNull private PermissionsChecker permissionsChecker;
+    @NotNull private ModuleContext moduleContext;
+    @NotNull private MineColonyDataProvider mineColonyDataProvider;
 
     @Before
     public void setUp()
@@ -141,14 +134,6 @@ public class CommandEntryPointTest
         citizenDataList2.add(citizenRAYCOMS);
         when(citizenManager2.getCitizen(205)).thenReturn(citizenRAYCOMS);
 
-        PowerMockito.mockStatic(ColonyManager.class);
-        BDDMockito.given(ColonyManager.getColonies()).willReturn(colonyList);
-        BDDMockito.given(ColonyManager.getColony(1)).willReturn(colony1);
-        BDDMockito.given(ColonyManager.getColony(2)).willReturn(colony2);
-
-        PowerMockito.mockStatic(PermissionAPI.class);
-        BDDMockito.given(PermissionAPI.hasPermission(any(), any())).willReturn(true);
-
         final EntityPlayerMP playerBob = mock(EntityPlayerMP.class);
         when(playerBob.getName()).thenReturn("Bob");
         final EntityPlayerMP playerSally = mock(EntityPlayerMP.class);
@@ -169,8 +154,21 @@ public class CommandEntryPointTest
         when(server.getPlayerList()).thenReturn(serverPlayerList);
 
         sender = mock(MinecraftServer.class);
-        instance = new CommandEntryPointNew();
+        
         pos = new BlockPos(1,2,3);
+
+        permissionsChecker = mock(PermissionsChecker.class);
+        when(permissionsChecker.hasPermission(any(), any())).thenReturn(true);
+
+        mineColonyDataProvider = mock(MineColonyDataProvider.class);
+        when(mineColonyDataProvider.getColonies()).thenReturn(colonyList);
+        when(mineColonyDataProvider.getColony(1)).thenReturn(colony1);
+        when(mineColonyDataProvider.getColony(2)).thenReturn(colony2);
+        
+        moduleContext = mock(ModuleContext.class);
+        when(moduleContext.get(MineColonyDataProvider.class)).thenReturn(mineColonyDataProvider);
+
+        instance = new CommandEntryPointNew();
     }
 
     @After
@@ -182,9 +180,25 @@ public class CommandEntryPointTest
         pos = null;
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_no_args__DO_getTabCompletions__EXPECT_colony_colonies_citizen()
+    {
+
+        // GIVEN:
+        final String[] args = new String[] {
+        };
+
+        // DO:
+
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
+
+        // EXPECT:
+        assertThat(results).containsExactlyInAnyOrder("colonies", "colony", "citizens", "kill", "check", "whoami", "whereami", "home", "raid-tonight", "raid-now", "rs", "rtp",
+                "backup", "scan");
+    }
+
+    @Test
+    public void GIVEN_empty_args__DO_getTabCompletions__EXPECT_colony_colonies_citizen()
     {
 
         // GIVEN:
@@ -194,15 +208,14 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("colonies", "colony", "citizens", "kill", "check", "whoami", "whereami", "home", "raid-tonight", "raid-now", "rs", "rtp",
                 "backup", "scan");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_scan__DO_getTabCompletions__EXPECT_x1_x2_y1_y2_z1_z2()
     {
 
@@ -213,14 +226,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("player:", "x1:", "x2:", "y1:", "y2:", "z1:", "z2:", "name:");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_Scan__DO_getTabCompletions__EXPECT_x1_x2_y1_y2_z1_z2()
     {
 
@@ -231,14 +243,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("player:", "x1:", "x2:", "y1:", "y2:", "z1:", "z2:", "name:");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_SCAN__DO_getTabCompletions__EXPECT_x1_x2_y1_y2_z1_z2()
     {
 
@@ -249,14 +260,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("player:", "x1:", "x2:", "y1:", "y2:", "z1:", "z2:", "name:");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_SCAN_x1NoColon__DO_getTabCompletions__EXPECT_x1()
     {
 
@@ -267,14 +277,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("x1:");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_SCAN_X1NoColon__DO_getTabCompletions__EXPECT_x1()
     {
 
@@ -285,14 +294,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("x1:");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_SCAN_X1_space__DO_getTabCompletions__EXPECT_1()
     {
 
@@ -303,14 +311,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("1");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_SCAN_y2_space__DO_getTabCompletions__EXPECT_2()
     {
 
@@ -321,14 +328,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("2");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_SCAN_z2_space__DO_getTabCompletions__EXPECT_3()
     {
 
@@ -339,14 +345,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("3");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_SCAN_X1_1_x2_2_y1_3_y2_4_z1_5_z2_6__DO_execute__EXPECT_scan_command_executed() throws CommandException
     {
 
@@ -386,11 +391,10 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_CLAIM__DO_execute__EXPECT_claim_command_executed() throws CommandException
     {
 
@@ -424,11 +428,10 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens__DO_getTabCompletions__EXPECT_citizens()
     {
 
@@ -439,14 +442,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("citizens");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_space__DO_getTabCompletions__EXPECT_info()
     {
 
@@ -457,14 +459,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("kill", "info", "list", "respawn");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_in__DO_getTabCompletions__EXPECT_info()
     {
 
@@ -475,14 +476,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("info");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info__DO_getTabCompletions__EXPECT_info()
     {
 
@@ -493,14 +493,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("info");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info_space__DO_getTabCompletions__EXPECT_colony()
     {
 
@@ -511,14 +510,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("colony:");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info_colonyNoColon_space__DO_getTabCompletions__EXPECT_1_2()
     {
 
@@ -529,14 +527,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("colony:");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info_colony_space__DO_getTabCompletions__EXPECT_1_2()
     {
 
@@ -547,14 +544,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("1", "2");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info_colony_1_space__DO_getTabCompletions__EXPECT_citizen()
     {
 
@@ -565,14 +561,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("citizen:");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info_colony_1_citizen_space__DO_getTabCompletions__EXPECT_101_102_103_104_John_Jenna()
     {
 
@@ -583,14 +578,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("101", "102", "103", "104", "John", "Jenna");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info_colony_1_citizen_J__DO_getTabCompletions__EXPECT_John_Jenna()
     {
 
@@ -601,14 +595,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("John", "Jenna");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info_colony_1_citizen_Jo__DO_getTabCompletions__EXPECT_John()
     {
 
@@ -619,14 +612,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("John");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info_colony_1_citizen_John_space__DO_getTabCompletions__EXPECT_A_S()
     {
 
@@ -637,14 +629,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("A.", "S.");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info_colony_1_citizen_John_A_space__DO_getTabCompletions__EXPECT_A_S()
     {
 
@@ -655,14 +646,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("Jones");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info_colony_1_citizen_John_S_space__DO_getTabCompletions__EXPECT_A_S()
     {
 
@@ -673,14 +663,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("Smith", "Jones");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info_colony_1_citizen_John_S_Smith_space__DO_getTabCompletions__EXPECT_citizen()
     {
 
@@ -691,14 +680,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).isEmpty();
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info_colony_1_citizen_1__DO_getTabCompletions__EXPECT_101_102_103_104()
     {
 
@@ -709,14 +697,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("101", "102", "103", "104");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info_colony_2_citizen_space__DO_getTabCompletions__EXPECT_201_202_203_204_205_Sally_R()
     {
 
@@ -727,14 +714,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("201", "202", "203", "204", "205","Sally", "R");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info_colony_2_citizen_Sally_space__DO_getTabCompletions__EXPECT_Jane()
     {
 
@@ -745,52 +731,48 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("Jane", "of");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info_colony_2_citizen_SallyJaneJohnsonTheThird_space__DO_getTabCompletions__EXPECT_Banana()
     {
 
         // GIVEN:
         final String[] args = new String[] {
-                "Citizens", "info", "colony:", "2", "citizen:", "Sally", "Jane", "Johnston", "the", "Third", ""
+                "Citizens", "info", "colony:", "2", "citizen:", "Sally", "Jane", "Johnson", "the", "Third", ""
         };
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
-        // At this point, we have a completed name and parsed argument, even though additional words could be a different name.
-        assertThat(results).isEmpty();
+        assertThat(results).containsExactlyInAnyOrder("Banana");
     }
 
     @Test
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
     public void GIVEN_args_citizens_info_colony_2_citizen_SallyJaneJohnsonTheThird_space_B__DO_getTabCompletions__EXPECT_Banana()
     {
 
         // GIVEN:
         final String[] args = new String[] {
-                "Citizens", "info", "colony:", "2", "citizen:", "Sally", "Jane", "Johnston", "the", "Third", "B"
+                "Citizens", "info", "colony:", "2", "citizen:", "Sally", "Jane", "Johnson", "the", "Third", "B"
         };
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("Banana");
     }
 
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info_colony_1_citizen_Sally__DO_execute__EXPECT_colony_info_command_parses_Sally() throws CommandException
     {
 
@@ -824,18 +806,18 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
 
     @Test
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
-    public void GIVEN_args_citizens_info_colony_1_citizen_Sally_Jane_Johnston_the_Third__DO_execute__EXPECT_colony_info_command_parses_SallyJaneJohnsonTheThird() throws CommandException
+    public void GIVEN_args_citizens_info_colony_1_citizen_Sally_Jane_Johnson_the_Third__DO_execute__EXPECT_colony_info_command_parses_SallyJaneJohnsonTheThird()
+            throws CommandException
     {
 
         // GIVEN:
         final String[] args = new String[] {
-                "Citizens", "info", "colony:", "2", "citizen:", "Sally", "Jane", "Johnston", "the", "Third"
+                "Citizens", "info", "colony:", "2", "citizen:", "Sally", "Jane", "Johnson", "the", "Third"
         };
 
         // DO:
@@ -858,22 +840,22 @@ public class CommandEntryPointTest
                 assertThat(actionArgumentList.get(0).getActionArgumentList()).extracting("type").containsOnly(ActionArgumentType.CITIZEN);
                 final Colony colony = actionMenuState.getColonyForArgument("colony");
                 final CitizenData citizenData = actionMenuState.getCitizenForArgument("citizen");
+                assertThat(citizenData).as("citizen.getName()").isNotNull();
                 assertThat(colony.getID()).isEqualTo(2);
                 assertThat(citizenData.getName()).isEqualTo("Sally Jane Johnson the Third");
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
     @Test
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
-    public void GIVEN_args_citizens_info_colony_1_citizen_Sally_Jane_Johnston_the_Third_Banana_Fo_Fanna__DO_execute__EXPECT_colony_info_command_parses_SallyJaneJohnsonTheThirdBananaFoFanna() throws CommandException
+    public void GIVEN_args_citizens_info_colony_1_citizen_Sally_Jane_Johnson_the_Third_Banana_Fo_Fanna__DO_execute__EXPECT_colony_info_command_parses_SallyJaneJohnsonTheThirdBananaFoFanna() throws CommandException
     {
 
         // GIVEN:
         final String[] args = new String[] {
-                "Citizens", "info", "colony:", "2", "citizen:", "Sally", "Jane", "Johnston", "the", "Third", "Banana", "Fo", "Fanna"
+                "Citizens", "info", "colony:", "2", "citizen:", "Sally", "Jane", "Johnson", "the", "Third", "Banana", "Fo", "Fanna"
         };
 
         // DO:
@@ -896,32 +878,120 @@ public class CommandEntryPointTest
                 assertThat(actionArgumentList.get(0).getActionArgumentList()).extracting("type").containsOnly(ActionArgumentType.CITIZEN);
                 final Colony colony = actionMenuState.getColonyForArgument("colony");
                 final CitizenData citizenData = actionMenuState.getCitizenForArgument("citizen");
+                assertThat(citizenData).as("citizen.getName()").isNotNull();
                 assertThat(colony.getID()).isEqualTo(2);
                 assertThat(citizenData.getName()).isEqualTo("Sally Jane Johnson the Third Banana Fo Fanna");
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    public void GIVEN_args_citizens_info_colony_1_citizen_1_space__DO_getTabCompletions__EXPECT_nothing() 
-    { 
- 
-        // GIVEN: 
-        final String[] args = new String[] { 
-                "Citizens", "info", "colony:", "1", "citizen:", "1", "" 
+    @Test
+    public void GIVEN_args_citizens_info_colony_1_citizen_1_space__DO_getTabCompletions__EXPECT_nothing()
+    {
+
+        // GIVEN:
+        final String[] args = new String[] {
+                "Citizens", "info", "colony:", "1", "citizen:", "1", ""
         };
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
-        assertThat(results).isEmpty(); 
+        // TODO: bad argument as 1 isn't a citizen number or name
+        assertThat(results).isEmpty();
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
+    public void GIVEN_args_citizens_info_colony_1_citizen_1_S__DO_getTabCompletions__EXPECT_nothing()
+    {
+
+        // GIVEN:
+        final String[] args = new String[] {
+                "Citizens", "info", "colony:", "1", "citizen:", "1", "S"
+        };
+
+        // DO:
+
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
+
+        // EXPECT:
+        // TODO: bad argument as 1 isn't a citizen number or name
+        assertThat(results).isEmpty();
+    }
+
+    @Test
+    public void GIVEN_args_citizens_info_colony_1_citizen_1_space__DO_execute__EXPECT_bad_args() throws CommandException
+    {
+
+        // GIVEN:
+        final String[] args = new String[] {
+                "Citizens", "info", "colony:", "1", "citizen:", "1", ""
+        };
+
+        // DO:
+
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenuState actionMenuState,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                throw new IllegalAccessException("Should not reach here");
+            }
+        };
+
+        try
+        {
+            instance.execute(server, sender, args, permissionsChecker, moduleContext);
+            Fail.failBecauseExceptionWasNotThrown(CommandException.class);
+        }
+        catch (final CommandException e)
+        {
+            assertThat(e).hasMessage("/mineColonies citizens info <colony: colony-id>: invalid value '1' for required argument citizen");
+        }
+    }
+
+    @Test
+    public void GIVEN_args_citizens_info_colony_1_citizen_1_S__DO_execute__EXPECT_bad_args() throws CommandException
+    {
+
+        // GIVEN:
+        final String[] args = new String[] {
+                "Citizens", "info", "colony:", "1", "citizen:", "1", "S"
+        };
+
+        // DO:
+
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenuState actionMenuState,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                throw new IllegalAccessException("Should not reach here");
+            }
+        };
+
+        try
+        {
+            instance.execute(server, sender, args, permissionsChecker, moduleContext);
+            Fail.failBecauseExceptionWasNotThrown(CommandException.class);
+        }
+        catch (final CommandException e)
+        {
+            assertThat(e).hasMessage("/mineColonies citizens info <colony: colony-id>: invalid value '1' for required argument citizen");
+        }
+    }
+
+    @Test
     public void GIVEN_args_citizens_info_colony_1_citizen_John_S_Smith__DO_execute__EXPECT_colony_info_command_executed() throws CommandException
     {
 
@@ -955,11 +1025,10 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_colony_space__DO_getTabCompletions__EXPECT_ownerchange()
     {
 
@@ -970,15 +1039,14 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("addofficer", "barbarians", "delete", "deletable", "info", "ownerchange", "raid", "raid-tonight", "refresh", "teleport",
                 "claim");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_colony_ownerchange_space__DO_getTabCompletions__EXPECT_colony_player()
     {
 
@@ -989,14 +1057,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("colony:", "player:");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_colony_ownerchange_colony_space__DO_getTabCompletions__EXPECT_1_2()
     {
 
@@ -1007,14 +1074,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("1", "2");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_colony_ownerchange_player_space__DO_getTabCompletions__EXPECT_Bob_Sally()
     {
 
@@ -1025,14 +1091,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("Bob", "Sally");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_colony_ownerchange_player_B__DO_getTabCompletions__EXPECT_Bob()
     {
 
@@ -1043,14 +1108,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("Bob");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_colony_ownerchange_player_Bob_space__DO_getTabCompletions__EXPECT_colony()
     {
 
@@ -1061,14 +1125,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("colony:");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_colony_ownerchange_player_Bob_colony_space__DO_getTabCompletions__EXPECT_1_2()
     {
 
@@ -1079,14 +1142,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("1", "2");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_colony_ownerchange_player_Bob_colony_1_space__DO_getTabCompletions__EXPECT_nothing()
     {
 
@@ -1097,14 +1159,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).isEmpty();
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_colony_ownerchange_colony_1_player_Bob_space__DO_execute__EXPECT_ChangeColonyOwnerCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1135,11 +1196,10 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_colony_ownerchange_player_Bob_colony_1_space__DO_execute__EXPECT_ChangeColonyOwnerCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1170,11 +1230,10 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_noargs__DO_execute__EXPECT_throwUsage()
     {
 
@@ -1185,9 +1244,21 @@ public class CommandEntryPointTest
 
         // DO:
 
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenuState actionMenuState,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                throw new IllegalAccessException("Should not reach here");
+            }
+        };
+
         try
         {
-            instance.execute(server, sender, args);
+            instance.execute(server, sender, args, permissionsChecker, moduleContext);
             Fail.failBecauseExceptionWasNotThrown(CommandException.class);
         }
         catch (final CommandException e)
@@ -1196,8 +1267,7 @@ public class CommandEntryPointTest
         }
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens__DO_execute__EXPECT_throwUsage()
     {
 
@@ -1208,9 +1278,21 @@ public class CommandEntryPointTest
 
         // DO:
 
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenuState actionMenuState,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                throw new IllegalAccessException("Should not reach here");
+            }
+        };
+
         try
         {
-            instance.execute(server, sender, args);
+            instance.execute(server, sender, args, permissionsChecker, moduleContext);
             Fail.failBecauseExceptionWasNotThrown(CommandException.class);
         }
         catch (final CommandException e)
@@ -1219,8 +1301,7 @@ public class CommandEntryPointTest
         }
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info__DO_execute__EXPECT_throwUsage()
     {
 
@@ -1231,9 +1312,21 @@ public class CommandEntryPointTest
 
         // DO:
 
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenuState actionMenuState,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                throw new IllegalAccessException("Should not reach here");
+            }
+        };
+
         try
         {
-            instance.execute(server, sender, args);
+            instance.execute(server, sender, args, permissionsChecker, moduleContext);
             Fail.failBecauseExceptionWasNotThrown(CommandException.class);
         }
         catch (final CommandException e)
@@ -1242,8 +1335,7 @@ public class CommandEntryPointTest
         }
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info_colonyNoColon__DO_execute__EXPECT_throwUsage()
     {
 
@@ -1254,9 +1346,21 @@ public class CommandEntryPointTest
 
         // DO:
 
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenuState actionMenuState,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                throw new IllegalAccessException("Should not reach here");
+            }
+        };
+
         try
         {
-            instance.execute(server, sender, args);
+            instance.execute(server, sender, args, permissionsChecker, moduleContext);
             Fail.failBecauseExceptionWasNotThrown(CommandException.class);
         }
         catch (final CommandException e)
@@ -1265,8 +1369,7 @@ public class CommandEntryPointTest
         }
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info_colony__DO_execute__EXPECT_throwUsage()
     {
 
@@ -1277,9 +1380,21 @@ public class CommandEntryPointTest
 
         // DO:
 
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenuState actionMenuState,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                throw new IllegalAccessException("Should not reach here");
+            }
+        };
+
         try
         {
-            instance.execute(server, sender, args);
+            instance.execute(server, sender, args, permissionsChecker, moduleContext);
             Fail.failBecauseExceptionWasNotThrown(CommandException.class);
         }
         catch (final CommandException e)
@@ -1288,8 +1403,7 @@ public class CommandEntryPointTest
         }
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_citizens_info_colony_BAD__DO_execute__EXPECT_throwUsage()
     {
 
@@ -1300,9 +1414,21 @@ public class CommandEntryPointTest
 
         // DO:
 
+        instance = new CommandEntryPointNew()
+        {
+            @Override
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+                    @NotNull final ActionMenuState actionMenuState,
+                    final Class<? extends IActionCommand> clazz)
+                    throws InstantiationException, IllegalAccessException, CommandException
+            {
+                throw new IllegalAccessException("Should not reach here");
+            }
+        };
+
         try
         {
-            instance.execute(server, sender, args);
+            instance.execute(server, sender, args, permissionsChecker, moduleContext);
             Fail.failBecauseExceptionWasNotThrown(CommandException.class);
         }
         catch (final CommandException e)
@@ -1311,45 +1437,47 @@ public class CommandEntryPointTest
         }
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
-    public void GIVEN_args_colony_info_sender_is_not_player__DO_execute__EXPECT_sendMsg() throws CommandException
-    {
+//    @Test
+//    public void GIVEN_args_colony_info_sender_is_not_player__DO_execute__EXPECT_sendMsg() throws CommandException
+//    {
+//
+//        // GIVEN:
+//        final String[] args = new String[] {
+//                "colony", "info"
+//        };
+//
+//        // DO:
+//
+//        // WARNING -- this test runs an actual command!
+//        
+//        // Sender is not a player
+//        instance.execute(server, sender, args, permissionsChecker, moduleContext);
+//        verify(sender, times(1)).sendMessage(any());
+//    }
+//
+//    @Test
+//    public void GIVEN_args_colony_info_sender_is_a_player__DO_execute__EXPECT_sendMsg() throws CommandException
+//    {
+//
+//        // GIVEN:
+//        final String[] args = new String[] {
+//                "colony", "info"
+//        };
+//
+//        // Sender is a player
+//        // TODO: make this playerSender the owner of a colony
+//        final EntityPlayerMP playerSender = mock(EntityPlayerMP.class);
+//
+//        // DO:
+//
+//
+//        // WARNING -- this test runs an actual command!
+//
+//        instance.execute(server, playerSender, args, permissionsChecker, moduleContext);
+//        verify(playerSender, times(1)).sendMessage(any());
+//    }
 
-        // GIVEN:
-        final String[] args = new String[] {
-                "colony", "info"
-        };
-
-        // DO:
-
-        // Sender is not a player
-        instance.execute(server, sender, args);
-        verify(sender, times(1)).sendMessage(any());
-    }
-
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
-    public void GIVEN_args_colony_info_sender_is_a_player__DO_execute__EXPECT_sendMsg() throws CommandException
-    {
-
-        // GIVEN:
-        final String[] args = new String[] {
-                "colony", "info"
-        };
-
-        // Sender is a player
-        // TODO: make this playerSender the owner of a colony
-        final EntityPlayerMP playerSender = mock(EntityPlayerMP.class);
-
-        // DO:
-
-        instance.execute(server, playerSender, args);
-        verify(playerSender, times(1)).sendMessage(any());
-    }
-
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_colony_delete_colony_1_canDestroy_space__DO_getTabCompletions__EXPECT_true_false() throws CommandException
     {
         // GIVEN:
@@ -1359,14 +1487,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("true", "false");
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_colonies_list_page_space__DO_getTabCompletions__EXPECT_nothing() throws CommandException
     {
         // GIVEN:
@@ -1376,14 +1503,13 @@ public class CommandEntryPointTest
 
         // DO:
 
-        final List<String> results = instance.getTabCompletions(server, sender, args, pos);
+        final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
         assertThat(results).isEmpty();
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_colony_delete_colony_1_canDestroy_true_confirmDelete_true__DO_execute__EXPECT_DeleteColonyCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1408,6 +1534,7 @@ public class CommandEntryPointTest
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("colony", "canDestroy", "confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN, ActionArgumentType.COLONY);
                 final Colony colony = actionMenuState.getColonyForArgument("colony");
+                assertThat(colony).as("colony").isNotNull();
                 assertThat(colony.getID()).as("colony.getID()").isEqualTo(1);
                 final Boolean canDestroyBoolean = (Boolean) actionMenuState.getBooleanForArgument("canDestroy");
                 assertThat(canDestroyBoolean).as("canDestroyBoolean").isTrue();
@@ -1420,11 +1547,10 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_colony_delete_colony_1__DO_execute__EXPECT_DeleteColonyCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1461,11 +1587,10 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_colonies_list_page_2_abandonedSinceTimeInHours_3__DO_execute__EXPECT_ListColoniesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1500,11 +1625,10 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_colonies_list_page_2__DO_execute__EXPECT_ListColoniesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1539,11 +1663,10 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_check_confirmDelete_true__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1574,11 +1697,10 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_check_confirmDelete_t__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1609,11 +1731,10 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_check_confirmDelete_yes__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1644,11 +1765,10 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_check_confirmDelete_y__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1679,11 +1799,10 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_check_confirmDelete_1__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1714,11 +1833,10 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_check_confirmDelete_false__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1749,11 +1867,10 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_check_confirmDelete_f__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1784,11 +1901,10 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_check_confirmDelete_no__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1819,11 +1935,10 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_check_confirmDelete_n__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1854,11 +1969,10 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_check_confirmDelete_0__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1889,11 +2003,10 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_delete_colony_1__DO_execute_twice__EXPECT_DeleteColonyCommand_state_2nd_time_to_be_different() throws CommandException
     {
         // GIVEN:
@@ -1922,6 +2035,7 @@ public class CommandEntryPointTest
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("colony", "canDestroy", "confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.COLONY, ActionArgumentType.BOOLEAN);
                 final Colony colony = actionMenuState.getColonyForArgument("colony");
+                assertThat(colony).as("colony").isNotNull();
                 final Boolean canDestroy = actionMenuState.getBooleanForArgument("canDestroy");
                 final Boolean confirmDelete = actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(colony.getID()).isEqualTo(1);
@@ -1930,7 +2044,7 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, argsFirstTime);
+        instance.execute(server, sender, argsFirstTime, permissionsChecker, moduleContext);
 
         instance = new CommandEntryPointNew()
         {
@@ -1955,11 +2069,10 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, argsSecondTime);
+        instance.execute(server, sender, argsSecondTime, permissionsChecker, moduleContext);
     }
 
-    @Test @Ignore
-    @PrepareForTest({PermissionAPI.class,ColonyManager.class})
+    @Test
     public void GIVEN_args_delete_colony_1__DO_execute__EXPECT_DeleteColonyCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1992,6 +2105,6 @@ public class CommandEntryPointTest
             }
         };
 
-        instance.execute(server, sender, args);
+        instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 }
