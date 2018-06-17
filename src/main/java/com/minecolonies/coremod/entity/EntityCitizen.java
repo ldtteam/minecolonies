@@ -792,7 +792,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             if (isDay && citizenData != null)
             {
                 isDay = false;
-                final double decreaseBy = citizenColonyHandler.getPerBuildingFoodCost();
+                final double decreaseBy = citizenColonyHandler.getPerBuildingFoodCost() * 2;
                 citizenData.decreaseSaturation(decreaseBy);
                 citizenData.markDirty();
             }
@@ -878,7 +878,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public int hashCode()
     {
-        return Objects.hash(super.hashCode(), citizenId, citizenColonyHandler.getColonyId());
+        return Objects.hash(citizenId, citizenColonyHandler == null ? getEntityId() : citizenColonyHandler.getColonyId());
     }
 
     /**
