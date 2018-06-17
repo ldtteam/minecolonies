@@ -132,7 +132,6 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
         if (isCitizenAssigned(citizen))
         {
             assignedCitizen.remove(citizen);
-            citizen.setWorkBuilding(null);
             markDirty();
         }
     }
