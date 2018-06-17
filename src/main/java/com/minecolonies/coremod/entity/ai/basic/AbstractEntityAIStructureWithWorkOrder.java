@@ -222,7 +222,10 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
         }
 
-        if (!ChiselAndBitsCheck.isChiselAndBitsBlock(blockState))
+        if (!ChiselAndBitsCheck.isChiselAndBitsBlock(blockState)
+              && blockState.getBlock() != Blocks.BED
+              && blockState.getBlock() != Blocks.STANDING_BANNER
+              && blockState.getBlock() != Blocks.WALL_BANNER)
         {
             building.addNeededResource(BlockUtils.getItemStackFromBlockState(blockState), 1);
         }

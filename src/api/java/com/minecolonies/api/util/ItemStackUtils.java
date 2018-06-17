@@ -15,9 +15,7 @@ import net.minecraft.item.*;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityFlowerPot;
-import net.minecraft.tileentity.TileEntityLockable;
+import net.minecraft.tileentity.*;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.Template;
@@ -114,15 +112,23 @@ public final class ItemStackUtils
             for (int i = 0; i < ((TileEntityLockable) tileEntity).getSizeInventory(); i++)
             {
                 final ItemStack stack = ((TileEntityLockable) tileEntity).getStackInSlot(i);
-                if (stack != null)
+                if (!ItemStackUtils.isEmpty(stack))
                 {
                     items.add(stack);
                 }
             }
         }
-        else if(ChiselAndBitsCheck.isChiselAndBitsTileEntity(tileEntity))
+        else if(tileEntity != null && ChiselAndBitsCheck.isChiselAndBitsTileEntity(tileEntity))
         {
             items.addAll(ChiselAndBitsCheck.getBitStacks(tileEntity));
+        }
+        else if(tileEntity instanceof TileEntityBed)
+        {
+            items.add(new ItemStack(Items.BED, 1, ((TileEntityBed) tileEntity).getColor().getMetadata()));
+        }
+        else if(tileEntity instanceof TileEntityBanner)
+        {
+            items.add(((TileEntityBanner)tileEntity).getItem());
         }
         return items;
     }
