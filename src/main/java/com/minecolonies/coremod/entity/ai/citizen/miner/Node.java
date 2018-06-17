@@ -7,6 +7,9 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+import java.util.Random;
+
 /**
  * Miner Node Data Structure.
  * <p>
@@ -25,6 +28,11 @@ public class Node
     private static final String TAG_STATUS  = "Status";
     private static final String TAG_PARENTX = "ParentX";
     private static final String TAG_PARENTZ = "ParentZ";
+
+    /**
+     * Random object.
+     */
+    private final Random random = new Random();
 
     /**
      * The distance to the center of the next node.
@@ -214,16 +222,6 @@ public class Node
     }
 
     /**
-     * Calculates the next Node north.
-     *
-     * @return position of the new Node.
-     */
-    public Vec2i getNorthNodeCenter()
-    {
-        return new Vec2i(getX(), getZ() - DISTANCE_TO_NEXT_NODE);
-    }
-
-    /**
      * Returns the x-coordinate in the node.
      *
      * @return x-coordinate
@@ -241,6 +239,16 @@ public class Node
     public int getZ()
     {
         return z;
+    }
+
+    /**
+     * Calculates the next Node north.
+     *
+     * @return position of the new Node.
+     */
+    public Vec2i getNorthNodeCenter()
+    {
+        return new Vec2i(getX(), getZ() - DISTANCE_TO_NEXT_NODE);
     }
 
     /**
@@ -271,6 +279,66 @@ public class Node
     public Vec2i getWestNodeCenter()
     {
         return new Vec2i(getX() - DISTANCE_TO_NEXT_NODE, getZ());
+    }
+
+    /**
+     * Return a random next node to work at, might be at this node or at a parent.
+     * @return the next node to go to.
+     * @param level the level it is part of.
+     */
+    @Nullable
+    public Node getRandomNextNode(final Level level, final int step)
+    {
+        if (step > 3)
+        {
+            return null;
+        }
+
+        final Node nextNode;
+        switch (random.nextInt(3))
+        {
+            case 0:
+                nextNode = level.getNode(getNorthNodeCenter());
+                break;
+            case 1:
+                nextNode = level.getNode(getSouthNodeCenter());
+                break;
+            case 2:
+                nextNode = level.getNode(getEastNodeCenter());
+                break;
+            default:
+                nextNode = level.getNode(getWestNodeCenter());
+        }
+
+        if (nextNode == null)
+        {
+            final Node parent = level.getNode(getParent());
+            return parent == null ? null : parent.getRandomNextNode(level, step+1);
+        }
+        return nextNode;
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        final Node node = (Node) o;
+        return x == node.x &&
+                 z == node.z;
+    }
+
+    @Override
+    public int hashCode()
+    {
+
+        return Objects.hash(x, z);
     }
 
     /**
