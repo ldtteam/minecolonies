@@ -10,6 +10,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.entity.pathfinding.PathResult;
 import com.minecolonies.coremod.inventory.GuiHandler;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
@@ -543,14 +544,15 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     private AIState searchANodeToMine(@NotNull final Level currentLevel)
     {
+        final BuildingMiner buildingMiner = getOwnBuilding(BuildingMiner.class);
+        if (buildingMiner == null)
+        {
+            return IDLE;
+        }
+
         if (workingNode == null || workingNode.getStatus() == Node.NodeStatus.COMPLETED)
         {
-            final BuildingMiner buildingMiner = getOwnBuilding(BuildingMiner.class);
-            if (buildingMiner == null)
-            {
-                return IDLE;
-            }
-            workingNode = buildingMiner.getActiveNode() == null ? currentLevel.getRandomNode(buildingMiner.getOldNode()) : buildingMiner.getActiveNode();
+            workingNode = buildingMiner.getActiveNode();
             buildingMiner.setActiveNode(workingNode);
             return MINER_CHECK_MINESHAFT;
         }
@@ -574,6 +576,14 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         else if (vectorZ == 1)
         {
             rotation = ROTATE_ONCE;
+        }
+
+        final Node parentNode = currentLevel.getNode(workingNode.getParent());
+        if (parentNode.getStyle() != Node.NodeType.SHAFT && (parentNode.getStatus() != Node.NodeStatus.COMPLETED || world.getBlockState(new BlockPos(parentNode.getX(), currentLevel.getDepth() + 2, parentNode.getZ())).getBlock() != Blocks.AIR))
+        {
+            workingNode = parentNode;
+            workingNode.setStatus(Node.NodeStatus.AVAILABLE);
+            buildingMiner.setActiveNode(parentNode);
         }
 
         @NotNull final BlockPos standingPosition = new BlockPos(workingNode.getParent().getX(), currentLevel.getDepth(), workingNode.getParent().getZ());
@@ -726,8 +736,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             }
         }
 
-        getOwnBuilding(BuildingMiner.class).setActiveNode(null);
-        getOwnBuilding(BuildingMiner.class).setOldNode(workingNode);
         workingNode = null;
 
         if (job.getStructure() != null)
@@ -800,6 +808,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         if (minerBuilding.hasClearedShaft())
         {
             minerBuilding.getCurrentLevel().closeNextNode(getRotation(), getOwnBuilding().getActiveNode());
+            getOwnBuilding(BuildingMiner.class).setActiveNode(null);
+            getOwnBuilding(BuildingMiner.class).setOldNode(workingNode);
         }
         else
         {

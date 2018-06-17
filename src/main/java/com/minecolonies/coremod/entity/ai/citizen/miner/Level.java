@@ -345,4 +345,15 @@ public class Level
     {
         return nodes.get(key);
     }
+
+    /**
+     * Returns a node by its key from the map.
+     *
+     * @param key the Point2D key.
+     * @return the Node.
+     */
+    public Node getOpenNode(final Vec2i key)
+    {
+        return nodes.get(key);
+    }
 }

@@ -298,21 +298,21 @@ public class Node
         switch (random.nextInt(3))
         {
             case 0:
-                nextNode = level.getNode(getNorthNodeCenter());
+                nextNode = level.getOpenNode(getNorthNodeCenter());
                 break;
             case 1:
-                nextNode = level.getNode(getSouthNodeCenter());
+                nextNode = level.getOpenNode(getSouthNodeCenter());
                 break;
             case 2:
-                nextNode = level.getNode(getEastNodeCenter());
+                nextNode = level.getOpenNode(getEastNodeCenter());
                 break;
             default:
-                nextNode = level.getNode(getWestNodeCenter());
+                nextNode = level.getOpenNode(getWestNodeCenter());
         }
 
-        if (nextNode == null)
+        if (nextNode == null || nextNode.style == NodeType.SHAFT)
         {
-            final Node parent = level.getNode(getParent());
+            final Node parent = level.getOpenNode(getParent());
             return parent == null ? null : parent.getRandomNextNode(level, step+1);
         }
         return nextNode;
@@ -348,7 +348,7 @@ public class Node
      * COMPLETED means it has been mined and all torches/wood structure has been placed
      * LADDER means this side has the ladder and must not be mined
      */
-    enum NodeStatus
+    public enum NodeStatus
     {
         //Not built yet.
         AVAILABLE,
