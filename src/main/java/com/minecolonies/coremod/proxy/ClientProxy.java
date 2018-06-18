@@ -4,6 +4,11 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.blocks.cactus.BlockCactusDoor;
+import com.minecolonies.coremod.blocks.decorative.BlockPaperwall;
+import com.minecolonies.coremod.blocks.decorative.BlockShingle;
+import com.minecolonies.coremod.blocks.decorative.BlockTimberFrame;
+import com.minecolonies.coremod.blocks.schematic.BlockSubstitution;
+import com.minecolonies.coremod.blocks.types.PaperwallType;
 import com.minecolonies.coremod.client.gui.*;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
@@ -207,7 +212,8 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockCactusPlank);
         createCustomModel(ModBlocks.blockCactusTrapdoor);
         createCustomModel(ModBlocks.blockCactusStair);
-        createCustomModel(ModBlocks.blockCactusSlab);
+        createCustomModel(ModBlocks.blockCactusSlabHalf);
+        createCustomModel(ModBlocks.blockCactusSlabDouble);
 
         createCustomModel(ModBlocks.blockSolidSubstitution);
         createCustomModel(ModBlocks.blockConstructionTape);

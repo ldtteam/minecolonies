@@ -679,10 +679,10 @@ tile.minecolonies.blockTimberFrame_dark_oak_onecrossedrl.name= Dark Oak Left-Rig
 tile.minecolonies.blockTimberFrame_dark_oak_downgated.name= Dark Oak Framed Timber Frame
 tile.minecolonies.blockTimberFrame_dark_oak_horizontalplain.name= Dark Oak Horizontal Timber Frame
 tile.minecolonies.blockTimberFrame_dark_oak_horizontalnocap.name= Dark Oak Horizontal Timber Frame
-tile.minecolonies.blockcactusplank.name= Cactus Plank
-tile.minecolonies.blockcactuspdoor.name= Cactus Trapdoor
-item.minecolonies.cactusdoor.name= Cactus Door
-
+tile.minecolonies.blockcactusplank.name=Cactus Plank
+tile.minecolonies.blockcactuspdoor.name=Cactus Trapdoor
+item.minecolonies.cactusdoor.name=Cactus Door
+tile.minecolonies.blockcactusslab_half.name=Cactus Slab
 
 
 com.minecolonies.coremod.request.toolow=Can't mine block %s at %s. Need to upgrade the building to use a tool with higher mining level.
@@ -709,3 +709,4 @@ com.minecolonies.coremod.gui.scanTool.remove=Remove
 com.minecolonies.coremod.gui.scanTool.replace=Replace
 com.minecolonies.coremod.gui.scan.replace.title=Block Replacement GUI
 com.minecolonies.coremod.gui.scanTool.select=Select
+

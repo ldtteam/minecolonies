@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.constant.Suppression;
+import com.minecolonies.coremod.blocks.interfaces.IBlockMinecolonies;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockTrapDoor;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
