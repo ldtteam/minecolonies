@@ -22,7 +22,7 @@ public abstract class AbstractBlockSlab<B extends AbstractBlockSlab<B>> extends 
      * Constructor of abstract class.
      * @param materialIn the input material.
      */
-    public AbstractBlockSlab(Material materialIn)
+    public AbstractBlockSlab(final Material materialIn)
     {
         super(materialIn);
     }

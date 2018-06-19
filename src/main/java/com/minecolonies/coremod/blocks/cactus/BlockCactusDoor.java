@@ -10,7 +10,8 @@ import java.util.Locale;
 
 public class BlockCactusDoor extends AbstractBlockDoor<BlockCactusDoor> {
 
-    public BlockCactusDoor(Block block) {
+    public BlockCactusDoor(final Block block)
+    {
         super(Material.WOOD, block);
         setRegistryName("blockcactusdoor");
         setUnlocalizedName(Constants.MOD_ID.toLowerCase(Locale.ENGLISH) + "." + "blockcactusdoor");

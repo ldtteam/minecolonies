@@ -9,7 +9,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.registries.IForgeRegistry;
 
-public class AbstractBlockTrapdoor<B extends AbstractBlockTrapdoor<B>> extends BlockTrapDoor implements IBlockMinecolonies<B>
+public abstract class AbstractBlockTrapdoor<B extends AbstractBlockTrapdoor<B>> extends BlockTrapDoor implements IBlockMinecolonies<B>
 {
     public AbstractBlockTrapdoor(final Material materialIn)
     {

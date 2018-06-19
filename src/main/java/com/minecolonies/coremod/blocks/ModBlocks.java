@@ -10,7 +10,6 @@ import com.minecolonies.coremod.blocks.types.TimberFrameType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemSlab;
 import net.minecraftforge.registries.IForgeRegistry;
 
