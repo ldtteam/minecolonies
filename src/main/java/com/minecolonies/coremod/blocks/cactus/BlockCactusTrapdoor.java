@@ -8,9 +8,11 @@ import net.minecraft.block.material.Material;
 
 import java.util.Locale;
 
-public class BlockCactusTrapdoor extends AbstractBlockTrapdoor<BlockCactusTrapdoor> {
+public class BlockCactusTrapdoor extends AbstractBlockTrapdoor<BlockCactusTrapdoor>
+{
 
-    public BlockCactusTrapdoor() {
+    public BlockCactusTrapdoor()
+    {
         super(Material.WOOD);
         setRegistryName("blockcactustrapdoor");
         setUnlocalizedName(Constants.MOD_ID.toLowerCase(Locale.ENGLISH) + "." + "blockcactustrapdoordoor");

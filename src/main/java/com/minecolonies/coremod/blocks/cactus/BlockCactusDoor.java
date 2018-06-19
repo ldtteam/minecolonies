@@ -8,7 +8,8 @@ import net.minecraft.block.material.Material;
 
 import java.util.Locale;
 
-public class BlockCactusDoor extends AbstractBlockDoor<BlockCactusDoor> {
+public class BlockCactusDoor extends AbstractBlockDoor<BlockCactusDoor>
+{
 
     public BlockCactusDoor(final Block block)
     {

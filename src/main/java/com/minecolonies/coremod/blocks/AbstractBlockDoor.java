@@ -51,13 +51,13 @@ public abstract class AbstractBlockDoor<B extends AbstractBlockDoor<B>> extends 
     }
 
     @Override
-    public Item getItemDropped(IBlockState state, Random rand, int fortune)
+    public Item getItemDropped(IBlockState state, Random rand, final int fortune)
     {
         return ModItems.itemCactusDoor;
     }
 
     @Override
-    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, final EntityPlayer player)
     {
         return new ItemStack(ModItems.itemCactusDoor);
     }

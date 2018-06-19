@@ -8,9 +8,11 @@ import net.minecraft.block.state.IBlockState;
 
 import java.util.Locale;
 
-public class BlockCactusStair extends AbstractBlockMinecoloniesStairs<BlockCactusStair> {
+public class BlockCactusStair extends AbstractBlockMinecoloniesStairs<BlockCactusStair>
+{
 
-    public BlockCactusStair(IBlockState modelState) {
+    public BlockCactusStair(final IBlockState modelState)
+    {
         super(modelState);
         setRegistryName("blockcactusstair");
         setUnlocalizedName(Constants.MOD_ID.toLowerCase(Locale.ENGLISH) + "." + "blockcactusstair");

@@ -9,10 +9,12 @@ import net.minecraft.block.material.Material;
 
 import java.util.Locale;
 
-public class BlockCactusPlank extends AbstractBlockMinecolonies<BlockCactusPlank> {
+public class BlockCactusPlank extends AbstractBlockMinecolonies<BlockCactusPlank>
+{
 
 
-    public BlockCactusPlank() {
+    public BlockCactusPlank()
+    {
         super(Material.WOOD, MapColor.GREEN);
         setRegistryName("blockcactusplank");
         setUnlocalizedName(Constants.MOD_ID.toLowerCase(Locale.ENGLISH) + "." + "blockcactusplank");

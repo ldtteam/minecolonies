@@ -19,7 +19,6 @@ import net.minecraft.world.World;
 public class ItemCactusDoor extends Item
 {
     private final Block block;
-    //TODO REMOVE -  private final String name;
 
     ItemCactusDoor(final Block block, final String name)
     {
@@ -32,7 +31,7 @@ public class ItemCactusDoor extends Item
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+    public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, final EnumFacing facing, float hitX, float hitY, float hitZ)
     {
         if (facing != EnumFacing.UP)
         {
@@ -53,7 +52,7 @@ public class ItemCactusDoor extends Item
                 EnumFacing enumfacing = EnumFacing.fromAngle((double)player.rotationYaw);
                 final int i = enumfacing.getFrontOffsetX();
                 final int j = enumfacing.getFrontOffsetZ();
-                final boolean flag = (i < 0 && hitZ < 0.5F || i > 0 && hitZ > 0.5F || j < 0 && hitX > 0.5F || j > 0 && hitX < 0.5F);
+                final boolean flag = ((i < 0) && (hitZ < 0.5F) || (i > 0) && (hitZ > 0.5F) || (j < 0) && (hitX > 0.5F) || (j > 0) && (hitX < 0.5F));
                 placeDoor(worldIn, pos, enumfacing, this.block, flag);
                 SoundType soundtype = worldIn.getBlockState(pos).getBlock().getSoundType(worldIn.getBlockState(pos), worldIn, pos, player);
                 worldIn.playSound(player, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
@@ -67,7 +66,7 @@ public class ItemCactusDoor extends Item
         }
     }
 
-    public static void placeDoor(World worldIn, BlockPos pos, EnumFacing facing, Block door, boolean isRightHinge)
+    public static void placeDoor(World worldIn, BlockPos pos, EnumFacing facing, final Block door, boolean isRightHinge)
     {
         final BlockPos blockpos = pos.offset(facing.rotateY());
         final BlockPos blockpos1 = pos.offset(facing.rotateYCCW());
@@ -75,9 +74,9 @@ public class ItemCactusDoor extends Item
         final int j = (worldIn.getBlockState(blockpos).isNormalCube() ? 1 : 0) + (worldIn.getBlockState(blockpos.up()).isNormalCube() ? 1 : 0);
         final boolean flag = worldIn.getBlockState(blockpos1).getBlock() == door || worldIn.getBlockState(blockpos1.up()).getBlock() == door;
         final boolean flag1 = worldIn.getBlockState(blockpos).getBlock() == door || worldIn.getBlockState(blockpos.up()).getBlock() == door;
-        if ((!flag || flag1) && j <= i)
+        if ((!flag || flag1) && (j <= i))
         {
-            if (flag1 && !flag || j < i)
+            if ((flag1 && !flag) || (j < i))
             {
                 isRightHinge = false;
             }
