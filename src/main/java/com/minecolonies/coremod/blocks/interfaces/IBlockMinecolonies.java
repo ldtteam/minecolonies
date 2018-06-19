@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.blocks.interfaces;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
 import net.minecraftforge.registries.IForgeRegistry;
 

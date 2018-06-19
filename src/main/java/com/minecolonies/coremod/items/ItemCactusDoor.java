@@ -21,6 +21,7 @@ public class ItemCactusDoor extends Item {
     private final String name;
 
     ItemCactusDoor(Block block, String name) {
+        super();
         this.name = name;
         this.block = block;
         setRegistryName(this.name);
@@ -34,17 +35,17 @@ public class ItemCactusDoor extends Item {
         if (facing != EnumFacing.UP) {
             return EnumActionResult.FAIL;
         } else {
-            IBlockState iblockstate = worldIn.getBlockState(pos);
-            Block block = iblockstate.getBlock();
+            final IBlockState iblockstate = worldIn.getBlockState(pos);
+            final Block block = iblockstate.getBlock();
             if (!block.isReplaceable(worldIn, pos)) {
                 pos = pos.offset(facing);
             }
 
-            ItemStack itemstack = player.getHeldItem(hand);
+            final ItemStack itemstack = player.getHeldItem(hand);
             if (player.canPlayerEdit(pos, facing, itemstack) && this.block.canPlaceBlockAt(worldIn, pos)) {
                 EnumFacing enumfacing = EnumFacing.fromAngle((double)player.rotationYaw);
                 int i = enumfacing.getFrontOffsetX();
-                int j = enumfacing.getFrontOffsetZ();
+                final int j = enumfacing.getFrontOffsetZ();
                 boolean flag = i < 0 && hitZ < 0.5F || i > 0 && hitZ > 0.5F || j < 0 && hitX > 0.5F || j > 0 && hitX < 0.5F;
                 placeDoor(worldIn, pos, enumfacing, this.block, flag);
                 SoundType soundtype = worldIn.getBlockState(pos).getBlock().getSoundType(worldIn.getBlockState(pos), worldIn, pos, player);
@@ -58,12 +59,12 @@ public class ItemCactusDoor extends Item {
     }
 
     public static void placeDoor(World worldIn, BlockPos pos, EnumFacing facing, Block door, boolean isRightHinge) {
-        BlockPos blockpos = pos.offset(facing.rotateY());
-        BlockPos blockpos1 = pos.offset(facing.rotateYCCW());
+        final BlockPos blockpos = pos.offset(facing.rotateY());
+        final BlockPos blockpos1 = pos.offset(facing.rotateYCCW());
         int i = (worldIn.getBlockState(blockpos1).isNormalCube() ? 1 : 0) + (worldIn.getBlockState(blockpos1.up()).isNormalCube() ? 1 : 0);
         int j = (worldIn.getBlockState(blockpos).isNormalCube() ? 1 : 0) + (worldIn.getBlockState(blockpos.up()).isNormalCube() ? 1 : 0);
-        boolean flag = worldIn.getBlockState(blockpos1).getBlock() == door || worldIn.getBlockState(blockpos1.up()).getBlock() == door;
-        boolean flag1 = worldIn.getBlockState(blockpos).getBlock() == door || worldIn.getBlockState(blockpos.up()).getBlock() == door;
+        final boolean flag = worldIn.getBlockState(blockpos1).getBlock() == door || worldIn.getBlockState(blockpos1.up()).getBlock() == door;
+        final boolean flag1 = worldIn.getBlockState(blockpos).getBlock() == door || worldIn.getBlockState(blockpos.up()).getBlock() == door;
         if ((!flag || flag1) && j <= i) {
             if (flag1 && !flag || j < i) {
                 isRightHinge = false;
@@ -72,8 +73,8 @@ public class ItemCactusDoor extends Item {
             isRightHinge = true;
         }
 
-        BlockPos blockpos2 = pos.up();
-        boolean flag2 = worldIn.isBlockPowered(pos) || worldIn.isBlockPowered(blockpos2);
+        final BlockPos blockpos2 = pos.up();
+        final boolean flag2 = worldIn.isBlockPowered(pos) || worldIn.isBlockPowered(blockpos2);
         IBlockState iblockstate = door.getDefaultState().withProperty(BlockDoor.FACING, facing).withProperty(BlockDoor.HINGE, isRightHinge ? BlockDoor.EnumHingePosition.RIGHT : BlockDoor.EnumHingePosition.LEFT).withProperty(BlockDoor.POWERED, flag2).withProperty(BlockDoor.OPEN, flag2);
         worldIn.setBlockState(pos, iblockstate.withProperty(BlockDoor.HALF, BlockDoor.EnumDoorHalf.LOWER), 2);
         worldIn.setBlockState(blockpos2, iblockstate.withProperty(BlockDoor.HALF, BlockDoor.EnumDoorHalf.UPPER), 2);
