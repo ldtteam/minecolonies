@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "normal": { "model": "minecolonies:blockcactusplank" },
+    "inventory": { "model": "minecolonies:blockcactusplank" }
+  }
+}
