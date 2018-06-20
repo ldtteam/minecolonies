@@ -3,6 +3,12 @@ package com.minecolonies.coremod.proxy;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.*;
+import com.minecolonies.coremod.blocks.cactus.BlockCactusDoor;
+import com.minecolonies.coremod.blocks.decorative.BlockPaperwall;
+import com.minecolonies.coremod.blocks.decorative.BlockShingle;
+import com.minecolonies.coremod.blocks.decorative.BlockTimberFrame;
+import com.minecolonies.coremod.blocks.schematic.BlockSubstitution;
+import com.minecolonies.coremod.blocks.types.PaperwallType;
 import com.minecolonies.coremod.client.gui.*;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
@@ -21,7 +27,6 @@ import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import com.minecolonies.structures.client.TemplateBlockAccessTransformHandler;
-import com.minecolonies.structures.client.TemplateRenderHandler;
 import com.minecolonies.structures.event.RenderEventHandler;
 import com.minecolonies.structures.helpers.Settings;
 import net.minecraft.block.Block;
@@ -204,6 +209,11 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutSwineHerder);
         createCustomModel(ModBlocks.blockHutChickenHerder);
         createCustomModel(ModBlocks.blockHutSmeltery);
+        createCustomModel(ModBlocks.blockCactusPlank);
+        createCustomModel(ModBlocks.blockCactusTrapdoor);
+        createCustomModel(ModBlocks.blockCactusStair);
+        createCustomModel(ModBlocks.blockCactusSlabHalf);
+        createCustomModel(ModBlocks.blockCactusSlabDouble);
 
         createCustomModel(ModBlocks.blockSolidSubstitution);
         createCustomModel(ModBlocks.blockConstructionTape);
@@ -228,7 +238,9 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModItems.itemAchievementProxyMetropolis);
         createCustomModel(ModBlocks.blockShingleSlab);
         createCustomModel(ModBlocks.multiBlock);
+        createCustomModel(ModItems.itemCactusDoor);
 
+        ModelLoader.setCustomStateMapper(ModBlocks.blockCactusDoor, new StateMap.Builder().ignore(BlockCactusDoor.POWERED).build());
         ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());
 
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleOak), 0,

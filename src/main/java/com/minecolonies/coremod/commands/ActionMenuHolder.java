@@ -6,7 +6,6 @@ public final class ActionMenuHolder
 {
     @NotNull private final TreeNode<IMenu> treeNode;
     @NotNull private final ActionArgument actionArgument;
-    private Object value;
 
     ActionMenuHolder(@NotNull final TreeNode<IMenu> treeNode, @NotNull final ActionArgument actionArgument)
     {
@@ -22,12 +21,58 @@ public final class ActionMenuHolder
     {
         return actionArgument;
     }
-    public Object getValue()
+    @Override
+    public int hashCode()
     {
-        return value;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((actionArgument == null) ? 0 : actionArgument.hashCode());
+        result = prime * result + ((treeNode == null) ? 0 : treeNode.hashCode());
+        return result;
     }
-    public void setValue(final Object value)
+    @Override
+    public boolean equals(final Object obj)
     {
-        this.value = value;
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        final ActionMenuHolder other = (ActionMenuHolder) obj;
+        if (actionArgument == null)
+        {
+            if (other.actionArgument != null)
+            {
+                return false;
+            }
+        }
+        else if (!actionArgument.equals(other.actionArgument))
+        {
+            return false;
+        }
+        if (treeNode == null)
+        {
+            if (other.treeNode != null)
+            {
+                return false;
+            }
+        }
+        else if (!treeNode.equals(other.treeNode))
+        {
+            return false;
+        }
+        return true;
+    }
+    @Override
+    public String toString()
+    {
+        return "ActionMenuHolder [treeNode=" + treeNode + ", actionArgument=" + actionArgument + "]";
     }
 }

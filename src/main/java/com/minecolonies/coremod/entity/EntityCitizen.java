@@ -878,7 +878,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public int hashCode()
     {
-        return Objects.hash(citizenId, citizenColonyHandler == null ? getEntityId() : citizenColonyHandler.getColonyId());
+        if (citizenColonyHandler == null)
+        {
+            return super.hashCode();
+        }
+        return Objects.hash(citizenId, citizenColonyHandler.getColonyId());
     }
 
     /**
