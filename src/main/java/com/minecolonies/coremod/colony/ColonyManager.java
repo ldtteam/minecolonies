@@ -959,11 +959,6 @@ public final class ColonyManager
         {
             if (numWorldsLoaded == 0)
             {
-                if (!backupColonyData())
-                {
-                    MineColonies.getLogger().error("Failed to save " + FILENAME_MINECOLONIES + " backup!");
-                }
-
                 //load the structures when we know where the world is
                 Structures.init();
 
@@ -1003,6 +998,11 @@ public final class ColonyManager
                 else
                 {
                     Log.getLogger().info(String.format("Server UUID %s", serverUUID));
+                }
+
+                if (!backupColonyData())
+                {
+                    MineColonies.getLogger().error("Failed to save " + FILENAME_MINECOLONIES + " backup!");
                 }
             }
             ++numWorldsLoaded;

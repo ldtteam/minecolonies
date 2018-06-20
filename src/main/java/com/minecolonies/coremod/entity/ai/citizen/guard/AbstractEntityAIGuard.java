@@ -194,10 +194,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             }
         }
 
-        if (worker.getCitizenColonyHandler().getWorkBuilding() != null
-              && !(worker.getLastAttackedEntity() != null
-                     && !worker.getLastAttackedEntity().isDead)
-              && getOwnBuilding() instanceof AbstractBuildingGuards
+        if (!(worker.getLastAttackedEntity() != null
+              && !worker.getLastAttackedEntity().isDead)
+              && getOwnBuilding(AbstractBuildingGuards.class) != null
               && target == null)
         {
             final AbstractBuildingGuards guardBuilding = (AbstractBuildingGuards) getOwnBuilding();
