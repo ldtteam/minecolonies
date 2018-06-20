@@ -206,15 +206,21 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  || worker.getCitizenData().getSaturation() <= 0;
     }
 
-    /**
-     * Can be overridden in implementations to return the exact building type.
-     *
-     * @return the building associated with this AI's worker.
-     */
     @Nullable
-    public AbstractBuildingWorker getOwnBuilding()
+    public <W extends AbstractBuildingWorker> W getOwnBuilding()
     {
-        return worker.getCitizenColonyHandler().getWorkBuilding();
+        final AbstractBuildingWorker worker = getOwnBuilding(getExpectedBuildingClass());
+        return worker == null ? null : (W) worker;
+    }
+
+    /**
+     * Can be overridden in implementations to return the exact building type the worker expects.
+     *
+     * @return the building type associated with this AI's worker.
+     */
+    public Class getExpectedBuildingClass()
+    {
+        return AbstractBuildingWorker.class;
     }
 
     /**

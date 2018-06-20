@@ -71,6 +71,12 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
                 new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace));
     }
 
+    @Override
+    public Class getExpectedBuildingClass()
+    {
+        return AbstractBuildingFurnaceUser.class;
+    }
+
     /**
      * Method called to extract things from the furnace after it has been reached already.
      * Has to be overwritten by the exact class.

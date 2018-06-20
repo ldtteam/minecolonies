@@ -47,6 +47,12 @@ public class Scrollbar extends Pane
     protected boolean barClicked = false;
 
     /**
+     * Offsets
+     */
+    protected int offsetX = 0;
+    protected int offsetY = 0;
+
+    /**
      * Instantiates the scrollbar with certain parameters.
      *
      * @param container the container of the scrollbar.
@@ -56,6 +62,13 @@ public class Scrollbar extends Pane
     {
         this(container);
         //  TODO: Parse Scrollbar-specific Params
+        
+        final PaneParams.SizePair size = params.getSizePairAttribute("scrollbarOffset", null, null);
+        if (size != null)
+        {
+            offsetX = size.getX();
+            offsetY = size.getY();
+        }
     }
 
     /**
@@ -113,11 +126,11 @@ public class Scrollbar extends Pane
             return;
         }
 
-        final int scrollBarBackX1 = x;
+        final int scrollBarBackX1 = x + offsetX;
         final int scrollBarBackX2 = scrollBarBackX1 + (getWidth() - 2);
 
         //  Scroll Area Back
-        drawGradientRect(scrollBarBackX2, y + getHeight(), scrollBarBackX1, y,
+        drawGradientRect(scrollBarBackX2, y + getHeight() + offsetY, scrollBarBackX1, y + offsetY,
           scrollbarBackground, scrollbarBackground);
 
         final int scrollBarStartY = y + getScrollBarYPos();

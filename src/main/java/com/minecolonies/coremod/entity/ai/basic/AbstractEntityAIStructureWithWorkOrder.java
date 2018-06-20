@@ -54,6 +54,12 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         worker.setCanPickUpLoot(true);
     }
 
+    @Override
+    public Class getExpectedBuildingClass()
+    {
+        return AbstractBuildingStructureBuilder.class;
+    }
+
     /**
      * Takes the existing workorder, loads the structure and tests the worker order if it is valid.
      */

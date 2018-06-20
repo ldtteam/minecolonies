@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.HappinessData;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;

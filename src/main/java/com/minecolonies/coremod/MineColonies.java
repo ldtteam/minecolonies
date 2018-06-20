@@ -34,7 +34,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 @Mod.EventBusSubscriber
-@Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION,
+@Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION, dependencies="after:gbook",
   /*dependencies = Constants.FORGE_VERSION,*/ acceptedMinecraftVersions = Constants.MC_VERSION)
 public class MineColonies
 {
@@ -160,6 +160,7 @@ public class MineColonies
         getNetwork().registerMessage(ColonyViewRemoveWorkOrderMessage.class, ColonyViewRemoveWorkOrderMessage.class, ++id, Side.CLIENT);
         getNetwork().registerMessage(UpdateChunkCapabilityMessage.class, UpdateChunkCapabilityMessage.class, ++id, Side.CLIENT);
         getNetwork().registerMessage(GuardMobAttackListMessage.class, GuardMobAttackListMessage.class, ++id, Side.CLIENT);
+        getNetwork().registerMessage(HappinessDataMessage.class,HappinessDataMessage.class,++id,Side.CLIENT);
 
         //  Permission Request messages
         getNetwork().registerMessage(PermissionsMessage.Permission.class, PermissionsMessage.Permission.class, ++id, Side.SERVER);

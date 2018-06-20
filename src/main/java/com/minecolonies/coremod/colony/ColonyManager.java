@@ -984,6 +984,7 @@ public final class ColonyManager
                             if (colonyData != null)
                             {
                                 @NotNull final Colony colony = Colony.loadColony(colonyData, world);
+                                colony.getCitizenManager().checkCitizensForHappiness();
                                 colonies.add(colony);
                                 ColonyManager.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
                                 addColonyByWorld(colony);
@@ -1385,6 +1386,25 @@ public final class ColonyManager
             return view.handleColonyViewRemoveWorkOrderMessage(workOrderId);
         }
 
+        return null;
+    }
+
+    /**
+     * Handle a message about the hapiness.
+     * if {@link #getColonyView(int)} gives a not-null result. If {@link
+     * #getColonyView(int)} is null, returns null.
+     *
+     * @param colonyId Id of the colony.
+     * @param data     Datas about the hapiness
+     * @return result of {@link ColonyView#handleHappinessDataMessage(HappinessData)} or null
+     */
+    public static IMessage handleHappinessDataMessage(final int colonyId, final HappinessData data)
+    {
+        final ColonyView view = getColonyView(colonyId);
+        if (view != null)
+        {
+            return view.handleHappinessDataMessage(data);
+        }
         return null;
     }
 
