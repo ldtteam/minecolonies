@@ -254,7 +254,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         if (building != null && target == null && worker.getCitizenColonyHandler().getColony() != null)
         {
-            for (CitizenData citizen : worker.getCitizenColonyHandler().getColony().getCitizenManager().getCitizens())
+            for (final CitizenData citizen : worker.getCitizenColonyHandler().getColony().getCitizenManager().getCitizens())
             {
                 if (citizen.getCitizenEntity().isPresent())
                 {
