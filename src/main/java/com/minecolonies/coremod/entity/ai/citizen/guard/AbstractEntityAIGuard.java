@@ -207,7 +207,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                         currentPatrolPoint = guardBuilding.getNextPatrolTarget(null);
                     }
                     if (currentPatrolPoint != null
-                      && worker.isWorkerAtSiteWithMove(currentPatrolPoint, 1))
+                      && worker.isWorkerAtSiteWithMove(currentPatrolPoint, 2))
                     {
                         currentPatrolPoint = guardBuilding.getNextPatrolTarget(currentPatrolPoint);
                     }
@@ -245,7 +245,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     protected EntityLivingBase getTarget()
     {
-        final AbstractBuildingGuards building = (AbstractBuildingGuards) getOwnBuilding();
+        final AbstractBuildingGuards building = getOwnBuilding();
 
         if (building != null && target == null)
         {
@@ -257,7 +257,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 {
                     final EntityPlayer player = (EntityPlayer) entity;
 
-                    if (worker.getCitizenColonyHandler().getColony() != null && worker.getCitizenColonyHandler().getColony().getPermissions().hasPermission(player, Action.GUARDS_ATTACK))
+                    if (worker.getCitizenColonyHandler().getColony() != null
+                          && worker.getCitizenColonyHandler().getColony().getPermissions().hasPermission(player, Action.GUARDS_ATTACK)
+                          && worker.canEntityBeSeen(player))
                     {
                         return entity;
                     }
@@ -276,6 +278,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     for (final EntityLivingBase entity : targets)
                     {
                         if (mobEntry.getEntityEntry().getEntityClass().isInstance(entity)
+                              && worker.canEntityBeSeen(entity)
                               && ( worker.getDistance(entity) < closest
                               || (int) closest == -1))
                         {
