@@ -8,10 +8,14 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
@@ -84,6 +88,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
           new AITarget(GUARD_ATTACK_PHYSICAL, this::attackPhysical),
           new AITarget(GUARD_ATTACK_RANGED, this::attackRanged)
         );
+        worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getStrength() + worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);
     }
 
@@ -247,8 +252,21 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     {
         final AbstractBuildingGuards building = getOwnBuilding();
 
-        if (building != null && target == null)
+        if (building != null && target == null && worker.getCitizenColonyHandler().getColony() != null)
         {
+            for (CitizenData citizen : worker.getCitizenColonyHandler().getColony().getCitizenManager().getCitizens())
+            {
+                if (citizen.getCitizenEntity().isPresent())
+                {
+                    final EntityLivingBase entity = citizen.getCitizenEntity().get().getRevengeTarget();
+                    if (entity instanceof AbstractEntityBarbarian
+                      && worker.canEntityBeSeen(entity))
+                    {
+                        return entity;
+                    }
+                }
+            }
+
             final List<EntityLivingBase> targets = world.getEntitiesWithinAABB(EntityLivingBase.class, getSearchArea());
 
             for (final EntityLivingBase entity : targets)
@@ -339,11 +357,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     protected AIState attackPhysical()
     {
 
-        if (worker.getLastAttackedEntity() != null
-              && !worker.getLastAttackedEntity().isDead
-              && worker.getDistance(worker.getLastAttackedEntity()) < getAttackRange())
+        if (worker.getRevengeTarget() != null
+              && !worker.getRevengeTarget().isDead
+              && worker.getDistance(worker.getRevengeTarget()) < getAttackRange())
         {
-            target = worker.getLastAttackedEntity();
+            target = worker.getRevengeTarget();
         }
 
         if (target == null || target.isDead)
