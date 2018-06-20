@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.miner;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
@@ -24,6 +25,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -818,10 +821,24 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             minerBuilding.setCurrentLevel(minerBuilding.getNumberOfLevels());
             minerBuilding.resetStartingLevelShaft();
         }
+        super.executeSpecificCompleteActions();
+
         //Send out update to client
         getOwnBuilding().markDirty();
+         job.setStructure(null);
 
-        job.setStructure(null);
+         final Colony colony = worker.getCitizenColonyHandler().getColony();
+         if (colony != null)
+         {
+             final List<WorkOrderBuildMiner> workOrders = colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildMiner.class);
+             if (workOrders.size() > 5)
+             {
+                 for (WorkOrderBuildMiner order : workOrders)
+                 {
+                     colony.getWorkManager().removeWorkOrder(order.getID());
+                 }
+             }
+         }
     }
 
     /**
