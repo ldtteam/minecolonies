@@ -12,10 +12,8 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
@@ -42,8 +40,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 import static com.minecolonies.coremod.entity.ai.citizen.guard.GuardConstants.*;
+import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends AbstractEntityAIInteract<J>
@@ -198,7 +196,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         if (worker.getCitizenColonyHandler().getWorkBuilding() != null
               && !(worker.getLastAttackedEntity() != null
-              && !worker.getLastAttackedEntity().isDead)
+                     && !worker.getLastAttackedEntity().isDead)
               && getOwnBuilding() instanceof AbstractBuildingGuards
               && target == null)
         {
@@ -212,7 +210,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                         currentPatrolPoint = guardBuilding.getNextPatrolTarget(null);
                     }
                     if (currentPatrolPoint != null
-                      && worker.isWorkerAtSiteWithMove(currentPatrolPoint, 2))
+                          && worker.isWorkerAtSiteWithMove(currentPatrolPoint, 2))
                     {
                         currentPatrolPoint = guardBuilding.getNextPatrolTarget(currentPatrolPoint);
                     }
@@ -260,7 +258,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 {
                     final EntityLivingBase entity = citizen.getCitizenEntity().get().getRevengeTarget();
                     if (entity instanceof AbstractEntityBarbarian
-                      && worker.canEntityBeSeen(entity))
+                          && worker.canEntityBeSeen(entity))
                     {
                         return entity;
                     }
@@ -281,7 +279,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     {
                         return entity;
                     }
-
                 }
             }
 
@@ -297,8 +294,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     {
                         if (mobEntry.getEntityEntry().getEntityClass().isInstance(entity)
                               && worker.canEntityBeSeen(entity)
-                              && ( worker.getDistance(entity) < closest
-                              || (int) closest == -1))
+                              && (worker.getDistance(entity) < closest
+                                    || (int) closest == -1))
                         {
                             closest = worker.getDistance(entity);
                             targetEntity = entity;
@@ -309,7 +306,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     {
                         return targetEntity;
                     }
-
                 }
             }
         }
@@ -348,7 +344,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             {
                 worker.isWorkerAtSiteWithMove(target.getPosition(), getAttackRange());
             }
-
         }
 
         return GUARD_ATTACK_PHYSICAL;
@@ -415,7 +410,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
                 if (ItemStackUtils.doesItemServeAsWeapon(heldItem))
                 {
-                    if(heldItem.getItem() instanceof ItemSword)
+                    if (heldItem.getItem() instanceof ItemSword)
                     {
                         damageToBeDealt += ((ItemSword) heldItem.getItem()).getAttackDamage();
                     }
@@ -518,6 +513,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Gets the reload time for a Range guard attack.
+     *
      * @return the reload time
      */
     protected int getAttackDelay()
@@ -531,6 +527,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Gets the aim height for ranged guards.
+     *
      * @return the aim height.
      * Suppression because the method already explains the value.
      */
@@ -542,6 +539,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Damage per ranged attack.
+     *
      * @return the attack damage
      * Suppression because the method already explains the value.
      */
