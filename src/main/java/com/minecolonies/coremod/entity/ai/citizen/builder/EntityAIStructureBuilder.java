@@ -39,6 +39,26 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     private static final int STRENGTH_MULTIPLIER = 1;
 
     /**
+     * At this y level the builder will be slower.
+     */
+    private static final int DEPTH_LEVEL_1 = 30;
+
+    /**
+     * At this y level the builder will be way slower..
+     */
+    private static final int DEPTH_LEVEL_2 = 15;
+
+    /**
+     * Speed buff at first depth level.
+     */
+    private static final int SPEED_BUFF_1 = 2;
+
+    /**
+     * Speed buff at second depth level.
+     */
+    private static final int SPEED_BUFF_2 = 4;
+
+    /**
      * Offset from the building to stand.
      */
     private static final int STAND_OFFSET = 3;
@@ -195,6 +215,23 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     public IBlockState getSolidSubstitution(@NotNull final BlockPos location)
     {
         return BlockUtils.getSubstitutionBlockAtWorld(world, location);
+    }
+
+    @Override
+    public int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
+    {
+        final int initialDelay = super.getBlockMiningDelay(block, pos);
+
+        if (pos.getY() > DEPTH_LEVEL_1)
+        {
+            return initialDelay;
+        }
+
+        if (pos.getY() < DEPTH_LEVEL_2)
+        {
+            return initialDelay * SPEED_BUFF_2;
+        }
+        return initialDelay * SPEED_BUFF_1;
     }
 
     /**
