@@ -29,7 +29,7 @@ public final class GuardConstants
     /**
      * Experience to add when a mob is killed
      */
-    public static final int EXP_PER_MOD_DEATH = 5;
+    public static final int EXP_PER_MOB_DEATH = 5;
 
     // -- Delays -- \\
 

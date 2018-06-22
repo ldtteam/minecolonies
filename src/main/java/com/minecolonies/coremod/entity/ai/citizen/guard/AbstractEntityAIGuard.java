@@ -233,7 +233,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         if (target != null && target.isDead)
         {
-            worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOD_DEATH);
+            worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
             target = null;
         }
 
@@ -360,7 +360,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         if (target == null || target.isDead)
         {
-            worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOD_DEATH);
+            worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
             return DECIDE;
         }
 
@@ -440,7 +440,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         if (target == null || target.isDead)
         {
-            worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOD_DEATH);
+            worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
             return DECIDE;
         }
 
