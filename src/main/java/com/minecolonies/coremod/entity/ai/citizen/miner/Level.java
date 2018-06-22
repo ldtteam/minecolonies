@@ -7,6 +7,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -163,23 +164,35 @@ public class Level
     /**
      * Getter for a random Node in the level.
      *
+     * @param node the last node.
      * @return any random node.
      */
-    public Node getRandomNode()
+    public Node getRandomNode(@Nullable final Node node)
     {
-        return openNodes.peek();
+        Node nextNode = null;
+        if (node != null && rand.nextInt(RANDOM_TYPES) > 0)
+        {
+            nextNode = node.getRandomNextNode(this, 0);
+        }
+        return nextNode == null ? openNodes.peek() : nextNode;
     }
 
     /**
-     * Closes the first Node in the list (Has been returned previously probably).
+     * Closes a given node. Or close the first in the list if null.
      * Then creates the new nodes connected to it.
      *
      * @param rotation the rotation of the node.
+     * @param node the node to close.
      */
-    public void closeNextNode(final int rotation)
+    public void closeNextNode(final int rotation, final Node node)
     {
-        final Node tempNode = openNodes.poll();
+        final Node tempNode = node == null ? openNodes.peek() : node;
         final List<Vec2i> nodeCenterList = new ArrayList<>(3);
+
+        if (tempNode == null)
+        {
+            return;
+        }
 
         switch (tempNode.getStyle())
         {
@@ -210,6 +223,7 @@ public class Level
             openNodes.add(tempNodeToAdd);
         }
         nodes.get(new Vec2i(tempNode.getX(), tempNode.getZ())).setStatus(Node.NodeStatus.COMPLETED);
+        openNodes.removeIf(tempNode::equals);
     }
 
     /**
@@ -328,6 +342,17 @@ public class Level
      * @return the Node.
      */
     public Node getNode(final Vec2i key)
+    {
+        return nodes.get(key);
+    }
+
+    /**
+     * Returns a node by its key from the map.
+     *
+     * @param key the Point2D key.
+     * @return the Node.
+     */
+    public Node getOpenNode(final Vec2i key)
     {
         return nodes.get(key);
     }

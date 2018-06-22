@@ -16,10 +16,8 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
+import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockSlab;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.BuildingConstants.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT_FIRST;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -42,150 +41,77 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 public class BuildingMiner extends AbstractBuildingStructureBuilder
 {
     /**
-     * The NBT Tag to store the floorBlock.
-     */
-    private static final String TAG_FLOOR_BLOCK    = "floorBlock";
-    /**
-     * The NBT Tag to store the fenceBlock.
-     */
-    private static final String TAG_FENCE_BLOCK    = "fenceBlock";
-    /**
-     * The NBT Tag to store the starting level of the shaft.
-     */
-    private static final String TAG_STARTING_LEVEL = "startingLevelShaft";
-    /**
-     * The NBT Tag to store list of levels.
-     */
-    private static final String TAG_LEVELS         = "levels";
-    /**
-     * The NBT Tag to store if the shaft has been cleared.
-     */
-    private static final String TAG_CLEARED        = "clearedShaft";
-    /**
-     * The NBT Tag to store the location of the shaft.
-     */
-    private static final String TAG_SLOCATION      = "shaftLocation";
-    /**
-     * The NBT Tag to store the vector-x of the shaft.
-     */
-    private static final String TAG_VECTORX        = "vectorx";
-    /**
-     * The NBT Tag to store the vector-z of the shaft.
-     */
-    private static final String TAG_VECTORZ        = "vectorz";
-    /**
-     * The NBT Tag to store the location of the cobblestone at the shaft.
-     */
-    private static final String TAG_CLOCATION      = "cobblelocation";
-    /**
-     * The NBT Tag to store the active node the miner is working on.
-     */
-    private static final String TAG_ACTIVE         = "activeNodeint";
-    /**
-     * The NBT Tag to store the current level the miner is working in.
-     */
-    private static final String TAG_CURRENT_LEVEL  = "currentLevel";
-    /**
-     * The NBT Tag to store the starting node.
-     */
-    private static final String TAG_SN             = "StartingNode";
-    /**
-     * The NBT Tag to store the location of the ladder.
-     */
-    private static final String TAG_LLOCATION      = "ladderlocation";
-    /**
-     * The NBT Tag to store if a ladder has been found yet.
-     */
-    private static final String TAG_LADDER         = "found_ladder";
-
-    private static final String TAG_SHAFT_BLOCK = "shaftBlock";
-
-    /**
      * The job description.
      */
-    private static final String      MINER              = "Miner";
+    private static final String MINER = "Miner";
 
-    /**
-     * Defines the material used for the floor of the shaft.
-     */
-    private static final IBlockState floorBlock         = Blocks.WOODEN_SLAB.getDefaultState().withProperty(BlockSlab.HALF, BlockSlab.EnumBlockHalf.TOP);
-
-    /**
-     * Max depth the miner reaches at level 0.
-     */
-    private static final int MAX_DEPTH_LEVEL_0 = 70;
-
-    /**
-     * Max depth the miner reaches at level 1.
-     */
-    private static final int MAX_DEPTH_LEVEL_1 = 50;
-
-    /**
-     * Max depth the miner reaches at level 2.
-     */
-    private static final int MAX_DEPTH_LEVEL_2 = 30;
-
-    /**
-     * Max depth the miner reaches at level 3.
-     */
-    private static final int         MAX_DEPTH_LEVEL_3  = 5;
     /**
      * Stores the levels of the miners mine. This could be a map with (depth,level).
      */
     @NotNull
-    private final        List<Level> levels             = new ArrayList<>();
+    private final List<Level> levels = new ArrayList<>();
+
     /**
      * True if shaft is at bottom limit.
      */
-    private               boolean     clearedShaft       = false;
-    /**
-     * Defines the material used for the structure of the horizontal shaft.
-     */
-    private              Block       shaftBlock         = Blocks.PLANKS;
-    /**
-     * Defines the material used for the fence of the shaft.
-     */
-    private              Block       fenceBlock         = Blocks.OAK_FENCE;
+    private boolean clearedShaft = false;
+
     /**
      * Here we can detect multiples of 5.
      */
-    private              int         startingLevelShaft = 0;
+    private int startingLevelShaft = 0;
+
     /**
      * The location of the topmost cobblestone the ladder starts at.
      */
     private BlockPos cobbleLocation;
+
     /**
      * The starting level of the node.
      */
     private int startingLevelNode = 0;
-    /**
-     * The id of the active node.
-     */
-    private int active            = 0;
+
     /**
      * The number of the current level.
      */
-    private int currentLevel      = 0;
+    private int currentLevel = 0;
+
     /**
      * The position of the start of the shaft.
      */
     private BlockPos shaftStart;
+
     /**
      * Ladder orientation in x.
      */
     private int vectorX = 1;
+
     /**
      * Ladder orientation in y.
      */
     private int vectorZ = 1;
+
     /**
      * The location of the topmost ladder in the shaft.
      */
     private BlockPos ladderLocation;
+
     /**
      * True if a ladder is found.
      */
     private boolean foundLadder = false;
+
+    /**
+     * The id of the activeNode node.
+     */
+    @Nullable
+    private Node activeNode = null;
+
+    /**
+     * The id of the old node.
+     */
+    @Nullable
+    private Node oldNode = null;
 
     /**
      * Required constructor.
@@ -281,22 +207,21 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     {
         super.readFromNBT(compound);
 
-        if (compound.hasKey(TAG_FENCE_BLOCK))
-        {
-            fenceBlock = Block.getBlockFromName(compound.getString(TAG_FENCE_BLOCK));
-        }
-        if (compound.hasKey(TAG_SHAFT_BLOCK))
-        {
-            shaftBlock = Block.getBlockFromName(compound.getString(TAG_SHAFT_BLOCK));
-        }
-
         startingLevelShaft = compound.getInteger(TAG_STARTING_LEVEL);
         clearedShaft = compound.getBoolean(TAG_CLEARED);
 
         vectorX = compound.getInteger(TAG_VECTORX);
         vectorZ = compound.getInteger(TAG_VECTORZ);
 
-        active = compound.getInteger(TAG_ACTIVE);
+        if (compound.hasKey(TAG_ACTIVE))
+        {
+            activeNode = Node.createFromNBT(compound.getCompoundTag(TAG_ACTIVE));
+        }
+        else if(compound.hasKey(TAG_OLD))
+        {
+            oldNode = Node.createFromNBT(compound.getCompoundTag(TAG_OLD));
+        }
+
         currentLevel = compound.getInteger(TAG_CURRENT_LEVEL);
 
         ladderLocation = BlockPosUtil.readFromNBT(compound, TAG_LLOCATION);
@@ -325,14 +250,23 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     {
         super.writeToNBT(compound);
 
-        compound.setString(TAG_FENCE_BLOCK, Block.REGISTRY.getNameForObject(fenceBlock).toString());
-        compound.setString(TAG_FLOOR_BLOCK, Block.REGISTRY.getNameForObject(shaftBlock).toString());
-
         compound.setInteger(TAG_STARTING_LEVEL, startingLevelShaft);
         compound.setBoolean(TAG_CLEARED, clearedShaft);
         compound.setInteger(TAG_VECTORX, vectorX);
         compound.setInteger(TAG_VECTORZ, vectorZ);
-        compound.setInteger(TAG_ACTIVE, active);
+        if (activeNode != null)
+        {
+            final NBTTagCompound nodeCompound = new NBTTagCompound();
+            activeNode.writeToNBT(nodeCompound);
+            compound.setTag(TAG_ACTIVE, nodeCompound);
+        }
+
+        if (oldNode != null)
+        {
+            final NBTTagCompound nodeCompound = new NBTTagCompound();
+            oldNode.writeToNBT(new NBTTagCompound());
+            compound.setTag(TAG_OLD, nodeCompound);
+        }
         compound.setInteger(TAG_CURRENT_LEVEL, currentLevel);
         compound.setBoolean(TAG_LADDER, foundLadder);
         compound.setInteger(TAG_SN, startingLevelNode);
@@ -599,43 +533,58 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     }
 
     /**
-     * Getter of the floor block.
-     *
-     * @return the material of the floor block.
+     * Getter to check if the shaft has been cleared.
+     * @return true if so.
      */
-    public IBlockState getFloorBlock()
-    {
-        return floorBlock;
-    }
-
-    /**
-     * Getter of the floor block.
-     *
-     * @return the material of the floor block.
-     */
-    public Block getShaftBlock()
-    {
-        return shaftBlock;
-    }
-
-    /**
-     * Getter of the fence block.
-     *
-     * @return the material of the fence block.
-     */
-    public Block getFenceBlock()
-    {
-        return fenceBlock;
-    }
-
     public boolean hasClearedShaft()
     {
         return clearedShaft;
     }
 
+    /**
+     * Setter if the shaft has been cleared.
+     * @param clearedShaft true if so.
+     */
     public void setClearedShaft(final boolean clearedShaft)
     {
         this.clearedShaft = clearedShaft;
+    }
+
+    /**
+     * Getter for the active node.
+     * @return the int id of the active node.
+     */
+    @NotNull
+    public Node getActiveNode()
+    {
+        return activeNode == null || activeNode.getStatus() == Node.NodeStatus.COMPLETED ? levels.get(currentLevel).getRandomNode(oldNode) : activeNode;
+    }
+
+    /**
+     * Setter for the active node.
+     * @param activeNode the int id of the active node.
+     */
+    public void setActiveNode(final Node activeNode)
+    {
+        this.activeNode = activeNode;
+    }
+
+    /**
+     * Getter for the old node.
+     * @return the int id of the old node.
+     */
+    public Node getOldNode()
+    {
+        return oldNode;
+    }
+
+    /**
+     * Setter for the old node.
+     * @param oldNode the int id of the old node.
+     */
+    public void setOldNode(final Node oldNode)
+    {
+        this.oldNode = oldNode;
     }
 
     @Override
@@ -649,9 +598,9 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
         final List<WorkOrderBuildMiner> list = getColony().getWorkManager().getOrderedList(WorkOrderBuildMiner.class);
 
-        for (final WorkOrderBuildMiner wo: list)
+        for (final WorkOrderBuildMiner wo : list)
         {
-            if(this.getID().equals(wo.getMinerBuilding()))
+            if (this.getID().equals(wo.getMinerBuilding()))
             {
                 citizen.getJob(JobMiner.class).setWorkOrder(wo);
                 wo.setClaimedBy(citizen);
