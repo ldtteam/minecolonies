@@ -1,22 +1,18 @@
 
-# What is MineColonies?
-Here, we would like to give you an overview of what our mod is.
-
-### Creativity 
-MineColonies is a town building mod that allows you create your own thriving Colony within Minecraft. It tends to depict a real-life scenario by providing you with different tools in your chest to aid your gaming experience. Featuring many NPC workers such as Builders, Crafters, Farmers, Guards, Enchanters and Alchemists, MineColonies provides the ability to create a rich and unique Colony.
+# About MineColonies 
+MineColonies is an interactive Town building mod that allows you to create your own thriving Town within Minecraft. It depicts real-life scenarios by providing you with different options for you to craft in your chest, to build your own Town  and enhance your gaming experience. Featuring many NPC workers such as: Builders, Crafters, Farmers, Fishermen, Guards, Barracks, Miners, Smeltery, Baker, Cook/Restuarant, Deliveryman, Animal Herders and many more in development. As well as a specialized buildings such as: Warehouse, Citizen Huts and a Townhall. MineColonies gives a player the ability to create a colony rich and unique as every player.
 
 ### Governance
-In MineColonies, you take control of what goes on in your Colony. Have an adequate number of villagers who will live in the town with you. Create a division of labour, hire workers to help in developing the Colony while you maturely act as a Supervisor.
+You have full control of how to build your Town. You determine how many workers you want or need, what type of workers, where they will live, hire or fire as you see fit. Creating a Town at your own pace your own pace. It is your Town to design and develop, you are the designer, administrator and boss always. 
 
 ### Security and Replenishment
-The growth and safety of the colony solely depends on your governmental skills. Barbarians attack the colony on few nights. Hire guards, assign them weapons and armour to aid in protecting the Colony. As a Colony owner, you cannot let your villagers go hungry. You can always get food from your chest to feed the hungry villagers.
+Your Town deserves the best security you can have. Strategically add Guard Towers or Tower Barracks to protect your Town from the night mobs and barbarians that will attack in random nights. Give them the best weapons and armour your Town has to offer. They need to be fed well to work and protect it better. Keep a busy farmer to supply the baker and the cook at the restaurant, so no one goes hungry. 
 
 ### Have fun, Play with Friends
-Taking a dive into our multiplayer system is a good way to learn more about Colony building and management. A robust permission system in multi-player allows you to collaborate in a single Colony with your friends, or have individual colonies all competing to be the best!
+MineColonies is a very powerful multi-player system and an awesome tool to learn more about Town designing, building and especially management. The permission system allows for collaborative team play in multi-player where you can assign different roles in a Town such as; Officer, Friend Neutral or even Hostile! Also have individual competing Colonies at the same time, all with a strong protection system for several management and Anti-Griefing. Fun for all! 
 ___
-##### MineColonies is a free and open source mod developed by LDT (Let's Dev Together), a non-profit community. The source code is on [GitHub.](https://github.com/ldtteam/minecolonies) Contribute to our Project. Found any bugs? Report an [issue](https://github.com/ldtteam/minecolonies/issues/new) so as to help us ensure you have the best gaming experience. For more information and enquiries, contact us on [Discord.](https://discord.gg/YEas2Yv)
-___
-Our developer team is continuously working to add more content to our mod and make the MineColonies experience even greater!
+##### MineColonies is a free and open source mod developed by LDT (Let's Dev Together), a non-profit community. The source code is on [GitHub.](https://github.com/ldtteam/minecolonies) Our developers are a hardworking well integrated coding team, continuously working to add more content to our mod and make the MineColonies experience even greater! Contribute to our Project. Found any bug? Report an [issue](https://github.com/ldtteam/minecolonies/issues/new) so as to help us ensure you have the best gaming experience. For more information and enquiries, contact us on [Discord.](https://discord.gg/YEas2Yv)
+___ 
 
 ## Our Team
 
@@ -33,11 +29,11 @@ Our developer team is continuously working to add more content to our mod and ma
 
 ### Visuals
 * Khranos – Animated/Static Modelling and Texturing 
-* D3miurge 
+* D3miurge - Graphics Artist, Models, Textures and GUI 
 * Pamplona – Static Modelling, Texturing, Concept Art and Building Design 
 * ImriLaoi – Static Modelling and Texturing
 
-### WiKi and Pack Creator 
+### WiKi and ModPack Creator 
 * Wissi
 
  
