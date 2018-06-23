@@ -835,7 +835,10 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
              {
                  for (WorkOrderBuildMiner order : workOrders)
                  {
-                     colony.getWorkManager().removeWorkOrder(order.getID());
+                     if (this.getOwnBuilding().getID().equals(order.getMinerBuilding()))
+                     {
+                         colony.getWorkManager().removeWorkOrder(order.getID());
+                     }
                  }
              }
          }
