@@ -325,8 +325,7 @@ public class WindowScan extends AbstractWindowSkeleton
                     {
                         if (tileEntity != null)
                         {
-                            final List<ItemStack> itemList = new ArrayList<>();
-                            itemList.addAll(ItemStackUtils.getItemStacksOfTileEntity(tileEntity.writeToNBT(new NBTTagCompound()), world));
+                            final List<ItemStack> itemList = new ArrayList<>(ItemStackUtils.getItemStacksOfTileEntity(tileEntity.writeToNBT(new NBTTagCompound()), world));
                             for (final ItemStack stack : itemList)
                             {
                                 addNeededResource(stack, 1);
@@ -365,10 +364,11 @@ public class WindowScan extends AbstractWindowSkeleton
      */
     public void addNeededResource(@Nullable final ItemStack res, final int amount)
     {
-        if (ItemStackUtils.isEmpty(res) || amount == 0)
+        if (res == null || amount == 0)
         {
             return;
         }
+
         final int hashCode = res.hasTagCompound() ? res.getTagCompound().hashCode() : 0;
         ItemStorage resource = resources.get(res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + hashCode);
         if (resource == null)
