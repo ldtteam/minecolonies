@@ -21,6 +21,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -629,6 +630,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             return START_WORKING;
         }
+        worker.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED + BASE_MOVEMENT_SPEED * worker.getCitizenExperienceHandler().getLevel() / WALKING_SPEED_MULTIPLIER);
 
         final AbstractBuildingWorker ownBuilding = getOwnBuilding();
 
@@ -660,8 +662,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean checkIfExecute()
     {
-        worker.setAIMoveSpeed((float) (BASE_MOVEMENT_SPEED + BASE_MOVEMENT_SPEED * worker.getCitizenExperienceHandler().getLevel() / WALKING_SPEED_MULTIPLIER));
-
         if (getWareHouse() != null && getWareHouse().getTileEntity() != null)
         {
             return false;
