@@ -308,12 +308,9 @@ public class TileEntityRack extends TileEntity
         else if (!single && !main && world != null && neighbor != null)
         {
             final TileEntity entity = world.getTileEntity(getNeighbor());
-            if (entity instanceof TileEntityRack)
+            if (entity instanceof TileEntityRack && !((TileEntityRack) entity).main)
             {
-                if (!((TileEntityRack) entity).main)
-                {
-                    this.main = true;
-                }
+                this.main = true;
             }
         }
     }
