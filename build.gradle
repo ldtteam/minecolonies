@@ -126,7 +126,7 @@ dependencies {
 }
 
 group = "com.minecolonies"
-version = config.minecraft_version.toString() + "-" + System.getenv()["version"]
+version = config.minecraft_version.toString() + "-" + System.getenv()["Version"]
 archivesBaseName = "minecolonies"
 
 sourceCompatibility = '1.8'
