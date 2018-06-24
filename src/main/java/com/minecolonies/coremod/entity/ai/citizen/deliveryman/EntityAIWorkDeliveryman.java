@@ -37,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -55,11 +56,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * Walking speed double at this level.
      */
     private static final double WALKING_SPEED_MULTIPLIER = 25;
-
-    /**
-     * The base movement speed of the deliveryman.
-     */
-    private static final double BASE_MOVEMENT_SPEED = 0.2D;
 
     /**
      * Delay in ticks between every inventory operation.
