@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.event;
+package com.minecolonies.coremod.event.capabilityproviders;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
 import net.minecraft.nbt.NBTBase;
@@ -11,10 +11,19 @@ import javax.annotation.Nullable;
 
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
+/**
+ * Capability provider for the chunk capability of Minecolonies.
+ */
 public class MinecoloniesChunkCapabilityProvider implements ICapabilitySerializable<NBTBase>
 {
+    /**
+     * The colony list capability. (For closest colony and claimed)
+     */
     private final IColonyTagCapability colonyList;
 
+    /**
+     * Constructor of the provider.
+     */
     public MinecoloniesChunkCapabilityProvider()
     {
         this.colonyList = new IColonyTagCapability.Impl();
