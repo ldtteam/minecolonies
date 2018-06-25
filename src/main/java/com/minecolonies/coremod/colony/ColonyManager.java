@@ -1181,17 +1181,12 @@ public final class ColonyManager
                 @Nullable final NBTTagCompound chunkData = loadNBTFromPath(file);
                 if (chunkData != null)
                 {
-                    final String fileName = file.getName();
-                    final int firstIndex = fileName.indexOf('-');
-                    final int secondIndex = fileName.indexOf('_');
-                    final int lastIndex = fileName.substring(secondIndex, fileName.length()).indexOf('_');
-
-                    final int firstInt = Integer.parseInt(fileName.substring(firstIndex+1, secondIndex-1));
-                    final int secondInt = Integer.parseInt(fileName.substring(secondIndex+1, lastIndex-1));
-
                     final ChunkLoadStorage storage = new ChunkLoadStorage(chunkData);
-                    chunkManager.addChunkStorage(firstInt, secondInt, storage);
-                    //file.delete();
+                    final int z = (int)(storage.getXz() >> 32);
+                    final int x = (int)storage.getXz();
+
+                    chunkManager.addChunkStorage(x, z, storage);
+                    file.delete();
                 }
             }
         }
