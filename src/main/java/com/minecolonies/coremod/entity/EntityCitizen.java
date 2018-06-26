@@ -390,8 +390,8 @@ public class EntityCitizen extends AbstractEntityCitizen
                 for (final Player player : PermissionUtils.getPlayersWithAtLeastRank(citizenColonyHandler.getColony(), Rank.OFFICER))
                 {
                     boolean isBarbarianClose = true;
-                    for(AbstractEntityBarbarian barbarian : this.getCitizenColonyHandler().getColony().getBarbManager().getHorde()) {
-                        EntityCitizen citizen = new EntityCitizen(this.getEntityWorld());
+                    for(final AbstractEntityBarbarian barbarian : this.getCitizenColonyHandler().getColony().getBarbManager().getHorde()) {
+                        final EntityCitizen citizen = new EntityCitizen(this.getEntityWorld());
                         if(MathUtils.twoDimDistance(barbarian.getPosition(), citizen.getPosition()) < 21)
                         {
                             isBarbarianClose = true;
