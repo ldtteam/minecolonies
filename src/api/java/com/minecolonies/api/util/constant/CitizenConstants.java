@@ -156,4 +156,9 @@ public final class CitizenConstants
      * Minimum stuck time for the worker to react.
      */
     public static final int MIN_STUCK_TIME = 5;
+
+    /**
+     * Distance between Barbarian and Citizen to not remove happiness.
+     */
+    public static final int BARB_DISTANCE_FOR_FREE_DEATH = 21;
 }

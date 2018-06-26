@@ -392,7 +392,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                     boolean isBarbarianClose = true;
                     for(final AbstractEntityBarbarian barbarian : this.getCitizenColonyHandler().getColony().getBarbManager().getHorde()) {
                         final EntityCitizen citizen = new EntityCitizen(this.getEntityWorld());
-                        if(MathUtils.twoDimDistance(barbarian.getPosition(), citizen.getPosition()) < 21)
+                        if(MathUtils.twoDimDistance(barbarian.getPosition(), citizen.getPosition()) < BARB_DISTANCE_FOR_FREE_DEATH)
                         {
                             isBarbarianClose = true;
                         }
