@@ -138,6 +138,7 @@ dependencies {
 group = "com.minecolonies"
 config.buildnumber = System.getenv()['BUILD_NUMBER'] != null ? System.getenv()['BUILD_NUMBER'] : System.getenv()['TRAVIS_BUILD_NUMBER']
 version = "${config.minecraft_version}-${config.minecolonies_major}.${config.minecolonies_minor}.${config.buildnumber}"
+archivesBaseName = "minecolonies"
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -170,28 +171,6 @@ processResources {
     }
 }
 
-
-compileJava {
-    options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint:all"
-    options.compilerArgs << "-Xmaxwarns"
-    options.compilerArgs << "9999"
-}
-
-compileApiJava {
-    options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint:all"
-    options.compilerArgs << "-Xmaxwarns"
-    options.compilerArgs << "9999"
-}
-
-compileBlockOutJava {
-    options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint:all"
-    options.compilerArgs << "-Xmaxwarns"
-    options.compilerArgs << "9999"
-}
-
 task apiJar(type: Jar) {
     from sourceSets.api.output
     classifier 'api'
@@ -209,18 +188,7 @@ task structuresJar(type: Jar){
 
 task deobfJar(type: Jar) {
     from sourceSets.main.output
-    appendix = 'deobf'
-}
-
-task incrementBuildNumber() {
-    dependsOn "reobf"
-    doLast {
-        config.minecolonies_build = (config.minecolonies_build.toString().toInteger()) + 1
-
-        configFile.withWriter {
-            config.toProperties().store(it, "")
-        }
-    }
+    classifier = 'deobf'
 }
 
 jar {
@@ -228,13 +196,6 @@ jar {
     from sourceSets.blockOut.output
     from sourceSets.structures.output
     from sourceSets.main.output
-
-    dependsOn apiJar
-    dependsOn blockOutJar
-    dependsOn structuresJar
-    dependsOn deobfJar
-    appendix = 'universal'
-    archiveName = "minecolonies-universal-" + project.version + ".jar"
 
     manifest {
         attributes 'FMLAT': "minecolonies_at.cfg"
@@ -251,50 +212,6 @@ idea {
     module {
         inheritOutputDirs = true
     }
-}
-
-task copyToLib(type: Copy) {
-    // into "build/lib"
-    into "lib"
-    from configurations.runtime
-}
-
-
-task runCheckStyle(type: Checkstyle) {
-    description 'Runs Checkstyle inspection against Minecolonies sourcesets.'
-    group = 'Code Quality'
-
-    ignoreFailures = true
-    showViolations = false
-
-    source 'src/main/java'
-
-    include '**/*.java'
-
-    exclude '**/com/minecolonies/blockout/**'
-
-    classpath = files()
-}
-
-task runPMD(type: Pmd) {
-    description 'Runs PMD inspection against Minecolonies sourcesets.'
-    group = 'Code Quality'
-
-    ignoreFailures = true
-
-    source 'src/main/java'
-
-    include '**/*.java'
-
-    exclude '**/com/minecolonies/blockout/**'
-
-    classpath = files()
-}
-
-task runSonar() {
-    dependsOn runCheckStyle, runPMD
-    description 'Runs the equivalent of a SonarQube analysis directly in the build process. Calls runCheckStyle and runPMD'
-    group = 'Code Quality'
 }
 
 task signJar(type: SignJar, dependsOn: reobfJar) {
@@ -327,6 +244,9 @@ curseforge {
             releaseType = System.getenv().CURSERELEASETYPE
 
             addArtifact deobfJar
+            addArtifact apiJar
+            addArtifact blockOutJar
+            addArtifact structuresJar
         }
     }
     else
