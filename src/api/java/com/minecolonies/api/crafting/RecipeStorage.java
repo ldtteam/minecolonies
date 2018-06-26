@@ -190,7 +190,11 @@ public class RecipeStorage implements IRecipeStorage
         final List<ItemStack> secondaryStacks = new ArrayList<>();
         for(final ItemStack stack: input)
         {
-            stack.getItem().getContainerItem(stack);
+            final ItemStack container = stack.getItem().getContainerItem(stack);
+            if (!ItemStackUtils.isEmpty(container))
+            {
+                secondaryStacks.add(container);
+            }
         }
         if(secondaryStacks.size() > getInput().size())
         {
@@ -270,7 +274,11 @@ public class RecipeStorage implements IRecipeStorage
         final List<ItemStack> secondaryStacks = new ArrayList<>();
         for(final ItemStack stack: input)
         {
-            stack.getItem().getContainerItem(stack);
+            final ItemStack container = stack.getItem().getContainerItem(stack);
+            if (!ItemStackUtils.isEmpty(container))
+            {
+                secondaryStacks.add(container);
+            }
         }
         for (final ItemStack stack : secondaryStacks)
         {

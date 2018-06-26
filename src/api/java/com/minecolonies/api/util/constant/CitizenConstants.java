@@ -13,7 +13,7 @@ public final class CitizenConstants
     /**
      * Base movement speed of every citizen.
      */
-    public static final  double                 BASE_MOVEMENT_SPEED  = 0.3D;
+    public static final  double BASE_MOVEMENT_SPEED  = 0.3D;
     /**
      * The middle saturation point. smaller than this = bad and bigger than this = good.
      */

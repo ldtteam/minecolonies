@@ -209,8 +209,9 @@ public class ReplaceBlockMessage extends AbstractMessage<ReplaceBlockMessage, IM
      */
     public static boolean correctBlockToRemoveOrReplace(final ItemStack worldStack, final IBlockState worldState, final ItemStack compareStack)
     {
-        return worldStack != null && (worldStack.isItemEqual(compareStack)
+        return (worldStack != null && worldStack.isItemEqual(compareStack)
                 || (compareStack.getItem() == Items.LAVA_BUCKET && (worldState.getBlock() == Blocks.LAVA || worldState.getBlock() == Blocks.FLOWING_LAVA))
-                || (compareStack.getItem() == Items.WATER_BUCKET && (worldState.getBlock() == Blocks.WATER || worldState.getBlock() == Blocks.FLOWING_WATER)));
+                || (compareStack.getItem() == Items.WATER_BUCKET && (worldState.getBlock() == Blocks.WATER || worldState.getBlock() == Blocks.FLOWING_WATER))
+                || (compareStack.getItem() == Items.AIR && (worldState.getBlock() == Blocks.AIR)));
     }
 }
