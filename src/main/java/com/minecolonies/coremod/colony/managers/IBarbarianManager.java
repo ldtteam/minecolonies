@@ -79,4 +79,7 @@ public interface IBarbarianManager
      * @param abstractEntityBarbarian the barbarian to unregister.
      */
     void unregisterBarbarian(@NotNull final AbstractEntityBarbarian abstractEntityBarbarian);
+
+
+    List<AbstractEntityBarbarian> getHorde();
 }

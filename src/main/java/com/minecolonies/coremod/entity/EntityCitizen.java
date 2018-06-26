@@ -16,7 +16,9 @@ import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.colony.managers.BarbarianManager;
 import com.minecolonies.coremod.entity.ai.minimal.*;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
 import com.minecolonies.coremod.entity.citizenhandlers.*;
@@ -362,6 +364,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @param damageSource the attacking entity.
      */
+
     @Override
     public void onDeath(@NotNull final DamageSource damageSource)
     {
@@ -372,16 +375,17 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 for (final Player player : PermissionUtils.getPlayersWithAtLeastRank(citizenColonyHandler.getColony(), Rank.OFFICER))
                 {
-                    EntityBarbarian barbarian = new EntityBarbarian(this.getEntityWorld());
-                    EntityCitizen citizen = new EntityCitizen(this.getEntityWorld());
-                    boolean isBarbarianClose;
-                    if(MathUtils.twoDimDistance(barbarian.getPosition(), citizen.getPosition()) < 21)
-                    {
-                        isBarbarianClose = true;
-                    }
-                    else
-                    {
-                        isBarbarianClose = false;
+                    boolean isBarbarianClose = true;
+                    for(AbstractEntityBarbarian barbarian : this.getCitizenColonyHandler().getColony().getBarbManager().getHorde()) {
+                        EntityCitizen citizen = new EntityCitizen(this.getEntityWorld());
+                        if(MathUtils.twoDimDistance(barbarian.getPosition(), citizen.getPosition()) < 21)
+                        {
+                            isBarbarianClose = true;
+                        }
+                        else
+                        {
+                            isBarbarianClose = false;
+                        }
                     }
                     if (player.getID().equals(damageSource.getTrueSource().getUniqueID()) && (!isBarbarianClose))
                     {
