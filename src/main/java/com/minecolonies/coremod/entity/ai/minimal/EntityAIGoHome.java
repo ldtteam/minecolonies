@@ -67,7 +67,7 @@ public class EntityAIGoHome extends EntityAIBase
         {
             areBarbariansInColony = false;
         }
-        return citizen.getDesiredActivity() == DesiredActivity.SLEEP && !citizen.getCitizenColonyHandler().isAtHome() || areBarbariansInColony && !citizen.getCitizenColonyHandler().isAtHome();
+        return !citizen.getCitizenColonyHandler().isAtHome()  && (citizen.getDesiredActivity() == DesiredActivity.SLEEP  || areBarbariansInColony);
     }
 
 

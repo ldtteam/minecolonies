@@ -80,5 +80,9 @@ public interface IBarbarianManager
      */
     void unregisterBarbarian(@NotNull final AbstractEntityBarbarian abstractEntityBarbarian);
 
+    /**
+     *
+     * @return
+     */
     List<AbstractEntityBarbarian> getHorde();
 }

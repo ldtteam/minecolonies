@@ -206,6 +206,7 @@ public class BarbarianManager implements IBarbarianManager
         return EnumFacing.getFacingFromVector(vector.getX(), 0, 0) == directionX && EnumFacing.getFacingFromVector(0, 0, vector.getZ()) == directionZ;
     }
 
+    @Override
     public List<AbstractEntityBarbarian> getHorde() {
         return horde;
     }
