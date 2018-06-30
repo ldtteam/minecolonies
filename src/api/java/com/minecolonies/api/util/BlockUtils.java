@@ -2,7 +2,6 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import net.minecraft.block.*;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -12,6 +11,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.registries.GameData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -191,7 +193,7 @@ public final class BlockUtils
 
     private static Item getItem(@NotNull final IBlockState blockState)
     {
-        if (blockState.getMaterial().equals(Material.LAVA))
+        if (blockState.getBlock().equals(Blocks.LAVA))
         {
             return Items.LAVA_BUCKET;
         }
@@ -355,6 +357,10 @@ public final class BlockUtils
      */
     public static ItemStack getItemStackFromBlockState(@NotNull final IBlockState blockState)
     {
+        if(blockState.getBlock() instanceof IFluidBlock)
+        {
+            return FluidUtil.getFilledBucket(new FluidStack(((IFluidBlock) blockState.getBlock()).getFluid(), 1000));
+        }
         final Item item = getItem(blockState);
 
         if (item == null)
