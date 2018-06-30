@@ -456,9 +456,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             if (!ItemStackUtils.isEmpty(tempStack))
             {
                 final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(tempStack.getItem(), tempStack.getItemDamage());
-                if (slot != -1)
+                if (slot != -1 )
                 {
+                    final ItemStack container = tempStack.getItem().getContainerItem(tempStack);
                     new InvWrapper(getInventory()).extractItem(slot, 1, false);
+                    if (!ItemStackUtils.isEmpty(container))
+                    {
+                        new InvWrapper(getInventory()).insertItem(slot, container, false);
+                    }
                     reduceNeededResources(tempStack);
                 }
             }

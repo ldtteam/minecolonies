@@ -80,6 +80,9 @@ public interface IBarbarianManager
      */
     void unregisterBarbarian(@NotNull final AbstractEntityBarbarian abstractEntityBarbarian);
 
-
+    /**
+     * Gets the horde of barbarians approaching the colony.
+     * @return the list of entities.
+     */
     List<AbstractEntityBarbarian> getHorde();
 }
