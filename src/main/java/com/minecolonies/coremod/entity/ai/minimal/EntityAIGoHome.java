@@ -58,7 +58,16 @@ public class EntityAIGoHome extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        return citizen.getDesiredActivity() == DesiredActivity.SLEEP && !citizen.getCitizenColonyHandler().isAtHome();
+        boolean areBarbariansInColony;
+        if(citizen.getCitizenColonyHandler().getColony().getBarbManager().getHorde().size() > 0)
+        {
+            areBarbariansInColony = true;
+        }
+        else
+        {
+            areBarbariansInColony = false;
+        }
+        return !citizen.getCitizenColonyHandler().isAtHome()  && (citizen.getDesiredActivity() == DesiredActivity.SLEEP  || areBarbariansInColony);
     }
 
 

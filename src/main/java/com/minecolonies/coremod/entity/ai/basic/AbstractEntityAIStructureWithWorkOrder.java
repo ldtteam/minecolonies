@@ -7,7 +7,7 @@ import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
-import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
+import com.minecolonies.coremod.blocks.schematic.BlockSolidSubstitution;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
@@ -222,7 +222,10 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
         }
 
-        if (!ChiselAndBitsCheck.isChiselAndBitsBlock(blockState))
+        if (!ChiselAndBitsCheck.isChiselAndBitsBlock(blockState)
+              && blockState.getBlock() != Blocks.BED
+              && blockState.getBlock() != Blocks.STANDING_BANNER
+              && blockState.getBlock() != Blocks.WALL_BANNER)
         {
             building.addNeededResource(BlockUtils.getItemStackFromBlockState(blockState), 1);
         }

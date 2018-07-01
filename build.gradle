@@ -185,6 +185,8 @@ jar {
     from sourceSets.blockOut.output
     from sourceSets.structures.output
     from sourceSets.main.output
+    
+    classifier = 'universal'
 
     manifest {
         attributes 'FMLAT': "minecolonies_at.cfg"

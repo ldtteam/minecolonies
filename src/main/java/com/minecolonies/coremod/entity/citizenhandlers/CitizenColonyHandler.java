@@ -220,7 +220,7 @@ public class CitizenColonyHandler
     public double getPerBuildingFoodCost()
     {
         return getWorkBuilding() == null || getWorkBuilding().getBuildingLevel() == 0 ? 1
-                 : (SATURATION_DECREASE_FACTOR * Math.pow(2, getWorkBuilding().getBuildingLevel() - 1.0));
+                 : (SATURATION_DECREASE_FACTOR * Math.pow(2, getWorkBuilding().getBuildingLevel()));
     }
 
     /**

@@ -4,8 +4,9 @@ import com.google.common.primitives.Ints;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.managers.ICitizenManager;
+import com.minecolonies.coremod.commands.AbstractCommandParser.ModuleContext;
+import com.minecolonies.coremod.commands.CommandEntryPointNew.MineColonyDataProvider;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,7 +27,7 @@ public enum ActionArgumentType
     ONLINE_PLAYER("online-player-expression", 0),
     PLAYER("player-expression", 0),
     COLONY("colony-id", 0),
-    CITIZEN("citizen-id or full-name", 2),
+    CITIZEN("citizen-id or full-name", 9),
     COORDINATE_X("x-coordinate", 0),
     COORDINATE_Y("y-coordinate", 0),
     COORDINATE_Z("z-coordinate", 0),
@@ -87,9 +88,9 @@ public enum ActionArgumentType
     }
 
     @NotNull
-    private static List<String> getColonyIdStrings()
+    private static List<String> getColonyIdStrings(@NotNull final MineColonyDataProvider mineColonyDataProvider)
     {
-        final List<Colony> colonyList = ColonyManager.getColonies();
+        final List<Colony> colonyList = mineColonyDataProvider.getColonies();
         final List<String> colonyIdList = new ArrayList<>(colonyList.size());
         for (final Colony colony : colonyList)
         {
@@ -98,7 +99,7 @@ public enum ActionArgumentType
         return colonyIdList;
     }
 
-    private static List<String> getCitizenNames(@Nullable final Colony colonyToUse)
+    private static List<String> getCitizenNames(@NotNull final MineColonyDataProvider mineColonyDataProvider, @Nullable final Colony colonyToUse)
     {
         final List<Colony> colonyList;
         if (null != colonyToUse)
@@ -107,7 +108,7 @@ public enum ActionArgumentType
         }
         else
         {
-            colonyList = ColonyManager.getColonies();
+            colonyList = mineColonyDataProvider.getColonies();
         }
         final List<String> citizenNameList = new ArrayList<>();
         for (final Colony colony : colonyList)
@@ -122,7 +123,7 @@ public enum ActionArgumentType
     }
 
     @NotNull
-    private static List<String> getCitizenIds(@Nullable final Colony colonyToUse)
+    private static List<String> getCitizenIds(@NotNull final MineColonyDataProvider mineColonyDataProvider, @Nullable final Colony colonyToUse)
     {
         final List<Colony> colonyList;
         if (null != colonyToUse)
@@ -131,7 +132,7 @@ public enum ActionArgumentType
         }
         else
         {
-            colonyList = ColonyManager.getColonies();
+            colonyList = mineColonyDataProvider.getColonies();
         }
         final List<String> citizenNameList = new ArrayList<>();
         for (final Colony colony : colonyList)
@@ -147,16 +148,18 @@ public enum ActionArgumentType
 
     @NotNull
     public List<String> getTabCompletions(@NotNull final MinecraftServer server,
-            @Nullable final BlockPos pos,
+            @Nullable final BlockPos pos, @NotNull final ModuleContext moduleContext,
             @NotNull final ActionMenuState actionMenuState, final String potentialArgumentValue)
     {
+        final MineColonyDataProvider mineColonyDataProvider = moduleContext.get(MineColonyDataProvider.class);
+
         switch (this)
         {
             case INTEGER:
             case STRING:
                 return Collections.emptyList();
             case BOOLEAN:
-                return Arrays.asList(new String[] {"true", "false"});
+                return getBooleanTabCompletions(potentialArgumentValue);
             case COORDINATE_X:
             case COORDINATE_Y:
             case COORDINATE_Z:
@@ -168,9 +171,9 @@ public enum ActionArgumentType
                 final List<String> allPlayerNameStrings = getAllPlayerNames(server);
                 return allPlayerNameStrings.stream().filter(k -> k.startsWith(potentialArgumentValue)).collect(Collectors.toList());
             case COLONY:
-                return getColonyTabCompletions(potentialArgumentValue);
+                return getColonyTabCompletions(mineColonyDataProvider, potentialArgumentValue);
             case CITIZEN:
-                return getCitizenTabCompletions(actionMenuState, potentialArgumentValue);
+                return getCitizenTabCompletions(mineColonyDataProvider, actionMenuState, potentialArgumentValue);
             default:
                 throw new IllegalStateException("Unimplemented ActionArgumentType tab completion");
         }
@@ -203,10 +206,11 @@ public enum ActionArgumentType
     }
 
     @NotNull
-    private List<String> getColonyTabCompletions(final String potentialArgumentValue)
+    private List<String> getColonyTabCompletions(@NotNull final MineColonyDataProvider mineColonyDataProvider,
+            final String potentialArgumentValue)
     {
         // TODO: use the colony we are in as the default tab completion.
-        final List<String> colonyNumberStrings = getColonyIdStrings();
+        final List<String> colonyNumberStrings = getColonyIdStrings(mineColonyDataProvider);
         if (potentialArgumentValue.isEmpty())
         {
             return colonyNumberStrings;
@@ -223,7 +227,8 @@ public enum ActionArgumentType
     }
 
     @NotNull
-    private List<String> getCitizenTabCompletions(@NotNull final ActionMenuState actionMenuState, final String potentialArgumentValue)
+    private List<String> getCitizenTabCompletions(@NotNull final MineColonyDataProvider mineColonyDataProvider,
+            @NotNull final ActionMenuState actionMenuState, final String potentialArgumentValue)
     {
         // TODO: see if we can figure out what citizen we are looking at as the default tab completion.
         @Nullable Colony colony = null;
@@ -243,8 +248,8 @@ public enum ActionArgumentType
             }
         }
 
-        final List<String> citizenNameStrings = getCitizenNames(colony);
-        final List<String> citizenNumberStrings = getCitizenIds(colony);
+        final List<String> citizenNameStrings = getCitizenNames(mineColonyDataProvider, colony);
+        final List<String> citizenNumberStrings = getCitizenIds(mineColonyDataProvider, colony);
         final String[] potentiaCitizenNameParts = potentialArgumentValue.split(" ", -1);
         final int currentWordIndex = potentiaCitizenNameParts.length - 1;
         if (potentialArgumentValue.isEmpty())
@@ -270,58 +275,47 @@ public enum ActionArgumentType
             {
                 return citizenNumberStrings.stream().filter(k -> k.startsWith(potentialArgumentValue)).collect(Collectors.toList());
             }
-            else
+        }
+
+        final Set<String> nameAtIndexStringSet = new HashSet<>();
+        for (final String citizenName : citizenNameStrings)
+        {
+            final String[] citizenNameParts = citizenName.split(" ");
+            if (citizenNameParts.length > currentWordIndex)
             {
-                final Set<String> firstNameSet = new HashSet<>();
-                for (final String citizenName : citizenNameStrings)
+                int i = 0;
+                while (i < currentWordIndex)
                 {
-                    final String[] citizenNameParts = citizenName.split(" ");
-                    firstNameSet.add(citizenNameParts[0]);
+                    if (!potentiaCitizenNameParts[i].equals(citizenNameParts[i]))
+                    {
+                        break;
+                    }
+                    ++i;
                 }
-                final List<String> firstNameMatches = firstNameSet.stream().filter(k -> k.startsWith(potentialArgumentValue)).collect(Collectors.toList());
-                if (!firstNameMatches.isEmpty())
+                if (i == currentWordIndex)
                 {
-                    return firstNameMatches;
+                    nameAtIndexStringSet.add(citizenNameParts[currentWordIndex]);
                 }
             }
+        }
+        if (!nameAtIndexStringSet.isEmpty())
+        {
+            return nameAtIndexStringSet.stream().filter(k -> k.startsWith(potentiaCitizenNameParts[currentWordIndex])).collect(Collectors.toList());
         }
         else
         {
-            if (1 == currentWordIndex)
-            {
-                final Set<String> middleNameSet = new HashSet<>();
-                for (final String citizenName : citizenNameStrings)
-                {
-                    final String[] citizenNameParts = citizenName.split(" ");
-                    if (potentiaCitizenNameParts[0].equals(citizenNameParts[0]))
-                    {
-                        middleNameSet.add(citizenNameParts[1]);
-                    }
-                }
-                return middleNameSet.stream().filter(k -> k.startsWith(potentiaCitizenNameParts[1])).collect(Collectors.toList());
-            }
-            else
-            {
-                final Set<String> lastNameSet = new HashSet<>();
-                for (final String citizenName : citizenNameStrings)
-                {
-                    final String[] citizenNameParts = citizenName.split(" ");
-                    if ((potentiaCitizenNameParts[0].equals(citizenNameParts[0])) && (potentiaCitizenNameParts[1].equals(citizenNameParts[1])))
-                    {
-                        lastNameSet.add(citizenNameParts[2]);
-                    }
-                }
-                return lastNameSet.stream().filter(k -> k.startsWith(potentiaCitizenNameParts[2])).collect(Collectors.toList());
-           }
+            return Collections.emptyList();
         }
-        return Collections.emptyList();
     }
 
     @Nullable
-    public Object parse(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @Nullable final BlockPos pos,
-            @NotNull final List<ActionMenuHolder> parsedHolders,
+    public Object parse(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @Nullable final BlockPos pos, 
+            @NotNull final ModuleContext moduleContext,
+            @NotNull final ActionMenuState actionMenuState,
             final String potentialArgumentValue)
     {
+        final MineColonyDataProvider mineColonyDataProvider = moduleContext.get(MineColonyDataProvider.class);
+
         // TODO: selector support, such as used by CommandKill to find player
         // Entity entity = <net.minecraft.command.CommandBase>.getEntity(server, sender, args[0]);
 
@@ -339,9 +333,9 @@ public enum ActionArgumentType
             case PLAYER:
                 return parseAnyPlayerValue(server, potentialArgumentValue);
             case COLONY:
-                return parseColonyValue(sender, potentialArgumentValue);
+                return parseColonyValue(sender, mineColonyDataProvider, potentialArgumentValue);
             case CITIZEN:
-                return parseCitizenDataValue(parsedHolders, potentialArgumentValue);
+                return parseCitizenDataValue(mineColonyDataProvider, actionMenuState, potentialArgumentValue);
             case STRING:
                 return potentialArgumentValue.isEmpty() ? null : potentialArgumentValue;
             default:
@@ -402,6 +396,28 @@ public enum ActionArgumentType
         return null;
     }
 
+    private static List<String> getBooleanTabCompletions(final String potentialArgumentValue)
+    {
+        if (potentialArgumentValue.isEmpty())
+        {
+            return Arrays.asList(new String[] {"true", "false" });
+        }
+        if (("true".startsWith(potentialArgumentValue))
+            || ("yes".startsWith(potentialArgumentValue))
+            || ("1".startsWith(potentialArgumentValue)))
+        {
+            return Collections.singletonList("true");
+        }
+        if (("false".startsWith(potentialArgumentValue))
+            || ("no".startsWith(potentialArgumentValue))
+            || ("0".startsWith(potentialArgumentValue)))
+        {
+            return Collections.singletonList("false");
+        }
+        
+        return Collections.emptyList();
+    }
+
     @Nullable
     private EntityPlayerMP parseOnlinePlayerValue(@NotNull final MinecraftServer server, final String potentialArgumentValue)
     {
@@ -439,16 +455,16 @@ public enum ActionArgumentType
     }
 
     @Nullable
-    private Colony parseColonyValue(@NotNull final ICommandSender sender, final String potentialArgumentValue)
+    private Colony parseColonyValue(@NotNull final ICommandSender sender, @NotNull final MineColonyDataProvider mineColonyDataProvider, final String potentialArgumentValue)
     {
-        final List<String> colonyNumberStrings = getColonyIdStrings();
+        final List<String> colonyNumberStrings = getColonyIdStrings(mineColonyDataProvider);
         final Integer result = Ints.tryParse(potentialArgumentValue);
         if (null != result)
         {
             int colonyNumber = result.intValue();
             if (sender instanceof EntityPlayer && colonyNumber == -1)
             {
-                final IColony icolony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
+                final IColony icolony = mineColonyDataProvider.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
                 if (icolony != null)
                 {
                     colonyNumber = icolony.getID();
@@ -456,7 +472,7 @@ public enum ActionArgumentType
             }
             if (colonyNumberStrings.contains(String.valueOf(colonyNumber)))
             {
-                return ColonyManager.getColony(colonyNumber);
+                return mineColonyDataProvider.getColony(colonyNumber);
             }
             return null;
         }
@@ -467,29 +483,30 @@ public enum ActionArgumentType
     }
 
     @Nullable
-    private CitizenData parseCitizenDataValue(@NotNull final List<ActionMenuHolder> parsedHolders, final String potentialArgumentValue)
+    private CitizenData parseCitizenDataValue(@NotNull final MineColonyDataProvider mineColonyDataProvider,
+            @NotNull final ActionMenuState actionMenuState, final String potentialArgumentValue)
     {
-        final ArrayList<ActionMenuHolder> reversedParsedHolderList = new ArrayList<>(parsedHolders);
-        Collections.reverse(reversedParsedHolderList);
+        // Try to find a non-null colony value set
         Colony colony = null;
-        for (final ActionMenuHolder actionMenuHolder : reversedParsedHolderList)
+        final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
+        for (final ActionArgument actionArgument : actionArgumentList)
         {
-            final ActionArgument actionArgument = actionMenuHolder.getActionArgument();
-            if (actionArgument.getType() == COLONY)
+            if ((actionArgument.getType() == COLONY) && actionMenuState.isValueSet(actionArgument))
             {
-                colony = (Colony) actionMenuHolder.getValue();
+                colony = actionMenuState.getColonyForArgument(actionArgument.getName());
                 break;
             }
         }
+
         if (null != colony)
         {
-            final ICitizenManager citizenManager = colony.getCitizenManager();
+            final ICitizenManager citizenManager = colony.getCitizenManager(); 
             return findCitizenForCitizenManager(citizenManager, potentialArgumentValue);
         }
         else
         {
             // no colony specified for citizen
-            final List<Colony> colonyList = ColonyManager.getColonies();
+            final List<Colony> colonyList = mineColonyDataProvider.getColonies();
             for (final Colony someColony : colonyList)
             {
                 final ICitizenManager citizenManager = someColony.getCitizenManager();

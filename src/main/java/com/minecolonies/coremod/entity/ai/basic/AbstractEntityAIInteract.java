@@ -256,7 +256,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      * @param pos   coordinate
      * @return the delay in ticks
      */
-    private int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
+    public int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
     {
         if (worker.getHeldItemMainhand() == null)
         {
