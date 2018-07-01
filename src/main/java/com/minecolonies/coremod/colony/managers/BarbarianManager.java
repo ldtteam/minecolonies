@@ -207,7 +207,8 @@ public class BarbarianManager implements IBarbarianManager
     }
 
     @Override
-    public List<AbstractEntityBarbarian> getHorde() {
-        return horde;
+    public List<AbstractEntityBarbarian> getHorde() 
+    {
+        return new ArrayList(horde);
     }
 }
