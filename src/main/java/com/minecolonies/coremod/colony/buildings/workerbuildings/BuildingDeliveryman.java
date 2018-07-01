@@ -14,12 +14,17 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
+
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
 
 /**
  * Class of the warehouse building.
@@ -121,6 +126,18 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
     public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
+    }
+
+    @Override
+    public void removeCitizen(final CitizenData citizen)
+    {
+        if (citizen != null)
+        {
+            final Optional<EntityCitizen> optCitizen = citizen.getCitizenEntity();
+            optCitizen.ifPresent(entityCitizen -> entityCitizen.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
+                                                    .setBaseValue(BASE_MOVEMENT_SPEED));
+        }
+        super.removeCitizen(citizen);
     }
 
     /**

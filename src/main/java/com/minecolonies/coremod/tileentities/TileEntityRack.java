@@ -305,6 +305,14 @@ public class TileEntityRack extends TileEntity
                 world.setBlockState(neighbor, typeNeighbor);
             }
         }
+        else if (!single && !main && world != null && neighbor != null)
+        {
+            final TileEntity entity = world.getTileEntity(getNeighbor());
+            if (entity instanceof TileEntityRack && !((TileEntityRack) entity).main)
+            {
+                this.main = true;
+            }
+        }
     }
 
     /**

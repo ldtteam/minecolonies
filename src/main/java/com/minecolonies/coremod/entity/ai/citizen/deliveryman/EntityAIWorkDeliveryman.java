@@ -21,6 +21,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -36,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -54,11 +56,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * Walking speed double at this level.
      */
     private static final double WALKING_SPEED_MULTIPLIER = 25;
-
-    /**
-     * The base movement speed of the deliveryman.
-     */
-    private static final double BASE_MOVEMENT_SPEED = 0.2D;
 
     /**
      * Delay in ticks between every inventory operation.
@@ -629,6 +626,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             return START_WORKING;
         }
+        worker.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED + BASE_MOVEMENT_SPEED * worker.getCitizenExperienceHandler().getLevel() / WALKING_SPEED_MULTIPLIER);
 
         final AbstractBuildingWorker ownBuilding = getOwnBuilding();
 
@@ -660,8 +658,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean checkIfExecute()
     {
-        worker.setAIMoveSpeed((float) (BASE_MOVEMENT_SPEED + BASE_MOVEMENT_SPEED * worker.getCitizenExperienceHandler().getLevel() / WALKING_SPEED_MULTIPLIER));
-
         if (getWareHouse() != null && getWareHouse().getTileEntity() != null)
         {
             return false;
