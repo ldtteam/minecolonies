@@ -9,7 +9,7 @@ import com.minecolonies.blockout.controls.ItemIcon;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
-import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -125,7 +125,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     /**
      * Constructor for the window of the farmer.
      *
-     * @param building {@link com.minecolonies.coremod.colony.buildings.BuildingFarmer.View}.
+     * @param building {@link BuildingFarmer.View}.
      */
     public WindowHutFarmer(final BuildingFarmer.View building)
     {
@@ -224,7 +224,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
             {
                 final BlockPos field = fields.get(index);
                 @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field, building.getLocation())));
-                final String direction = calcDirection(building.getLocation(), field);
+                final String direction = BlockPosUtil.calcDirection(building.getLocation(), field);
                 final TileEntity entity = world.getTileEntity(field);
                 if(entity instanceof ScarecrowTileEntity)
                 {
@@ -262,38 +262,6 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
                 }
             }
         });
-    }
-
-    /**
-     * Calculates the direction the field is from the building.
-     *
-     * @param building the building.
-     * @param field    the field.
-     * @return a string describing the direction.
-     */
-    private static String calcDirection(@NotNull final BlockPos building, @NotNull final BlockPos field)
-    {
-        String dist = "";
-
-        if (field.getZ() > building.getZ() + 1)
-        {
-            dist = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_SOUTH);
-        }
-        else if (field.getZ() < building.getZ() - 1)
-        {
-            dist = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_NORTH);
-        }
-
-        if (field.getX() > building.getX() + 1)
-        {
-            dist += LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST);
-        }
-        else if (field.getX() < building.getX() - 1)
-        {
-            dist += LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST);
-        }
-
-        return dist;
     }
 
     @NotNull

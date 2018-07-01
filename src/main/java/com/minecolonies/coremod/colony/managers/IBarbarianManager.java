@@ -1,7 +1,11 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Interface implementing all methods required for all barbarianmanagers.
@@ -33,6 +37,12 @@ public interface IBarbarianManager
     void setCanHaveBarbEvents(final boolean canHave);
 
     /**
+     * Add a spawnPoint to the last barb spawns.
+     * @param pos the position to set.
+     */
+    void addBarbarianSpawnPoint(final BlockPos pos);
+
+    /**
      * Set if the raid has been calculated.
      * @param hasSet true or false.
      */
@@ -51,4 +61,28 @@ public interface IBarbarianManager
      * @return the position.
      */
     BlockPos getRandomOutsiderInDirection(final EnumFacing directionX, final EnumFacing directionZ);
+
+    /**
+     * Getter for the last spawn points.
+     * @return a copy of the list
+     */
+    List<BlockPos> getLastSpawnPoints();
+
+    /**
+     * Register a barbarian at the colony.
+     * @param abstractEntityBarbarian the barbarian to register.
+     */
+    void registerBarbarian(@NotNull final AbstractEntityBarbarian abstractEntityBarbarian);
+
+    /**
+     * Unregister a barbarian from the colony.
+     * @param abstractEntityBarbarian the barbarian to unregister.
+     */
+    void unregisterBarbarian(@NotNull final AbstractEntityBarbarian abstractEntityBarbarian);
+
+    /**
+     * Gets the horde of barbarians approaching the colony.
+     * @return the list of entities.
+     */
+    List<AbstractEntityBarbarian> getHorde();
 }

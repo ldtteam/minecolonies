@@ -3,13 +3,12 @@ package com.minecolonies.coremod.entity.ai.citizen.baker;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.buildings.BuildingBaker;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.placementhandlers.PlacementHandlers;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -23,10 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BAKER_NO_FURNACES;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -119,10 +116,16 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
           new AITarget(BAKER_TAKE_OUT_OF_OVEN, this::takeFromOven),
           new AITarget(BAKER_FINISHING, this::finishing)
         );
-        worker.setSkillModifier(
+        worker.getCitizenExperienceHandler().setSkillModifier(
           INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
             + DEXTERITY_MULTIPLIER * worker.getCitizenData().getDexterity());
         worker.setCanPickUpLoot(true);
+    }
+
+    @Override
+    public Class getExpectedBuildingClass()
+    {
+        return BuildingBaker.class;
     }
 
     private AIState finishing()
@@ -145,7 +148,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         }
 
         worker.setHeldItem(EnumHand.MAIN_HAND, currentBakingProduct.getEndProduct());
-        worker.hitBlockWithToolInHand(getOwnBuilding().getLocation());
+        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getLocation());
 
         if (progress >= getRequiredProgressForKneading())
         {
@@ -162,8 +165,8 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
                     InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), returnStack);
                 }
             }
-            worker.addExperience(XP_PER_PRODUCT);
-            incrementActionsDone();
+            worker.getCitizenExperienceHandler().addExperience(XP_PER_PRODUCT);
+            incrementActionsDoneAndDecSaturation();
             progress = 0;
             currentBakingProduct = null;
             return PREPARING;
@@ -182,7 +185,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     @Override
     public BuildingBaker getOwnBuilding()
     {
-        return (BuildingBaker) worker.getWorkBuilding();
+        return (BuildingBaker) worker.getCitizenColonyHandler().getWorkBuilding();
     }
 
     @Override
@@ -193,7 +196,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
     private int getRequiredProgressForKneading()
     {
-        return PROGRESS_MULTIPLIER / Math.min(worker.getLevel() + 1, MAX_LEVEL) * KNEADING_TIME;
+        return PROGRESS_MULTIPLIER / Math.min(worker.getCitizenExperienceHandler().getLevel() + 1, MAX_LEVEL) * KNEADING_TIME;
     }
 
     private AIState takeFromOven()
@@ -250,7 +253,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         }
 
         worker.setHeldItem(EnumHand.MAIN_HAND, storage.getInput().get(worker.getRandom().nextInt(storage.getInput().size())).copy());
-        worker.hitBlockWithToolInHand(getOwnBuilding().getLocation());
+        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getLocation());
 
         if (progress >= getRequiredProgressForKneading())
         {

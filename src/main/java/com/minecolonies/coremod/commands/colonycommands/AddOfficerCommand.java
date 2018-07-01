@@ -5,6 +5,8 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.minecolonies.coremod.commands.ActionMenuState;
+import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -18,18 +20,23 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.CommandConstants.*;
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.ADDOFFICER;
 
 /**
  * List all colonies.
  */
-public class AddOfficerCommand extends AbstractSingleCommand
+public class AddOfficerCommand extends AbstractSingleCommand implements IActionCommand
 {
+    public static final String DESC = "addOfficer";
 
-    public static final  String DESC            = "addOfficer";
-    private static final String SUCCESS_MESSAGE = "Succesfully added Player %s to colony %d";
-    private static final String COLONY_NULL     = "Couldn't find colony %d.";
-    private static final String NO_ARGUMENTS    = "Please define a colony or player";
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
+    public AddOfficerCommand()
+    {
+        super();
+    }
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -49,12 +56,20 @@ public class AddOfficerCommand extends AbstractSingleCommand
     }
 
     @Override
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
+    {
+        final Colony colony = actionMenuState.getColonyForArgument("colony");
+        final EntityPlayer player = actionMenuState.getPlayerForArgument("player");
+
+        executeShared(server, sender, colony, player.getName());
+    }
+
+    @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-
         if (args.length == 0)
         {
-            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.sendMessage(new TextComponentString(NO_COLONY_OR_PLAYER));
             return;
         }
 
@@ -66,7 +81,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
             final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
             if (colony == null)
             {
-                senderEntity.sendMessage(new TextComponentString(COLONY_NULL));
+                sender.sendMessage(new TextComponentString(COLONY_X_NULL));
                 return;
             }
             colonyId = colony.getID();
@@ -76,18 +91,8 @@ public class AddOfficerCommand extends AbstractSingleCommand
 
         if (colony == null)
         {
-            sender.sendMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
+            sender.sendMessage(new TextComponentString(String.format(COLONY_X_NULL, colonyId)));
             return;
-        }
-
-        if (senderEntity instanceof EntityPlayer)
-        {
-            final EntityPlayer player = (EntityPlayer) sender;
-            if (!canPlayerUseCommand(player, ADDOFFICER, colonyId))
-            {
-                senderEntity.sendMessage(new TextComponentString(NOT_PERMITTED));
-                return;
-            }
         }
 
         String playerName = null;
@@ -101,17 +106,34 @@ public class AddOfficerCommand extends AbstractSingleCommand
             playerName = sender.getName();
         }
 
+        executeShared(server, sender, colony, playerName);
+    }
+
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final Colony colony, final String playerName)
+            throws CommandException
+    {
+        final Entity senderEntity = sender.getCommandSenderEntity();
+        if (senderEntity instanceof EntityPlayer)
+        {
+            final EntityPlayer senderPlayer = (EntityPlayer) sender;
+            if (!canPlayerUseCommand(senderPlayer, ADDOFFICER, colony.getID()))
+            {
+                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
+                return;
+            }
+        }
+
         colony.getPermissions().addPlayer(playerName, Rank.OFFICER, colony.getWorld());
-        sender.sendMessage(new TextComponentString(String.format(SUCCESS_MESSAGE, playerName, colonyId)));
+        sender.sendMessage(new TextComponentString(String.format(SUCCESS_MESSAGE_ADD_OFFICER, playerName, colony.getID())));
     }
 
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
-                                                 @NotNull final MinecraftServer server,
-                                                 @NotNull final ICommandSender sender,
-                                                 @NotNull final String[] args,
-                                                 @Nullable final BlockPos pos)
+            @NotNull final MinecraftServer server,
+            @NotNull final ICommandSender sender,
+            @NotNull final String[] args,
+            @Nullable final BlockPos pos)
     {
         return Collections.emptyList();
     }

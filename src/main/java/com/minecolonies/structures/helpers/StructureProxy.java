@@ -16,9 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.Constants.ROTATE_ONCE;
-import static com.minecolonies.api.util.constant.Constants.ROTATE_THREE_TIMES;
-import static com.minecolonies.api.util.constant.Constants.ROTATE_TWICE;
+import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
  * Proxy class translating the structures method to something we can use.
@@ -289,12 +287,15 @@ public class StructureProxy
                 offset = info.pos.add(minX, minY, minZ);
             }
 
-            if(info.tileentityData != null)
+            if (info.tileentityData != null)
             {
                 final TileEntity entity = TileEntity.create(world, info.tileentityData);
-                entity.rotate(rotation);
-                entity.mirror(mirror);
-                this.blocks[x][y][z] = new Template.BlockInfo(info.pos, info.blockState, entity.writeToNBT(new NBTTagCompound()));
+                if (entity != null)
+                {
+                    entity.rotate(rotation);
+                    entity.mirror(mirror);
+                    this.blocks[x][y][z] = new Template.BlockInfo(info.pos, info.blockState, entity.writeToNBT(new NBTTagCompound()));
+                }
             }
         }
 

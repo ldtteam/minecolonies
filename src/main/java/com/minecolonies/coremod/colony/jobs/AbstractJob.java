@@ -57,6 +57,8 @@ public abstract class AbstractJob
     private static final String MAPPING_SWINE_HERDER   = "SwineHerder";
     private static final String MAPPING_CHICKEN_HERDER = "ChickenHerder";
     private static final String MAPPING_SMELTER        = "Smelter";
+    private static final String MAPPING_RANGER         = "Ranger";
+    private static final String MAPPING_KNIGHT         = "Knight";
 
     /**
      * The priority assigned with every main AI job.
@@ -78,7 +80,6 @@ public abstract class AbstractJob
         addMapping(MAPPING_LUMBERJACK, JobLumberjack.class);
         addMapping(MAPPING_FARMER, JobFarmer.class);
         addMapping(MAPPING_FISHERMAN, JobFisherman.class);
-        addMapping(MAPPING_TOWER_GUARD, JobGuard.class);
         addMapping(MAPPING_BAKER, JobBaker.class);
         addMapping(MAPPING_COOK, JobCook.class);
         addMapping(MAPPING_SHEPHERD, JobShepherd.class);
@@ -86,6 +87,8 @@ public abstract class AbstractJob
         addMapping(MAPPING_SWINE_HERDER, JobSwineHerder.class);
         addMapping(MAPPING_CHICKEN_HERDER, JobChickenHerder.class);
         addMapping(MAPPING_SMELTER, JobSmelter.class);
+        addMapping(MAPPING_RANGER, JobRanger.class);
+        addMapping(MAPPING_KNIGHT, JobKnight.class);
     }
 
     /**
@@ -228,7 +231,7 @@ public abstract class AbstractJob
     }
 
     /**
-     * Get the Colony that this Job is associated with (shortcut for getCitizen().getColony()).
+     * Get the Colony that this Job is associated with (shortcut for getAssignedCitizen().getColony()).
      *
      * @return {@link Colony} of the citizen.
      */

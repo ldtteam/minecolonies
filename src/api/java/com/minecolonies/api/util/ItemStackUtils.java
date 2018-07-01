@@ -1,6 +1,7 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.entity.Entity;
@@ -14,9 +15,7 @@ import net.minecraft.item.*;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityFlowerPot;
-import net.minecraft.tileentity.TileEntityLockable;
+import net.minecraft.tileentity.*;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.Template;
@@ -113,13 +112,24 @@ public final class ItemStackUtils
             for (int i = 0; i < ((TileEntityLockable) tileEntity).getSizeInventory(); i++)
             {
                 final ItemStack stack = ((TileEntityLockable) tileEntity).getStackInSlot(i);
-                if (stack != null)
+                if (!ItemStackUtils.isEmpty(stack))
                 {
                     items.add(stack);
                 }
             }
         }
-
+        else if(tileEntity != null && ChiselAndBitsCheck.isChiselAndBitsTileEntity(tileEntity))
+        {
+            items.addAll(ChiselAndBitsCheck.getBitStacks(tileEntity));
+        }
+        else if(tileEntity instanceof TileEntityBed)
+        {
+            items.add(new ItemStack(Items.BED, 1, ((TileEntityBed) tileEntity).getColor().getMetadata()));
+        }
+        else if(tileEntity instanceof TileEntityBanner)
+        {
+            items.add(((TileEntityBanner)tileEntity).getItem());
+        }
         return items;
     }
 
@@ -146,8 +156,12 @@ public final class ItemStackUtils
 
     /**
      * Adds entities to the builder building if he needs it.
+     * @param entityInfo the entity info object.
+     * @param world the world.
+     * @param placer the entity placer.
+     * @return a list of stacks.
      */
-    public static List<ItemStack> getListOfStackForEntity(final Template.EntityInfo entityInfo, final World world, final Entity placer)
+    public static List<ItemStack> getListOfStackForEntityInfo(final Template.EntityInfo entityInfo, final World world, final Entity placer)
     {
         if (entityInfo != null)
         {
@@ -155,30 +169,45 @@ public final class ItemStackUtils
 
             if (entity != null)
             {
-                final List<ItemStack> request = new ArrayList<>();
-                if (entity instanceof EntityItemFrame)
-                {
-                    final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
-                    if (!ItemStackUtils.isEmpty(stack))
-                    {
-                        ItemStackUtils.setSize(stack, 1);
-                        request.add(stack);
-                    }
-                    request.add(new ItemStack(Items.ITEM_FRAME, 1));
-                }
-                else if (entity instanceof EntityArmorStand)
-                {
-                    request.add(entity.getPickedResult(new RayTraceResult(placer)));
-                    entity.getArmorInventoryList().forEach(request::add);
-                    entity.getHeldEquipment().forEach(request::add);
-                }
-                else if (!(entity instanceof EntityMob))
-                {
-                    request.add(entity.getPickedResult(new RayTraceResult(placer)));
-                }
-
-                return request;
+                return getListOfStackForEntity(entity, placer);
             }
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Adds entities to the builder building if he needs it.
+     * @param entity the entity object.
+     * @param placer the entity placer.
+     * @return a list of stacks.
+     */
+    public static List<ItemStack> getListOfStackForEntity(final Entity entity, final Entity placer)
+    {
+        if (entity != null)
+        {
+            final List<ItemStack> request = new ArrayList<>();
+            if (entity instanceof EntityItemFrame)
+            {
+                final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
+                if (!ItemStackUtils.isEmpty(stack))
+                {
+                    ItemStackUtils.setSize(stack, 1);
+                    request.add(stack);
+                }
+                request.add(new ItemStack(Items.ITEM_FRAME, 1));
+            }
+            else if (entity instanceof EntityArmorStand)
+            {
+                request.add(entity.getPickedResult(new RayTraceResult(placer)));
+                entity.getArmorInventoryList().forEach(request::add);
+                entity.getHeldEquipment().forEach(request::add);
+            }
+            else if (!(entity instanceof EntityMob))
+            {
+                request.add(entity.getPickedResult(new RayTraceResult(placer)));
+            }
+
+            return request;
         }
         return Collections.emptyList();
     }

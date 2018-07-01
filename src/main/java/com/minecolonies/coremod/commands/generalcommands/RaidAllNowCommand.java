@@ -3,6 +3,8 @@ package com.minecolonies.coremod.commands.generalcommands;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.minecolonies.coremod.commands.ActionMenuState;
+import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -19,11 +21,19 @@ import java.util.List;
 /**
  * Created by Asher on 19/7/17.
  */
-public class RaidAllNowCommand extends AbstractSingleCommand
+public class RaidAllNowCommand extends AbstractSingleCommand implements IActionCommand
 {
 
     public static final  String              DESC       = "raid-now";
     private static final TextComponentString SUCCESSFUL = new TextComponentString("Command Successful");
+
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
+    public RaidAllNowCommand()
+    {
+        super();
+    }
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -42,8 +52,18 @@ public class RaidAllNowCommand extends AbstractSingleCommand
         return super.getCommandUsage(sender) + "<ColonyId>";
     }
 
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
+    {
+        executeShared(server, sender);
+    }
+
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    {
+        executeShared(server, sender);
+    }
+
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender) throws CommandException
     {
         if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
         {

@@ -6,6 +6,11 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.*;
+import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.network.messages.ColonyViewBuildingViewMessage;
@@ -83,7 +88,7 @@ public class BuildingManager implements IBuildingManager
         for (int i = 0; i < buildingTagList.tagCount(); ++i)
         {
             final NBTTagCompound buildingCompound = buildingTagList.getCompoundTagAt(i);
-            @Nullable final AbstractBuilding b = AbstractBuilding.createFromNBT(colony, buildingCompound);
+            @Nullable final AbstractBuilding b = BuildingRegistry.createFromNBT(colony, buildingCompound);
             if (b != null)
             {
                 addBuilding(b);
@@ -99,7 +104,6 @@ public class BuildingManager implements IBuildingManager
                 addField(BlockPosUtil.readFromNBT(fieldTagList.getCompoundTagAt(i), TAG_POS));
             }
         }
-
     }
 
     @Override
@@ -157,7 +161,10 @@ public class BuildingManager implements IBuildingManager
         //  Tick Buildings
         for (@NotNull final AbstractBuilding building : buildings.values())
         {
-            building.onWorldTick(event);
+            if (event.world.isBlockLoaded(building.getLocation()))
+            {
+                building.onWorldTick(event);
+            }
         }
     }
 
@@ -172,7 +179,7 @@ public class BuildingManager implements IBuildingManager
     {
         @Nullable final List<AbstractBuilding> removedBuildings = new ArrayList<>();
 
-        //Need this list, we may enter he while we add a building in the real world.
+        //Need this list, we may enter here while we add a building in the real world.
         final List<AbstractBuilding> tempBuildings = new ArrayList<>(buildings.values());
 
         for (@NotNull final AbstractBuilding building : tempBuildings)
@@ -290,7 +297,7 @@ public class BuildingManager implements IBuildingManager
         tileEntity.setColony(colony);
         if (!buildings.containsKey(tileEntity.getPosition()))
         {
-            @Nullable final AbstractBuilding building = AbstractBuilding.create(colony, tileEntity);
+            @Nullable final AbstractBuilding building = BuildingRegistry.create(colony, tileEntity);
             if (building != null)
             {
                 addBuilding(building);
@@ -378,7 +385,7 @@ public class BuildingManager implements IBuildingManager
     {
         double distance = Double.MAX_VALUE;
         BlockPos goodCook = null;
-        for (final AbstractBuilding building : citizen.getColony().getBuildingManager().getBuildings().values())
+        for (final AbstractBuilding building : citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values())
         {
             if (building instanceof BuildingCook && building.getBuildingLevel() > 0)
             {
@@ -391,6 +398,18 @@ public class BuildingManager implements IBuildingManager
             }
         }
         return goodCook;
+    }
+
+    @Override
+    public void setTownHall(@Nullable final BuildingTownHall building)
+    {
+        this.townHall = building;
+    }
+
+    @Override
+    public void setWareHouse(@Nullable final BuildingWareHouse building)
+    {
+        this.wareHouse = building;
     }
 
     /**

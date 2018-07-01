@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.HappinessData;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -59,14 +60,6 @@ public interface ICitizenManager
      * @return CitizenData associated with the ID, or null if it was not found.
      */
     CitizenData getCitizen(final int citizenId);
-
-    /**
-     * Spawn a citizen if his entity is null.
-     *
-     * @param data Data to use to spawn citizen.
-     * @param world the world to spawn it in.
-     */
-    void spawnCitizenIfNull(@Nullable final CitizenData data, @Nullable final World world);
 
     /**
      * Spawn a citizen with specific citizen data.

@@ -9,9 +9,10 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.BuildingBarracksTower;
-import com.minecolonies.coremod.colony.buildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.managers.ICitizenManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
@@ -20,6 +21,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -27,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -49,72 +52,89 @@ public class CitizenData
     /**
      * Tags.
      */
-    private static final String TAG_ID                  = "id";
-    private static final String TAG_NAME                = "name";
-    private static final String TAG_FEMALE              = "female";
-    private static final String TAG_TEXTURE             = "texture";
-    private static final String TAG_LEVEL               = "level";
-    private static final String TAG_EXPERIENCE          = "experience";
-    private static final String TAG_HEALTH              = "health";
-    private static final String TAG_MAX_HEALTH          = "maxHealth";
-    private static final String TAG_SKILLS              = "skills";
-    private static final String TAG_SKILL_STRENGTH      = "strength";
-    private static final String TAG_SKILL_STAMINA       = "endurance";
-    private static final String TAG_SKILL_SPEED         = "charisma";
-    private static final String TAG_SKILL_INTELLIGENCE  = "intelligence";
-    private static final String TAG_SKILL_DEXTERITY     = "dexterity";
-    private static final String TAG_SATURATION          = "saturation";
-    private static final String TAG_HELD_ITEM_SLOT      = "HeldItemSlot";
-    private static final String TAG_INVENTORY           = "inventory";
+    private static final String TAG_ID                     = "id";
+    private static final String TAG_NAME                   = "name";
+    private static final String TAG_FEMALE                 = "female";
+    private static final String TAG_TEXTURE                = "texture";
+    private static final String TAG_LEVEL                  = "level";
+    private static final String TAG_EXPERIENCE             = "experience";
+    private static final String TAG_HEALTH                 = "health";
+    private static final String TAG_MAX_HEALTH             = "maxHealth";
+    private static final String TAG_SKILLS                 = "skills";
+    private static final String TAG_SKILL_STRENGTH         = "strength";
+    private static final String TAG_SKILL_STAMINA          = "endurance";
+    private static final String TAG_SKILL_SPEED            = "charisma";
+    private static final String TAG_SKILL_INTELLIGENCE     = "intelligence";
+    private static final String TAG_SKILL_DEXTERITY        = "dexterity";
+    private static final String TAG_SATURATION             = "saturation";
+    private static final String TAG_HELD_ITEM_SLOT         = "HeldItemSlot";
+    private static final String TAG_OFFHAND_HELD_ITEM_SLOT = "OffhandHeldItemSlot";
+    private static final String TAG_INVENTORY              = "inventory";
 
     /**
      * Minimum saturation of a citizen.
      */
     private static final int MIN_SATURATION = 0;
+
     /**
      * The unique citizen id.
      */
     private final int                          id;
+
     /**
      * The colony the citizen belongs to.
      */
     private final Colony                       colony;
+
+
+    /**
+     * Inventory of the citizen.
+     */
     private final InventoryCitizen             inventory;
+
     /**
      * The name of the citizen.
      */
     private       String                       name;
+
     /**
      * Boolean gender, true = female, false = male.
      */
     private       boolean                      female;
+
     /**
      * The id of the citizens texture.
      */
     private       int                          textureId;
+
     /**
      * The home building of the citizen.
      */
     @Nullable
     private       AbstractBuilding             homeBuilding;
+
     /**
      * The work building of the citizen.
      */
     @Nullable
     private       AbstractBuildingWorker       workBuilding;
+
     /**
      * The job of the citizen.
      */
     private       AbstractJob                  job;
+
     /**
      * If the citizen is dirty (Has to be updated on client side).
      */
     private       boolean                      dirty;
+
     /**
      * Its entitity.
      */
     @NotNull
     private       WeakReference<EntityCitizen> entity;
+
     /**
      * Attributes, which influence the workers behaviour.
      * May be added more later.
@@ -142,6 +162,11 @@ public class CitizenData
      * This also includes the amount of experience within their Experience Bar.
      */
     private double experience;
+
+    /**
+     * The last position of the citizen.
+     */
+    private BlockPos lastPosition = new BlockPos(0, 0, 0);
 
     /**
      * Create a CitizenData given an ID.
@@ -207,7 +232,8 @@ public class CitizenData
         {
             final NBTTagList nbttaglist = compound.getTagList(TAG_INVENTORY, 10);
             this.inventory.readFromNBT(nbttaglist);
-            this.inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
+            this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInteger(TAG_HELD_ITEM_SLOT));
+            this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInteger(TAG_OFFHAND_HELD_ITEM_SLOT));
         }
     }
 
@@ -245,8 +271,6 @@ public class CitizenData
         {
             entity = new WeakReference<>(citizen);
         }
-
-        markDirty();
     }
 
     /**
@@ -446,20 +470,39 @@ public class CitizenData
     private String generateName(@NotNull final Random rand)
     {
         String citizenName;
+        final String firstName;
+        final String middleInitial;
+        final String lastName;
+
         if (female)
         {
-            citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.names.femaleFirstNames), getRandomLetter(rand),
-              getRandomElement(rand, Configurations.names.lastNames));
+            firstName = getRandomElement(rand, Configurations.names.femaleFirstNames);
         }
         else
         {
-            citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.names.maleFirstNames), getRandomLetter(rand),
-              getRandomElement(rand, Configurations.names.lastNames));
+            firstName = getRandomElement(rand, Configurations.names.maleFirstNames);
         }
+
+        middleInitial = String.valueOf(getRandomLetter(rand));
+        lastName = getRandomElement(rand, Configurations.names.lastNames);
+
+        if (Configurations.names.useMiddleInitial)
+        {
+            citizenName = String.format("%s %s. %s", firstName, middleInitial, lastName);
+        }
+        else
+        {
+            citizenName = String.format("%s %s", firstName, lastName);
+        }
+
+        // Check whether there's already a citizen with this name
+        final ICitizenManager manager = this.getColony().getCitizenManager();
         for (int i = 1; i <= this.getColony().getCitizenManager().getMaxCitizens(); i++)
         {
-            if (this.getColony().getCitizenManager().getCitizen(i) != null && this.getColony().getCitizenManager().getCitizen(i).getName().equals(citizenName))
+            final CitizenData citizen = manager.getCitizen(i);
+            if (citizen != null && citizen.getName().equals(citizenName))
             {
+                // Oops - recurse this function and try again
                 citizenName = generateName(rand);
             }
         }
@@ -642,35 +685,42 @@ public class CitizenData
      */
     public void updateCitizenEntityIfNecessary()
     {
-        if (!getCitizenEntity().isPresent())
+        final List<EntityCitizen> list = colony.getWorld()
+                .getEntities(EntityCitizen.class,
+                        entityCitizen -> entityCitizen.getCitizenColonyHandler().getColonyId() == colony.getID() && entityCitizen.getCitizenData().getId() == getId());
+
+        if (!list.isEmpty())
         {
-            //The current citizen entity seems to be gone (either on purpose or the game unloaded the entity)
-            //No biggy lets respawn an entity.
-            colony.getCitizenManager().spawnCitizen(this, colony.getWorld());
-
-            //Since we might have respawned an entity in an unloaded chunk (Townhall is not loaded)
-            //We check if we created one or not.
-            getCitizenEntity().ifPresent(entityCitizen -> {
-
-                BlockPos location = null;
-                if (getWorkBuilding() == null)
-                {
-                    if (colony.hasTownHall())
-                    {
-                        location = colony.getBuildingManager().getTownHall().getLocation();
-                    }
-                }
-                else
-                {
-                    location = getWorkBuilding().getLocation();
-                }
-
-                if (location != null)
-                {
-                    TeleportHelper.teleportCitizen(entityCitizen, colony.getWorld(), location);
-                }
-            });
+            setCitizenEntity(list.get(0));
+            return;
         }
+
+        //The current citizen entity seems to be gone (either on purpose or the game unloaded the entity)
+        //No biggy lets respawn an entity.
+        colony.getCitizenManager().spawnCitizen(this, colony.getWorld());
+
+        //Since we might have respawned an entity in an unloaded chunk (Townhall is not loaded)
+        //We check if we created one or not.
+        getCitizenEntity().ifPresent(entityCitizen -> {
+
+            BlockPos location = null;
+            if (getWorkBuilding() == null)
+            {
+                if (colony.hasTownHall())
+                {
+                    location = colony.getBuildingManager().getTownHall().getLocation();
+                }
+            }
+            else
+            {
+                location = getWorkBuilding().getLocation();
+            }
+
+            if (location != null)
+            {
+                TeleportHelper.teleportCitizen(entityCitizen, colony.getWorld(), location);
+            }
+        });
     }
 
     /**
@@ -692,7 +742,7 @@ public class CitizenData
     {
         this.job = job;
 
-        getCitizenEntity().ifPresent(entityCitizen -> entityCitizen.onJobChanged(job));
+        getCitizenEntity().ifPresent(entityCitizen -> entityCitizen.getCitizenJobHandler().onJobChanged(job));
 
         markDirty();
     }
@@ -751,7 +801,8 @@ public class CitizenData
         }
 
         compound.setTag(TAG_INVENTORY, inventory.writeToNBT(new NBTTagList()));
-        compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot());
+        compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.MAIN_HAND));
+        compound.setInteger(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.OFF_HAND));
         return compound;
     }
 
@@ -813,10 +864,10 @@ public class CitizenData
     private void writeStatusToBuffer(@NotNull final ByteBuf buf)
     {
         final Optional<EntityCitizen> optionalEntityCitizen = getCitizenEntity();
-        buf.writeInt(optionalEntityCitizen.map(entityCitizen -> entityCitizen.getLatestStatus().length).orElse(0));
+        buf.writeInt(optionalEntityCitizen.map(entityCitizen -> entityCitizen.getCitizenStatusHandler().getLatestStatus().length).orElse(0));
 
         optionalEntityCitizen.ifPresent(entityCitizen -> {
-            final ITextComponent[] latestStatus = entityCitizen.getLatestStatus();
+            final ITextComponent[] latestStatus = entityCitizen.getCitizenStatusHandler().getLatestStatus();
             for (int i = 0; i < latestStatus.length; i++)
             {
                 ByteBufUtils.writeUTF8String(buf, latestStatus[i] == null ? "" : latestStatus[i].getUnformattedText());
@@ -941,6 +992,24 @@ public class CitizenData
     public int getDexterity()
     {
         return dexterity;
+    }
+
+    /**
+     * Set the last position of the citizen.
+     * @param lastPosition the last position.
+     */
+    public void setLastPosition(final BlockPos lastPosition)
+    {
+        this.lastPosition = lastPosition;
+    }
+
+    /**
+     * Get the last position of the citizen.
+     * @return the last position.
+     */
+    public BlockPos getLastPosition()
+    {
+        return lastPosition;
     }
 
     /**

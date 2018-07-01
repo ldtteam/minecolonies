@@ -5,7 +5,6 @@ import com.minecolonies.coremod.commands.AbstractSplitCommand;
 import com.minecolonies.coremod.commands.ColonyCommand;
 import com.minecolonies.coremod.commands.ISubCommand;
 import com.minecolonies.coremod.commands.MinecoloniesCommand;
-import com.minecolonies.coremod.commands.colonycommands.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;

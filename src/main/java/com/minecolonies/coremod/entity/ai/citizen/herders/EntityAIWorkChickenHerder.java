@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.herders;
 
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingChickenHerder;
 import com.minecolonies.coremod.colony.jobs.JobChickenHerder;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.init.Items;
@@ -25,6 +26,12 @@ public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChicken
     public EntityAIWorkChickenHerder(@NotNull final JobChickenHerder job)
     {
         super(job);
+    }
+
+    @Override
+    public Class getExpectedBuildingClass()
+    {
+        return BuildingChickenHerder.class;
     }
 
     @Override

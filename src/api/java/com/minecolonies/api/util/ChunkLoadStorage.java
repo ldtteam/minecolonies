@@ -182,8 +182,11 @@ public class ChunkLoadStorage
      */
     public void applyToCap(final IColonyTagCapability cap)
     {
-        cap.setOwningColony(this.colonyId);
-
+        if(this.getColonyId() > 0)
+        {
+            cap.setOwningColony(this.colonyId);
+        }
+        
         for(final int tempColonyId: coloniesToAdd)
         {
             cap.addColony(tempColonyId);
@@ -240,6 +243,9 @@ public class ChunkLoadStorage
             }
         }
 
-        this.colonyId = newStorage.getColonyId();
+        if(newStorage.getColonyId() > 0 || !newStorage.coloniesToRemove.isEmpty())
+        {
+            this.colonyId = newStorage.getColonyId();
+        }
     }
 }

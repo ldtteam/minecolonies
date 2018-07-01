@@ -4,7 +4,7 @@ import com.minecolonies.api.entity.ai.pathfinding.AbstractWalkToProxy;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.BuildingMiner;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -42,25 +42,25 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
     @Override
     public Set<BlockPos> getWayPoints()
     {
-        if (citizen.getColony() == null)
+        if (citizen.getCitizenColonyHandler().getColony() == null)
         {
             return Collections.emptySet();
         }
 
-        return citizen.getColony().getWayPoints().keySet();
+        return citizen.getCitizenColonyHandler().getColony().getWayPoints().keySet();
     }
 
     @Override
     public boolean careAboutY()
     {
-        return citizen.getColonyJob() instanceof JobBuilder;
+        return citizen.getCitizenJobHandler().getColonyJob() instanceof JobBuilder;
     }
 
     @Override
     public BlockPos getSpecializedProxy(final BlockPos target, final double distanceToPath)
     {
-        final AbstractBuildingWorker building = citizen.getWorkBuilding();
-        if (citizen.getColonyJob() != null && citizen.getColonyJob() instanceof JobMiner && building instanceof BuildingMiner)
+        final AbstractBuildingWorker building = citizen.getCitizenColonyHandler().getWorkBuilding();
+        if (citizen.getCitizenJobHandler().getColonyJob() != null && citizen.getCitizenJobHandler().getColonyJob() instanceof JobMiner && building instanceof BuildingMiner)
         {
             return getMinerProxy(target, distanceToPath, (BuildingMiner) building);
         }
@@ -90,9 +90,9 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
             //Check if miner is underground in shaft and his target is overground.
             if (workerY <= levelDepth && targetY > levelDepth)
             {
-                if (level.getRandomNode() != null && level.getRandomNode().getParent() != null)
+                if (building.getActiveNode() != null && building.getActiveNode().getParent() != null)
                 {
-                    com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(level.getRandomNode().getParent());
+                    com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(building.getActiveNode().getParent());
                     while (new Vec2i(currentNode.getX(), currentNode.getZ()).equals(currentNode.getParent()) && currentNode.getParent() != null)
                     {
                         addToProxyList(new BlockPos(currentNode.getX(), levelDepth, currentNode.getZ()));
@@ -126,9 +126,9 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                                 level.getDepth(),
                                 ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
 
-                if (level.getRandomNode() != null && level.getRandomNode().getParent() != null)
+                if (building.getActiveNode() != null && building.getActiveNode().getParent() != null)
                 {
-                    calculateNodes(level, levelDepth);
+                    calculateNodes(level, levelDepth, building);
                 }
 
                 return newProxy;
@@ -158,9 +158,9 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                     }
                 }
 
-                if (level.getRandomNode().getParent() != null)
+                if (building.getActiveNode().getParent() != null)
                 {
-                    calculateNodes(level, levelDepth);
+                    calculateNodes(level, levelDepth, building);
                 }
 
                 if (!getProxyList().isEmpty())
@@ -174,10 +174,10 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
         return getProxy(target, citizen.getPosition(), distanceToPath);
     }
 
-    private void calculateNodes(final Level level, final int levelDepth)
+    private void calculateNodes(final Level level, final int levelDepth, final BuildingMiner buildingMiner)
     {
         final List<BlockPos> nodesToTarget = new ArrayList<>();
-        com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(level.getRandomNode().getParent());
+        com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(buildingMiner.getActiveNode().getParent());
         while (new Vec2i(currentNode.getX(), currentNode.getZ()).equals(currentNode.getParent()) && currentNode.getParent() != null)
         {
             nodesToTarget.add(new BlockPos(currentNode.getX(), levelDepth, currentNode.getZ()));

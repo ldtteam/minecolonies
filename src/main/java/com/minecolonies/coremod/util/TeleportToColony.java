@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -92,7 +92,7 @@ public final class TeleportToColony
             teleportPlayer(playerToTeleport, colonyId, sender);
             return;
         }
-        sender.getCommandSenderEntity().sendMessage(new TextComponentString("Please wait at least " + Configurations.gameplay.teleportBuffer + " seconds to teleport again"));
+        sender.sendMessage(new TextComponentString("Please wait at least " + Configurations.gameplay.teleportBuffer + " seconds to teleport again"));
     }
 
     /**
@@ -112,8 +112,6 @@ public final class TeleportToColony
             return;
         }
 
-        playerToTeleport.sendMessage(new TextComponentString("We got places to go, kid..."));
-
         final BlockPos position = townHall.getLocation();
 
         final int dimension = playerToTeleport.getEntityWorld().provider.getDimension();
@@ -121,13 +119,14 @@ public final class TeleportToColony
 
         if (colID < MIN_COLONY_ID)
         {
-            playerToTeleport.sendMessage(new TextComponentString(CANT_FIND_COLONY));
+            sender.sendMessage(new TextComponentString(CANT_FIND_COLONY));
             return;
         }
 
         final EntityPlayerMP entityPlayerMP = (EntityPlayerMP) sender;
         if (dimension != colonyDimension)
         {
+            playerToTeleport.sendMessage(new TextComponentString("We got places to go, kid..."));
             playerToTeleport.sendMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
             final MinecraftServer server = sender.getEntityWorld().getMinecraftServer();
             final WorldServer worldServer = server.getWorld(colonyDimension);

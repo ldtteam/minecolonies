@@ -5,7 +5,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import com.minecolonies.coremod.blocks.RackType;
+import com.minecolonies.coremod.blocks.types.RackType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -305,6 +305,14 @@ public class TileEntityRack extends TileEntity
                 world.setBlockState(neighbor, typeNeighbor);
             }
         }
+        else if (!single && !main && world != null && neighbor != null)
+        {
+            final TileEntity entity = world.getTileEntity(getNeighbor());
+            if (entity instanceof TileEntityRack && !((TileEntityRack) entity).main)
+            {
+                this.main = true;
+            }
+        }
     }
 
     /**
@@ -314,7 +322,7 @@ public class TileEntityRack extends TileEntity
      */
     public TileEntityRack getOtherChest()
     {
-        if (neighbor.equals(BlockPos.ORIGIN))
+        if (neighbor.equals(BlockPos.ORIGIN) || world == null)
         {
             return null;
         }

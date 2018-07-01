@@ -54,25 +54,31 @@ public final class BarbarianSpawnUtils
     private static final int    PRIORITY_THREE              = 3;
     private static final int    PRIORITY_FOUR               = 4;
     private static final int    PRIORITY_FIVE               = 5;
+
     /**
      * Other various values used for AI Tasks.
      */
     private static final double AI_MOVE_SPEED               = 2.0D;
     private static final float  MAX_WATCH_DISTANCE          = 8.0F;
+
     /**
      * Values used for mob attributes.
      */
     private static final double FOLLOW_RANGE                = 35.0D;
-    private static final double MOVEMENT_SPEED              = 0.2D;
-    private static final double ARMOR                       = 2.0D;
+    private static final double MOVEMENT_SPEED              = 0.25D;
+    private static final double ARMOR                       = 1.5D;
+    private static final double CHIEF_ARMOR                 = 8D;
     private static final double BARBARIAN_BASE_HEALTH       = 10;
-    private static final double BARBARIAN_HEALTH_MULTIPLIER = 0.25;
+    private static final double BARBARIAN_HEALTH_MULTIPLIER = 0.2;
 
     /**
      * Private constructor to hide the implicit public one.
      */
     private BarbarianSpawnUtils()
     {
+        /**
+         * Intentionally left empty.
+         */
     }
 
     /**
@@ -86,7 +92,14 @@ public final class BarbarianSpawnUtils
         barbarian.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
         barbarian.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
         barbarian.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(ATTACK_DAMAGE);
-        barbarian.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(ARMOR);
+        if(barbarian instanceof EntityChiefBarbarian)
+        {
+            barbarian.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(CHIEF_ARMOR);
+        }
+        else
+        {
+            barbarian.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(ARMOR);
+        }
         barbarian.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getHealthBasedOnRaidLevel(colony));
     }
 
@@ -177,7 +190,6 @@ public final class BarbarianSpawnUtils
                 {
                     setBarbarianEquipment(entity);
                     entity.setPositionAndRotation(x, y + 1.0, z, (float) MathHelper.wrapDegrees(world.rand.nextDouble() * WHOLE_CIRCLE), 0.0F);
-                    entity.applyInternalEntityAttributes();
                     CompatibilityUtils.spawnEntity(world, entity);
                 }
             });

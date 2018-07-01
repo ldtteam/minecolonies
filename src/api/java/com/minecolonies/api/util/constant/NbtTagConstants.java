@@ -5,65 +5,66 @@ package com.minecolonies.api.util.constant;
  */
 public final class NbtTagConstants
 {
-    public static final String TAG_ID               = "id";
-    public static final String TAG_NAME             = "name";
-    public static final String TAG_DIMENSION        = "dimension";
-    public static final String TAG_CENTER           = "center";
-    public static final String TAG_MAX_CITIZENS     = "maxCitizens";
-    public static final String TAG_BUILDINGS        = "buildings";
-    public static final String TAG_CITIZENS         = "citizens";
-    public static final String TAG_ACHIEVEMENT      = "achievement";
-    public static final String TAG_ACHIEVEMENT_LIST = "achievementlist";
-    public static final String TAG_WORK             = "work";
-    public static final String TAG_MANUAL_HIRING    = "manualHiring";
-    public static final String TAG_MANUAL_HOUSING   = "manualHousing";
-    public static final String TAG_REQUESTMANAGER   = "requestManager";
-    public static final String TAG_WAYPOINT         = "waypoints";
-    public static final String TAG_FREE_BLOCKS      = "freeBlocks";
-    public static final String TAG_FREE_POSITIONS   = "freePositions";
-    public static final String TAG_HAPPINESS        = "happiness";
-    public static final String TAG_ABANDONED        = "abandoned";
-    public static final String TAG_BUILDING_PRIO    = "buildingPrio";
-    public static final String TAG_PRIO             = "prio";
-    public static final String TAG_PRIO_ID          = "prioId";
-    public static final String TAG_COLONIES         = "colonies";
-    public static final String TAG_UUID             = "uuid";
-    public static final String TAG_STATISTICS            = "statistics";
-    public static final String TAG_MINER_STATISTICS      = "minerStatistics";
-    public static final String TAG_MINER_ORES            = "ores";
-    public static final String TAG_MINER_DIAMONDS        = "diamonds";
-    public static final String TAG_FARMER_STATISTICS     = "farmerStatistics";
-    public static final String TAG_FARMER_WHEAT          = "wheat";
-    public static final String TAG_FARMER_POTATOES       = "potatoes";
-    public static final String TAG_FARMER_CARROTS        = "carrots";
-    public static final String TAG_GUARD_STATISTICS      = "guardStatistics";
-    public static final String TAG_GUARD_MOBS            = "mobs";
-    public static final String TAG_BUILDER_STATISTICS    = "builderStatistics";
-    public static final String TAG_BUILDER_HUTS          = "huts";
-    public static final String TAG_FISHERMAN_STATISTICS  = "fishermanStatistics";
-    public static final String TAG_FISHERMAN_FISH        = "fish";
-    public static final String TAG_LUMBERJACK_STATISTICS = "lumberjackStatistics";
-    public static final String TAG_LUMBERJACK_TREES      = "trees";
-    public static final String TAG_LUMBERJACK_SAPLINGS   = "saplings";
-    public static final String TAG_FIELDS                = "fields";
-    public static final String TAG_NEW_FIELDS            = "newFields";
-    public static final String TAG_COMPATABILITY_MANAGER = "compatabilityManager";
-    public static final String TAG_SAPLINGS              = "tagSaplings";
-    public static final String TAG_SAP_LEAVE             = "tagSapLeaves";
-    public static final String TAG_ORES                  = "tagOres";
-    public static final String TAG_BLOCK                 = "block";
-    public static final String TAG_POS                   = "pos";
-    public static final String TAG_BUILDING_MANAGER      = "buildingManager";
-    public static final String TAG_CITIZEN_MANAGER       = "citizenManager";
-    public static final String TAG_STATS_MANAGER         = "statsManager";
-    public static final String TAG_COLONY_ID             = "colony";
-    public static final String TAG_CITIZEN               = "citizen";
-    public static final String TAG_HELD_ITEM_SLOT        = "HeldItemSlot";
-    public static final String TAG_STATUS                = "status";
-    public static final String TAG_LAST_JOB              = "lastJob";
-    public static final String TAG_DAY                   = "day";
-    public static final String OWNED_CHUNKS_TO_LOAD_TAG  = "ownedChunks";
-    public static final String CLOSE_CHUNKS_TO_LOAD_TAG  = "closeChunks";
+    public static final String TAG_ID                     = "id";
+    public static final String TAG_NAME                   = "name";
+    public static final String TAG_DIMENSION              = "dimension";
+    public static final String TAG_CENTER                 = "center";
+    public static final String TAG_MAX_CITIZENS           = "maxCitizens";
+    public static final String TAG_BUILDINGS              = "buildings";
+    public static final String TAG_CITIZENS               = "citizens";
+    public static final String TAG_ACHIEVEMENT            = "achievement";
+    public static final String TAG_ACHIEVEMENT_LIST       = "achievementlist";
+    public static final String TAG_WORK                   = "work";
+    public static final String TAG_MANUAL_HIRING          = "manualHiring";
+    public static final String TAG_MANUAL_HOUSING         = "manualHousing";
+    public static final String TAG_REQUESTMANAGER         = "requestManager";
+    public static final String TAG_WAYPOINT               = "waypoints";
+    public static final String TAG_FREE_BLOCKS            = "freeBlocks";
+    public static final String TAG_FREE_POSITIONS         = "freePositions";
+    public static final String TAG_HAPPINESS              = "happiness";
+    public static final String TAG_ABANDONED              = "abandoned";
+    public static final String TAG_BUILDING_PRIO          = "buildingPrio";
+    public static final String TAG_PRIO                   = "prio";
+    public static final String TAG_PRIO_ID                = "prioId";
+    public static final String TAG_COLONIES               = "colonies";
+    public static final String TAG_UUID                   = "uuid";
+    public static final String TAG_STATISTICS             = "statistics";
+    public static final String TAG_MINER_STATISTICS       = "minerStatistics";
+    public static final String TAG_MINER_ORES             = "ores";
+    public static final String TAG_MINER_DIAMONDS         = "diamonds";
+    public static final String TAG_FARMER_STATISTICS      = "farmerStatistics";
+    public static final String TAG_FARMER_WHEAT           = "wheat";
+    public static final String TAG_FARMER_POTATOES        = "potatoes";
+    public static final String TAG_FARMER_CARROTS         = "carrots";
+    public static final String TAG_GUARD_STATISTICS       = "guardStatistics";
+    public static final String TAG_GUARD_MOBS             = "mobs";
+    public static final String TAG_BUILDER_STATISTICS     = "builderStatistics";
+    public static final String TAG_BUILDER_HUTS           = "huts";
+    public static final String TAG_FISHERMAN_STATISTICS   = "fishermanStatistics";
+    public static final String TAG_FISHERMAN_FISH         = "fish";
+    public static final String TAG_LUMBERJACK_STATISTICS  = "lumberjackStatistics";
+    public static final String TAG_LUMBERJACK_TREES       = "trees";
+    public static final String TAG_LUMBERJACK_SAPLINGS    = "saplings";
+    public static final String TAG_FIELDS                 = "fields";
+    public static final String TAG_NEW_FIELDS             = "newFields";
+    public static final String TAG_COMPATABILITY_MANAGER  = "compatabilityManager";
+    public static final String TAG_SAPLINGS               = "tagSaplings";
+    public static final String TAG_SAP_LEAVE              = "tagSapLeaves";
+    public static final String TAG_ORES                   = "tagOres";
+    public static final String TAG_BLOCK                  = "block";
+    public static final String TAG_POS                    = "pos";
+    public static final String TAG_BUILDING_MANAGER       = "buildingManager";
+    public static final String TAG_CITIZEN_MANAGER        = "citizenManager";
+    public static final String TAG_STATS_MANAGER          = "statsManager";
+    public static final String TAG_COLONY_ID              = "colony";
+    public static final String TAG_CITIZEN                = "citizen";
+    public static final String TAG_HELD_ITEM_SLOT         = "HeldItemSlot";
+    public static final String TAG_OFFHAND_HELD_ITEM_SLOT = "OffhandHeldItemSlot";
+    public static final String TAG_STATUS                 = "status";
+    public static final String TAG_LAST_JOB               = "lastJob";
+    public static final String TAG_DAY                    = "day";
+    public static final String OWNED_CHUNKS_TO_LOAD_TAG   = "ownedChunks";
+    public static final String CLOSE_CHUNKS_TO_LOAD_TAG   = "closeChunks";
 
     /**
      * Tag used to store the containers to NBT.
@@ -114,7 +115,7 @@ public final class NbtTagConstants
     /**
      * Tag to store if auto deletable to a colony.
      */
-    public static final String TAG_AUTO_DELETE ="autoDelete";
+    public static final String TAG_AUTO_DELETE = "autoDelete";
 
     /**
      * The tag to store the requester Id of the Building.
@@ -208,13 +209,49 @@ public final class NbtTagConstants
     /**
      * NBT tag constants for MultiBlock tileEntities.
      */
-    public static final String TAG_INPUT = "input";
-    public static final String TAG_RANGE = "range";
-    public static final String TAG_DIRECTION = "direction";
-    public static final String TAG_LENGTH = "length";
-    public static final String TAG_PROGRESS = "progress";
+    public static final String TAG_INPUT            = "input";
+    public static final String TAG_RANGE            = "range";
+    public static final String TAG_DIRECTION        = "direction";
+    public static final String TAG_LENGTH           = "length";
+    public static final String TAG_PROGRESS         = "progress";
     public static final String TAG_OUTPUT_DIRECTION = "outputDirection";
-    public static final String TAG_SPEED = "speed";
+    public static final String TAG_SPEED            = "speed";
+
+    /**
+     * Tag used to store the worker to nbt.
+     */
+    public static final String TAG_WORKER = "worker";
+
+    /**
+     * NBTTag to store the recipes list.
+     */
+    public static final String TAG_RECIPES = "recipes";
+
+    /**
+     * Tag to store the id to NBT.
+     */
+    public static final String TAG_WORKER_ID = "workerId";
+
+    /**
+     * The tag used to store the residents.
+     */
+    public static final String TAG_RESIDENTS = "residents";
+
+    /**
+     * List storing all beds which have been registered to the building.
+     */
+    public static final String TAG_BEDS = "beds";
+
+    /**
+     * Var for first pos string.
+     */
+    public static final String FIRST_POS_STRING = "pos1";
+
+    /**
+     * Var for second pos string.
+     */
+    public static final String SECOND_POS_STRING = "pos2";
+
     /**
      * Private constructor to hide the implicit one.
      */

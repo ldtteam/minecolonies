@@ -3,10 +3,13 @@ package com.minecolonies.coremod.proxy;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.*;
-import com.minecolonies.coremod.client.gui.WindowBuildTool;
-import com.minecolonies.coremod.client.gui.WindowCitizen;
-import com.minecolonies.coremod.client.gui.WindowClipBoard;
-import com.minecolonies.coremod.client.gui.WindowMultiBlock;
+import com.minecolonies.coremod.blocks.cactus.BlockCactusDoor;
+import com.minecolonies.coremod.blocks.decorative.BlockPaperwall;
+import com.minecolonies.coremod.blocks.decorative.BlockShingle;
+import com.minecolonies.coremod.blocks.decorative.BlockTimberFrame;
+import com.minecolonies.coremod.blocks.schematic.BlockSubstitution;
+import com.minecolonies.coremod.blocks.types.PaperwallType;
+import com.minecolonies.coremod.client.gui.*;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
@@ -23,6 +26,7 @@ import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
+import com.minecolonies.structures.client.TemplateBlockAccessTransformHandler;
 import com.minecolonies.structures.event.RenderEventHandler;
 import com.minecolonies.structures.helpers.Settings;
 import net.minecraft.block.Block;
@@ -32,11 +36,13 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -116,6 +122,18 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
+    public void openScanToolWindow(@Nullable final BlockPos pos1, @Nullable final BlockPos pos2)
+    {
+        if (pos1 == null || pos2 == null)
+        {
+            return;
+        }
+
+        @Nullable final WindowScan window = new WindowScan(pos1, pos2);
+        window.open();
+    }
+
+    @Override
     public void openMultiBlockWindow(@Nullable final BlockPos pos)
     {
         @Nullable final WindowMultiBlock window = new WindowMultiBlock(pos);
@@ -180,6 +198,7 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutWareHouse);
         createCustomModel(ModBlocks.blockHutDeliveryman);
         createCustomModel(ModBlocks.blockSubstitution);
+        createCustomModel(ModBlocks.blockBarracksTowerSubstitution);
         createCustomModel(ModBlocks.blockHutField);
         createCustomModel(ModBlocks.blockHutGuardTower);
         createCustomModel(ModBlocks.blockHutBarracks);
@@ -190,6 +209,11 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutSwineHerder);
         createCustomModel(ModBlocks.blockHutChickenHerder);
         createCustomModel(ModBlocks.blockHutSmeltery);
+        createCustomModel(ModBlocks.blockCactusPlank);
+        createCustomModel(ModBlocks.blockCactusTrapdoor);
+        createCustomModel(ModBlocks.blockCactusStair);
+        createCustomModel(ModBlocks.blockCactusSlabHalf);
+        createCustomModel(ModBlocks.blockCactusSlabDouble);
 
         createCustomModel(ModBlocks.blockSolidSubstitution);
         createCustomModel(ModBlocks.blockConstructionTape);
@@ -215,7 +239,9 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockShingleSlab);
         createCustomModel(ModBlocks.multiBlock);
         createCustomModel(ModBlocks.blockBarrel);
+        createCustomModel(ModItems.itemCactusDoor);
 
+        ModelLoader.setCustomStateMapper(ModBlocks.blockCactusDoor, new StateMap.Builder().ignore(BlockCactusDoor.POWERED).build());
         ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());
 
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleOak), 0,
@@ -248,11 +274,17 @@ public class ClientProxy extends CommonProxy
               new ModelResourceLocation(ModBlocks.blockPaperWall.getRegistryName() + "_" + type.getName(), INVENTORY));
         }
 
-        for (final BlockTimberFrame frame : ModBlocks.timberFrames)
+        for (final BlockTimberFrame frame : ModBlocks.getTimberFrames())
         {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(frame), 0,
                         new ModelResourceLocation(frame.getRegistryName(), INVENTORY));
         }
+
+        //Additionally we register an exclusion handler here;
+        TemplateBlockAccessTransformHandler.getInstance().AddTransformHandler(
+          (b) -> b.blockState.getBlock() instanceof BlockSubstitution,
+          (b) -> new Template.BlockInfo(b.pos, Blocks.AIR.getDefaultState(), null)
+        );
     }
 
     @Override

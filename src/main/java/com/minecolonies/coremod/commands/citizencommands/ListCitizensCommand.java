@@ -5,6 +5,8 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.minecolonies.coremod.commands.ActionMenuState;
+import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,20 +29,28 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.L
 /**
  * List all colonies.
  */
-public class ListCitizensCommand extends AbstractSingleCommand
+public class ListCitizensCommand extends AbstractSingleCommand implements IActionCommand
 {
 
     public static final  String DESC                   = "list";
     private static final String CITIZEN_DESCRIPTION    = "§2ID: §f %d §2 Name: §f %s";
     private static final String COORDINATES_XYZ        = "§2Coordinates: §f §4x=§f%s §4y=§f%s §4z=§f%s";
-    private static final String LIST_COMMAND_SUGGESTED = "/mc citizens list %d %d";
-    private static final String COMMAND_CITIZEN_INFO   = "/mc citizens info %s %s";
+    private static final String LIST_COMMAND_SUGGESTED = "/mc citizens list colony: %d page: %d";
+    private static final String COMMAND_CITIZEN_INFO   = "/mc citizens info colony: %s citizen: %s";
     private static final String PAGE_TOP               = "§2   ------------------ page %d of %d ------------------";
     private static final String PREV_PAGE              = " <- prev";
     private static final String NEXT_PAGE              = "next -> ";
     private static final String PAGE_LINE              = "§2 ----------------";
     private static final String PAGE_LINE_DIVIDER      = "§2 | ";
     private static final int    CITIZENS_ON_PAGE       = 9;
+
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
+    public ListCitizensCommand()
+    {
+        super();
+    }
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -60,36 +70,62 @@ public class ListCitizensCommand extends AbstractSingleCommand
     }
 
     @Override
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
+    {
+        final Colony colony = actionMenuState.getColonyForArgument("colony");
+        final Integer page = actionMenuState.getIntegerForArgument("page");
+        executeShared(server, sender, colony, page);
+    }
+
+    @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         int colonyId = getIthArgument(args, 0, getColonyId(sender));
+        final Integer page = getIthArgument(args, 1, 1);
 
+        Colony colony = null;
         if (sender instanceof EntityPlayer)
         {
             if (colonyId == -1)
             {
-                final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
-                if (colony != null)
+                final IColony icolony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
+                if (icolony != null)
                 {
-                    colonyId = colony.getID();
+                    colonyId = icolony.getID();
                 }
             }
+        }
+        colony = ColonyManager.getColony(colonyId);
 
+        executeShared(server, sender, colony, page);
+    }
+
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final Colony colony, final Integer pageProvided) throws CommandException
+    {
+        int page;
+        if (null != pageProvided)
+        {
+            page = pageProvided.intValue();
+        }
+        else
+        {
+            page = 1;
+        }
+
+        if (sender instanceof EntityPlayer)
+        {
             final EntityPlayer player = (EntityPlayer) sender;
-            if (!canPlayerUseCommand(player, LISTCITIZENS, colonyId))
+            if ((null != colony) && !canPlayerUseCommand(player, LISTCITIZENS, colony.getID()))
             {
-                player.sendMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
+                sender.sendMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
                 return;
             }
         }
-
-        final Colony colony = ColonyManager.getColony(colonyId);
 
         final List<CitizenData> citizens = colony.getCitizenManager().getCitizens();
         final int citizenCount = citizens.size();
 
         // check to see if we have to add one page to show the half page
-        int page = getIthArgument(args, 1, 1);
         final int halfPage = (citizenCount % CITIZENS_ON_PAGE == 0) ? 0 : 1;
         final int pageCount = ((citizenCount) / CITIZENS_ON_PAGE) + halfPage;
 
@@ -122,12 +158,13 @@ public class ListCitizensCommand extends AbstractSingleCommand
               citizen.getName())).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                                                                      String.format(COMMAND_CITIZEN_INFO, citizen.getColony().getID(), citizen.getId())))));
 
-            citizen.getCitizenEntity().ifPresent(entityCitizen -> {
+            citizen.getCitizenEntity().ifPresent(entityCitizen ->
+            {
                 final BlockPos position = entityCitizen.getPosition();
                 sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
             });
         }
-        drawPageSwitcher(sender, page, citizenCount, halfPage, colonyId);
+        drawPageSwitcher(sender, page, citizenCount, halfPage, (null != colony ? colony.getID() : -1));
     }
 
     /**

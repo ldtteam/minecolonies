@@ -1,11 +1,19 @@
 package com.minecolonies.api.util.constant;
 
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.math.BlockPos;
+
+/**
+ * Constants regarding citizens.
+ */
 public final class CitizenConstants
 {
     /**
      * Base movement speed of every citizen.
      */
-    public static final  double                 BASE_MOVEMENT_SPEED  = 0.3D;
+    public static final  double BASE_MOVEMENT_SPEED  = 0.3D;
     /**
      * The middle saturation point. smaller than this = bad and bigger than this = good.
      */
@@ -34,9 +42,6 @@ public final class CitizenConstants
      * Number of ticks to heal the citizens.
      */
     public static final int    HEAL_CITIZENS_AFTER = 100;
-    /**
-     * Tag's to save data to NBT.
-     */
 
     /**
      * Distance to avoid Barbarian.
@@ -110,7 +115,7 @@ public final class CitizenConstants
     /**
      * If the entitiy is stuck for 2 minutes do something.
      */
-    public static final int    MAX_STUCK_TIME             = 60;
+    public static final int    MAX_STUCK_TIME             = 120;
     /**
      * The max amount of lines the latest log allows.
      */
@@ -146,9 +151,14 @@ public final class CitizenConstants
     /**
      * Decrease by this * buildingLevel each new night.
      */
-    public static final double SATURATION_DECREASE_FACTOR = 0.2;
+    public static final double SATURATION_DECREASE_FACTOR = 0.02;
     /**
      * Minimum stuck time for the worker to react.
      */
     public static final int MIN_STUCK_TIME = 5;
+
+    /**
+     * Distance between Barbarian and Citizen to not remove happiness.
+     */
+    public static final int BARB_DISTANCE_FOR_FREE_DEATH = 21;
 }

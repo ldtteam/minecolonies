@@ -4,9 +4,9 @@ import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.PaneParams;
 import com.minecolonies.blockout.views.View;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -84,6 +84,12 @@ public class TextField extends Pane
     public void setText(@NotNull final String s)
     {
         text = s.length() <= maxTextLength ? s : s.substring(0, maxTextLength);
+        setCursorPosition(text.length());
+    }
+
+    public void setTextIgnoreLength(@NotNull final String s)
+    {
+        text = s;
         setCursorPosition(text.length());
     }
 
@@ -497,6 +503,11 @@ public class TextField extends Pane
         final int insertAt = Math.min(cursorPosition, selectionEnd);
         final int insertEnd = Math.max(cursorPosition, selectionEnd);
         final int availableChars = (maxTextLength - text.length()) + (insertEnd - insertAt);
+        
+        if (availableChars < 0)
+        {
+            return;
+        }
 
         @NotNull final StringBuilder resultBuffer = new StringBuilder();
         if (text.length() > 0 && insertAt > 0)

@@ -16,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 import static com.minecolonies.api.util.constant.Constants.MAX_AMOUNT_OF_PIECES;
-import static com.minecolonies.api.util.constant.Constants.MAX_MESSAGE_SIZE;
 
 /**
  * Save Schematic Message.

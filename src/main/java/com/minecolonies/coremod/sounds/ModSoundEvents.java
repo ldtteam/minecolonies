@@ -99,7 +99,6 @@ public final class ModSoundEvents
         registry.register(KnightSounds.Male.farewell);
         registry.register(KnightSounds.Male.interaction);
 
-        registry.register(ArcherSounds.Female.badHousing);
         registry.register(ArcherSounds.Female.levelUp);
         registry.register(ArcherSounds.Female.saturationHigh);
         registry.register(ArcherSounds.Female.saturationLow);

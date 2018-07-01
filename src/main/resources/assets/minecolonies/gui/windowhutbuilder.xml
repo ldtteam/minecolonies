@@ -51,10 +51,18 @@
         </view>
 
         <view id="resourceActions" size="100% 100%">
-            <label size="100% 11" pos="0 0"
+            <label size="100% 11" pos="0 2"
                    label="$(com.minecolonies.coremod.gui.workerHuts.resourceList)" color="black"
                    textalign="BOTTOM_MIDDLE"/>
-            <list id="resources" size="78% 85%" pos="30 20">
+
+            <label size="100% 11" pos="0 14" id="constructionName"
+                   label="" color="black"
+                   textalign="BOTTOM_MIDDLE"/>
+            <label size="100% 11" pos="0 25" id="constructionPos"
+                   label="" color="black"
+                   textalign="BOTTOM_MIDDLE"/>
+
+            <list id="resources" size="78% 75%" pos="30 40">
                 <box size="100% 30" linewidth="2">
                     <itemicon id="resourceIcon" size="16 16" pos="1 1"/>
                     <label id="resourceName" size="100 12" pos="20 3" textalign="MIDDLE_LEFT" color="black"/>

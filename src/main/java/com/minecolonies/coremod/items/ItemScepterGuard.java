@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -16,8 +17,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-
-import static com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.Task;
 
 /**
  * Guard Scepter Item class. Used to give tasks to guards.
@@ -43,20 +42,21 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
     @NotNull
     @Override
     public EnumActionResult onItemUse(
-                                       final EntityPlayer playerIn,
-                                       final World worldIn,
-                                       final BlockPos pos,
-                                       final EnumHand hand,
-                                       final EnumFacing facing,
-                                       final float hitX,
-                                       final float hitY,
-                                       final float hitZ)
+      final EntityPlayer playerIn,
+      final World worldIn,
+      final BlockPos pos,
+      final EnumHand hand,
+      final EnumFacing facing,
+      final float hitX,
+      final float hitY,
+      final float hitZ)
     {
         // if server world, do nothing
         if (worldIn.isRemote)
         {
             return EnumActionResult.FAIL;
         }
+
         final ItemStack scepter = playerIn.getHeldItem(hand);
         if (!scepter.hasTagCompound())
         {
@@ -103,14 +103,14 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         }
         final AbstractBuildingGuards tower = (AbstractBuildingGuards) hut;
 
-        if (BlockPosUtil.getDistance2D(pos, guardTower) > tower.getPatrolDistance())
+        if(BlockPosUtil.getDistance2D(pos, guardTower) > tower.getPatrolDistance())
         {
             LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolClickGuardTooFar");
             return EnumActionResult.FAIL;
         }
 
-        final Task task = Task.values()[compound.getInteger("task")];
-        final CitizenData citizen = tower.getMainWorker();
+        final GuardTask task = GuardTask.values()[compound.getInteger("task")];
+        final CitizenData citizen = tower.getMainCitizen();
 
         String name = "";
         if (citizen != null)
@@ -118,10 +118,10 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             name = " " + citizen.getName();
         }
 
-        if (task.equals(Task.GUARD))
+        if (task.equals(GuardTask.GUARD))
         {
             LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolClickGuard", pos, name);
-            tower.setGuardTarget(pos);
+            tower.setGuardPos(pos);
             playerIn.inventory.removeStackFromSlot(playerIn.inventory.currentItem);
         }
         else

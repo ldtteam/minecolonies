@@ -29,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -42,12 +43,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
 import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATION;
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.TranslationConstants.BUILDING_LEVEL_TOO_LOW;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
-import static com.minecolonies.coremod.colony.buildings.AbstractBuilding.MAX_PRIO;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -60,7 +60,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * The maximum range to keep from the current building place.
      */
-    public static final    int EXCEPTION_TIMEOUT             = 100;
+    private static final    int EXCEPTION_TIMEOUT             = 100;
     /**
      * Buffer time in ticks he will accept a last attacker as valid.
      */
@@ -206,15 +206,43 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  || worker.getCitizenData().getSaturation() <= 0;
     }
 
+    @Nullable
+    public <W extends AbstractBuildingWorker> W getOwnBuilding()
+    {
+        final AbstractBuildingWorker worker = getOwnBuilding(getExpectedBuildingClass());
+        return worker == null ? null : (W) worker;
+    }
+
+    /**
+     * Can be overridden in implementations to return the exact building type the worker expects.
+     *
+     * @return the building type associated with this AI's worker.
+     */
+    public Class getExpectedBuildingClass()
+    {
+        return AbstractBuildingWorker.class;
+    }
+
     /**
      * Can be overridden in implementations to return the exact building type.
      *
      * @return the building associated with this AI's worker.
      */
     @Nullable
-    public AbstractBuildingWorker getOwnBuilding()
+    public <W extends AbstractBuildingWorker> W getOwnBuilding(@NotNull final Class<W> type)
     {
-        return worker.getWorkBuilding();
+        if (type.isInstance(worker.getCitizenColonyHandler().getWorkBuilding()))
+        {
+            return (W) worker.getCitizenColonyHandler().getWorkBuilding();
+        }
+        else
+        {
+            if (worker.getCitizenData() != null)
+            {
+                worker.getCitizenData().setJob(null);
+            }
+        }
+        return null;
     }
 
     @Override
@@ -230,7 +258,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 final String name = this.worker.getName();
                 final BlockPos workerPosition = worker.getPosition();
-                final AbstractJob colonyJob = worker.getColonyJob();
+                final AbstractJob colonyJob = worker.getCitizenJobHandler().getColonyJob();
                 final String jobName = colonyJob == null ? "null" : colonyJob.getName();
                 Log.getLogger().error("Pausing Entity " + name + " (" + jobName + ") at " + workerPosition + " for " + timeout + " Seconds because of error:");
             }
@@ -269,7 +297,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (restaurant == null)
         {
-            final BlockPos goodCook = worker.getColony().getBuildingManager().getBestRestaurant(worker);
+            final BlockPos goodCook = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBestRestaurant(worker);
 
             if (goodCook == null)
             {
@@ -294,7 +322,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Check if we need to dump the workers inventory.
+     * Check if we need to dump the worker inventory.
      * <p>
      * This will also ask the implementing ai
      * if we need to dump on custom reasons.
@@ -304,7 +332,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean inventoryNeedsDump()
     {
-        return (worker.isInventoryFull()
+        return (worker.getCitizenInventoryHandler().isInventoryFull()
                   || actionsDone >= getActionsDoneUntilDumping()
                   || wantInventoryDumped())
                  && !(job instanceof JobDeliveryman);
@@ -408,7 +436,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
             if (delay % HIT_EVERY_X_TICKS == 0)
             {
-                worker.hitBlockWithToolInHand(currentWorkingLocation);
+                worker.getCitizenItemHandler().hitBlockWithToolInHand(currentWorkingLocation);
             }
             delay--;
             return true;
@@ -445,7 +473,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         if (!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()) && !getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
-            worker.setLatestStatus();
+            worker.getCitizenStatusHandler().setLatestStatus();
             return;
         }
 
@@ -455,7 +483,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             request = getOwnBuilding().getOpenRequests(worker.getCitizenData()).stream().findFirst().orElse(null);
         }
 
-        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"), request.getShortDisplayString());
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"), request.getShortDisplayString());
     }
 
     /**
@@ -491,17 +519,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getToken());
 
                 final ItemStack deliveredItemStack = firstDeliverableRequest.getDelivery();
-                if (InventoryUtils.getItemCountInItemHandler(
-                  new InvWrapper(worker.getInventoryCitizen()), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount())
+                final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
+                        stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(deliveredItemStack, stack, true, true));
+                if (count >= deliveredItemStack.getCount() && getTotalRequiredAmount(deliveredItemStack) <= count)
                 {
                     return NEEDS_ITEM;
                 }
 
                 //Takes one Stack from the hut if existent
-                if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), deliveredItemStack::isItemEqualIgnoreDurability) >= deliveredItemStack.getCount() &&
+                if (InventoryUtils.getItemCountInProvider(getOwnBuilding(),
+                        stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(deliveredItemStack, stack, true, true)) >= deliveredItemStack.getCount() &&
                       InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                         getOwnBuilding(),
-                        deliveredItemStack::isItemEqualIgnoreDurability,
+                              stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(deliveredItemStack, stack, true, true),
                         deliveredItemStack.getCount(),
                         new InvWrapper(worker.getInventoryCitizen())))
                 {
@@ -528,6 +558,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
+     * Get the total amount required for an itemStack.
+     * Workers have to override this if they have more information.
+     * @param deliveredItemStack the required stack.
+     * @return on default the size of the stack.
+     */
+    public int getTotalRequiredAmount(final ItemStack deliveredItemStack)
+    {
+        return deliveredItemStack.getCount();
+    }
+
+    /**
      * Walk the worker to it's building chest.
      * Please return immediately if this returns true.
      *
@@ -542,7 +583,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Check all chests in the worker hut for a required item matching a certain predicate
+     * Check all chests in the workers hut for a required item matching a certain predicate
      *
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
@@ -580,7 +621,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Check all chests in the worker hut for a required item.
+     * Check all chests in the workers hut for a required item.
      *
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
@@ -630,7 +671,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Finds the first @see ItemStack the type of {@code is}.
-     * It will be taken from the chest and placed in the workers inventory.
+     * It will be taken from the chest and placed in the worker inventory.
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
@@ -644,7 +685,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  && InventoryFunctions
                       .matchFirstInProviderWithAction(
                         entity,
-                        stack -> !ItemStackUtils.isEmpty(stack) && is.isItemEqualIgnoreDurability(stack),
+                        stack -> !ItemStackUtils.isEmpty(stack) &&  ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true),
                         this::takeItemStackFromProvider
                       );
     }
@@ -687,7 +728,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Finds the first @see ItemStack the type of {@code is}.
-     * It will be taken from the chest and placed in the workers inventory.
+     * It will be taken from the chest and placed in the worker inventory.
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
@@ -717,7 +758,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Finds the first @see ItemStack the type of {@code is}.
-     * It will be taken from the chest and placed in the workers inventory.
+     * It will be taken from the chest and placed in the worker inventory.
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
@@ -741,7 +782,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Takes whatever is in that slot of the workers chest and puts it in his inventory.
+     * Takes whatever is in that slot of the worker chest and puts it in his inventory.
      * If the inventory is full, only the fitting part will be moved.
      * Beware this method shouldn't be private, because the generic access won't work within a lambda won't work else.
      *
@@ -802,7 +843,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean checkForNeededTool(@NotNull final IToolType toolType, final int minimalLevel)
     {
-        final int maxToolLevel = worker.getWorkBuilding().getMaxToolLevel();
+        final int maxToolLevel = worker.getCitizenColonyHandler().getWorkBuilding().getMaxToolLevel();
         final InventoryCitizen inventory = worker.getInventoryCitizen();
         if (InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), toolType, minimalLevel, maxToolLevel))
         {
@@ -814,7 +855,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Check all chests in the worker hut for a required tool.
+     * Check all chests in the workers hut for a required tool.
      *
      * @param toolType     the type of tool requested (amount is ignored)
      * @param minimalLevel the minimal level the tool should have.
@@ -899,7 +940,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Can be overridden by implementations to specify items useful for the worker.
-     * When the workers inventory is full, he will try to keep these items.
+     * When the worker inventory is full, he will try to keep these items.
      * ItemStack amounts are ignored, the first stack found will be taken.
      *
      * @return a list with items nice to have for the worker
@@ -944,7 +985,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         final int bestSlot = getMostEfficientTool(target);
         if (bestSlot >= 0)
         {
-            worker.setHeldItem(bestSlot);
+            worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, bestSlot);
             return true;
         }
         requestTool(target, pos);
@@ -1001,7 +1042,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         int bestSlot = -1;
         int bestLevel = Integer.MAX_VALUE;
         @NotNull final InventoryCitizen inventory = worker.getInventoryCitizen();
-        final int maxToolLevel = worker.getWorkBuilding().getMaxToolLevel();
+        final int maxToolLevel = worker.getCitizenColonyHandler().getWorkBuilding().getMaxToolLevel();
 
         for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
         {
@@ -1035,6 +1076,23 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         hasDelayed = false;
         return false;
+    }
+
+    /**
+     * Tell the ai that you have done one more action.
+     * <p>
+     * if the actions exceed a certain number,
+     * the ai will dump it's inventory.
+     * this also triggers the AI to get hungry.
+     * <p>
+     * For example:
+     * <p>
+     * After x blocks, bring everything back.
+     */
+    protected final void incrementActionsDoneAndDecSaturation()
+    {
+        worker.decreaseSaturationForAction();
+        actionsDone++;
     }
 
     /**
@@ -1201,10 +1259,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return true;
         }
 
-        if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), stack::isItemEqualIgnoreDurability) >= stack.getCount() &&
+        if (InventoryUtils.getItemCountInProvider(getOwnBuilding(),
+                itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true)) >= stack.getCount() &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
-                getOwnBuilding(),
-                stack::isItemEqualIgnoreDurability,
+                getOwnBuilding(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true),
                 stack.getCount(),
                 new InvWrapper(worker.getInventoryCitizen())))
         {

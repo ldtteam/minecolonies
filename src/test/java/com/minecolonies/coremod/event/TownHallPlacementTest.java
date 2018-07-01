@@ -21,7 +21,16 @@ import static org.powermock.api.mockito.PowerMockito.when;
 // TODO make these tests actually test something, now that createColony call is moved...
 public class TownHallPlacementTest extends AbstractMockStaticsTest
 {
-    private static final BlockPos PLACE_POS = new BlockPos(0, 0, 0);
+    /**
+     * The position the townhall will get placed.
+     */
+    private static final BlockPos PLACE_POS = new BlockPos(1000, 100, 1000);
+
+    /**
+     * The position the world spawn is.
+     */
+    private static final BlockPos SPAWN_POS = new BlockPos(0, 100, 0);
+
     @Mock
     private Colony       colony;
     @Mock
@@ -35,6 +44,7 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
     public void setupColonyPlacement() throws Exception
     {
         when(colony.getCenter()).thenReturn(PLACE_POS);
+        when(world.getSpawnPoint()).thenReturn(SPAWN_POS);
     }
 
     //first townhall
