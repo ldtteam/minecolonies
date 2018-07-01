@@ -12,29 +12,43 @@ import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.CitizenDataView;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.minimal.*;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
 import com.minecolonies.coremod.entity.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
-import com.minecolonies.coremod.util.*;
+import com.minecolonies.coremod.util.PermissionUtils;
+import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.*;
-import net.minecraft.entity.ai.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.ai.EntityAIOpenDoor;
+import net.minecraft.entity.ai.EntityAISwimming;
+import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.EntityAIWatchClosest2;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.*;
+import net.minecraft.item.ItemFood;
+import net.minecraft.item.ItemNameTag;
+import net.minecraft.item.ItemShield;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.*;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -45,13 +59,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Objects;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.Suppression.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
+import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_NOT_ALLOWED;
+import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_SAME;
 
 /**
  * The Class used to represent the citizen entities.
@@ -361,6 +378,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @param damageSource the attacking entity.
      */
+
     @Override
     public void onDeath(@NotNull final DamageSource damageSource)
     {
@@ -369,9 +387,23 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             if (damageSource.getTrueSource() instanceof EntityPlayer)
             {
+                boolean isBarbarianClose = true;
+                for(final AbstractEntityBarbarian barbarian : this.getCitizenColonyHandler().getColony().getBarbManager().getHorde())
+                {
+                    final EntityCitizen citizen = new EntityCitizen(this.getEntityWorld());
+                    if(MathUtils.twoDimDistance(barbarian.getPosition(), citizen.getPosition()) < BARB_DISTANCE_FOR_FREE_DEATH)
+                    {
+                        isBarbarianClose = true;
+                        break;
+                    }
+                    else
+                    {
+                        isBarbarianClose = false;
+                    }
+                }
                 for (final Player player : PermissionUtils.getPlayersWithAtLeastRank(citizenColonyHandler.getColony(), Rank.OFFICER))
                 {
-                    if (player.getID().equals(damageSource.getTrueSource().getUniqueID()))
+                    if (player.getID().equals(damageSource.getTrueSource().getUniqueID()) && !isBarbarianClose)
                     {
                         penalty = CITIZEN_KILL_PENALTY;
                         break;
