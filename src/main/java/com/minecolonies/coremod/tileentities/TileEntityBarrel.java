@@ -37,7 +37,11 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     public void update()
     {
         World world = this.getWorld();
-        if(!world.isRemote)
+
+        //todo we should do this here in intervals look how we check things in random intervals in the colony.
+        // this way we avoid calling this every tick which causes lag. Just calling this probablistically every 20 ticks and
+        // make it run until 24000/20 will have the same result but consume way less load on the server.
+        if(!world.isRemote) //todo please use { }
             this.updateTick(world, this.getPos(), world.getBlockState(this.getPos()), new Random());
     }
 
@@ -47,14 +51,16 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         //Log.getLogger().info("UpdateTick called");
 
         //We get the actual value of the blockstate for the barrel
-        BarrelType barrelType = state.getActualState(worldIn, pos).getValue(BlockBarrel.VARIANT);
+        //this is expensive BarrelType barrelType = state.getB(worldIn, pos).getValue(BlockBarrel.VARIANT);
         //Log.getLogger().info("The barrel is "+barrelType.getName());
 
         //Check if the barrel is actually full
-        if(barrelType.equals(BarrelType.WORKING))
+        if(getItems() == TileEntityBarrel.MAX_ITEMS)
         {
             doBarrelCompostTick(worldIn, pos, state);
         }
+        //todo let's not do this, why don't we use a boolean in the tileEntity which is done = true, or done = false and you set it here after done
+        //todo would also mean we need to get this boolean value in the blockBarrel getactualState
         if(barrelType.equals(BarrelType.DONE))
         {
             //If the barrel is done, we spawn particles imitating "bad smell"
@@ -74,6 +80,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
                     BarrelType.DONE).withProperty(BlockBarrel.FACING, blockState.getValue(BlockBarrel.FACING));
             worldIn.setBlockState(this.pos, newState);
             this.updateBlock(worldIn, newState);
+            //todo and when we have the boolean we only have to set the boolean and mark this block for update.
             timer = 0;
             items = 0;
         }
@@ -140,6 +147,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
 
     private boolean checkCorrectItem(ItemStack itemStack)
     {
+        // todo we should probably make this configureable in the configuration, but for testing this is okay.
         //Any new item we want it to accept should be added here
         return itemStack.getItem().equals(Items.ROTTEN_FLESH)
                 || itemStack.getItem().equals(Items.WHEAT_SEEDS)
