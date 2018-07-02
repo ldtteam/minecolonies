@@ -12,7 +12,6 @@ buildscript {
 }
 
 plugins {
-    id "org.sonarqube" version "2.3"
     id "com.matthewprenger.cursegradle" version "1.0.9"
 }
 repositories {
@@ -27,15 +26,6 @@ repositories {
     }
     maven {
         url 'http://dogforce-games.com/maven'
-    }
-}
-
-sonarqube {
-    properties{
-        property "sonar.host.url", "http://home.kk-sc.de:9000"
-        property "sonar.sourceEncoding", "UTF-8"
-        property "sonar.projectName", "Minecolonies"
-        property "sonar.branch", System.getenv()['TEAMCITY_BRANCH'] != null ? System.getenv()['TEAMCITY_BRANCH'] : System.getenv()['TRAVIS_BRANCH']
     }
 }
 
@@ -136,8 +126,7 @@ dependencies {
 }
 
 group = "com.minecolonies"
-config.buildnumber = System.getenv()['BUILD_NUMBER'] != null ? System.getenv()['BUILD_NUMBER'] : System.getenv()['TRAVIS_BUILD_NUMBER']
-version = "${config.minecraft_version}-${config.minecolonies_major}.${config.minecolonies_minor}.${config.buildnumber}"
+version = config.minecraft_version.toString() + "-" + System.getenv()["Version"]
 archivesBaseName = "minecolonies"
 
 sourceCompatibility = '1.8'
@@ -148,7 +137,7 @@ minecraft {
     version = config.minecraft_version + "-" + config.forge_version
     runDir = "run"
 	
-	mappings = "${config.minecolonies_mappings}"
+	mappings = "${config.mappings}"
 	
     replace "@VERSION@", project.version
     replaceIn "util/constant/Constants.java"
@@ -196,6 +185,8 @@ jar {
     from sourceSets.blockOut.output
     from sourceSets.structures.output
     from sourceSets.main.output
+    
+    classifier = 'universal'
 
     manifest {
         attributes 'FMLAT': "minecolonies_at.cfg"
