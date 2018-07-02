@@ -52,8 +52,10 @@ public interface IChunkmanagerCapability
      */
     class Impl implements IChunkmanagerCapability
     {
-        final Map<ChunkPos, ChunkLoadStorage> chunkStorages = new HashMap<>();
-
+        /**
+         * Map of chunkPos to chunkLoadStorage.
+         */
+        private final Map<ChunkPos, ChunkLoadStorage> chunkStorages = new HashMap<>();
 
         @Nullable
         @Override

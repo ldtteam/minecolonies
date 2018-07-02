@@ -528,13 +528,12 @@ public final class ColonyManager
             return true;
         }
         final Chunk centralChunk = w.getChunkFromBlockCoords(pos);
-        final ChunkLoadStorage storage = worldCapability.getChunkStorage(centralChunk.x, centralChunk.z);
         final IColonyTagCapability colonyCap = centralChunk.getCapability(CLOSE_COLONY_CAP, null);
         if (colonyCap == null)
         {
             return true;
         }
-
+        final ChunkLoadStorage storage = worldCapability.getChunkStorage(centralChunk.x, centralChunk.z);
         if (storage != null)
         {
             storage.applyToCap(colonyCap);
