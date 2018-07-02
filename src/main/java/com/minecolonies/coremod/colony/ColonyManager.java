@@ -13,7 +13,6 @@ import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
@@ -38,7 +37,6 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -118,9 +116,9 @@ public final class ColonyManager
     public static final String FILENAME_COLONY = "colony%d.dat";
 
     /**
-     * chunk filename.
+     * Distance in chunks to load immediately after creating the colony.
      */
-    private static final String FILENAME_CHUNK = "chunk-%d_%d_%d";
+    private static final int DISTANCE_TO_LOAD_IMMEDIATELY = 5;
 
     /**
      * The damage source used to kill citizens.
@@ -228,32 +226,13 @@ public final class ColonyManager
     private static void claimColonyChunks(final World world, final boolean add, final int id, final BlockPos center, final int dimension)
     {
         final Chunk centralChunk = world.getChunkFromBlockCoords(center);
-
-        //TODO: get the surrounding 7 chunks.
-        if(centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() == id && add)
-        {
-            return;
-        }
-        final IColonyTagCapability cap = centralChunk.getCapability(CLOSE_COLONY_CAP, null);
-
-        if(add)
-        {
-            cap.setOwningColony(id);
-            cap.addColony(id);
-        }
-        else
-        {
-            cap.removeColony(id);
-        }
-        centralChunk.markDirty();
-        MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(centralChunk.getCapability(CLOSE_COLONY_CAP, null), centralChunk.x, centralChunk.z));
+        loadChunkAndAddData(world, center, add, id);
 
         final int chunkX = centralChunk.x;
         final int chunkZ = centralChunk.z;
 
         final int range = Configurations.gameplay.workingRangeTownHallChunks;
         final int buffer = Configurations.gameplay.townHallPaddingChunk;
-
 
         claimChunksInRange(id, dimension, add, chunkX, chunkZ, range, buffer, world);
     }
@@ -283,6 +262,13 @@ public final class ColonyManager
         {
             for (int j = chunkZ - maxRange; j <= chunkZ + maxRange; j++)
             {
+                if (i >= chunkX - DISTANCE_TO_LOAD_IMMEDIATELY && j >= chunkZ - DISTANCE_TO_LOAD_IMMEDIATELY && i <= chunkX + DISTANCE_TO_LOAD_IMMEDIATELY && j <= chunkZ + DISTANCE_TO_LOAD_IMMEDIATELY
+                      && loadChunkAndAddData(world, new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK), add, colonyId))
+                {
+                    continue;
+                }
+
+
                 final boolean owning = i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range;
                 @NotNull final ChunkLoadStorage newStorage = new ChunkLoadStorage(colonyId, ChunkPos.asLong(i, j), add, dimension, owning);
                 if (!chunkManager.addChunkStorage(i, j, newStorage))
@@ -291,6 +277,48 @@ public final class ColonyManager
                 }
             }
         }
+    }
+
+    /**
+     * Add the data to the chunk directly.
+     * @param world the world.
+     * @param pos the position.
+     * @param add if add or delete.
+     * @param id the id.
+     * @return true if successful.
+     */
+    private static boolean loadChunkAndAddData(final World world, final BlockPos pos, final boolean add, final int id)
+    {
+        if (!world.isBlockLoaded(pos))
+        {
+            return false;
+        }
+
+        final Chunk chunk = world.getChunkFromBlockCoords(pos);
+        if(chunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() == id && add)
+        {
+            return false;
+        }
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+
+        if (cap == null)
+        {
+            return false;
+        }
+
+        if(add)
+        {
+            cap.setOwningColony(id);
+            cap.addColony(id);
+        }
+        else
+        {
+            cap.removeColony(id);
+        }
+
+        chunk.markDirty();
+        MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
+        return true;
     }
 
     /**
