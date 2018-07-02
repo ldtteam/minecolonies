@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 
 public class TileEntityBarrel extends TileEntity implements ITickable
 {
+    private boolean                                 done           = false;
     private int                                     items          = 0;
     private int                                     timer          = 0;
     public static final int                         MAX_ITEMS      = 64;
@@ -41,8 +42,10 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         //todo we should do this here in intervals look how we check things in random intervals in the colony.
         // this way we avoid calling this every tick which causes lag. Just calling this probablistically every 20 ticks and
         // make it run until 24000/20 will have the same result but consume way less load on the server.
-        if(!world.isRemote) //todo please use { }
+        if(!world.isRemote)
+        {
             this.updateTick(world, this.getPos(), world.getBlockState(this.getPos()), new Random());
+        }
     }
 
 
@@ -61,7 +64,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         }
         //todo let's not do this, why don't we use a boolean in the tileEntity which is done = true, or done = false and you set it here after done
         //todo would also mean we need to get this boolean value in the blockBarrel getactualState
-        if(barrelType.equals(BarrelType.DONE))
+        if(this.done)
         {
             //If the barrel is done, we spawn particles imitating "bad smell"
             ((WorldServer)worldIn).spawnParticle(
@@ -79,10 +82,11 @@ public class TileEntityBarrel extends TileEntity implements ITickable
             IBlockState newState = blockState.withProperty(BlockBarrel.VARIANT,
                     BarrelType.DONE).withProperty(BlockBarrel.FACING, blockState.getValue(BlockBarrel.FACING));
             worldIn.setBlockState(this.pos, newState);
-            this.updateBlock(worldIn, newState);
             //todo and when we have the boolean we only have to set the boolean and mark this block for update.
             timer = 0;
             items = 0;
+            done = true;
+            this.updateBlock(worldIn, newState);
         }
     }
 
@@ -96,6 +100,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         {
             // TODO: Add this back in once compost exists again. For now it drops 6 boneMeals
             // playerIn.inventory.addItemStackToInventory(new ItemStack(ModItems.compost, 6));
+            done = false;
             playerIn.inventory.addItemStackToInventory(new ItemStack(Items.DYE, 6, 15));
             IBlockState newState = state.withProperty(BlockBarrel.VARIANT,
                     BarrelType.ZERO).withProperty(BlockBarrel.FACING, state.getValue(BlockBarrel.FACING));
@@ -110,7 +115,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
             return false;
         }
 
-        if(state.getValue(BlockBarrel.VARIANT).equals(BarrelType.WORKING))
+        if(items == MAX_ITEMS)
         {
             playerIn.sendMessage(new TextComponentString("The barrel is working!"));
             return false;
@@ -141,7 +146,6 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         this.items = this.items + itemsToRemove;
         itemsToRemove = itemsToRemove/factor;
         ItemStackUtils.changeSize(itemStack, -itemsToRemove);
-        this.updateBlock(worldIn, worldIn.getBlockState(this.getPos()));
 
     }
 
@@ -158,12 +162,11 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     }
 
     public void updateBlock(World worldIn, IBlockState state) {
-        if (!worldIn.isRemote)
-        {
-            this.markDirty();
-            worldIn.notifyBlockUpdate(this.getPos(), state, state, 0x3 );
-            Log.getLogger().info("notifyBlockUpdate called");
-        }
+         this.markDirty();
+         worldIn.notifyBlockUpdate(this.getPos(), state, BlockBarrel.changeStateOverFullness(this, worldIn, state, pos), 0x3 );
+
+         //Todo remove this, just for testing purposes
+        world.setBlockState(pos, state);
     }
 
     @Override
@@ -203,14 +206,12 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     @Override
     public NBTTagCompound getUpdateTag()
     {
-        Log.getLogger().info("getUpdateTag called");
         return writeToNBT(new NBTTagCompound());
     }
 
     @Override
     public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
     {
-        Log.getLogger().info("onDataPacket called");
         final NBTTagCompound compound = packet.getNbtCompound();
         this.readFromNBT(compound);
     }

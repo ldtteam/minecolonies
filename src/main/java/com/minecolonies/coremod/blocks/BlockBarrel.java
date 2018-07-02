@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.logging.Logger;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
@@ -113,8 +114,10 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     public void updateTick(final World worldIn, final BlockPos pos, final IBlockState state, final Random rand)
     {
         TileEntity te = worldIn.getTileEntity(pos);
-        //todo check if not null
-        ((TileEntityBarrel) te).updateTick(worldIn, pos, state, rand);
+        if(te!=null)
+        {
+            ((TileEntityBarrel) te).updateTick(worldIn, pos, state, rand);
+        }
     }
 
     @NotNull
@@ -248,21 +251,25 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     @Override
     public IBlockState getActualState(@NotNull final IBlockState state, @NotNull final IBlockAccess worldIn, @NotNull final BlockPos pos)
     {
-        return changeStateOverFullness((World) worldIn, state, pos);
+        Log.getLogger().info("getActualState");
+
+
+        final TileEntity entity = worldIn.getTileEntity(pos);
+
+        if (!(entity instanceof TileEntityBarrel))
+        {
+            return super.getActualState(state, worldIn, pos);
+        }
+
+        return changeStateOverFullness((TileEntityBarrel) entity, worldIn, state, pos);
     }
 
     // Please note that we shouldn't manipulate the world in any way in this method, in this method we should just calculate the state the barrel should be in and return it
     // the world will do the rest, the world actually calls the getActualState method.
-    private IBlockState changeStateOverFullness(World worldIn, IBlockState blockState, BlockPos pos)
+    public static IBlockState changeStateOverFullness(TileEntityBarrel entity, IBlockAccess worldIn, IBlockState blockState, BlockPos pos)
     {
-        //todo again { }
-        if(!(worldIn.getTileEntity(pos) instanceof TileEntityBarrel))
-            return null;
 
-        TileEntityBarrel te = (TileEntityBarrel) worldIn.getTileEntity(pos);
-
-        //The posible states of the barrel (minus the state done and working)
-        int possibleStates = BarrelType.values().length-3;   //From 0 to last state
+        final TileEntityBarrel te = entity;
 
         //12.8 -> the number of items needed to go up on a state (having 6 filling states)
         //So items/12.8 -> meta of the state we should get
@@ -279,6 +286,8 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
         {
             type = BarrelType.WORKING;
         }
+
+        Log.getLogger().info("Barrel Type: "+type.name() );
 
         return blockState.withProperty(BlockBarrel.VARIANT,
           type).withProperty(BlockBarrel.FACING, blockState.getValue(BlockBarrel.FACING));
