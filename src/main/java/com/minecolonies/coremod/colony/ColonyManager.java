@@ -522,18 +522,24 @@ public final class ColonyManager
      */
     public static boolean isTooCloseToColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        final Chunk centralChunk = w.getChunkFromBlockCoords(pos);
-        if (!centralChunk.getCapability(CLOSE_COLONY_CAP, null).getAllCloseColonies().isEmpty())
+        final IChunkmanagerCapability worldCapability = w.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
+        if (worldCapability == null)
         {
             return true;
         }
-        final IChunkmanagerCapability capability = w.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
-        if (capability == null)
+        final Chunk centralChunk = w.getChunkFromBlockCoords(pos);
+        final ChunkLoadStorage storage = worldCapability.getChunkStorage(centralChunk.x, centralChunk.z);
+        final IColonyTagCapability colonyCap = centralChunk.getCapability(CLOSE_COLONY_CAP, null);
+        if (colonyCap == null)
         {
-            return false;
+            return true;
         }
-        final ChunkLoadStorage storage = capability.getChunkStorage(centralChunk.x, centralChunk.z);
-        return storage != null && storage.getColonyId() != 0;
+
+        if (storage != null)
+        {
+            storage.applyToCap(colonyCap);
+        }
+        return !colonyCap.getAllCloseColonies().isEmpty();
     }
 
     /**
