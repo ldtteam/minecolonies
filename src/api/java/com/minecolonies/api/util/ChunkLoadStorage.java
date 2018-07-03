@@ -10,7 +10,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WAYPOINT;
 
 /**
  * The chunkload storage used to load chunks with colony information.
@@ -116,24 +115,6 @@ public class ChunkLoadStorage
     }
 
     /**
-     * Getter for the list of colonies to add.
-     * @return a copy of the list.
-     */
-    public List<Integer> getColoniesToAdd()
-    {
-        return new ArrayList<>(coloniesToAdd);
-    }
-
-    /**
-     * Getter for the list of colonies to remove.
-     * @return a copy of the list.
-     */
-    public List<Integer> getColoniesToRemove()
-    {
-        return new ArrayList<>(coloniesToRemove);
-    }
-
-    /**
      * Getter for the colonyId.
      * @return the id.
      */
@@ -149,6 +130,15 @@ public class ChunkLoadStorage
     public int getDimension()
     {
         return dimension;
+    }
+
+    /**
+     * Get the x long.
+     * @return the long representing two integers.
+     */
+    public long getXz()
+    {
+        return xz;
     }
 
     @Override
