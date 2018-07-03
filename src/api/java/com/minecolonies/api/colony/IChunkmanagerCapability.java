@@ -61,7 +61,7 @@ public interface IChunkmanagerCapability
         @Override
         public ChunkLoadStorage getChunkStorage(final int chunkX, final int chunkZ)
         {
-            return chunkStorages.get(new ChunkPos(chunkX, chunkZ));
+            return chunkStorages.remove(new ChunkPos(chunkX, chunkZ));
         }
 
         @Override
