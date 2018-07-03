@@ -123,7 +123,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         else
         {
             this.consumeNeededItems(worldIn, itemstack);
-            this.updateBlock(worldIn, worldIn.getBlockState(this.getPos()));
+            this.updateBlock(worldIn, state);
             return true;
         }
     }
@@ -163,10 +163,12 @@ public class TileEntityBarrel extends TileEntity implements ITickable
 
     public void updateBlock(World worldIn, IBlockState state) {
          this.markDirty();
-         worldIn.notifyBlockUpdate(this.getPos(), state, BlockBarrel.changeStateOverFullness(this, worldIn, state, pos), 0x3 );
+         //worldIn.notifyBlockUpdate(this.getPos(), state, BlockBarrel.changeStateOverFullness(this, worldIn, state, pos), 0x3 );
 
+         world.notifyBlockUpdate(pos, state, state, 11);
+         world.markBlockRangeForRenderUpdate(pos,pos);
          //Todo remove this, just for testing purposes
-        world.setBlockState(pos, state);
+        world.setBlockState(pos, state, 3);
     }
 
     @Override
@@ -176,6 +178,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
 
         compound.setInteger("items", this.items);
         compound.setInteger("timer", this.timer);
+        compound.setBoolean("done", this.done);
 
         return compound;
     }
@@ -186,6 +189,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         super.readFromNBT(compound);
         this.items = compound.getInteger("items");
         this.timer = compound.getInteger("timer");
+        this.done = compound.getBoolean("done");
     }
 
     public int getItems()
@@ -214,6 +218,16 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     {
         final NBTTagCompound compound = packet.getNbtCompound();
         this.readFromNBT(compound);
+    }
+
+    @Override
+    public final void handleUpdateTag(NBTTagCompound tag)
+    {
+        this.items = tag.getInteger("items");
+        this.timer = tag.getInteger("timer");
+        this.done = tag.getBoolean("done");
+        IBlockState state = world.getBlockState(pos);
+        world.notifyBlockUpdate(pos, state, state, 11);
     }
 
 
