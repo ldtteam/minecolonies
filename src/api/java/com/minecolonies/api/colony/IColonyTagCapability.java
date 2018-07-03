@@ -16,7 +16,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONIES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 
 /**
- * Not used for now, maybe in 1.13?
+ *
  * Capability for the colony tag for chunks
  */
 public interface IColonyTagCapability
@@ -79,6 +79,7 @@ public interface IColonyTagCapability
          */
         private int owningColony = 0;
 
+        @NotNull
         @Override
         public IColonyTagCapability addColony(final int id)
         {
@@ -96,6 +97,7 @@ public interface IColonyTagCapability
             owningColony = 0;
         }
 
+        @NotNull
         @Override
         public IColonyTagCapability removeColony(final int id)
         {
@@ -113,6 +115,7 @@ public interface IColonyTagCapability
             return this;
         }
 
+        @NotNull
         @Override
         public IColonyTagCapability setOwningColony(final int id)
         {
@@ -144,7 +147,7 @@ public interface IColonyTagCapability
         {
             final NBTTagCompound compound = new NBTTagCompound();
             compound.setInteger(TAG_ID, instance.getOwningColony());
-            compound.setTag(TAG_COLONIES, instance.getAllCloseColonies().stream().map(id -> Storage.write(id)).collect(NBTUtils.toNBTTagList()));
+            compound.setTag(TAG_COLONIES, instance.getAllCloseColonies().stream().map(Storage::write).collect(NBTUtils.toNBTTagList()));
             return compound;
         }
 
@@ -165,7 +168,7 @@ public interface IColonyTagCapability
          * @param id the id.
          * @return the compound of it.
          */
-        private static NBTTagCompound write(@NotNull final int id)
+        private static NBTTagCompound write(final int id)
         {
             final NBTTagCompound compound = new NBTTagCompound();
             compound.setInteger(TAG_ID, id);

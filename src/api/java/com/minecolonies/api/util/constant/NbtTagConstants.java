@@ -253,6 +253,26 @@ public final class NbtTagConstants
     public static final String SECOND_POS_STRING = "pos2";
 
     /**
+     * Tag for all chunk storages..
+     */
+    public static final String TAG_CHUNK_STORAGE = "chunk";
+
+    /**
+     * Var for first pos string.
+     */
+    public static final String TAG_X = "xPos";
+
+    /**
+     * Var for second pos string.
+     */
+    public static final String TAG_Z = "zPos";
+
+    /**
+     * Tag for all chunk storages..
+     */
+    public static final String TAG_ALL_CHUNK_STORAGES = "allchunk";
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private NbtTagConstants()

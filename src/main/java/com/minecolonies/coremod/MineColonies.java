@@ -1,6 +1,7 @@
 package com.minecolonies.coremod;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
@@ -40,6 +41,9 @@ public class MineColonies
 {
     @CapabilityInject(IColonyTagCapability.class)
     public static Capability<IColonyTagCapability> CLOSE_COLONY_CAP;
+
+    @CapabilityInject(IChunkmanagerCapability.class)
+    public static Capability<IChunkmanagerCapability> CHUNK_STORAGE_UPDATE_CAP;
 
     private static final Logger logger = LogManager.getLogger(Constants.MOD_ID);
     /**
@@ -102,7 +106,8 @@ public class MineColonies
     @Mod.EventHandler
     public void preInit(@NotNull final FMLPreInitializationEvent event)
     {
-        CapabilityManager.INSTANCE.register(IColonyTagCapability.class, new IColonyTagCapability.Storage(), IColonyTagCapability.Impl.class);
+        CapabilityManager.INSTANCE.register(IColonyTagCapability.class, new IColonyTagCapability.Storage(), IColonyTagCapability.Impl::new);
+        CapabilityManager.INSTANCE.register(IChunkmanagerCapability.class, new IChunkmanagerCapability.Storage(), IChunkmanagerCapability.Impl::new);
 
         StandardFactoryControllerInitializer.onPreInit();
         proxy.registerEntities();
