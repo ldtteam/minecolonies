@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -8,13 +10,17 @@ import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
 
 /**
  * Class to handle the placement of the supplychest and with it the supplyship.
@@ -71,6 +77,10 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     {
         if (worldIn.isRemote)
         {
+            if(!Configurations.gameplay.allowOtherDimColonies && worldIn.provider.getDimension() != 0)
+            {
+                return EnumActionResult.FAIL;
+            }
             placeSupplyShip(pos, playerIn.getHorizontalFacing());
         }
 
@@ -82,9 +92,13 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     public ActionResult<ItemStack> onItemRightClick(final World worldIn, final EntityPlayer playerIn, final EnumHand hand)
     {
         final ItemStack stack = playerIn.getHeldItem(hand);
-
         if (worldIn.isRemote)
         {
+            if(!Configurations.gameplay.allowOtherDimColonies && worldIn.provider.getDimension() != 0)
+            {
+                LanguageHandler.sendPlayerMessage(playerIn, CANT_PLACE_COLONY_IN_OTHER_DIM);
+                return new ActionResult<>(EnumActionResult.FAIL, stack);
+            }
             placeSupplyShip(null, playerIn.getHorizontalFacing());
         }
 

@@ -13,7 +13,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Random;
@@ -27,7 +26,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     protected final EntityCreature entity;
     protected final World          world;
     protected final double         speed;
-    protected final Colony         colony;
+    protected Colony         colony;
     /**
      * The navigator for this entity.
      */
@@ -51,7 +50,6 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         this.entity = creatureIn;
         this.speed = speedIn;
         this.world = creatureIn.getEntityWorld();
-        this.colony = ColonyManager.getClosestColony(world, creatureIn.getPosition());
         this.newNavigator = new PathNavigate(entity, world);
         updateNavigatorField();
         this.newNavigator.setCanSwim(true);
@@ -109,7 +107,8 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
      *
      * @return Boolean value of whether or not to continue executing
      */
-    public boolean continueExecuting()
+    @Override
+    public boolean shouldContinueExecuting()
     {
         return !this.entity.getNavigator().noPath() && this.entity.isEntityAlive();
     }
@@ -117,6 +116,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     /**
      * Is executed when the ai Starts Executing
      */
+    @Override
     public void startExecuting()
     {
         updateNavigatorField();
@@ -156,12 +156,12 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
      */
     private BlockPos getRandomBuilding()
     {
-        if (colony == null)
+        if (getColony() == null)
         {
             return null;
         }
 
-        final Collection<AbstractBuilding> buildingList = colony.getBuildings().values();
+        final Collection<AbstractBuilding> buildingList = getColony().getBuildingManager().getBuildings().values();
         final Object[] buildingArray = buildingList.toArray();
         if (buildingArray.length != 0)
         {
@@ -176,15 +176,13 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         }
     }
 
-    /**
-     * returns the center of the colony
-     *
-     * @return BlockPos of the center
-     */
-    @Nullable
-    protected BlockPos getPosition()
+    public Colony getColony()
     {
-        colony.getBuildings();
-        return colony.getCenter();
+        if (colony == null)
+        {
+            colony = ColonyManager.getClosestColony(world, entity.getPosition());
+        }
+
+        return colony;
     }
 }

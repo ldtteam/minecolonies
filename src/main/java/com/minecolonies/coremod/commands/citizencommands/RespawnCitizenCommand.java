@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.RESPAWNCITIZENS;
 
@@ -26,6 +27,14 @@ public class RespawnCitizenCommand extends AbstractCitizensCommands
     private static final String CITIZEN_DESCRIPTION = "§2ID: §f %d §2 Name: §f %s";
     private static final String REMOVED_MESSAGE     = "Has been removed";
     private static final String COORDINATES_XYZ     = "§4x=§f%s §4y=§f%s §4z=§f%s";
+
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
+    public RespawnCitizenCommand()
+    {
+        super();
+    }
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -45,17 +54,18 @@ public class RespawnCitizenCommand extends AbstractCitizensCommands
     }
 
     @Override
-    void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
+    public void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
     {
-        final CitizenData citizenData = colony.getCitizen(citizenId);
-        final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
-        sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
+        final CitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
+        final Optional<EntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
 
-        if (entityCitizen == null)
+        sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
+        if (!optionalEntityCitizen.isPresent())
         {
-            colony.spawnCitizen(citizenData);
-            return;
+            citizenData.updateCitizenEntityIfNecessary();
         }
+
+        final EntityCitizen entityCitizen = citizenData.getCitizenEntity().get();
 
         final BlockPos position = entityCitizen.getPosition();
         sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));

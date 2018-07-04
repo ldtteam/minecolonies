@@ -1,17 +1,24 @@
 package com.minecolonies.coremod;
 
+import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
+import com.minecolonies.coremod.commands.CommandEntryPointNew;
+import com.minecolonies.coremod.event.BarbarianSpawnEventHandler;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.event.FMLEventHandler;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.util.RecipeHandler;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -28,10 +35,16 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 @Mod.EventBusSubscriber
-@Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION,
+@Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION, dependencies="after:gbook",
   /*dependencies = Constants.FORGE_VERSION,*/ acceptedMinecraftVersions = Constants.MC_VERSION)
 public class MineColonies
 {
+    @CapabilityInject(IColonyTagCapability.class)
+    public static Capability<IColonyTagCapability> CLOSE_COLONY_CAP;
+
+    @CapabilityInject(IChunkmanagerCapability.class)
+    public static Capability<IChunkmanagerCapability> CHUNK_STORAGE_UPDATE_CAP;
+
     private static final Logger logger = LogManager.getLogger(Constants.MOD_ID);
     /**
      * Forge created instance of the Mod.
@@ -50,6 +63,7 @@ public class MineColonies
 
     static
     {
+        MinecraftForge.EVENT_BUS.register(new BarbarianSpawnEventHandler());
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         MinecraftForge.EVENT_BUS.register(new FMLEventHandler());
     }
@@ -65,7 +79,7 @@ public class MineColonies
     }
 
     /**
-     * Returns whether the side is client or not
+     * Returns whether the side is server or not
      *
      * @return True when server, otherwise false
      */
@@ -92,12 +106,15 @@ public class MineColonies
     @Mod.EventHandler
     public void preInit(@NotNull final FMLPreInitializationEvent event)
     {
+        CapabilityManager.INSTANCE.register(IColonyTagCapability.class, new IColonyTagCapability.Storage(), IColonyTagCapability.Impl::new);
+        CapabilityManager.INSTANCE.register(IChunkmanagerCapability.class, new IChunkmanagerCapability.Storage(), IChunkmanagerCapability.Impl::new);
+
         StandardFactoryControllerInitializer.onPreInit();
         proxy.registerEntities();
         proxy.registerEntityRendering();
         proxy.registerEvents();
 
-        @NotNull Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
+        @NotNull final Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
         configuration.load();
 
         if (configuration.hasChanged())
@@ -146,12 +163,16 @@ public class MineColonies
         getNetwork().registerMessage(ColonyStylesMessage.class, ColonyStylesMessage.class, ++id, Side.CLIENT);
         getNetwork().registerMessage(ColonyViewWorkOrderMessage.class, ColonyViewWorkOrderMessage.class, ++id, Side.CLIENT);
         getNetwork().registerMessage(ColonyViewRemoveWorkOrderMessage.class, ColonyViewRemoveWorkOrderMessage.class, ++id, Side.CLIENT);
+        getNetwork().registerMessage(UpdateChunkCapabilityMessage.class, UpdateChunkCapabilityMessage.class, ++id, Side.CLIENT);
+        getNetwork().registerMessage(GuardMobAttackListMessage.class, GuardMobAttackListMessage.class, ++id, Side.CLIENT);
+        getNetwork().registerMessage(HappinessDataMessage.class,HappinessDataMessage.class,++id,Side.CLIENT);
 
         //  Permission Request messages
         getNetwork().registerMessage(PermissionsMessage.Permission.class, PermissionsMessage.Permission.class, ++id, Side.SERVER);
         getNetwork().registerMessage(PermissionsMessage.AddPlayer.class, PermissionsMessage.AddPlayer.class, ++id, Side.SERVER);
         getNetwork().registerMessage(PermissionsMessage.RemovePlayer.class, PermissionsMessage.RemovePlayer.class, ++id, Side.SERVER);
         getNetwork().registerMessage(PermissionsMessage.ChangePlayerRank.class, PermissionsMessage.ChangePlayerRank.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(PermissionsMessage.AddPlayerOrFakePlayer.class, PermissionsMessage.AddPlayerOrFakePlayer.class, ++id, Side.SERVER);
 
         //  Colony Request messages
         getNetwork().registerMessage(BuildRequestMessage.class, BuildRequestMessage.class, ++id, Side.SERVER);
@@ -166,19 +187,33 @@ public class MineColonies
         getNetwork().registerMessage(AssignFieldMessage.class, AssignFieldMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(AssignmentModeMessage.class, AssignmentModeMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(GuardTaskMessage.class, GuardTaskMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(GuardRecalculateMessage.class, GuardRecalculateMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(MobEntryChangeMessage.class, MobEntryChangeMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(GuardScepterMessage.class, GuardScepterMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(RecallTownhallMessage.class, RecallTownhallMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(TransferItemsRequestMessage.class, TransferItemsRequestMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(MarkBuildingDirtyMessage.class, MarkBuildingDirtyMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(ChangeFreeToInteractBlockMessage.class, ChangeFreeToInteractBlockMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(LumberjackSaplingSelectorMessage.class, LumberjackSaplingSelectorMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(LumberjackReplantSaplingToggleMessage.class, LumberjackReplantSaplingToggleMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(ToggleHousingMessage.class, ToggleHousingMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(AssignUnassignMessage.class, AssignUnassignMessage.class, ++id, Side.SERVER);
-        getNetwork().registerMessage(LumberjackSaplingSelectorMessage.class, LumberjackSaplingSelectorMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(OpenCraftingGUIMessage.class, OpenCraftingGUIMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(AddRemoveRecipeMessage.class, AddRemoveRecipeMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(ChangeRecipePriorityMessage.class, ChangeRecipePriorityMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(UpgradeWarehouseMessage.class, UpgradeWarehouseMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(BuildToolPasteMessage.class, BuildToolPasteMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(TransferItemsToCitizenRequestMessage.class, TransferItemsToCitizenRequestMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(UpdateRequestStateMessage.class, UpdateRequestStateMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(BuildingSetStyleMessage.class, BuildingSetStyleMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(MultiBlockChangeMessage.class, MultiBlockChangeMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(CowboySetMilkCowsMessage.class, CowboySetMilkCowsMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(BuildingMoveMessage.class, BuildingMoveMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(RecallSingleCitizenMessage.class, RecallSingleCitizenMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(ScanOnServerMessage.class, ScanOnServerMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(RemoveBlockMessage.class, RemoveBlockMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(RemoveEntityMessage.class, RemoveEntityMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(ReplaceBlockMessage.class, ReplaceBlockMessage.class, ++id, Side.SERVER);
 
         // Schematic transfer messages
         getNetwork().registerMessage(SchematicRequestMessage.class, SchematicRequestMessage.class, ++id, Side.SERVER);
@@ -188,6 +223,9 @@ public class MineColonies
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class, BlockParticleEffectMessage.class, ++id, Side.CLIENT);
         getNetwork().registerMessage(SaveScanMessage.class, SaveScanMessage.class, ++id, Side.CLIENT);
+
+        //JEI Messages
+        getNetwork().registerMessage(TransferRecipeCrafingTeachingMessage.class, TransferRecipeCrafingTeachingMessage.class, ++id, Side.SERVER);
     }
 
     public static SimpleNetworkWrapper getNetwork()
@@ -206,5 +244,6 @@ public class MineColonies
     {
         // register server commands
         event.registerServerCommand(new CommandEntryPoint());
+        event.registerServerCommand(new CommandEntryPointNew());
     }
 }

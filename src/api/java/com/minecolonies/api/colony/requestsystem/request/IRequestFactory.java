@@ -50,8 +50,8 @@ public interface IRequestFactory<T extends IRequestable, R extends IRequest<T>> 
 
         if (context.length == NUMBER_OF_PROPERTIES)
         {
-            IRequester requester = (IRequester) context[1];
-            IToken token = (IToken) context[0];
+            final IRequester requester = (IRequester) context[1];
+            final IToken token = (IToken) context[0];
 
             return this.getNewInstance(t, requester, token);
         }
@@ -61,9 +61,9 @@ public interface IRequestFactory<T extends IRequestable, R extends IRequest<T>> 
             throw new IllegalArgumentException("Unsupported context - Third context object is not a request state");
         }
 
-        IRequester requester = (IRequester) context[1];
-        IToken token = (IToken) context[0];
-        RequestState state = (RequestState) context[2];
+        final IRequester requester = (IRequester) context[1];
+        final IToken token = (IToken) context[0];
+        final RequestState state = (RequestState) context[2];
 
         return this.getNewInstance(t, requester, token, state);
     }
@@ -76,7 +76,7 @@ public interface IRequestFactory<T extends IRequestable, R extends IRequest<T>> 
      * @param token    The token to build the request from.
      * @return The new output instance for a given input.
      */
-    default R getNewInstance(@NotNull final T input, @NotNull final IRequester location, @NotNull final IToken token)
+    default R getNewInstance(@NotNull final T input, @NotNull final IRequester location, @NotNull final IToken<?> token)
     {
         return this.getNewInstance(input, location, token, RequestState.CREATED);
     }
@@ -90,5 +90,5 @@ public interface IRequestFactory<T extends IRequestable, R extends IRequest<T>> 
      * @param initialState The initial state of the request request.
      * @return The new output instance for a given input.
      */
-    R getNewInstance(@NotNull T input, @NotNull IRequester location, @NotNull IToken token, @NotNull RequestState initialState);
+    R getNewInstance(@NotNull T input, @NotNull IRequester location, @NotNull IToken<?> token, @NotNull RequestState initialState);
 }

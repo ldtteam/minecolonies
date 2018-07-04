@@ -164,7 +164,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         triggerMinedBlock(blockToMine);
 
         //Break the block
-        worker.breakBlockWithToolInHand(blockToMine);
+        worker.getCitizenItemHandler().breakBlockWithToolInHand(blockToMine);
 
         //add the drops to the citizen
         for (final ItemStack item : localItems)
@@ -174,9 +174,9 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
 
         if (tool != null)
         {
-            tool.getItem().onUpdate(tool, world, worker, worker.findFirstSlotInInventoryWith(tool.getItem(), tool.getItemDamage()), true);
+            tool.getItem().onUpdate(tool, world, worker, worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(tool.getItem(), tool.getItemDamage()), true);
         }
-        worker.addExperience(XP_PER_BLOCK);
+        worker.getCitizenExperienceHandler().addExperience(XP_PER_BLOCK);
         this.incrementActionsDone();
         return true;
     }
@@ -191,7 +191,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     {
         final Block curBlock = world.getBlockState(blockToMine).getBlock();
 
-        if (!holdEfficientTool(curBlock))
+        if (!holdEfficientTool(curBlock, blockToMine))
         {
             //We are missing a tool to harvest this block...
             return true;
@@ -200,7 +200,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         final ItemStack tool = worker.getHeldItemMainhand();
 
         if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.BEDROCK
-              && curBlock.getHarvestTool(curBlock.getDefaultState()) != null)
+              && curBlock.getHarvestTool(world.getBlockState(blockToMine)) != null)
         {
             Log.getLogger().info(String.format(
               "ForgeHook not in sync with EfficientTool for %s and %s\n"
@@ -229,23 +229,23 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
               || world.getBlockState(blockToMine).getBlock() == (Blocks.REDSTONE_ORE)
               || world.getBlockState(blockToMine).getBlock() == (Blocks.EMERALD_ORE))
         {
-            this.getOwnBuilding().getColony().incrementStatistic("ores");
+            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("ores");
         }
         if (world.getBlockState(blockToMine).getBlock().equals(Blocks.DIAMOND_ORE))
         {
-            this.getOwnBuilding().getColony().incrementStatistic("diamonds");
+            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("diamonds");
         }
         if (world.getBlockState(blockToMine).getBlock().equals(Blocks.CARROTS))
         {
-            this.getOwnBuilding().getColony().incrementStatistic("carrots");
+            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("carrots");
         }
         if (world.getBlockState(blockToMine).getBlock().equals(Blocks.POTATOES))
         {
-            this.getOwnBuilding().getColony().incrementStatistic("potatoes");
+            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("potatoes");
         }
         if (world.getBlockState(blockToMine).getBlock().equals(Blocks.WHEAT))
         {
-            this.getOwnBuilding().getColony().incrementStatistic("wheat");
+            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("wheat");
         }
     }
 
@@ -256,7 +256,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      * @param pos   coordinate
      * @return the delay in ticks
      */
-    private int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
+    public int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
     {
         if (worker.getHeldItemMainhand() == null)
         {
@@ -264,7 +264,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         }
 
         return (int) ((Configurations.gameplay.blockMiningDelayModifier
-                         * Math.pow(LEVEL_MODIFIER, worker.getLevel()))
+                         * Math.pow(LEVEL_MODIFIER, worker.getCitizenExperienceHandler().getLevel()))
                         * (double) world.getBlockState(pos).getBlockHardness(world, pos)
                         / (double) (worker.getHeldItemMainhand().getItem()
                                       .getDestroySpeed(worker.getHeldItemMainhand(),
@@ -276,7 +276,9 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      */
     public void fillItemsList()
     {
-        searchForItems(worker.getEntityBoundingBox().expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP).expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
+        searchForItems(worker.getEntityBoundingBox()
+                .expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
+                .expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
     }
 
     /**
@@ -289,7 +291,8 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     {
         items = world.getEntitiesWithinAABB(EntityItem.class, boundingBox)
                   .stream()
-                  .filter(item -> item != null && !item.isDead)
+                  .filter(item -> item != null && !item.isDead &&
+                          (!item.getEntityData().hasKey("PreventRemoteMovement") || !item.getEntityData().getBoolean("PreventRemoteMovement")))
                   .map(BlockPosUtil::fromEntity)
                   .collect(Collectors.toList());
     }

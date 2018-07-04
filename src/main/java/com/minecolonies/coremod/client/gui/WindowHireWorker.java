@@ -239,7 +239,7 @@ public class WindowHireWorker extends Window implements ButtonHandler
 
         if (colony.getTownHall() != null)
         {
-            building.openGui();
+            building.openGui(false);
         }
     }
 }

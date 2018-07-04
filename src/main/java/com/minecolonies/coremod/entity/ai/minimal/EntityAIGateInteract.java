@@ -14,6 +14,8 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.util.constant.Constants.HALF_BLOCK;
+
 /**
  * Used for gate interaction for the citizens.
  */
@@ -27,10 +29,7 @@ public class EntityAIGateInteract extends EntityAIBase
      * Number of blocks to check for the fence gate - length.
      */
     private static final int    LENGTH_TO_CHECK = 2;
-    /**
-     * The length of half a block.
-     */
-    private static final double HALF_BLOCK      = 0.5D;
+
     /**
      * The min distance the gate has to be from the citizen.
      */

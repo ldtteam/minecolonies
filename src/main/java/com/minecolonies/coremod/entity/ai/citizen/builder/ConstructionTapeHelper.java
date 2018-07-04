@@ -14,6 +14,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -61,7 +62,6 @@ public final class ConstructionTapeHelper
         if (Configurations.gameplay.builderPlaceConstructionTape)
         {
             final IBlockState constructionTape = ModBlocks.blockConstructionTape.getDefaultState();
-            final IBlockState constructionTapeCorner = ModBlocks.blockConstructionTapeCorner.getDefaultState();
 
             final int x1 = corners.getFirst().getFirst();
             final int x3 = corners.getFirst().getSecond();
@@ -126,10 +126,10 @@ public final class ConstructionTapeHelper
             final BlockPos corner3 = new BlockPos(x3, newY, z1);
             newY = checkIfPlaceable(x3, y, z3, world);
             final BlockPos corner4 = new BlockPos(x3, newY, z3);
-            world.setBlockState(corner1, constructionTapeCorner.withProperty(FACING, EnumFacing.SOUTH));
-            world.setBlockState(corner2, constructionTapeCorner.withProperty(FACING, EnumFacing.EAST));
-            world.setBlockState(corner3, constructionTapeCorner.withProperty(FACING, EnumFacing.WEST));
-            world.setBlockState(corner4, constructionTapeCorner.withProperty(FACING, EnumFacing.NORTH));
+            world.setBlockState(corner1, constructionTape.withProperty(FACING, EnumFacing.SOUTH));
+            world.setBlockState(corner2, constructionTape.withProperty(FACING, EnumFacing.EAST));
+            world.setBlockState(corner3, constructionTape.withProperty(FACING, EnumFacing.WEST));
+            world.setBlockState(corner4, constructionTape.withProperty(FACING, EnumFacing.NORTH));
         }
     }
 
@@ -145,29 +145,20 @@ public final class ConstructionTapeHelper
 
     public static int checkIfPlaceable(@NotNull final int x, @NotNull final int y, @NotNull final int z, @NotNull final World world)
     {
-        int newY = y;
-        boolean working = true;
-        while (working)
+        BlockPos target = new BlockPos(x,y,z);
+        final Chunk chunk = world.getChunkFromBlockCoords(target);
+
+        target = new BlockPos(x, chunk.getTopFilledSegment() + 16, z);
+        while(world.getBlockState(target).getMaterial().isReplaceable())
         {
-            final BlockPos block = new BlockPos(x, newY, z);
-            final BlockPos blockMin1 = new BlockPos(x, newY - 1, z);
-            if (world.getBlockState(block).getMaterial().isReplaceable())
+            target = target.down();
+            if (target.getY() == 0)
             {
-                if (world.getBlockState(blockMin1).getMaterial().isReplaceable() && newY >= 1)
-                {
-                    newY = newY - 1;
-                }
-                else
-                {
-                    working = false;
-                }
-            }
-            else
-            {
-                newY = newY + 1;
+                break;
             }
         }
-        return newY > 0 ? newY : y;
+
+        return target.getY() + 1;
     }
 
     /**
@@ -241,10 +232,10 @@ public final class ConstructionTapeHelper
         final BlockPos corner2 = new BlockPos(x1, 0, z3);
         final BlockPos corner3 = new BlockPos(x3, 0, z1);
         final BlockPos corner4 = new BlockPos(x3, 0, z3);
-        removeTapeIfNecessary(world, corner1, ModBlocks.blockConstructionTapeCorner);
-        removeTapeIfNecessary(world, corner2, ModBlocks.blockConstructionTapeCorner);
-        removeTapeIfNecessary(world, corner3, ModBlocks.blockConstructionTapeCorner);
-        removeTapeIfNecessary(world, corner4, ModBlocks.blockConstructionTapeCorner);
+        removeTapeIfNecessary(world, corner1, ModBlocks.blockConstructionTape);
+        removeTapeIfNecessary(world, corner2, ModBlocks.blockConstructionTape);
+        removeTapeIfNecessary(world, corner3, ModBlocks.blockConstructionTape);
+        removeTapeIfNecessary(world, corner4, ModBlocks.blockConstructionTape);
     }
 
     /**

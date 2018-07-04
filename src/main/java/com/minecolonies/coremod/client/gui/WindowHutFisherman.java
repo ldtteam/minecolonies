@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.buildings.BuildingFisherman;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFisherman;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -12,7 +12,7 @@ public class WindowHutFisherman extends AbstractWindowWorkerBuilding<BuildingFis
     /**
      * Constructor for the window of the fisherman.
      *
-     * @param building {@link com.minecolonies.coremod.colony.buildings.BuildingFisherman.View}.
+     * @param building {@link BuildingFisherman.View}.
      */
     public WindowHutFisherman(final BuildingFisherman.View building)
     {

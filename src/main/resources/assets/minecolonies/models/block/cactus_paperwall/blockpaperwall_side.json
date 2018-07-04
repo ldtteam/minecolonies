@@ -1,0 +1,7 @@
+{
+  "parent": "block/pane_side",
+  "textures": {
+    "edge": "minecolonies:blocks/paperwall/paperwall_cactus_top",
+    "pane": "minecolonies:blocks/paperwall/paperwall_cactus_white"
+  }
+}

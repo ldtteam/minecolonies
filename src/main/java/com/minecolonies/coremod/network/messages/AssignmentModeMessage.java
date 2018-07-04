@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -72,7 +72,7 @@ public class AssignmentModeMessage extends AbstractMessage<AssignmentModeMessage
                 return;
             }
 
-            @Nullable final BuildingFarmer building = colony.getBuilding(message.buildingId, BuildingFarmer.class);
+            @Nullable final BuildingFarmer building = colony.getBuildingManager().getBuilding(message.buildingId, BuildingFarmer.class);
             if (building != null)
             {
                 building.setAssignManually(message.assignmentMode);

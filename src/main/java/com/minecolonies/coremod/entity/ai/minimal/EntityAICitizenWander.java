@@ -1,10 +1,12 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 /**
@@ -40,15 +42,29 @@ public class EntityAICitizenWander extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        if (isToOld() || checkForRandom() || citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP)
+        if (isTooOld() || checkForRandom() || citizen.getDesiredActivity() == DesiredActivity.SLEEP)
         {
             return false;
         }
 
-        Vec3d vec3d = RandomPositionGenerator.getLandPos(citizen, 10, 7);
-        if (vec3d == null)
+        Vec3d vec3d = null;
+        if(citizen.getCitizenData().getSaturation() <= 0)
         {
-            return false;
+            final BlockPos pos = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestRestaurant(citizen);
+            if(pos != null)
+            {
+                vec3d = new Vec3d(pos);
+            }
+        }
+
+
+        if(vec3d == null)
+        {
+            vec3d = RandomPositionGenerator.getLandPos(citizen, 10, 7);
+            if (vec3d == null)
+            {
+                return false;
+            }
         }
 
         vec3d = new Vec3d(vec3d.x, BlockPosUtil.getValidHeight(vec3d, CompatibilityUtils.getWorld(citizen)), vec3d.z);
@@ -66,7 +82,7 @@ public class EntityAICitizenWander extends EntityAIBase
      *
      * @return True when age => 100, otherwise false.
      */
-    private boolean isToOld()
+    private boolean isTooOld()
     {
         return citizen.getGrowingAge() >= 100;
     }

@@ -1,9 +1,12 @@
 package com.minecolonies.coremod.commands.citizencommands;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.minecolonies.coremod.commands.ActionMenuState;
+import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,7 +22,7 @@ import java.util.List;
 /**
  * Parent class for all citizen related commands, contains code which is the same for all commands relating citizens.
  */
-public abstract class AbstractCitizensCommands extends AbstractSingleCommand
+public abstract class AbstractCitizensCommands extends AbstractSingleCommand implements IActionCommand
 {
     private static final String NO_ARGUMENTS = "Please define a valid citizen and/or colony";
 
@@ -31,6 +34,27 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
     public AbstractCitizensCommands(@NotNull final String... parents)
     {
         super(parents);
+    }
+
+    @Override
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
+    {
+        final Colony colony = actionMenuState.getColonyForArgument("colony");
+        if (colony == null)
+        {
+            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+            return;
+        }
+
+        final CitizenData citizenData = actionMenuState.getCitizenForArgument("citizen");
+        if (null == citizenData)
+        {
+            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+            return;
+        }
+
+        final int citizenId = citizenData.getId();
+        executeSpecializedCode(server, sender, colony, citizenId);
     }
 
     @NotNull
@@ -60,7 +84,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
                 final EntityPlayer player = server.getEntityWorld().getPlayerEntityByName(args[0]);
                 if (player != null)
                 {
-                    IColony tempColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
+                    final IColony tempColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
                     if (tempColony != null)
                     {
                         colonyId = tempColony.getID();
@@ -95,14 +119,14 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
             final EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, getCommand(), colonyId))
             {
-                player.sendMessage(new TextComponentString(NOT_PERMITTED));
+                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }
 
         final int citizenId = getValidCitizenId(colony, firstArgumentColonyId, args);
 
-        if (citizenId == -1 || colony.getCitizen(citizenId) == null)
+        if (citizenId == -1 || colony.getCitizenManager().getCitizen(citizenId) == null)
         {
             sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
             return;
@@ -133,7 +157,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
      *
      * @return the command.
      */
-    abstract Commands getCommand();
+    public abstract Commands getCommand();
 
     /**
      * Get a valid citizenid from the arguments.
@@ -157,9 +181,9 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
             if (args.length >= offset + 2)
             {
                 final String citizenName = args[offset] + " " + args[offset + 1] + " " + args[offset + 2];
-                for (int i = 1; i <= colony.getCitizens().size(); i++)
+                for (int i = 1; i <= colony.getCitizenManager().getCitizens().size(); i++)
                 {
-                    if (colony.getCitizen(i).getName().equals(citizenName))
+                    if (colony.getCitizenManager().getCitizen(i).getName().equals(citizenName))
                     {
                         return i;
                     }
@@ -179,5 +203,5 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
      * @param colonyId  the id for the colony
      * @param citizenId the id for the citizen
      */
-    abstract void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colonyId, final int citizenId);
+    public abstract void executeSpecializedCode(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final Colony colonyId, final int citizenId);
 }

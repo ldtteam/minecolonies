@@ -7,15 +7,13 @@ import com.minecolonies.coremod.colony.ColonyView;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Add or Update a ColonyView on the client.
  */
-public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMessage, IMessage>
+public class ColonyViewMessage extends AbstractMessage<ColonyViewMessage, IMessage>
 {
     private int     colonyId;
     private boolean isNewSubscription;
@@ -60,10 +58,12 @@ public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMe
         buf.writeBytes(colonyBuffer);
     }
 
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull final ColonyViewMessage message, final MessageContext ctx)
+    protected void messageOnClientThread(final ColonyViewMessage message, final MessageContext ctx)
     {
-        return ColonyManager.handleColonyViewMessage(message.colonyId, message.colonyBuffer, MineColonies.proxy.getWorldFromMessage(ctx), message.isNewSubscription);
+        if(MineColonies.proxy.getWorldFromMessage(ctx) != null)
+        {
+            ColonyManager.handleColonyViewMessage(message.colonyId, message.colonyBuffer, MineColonies.proxy.getWorldFromMessage(ctx), message.isNewSubscription);
+        }
     }
 }

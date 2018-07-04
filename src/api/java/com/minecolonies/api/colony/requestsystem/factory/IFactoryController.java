@@ -29,11 +29,11 @@ public interface IFactoryController
         {
             return getFactoryForInput((TypeToken<? extends Input>) TypeToken.of(Class.forName(className)));
         }
-        catch (IllegalArgumentException ex)
+        catch (final IllegalArgumentException ex)
         {
             throw ex;
         }
-        catch (Exception ex)
+        catch (final Exception ex)
         {
             throw new IllegalArgumentException("The given input name is unknown", ex);
         }
@@ -82,11 +82,11 @@ public interface IFactoryController
         {
             return getFactoryForOutput((TypeToken<? extends Output>) TypeToken.of(Class.forName(className)));
         }
-        catch (IllegalArgumentException ex)
+        catch (final IllegalArgumentException ex)
         {
             throw ex;
         }
-        catch (Exception ex)
+        catch (final Exception ex)
         {
             throw new IllegalArgumentException("The given output name is unknown", ex);
         }
@@ -189,10 +189,9 @@ public interface IFactoryController
      * Or if an upgrade between version is needed.
      *
      * @param overrideHandler The override handler to register.
-     * @param <Input>         The input that that the handler converts from.
      * @param <Output>        The output type that the handler converts to.
      */
-    <Input, Output> void registerNewTypeOverrideHandler(@NotNull final ITypeOverrideHandler<Input, Output> overrideHandler);
+    <Output> void registerNewTypeOverrideHandler(@NotNull final ITypeOverrideHandler<Output> overrideHandler);
 
     /**
      * Method used to register a renaming of a class.

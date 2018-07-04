@@ -113,7 +113,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      * @param theCommand which command to check if the player can use it
      * @return boolean
      */
-    public boolean canCommandSenderUseCommand(final Commands theCommand)
+    public static boolean canCommandSenderUseCommand(final Commands theCommand)
     {
         switch (theCommand)
         {
@@ -141,6 +141,8 @@ public abstract class AbstractSingleCommand implements ISubCommand
                 return Configurations.gameplay.canPlayerUseRefreshColonyCommand;
             case MC_BACKUP:
                 return Configurations.gameplay.canPlayerUseBackupCommand;
+            case RSRESET:
+                return Configurations.requestSystem.canPlayerUseResetCommand;
             default:
                 return false;
         }
@@ -173,6 +175,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
         CHANGE_COLONY_OWNER,
         REFRESH_COLONY,
         HOMETP,
-        MC_BACKUP
+        MC_BACKUP,
+        RSRESET
     }
 }

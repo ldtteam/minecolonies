@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.BuildingMiner;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -72,7 +72,7 @@ public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, 
                 return;
             }
 
-            @Nullable final BuildingMiner building = colony.getBuilding(message.buildingId, BuildingMiner.class);
+            @Nullable final BuildingMiner building = colony.getBuildingManager().getBuilding(message.buildingId, BuildingMiner.class);
             if (building != null && message.level >= 0 && message.level < building.getNumberOfLevels())
             {
                 building.setCurrentLevel(message.level);

@@ -3,7 +3,6 @@ package com.minecolonies.coremod.colony.workorders;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.WorkOrderView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -34,6 +33,9 @@ public abstract class AbstractWorkOrder
     {
         addMapping("build", WorkOrderBuild.class);
         addMapping("decoration", WorkOrderBuildDecoration.class);
+        addMapping("removal", WorkOrderBuildRemoval.class);
+        addMapping("building", WorkOrderBuildBuilding.class);
+        addMapping("miner", WorkOrderBuildMiner.class);
     }
 
     protected int id;
@@ -247,7 +249,7 @@ public abstract class AbstractWorkOrder
      *
      * @param citizen {@link CitizenData}
      */
-    void setClaimedBy(@Nullable final CitizenData citizen)
+    public void setClaimedBy(@Nullable final CitizenData citizen)
     {
         changed = true;
         claimedBy = (citizen != null) ? citizen.getId() : 0;
@@ -301,14 +303,6 @@ public abstract class AbstractWorkOrder
     }
 
     /**
-     * Attempt to fulfill the Work Order.
-     * Override this with an implementation for the Work Order to find a Citizen to perform the job
-     *
-     * @param colony The colony that owns the Work Order
-     */
-    public abstract void attemptToFulfill(Colony colony);
-
-    /**
      * Writes the workOrders data to a byte buf for transition.
      *
      * @param buf Buffer to write to
@@ -344,8 +338,9 @@ public abstract class AbstractWorkOrder
      * Override this when something need to be done when the work order is added
      *
      * @param colony in which the work order exist
+     * @param readingFromNbt if being read from NBT.
      */
-    public void onAdded(final Colony colony)
+    public void onAdded(final Colony colony, final boolean readingFromNbt)
     {
     }
 

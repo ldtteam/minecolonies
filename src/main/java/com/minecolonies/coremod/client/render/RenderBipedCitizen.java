@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.render;
 import com.minecolonies.coremod.client.model.*;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
@@ -22,6 +23,8 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     private static final Map<Model, ModelBiped> idToMaleModelMap   = new EnumMap<>(Model.class);
     private static final Map<Model, ModelBiped> idToFemaleModelMap = new EnumMap<>(Model.class);
     private static final double                 SHADOW_SIZE        = 0.5F;
+    private static final int THREE_QUARTERS = 270;
+
     static
     {
         idToMaleModelMap.put(Model.DELIVERYMAN, new ModelEntityDeliverymanMale());
@@ -70,6 +73,34 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     }
 
     @Override
+    protected void renderLivingAt(final EntityCitizen entityLivingBaseIn, final double x, final double y, final double z)
+    {
+        if (entityLivingBaseIn.isEntityAlive() && entityLivingBaseIn.getCitizenSleepHandler().isAsleep())
+        {
+            super.renderLivingAt(entityLivingBaseIn, x + (double)entityLivingBaseIn.getCitizenSleepHandler().getRenderOffsetX(), y, z + (double)entityLivingBaseIn.getCitizenSleepHandler().getRenderOffsetZ());
+        }
+        else
+        {
+            super.renderLivingAt(entityLivingBaseIn, x, y, z);
+        }
+    }
+
+    @Override
+    protected void applyRotations(final EntityCitizen entityLiving, final float p_77043_2_, final float rotationYaw, final float partialTicks)
+    {
+        if (entityLiving.isEntityAlive() && entityLiving.getCitizenSleepHandler().isAsleep())
+        {
+            GlStateManager.rotate(entityLiving.getCitizenSleepHandler().getBedOrientationInDegrees(), 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotate(this.getDeathMaxRotation(entityLiving), 0.0F, 0.0F, 1.0F);
+            GlStateManager.rotate(THREE_QUARTERS, 0.0F, 1.0F, 0.0F);
+        }
+        else
+        {
+            super.applyRotations(entityLiving, p_77043_2_, rotationYaw, partialTicks);
+        }
+    }
+
+    @Override
     protected ResourceLocation getEntityTexture(@NotNull final EntityCitizen entity)
     {
         return entity.getTexture();
@@ -88,13 +119,16 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         DELIVERYMAN("Deliveryman", 1),
         MINER("Miner", 1),
         // Lumberjack: 4 male, 1 female
-        LUMBERJACK("Lumberjack", 1),
-        FARMER("Farmer", 1),
-        FISHERMAN("Fisherman", 1),
-        ARCHER_GUARD("Archer", 1),
-        KNIGHT_GUARD("Knight", 1),
-        BAKER("Baker", 1);
-
+        LUMBERJACK("lumberjack", 1),
+        FARMER("farmer", 1),
+        FISHERMAN("fisherman", 1),
+        ARCHER_GUARD("archer", 1),
+        KNIGHT_GUARD("knight", 1),
+        BAKER("baker", 1),
+        SHEEP_FARMER("sheepfarmer", 1),
+        COW_FARMER("cowfarmer", 1),
+        PIG_FARMER("pigfarmer", 1),
+        CHICKEN_FARMER("chickenfarmer", 1);
         /**
          * String describing the citizen.
          * Used by the renderer.

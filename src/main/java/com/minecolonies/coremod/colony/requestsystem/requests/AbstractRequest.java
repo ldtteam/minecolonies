@@ -12,8 +12,8 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHandler;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -442,15 +442,17 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     public List<ItemStack> getDisplayStacks()
     {
         if (!(getRequest() instanceof IDeliverable))
+        {
             return Lists.newArrayList();
+        }
 
-        IDeliverable deliverable = (IDeliverable) getRequest();
+        final IDeliverable deliverable = (IDeliverable) getRequest();
 
         if (itemExamples == null)
         {
             itemExamples =
               ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
-                  NonNullList<ItemStack> stacks = NonNullList.create();
+                  final NonNullList<ItemStack> stacks = NonNullList.create();
                   try
                   {
                       item.getSubItems(CreativeTabs.SEARCH, stacks);
@@ -465,5 +467,77 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         }
 
         return itemExamples;
+    }
+
+    @NotNull
+    @Override
+    public <T> Optional<T> getRequestOfType(final Class<T> tClass)
+    {
+        final R request = getRequest();
+        if (tClass.isInstance(request))
+        {
+            return Optional.of(tClass.cast(request));
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof AbstractRequest))
+        {
+            return false;
+        }
+
+        final AbstractRequest<?> that = (AbstractRequest<?>) o;
+
+        if (!getToken().equals(that.getToken()))
+        {
+            return false;
+        }
+        if (!requested.equals(that.requested))
+        {
+            return false;
+        }
+        if (!getChildren().equals(that.getChildren()))
+        {
+            return false;
+        }
+        if (!getRequester().equals(that.getRequester()))
+        {
+            return false;
+        }
+        if (getState() != that.getState())
+        {
+            return false;
+        }
+        if (getResult() != null ? !getResult().equals(that.getResult()) : that.getResult() != null)
+        {
+            return false;
+        }
+        if (getParent() != null ? !getParent().equals(that.getParent()) : that.getParent() != null)
+        {
+            return false;
+        }
+        return deliveryStack.equals(that.deliveryStack);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result1 = getToken().hashCode();
+        result1 = 31 * result1 + requested.hashCode();
+        result1 = 31 * result1 + getChildren().hashCode();
+        result1 = 31 * result1 + getRequester().hashCode();
+        result1 = 31 * result1 + getState().hashCode();
+        result1 = 31 * result1 + (getResult() != null ? getResult().hashCode() : 0);
+        result1 = 31 * result1 + (getParent() != null ? getParent().hashCode() : 0);
+        result1 = 31 * result1 + deliveryStack.hashCode();
+        return result1;
     }
 }

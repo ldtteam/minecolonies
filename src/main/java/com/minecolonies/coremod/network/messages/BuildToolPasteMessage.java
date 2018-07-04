@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
@@ -12,6 +11,8 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
+import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.util.StructureWrapper;
@@ -177,20 +178,30 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             {
                 handleHut(CompatibilityUtils.getWorld(player), player, sn, message.rotation, message.pos, message.mirror);
             }
+
+
             StructureWrapper.loadAndPlaceStructureWithRotation(player.world, message.structureName,
               message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete);
+
+            if (message.isHut)
+            {
+                @Nullable final AbstractBuilding building = ColonyManager.getBuilding(CompatibilityUtils.getWorld(player), message.pos);
+                if (building != null)
+                {
+                    final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
+                    ConstructionTapeHelper.removeConstructionTape(workOrder, CompatibilityUtils.getWorld(player));
+                }
+            }
         }
         else if(message.freeMode !=  null )
         {
-            final List<ItemStack> stacks = new ArrayList<>();
-            final int chestHeight;
-
             if(player.getStatFile().readStat(StatList.getObjectUseStats(ModItems.supplyChest)) > 0)
             {
                 LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.error.supplyChestAlreadyPlaced");
                 return;
             }
-
+            final List<ItemStack> stacks = new ArrayList<>();
+            final int chestHeight;
             if(message.freeMode == WindowBuildTool.FreeMode.SUPPLYSHIP)
             {
                 stacks.add(new ItemStack(ModItems.supplyChest));
@@ -256,7 +267,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
         if (tempColony != null
               && !tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
-              && BlockPosUtil.getDistance2D(tempColony.getCenter(), buildPos) >= Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)
+              && !ColonyManager.isTooCloseToColony(world, buildPos))
         {
             return;
         }
@@ -324,7 +335,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             building.setRotation(rotation);
             if (mirror)
             {
-                building.setMirror();
+                building.invertMirror();
             }
         }
     }

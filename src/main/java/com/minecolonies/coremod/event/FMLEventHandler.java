@@ -3,7 +3,6 @@ package com.minecolonies.coremod.event;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.items.*;
 import com.minecolonies.coremod.network.messages.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.ServerUUIDMessage;
 import com.minecolonies.coremod.sounds.ModSoundEvents;

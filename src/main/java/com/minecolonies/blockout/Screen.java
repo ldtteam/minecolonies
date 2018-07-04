@@ -6,6 +6,9 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+
+import java.io.IOException;
 
 /**
  * Wraps MineCrafts GuiScreen for BlockOut's Window.
@@ -73,6 +76,21 @@ public class Screen extends GuiScreen
             //  Adjust coordinate to origin of window
             window.click(mx - x, my - y);
         }
+        else if(code == 1)
+        {
+            window.rightClick(mx - x, my - y);
+        }
+    }
+
+    @Override
+    public void handleMouseInput() throws IOException
+    {
+        super.handleMouseInput();
+        final int wheel = Mouse.getDWheel();
+        if(wheel != 0)
+        {
+            window.scrollInput(wheel);
+        }
     }
 
     @Override
@@ -104,11 +122,14 @@ public class Screen extends GuiScreen
     @Override
     public void updateScreen()
     {
-        window.onUpdate();
-
-        if (!mc.player.isEntityAlive() || mc.player.isDead)
+        if(mc != null)
         {
-            mc.player.closeScreen();
+            window.onUpdate();
+
+            if (!mc.player.isEntityAlive() || mc.player.isDead)
+            {
+                mc.player.closeScreen();
+            }
         }
     }
 

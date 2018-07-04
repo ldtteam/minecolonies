@@ -59,5 +59,5 @@ public interface IFactory<Input, Output>
      * @return The request that corresponds with the given data in the nbt
      */
     @NotNull
-    Output deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound nbt);
+    Output deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound nbt) throws Throwable;
 }

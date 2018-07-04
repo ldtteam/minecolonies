@@ -24,11 +24,20 @@ public class Configurations
         @Config.Comment("Should builder place construction tape?")
         public boolean builderPlaceConstructionTape = true;
 
-        @Config.Comment("Colony size (radius)")
-        public int workingRangeTownHall = 100;
+        @Config.Comment("Colony size (radius) - deprecated, don't use")
+        public int workingRangeTownHall = 200;
 
-        @Config.Comment("Padding between colonies")
+        @Config.Comment("Colony size (radius in chunks around central colony chunk)")
+        public int workingRangeTownHallChunks = 8;
+
+        @Config.Comment("Padding between colonies  - deprecated, don't use")
         public int townHallPadding = 20;
+
+        @Config.Comment("Padding between colonies in chunks")
+        public int townHallPaddingChunk = 1;
+
+        @Config.Comment("Should player get one guidebook on first join to a new world?")
+        public boolean playerGetsGuidebookOnFirstJoin = true;
 
         @Config.Comment("Should supply chests be craftable on this server?")
         public boolean supplyChests = true;
@@ -39,6 +48,9 @@ public class Configurations
         @Config.RangeInt(min = (CITIZEN_RESPAWN_INTERVAL_MIN), max = CITIZEN_RESPAWN_INTERVAL_MAX)
         @Config.Comment("Average citizen respawn interval (in seconds)")
         public int citizenRespawnInterval = 60;
+
+        @Config.Comment("Max citizens in one colony")
+        public int maxCitizenPerColony = 50;
 
         @Config.Comment("Should builder and miner build without resources? (this also turns off what they produce)")
         public boolean builderInfiniteResources = false;
@@ -52,7 +64,7 @@ public class Configurations
         @Config.Comment("Delay modifier to mine a block (Decreasing it, decreases the delay)")
         public int blockMiningDelayModifier = 500;
 
-        @Config.Comment("Should worker work during the rain?")
+        @Config.Comment("Should workers work during the rain?")
         public boolean workersAlwaysWorkInRain = false;
 
         @Config.Comment("Should the colony protection be enabled?")
@@ -74,6 +86,9 @@ public class Configurations
 
         @Config.Comment("The average amount of nights between raids")
         public int averageNumberOfNightsBetweenRaids = 3;
+
+        @Config.Comment("The minimum number of nights between raids")
+        public int minimumNumberOfNightsBetweenRaids = 1;
 
         @Config.Comment("Should players be allowed to build their colonies over existing villages?")
         public boolean protectVillages = false;
@@ -148,6 +163,9 @@ public class Configurations
         @Config.Comment("Amount of attemps to find a save rtp")
         public int numberOfAttemptsForSafeTP = 4;
 
+        @Config.Comment("Should the min/max distance from spawn also affect colony placement?")
+        public boolean restrictColonyPlacement = false;
+
         @Config.Comment("Max distance from world spawn")
         public int maxDistanceFromWorldSpawn = 8000;
 
@@ -178,7 +196,18 @@ public class Configurations
                                                    "block:dirt",
                                                    "0 0 0"
                                                  };
-    }
+        @Config.Comment("Should colonies in other dimensions be allowed (Default = false)?")
+        public boolean allowOtherDimColonies = false;
+
+        @Config.Comment("ResourceLocations for extra entities for the GuardHut's list. \n"
+                          + "once done you'll need to recalculate the list."
+                          + "EntityMob's already calculated in list.")
+        public String[] guardResourceLocations = new String[]
+                                                           {
+                                                             "minecraft:slime",
+                                                             "tconstruct:blueslime"
+                                                           };
+     }
 
     public static class Pathfinding
     {
@@ -194,6 +223,9 @@ public class Configurations
 
     public static class Names
     {
+        @Config.Comment("Generate a middle initial when creating new colonist names")
+        public boolean useMiddleInitial = true;
+
         @Config.Comment("Male first names to be used for colonists")
         public String[] maleFirstNames = new String[]
                                            {
@@ -803,5 +835,8 @@ public class Configurations
 
         @Config.Comment("Should the request system creatively resolve (if possible) when the player is required to resolve a request.")
         public boolean creativeResolve = false;
+
+        @Config.Comment("Should the player be allowed to use the '/mc colony rs reset' command?")
+        public boolean canPlayerUseResetCommand = false;
     }
 }

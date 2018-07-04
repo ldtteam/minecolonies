@@ -4,9 +4,9 @@ import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.PaneParams;
 import com.minecolonies.blockout.views.View;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -84,6 +84,12 @@ public class TextField extends Pane
     public void setText(@NotNull final String s)
     {
         text = s.length() <= maxTextLength ? s : s.substring(0, maxTextLength);
+        setCursorPosition(text.length());
+    }
+
+    public void setTextIgnoreLength(@NotNull final String s)
+    {
+        text = s;
         setCursorPosition(text.length());
     }
 
@@ -322,7 +328,7 @@ public class TextField extends Pane
      * Draw itself at positions mx and my.
      */
     @Override
-    protected void drawSelf(final int mx, final int my)
+    public void drawSelf(final int mx, final int my)
     {
         final int color = enabled ? textColor : textColorDisabled;
         final int drawWidth = getInternalWidth();
@@ -497,31 +503,36 @@ public class TextField extends Pane
         final int insertAt = Math.min(cursorPosition, selectionEnd);
         final int insertEnd = Math.max(cursorPosition, selectionEnd);
         final int availableChars = (maxTextLength - text.length()) + (insertEnd - insertAt);
+        
+        if (availableChars < 0)
+        {
+            return;
+        }
 
-        @NotNull String result = "";
+        @NotNull final StringBuilder resultBuffer = new StringBuilder();
         if (text.length() > 0 && insertAt > 0)
         {
-            result = text.substring(0, insertAt);
+            resultBuffer.append(text.substring(0, insertAt));
         }
 
         final int insertedLength;
         if (availableChars < filteredStr.length())
         {
-            result = result + filteredStr.substring(0, availableChars);
+            resultBuffer.append(filteredStr.substring(0, availableChars));
             insertedLength = availableChars;
         }
         else
         {
-            result = result + filteredStr;
+            resultBuffer.append(filteredStr);
             insertedLength = filteredStr.length();
         }
 
         if (text.length() > 0 && insertEnd < text.length())
         {
-            result = result + text.substring(insertEnd);
+            resultBuffer.append(text.substring(insertEnd));
         }
 
-        text = result;
+        text = resultBuffer.toString();
         moveCursorBy((insertAt - selectionEnd) + insertedLength);
     }
 

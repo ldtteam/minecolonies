@@ -30,6 +30,7 @@ README.txt
 /.settings/
 /.project
 /.classpath
+/.checkstyle
 /MineColonies_Client.launch
 /MineColonies_Server.launch
 
@@ -39,3 +40,5 @@ README.txt
 
 tools/export_lang/.api_key
 tools/fix_model_angle/*.class
+
+run2/

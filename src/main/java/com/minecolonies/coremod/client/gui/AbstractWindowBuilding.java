@@ -5,34 +5,21 @@ import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.BuildRequestMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.WindowConstants.*;
+
 /**
  * Manage windows associated with Buildings.
  *
- * @param <B> Class extending {@link AbstractBuildingHut.View}.
+ * @param <B> Class extending {@link AbstractBuildingView}.
  */
-public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View> extends AbstractWindowSkeleton
+public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> extends AbstractWindowSkeleton
 {
-    /**
-     * Id of the type label in the GUI.
-     */
-    private static final String LABEL_BUILDINGTYPE = "type";
-
-    private static final String BUTTON_BUILD        = "build";
-    private static final String BUTTON_REPAIR       = "repair";
-    private static final String BUTTON_INVENTORY    = "inventory";
-    private static final String LABEL_BUILDING_NAME = "name";
-    private static final String BUTTON_PREVPAGE     = "prevPage";
-    private static final String BUTTON_NEXTPAGE     = "nextPage";
-    private static final String VIEW_PAGES          = "pages";
-    private static final String PAGE_ACTIONS        = "pageActions";
-
     /**
      * Type B is a class that extends {@link AbstractBuildingWorker.View}.
      */
@@ -47,7 +34,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
     /**
      * Constructor for the windows that are associated with buildings.
      *
-     * @param building Class extending {@link AbstractBuildingHut.View}.
+     * @param building Class extending {@link AbstractBuildingView}.
      * @param resource Resource location string.
      */
     public AbstractWindowBuilding(final B building, final String resource)
@@ -71,7 +58,16 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
      */
     private void buildClicked()
     {
-        MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
+        if(buttonBuild.getLabel().equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.cancelBuild"))
+                || buttonBuild.getLabel().equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.cancelUpgrade")))
+        {
+            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
+        }
+        else
+        {
+            @NotNull final WindowBuildBuilding window = new WindowBuildBuilding(building.getColony(), building.getLocation());
+            window.open();
+        }
     }
 
     /**
@@ -87,7 +83,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
      */
     private void inventoryClicked()
     {
-        MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(building));
+        MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(building.getID()));
     }
 
     @Override
@@ -134,10 +130,9 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
             return;
         }
 
-        buttonBuild.setEnabled(!buildingView.isBuildingMaxLevel() && !buildingView.isRepairing());
         if (buildingView.isBuildingMaxLevel())
         {
-            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.upgradeUnavailable"));
+            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.switchStyle"));
         }
         else if (buildingView.isBuilding())
         {

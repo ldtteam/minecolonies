@@ -4,18 +4,17 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.client.gui.WindowScan;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.network.messages.SaveScanMessage;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -23,6 +22,11 @@ import net.minecraft.world.gen.structure.template.Template;
 import net.minecraft.world.gen.structure.template.TemplateManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.minecolonies.api.util.constant.Constants.MAX_SCHEMATIC_SIZE;
+import static com.minecolonies.api.util.constant.NbtTagConstants.FIRST_POS_STRING;
+import static com.minecolonies.api.util.constant.NbtTagConstants.SECOND_POS_STRING;
+import static com.minecolonies.api.util.constant.TranslationConstants.MAX_SCHEMATIC_SIZE_REACHED;
 
 /**
  * Item used to scan structures.
@@ -38,6 +42,44 @@ public class ItemScanTool extends AbstractItemMinecolonies
 
         super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setMaxStackSize(1);
+    }
+
+    @Override
+    public float getDestroySpeed(final ItemStack stack, final IBlockState state)
+    {
+        return Float.MAX_VALUE;
+    }
+
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(final World worldIn, final EntityPlayer playerIn, final EnumHand hand)
+    {
+        final ItemStack stack = playerIn.getHeldItem(hand);
+        if (!stack.hasTagCompound())
+        {
+            stack.setTagCompound(new NBTTagCompound());
+        }
+        final NBTTagCompound compound = stack.getTagCompound();
+
+        @NotNull final BlockPos pos1 = BlockPosUtil.readFromNBT(compound, FIRST_POS_STRING);
+        @NotNull final BlockPos pos2 = BlockPosUtil.readFromNBT(compound, SECOND_POS_STRING);
+
+        if (!worldIn.isRemote)
+        {
+            if (playerIn.isSneaking())
+            {
+                saveStructure(worldIn, pos1, pos2, playerIn, null);
+            }
+        }
+        else
+        {
+            if (!playerIn.isSneaking())
+            {
+                final WindowScan window = new WindowScan(pos1, pos2);
+                window.open();
+            }
+        }
+
+        return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
     }
 
     @NotNull
@@ -59,48 +101,20 @@ public class ItemScanTool extends AbstractItemMinecolonies
         }
         final NBTTagCompound compound = stack.getTagCompound();
 
-        if (!compound.hasKey("pos1"))
+        @NotNull final BlockPos pos1 = BlockPosUtil.readFromNBT(compound, FIRST_POS_STRING);
+        @NotNull final BlockPos pos2 = pos;
+        if (pos2.distanceSq(pos1) > 0)
         {
-            BlockPosUtil.writeToNBT(compound, "pos1", pos);
+            BlockPosUtil.writeToNBT(compound, SECOND_POS_STRING, pos2);
             if (worldIn.isRemote)
             {
-                LanguageHandler.sendPlayerMessage(playerIn, "item.scepterSteel.point");
+                LanguageHandler.sendPlayerMessage(playerIn, "item.scepterSteel.point2", pos.getX(), pos.getY(), pos.getZ());
             }
-            return EnumActionResult.SUCCESS;
-        }
-        else if (!compound.hasKey("pos2"))
-        {
-            @NotNull final BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
-            @NotNull final BlockPos pos2 = pos;
-            if (pos2.distanceSq(pos1) > 0)
-            {
-                BlockPosUtil.writeToNBT(compound, "pos2", pos2);
-                if (worldIn.isRemote)
-                {
-                    LanguageHandler.sendPlayerMessage(playerIn, "item.scepterSteel.point2");
-                }
-                return EnumActionResult.SUCCESS;
-            }
-            if (worldIn.isRemote)
-            {
-                LanguageHandler.sendPlayerMessage(playerIn, "item.scepterSteel.samePoint");
-            }
-            return EnumActionResult.FAIL;
-        }
-        else
-        {
-            @NotNull final BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
-            @NotNull final BlockPos pos2 = BlockPosUtil.readFromNBT(compound, "pos2");
 
-            //todo if on client (ssp) -> no need to send message, we can execute it in worldIn.isRemote without a message.
-            if (!worldIn.isRemote)
-            {
-                saveStructure(worldIn, pos1, pos2, playerIn);
-            }
-            compound.removeTag("pos1");
-            compound.removeTag("pos2");
+            stack.setTagCompound(compound);
             return EnumActionResult.SUCCESS;
         }
+        return EnumActionResult.FAIL;
     }
 
     /**
@@ -110,10 +124,10 @@ public class ItemScanTool extends AbstractItemMinecolonies
      * @param from   First corner.
      * @param to     Second corner.
      * @param player causing this action.
+     * @param name the name of it.
      */
-    private static void saveStructure(@Nullable final World world, @Nullable final BlockPos from, @Nullable final BlockPos to, @NotNull final EntityPlayer player)
+    public static void saveStructure(@Nullable final World world, @Nullable final BlockPos from, @Nullable final BlockPos to, @NotNull final EntityPlayer player, final String name)
     {
-        //todo if on clientSide check if isRemote and if it is -> don't seed message, execute right away.
         if (world == null || from == null || to == null)
         {
             throw new IllegalArgumentException("Invalid method call, arguments can't be null. Contact a developer.");
@@ -124,19 +138,32 @@ public class ItemScanTool extends AbstractItemMinecolonies
         final BlockPos blockpos1 =
           new BlockPos(Math.max(from.getX(), to.getX()), Math.max(from.getY(), to.getY()), Math.max(from.getZ(), to.getZ()));
         final BlockPos size = blockpos1.subtract(blockpos).add(1, 1, 1);
-
+        if(size.getX() * size.getY() * size.getZ() > MAX_SCHEMATIC_SIZE)
+        {
+            LanguageHandler.sendPlayerMessage(player, MAX_SCHEMATIC_SIZE_REACHED, MAX_SCHEMATIC_SIZE);
+            return;
+        }
         final WorldServer worldserver = (WorldServer) world;
         final MinecraftServer minecraftserver = world.getMinecraftServer();
         final TemplateManager templatemanager = worldserver.getStructureTemplateManager();
 
         final long currentMillis = System.currentTimeMillis();
         final String currentMillisString = Long.toString(currentMillis);
-        final String fileName = "/minecolonies/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillisString + ".nbt");
+        final String prefix = "/minecolonies/scans/";
+        final String fileName;
+        if(name == null || name.isEmpty())
+        {
+            fileName = LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillisString);
+        }
+        else
+        {
+            fileName = name;
+        }
 
-        final Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation(fileName));
+        final Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation(prefix + fileName + ".nbt"));
         template.takeBlocksFromWorld(world, blockpos, size, true, Blocks.STRUCTURE_VOID);
         template.setAuthor(Constants.MOD_ID);
-
-        MineColonies.getNetwork().sendTo(new SaveScanMessage(template.writeToNBT(new NBTTagCompound()), currentMillis), (EntityPlayerMP) player);
+        MineColonies.getNetwork().sendTo(
+                new SaveScanMessage(template.writeToNBT(new NBTTagCompound()), fileName), (EntityPlayerMP) player);
     }
 }

@@ -15,6 +15,8 @@
    **MineColonies** is a mod for the famous game *Minecraft* from Mojang. This mod allows the user to generate many structures like ships, town halls, farms and even NPC's which are called workers. These workers can be assigned by the player to do various things ranging from building structures, gathering resources and even protecting existing buildings! Workers also have an experience and leveling system: the more they work, the more experience they'll get, allowing them to complete their tasks a lot faster.
     The freedom and convenience given by this mod allows anyone to build many different cities: they can be small, specialized villages or big and vibrant metropolis. The possibilities are endless!
 
+##### Website:
+https://www.minecolonies.com/
 
 
 For Users
@@ -91,7 +93,8 @@ This section assumes that you're using the command-line version of Git.
     * If you see `BUILD FAILED`, check the error output (it should be right around `BUILD FAILED`), fix everything (if possible), and try again.
 3. Go to `basefolder\MineColonies\build\libs`.
     *  You should see a `.jar` file named `MineColonies-universal--0.0.#.jar`, where # is the `build_number` value in `build.properties`.
-4. Copy the jar into your Minecraft mods folder, and you are done!
+4. Copy the jar into your Minecraft mods folder, and you are done! (~/.minecraft/mods on Linux)
+5. Alternatively, you can also run `./gradlew runClient` to start Minecraft with this jar.
 
 #### Updating Your Repository
 In order to get the most up-to-date builds, you'll have to periodically update your local repository.

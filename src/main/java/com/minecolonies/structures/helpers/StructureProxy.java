@@ -3,6 +3,8 @@ package com.minecolonies.structures.helpers;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
@@ -13,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
  * Proxy class translating the structures method to something we can use.
@@ -212,13 +216,13 @@ public class StructureProxy
         final Rotation rotation;
         switch (times)
         {
-            case 1:
+            case ROTATE_ONCE:
                 rotation = Rotation.CLOCKWISE_90;
                 break;
-            case 2:
+            case ROTATE_TWICE:
                 rotation = Rotation.CLOCKWISE_180;
                 break;
-            case 3:
+            case ROTATE_THREE_TIMES:
                 rotation = Rotation.COUNTERCLOCKWISE_90;
                 break;
             default:
@@ -282,6 +286,17 @@ public class StructureProxy
                 foundHut = true;
                 offset = info.pos.add(minX, minY, minZ);
             }
+
+            if (info.tileentityData != null)
+            {
+                final TileEntity entity = TileEntity.create(world, info.tileentityData);
+                if (entity != null)
+                {
+                    entity.rotate(rotation);
+                    entity.mirror(mirror);
+                    this.blocks[x][y][z] = new Template.BlockInfo(info.pos, info.blockState, entity.writeToNBT(new NBTTagCompound()));
+                }
+            }
         }
 
         updateOffSetIfDecoration(foundHut, size, times, minX, minY, minZ);
@@ -308,15 +323,15 @@ public class StructureProxy
         if (!foundHut)
         {
             BlockPos tempSize = size;
-            if (rotation == 1)
+            if (rotation == ROTATE_ONCE)
             {
                 tempSize = new BlockPos(-size.getX(), size.getY(), size.getZ());
             }
-            if (rotation == 2)
+            if (rotation == ROTATE_TWICE)
             {
                 tempSize = new BlockPos(-size.getX(), size.getY(), -size.getZ());
             }
-            if (rotation == 3)
+            if (rotation == ROTATE_THREE_TIMES)
             {
                 tempSize = new BlockPos(size.getX(), size.getY(), -size.getZ());
             }

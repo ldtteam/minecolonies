@@ -8,7 +8,7 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.colony.buildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.network.messages.AssignUnassignMessage;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;

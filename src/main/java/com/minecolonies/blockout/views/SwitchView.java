@@ -43,7 +43,13 @@ public class SwitchView extends View
         }
     }
 
-    public void setView(final String name)
+    /**
+     * Switch current view to view with id given as param
+     * 
+     * @param name id of view
+     * @return true if view of given name was found, else false
+     */
+    public boolean setView(final String name)
     {
         //  Immediate children only
         for (@NotNull final Pane child : children)
@@ -51,9 +57,10 @@ public class SwitchView extends View
             if (child.getID().equals(name))
             {
                 setCurrentView(child);
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     @Nullable
@@ -170,5 +177,13 @@ public class SwitchView extends View
         }
 
         setCurrentView(children.get(index));
+    }
+
+    /**
+     * Get amount of views
+     */
+    public int getChildrenSize()
+    {
+        return children.size();
     }
 }

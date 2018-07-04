@@ -5,6 +5,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.blocks.types.RackType;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
@@ -282,20 +283,17 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
                                      final float hitY,
                                      final float hitZ)
     {
-        /*
-        If the world is client, open the gui of the building
-         */
-        if (!worldIn.isRemote)
-        {
-            final Colony colony = ColonyManager.getColony(worldIn, pos);
-            final TileEntity tileEntity = worldIn.getTileEntity(pos);
+        final Colony colony = ColonyManager.getColony(worldIn, pos);
+        final TileEntity tileEntity = worldIn.getTileEntity(pos);
 
-            if ((colony == null || colony.getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS))
-                  && tileEntity instanceof TileEntityRack)
+        if ((colony == null || colony.getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS))
+              && tileEntity instanceof TileEntityRack)
+        {
+            if (!worldIn.isRemote)
             {
                 playerIn.openGui(MineColonies.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
-                return true;
             }
+            return true;
         }
         return false;
     }

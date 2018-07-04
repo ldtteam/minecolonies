@@ -1,8 +1,5 @@
 package com.minecolonies.coremod.util;
 
-import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
@@ -15,19 +12,16 @@ import java.util.Set;
 /**
  * Contains colony specific utility.
  */
-public class ColonyUtils
+public final class ColonyUtils
 {
     /**
-     * Checks if a citizen is missing from the world.
-     *
-     * @param citizen the citizen to check.
-     * @return true if so.
+     * Private constructor to hide implicit one.
      */
-    public static boolean isCitizenMissingFromWorld(@NotNull final CitizenData citizen)
+    private ColonyUtils()
     {
-        final EntityCitizen entity = citizen.getCitizenEntity();
-
-        return entity != null && CompatibilityUtils.getWorld(entity).getEntityByID(entity.getEntityId()) != entity;
+        /**
+         * Intentionally left empty.
+         */
     }
 
     /**
@@ -60,11 +54,11 @@ public class ColonyUtils
      * @return a tuple with the required corners.
      */
     public static Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> calculateCorners(
-                                                                                            final BlockPos pos,
-                                                                                            final World world,
-                                                                                            final StructureWrapper wrapper,
-                                                                                            final int rotation,
-                                                                                            final boolean isMirrored)
+      final BlockPos pos,
+      final World world,
+      final StructureWrapper wrapper,
+      final int rotation,
+      final boolean isMirrored)
     {
         wrapper.rotate(rotation, world, pos, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
         wrapper.setPosition(pos);

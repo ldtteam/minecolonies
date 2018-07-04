@@ -2,6 +2,8 @@ package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.colony.CitizenDataView;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -62,6 +64,20 @@ public interface IProxy
     void openBuildToolWindow(final BlockPos pos);
 
     /**
+     * Opens a scan tool window.
+     * @param pos1 first pos.
+     * @param pos2 second pos.
+     */
+    void openScanToolWindow(final BlockPos pos1, final BlockPos pos2);
+
+    /**
+     * Opens a build tool window.
+     *
+     * @param pos coordinates.
+     */
+    void openMultiBlockWindow(final BlockPos pos);
+
+    /**
      * Opens a build tool window for a specific structure.
      * @param pos the position.
      * @param structureName the structure name.
@@ -104,4 +120,12 @@ public interface IProxy
      */
     @Nullable
     World getWorld(final int dimension);
+
+    /**
+     * Returns the recipe book from the player.
+     * @param player THe player.
+     * @return The recipe book.
+     */
+    @NotNull
+    RecipeBook getRecipeBookFromPlayer(@NotNull final EntityPlayer player);
 }

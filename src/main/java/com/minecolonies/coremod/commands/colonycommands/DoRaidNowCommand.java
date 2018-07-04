@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.minecolonies.coremod.commands.ActionMenuState;
+import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -20,13 +21,21 @@ import java.util.List;
 /**
  * Trigger a raid event at run
  */
-public class DoRaidNowCommand extends AbstractSingleCommand
+public class DoRaidNowCommand extends AbstractSingleCommand implements IActionCommand
 {
 
     public static final  String              DESC                       = "raid";
-    private static final TextComponentString NO_COLONY_FOUND_MESSAGE_ID = new TextComponentString("No Colony found.");
+    private static final TextComponentString NO_COLONY_FOUND_MESSAGE = new TextComponentString("No Colony found.");
     private static final TextComponentString NO_ARGUMENTS               = new TextComponentString("Please define a colony to raid.");
     private static final TextComponentString SUCCESSFUL                 = new TextComponentString("Command Successful");
+
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
+    public DoRaidNowCommand()
+    {
+        super();
+    }
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -46,7 +55,40 @@ public class DoRaidNowCommand extends AbstractSingleCommand
     }
 
     @Override
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
+    {
+        final Colony colony = actionMenuState.getColonyForArgument("colony");
+        if (colony == null)
+        {
+            sender.sendMessage(NO_COLONY_FOUND_MESSAGE);
+            return;
+        }
+        executeShared(server, sender, colony);
+    }
+
+    @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    {
+        Colony colony = null;
+        if (args.length != 0)
+        {
+            colony = ColonyManager.getColony(Integer.parseInt(args[0]));
+            if (colony == null)
+            {
+                sender.sendMessage(NO_COLONY_FOUND_MESSAGE);
+                return;
+            }
+        }
+        else
+        {
+            sender.sendMessage(NO_ARGUMENTS);
+            return;
+        }
+
+        executeShared(server, sender, colony);
+    }
+
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @Nullable final Colony colony)
     {
         if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
         {
@@ -54,23 +96,8 @@ public class DoRaidNowCommand extends AbstractSingleCommand
             return;
         }
 
-        if (args.length != 0)
-        {
-            final Colony colony = ColonyManager.getColony(Integer.parseInt(args[0]));
-            if (colony == null)
-            {
-                sender.sendMessage(NO_COLONY_FOUND_MESSAGE_ID);
-                return;
-            }
-
-            MobEventsUtils.barbarianEvent(colony.getWorld(), colony);
-
-            sender.sendMessage(SUCCESSFUL);
-        }
-        else
-        {
-            sender.sendMessage(NO_ARGUMENTS);
-        }
+        MobEventsUtils.barbarianEvent(colony.getWorld(), colony);
+        sender.sendMessage(SUCCESSFUL);
     }
 
     @NotNull

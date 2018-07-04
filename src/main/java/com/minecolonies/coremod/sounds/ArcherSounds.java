@@ -1,12 +1,14 @@
 package com.minecolonies.coremod.sounds;
 
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Random;
+
+import static com.minecolonies.api.util.constant.CitizenConstants.AVERAGE_SATURATION;
+import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
 
 /**
  * Class containing the Archer sounds.
@@ -37,7 +39,6 @@ public final class ArcherSounds extends AbstractWorkerSounds
         public static final SoundEvent saturationLow     = ModSoundEvents.getSoundID("mob.guard.archer.female.saturationLow");
         public static final SoundEvent saturationHigh    = ModSoundEvents.getSoundID("mob.guard.archer.female.saturationHigh");
         public static final SoundEvent levelUp           = ModSoundEvents.getSoundID("mob.guard.archer.female.levelup");
-        public static final SoundEvent badHousing        = ModSoundEvents.getSoundID("mob.guard.archer.female.badhousing");
         public static final SoundEvent greeting          = ModSoundEvents.getSoundID("mob.guard.archer.female.greeting");
         public static final SoundEvent farewell          = ModSoundEvents.getSoundID("mob.guard.archer.female.farewell");
         public static final SoundEvent interaction       = ModSoundEvents.getSoundID("mob.guard.archer.female.interaction");
@@ -157,11 +158,11 @@ public final class ArcherSounds extends AbstractWorkerSounds
         }
 
         final SoundEvent saturationFeedback;
-        if (saturation < EntityCitizen.LOW_SATURATION)
+        if (saturation < LOW_SATURATION)
         {
             saturationFeedback = Female.saturationVeryLow;
         }
-        else if (saturation < EntityCitizen.AVERAGE_SATURATION)
+        else if (saturation < AVERAGE_SATURATION)
         {
             saturationFeedback = Female.saturationLow;
         }

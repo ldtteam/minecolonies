@@ -28,7 +28,7 @@ public class WarehouseRequestResolverFactory implements IRequestResolverFactory<
     @Override
     public TypeToken<? extends ILocation> getFactoryInputType()
     {
-        return TypeToken.of(ILocation.class);
+        return TypeConstants.ILOCATION;
     }
 
     @NotNull
@@ -47,7 +47,7 @@ public class WarehouseRequestResolverFactory implements IRequestResolverFactory<
     public NBTTagCompound serialize(
                                      @NotNull final IFactoryController controller, @NotNull final WarehouseRequestResolver warehouseRequestResolver)
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        final NBTTagCompound compound = new NBTTagCompound();
         compound.setTag(NBT_TOKEN, controller.serialize(warehouseRequestResolver.getRequesterId()));
         compound.setTag(NBT_LOCATION, controller.serialize(warehouseRequestResolver.getRequesterLocation()));
         return compound;
@@ -57,8 +57,8 @@ public class WarehouseRequestResolverFactory implements IRequestResolverFactory<
     @Override
     public WarehouseRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
     {
-        IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
-        ILocation location = controller.deserialize(nbt.getCompoundTag(NBT_LOCATION));
+        final IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
+        final ILocation location = controller.deserialize(nbt.getCompoundTag(NBT_LOCATION));
 
         return new WarehouseRequestResolver(location, token);
     }

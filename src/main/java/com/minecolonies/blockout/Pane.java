@@ -317,7 +317,7 @@ public class Pane extends Gui
      * @param mx Mouse x (relative to parent).
      * @param my Mouse y (relative to parent).
      */
-    protected void drawSelf(final int mx, final int my)
+    public void drawSelf(final int mx, final int my)
     {
         // Can be overloaded
     }
@@ -455,6 +455,20 @@ public class Pane extends Gui
     }
 
     /**
+     * Process a rightclick mouse down on the Pane.
+     * <p>
+     * It is advised that only containers of other panes override this method.
+     *
+     * @param mx mouse X coordinate, relative to parent's top-left.
+     * @param my mouse Y coordinate, relative to parent's top-left.
+     */
+    public void rightClick(final int mx, final int my)
+    {
+        setLastClickedPane(this);
+        handleRightClick(mx - x, my - y);
+    }
+
+    /**
      * Set a pane as the last clicked pane.
      *
      * @param pane pane to set.
@@ -473,6 +487,19 @@ public class Pane extends Gui
      * @param my mouse Y coordinate, relative to Pane's top-left.
      */
     public void handleClick(final int mx, final int my)
+    {
+        // Can be overloaded
+    }
+
+    /**
+     * Process a right click on the Pane.
+     * <p>
+     * Override this to process the actual click.
+     *
+     * @param mx mouse X coordinate, relative to Pane's top-left.
+     * @param my mouse Y coordinate, relative to Pane's top-left.
+     */
+    public void handleRightClick(final int mx, final int my)
     {
         // Can be overloaded
     }
@@ -577,6 +604,17 @@ public class Pane extends Gui
             final int scale = Screen.getScale();
             GL11.glScissor(info.x * scale, mc.displayHeight - ((info.y + info.height) * scale), info.width * scale, info.height * scale);
         }
+    }
+
+    /**
+     * Wheel input.
+     * @param wheel minus for down, plus for up.
+     */
+    public void scrollInput(final int wheel)
+    {
+        /**
+         * Can be overwritten by child classes
+         */
     }
 
     private static class ScissorsInfo

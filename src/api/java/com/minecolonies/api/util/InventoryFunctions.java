@@ -13,8 +13,18 @@ import java.util.function.*;
  * Most methods will be remapping of parameters to reduce duplication.
  * Because of erasure clashes, not all combinations are supported.
  */
-public class InventoryFunctions
+public final class InventoryFunctions
 {
+    /**
+     * Private constructor to hide implicit one.
+     */
+    private InventoryFunctions()
+    {
+        /**
+         * Intentionally left empty.
+         */
+    }
+
     /**
      * Search for a stack in an Inventory matching the predicate.
      *

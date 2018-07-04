@@ -25,7 +25,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,7 +42,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public static final  PropertyDirection FACING     = BlockHorizontal.FACING;
     private static final float             HARDNESS   = 10F;
     private static final float             RESISTANCE = Float.POSITIVE_INFINITY;
-    protected int workingRange;
 
     /**
      * Constructor for a block using the minecolonies mod.
@@ -211,7 +209,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
                   && building.getColony() != null
                   && building.getColony().getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS))
             {
-                building.openGui();
+                building.openGui(playerIn.isSneaking());
             }
         }
         return true;
@@ -268,7 +266,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
 
             if (colony != null)
             {
-                colony.addNewBuilding(hut);
+                colony.getBuildingManager().addNewBuilding(hut, worldIn);
             }
         }
     }
