@@ -443,7 +443,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             for (@NotNull final Field field : tempFields)
             {
                 final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) world.getTileEntity(field.getID());
-                if (scarecrow == null && field.getOwner().compareTo(getMainWorker().getName()) != 0)
+                if (scarecrow == null)
                 {
                     farmerFields.remove(field);
                     if (currentField != null && currentField.getID() == field.getID())
