@@ -202,7 +202,6 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         world.notifyBlockUpdate(pos, state, state, 11);
     }
 
-
     public int getItems()
     {
         return items;
@@ -213,5 +212,36 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         return done;
     }
 
+    //INTERFACE WITH AI PAWNS
+
+    /***
+     * Lets the AI insert items into the barrel.
+     * @param item the itemStack to be placed inside it.
+     * @return false if it couldnt be completed, true if at least 1 item of the stack was inserted.
+     */
+    public boolean addItem(ItemStack item)
+    {
+        //Todo implement method
+        return false;
+    }
+
+    /***
+     * Lets the AI retrieve the compost when the barrel has done processing it.
+     * @return The generated compost. If the barrel is not ready yet to be harvested, it will return an empty itemStack.
+     */
+    public ItemStack retrieveCompost()
+    {
+        //Todo implement method
+        return ItemStack.EMPTY;
+    }
+
+    /**
+     * Lets the AI know if a barrel is ready to be harvested.
+     * @return true if the barrel is ready, false if not.
+     */
+    public boolean isReady()
+    {
+        return done;
+    }
 
 }
