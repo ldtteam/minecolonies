@@ -216,19 +216,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
                 treesToFell.put(new ItemStorage(stack), cut);
             }
         }
-		        // Not all trees can show up.  Just trees at the time of hut placement
-        // Lets check to see if there are more trees and if so add them to the list
-        //  that way is a mod is added after.  It can still use the trees from it
-        // if it has some. 
-        Map<ItemStorage, Boolean> tempTreesToFell = new LinkedHashMap<>();
-        tempTreesToFell.putAll(View.calcSaplings(OreDictionary.getOres("treeSapling")));
-        
-        for (@NotNull final Map.Entry<ItemStorage, Boolean> entry : tempTreesToFell.entrySet())
-        {
-        	ItemStorage stack = entry.getKey();
-        	treesToFell.putIfAbsent(stack, false);
-        }
-        
     }
 
     @Override
