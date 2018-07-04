@@ -26,6 +26,7 @@ public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerd
     public EntityAIWorkSwineHerder(@NotNull final JobSwineHerder job)
     {
         super(job);
+        worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getDexterity() + worker.getCitizenData().getStrength());
     }
 
     @Override
