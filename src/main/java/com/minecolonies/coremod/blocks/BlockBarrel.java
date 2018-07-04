@@ -7,6 +7,7 @@ import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
@@ -34,6 +35,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -42,7 +44,7 @@ import java.util.logging.Logger;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
-public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarrel>
+public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarrel> implements ITileEntityProvider
 {
 
     public static final PropertyEnum<BarrelType> VARIANT        = PropertyEnum.create("variant", BarrelType.class);
@@ -151,7 +153,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
             final float hitY,
             final float hitZ)
     {
-        if(!worldIn.isRemote) {
+        //if(!worldIn.isRemote) {
 
             final ItemStack itemstack = playerIn.inventory.getCurrentItem();
             TileEntity te = worldIn.getTileEntity(pos);
@@ -159,7 +161,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
                 ((TileEntityBarrel) te).useBarrel(worldIn, playerIn, itemstack, state, pos);
             }
 
-        }
+        //}
         return true;
     }
 
@@ -287,10 +289,19 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
         {
             type = BarrelType.WORKING;
         }
-
-        Log.getLogger().info("Barrel Type: "+type.name() );
+        if(te.isDone())
+        {
+            type = BarrelType.DONE;
+        }
 
         return blockState.withProperty(BlockBarrel.VARIANT,
           type).withProperty(BlockBarrel.FACING, blockState.getValue(BlockBarrel.FACING));
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createNewTileEntity(World world, int i)
+    {
+        return new TileEntityBarrel();
     }
 }

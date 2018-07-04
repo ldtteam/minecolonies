@@ -32,7 +32,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     private int                                     items          = 0;
     private int                                     timer          = 0;
     public static final int                         MAX_ITEMS      = 64;
-    private static final int                        TIMER_END      = 24000; //Number of Minecraft ticks in 2 whole days
+    private static final int                        TIMER_END      = 24000; //24000; //Number of Minecraft ticks in 2 whole days
 
     @Override
     public void update()
@@ -42,29 +42,18 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         //todo we should do this here in intervals look how we check things in random intervals in the colony.
         // this way we avoid calling this every tick which causes lag. Just calling this probablistically every 20 ticks and
         // make it run until 24000/20 will have the same result but consume way less load on the server.
-        if(!world.isRemote)
-        {
-            this.updateTick(world, this.getPos(), world.getBlockState(this.getPos()), new Random());
-        }
+        this.updateTick(world, this.getPos(), world.getBlockState(this.getPos()), new Random());
     }
 
 
     public void updateTick(final World worldIn, final BlockPos pos, final IBlockState state, final Random rand)
     {
-        //Log.getLogger().info("UpdateTick called");
-
-        //We get the actual value of the blockstate for the barrel
-        //this is expensive BarrelType barrelType = state.getB(worldIn, pos).getValue(BlockBarrel.VARIANT);
-        //Log.getLogger().info("The barrel is "+barrelType.getName());
-
         //Check if the barrel is actually full
         if(getItems() == TileEntityBarrel.MAX_ITEMS)
         {
             doBarrelCompostTick(worldIn, pos, state);
         }
-        //todo let's not do this, why don't we use a boolean in the tileEntity which is done = true, or done = false and you set it here after done
-        //todo would also mean we need to get this boolean value in the blockBarrel getactualState
-        if(this.done)
+        if(this.done && !world.isRemote)
         {
             //If the barrel is done, we spawn particles imitating "bad smell"
             ((WorldServer)worldIn).spawnParticle(
@@ -79,43 +68,33 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         timer++;
         if (timer >= TIMER_END)
         {
-            IBlockState newState = blockState.withProperty(BlockBarrel.VARIANT,
-                    BarrelType.DONE).withProperty(BlockBarrel.FACING, blockState.getValue(BlockBarrel.FACING));
-            worldIn.setBlockState(this.pos, newState);
-            //todo and when we have the boolean we only have to set the boolean and mark this block for update.
             timer = 0;
             items = 0;
             done = true;
-            this.updateBlock(worldIn, newState);
+            updateBlock(worldIn, blockState);
         }
     }
 
     //whenever player right click to barrel call this.
     public boolean useBarrel(final World worldIn, final EntityPlayer playerIn, final ItemStack itemstack, final IBlockState state, final BlockPos pos)
     {
-        if(getWorld().isRemote) return false;
-
         //If the barrel has finished composting, we drop and change state
-        if(state.getValue(BlockBarrel.VARIANT).equals(BarrelType.DONE))
+        if (done)
         {
             // TODO: Add this back in once compost exists again. For now it drops 6 boneMeals
             // playerIn.inventory.addItemStackToInventory(new ItemStack(ModItems.compost, 6));
             done = false;
             playerIn.inventory.addItemStackToInventory(new ItemStack(Items.DYE, 6, 15));
-            IBlockState newState = state.withProperty(BlockBarrel.VARIANT,
-                    BarrelType.ZERO).withProperty(BlockBarrel.FACING, state.getValue(BlockBarrel.FACING));
-            worldIn.setBlockState(this.pos, newState);
-            this.updateBlock(worldIn, newState);
+            updateBlock(worldIn, state);
             return true;
         }
 
-        //We check if the player is holding one of this items. If none is found, the method ends.
-        if(!this.checkCorrectItem(itemstack))
+        if (!this.checkCorrectItem(itemstack))
         {
             return false;
         }
 
-        if(items == MAX_ITEMS)
+        if (items == MAX_ITEMS)
         {
             playerIn.sendMessage(new TextComponentString("The barrel is working!"));
             return false;
@@ -126,6 +105,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
             this.updateBlock(worldIn, state);
             return true;
         }
+
     }
 
     private void consumeNeededItems(World worldIn, ItemStack itemStack)
@@ -161,14 +141,11 @@ public class TileEntityBarrel extends TileEntity implements ITickable
                 || itemStack.getItem().equals(Item.getItemFromBlock(Blocks.SAPLING));
     }
 
-    public void updateBlock(World worldIn, IBlockState state) {
+    public void updateBlock(World worldIn, IBlockState state)
+    {
          this.markDirty();
-         //worldIn.notifyBlockUpdate(this.getPos(), state, BlockBarrel.changeStateOverFullness(this, worldIn, state, pos), 0x3 );
-
-         world.notifyBlockUpdate(pos, state, state, 11);
+         world.notifyBlockUpdate(pos, state, state, 0x03);
          world.markBlockRangeForRenderUpdate(pos,pos);
-         //Todo remove this, just for testing purposes
-        world.setBlockState(pos, state, 0x03);
 
     }
 
@@ -192,12 +169,6 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         this.timer = compound.getInteger("timer");
         this.done = compound.getBoolean("done");
     }
-
-    public int getItems()
-    {
-        return items;
-    }
-
 
     @Override
     public SPacketUpdateTileEntity getUpdatePacket()
@@ -229,6 +200,17 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         this.done = tag.getBoolean("done");
         IBlockState state = world.getBlockState(pos);
         world.notifyBlockUpdate(pos, state, state, 11);
+    }
+
+
+    public int getItems()
+    {
+        return items;
+    }
+
+    public boolean isDone()
+    {
+        return done;
     }
 
 
