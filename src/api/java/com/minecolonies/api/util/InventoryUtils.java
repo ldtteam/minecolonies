@@ -429,6 +429,7 @@ public class InventoryUtils
         final Set<IItemHandler> handlerList = Arrays.stream(EnumFacing.VALUES)
                                                 .filter(facing -> provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
                                                 .map(facing -> provider.getCapability(ITEM_HANDLER_CAPABILITY, facing))
+                                                .filter(Objects::nonNull)
                                                 .collect(Collectors.toSet());
 
         if (provider.hasCapability(ITEM_HANDLER_CAPABILITY, null))
@@ -439,6 +440,8 @@ public class InventoryUtils
                 handlerList.add(nullHandler);
             }
         }
+
+        handlerList.removeIf(Objects::isNull);
 
         return handlerList;
     }
@@ -1355,7 +1358,6 @@ public class InventoryUtils
         {
             return true;
         }
-        final ItemStack originalStack = sourceStack.copy();
 
         for (int i = 0; i < targetHandler.getSlots(); i++)
         {
@@ -1367,6 +1369,7 @@ public class InventoryUtils
             }
         }
 
+        final ItemStack originalStack = sourceStack.copy();
         if (!ItemStack.areItemStacksEqual(sourceStack, originalStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(sourceStack, originalStack))
         {
             final int usedAmount = ItemStackUtils.getSize(sourceStack) - ItemStackUtils.getSize(originalStack);
@@ -1392,7 +1395,7 @@ public class InventoryUtils
     {
         int currentAmount = amount;
 
-        for(IItemHandler handler : getItemHandlersFromProvider(targetProvider))
+        for(final IItemHandler handler : getItemHandlersFromProvider(targetProvider))
         {
             currentAmount = transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(sourceProvider, itemStackSelectionPredicate, amount, handler);
 
@@ -1419,7 +1422,7 @@ public class InventoryUtils
       @NotNull final int amount, @NotNull final IItemHandler targetHandler)
     {
         int currentAmount = amount;
-        for (IItemHandler handler : getItemHandlersFromProvider(sourceProvider))
+        for (final IItemHandler handler : getItemHandlersFromProvider(sourceProvider))
         {
             currentAmount = transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandlerWithResult(handler, itemStackSelectionPredicate, currentAmount, targetHandler);
 
@@ -1446,8 +1449,15 @@ public class InventoryUtils
       @NotNull final int amount, @NotNull final IItemHandler targetHandler)
     {
         int currentAmount = amount;
-        while (currentAmount >= 0)
+        int tries = 0;
+        while (currentAmount > 0)
         {
+            tries++;
+            if(tries > sourceHandler.getSlots())
+            {
+                break;
+            }
+
             final int desiredItemSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler,
               itemStackSelectionPredicate::test);
 
@@ -1529,8 +1539,6 @@ public class InventoryUtils
 
         return false;
     }
-
-    //TODO (UPDATE To 1.11): Update next two methods to reflect 1.11 Changes.
 
     /**
      * Method to swap the ItemStacks from the given source {@link IItemHandler}
@@ -1634,6 +1642,48 @@ public class InventoryUtils
         }
 
         return success && i >= list.size();
+    }
+
+    /**
+     * Remove a list of stacks from a given Itemhandler
+     *
+     * @param handler the itemHandler.
+     * @param input   the stack to remove.
+     * @return true if succesful.
+     */
+    public static boolean removeStackFromItemHandler(final IItemHandler handler, final ItemStack input)
+    {
+        int maxTries = 0;
+        maxTries += ItemStackUtils.getSize(input);
+
+        boolean success = true;
+        int i = 0;
+        int tries = 0;
+        while (tries < maxTries)
+        {
+            final int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, input::isItemEqual);
+
+            if (slot == -1)
+            {
+                success = false;
+                i++;
+                continue;
+            }
+
+            final int removedSize = ItemStackUtils.getSize(handler.extractItem(slot, ItemStackUtils.getSize(input), false));
+
+            if (removedSize == ItemStackUtils.getSize(input))
+            {
+                i++;
+            }
+            else
+            {
+                ItemStackUtils.changeSize(input, -removedSize);
+            }
+            tries++;
+        }
+
+        return success && i >= 1;
     }
 
     /**

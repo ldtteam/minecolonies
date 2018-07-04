@@ -1,30 +1,49 @@
 package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.MathUtils;
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
-import com.minecolonies.coremod.blocks.BlockHutTownHall;
-import com.minecolonies.coremod.blocks.BlockHutWareHouse;
+import com.minecolonies.coremod.blocks.huts.BlockHutField;
+import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
+import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesChunkCapabilityProvider;
+import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldCapabilityProvider;
+import com.minecolonies.coremod.items.ModItems;
+import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSilverfish;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -32,6 +51,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
+import static com.minecolonies.api.util.constant.NbtTagConstants.FIRST_POS_STRING;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
  * Handles all forge events.
@@ -56,26 +80,131 @@ public class EventHandler
                 final WorldClient world = mc.world;
                 final EntityPlayerSP player = mc.player;
                 IColony colony = ColonyManager.getIColony(world, player.getPosition());
-                final double minDistance = ColonyManager.getMinimumDistanceBetweenTownHalls();
 
                 if (colony == null)
                 {
-                    colony = ColonyManager.getClosestIColony(world, player.getPosition());
-
-                    if (colony == null || Math.sqrt(colony.getDistanceSquared(player.getPosition())) > 2 * minDistance)
+                    if (!ColonyManager.isTooCloseToColony(world, player.getPosition()))
                     {
                         event.getLeft().add(LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.noCloseColony"));
                         return;
                     }
+                    colony = ColonyManager.getClosestIColony(world, player.getPosition());
+
+                    if (colony == null)
+                    {
+                        return;
+                    }
 
                     event.getLeft().add(LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.nextColony",
-                      (int) Math.sqrt(colony.getDistanceSquared(player.getPosition())), minDistance));
+                            (int) Math.sqrt(colony.getDistanceSquared(player.getPosition())), ColonyManager.getMinimumDistanceBetweenTownHalls()));
                     return;
                 }
 
                 event.getLeft().add(colony.getName() + " : "
-                                      + LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.blocksFromCenter",
-                  (int) Math.sqrt(colony.getDistanceSquared(player.getPosition()))));
+                        + LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.blocksFromCenter",
+                        (int) Math.sqrt(colony.getDistanceSquared(player.getPosition()))));
+            }
+        }
+    }
+
+    /**
+     * Event called to attach capabilities on a chunk.
+     *
+     * @param event the event.
+     */
+    @SubscribeEvent
+    public void onAttachingCapabilitiesChunk(@NotNull final AttachCapabilitiesEvent<Chunk> event)
+    {
+        event.addCapability(new ResourceLocation(Constants.MOD_ID, "closeColony"), new MinecoloniesChunkCapabilityProvider());
+    }
+
+    /**
+     * Event called to attach capabilities on the world.
+     *
+     * @param event the event.
+     */
+    @SubscribeEvent
+    public void onAttachingCapabilitiesWorld(@NotNull final AttachCapabilitiesEvent<World> event)
+    {
+        event.addCapability(new ResourceLocation(Constants.MOD_ID, "chunkUpdate"), new MinecoloniesWorldCapabilityProvider());
+    }
+
+    /**
+     * Called when a chunk gets loaded for some reason.
+     */
+    @SubscribeEvent
+    public void onChunkLoad(@NotNull final ChunkEvent.Load event)
+    {
+        if (event.getWorld() instanceof WorldServer)
+        {
+            ColonyManager.loadChunk(event.getChunk(), event.getWorld());
+        }
+    }
+
+    /**
+     * Event called when the player enters a new chunk.
+     *
+     * @param event the event.
+     */
+    @SubscribeEvent
+    public void onEnteringChunk(@NotNull final PlayerEvent.EnteringChunk event)
+    {
+        final Entity entity = event.getEntity();
+
+        //  Add nearby players
+        if (entity instanceof EntityPlayerMP && entity.dimension == 0)
+        {
+            final World world = entity.getEntityWorld();
+            final Chunk newChunk = world.getChunkFromChunkCoords(event.getNewChunkX(), event.getNewChunkZ());
+            ColonyManager.loadChunk(newChunk, entity.world);
+
+            final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null);
+
+            MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(newCloseColonies, newChunk.x, newChunk.z));
+            @NotNull final EntityPlayerMP player = (EntityPlayerMP) entity;
+            final Chunk oldChunk = world.getChunkFromChunkCoords(event.getOldChunkX(), event.getOldChunkZ());
+            final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null);
+
+            // Add new subscribers to colony.
+            for (final int colonyId : newCloseColonies.getAllCloseColonies())
+            {
+                final Colony colony = ColonyManager.getColony(colonyId);
+                if (colony != null)
+                {
+                    colony.getPackageManager().addSubscribers(player);
+                }
+            }
+
+            //Remove old subscribers from colony.
+            for (final int colonyId : oldCloseColonies.getAllCloseColonies())
+            {
+                if (!newCloseColonies.getAllCloseColonies().contains(colonyId))
+                {
+                    final Colony colony = ColonyManager.getColony(colonyId);
+                    if (colony != null)
+                    {
+                        colony.getPackageManager().removeSubscriber(player);
+                    }
+                }
+            }
+
+            if (newCloseColonies.getOwningColony() != oldCloseColonies.getOwningColony())
+            {
+                if (newCloseColonies.getOwningColony() == 0)
+                {
+                    final Colony colony = ColonyManager.getColony(oldCloseColonies.getOwningColony());
+                    if (colony != null)
+                    {
+                        colony.removeVisitingPlayer(player);
+                    }
+                    return;
+                }
+
+                final Colony colony = ColonyManager.getColony(newCloseColonies.getOwningColony());
+                if (colony != null)
+                {
+                    colony.addVisitingPlayer(player);
+                }
             }
         }
     }
@@ -107,6 +236,22 @@ public class EventHandler
 
             building.destroy();
         }
+
+        if (event.getPlayer() instanceof EntityPlayer && event.getPlayer().getHeldItem(EnumHand.MAIN_HAND).getItem() == ModItems.scanTool)
+        {
+            final ItemStack itemstack = event.getPlayer().getHeldItem(EnumHand.MAIN_HAND);
+            if (!itemstack.hasTagCompound())
+            {
+                itemstack.setTagCompound(new NBTTagCompound());
+            }
+            final NBTTagCompound compound = itemstack.getTagCompound();
+
+            BlockPosUtil.writeToNBT(compound, FIRST_POS_STRING, event.getPos());
+            LanguageHandler.sendPlayerMessage(event.getPlayer(), "item.scepterSteel.point", event.getPos().getX(), event.getPos().getY(), event.getPos().getZ());
+            itemstack.setTagCompound(compound);
+
+            event.setCanceled(true);
+        }
     }
 
     /**
@@ -127,23 +272,19 @@ public class EventHandler
         {
             // this was the simple way of doing it, minecraft calls onBlockActivated
             // and uses that return value, but I didn't want to call it twice
-            if (playerRightClickInteract(player, world, event.getPos())
-                  && world.getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut)
-
-
+            if (playerRightClickInteract(player, world, event.getPos()) && world.getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut)
             {
                 final IColony colony = ColonyManager.getIColony(world, event.getPos());
                 if (colony != null
-                      && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
+                        && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
                 {
                     event.setCanceled(true);
                 }
 
                 return;
             }
-            else if (event.getEntityPlayer() != null
-                       && "pmardle".equalsIgnoreCase(event.getEntityPlayer().getName())
-                       && event.getItemStack() != null && Block.getBlockFromItem(event.getItemStack().getItem()) instanceof BlockSilverfish)
+            else if ("pmardle".equalsIgnoreCase(event.getEntityPlayer().getName())
+                    && Block.getBlockFromItem(event.getItemStack().getItem()) instanceof BlockSilverfish)
             {
                 LanguageHandler.sendPlayerMessage(event.getEntityPlayer(), "Stop that you twat!!!");
                 event.setCanceled(true);
@@ -169,7 +310,7 @@ public class EventHandler
     private static boolean playerRightClickInteract(@NotNull final EntityPlayer player, final World world, final BlockPos pos)
     {
         return !player.isSneaking() || player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null
-                 || player.getHeldItemMainhand().getItem().doesSneakBypassUse(player.getHeldItemMainhand(), world, pos, player);
+                || player.getHeldItemMainhand().getItem().doesSneakBypassUse(player.getHeldItemMainhand(), world, pos, player);
     }
 
     /**
@@ -181,7 +322,7 @@ public class EventHandler
     private static void handleEventCancellation(@NotNull final PlayerInteractEvent event, @NotNull final EntityPlayer player)
     {
         final Block heldBlock = Block.getBlockFromItem(player.getHeldItemMainhand().getItem());
-        if (heldBlock instanceof AbstractBlockHut)
+        if (heldBlock instanceof AbstractBlockHut || heldBlock instanceof BlockHutField)
         {
             event.setCanceled(!onBlockHutPlaced(event.getWorld(), player, heldBlock, event.getPos().offset(event.getFace())));
         }
@@ -199,6 +340,12 @@ public class EventHandler
      */
     public static boolean onBlockHutPlaced(@NotNull final World world, @NotNull final EntityPlayer player, final Block block, final BlockPos pos)
     {
+        if (!Configurations.gameplay.allowOtherDimColonies && world.provider.getDimension() != 0)
+        {
+            LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_IN_OTHER_DIM);
+            return false;
+        }
+
         if (block instanceof BlockHutTownHall)
         {
             return onTownHallPlaced(world, player, pos);
@@ -213,12 +360,27 @@ public class EventHandler
         }
     }
 
-    static boolean onTownHallPlaced(@NotNull final World world, @NotNull final EntityPlayer player, final BlockPos pos)
+    protected static boolean onTownHallPlaced(@NotNull final World world, @NotNull final EntityPlayer player, final BlockPos pos)
     {
         IColony colony = ColonyManager.getIColonyByOwner(world, player);
         if (colony != null)
         {
             return canOwnerPlaceTownHallHere(world, player, colony, pos);
+        }
+
+        if (Configurations.gameplay.restrictColonyPlacement)
+        {
+            final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, world.getSpawnPoint()));
+            if (spawnDistance < Configurations.gameplay.minDistanceFromWorldSpawn)
+            {
+                LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, Configurations.gameplay.minDistanceFromWorldSpawn);
+                return false;
+            }
+            else if (spawnDistance > Configurations.gameplay.maxDistanceFromWorldSpawn)
+            {
+                LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, Configurations.gameplay.maxDistanceFromWorldSpawn);
+                return false;
+            }
         }
 
         colony = ColonyManager.getClosestIColony(world, pos);
@@ -301,7 +463,7 @@ public class EventHandler
             if (closestColony.hasTownHall() || !closestColony.getPermissions().isColonyMember(player))
             {
                 Log.getLogger().info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at "
-                                       + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
+                        + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
                 //Placing in a colony which already has a town hall
                 LanguageHandler.sendPlayerMessage(player, "tile.blockHutTownHall.messageTooClose");
                 return false;
@@ -317,16 +479,17 @@ public class EventHandler
             return true;
         }
 
-        if (closestColony.getDistanceSquared(pos) <= MathUtils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
+        if (ColonyManager.isTooCloseToColony(world, pos))
         {
             Log.getLogger().info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at "
-                                   + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
+                    + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
             //Placing too close to an existing colony
             LanguageHandler.sendPlayerMessage(player, "tile.blockHutTownHall.messageTooClose");
             return false;
         }
 
-        if (Configurations.gameplay.protectVillages && world.getVillageCollection().getNearestVillage(pos, Configurations.gameplay.workingRangeTownHall) != null)
+        if (Configurations.gameplay.protectVillages
+                && world.getVillageCollection().getNearestVillage(pos, Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK) != null)
         {
             Log.getLogger().warn("Village close by!");
             return false;

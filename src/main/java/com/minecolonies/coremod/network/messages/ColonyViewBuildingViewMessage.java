@@ -7,15 +7,13 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Add or Update a AbstractBuilding.View to a ColonyView on the client.
  */
-public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<ColonyViewBuildingViewMessage, IMessage>
+public class ColonyViewBuildingViewMessage extends AbstractMessage<ColonyViewBuildingViewMessage, IMessage>
 {
     private int      colonyId;
     private BlockPos buildingId;
@@ -59,10 +57,9 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
         buf.writeBytes(buildingData);
     }
 
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull final ColonyViewBuildingViewMessage message, final MessageContext ctx)
+    protected void messageOnClientThread(final ColonyViewBuildingViewMessage message, final MessageContext ctx)
     {
-        return ColonyManager.handleColonyBuildingViewMessage(message.colonyId, message.buildingId, message.buildingData);
+        ColonyManager.handleColonyBuildingViewMessage(message.colonyId, message.buildingId, message.buildingData);
     }
 }

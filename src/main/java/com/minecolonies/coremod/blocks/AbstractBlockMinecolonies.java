@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.constant.Suppression;
+import com.minecolonies.coremod.blocks.interfaces.IBlockMinecolonies;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -33,7 +34,6 @@ public abstract class AbstractBlockMinecolonies<B extends AbstractBlockMinecolon
         registry.register(this);
         return (B) this;
     }
-
     /**
      * Registery block at gameregistry.
      *

@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
@@ -22,7 +22,7 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.K
 /**
  * List all colonies.
  */
-public class KillCitizenCommand extends AbstractCitizensCommands
+public class KillCitizenCommand extends AbstractCitizensCommands implements IActionCommand
 {
 
     public static final  String DESC                = "kill";
@@ -34,6 +34,14 @@ public class KillCitizenCommand extends AbstractCitizensCommands
      * The damage source used to kill citizens.
      */
     private static final DamageSource CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
+
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
+    public KillCitizenCommand()
+    {
+        super();
+    }
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -53,15 +61,16 @@ public class KillCitizenCommand extends AbstractCitizensCommands
     }
 
     @Override
-    void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
+    public void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
     {
-        final CitizenData citizenData = colony.getCitizen(citizenId);
-        final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
-        sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
-        final BlockPos position = entityCitizen.getPosition();
-        sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
-        sender.sendMessage(new TextComponentString(REMOVED_MESSAGE));
-        server.addScheduledTask(() -> entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE));
+        final CitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
+        citizenData.getCitizenEntity().ifPresent(entityCitizen -> {
+            sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
+            final BlockPos position = entityCitizen.getPosition();
+            sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
+            sender.sendMessage(new TextComponentString(REMOVED_MESSAGE));
+            server.addScheduledTask(() -> entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE));
+        });
     }
 
     @NotNull

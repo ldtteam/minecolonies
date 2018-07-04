@@ -8,20 +8,29 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
-import com.minecolonies.coremod.util.RenderUtils;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.lwjgl.opengl.GL11.GL_LINES;
+import static org.lwjgl.opengl.GL11.GL_LINE_LOOP;
+import static org.lwjgl.opengl.GL11.glColor4f;
 
 /**
  * Used to handle client events.
@@ -64,16 +73,76 @@ public class ClientEventHandler
 
         if (structure != null)
         {
-            final BlockPos position = Settings.instance.getPosition();
             if (Settings.instance.getStructureName().contains(AbstractEntityAIStructure.WAYPOINT_STRING))
             {
-                RenderUtils.renderWayPoints(position, world, event.getPartialTicks());
+                //TODO: Implement waypoint rendering.
             }
             else
             {
-                RenderUtils.renderColonyBorder(position, world, event.getPartialTicks(), player, colonyBorder);
+                //TODO: Implement rendering of the colony border.
             }
             return;
+        }
+        else if (Settings.instance.getBox() != null)
+        {
+            final BlockPos posA = Settings.instance.getBox().getFirst();
+            final BlockPos posB = Settings.instance.getBox().getSecond();
+
+            int x1 = posA.getX();
+            int y1 = posA.getY();
+            int z1 = posA.getZ();
+
+            int x2 = posB.getX();
+            int y2 = posB.getY();
+            int z2 = posB.getZ();
+
+            if (x1 > x2)
+            {
+                x1++;
+            }
+            else
+            {
+                x2++;
+            }
+
+            if (y1 > y2)
+            {
+                y1++;
+            }
+            else
+            {
+                y2++;
+            }
+
+            if (z1 > z2)
+            {
+                z1++;
+            }
+            else
+            {
+                z2++;
+            }
+
+            final double renderPosX = player.lastTickPosX + (player.posX - player.lastTickPosX) * (double)event.getPartialTicks();
+            final double renderPosY = player.lastTickPosY + (player.posY - player.lastTickPosY) * (double)event.getPartialTicks();
+            final double renderPosZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double)event.getPartialTicks();
+
+            GlStateManager.enableBlend();
+            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                    GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+                    GlStateManager.SourceFactor.ONE,
+                    GlStateManager.DestFactor.ZERO);
+            GlStateManager.glLineWidth(2.0F);
+            GlStateManager.disableTexture2D();
+            GlStateManager.depthMask(false);
+
+            final AxisAlignedBB axisalignedbb = new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
+            RenderGlobal.drawSelectionBoundingBox(axisalignedbb.grow(0.002D).offset(-renderPosX, -renderPosY, -renderPosZ), 1.0F, 1.0F, 1.0F, 1.0F);
+
+
+            GlStateManager.depthMask(true);
+            GlStateManager.enableTexture2D();
+            GlStateManager.disableBlend();
         }
         else
         {
@@ -82,8 +151,7 @@ public class ClientEventHandler
                 final Entity entityCitizen = world.getEntityByID(citizen.getEntityId());
                 if (entityCitizen instanceof EntityCitizen)
                 {
-                    RenderUtils.renderSigns(world, event.getPartialTicks(), citizen, player,
-                      entityCitizen.getPosition());
+                    //TODO: Reimplement status rendering.
                     ticksPassed += event.getPartialTicks();
                     if (ticksPassed > Constants.TICKS_SECOND * SECONDS_TO_SHOW)
                     {
@@ -108,7 +176,7 @@ public class ClientEventHandler
                     final Entity entityCitizen = world.getEntityByID(citizenDataView.getEntityId());
                     if (entityCitizen instanceof EntityCitizen && entityCitizen.getPosition().distanceSq(player.getPosition()) <= 2)
                     {
-                        RenderUtils.renderSigns(world, event.getPartialTicks(), citizenDataView, player, entityCitizen.getPosition());
+                        //TODO: Reimplement sign rendering.
                         citizen = citizenDataView;
                         return;
                     }

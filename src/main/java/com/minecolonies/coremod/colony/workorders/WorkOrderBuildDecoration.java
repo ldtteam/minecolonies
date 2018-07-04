@@ -7,7 +7,6 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -31,7 +30,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     private static final String TAG_SCHEMATIC_MD5     = "schematicMD5";
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
 
-    protected boolean  isMirrored;
+    protected boolean  isBuildingMirrored;
     protected BlockPos buildingLocation;
     protected int      buildingRotation;
     protected String   structureName;
@@ -69,7 +68,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         this.buildingRotation = rotation;
         this.buildingLocation = location;
         this.cleared = false;
-        this.isMirrored = mirror;
+        this.isBuildingMirrored = mirror;
         this.requested = false;
     }
 
@@ -115,7 +114,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
 
         buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
         requested = compound.getBoolean(TAG_IS_REQUESTED);
-        isMirrored = compound.getBoolean(TAG_IS_MIRRORED);
+        isBuildingMirrored = compound.getBoolean(TAG_IS_MIRRORED);
     }
 
     /**
@@ -147,68 +146,13 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         }
         compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
         compound.setBoolean(TAG_IS_REQUESTED, requested);
-        compound.setBoolean(TAG_IS_MIRRORED, isMirrored);
+        compound.setBoolean(TAG_IS_MIRRORED, isBuildingMirrored);
     }
 
     @Override
     public boolean isValid(final Colony colony)
     {
         return true;
-    }
-
-    /**
-     * Attempt to fulfill the Work Order.
-     * Override this with an implementation for the Work Order to find a Citizen to perform the job
-     * <p>
-     * finds the closest suitable builder for this job.
-     *
-     * @param colony The colony that owns the Work Order.
-     */
-    @Override
-    public void attemptToFulfill(@NotNull final Colony colony)
-    {
-        boolean sendMessage = true;
-        boolean hasBuilder = false;
-        double distanceToBuilder = 0;
-        CitizenData claimedBy = null;
-
-        for (@NotNull final CitizenData citizen : colony.getCitizens().values())
-        {
-            final JobBuilder job = citizen.getJob(JobBuilder.class);
-
-            if (job == null || citizen.getWorkBuilding() == null)
-            {
-                continue;
-            }
-
-            hasBuilder = true;
-
-            // don't send a message if we have a valid worker that is busy.
-            if (canBuild(citizen))
-            {
-                sendMessage = false;
-            }
-
-            if (!job.hasWorkOrder() && canBuild(citizen))
-            {
-                final double distance = citizen.getWorkBuilding().getID().distanceSq(this.buildingLocation);
-                if (claimedBy == null || distance < distanceToBuilder)
-                {
-                    claimedBy = citizen;
-                    distanceToBuilder = distance;
-                }
-            }
-        }
-
-        if (claimedBy != null)
-        {
-            final JobBuilder job = claimedBy.getJob(JobBuilder.class);
-            job.setWorkOrder(this);
-            this.setClaimedBy(claimedBy);
-            return;
-        }
-
-        sendBuilderMessage(colony, hasBuilder, sendMessage);
     }
 
     /**
@@ -265,10 +209,10 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     }
 
     @Override
-    public void onAdded(final Colony colony)
+    public void onAdded(final Colony colony, final boolean readingFromNbt)
     {
-        super.onAdded(colony);
-        if (colony != null && colony.getWorld() != null)
+        super.onAdded(colony, readingFromNbt);
+        if (!readingFromNbt && colony != null && colony.getWorld() != null)
         {
             ConstructionTapeHelper.placeConstructionTape(this, colony.getWorld());
         }
@@ -364,6 +308,6 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      */
     public boolean isMirrored()
     {
-        return isMirrored;
+        return isBuildingMirrored;
     }
 }

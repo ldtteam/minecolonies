@@ -24,17 +24,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.RSConstants.CONST_RETRYING_RESOLVER_PRIORITY;
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
+
 public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 {
 
     private static final Integer CONST_RETRYING_ID_SCALE = -20000;
 
-    private IRequestManager manager;
-    private ILocation       location;
-    private IToken          id;
-    private IToken          current;
-    private HashMap<IToken, Integer> delays           = new HashMap<>();
-    private HashMap<IToken, Integer> assignedRequests = new HashMap<>();
+    private       IRequestManager manager;
+    private final ILocation       location;
+    private final IToken<?>       id;
+    private       IToken<?>       current;
+    private final HashMap<IToken<?>, Integer> delays           = new HashMap<>();
+    private final HashMap<IToken<?>, Integer> assignedRequests = new HashMap<>();
 
     public StandardRetryingRequestResolver(final IFactoryController factoryController, final IRequestManager manager)
     {
@@ -42,6 +45,12 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 
         this.id = factoryController.getNewInstance(TypeConstants.ITOKEN, manager.getColony().getID() * CONST_RETRYING_ID_SCALE);
         this.location = factoryController.getNewInstance(TypeConstants.ILOCATION, manager.getColony().getCenter(), manager.getColony().getWorld().provider.getDimension());
+    }
+
+    public StandardRetryingRequestResolver(final IToken<?> id, final ILocation location)
+    {
+        this.id = id;
+        this.location = location;
     }
 
     @Override
@@ -70,15 +79,9 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 
     @Nullable
     @Override
-    public IToken getCurrentlyBeingReassignedRequest()
+    public IToken<?> getCurrentlyBeingReassignedRequest()
     {
         return current;
-    }
-
-    public StandardRetryingRequestResolver(final IToken id, final ILocation location)
-    {
-        this.id = id;
-        this.location = location;
     }
 
     @Override
@@ -88,8 +91,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     }
 
     @Override
-    public boolean canResolve(
-                               @NotNull final IRequestManager manager, final IRequest<? extends IRetryable> requestToCheck)
+    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends IRetryable> requestToCheck)
     {
         return getCurrentlyBeingReassignedRequest() == null || requestToCheck.getToken() != getCurrentlyBeingReassignedRequest()
                  || getCurrentReassignmentAttempt() < getMaximalTries();
@@ -97,25 +99,23 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 
     @Nullable
     @Override
-    public List<IToken> attemptResolve(
-                                        @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
+    public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
     {
         return ImmutableList.of();
     }
 
-    @Nullable
     @Override
     public void resolve(
-                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request) throws RuntimeException
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request) throws RuntimeException
     {
         delays.put(request.getToken(), getMaximalDelayBetweenRetriesInTicks());
         assignedRequests.put(request.getToken(), assignedRequests.containsKey(request.getToken()) ? assignedRequests.get(request.getToken()) + 1 : 1);
     }
 
+    @SuppressWarnings(RAWTYPES)
     @Nullable
     @Override
-    public IRequest getFollowupRequestForCompletion(
-                                                     @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> completedRequest)
+    public IRequest getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> completedRequest)
     {
         //Gets never called, since these will never get completed, only overruled or reassigned.
         return null;
@@ -123,11 +123,9 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 
     @Nullable
     @Override
-    public IRequest onRequestCancelledOrOverruled(
-                                                   @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request) throws IllegalArgumentException
+    public IRequest<?> onRequestCancelled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
     {
-        //Okey somebody completed it or what ever.
-        //Lets remove if from our data structures:
         if (assignedRequests.containsKey(request.getToken()))
         {
             delays.remove(request.getToken());
@@ -139,9 +137,16 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     }
 
     @Override
+    public void onRequestBeingOverruled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
+    {
+        onRequestCancelled(manager, request);
+    }
+
+    @Override
     public int getPriority()
     {
-        return AbstractRequestResolver.CONST_DEFAULT_RESOLVER_PRIORITY - 50;
+        return CONST_RETRYING_RESOLVER_PRIORITY;
     }
 
     @Override
@@ -156,14 +161,26 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
         });
 
         //Lets get all keys with 0 residual delay:
-        final Set<IToken> retryables = delays.keySet().stream().filter(t -> delays.get(t) == 0).collect(Collectors.toSet());
-        final Set<IToken> successfully = retryables.stream().filter(t -> {
-            final Set<IToken> blackList = assignedRequests.get(t) < getMaximalTries() ? ImmutableSet.of() : ImmutableSet.of(id);
+        final Set<IToken<?>> retryables = delays.keySet().stream().filter(t -> delays.get(t) == 0).collect(Collectors.toSet());
+        final Set<IToken<?>> successfully = retryables.stream().filter(t -> {
+            final Set<IToken<?>> blackList = assignedRequests.get(t) < getMaximalTries() ? ImmutableSet.of() : ImmutableSet.of(id);
 
             Integer currentAttempt = assignedRequests.get(t);
 
             this.setCurrent(t);
-            final IToken resultingResolver = manager.reassignRequest(t, blackList);
+            final IToken<?> resultingResolver;
+
+            try
+            {
+                resultingResolver = manager.reassignRequest(t, blackList);
+            }
+            catch (Exception ex)
+            {
+                assignedRequests.remove(t);
+                delays.remove(t);
+                return false;
+            }
+
             this.setCurrent(null);
 
             assignedRequests.put(t, ++currentAttempt);
@@ -185,18 +202,25 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     }
 
     @Override
-    public ImmutableList<IToken> getAllAssignedRequests()
+    public ImmutableList<IToken<?>> getAllAssignedRequests()
     {
         return ImmutableList.copyOf(assignedRequests.keySet());
     }
 
-    public void setCurrent(@Nullable final IToken token)
+    @Override
+    public void onSystemReset()
+    {
+        assignedRequests.clear();
+        delays.clear();
+    }
+
+    public void setCurrent(@Nullable final IToken<?> token)
     {
         this.current = token;
     }
 
     @Override
-    public IToken getRequesterId()
+    public IToken<?> getRequesterId()
     {
         return id;
     }
@@ -208,28 +232,26 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
         return location;
     }
 
-    @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IToken token)
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         //Noop, we do not schedule child requests. So this is never called.
     }
 
-    @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         //Noop, see onRequestComplete.
     }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken token)
+    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         return new TextComponentString("Player");
     }
 
-    public void updateData(@NotNull final Map<IToken, Integer> newAssignedRequests, @NotNull final Map<IToken, Integer> newDelays)
+    public void updateData(@NotNull final Map<IToken<?>, Integer> newAssignedRequests, @NotNull final Map<IToken<?>, Integer> newDelays)
     {
         this.assignedRequests.clear();
         this.assignedRequests.putAll(newAssignedRequests);
@@ -238,12 +260,12 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
         this.delays.putAll(newDelays);
     }
 
-    public HashMap<IToken, Integer> getDelays()
+    public Map<IToken<?>, Integer> getDelays()
     {
         return delays;
     }
 
-    public HashMap<IToken, Integer> getAssignedRequests()
+    public Map<IToken<?>, Integer> getAssignedRequests()
     {
         return assignedRequests;
     }

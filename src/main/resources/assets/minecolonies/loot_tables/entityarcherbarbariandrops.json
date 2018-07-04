@@ -1,28 +1,13 @@
 {
   "pools": [
     {
-      "name": "minecolonies: ArcherBarbarian",
+      "name": "minecolonies:ArcherBarbarian",
       "rolls": 1,
+      "bonus_rolls": 1,
       "entries": [
         {
-          "type": "item",
-          "weight": 5,
-          "name": "minecraft:diamond_sword"
-        },
-        {
-          "type": "item",
-          "weight": 10,
-          "name": "minecraft:golden_sword"
-        },
-        {
-          "type": "item",
-          "weight": 15,
-          "name": "minecraft:iron_sword"
-        },
-        {
-          "type": "item",
-          "weight": 30,
-          "name": "minecraft:stone_sword"
+          "type": "empty",
+          "weight": 80
         },
         {
           "type": "item",
@@ -31,7 +16,7 @@
         },
         {
           "type": "item",
-          "weight": 20,
+          "weight": 10,
           "name": "minecolonies:ancienttome"
         }
       ]

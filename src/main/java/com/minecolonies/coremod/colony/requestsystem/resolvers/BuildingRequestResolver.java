@@ -10,10 +10,9 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractBuildingDependentRequestResolver;
 import net.minecraft.tileentity.TileEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,14 +22,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.RSConstants.CONST_BUILDING_RESOLVER_PRIORITY;
+
 /**
  * Resolver that checks if a deliverable request is already in the building it is being requested from.
  */
-public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverable>
+public class BuildingRequestResolver extends AbstractBuildingDependentRequestResolver<IDeliverable>
 {
     public BuildingRequestResolver(
                                     @NotNull final ILocation location,
-                                    @NotNull final IToken token)
+                                    @NotNull final IToken<?> token)
     {
         super(location, token);
     }
@@ -38,67 +39,43 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
     @Override
     public int getPriority()
     {
-        return CONST_DEFAULT_RESOLVER_PRIORITY + 100;
+        return CONST_BUILDING_RESOLVER_PRIORITY;
     }
 
     @Override
     public TypeToken<? extends IDeliverable> getRequestType()
     {
-        return TypeToken.of(IDeliverable.class);
+        return TypeConstants.DELIVERABLE;
     }
 
+
     @Override
-    public boolean canResolve(
-                               @NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
+    public boolean canResolveForBuilding(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        if (manager.getColony().getWorld().isRemote)
-        {
-            return false;
-        }
-
-        if (!(requestToCheck.getRequester() instanceof BuildingBasedRequester))
-        {
-            return false;
-        }
-
-        if (!requestToCheck.getRequester().getRequesterLocation().equals(getRequesterLocation()))
-        {
-            return false;
-        }
-
-        AbstractBuilding building = getBuildingFromRequest(manager, requestToCheck);
-
-        List<TileEntity> tileEntities = new ArrayList<>();
+        final List<TileEntity> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
         tileEntities.removeIf(Objects::isNull);
 
         return tileEntities.stream()
-                 .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> requestToCheck.getRequest().matches(itemStack)))
+                 .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> request.getRequest().matches(itemStack)))
                  .anyMatch(itemStacks -> !itemStacks.isEmpty());
     }
 
     @Nullable
     @Override
-    public List<IToken> attemptResolve(
-                                        @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public List<IToken<?>> attemptResolveForBuilding(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        if (canResolve(manager, request))
-        {
-            return Lists.newArrayList();
-        }
-
-        return null;
+        return Lists.newArrayList();
     }
 
-    @Nullable
     @Override
-    public void resolve(
-                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws RuntimeException
+    public void resolveForBuilding(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        AbstractBuilding building = getBuildingFromRequest(manager, request);
-
-        List<TileEntity> tileEntities = new ArrayList<>();
+        final List<TileEntity> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
 
@@ -112,27 +89,9 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
         manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
     }
 
-    @NotNull
-    private AbstractBuilding getBuildingFromRequest(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws RuntimeException
-    {
-        BuildingBasedRequester requester = (BuildingBasedRequester) request.getRequester();
-        return requester.getBuilding().map(r -> {
-            if (r instanceof AbstractBuildingView && manager.getColony() instanceof Colony)
-            {
-                final Colony colony = (Colony) manager.getColony();
-                return colony.getBuilding(((AbstractBuildingView) r).getID());
-            }
-            else
-            {
-                return (AbstractBuilding) r;
-            }
-        }).orElseThrow(() -> new IllegalStateException("Unknown building."));
-    }
-
     @Nullable
     @Override
-    public IRequest getFollowupRequestForCompletion(
+    public IRequest<?> getFollowupRequestForCompletion(
                                                      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
     {
         return null;
@@ -140,22 +99,29 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
 
     @Nullable
     @Override
-    public IRequest onRequestCancelledOrOverruled(
-                                                   @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws IllegalArgumentException
+    public IRequest<?> onRequestCancelled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         return null;
     }
 
-    @NotNull
+    @Nullable
     @Override
-    public void onRequestComplete(@NotNull final IToken token)
+    public void onRequestBeingOverruled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    {
+        return;
+    }
+
+
+    @Override
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
 
     }
 
-    @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IRequestManager manager,@NotNull final IToken<?> token)
     {
 
     }

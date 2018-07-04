@@ -51,6 +51,10 @@ public enum AIState
      */
     CLEAR_STEP,
     /**
+     * Cleans the building area.
+     */
+    REMOVE_STEP,
+    /**
      * Requests materials.
      */
     REQUEST_MATERIALS,
@@ -78,6 +82,10 @@ public enum AIState
      * Go search food.
      */
     HUNGRY,
+    /**
+     * Decide what AIstate to go to next.
+     */
+    DECIDE,
     /*
 ###FISHERMAN###
      */
@@ -209,9 +217,24 @@ public enum AIState
     GUARD_GET_TARGET,
 
     /**
-     * Hunt the target down.
+     *Guard attack target.
      */
-    GUARD_HUNT_DOWN_TARGET,
+    GUARD_ATTACK,
+
+    /**
+     * Physically attack the target.
+     */
+    GUARD_ATTACK_PHYSICAL,
+
+    /**
+     * Use a ranged attack against the target.
+     */
+    GUARD_ATTACK_RANGED,
+
+    /**
+     * Allow the guard to protect himself.
+     */
+    GUARD_ATTACK_PROTECT,
 
     /**
      * Patrol through the village.
@@ -282,31 +305,75 @@ public enum AIState
     BAKER_TAKE_OUT_OF_OVEN,
 
     /*
+###Furnace users###
+     */
+
+    /**
+     * smelter smelts ore until its a bar.
+     */
+    START_USING_FURNACE,
+
+    /**
+     * Gathering ore from his building.
+     */
+    GATHERING_REQUIRED_MATERIALS,
+
+    /**
+     * Retrieve the ore from the furnace.
+     */
+    RETRIEVING_END_PRODUCT_FROM_FURNACE,
+
+    /*
 ###Cook###
      */
 
     /**
-     * Get some burnable material for the furnace.
-     */
-    COOK_GET_FIREWOOD,
-
-    /**
-     * Cook cooks food until its cooked.
-     */
-    COOK_COOK_FOOD,
-
-    /**
-     * Gathering food from his building.
-     */
-    COOK_GATHERING,
-
-    /**
-     * Retrieve the food from the furnace.
-     */
-    COOK_RETRIEVE_FOOD,
-
-    /**
      * Serve food to the citizen inside the building.
      */
-    COOK_SERVE
+    COOK_SERVE_FOOD_TO_CITIZEN,
+
+    /*
+    ###Smelter###
+     */
+    /**
+     * Smelt stuff he finds in his hut to ingots.
+     */
+    SMELTER_SMELTING_ITEMS,
+
+    /*
+### Herders ###
+     */
+
+    /**
+     * Breed two animals together.
+     */
+    HERDER_BREED,
+
+    /**
+     * Butcher an animal.
+     */
+    HERDER_BUTCHER,
+
+    /**
+     * Pickup items within area.
+     */
+    HERDER_PICKUP,
+
+    /*
+### Cowboy ###
+     */
+
+    /**
+     * Milk cows!
+     */
+    COWBOY_MILK,
+
+    /*
+### Shepherd ###
+     */
+
+    /**
+     * Shear a sheep!
+     */
+    SHEPHERD_SHEAR
 }

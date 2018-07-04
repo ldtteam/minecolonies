@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.pathfinding.*;
@@ -70,6 +71,7 @@ public class PathNavigate extends PathNavigateGround
         return true;
     }
 
+    @NotNull
     @Override
     protected Vec3d getEntityPosition()
     {
@@ -78,7 +80,7 @@ public class PathNavigate extends PathNavigateGround
 
     @Nullable
     @Override
-    public Path getPathToPos(final BlockPos pos)
+    public Path getPathToPos(@NotNull final BlockPos pos)
     {
         //Because this directly returns Path we can't do it async.
         return null;
@@ -404,11 +406,11 @@ public class PathNavigate extends PathNavigateGround
      * @param treesToCut the trees which should be cut.
      * @return the result of the search.
      */
-    public PathJobFindTree.TreePathResult moveToTree(final int range, final double speed, final Map<ItemStorage, Boolean> treesToCut)
+    public PathJobFindTree.TreePathResult moveToTree(final int range, final double speed, final Map<ItemStorage, Boolean> treesToCut, final Colony colony)
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
         return (PathJobFindTree.TreePathResult) setPathJob(
-          new PathJobFindTree(CompatibilityUtils.getWorld(entity), start, ((EntityCitizen) entity).getWorkBuilding().getLocation(), range, treesToCut), null, speed);
+          new PathJobFindTree(CompatibilityUtils.getWorld(entity), start, ((EntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding().getLocation(), range, treesToCut, colony), null, speed);
     }
 
     /**
@@ -424,7 +426,7 @@ public class PathNavigate extends PathNavigateGround
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
         return (PathJobFindWater.WaterPathResult) setPathJob(
-          new PathJobFindWater(CompatibilityUtils.getWorld(ourEntity), start, ((EntityCitizen) ourEntity).getWorkBuilding().getLocation(), range, ponds), null, speed);
+          new PathJobFindWater(CompatibilityUtils.getWorld(ourEntity), start, ((EntityCitizen) ourEntity).getCitizenColonyHandler().getWorkBuilding().getLocation(), range, ponds), null, speed);
     }
 
     /**

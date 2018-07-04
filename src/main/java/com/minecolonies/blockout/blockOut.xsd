@@ -132,6 +132,7 @@
             <xs:extension base="paneType">
                 <xs:group ref="paneContainerGroup" minOccurs="1" maxOccurs="1"/>
                 <xs:attribute name="padding" type="xs:integer"/>
+                <xs:attribute name="scrollbarOffset" type="fixedSizePair"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -241,6 +242,8 @@
                 <xs:attribute name="padding" type="xs:integer"/>
                 <xs:attribute name="maxContentHeight" type="xs:integer"/>
                 <xs:attribute name="dropDownSize" type="fixedSizePair"/>
+                <xs:attribute name="source" type="xs:string"/>
+                <xs:attribute name="textcolor" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

@@ -17,6 +17,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
+
 /**
  * Transfer some items from the player inventory to the Workers's Inventory.
  */
@@ -95,27 +97,27 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
             return;
         }
 
-        final CitizenData citizenData = colony.getCitizen(message.citizenId);
+        final CitizenData citizenData = colony.getCitizenManager().getCitizen(message.citizenId);
         if (citizenData == null)
         {
             Log.getLogger().warn("TransferItemsRequestMessage citizenData is null");
             return;
         }
 
-        final EntityCitizen citizen = citizenData.getCitizenEntity();
-        if (citizen == null)
+        final Optional<EntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
+        if (!optionalEntityCitizen.isPresent())
         {
             Log.getLogger().warn("TransferItemsRequestMessage entity citizen is null");
             return;
         }
 
-        if (message.quantity <= 0)
+        final boolean isCreative = player.capabilities.isCreativeMode;
+        if (message.quantity <= 0 && !isCreative)
         {
             Log.getLogger().warn("TransferItemsRequestMessage quantity below 0");
             return;
         }
 
-        final boolean isCreative = player.capabilities.isCreativeMode;
         final Item item = message.itemStack.getItem();
         final int amountToTake;
         if (isCreative)
@@ -127,9 +129,10 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
             amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage()));
         }
 
-        final ItemStack itemStackToTake = new ItemStack(item, amountToTake, message.itemStack.getItemDamage());
-
-        ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(citizen.getInventoryCitizen()), itemStackToTake);
+        final ItemStack itemStackToTake = message.itemStack.copy();
+        ItemStackUtils.setSize(itemStackToTake, message.quantity);
+        final EntityCitizen citizen = optionalEntityCitizen.get();
+        final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(citizen.getInventoryCitizen()), itemStackToTake);
         if (!isCreative)
         {
             int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);

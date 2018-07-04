@@ -1,18 +1,20 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Color;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.controls.*;
 import com.minecolonies.blockout.views.Box;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
-import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -139,30 +141,24 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     @Override
     public void onOpened()
     {
-        String[] labels = request.getLongDisplayString().getFormattedText()
-                            .replace("§r", " ")
-                            .replace(": ", ":\n")
-
-                            .split("(?<=\n)");
-
-        final StringBuilder finalLabel = new StringBuilder();
-
-        for (final String s : labels)
-        {
-            finalLabel.append(WordUtils.wrap(s, WRAP_AFTER_X, "\n", true));
-        }
-
-        labels = finalLabel.toString().split("\n");
+        final String[] labels = new String[] {request.getLongDisplayString().getFormattedText()};
         final Box box = findPaneOfTypeByID(BOX_ID_REQUEST, Box.class);
         int y = Y_OFFSET_EACH_TEXTFIELD;
+        final int availableLabelWidth = box.getInteriorWidth() - 1 - box.getX();
         for (final String s : labels)
         {
-            final Label descriptionLabel = new Label();
-            descriptionLabel.setColor(BLACK, BLACK);
-            descriptionLabel.setLabelText("§r§0" + s);
-            box.addChild(descriptionLabel);
-            descriptionLabel.setPosition(1, y);
-            y += Y_OFFSET_EACH_TEXTFIELD;
+            final String labelText = "§r§0" + s;
+            // Temporary workaround until Labels support multi-line rendering
+            final List<String> multilineLabelStrings = mc.fontRenderer.listFormattedStringToWidth(labelText, availableLabelWidth);
+            for (final String splitLabelText : multilineLabelStrings)
+            {
+                final Label descriptionLabel = new Label();
+                descriptionLabel.setColor(BLACK, BLACK);
+                descriptionLabel.setLabelText(splitLabelText);
+                box.addChild(descriptionLabel);
+                descriptionLabel.setPosition(1, y);
+                y += Y_OFFSET_EACH_TEXTFIELD;
+            }
         }
 
         final ItemIcon exampleStackDisplay = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
@@ -179,21 +175,36 @@ public class WindowRequestDetail extends Window implements ButtonHandler
             logo.setImage(request.getDisplayIcon());
         }
 
-        findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(request.getToken()).getFormattedText());
+        final ColonyView view = ColonyManager.getColonyView(colonyId);
+        findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
         final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
         targetLabel.setLabelText(request.getRequester().getDeliveryLocation().toString());
 
+
+        final ColonyView colony = ColonyManager.getColonyView(colonyId);
+        if(colony == null)
+        {
+            Log.getLogger().warn("---Colony Null in WindowRequestDetail---");
+            return;
+        }
+
         try
         {
-            findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " +
-                    ColonyManager.getColony(colonyId).getRequestManager().getResolverForRequest(
-                            request.getToken()).getDisplayName(request.getToken()).getFormattedText());
+            final IRequestResolver resolver = colony.getRequestManager().getResolverForRequest(request.getToken());
+            if(resolver == null)
+            {
+                Log.getLogger().warn("---IRequestResolver Null in WindowRequestDetail---");
+                return;
+            }
+
+            findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " + resolver.getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
         }
         catch(@SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS) final IllegalArgumentException e)
         {
             /**
              * Do nothing we just need to know if it has a resolver or not.
              */
+            Log.getLogger().warn("---IRequestResolver Null in WindowRequestDetail---", e);
         }
 
         box.setSize(box.getWidth(), y);

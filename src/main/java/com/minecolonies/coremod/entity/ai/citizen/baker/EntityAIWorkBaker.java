@@ -1,21 +1,19 @@
 package com.minecolonies.coremod.entity.ai.citizen.baker;
 
+import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.buildings.BuildingBaker;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
@@ -118,15 +116,21 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
           new AITarget(BAKER_TAKE_OUT_OF_OVEN, this::takeFromOven),
           new AITarget(BAKER_FINISHING, this::finishing)
         );
-        worker.setSkillModifier(
+        worker.getCitizenExperienceHandler().setSkillModifier(
           INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
             + DEXTERITY_MULTIPLIER * worker.getCitizenData().getDexterity());
         worker.setCanPickUpLoot(true);
     }
 
+    @Override
+    public Class getExpectedBuildingClass()
+    {
+        return BuildingBaker.class;
+    }
+
     private AIState finishing()
     {
-        if (currentBakingProduct == null)
+        if (currentBakingProduct == null || currentBakingProduct.getState() != ProductState.BAKED)
         {
             progress = 0;
             final List<BakingProduct> bakingProducts = getOwnBuilding().getTasks().get(ProductState.BAKED);
@@ -144,7 +148,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         }
 
         worker.setHeldItem(EnumHand.MAIN_HAND, currentBakingProduct.getEndProduct());
-        worker.hitBlockWithToolInHand(getOwnBuilding().getLocation());
+        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getLocation());
 
         if (progress >= getRequiredProgressForKneading())
         {
@@ -152,13 +156,17 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             getOwnBuilding().removeFromTasks(ProductState.BAKED, currentBakingProduct);
             InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), currentBakingProduct.getEndProduct());
 
-            final RecipeStorage storage = BakerRecipes.getRecipes().get(currentBakingProduct.getRecipeId());
-            for (final ItemStack stack : storage.getSecondaryOutput())
+            final IRecipeStorage storage = BakerRecipes.getRecipes().get(currentBakingProduct.getRecipeId());
+            for (final ItemStack stack : storage.getInput())
             {
-                InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), stack.copy());
+                final ItemStack returnStack = stack.getItem().getContainerItem(stack);
+                if(returnStack != null)
+                {
+                    InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), returnStack);
+                }
             }
-            worker.addExperience(XP_PER_PRODUCT);
-            incrementActionsDone();
+            worker.getCitizenExperienceHandler().addExperience(XP_PER_PRODUCT);
+            incrementActionsDoneAndDecSaturation();
             progress = 0;
             currentBakingProduct = null;
             return PREPARING;
@@ -177,7 +185,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     @Override
     public BuildingBaker getOwnBuilding()
     {
-        return (BuildingBaker) worker.getWorkBuilding();
+        return (BuildingBaker) worker.getCitizenColonyHandler().getWorkBuilding();
     }
 
     @Override
@@ -188,7 +196,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
     private int getRequiredProgressForKneading()
     {
-        return PROGRESS_MULTIPLIER / Math.min(worker.getLevel() + 1, MAX_LEVEL) * KNEADING_TIME;
+        return PROGRESS_MULTIPLIER / Math.min(worker.getCitizenExperienceHandler().getLevel() + 1, MAX_LEVEL) * KNEADING_TIME;
     }
 
     private AIState takeFromOven()
@@ -232,7 +240,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             return createNewProduct();
         }
 
-        final RecipeStorage storage = BakerRecipes.getRecipes().get(currentBakingProduct.getRecipeId());
+        final IRecipeStorage storage = BakerRecipes.getRecipes().get(currentBakingProduct.getRecipeId());
 
         if (currentBakingProduct.getState() == ProductState.UNCRAFTED)
         {
@@ -245,7 +253,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         }
 
         worker.setHeldItem(EnumHand.MAIN_HAND, storage.getInput().get(worker.getRandom().nextInt(storage.getInput().size())).copy());
-        worker.hitBlockWithToolInHand(getOwnBuilding().getLocation());
+        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getLocation());
 
         if (progress >= getRequiredProgressForKneading())
         {
@@ -271,22 +279,11 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     private AIState createNewProduct()
     {
         progress = 0;
-        final List<IItemHandler> handlers = new ArrayList<>();
-        handlers.add(new InvWrapper(worker.getInventoryCitizen()));
-        handlers.add(new InvWrapper(getOwnBuilding().getTileEntity()));
+        final List<IItemHandler> handlers = getOwnBuilding().getHandlers();
 
-        for (final BlockPos pos : getOwnBuilding().getAdditionalCountainers())
-        {
-            final TileEntity entity = world.getTileEntity(pos);
-            if (entity instanceof TileEntityChest)
-            {
-                handlers.add(new InvWrapper((TileEntityChest) entity));
-            }
-        }
-
-        RecipeStorage storage = null;
+        IRecipeStorage storage = null;
         int recipeId = 0;
-        for (final RecipeStorage tempStorage : BakerRecipes.getRecipes())
+        for (final IRecipeStorage tempStorage : BakerRecipes.getRecipes())
         {
             if (tempStorage.canFullFillRecipe(handlers.toArray(new IItemHandler[handlers.size()])))
             {
@@ -298,7 +295,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
         if (storage == null)
         {
-            final List<RecipeStorage> recipes = BakerRecipes.getRecipes();
+            final List<IRecipeStorage> recipes = BakerRecipes.getRecipes();
             final List<ItemStack> lastRecipe = recipes.get(recipes.size() - 1).getInput();
             final ItemStack[] arrayToRequestAndRetrieve = lastRecipe.toArray(new ItemStack[lastRecipe.size()]);
             checkIfRequestForItemExistOrCreate(arrayToRequestAndRetrieve);
@@ -318,7 +315,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      * @param storage the given storage.
      * @return the next state to transit to.
      */
-    private AIState craftNewProduct(final RecipeStorage storage)
+    private AIState craftNewProduct(final IRecipeStorage storage)
     {
         final List<ItemStack> list = new ArrayList<>();
 

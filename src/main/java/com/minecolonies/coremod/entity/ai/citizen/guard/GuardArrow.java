@@ -37,7 +37,7 @@ public class GuardArrow extends EntityTippedArrow
     public GuardArrow(final World worldIn, final EntityCitizen shooter)
     {
         super(worldIn, shooter);
-        this.colony = shooter.getColony();
+        this.colony = shooter.getCitizenColonyHandler().getColony();
     }
 
     @Override
@@ -66,10 +66,10 @@ public class GuardArrow extends EntityTippedArrow
                 final EntityPlayer player = (EntityPlayer) targetEntity;
                 if (colony.getPermissions().isColonyMember(player))
                 {
-                    this.colony.triggerAchievement(ModAchievements.achievementPlayerDeathGuard);
+                    this.colony.getStatsManager().triggerAchievement(ModAchievements.achievementPlayerDeathGuard);
                 }
             }
-            colony.incrementStatistic("mobs");
+            colony.getStatsManager().incrementStatistic("mobs");
         }
     }
 

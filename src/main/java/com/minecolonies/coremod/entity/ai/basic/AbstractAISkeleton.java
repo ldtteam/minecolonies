@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.api.entity.ai.DesiredActivity;
+import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
@@ -13,8 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import static com.minecolonies.coremod.entity.EntityCitizen.Status.IDLE;
 
 /**
  * Skeleton class for worker ai.
@@ -51,12 +51,18 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     protected AbstractAISkeleton(@NotNull final J job)
     {
         super();
+
+        if (!job.getCitizen().getCitizenEntity().isPresent())
+        {
+            throw new IllegalArgumentException("Cannot instantiate a AI from a Job that is attached to a Citizen without entity.");
+        }
+
         this.targetList = new ArrayList<>();
         setMutexBits(MUTEX_MASK);
         this.job = job;
-        this.worker = this.job.getCitizen().getCitizenEntity();
+        this.worker = this.job.getCitizen().getCitizenEntity().get();
         this.world = CompatibilityUtils.getWorld(this.worker);
-        this.chatSpamFilter = new ChatSpamFilter(worker);
+        this.chatSpamFilter = new ChatSpamFilter(job.getCitizen());
         this.state = AIState.INIT;
     }
 
@@ -90,7 +96,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     @Override
     public final boolean shouldExecute()
     {
-        return worker.getDesiredActivity() == EntityCitizen.DesiredActivity.WORK;
+        return worker.getDesiredActivity() == DesiredActivity.WORK;
     }
 
     /**
@@ -108,7 +114,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     @Override
     public final void startExecuting()
     {
-        worker.setStatus(EntityCitizen.Status.WORKING);
+        worker.getCitizenStatusHandler().setStatus(Status.WORKING);
     }
 
     /**
@@ -117,7 +123,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     @Override
     public final void resetTask()
     {
-        worker.setStatus(IDLE);
+        worker.getCitizenStatusHandler().setStatus(Status.IDLE);
     }
 
     /**

@@ -5,10 +5,10 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
-import net.minecraft.block.BlockOre;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
@@ -180,7 +180,8 @@ public class Structure
                                                                @NotNull final Block worldBlock, @NotNull final IBlockState worldMetadata)
         {
             return structureBlock == ModBlocks.blockSubstitution || (structureBlock == ModBlocks.blockSolidSubstitution
-                                                                       && worldMetadata.getMaterial().isSolid() && !(worldBlock instanceof BlockOre) && worldBlock != Blocks.AIR);
+                    && worldMetadata.getMaterial().isSolid() && !(ColonyManager.getCompatabilityManager().isOre(worldMetadata))
+                    && worldBlock != Blocks.AIR);
         }
     }
 
@@ -188,7 +189,8 @@ public class Structure
      * The internal structure loaded.
      */
     @Nullable
-    private final StructureWrapper structure;
+    private final StructureWrapper theStructure;
+
     /**
      * the targetWorld to build the structure in.
      */
@@ -232,7 +234,7 @@ public class Structure
                       final BlockPos blockProgress,
                       final Mirror mirror) throws StructureException
     {
-        this.structure = loadStructure(targetWorld, buildingLocation, structureFileName, rotation, stageProgress, blockProgress, mirror);
+        this.theStructure = loadStructure(targetWorld, buildingLocation, structureFileName, rotation, stageProgress, blockProgress, mirror);
         this.stage = stageProgress;
         this.targetWorld = targetWorld;
     }
@@ -295,7 +297,7 @@ public class Structure
      */
     public Structure(final World targetWorld, final StructureWrapper structure, final Stage stageProgress)
     {
-        this.structure = structure;
+        this.theStructure = structure;
         this.stage = stageProgress;
         this.targetWorld = targetWorld;
     }
@@ -334,7 +336,7 @@ public class Structure
      */
     public BlockPos getCurrentBlockPosition()
     {
-        return this.structure.getBlockPosition();
+        return this.theStructure.getBlockPosition();
     }
 
     /**
@@ -350,20 +352,23 @@ public class Structure
         switch (this.stage)
         {
             case CLEAR:
-                return advanceBlocks(this.structure::decrementBlock,
+                return advanceBlocks(this.theStructure::decrementBlock,
                   structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
                                       || structureBlock.worldBlock == Blocks.AIR);
             case BUILD:
-                return advanceBlocks(this.structure::incrementBlock, structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
+                return advanceBlocks(this.theStructure::incrementBlock, structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
                                                                                          && structureBlock.block == Blocks.AIR
                                                                                          && !structureBlock.metadata.getMaterial().isSolid());
             case SPAWN:
-                return advanceBlocks(this.structure::decrementBlock, structureBlock ->
+                return advanceBlocks(this.theStructure::decrementBlock, structureBlock ->
                                                                        structureBlock.entity == null);
             case DECORATE:
-                return advanceBlocks(this.structure::incrementBlock, structureBlock ->
+                return advanceBlocks(this.theStructure::incrementBlock, structureBlock ->
                                                                        structureBlock.doesStructureBlockEqualWorldBlock()
                                                                          || structureBlock.metadata.getMaterial().isSolid());
+            case REMOVE:
+                return advanceBlocks(this.theStructure::decrementBlock,
+                        structureBlock -> structureBlock.worldBlock == Blocks.AIR);
             default:
                 return Result.NEW_BLOCK;
         }
@@ -403,15 +408,15 @@ public class Structure
     public StructureBlock getCurrentBlock()
     {
         return new StructureBlock(
-                                   this.structure.getBlock(),
-                                   this.structure.getBlockPosition(),
-                                   this.structure.getBlockState(),
-                                   this.structure.getEntityinfo(),
-                                   this.structure.getItem(),
-                                   BlockPosUtil.getBlock(targetWorld, this.structure.getBlockPosition()),
-                                   BlockPosUtil.getBlockState(targetWorld, this.structure.getBlockPosition()),
+                                   this.theStructure.getBlock(),
+                                   this.theStructure.getBlockPosition(),
+                                   this.theStructure.getBlockState(),
+                                   this.theStructure.getEntityinfo(),
+                                   this.theStructure.getItem(),
+                                   BlockPosUtil.getBlock(targetWorld, this.theStructure.getBlockPosition()),
+                                   BlockPosUtil.getBlockState(targetWorld, this.theStructure.getBlockPosition()),
                                    !targetWorld.getEntitiesWithinAABB(net.minecraft.entity.Entity.class,
-                                     new AxisAlignedBB(this.structure.getBlockPosition()),
+                                     new AxisAlignedBB(this.theStructure.getBlockPosition()),
                                      entity -> !(entity instanceof EntityLiving || entity instanceof EntityPlayer || entity instanceof EntityItem)).isEmpty());
     }
 
@@ -422,7 +427,7 @@ public class Structure
      */
     public int getWidth()
     {
-        return this.structure.getWidth();
+        return this.theStructure.getWidth();
     }
 
     /**
@@ -432,7 +437,7 @@ public class Structure
      */
     public int getLength()
     {
-        return this.structure.getLength();
+        return this.theStructure.getLength();
     }
 
     /**
@@ -442,7 +447,7 @@ public class Structure
      */
     public int getHeight()
     {
-        return this.structure.getHeight();
+        return this.theStructure.getHeight();
     }
 
     /**
@@ -452,7 +457,7 @@ public class Structure
      */
     public BlockPos getCenter()
     {
-        return this.structure.getPosition();
+        return this.theStructure.getPosition();
     }
 
     /**
@@ -474,6 +479,7 @@ public class Structure
         BUILD,
         DECORATE,
         SPAWN,
-        COMPLETE
+        COMPLETE,
+        REMOVE
     }
 }

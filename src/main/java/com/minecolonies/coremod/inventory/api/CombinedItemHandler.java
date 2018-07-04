@@ -184,7 +184,7 @@ public class CombinedItemHandler
 
         for (final IItemHandlerModifiable modifiable : handlers)
         {
-            if (slot < modifiable.getSlots())
+            if (activeSlot < modifiable.getSlots())
             {
                 return modifiable.getStackInSlot(activeSlot);
             }
@@ -193,7 +193,9 @@ public class CombinedItemHandler
         }
 
         return null;
-    }    /**
+    }
+
+    /**
      * Get the name of this object. For players this returns their username.
      */
     @Override
@@ -247,16 +249,19 @@ public class CombinedItemHandler
     @Override
     public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
     {
-        int activeSlot = slot;
-
+        int checkedSlots = 0;
         for (final IItemHandlerModifiable modifiable : handlers)
         {
-            if (activeSlot < modifiable.getSlots())
+            if (modifiable.getSlots() + checkedSlots <= slot)
             {
-                return modifiable.extractItem(slot, amount, simulate);
+                checkedSlots += modifiable.getSlots();
+                continue;
             }
-
-            activeSlot -= modifiable.getSlots();
+            final int activeSlot = slot - checkedSlots;
+            if(activeSlot < modifiable.getSlots())
+            {
+                return modifiable.extractItem(activeSlot, amount, simulate);
+            }
         }
 
         return null;
@@ -269,9 +274,13 @@ public class CombinedItemHandler
         for (final IItemHandlerModifiable modifiable : handlers)
         {
             if (slotIndex >= modifiable.getSlots())
+            {
                 slotIndex-=modifiable.getSlots();
+            }
             else
+            {
                 return modifiable.getSlotLimit(slotIndex);
+            }
         }
 
         return 0;

@@ -9,7 +9,7 @@
     <itemicon id="requestStack" size="24 24" pos="14 34"/>
     <image id="deliveryImage" source="minecraft:textures/misc/shadow.png" size="24 24" pos="14 34" visible="false"/>
 
-    <box id="requestDetail" size="100% 50%" pos="20 70" linewidth="0">
+    <box id="requestDetail" size="100% 50%" pos="20 70" linewidth="0" color="black">
 
     </box>
 

@@ -67,7 +67,7 @@ public class CommandEntryPoint extends CommandBase
     @Override
     public List<String> getAliases()
     {
-        return Arrays.asList("mc", "col", "mcol", "mcolonies", "minecol", "minecolonies");
+        return Arrays.asList("mc_old");
     }
 
     /**

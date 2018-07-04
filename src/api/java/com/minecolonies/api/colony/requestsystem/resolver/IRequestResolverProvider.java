@@ -24,5 +24,5 @@ public interface IRequestResolverProvider
      *
      * @return a list of resolvers.
      */
-    ImmutableCollection<IRequestResolver> getResolvers();
+    ImmutableCollection<IRequestResolver<?>> getResolvers();
 }

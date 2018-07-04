@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.constant.Suppression;
+import com.minecolonies.coremod.blocks.interfaces.IBlockMinecolonies;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
@@ -11,11 +12,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
-
 public abstract class AbstractBlockMinecoloniesStairs<B extends AbstractBlockMinecoloniesStairs<B>> extends BlockStairs implements IBlockMinecolonies<B>
 {
-    protected AbstractBlockMinecoloniesStairs(final IBlockState modelState)
+    public AbstractBlockMinecoloniesStairs(final IBlockState modelState)
     {
         super(modelState);
     }

@@ -7,8 +7,11 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import com.minecolonies.coremod.blocks.BlockWaypoint;
+import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.placementhandlers.IPlacementHandler;
 import com.minecolonies.coremod.placementhandlers.PlacementHandlers;
 import com.minecolonies.structures.helpers.StructureProxy;
@@ -112,6 +115,7 @@ public final class StructureWrapper
         try
         {
             @NotNull final StructureWrapper structureWrapper = new StructureWrapper(worldObj, name);
+            structureWrapper.position = pos;
             structureWrapper.rotate(rotations, worldObj, pos, mirror);
             structureWrapper.placeStructure(pos.subtract(structureWrapper.getOffset()), complete);
         }
@@ -241,7 +245,24 @@ public final class StructureWrapper
         for (final IPlacementHandler handlers : PlacementHandlers.handlers)
         {
             final Object result = handlers.handle(world, pos, localState, null, true, complete);
-            if (!(result instanceof IPlacementHandler.ActionProcessingResult) || result != IGNORE)
+            if (result instanceof  IBlockState)
+            {
+                final IBlockState blockState = (IBlockState) result;
+
+                final Colony colony = ColonyManager.getColony(world, pos);
+                if (colony != null)
+                {
+                    final AbstractBuilding building = colony.getBuildingManager().getBuilding(position);
+
+                    if (building != null)
+                    {
+                        building.registerBlockPosition(blockState, pos, world);
+                    }
+                }
+
+                return;
+            }
+            else if (!(result instanceof IPlacementHandler.ActionProcessingResult) || result != IGNORE)
             {
                 return;
             }
@@ -709,7 +730,7 @@ public final class StructureWrapper
     /**
      * @return The StructureProxy that houses all the info about what is stored in a structure.
      */
-    public StructureProxy structure()
+    public StructureProxy getStructure()
     {
         return structure;
     }

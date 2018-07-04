@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.minecolonies.coremod.commands.ActionMenuState;
+import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,11 +20,19 @@ import java.util.List;
 /**
  * Command to make all colonies raid this night.
  */
-public class RaidAllTonightCommand extends AbstractSingleCommand
+public class RaidAllTonightCommand extends AbstractSingleCommand implements IActionCommand
 {
 
     public static final  String              DESC       = "raid-tonight";
     private static final TextComponentString SUCCESSFUL = new TextComponentString("Command Successful");
+
+    /**
+     * no-args constructor called by new CommandEntryPoint executer.
+     */
+    public RaidAllTonightCommand()
+    {
+        super();
+    }
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -43,7 +52,18 @@ public class RaidAllTonightCommand extends AbstractSingleCommand
     }
 
     @Override
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
+    {
+        executeShared(server, sender);
+    }
+
+    @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    {
+        executeShared(server, sender);
+    }
+
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender) throws CommandException
     {
         if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
         {
@@ -53,7 +73,7 @@ public class RaidAllTonightCommand extends AbstractSingleCommand
 
         for (final Colony colony : ColonyManager.getColonies())
         {
-            colony.setWillRaidTonight(true);
+            colony.getBarbManager().setWillRaidTonight(true);
         }
 
         sender.sendMessage(SUCCESSFUL);

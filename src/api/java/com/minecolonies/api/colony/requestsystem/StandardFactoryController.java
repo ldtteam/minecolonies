@@ -115,8 +115,8 @@ public final class StandardFactoryController implements IFactoryController
     @Override
     public <INPUT, OUTPUT> IFactory<INPUT, OUTPUT> getFactoryForIO(@NotNull final TypeToken<? extends INPUT> inputClass, @NotNull final TypeToken<? extends OUTPUT> outputClass) throws IllegalArgumentException
     {
-        final ITypeOverrideHandler<INPUT, ?> inputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.getInputType().equals(inputClass)).findFirst().orElse(null);
-        final ITypeOverrideHandler<?, OUTPUT> outputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.getInputType().equals(outputClass)).findFirst().orElse(null);
+        final ITypeOverrideHandler<?> inputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.matches(inputClass)).findFirst().orElse(null);
+        final ITypeOverrideHandler<OUTPUT> outputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.matches(outputClass)).findFirst().orElse(null);
 
         final TypeToken input = inputOverrideHandler != null ? inputOverrideHandler.getOutputType() : inputClass;
         final TypeToken output = outputOverrideHandler != null ? outputOverrideHandler.getOutputType() : outputClass;
@@ -125,8 +125,6 @@ public final class StandardFactoryController implements IFactoryController
             //Request from cache or search.
             return secondaryMappingsCache.get(new Tuple<>(input, output), () ->
             {
-                Log.getLogger().debug("Attempting to find a Factory with Primary: " + input.toString() + " -> " + output.toString());
-
                 final Set<TypeToken> secondaryInputSet = ReflectionUtils.getSuperClasses(input);
 
                 for (final TypeToken secondaryInputClass : secondaryInputSet)
@@ -137,13 +135,11 @@ public final class StandardFactoryController implements IFactoryController
                         continue;
                     }
 
-                    Log.getLogger().debug("Found matching Factory for Primary input type.");
-                    for (IFactory factory : factories)
+                    for (final IFactory factory : factories)
                     {
                         final Set<TypeToken> secondaryOutputSet = ReflectionUtils.getSuperClasses(factory.getFactoryOutputType());
                         if (secondaryOutputSet.contains(output))
                         {
-                            Log.getLogger().debug("Found input factory with matching super OUTPUT type. Search complete with: " + factory);
                             return factory;
                         }
                     }
@@ -161,7 +157,7 @@ public final class StandardFactoryController implements IFactoryController
     @Override
     public <INPUT> IFactory<INPUT, ?> getFactoryForInput(@NotNull final TypeToken<? extends INPUT> inputClass) throws IllegalArgumentException
     {
-        final ITypeOverrideHandler<INPUT, ?> inputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.getInputType().equals(inputClass)).findFirst().orElse(null);
+        final ITypeOverrideHandler<?> inputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.matches(inputClass)).findFirst().orElse(null);
 
         final TypeToken input = inputOverrideHandler != null ? inputOverrideHandler.getOutputType() : inputClass;
 
@@ -183,7 +179,7 @@ public final class StandardFactoryController implements IFactoryController
     @Override
     public <OUTPUT> IFactory<?, OUTPUT> getFactoryForOutput(@NotNull final TypeToken<? extends OUTPUT> outputClass) throws IllegalArgumentException
     {
-        final ITypeOverrideHandler<?, OUTPUT> outputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.getInputType().equals(outputClass)).findFirst().orElse(null);
+        final ITypeOverrideHandler<OUTPUT> outputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.matches(outputClass)).findFirst().orElse(null);
 
         final TypeToken output = outputOverrideHandler != null ? outputOverrideHandler.getOutputType() : outputClass;
 
@@ -204,9 +200,6 @@ public final class StandardFactoryController implements IFactoryController
     @Override
     public <INPUT, OUTPUT> void registerNewFactory(@NotNull final IFactory<INPUT, OUTPUT> factory) throws IllegalArgumentException
     {
-        Log.getLogger()
-          .debug(
-            "Registering factory: " + factory.toString() + " with input: " + factory.getFactoryInputType().toString() + " and output: " + factory.getFactoryOutputType() + ".");
         primaryInputMappings.putIfAbsent(factory.getFactoryInputType(), new HashSet<>());
         primaryOutputMappings.putIfAbsent(factory.getFactoryOutputType(), new HashSet<>());
 
@@ -221,16 +214,12 @@ public final class StandardFactoryController implements IFactoryController
         primaryInputFactories.add(factory);
         primaryOutputFactories.add(factory);
 
-        Log.getLogger()
-          .debug("Retrieving super types of output: " + factory.getFactoryOutputType().toString());
-
         final Set<TypeToken> outputSuperTypes = ReflectionUtils.getSuperClasses(factory.getFactoryOutputType());
 
         outputSuperTypes.remove(factory.getFactoryOutputType());
 
         if (!outputSuperTypes.isEmpty())
         {
-            Log.getLogger().debug("OUTPUT type is not Object or Interface. Introducing secondary OUTPUT-Types");
             outputSuperTypes.forEach(t ->
             {
                 if (!secondaryOutputMappings.containsKey(t))
@@ -274,7 +263,15 @@ public final class StandardFactoryController implements IFactoryController
             throw (IllegalArgumentException) new IllegalArgumentException("The given compound holds an unknown output type for this Controller").initCause(e);
         }
 
-        return factory.deserialize(this, compound.getCompoundTag(NBT_DATA));
+        try
+        {
+            return factory.deserialize(this, compound.getCompoundTag(NBT_DATA));
+        }
+        catch (Throwable throwable)
+        {
+            Log.getLogger().error(throwable);
+            return null;
+        }
     }
 
     private String processClassRenaming(@NotNull final String previousClassName)
@@ -320,7 +317,7 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
-    public <INPUT, OUTPUT> void registerNewTypeOverrideHandler(@NotNull final ITypeOverrideHandler<INPUT, OUTPUT> overrideHandler)
+    public <OUTPUT> void registerNewTypeOverrideHandler(@NotNull final ITypeOverrideHandler<OUTPUT> overrideHandler)
     {
         this.typeOverrideHandlers.add(overrideHandler);
     }

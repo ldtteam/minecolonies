@@ -102,15 +102,15 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
                 return;
             }
 
-            final CitizenData citizen = colony.getCitizen(message.citizenID);
+            final CitizenData citizen = colony.getCitizenManager().getCitizen(message.citizenID);
             if (message.hire)
             {
 
-                ((AbstractBuildingWorker) colony.getBuilding(message.buildingId)).setWorker(citizen);
+                ((AbstractBuildingWorker) colony.getBuildingManager().getBuilding(message.buildingId)).assignCitizen(citizen);
             }
             else
             {
-                ((AbstractBuildingWorker) colony.getBuilding(message.buildingId)).removeCitizen(citizen);
+                ((AbstractBuildingWorker) colony.getBuildingManager().getBuilding(message.buildingId)).removeCitizen(citizen);
             }
         }
     }

@@ -168,7 +168,7 @@ public class ButtonImage extends Button
      */
     private void loadTextInfo(final PaneParams params)
     {
-        textScale = params.getDoubleAttribute("scale", textScale);
+        textScale = params.getDoubleAttribute("textscale", textScale);
         textAlignment = params.getEnumAttribute("textalign", Alignment.class, textAlignment);
         textColor = params.getColorAttribute("textcolor", textColor);
         // match textColor by default
@@ -487,7 +487,7 @@ public class ButtonImage extends Button
      * @param my Mouse y (relative to parent)
      */
     @Override
-    protected void drawSelf(final int mx, final int my)
+    public void drawSelf(final int mx, final int my)
     {
         final boolean mouseOver = isPointInPane(mx, my);
 
@@ -521,6 +521,10 @@ public class ButtonImage extends Button
                 h = disabledHeight;
                 mapWidth = disabledMapWidth;
                 mapHeight = disabledMapHeight;
+            }
+            else
+            {
+                return;
             }
         }
         else if (mouseOver && imageHighlight != null)
@@ -584,7 +588,7 @@ public class ButtonImage extends Button
             }
 
             GlStateManager.pushMatrix();
-            GlStateManager.translate((float) textScale, (float) textScale, (float) textScale);
+            GlStateManager.scale((float) textScale, (float) textScale, (float) textScale);
             mc.fontRenderer.drawString(label, (float) (getX() + offsetX), (float) (getY() + offsetY), color, shadow);
             GlStateManager.popMatrix();
         }

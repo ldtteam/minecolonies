@@ -62,7 +62,7 @@ public class View extends Pane
     }
 
     @Override
-    protected void drawSelf(final int mx, final int my)
+    public void drawSelf(final int mx, final int my)
     {
         //  Translate the drawing origin to our x,y.
         GlStateManager.pushMatrix();
@@ -79,6 +79,18 @@ public class View extends Pane
         children.stream().filter(this::childIsVisible).forEach(child -> child.draw(drawX, drawY));
 
         GlStateManager.popMatrix();
+    }
+
+    @Override
+    public void scrollInput(final int wheel)
+    {
+        for (final Pane child : new ArrayList<>(children))
+        {
+            if (child != null)
+            {
+                child.scrollInput(wheel);
+            }
+        }
     }
 
     @Nullable
@@ -109,6 +121,23 @@ public class View extends Pane
         for (final Pane child : children)
         {
             child.setWindow(w);
+        }
+    }
+
+    //  Mouse
+    @Override
+    public void rightClick(final int mx, final int my)
+    {
+        final int mxChild = mx - x - padding;
+        final int myChild = my - y - padding;
+        final Pane clickedPane = findPaneForClick(mxChild, myChild);
+        if (clickedPane != null)
+        {
+            clickedPane.rightClick(mxChild, myChild);
+        }
+        else
+        {
+            super.rightClick(mx, my);
         }
     }
 

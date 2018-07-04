@@ -16,12 +16,12 @@ import java.util.stream.StreamSupport;
 public class NBTUtils
 {
 
-    public static Stream<NBTTagCompound> streamCompound(NBTTagList list)
+    public static Stream<NBTTagCompound> streamCompound(final NBTTagList list)
     {
         return streamBase(list).filter(b -> b instanceof NBTTagCompound).map(b -> (NBTTagCompound) b);
     }
 
-    public static Stream<NBTBase> streamBase(NBTTagList list)
+    public static Stream<NBTBase> streamBase(final NBTTagList list)
     {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(new TagListIterator(list), Spliterator.ORDERED), false);
     }
@@ -46,7 +46,7 @@ public class NBTUtils
             public BinaryOperator<NBTTagList> combiner()
             {
                 return (list1, list2) -> {
-                    NBTTagList result = supplier().get();
+                    final NBTTagList result = supplier().get();
 
                     streamBase(list1).forEach(result::appendTag);
                     streamBase(list2).forEach(result::appendTag);
@@ -74,7 +74,6 @@ public class NBTUtils
 
         private final NBTTagList list;
         private int currentIndex = 0;
-
         private TagListIterator(final NBTTagList list) {this.list = list;}
 
         @Override

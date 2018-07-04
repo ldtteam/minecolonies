@@ -30,6 +30,7 @@ public class Image extends Pane
     protected int     mapWidth     = MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
     protected int     mapHeight    = MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
     protected boolean customSized  = true;
+    protected boolean autoscale = true;
 
     /**
      * Default Constructor.
@@ -67,6 +68,8 @@ public class Image extends Pane
             imageWidth = size.getX();
             imageHeight = size.getY();
         }
+
+        autoscale = params.getBooleanAttribute("autoscale", true);
     }
 
     private void loadMapDimensions()
@@ -193,17 +196,20 @@ public class Image extends Pane
      * @param my Mouse y (relative to parent)
      */
     @Override
-    protected void drawSelf(final int mx, final int my)
+    public void drawSelf(final int mx, final int my)
     {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
         this.mc.getTextureManager().bindTexture(resourceLocation);
 
+        GlStateManager.pushMatrix();
+
         if (this.customSized)
         {
             // /Draw
-            drawModalRectWithCustomSizedTexture(x, y,
+            drawScaledCustomSizeModalRect(x, y,
               imageOffsetX, imageOffsetY,
+                    mapWidth, mapHeight,
               imageWidth != 0 ? imageWidth : getWidth(),
               imageHeight != 0 ? imageHeight : getHeight(),
               mapWidth, mapHeight);
@@ -215,5 +221,7 @@ public class Image extends Pane
               imageWidth != 0 ? imageWidth : getWidth(),
               imageHeight != 0 ? imageHeight : getHeight());
         }
+
+        GlStateManager.popMatrix();
     }
 }

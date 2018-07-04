@@ -6,7 +6,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
@@ -16,6 +16,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 /**
  * Used to handle citizen recalls to the townhall.
@@ -67,23 +69,22 @@ public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage
                 return;
             }
 
-            @Nullable final BuildingTownHall building = colony.getTownHall();
+            @Nullable final BuildingTownHall building = colony.getBuildingManager().getTownHall();
             if (building != null)
             {
                 final BlockPos location = building.getLocation();
                 final World world = colony.getWorld();
-                for (final CitizenData citizenData : colony.getCitizens().values())
+                for (final CitizenData citizenData : colony.getCitizenManager().getCitizens())
                 {
-                    EntityCitizen citizen = citizenData.getCitizenEntity();
-                    if (citizen == null)
+                    Optional<EntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
+                    if (!optionalEntityCitizen.isPresent())
                     {
-
                         Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
-                        colony.spawnCitizen(citizenData);
-                        citizen = citizenData.getCitizenEntity();
+                        citizenData.updateCitizenEntityIfNecessary();
+                        optionalEntityCitizen = citizenData.getCitizenEntity();
                     }
 
-                    if (!TeleportHelper.teleportCitizen(citizen, world, location))
+                    if (optionalEntityCitizen.isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), world, location))
                     {
                         LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.workerHuts.recallFail");
                     }

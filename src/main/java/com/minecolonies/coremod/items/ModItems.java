@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.coremod.blocks.ModBlocks;
 import net.minecraft.item.Item;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -21,6 +22,7 @@ public final class ModItems
     public static Item ancientTome;
     public static Item chiefSword;
     public static Item clipboard;
+    public static Item itemCactusDoor;
 
     public static Item itemAchievementProxySettlement;
     public static Item itemAchievementProxyTown;
@@ -52,6 +54,7 @@ public final class ModItems
         ancientTome = new ItemAncientTome();
         chiefSword = new ItemChiefSword();
         clipboard = new ItemClipBoard();
+        itemCactusDoor = new ItemCactusDoor(ModBlocks.blockCactusDoor, "cactusdoor");
         itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement");
         itemAchievementProxyTown = new ItemAchievementProxy("sizeTown");
         itemAchievementProxyCity = new ItemAchievementProxy("sizeCity");
@@ -71,5 +74,6 @@ public final class ModItems
         registry.register(itemAchievementProxyCity);
         registry.register(itemAchievementProxyMetropolis);
         registry.register(clipboard);
+        registry.register(itemCactusDoor);
     }
 }

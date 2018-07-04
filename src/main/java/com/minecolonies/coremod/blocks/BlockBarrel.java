@@ -74,13 +74,13 @@ public class BlockBarrel extends Block
         setResistance(RESISTANCE);
     }
 
-    public void AddItemToBarrel(final World worldIn, final EntityPlayer playerIn, final ItemStack itemStack, final IBlockState state, final BlockPos pos)
+    public void addItemToBarrel(final World worldIn, final EntityPlayer playerIn, final ItemStack itemStack, final IBlockState state, final BlockPos pos)
     {
-        UseBarrel(worldIn, playerIn, itemStack, state, pos);
+        useBarrel(worldIn, playerIn, itemStack, state, pos);
     }
 
     //whenever player right click to barrel call this.
-    public boolean UseBarrel(final World worldIn, final EntityPlayer playerIn, final ItemStack itemstack, final IBlockState state, final BlockPos pos)
+    public boolean useBarrel(final World worldIn, final EntityPlayer playerIn, final ItemStack itemstack, final IBlockState state, final BlockPos pos)
     {
         Log.getLogger().info("block activated");
 
@@ -129,12 +129,12 @@ public class BlockBarrel extends Block
         return true;
     }
 
-    public void GetItemFromBarrel(final World worldIn, final EntityPlayer playerIn, final ItemStack itemStack, final IBlockState state, final BlockPos pos)
+    public void getItemFromBarrel(final World worldIn, final EntityPlayer playerIn, final ItemStack itemStack, final IBlockState state, final BlockPos pos)
     {
         final int bs = state.getValue(BARRELSTATE);
         if (bs == 2)
         {
-            UseBarrel(worldIn, playerIn, null, state, pos);
+            useBarrel(worldIn, playerIn, null, state, pos);
         }
     }
 
@@ -230,7 +230,7 @@ public class BlockBarrel extends Block
         Log.getLogger().info("block right-clicked");
 
         final ItemStack itemstack = playerIn.inventory.getCurrentItem();
-        UseBarrel(worldIn, playerIn, itemstack, state, pos);
+        useBarrel(worldIn, playerIn, itemstack, state, pos);
         return true;
     }
 }

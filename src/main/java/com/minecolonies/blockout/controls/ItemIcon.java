@@ -51,13 +51,26 @@ public class ItemIcon extends Pane
         }
     }
 
+    /**
+     * Set the item of the icon.
+     * @param itemStack the itemstack to set.
+     */
     public void setItem(final ItemStack itemStack)
     {
         this.itemStack = itemStack;
     }
 
+    /**
+     * Get the itemstack of the icon.
+     * @return the stack of it.
+     */
+    public ItemStack getItem()
+    {
+        return this.itemStack;
+    }
+
     @Override
-    protected void drawSelf(final int mx, final int my)
+    public void drawSelf(final int mx, final int my)
     {
         if (itemStack != null)
         {

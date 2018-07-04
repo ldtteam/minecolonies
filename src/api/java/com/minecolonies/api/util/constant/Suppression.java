@@ -144,6 +144,13 @@ public final class Suppression
      */
     @NonNls
     public static final String TOO_MANY_RETURNS = "squid:S1142";
+
+    /**
+     * Sometimes code is commented out and not deleted for a reason.
+     */
+    @NonNls
+    public static final String COMMENTED_OUT_CODE_LINE = "squid:CommentedOutCodeLine";
+
     private Suppression()
     {
         //empty default

@@ -35,7 +35,7 @@ public class Tool implements IDeliverable
     private final Integer maxLevel;
 
     @NotNull
-    private ItemStack result;
+    private ItemStack result = ItemStackUtils.EMPTY;
 
     public Tool(@NotNull final IToolType toolClass, @NotNull final Integer minLevel, @NotNull final Integer maxLevel)
     {
@@ -57,9 +57,9 @@ public class Tool implements IDeliverable
      * @return The NBTTagCompound containing the tool data.
      */
     @NotNull
-    public static NBTTagCompound serialize(IFactoryController controller, Tool tool)
+    public static NBTTagCompound serialize(final IFactoryController controller, final Tool tool)
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        final NBTTagCompound compound = new NBTTagCompound();
 
         compound.setString(NBT_TYPE, tool.getToolClass().getName());
         compound.setInteger(NBT_MIN_LEVEL, tool.getMinLevel());
@@ -119,13 +119,13 @@ public class Tool implements IDeliverable
      * @return An instance of Tool with the data contained in the given NBT.
      */
     @NotNull
-    public static Tool deserialize(IFactoryController controller, NBTTagCompound nbt)
+    public static Tool deserialize(final IFactoryController controller, final NBTTagCompound nbt)
     {
         //API:Map the given strings a proper way.
-        IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
-        Integer minLevel = nbt.getInteger(NBT_MIN_LEVEL);
-        Integer maxLevel = nbt.getInteger(NBT_MAX_LEVEL);
-        ItemStack result = new ItemStack(nbt.getCompoundTag(NBT_RESULT));
+        final IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
+        final Integer minLevel = nbt.getInteger(NBT_MIN_LEVEL);
+        final Integer maxLevel = nbt.getInteger(NBT_MAX_LEVEL);
+        final ItemStack result = new ItemStack(nbt.getCompoundTag(NBT_RESULT));
 
         return new Tool(type, minLevel, maxLevel, result);
     }
@@ -134,7 +134,7 @@ public class Tool implements IDeliverable
     public boolean matches(@NotNull final ItemStack stack)
     {
         //API:Map the given strings a proper way.
-        boolean toolTypeResult = !ItemStackUtils.isEmpty(stack)
+        final boolean toolTypeResult = !ItemStackUtils.isEmpty(stack)
                 && stack.getCount() >= 1
                 && getToolClasses(stack).stream()
                 .filter(s -> getToolClass().getName().equalsIgnoreCase(s))
@@ -153,6 +153,12 @@ public class Tool implements IDeliverable
     private Set<String> getToolClasses(final ItemStack stack)
     {
         final Set set = new HashSet();
+
+        if(ItemStackUtils.isEmpty(stack))
+        {
+            return set;
+        }
+
         set.addAll(stack.getItem().getToolClasses(stack));
 
         if(stack.getItem() instanceof ItemBow)
@@ -171,6 +177,10 @@ public class Tool implements IDeliverable
         {
             set.add("rod");
         }
+        else if(stack.getItem() instanceof  ItemShears)
+        {
+            set.add("shears");
+        }
         return set;
     }
 
@@ -180,11 +190,48 @@ public class Tool implements IDeliverable
         return 1;
     }
 
-
-
     @Override
     public void setResult(@NotNull final ItemStack result)
     {
         this.result = result;
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof Tool))
+        {
+            return false;
+        }
+
+        final Tool tool = (Tool) o;
+
+        if (!getToolClass().equals(tool.getToolClass()))
+        {
+            return false;
+        }
+        if (!getMinLevel().equals(tool.getMinLevel()))
+        {
+            return false;
+        }
+        if (!getMaxLevel().equals(tool.getMaxLevel()))
+        {
+            return false;
+        }
+        return ItemStackUtils.compareItemStacksIgnoreStackSize(getResult(), tool.getResult());
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result1 = getToolClass().hashCode();
+        result1 = 31 * result1 + getMinLevel().hashCode();
+        result1 = 31 * result1 + getMaxLevel().hashCode();
+        result1 = 31 * result1 + getResult().hashCode();
+        return result1;
     }
 }

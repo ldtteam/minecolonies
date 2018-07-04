@@ -4,6 +4,7 @@ import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.views.DropDownList;
 import com.minecolonies.coremod.MineColonies;
@@ -16,10 +17,13 @@ import com.minecolonies.coremod.network.messages.BuildToolPasteMessage;
 import com.minecolonies.coremod.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.coremod.network.messages.SchematicRequestMessage;
 import com.minecolonies.coremod.network.messages.SchematicSaveMessage;
+import com.minecolonies.coremod.placementhandlers.PlacementError;
+import com.minecolonies.coremod.placementhandlers.PlacementError.PlacementErrorType;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Rotation;
@@ -28,136 +32,22 @@ import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import scala.Array;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static com.minecolonies.api.util.constant.Constants.MAX_MESSAGE_SIZE;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * BuildTool window.
  */
 public class WindowBuildTool extends AbstractWindowSkeleton
 {
-    /**
-     * This button is used to set the previous available building type.
-     */
-    private static final String BUTTON_PREVIOUS_TYPE_ID = "previousBuildingType";
-
-    /**
-     * This drop down list is used to set the section either huts (Builder, Town Hall), decorations or scan mode.
-     */
-    private static final String DROPDOWN_TYPE_ID = "buildingType";
-
-    /**
-     * This button is used to set the next available building type.
-     */
-    private static final String BUTTON_NEXT_TYPE_ID = "nextBuildingType";
-
-    /**
-     * This button is used to set the previous available style.
-     */
-    private static final String BUTTON_PREVIOUS_STYLE_ID = "previousStyle";
-
-    /**
-     * This drop down list is used to choose which style should be used.
-     */
-    private static final String DROPDOWN_STYLE_ID = "style";
-
-    /**
-     * This button is used to set the next available style.
-     */
-    private static final String BUTTON_NEXT_STYLE_ID = "nextStyle";
-
-    /**
-     * This button is used to set the previous available schematic.
-     */
-    private static final String BUTTON_PREVIOUS_SCHEMATIC_ID = "previousSchematic";
-
-    /**
-     * This drop down list is used to set the schematic.
-     */
-    private static final String DROPDOWN_SCHEMATIC_ID = "schematic";
-
-    /**
-     * This button is used to set the next available schematic.
-     */
-    private static final String BUTTON_NEXT_SCHEMATIC_ID = "nextSchematic";
-
-    /**
-     * This button will send a packet to the server telling it to place this hut/decoration.
-     */
-    private static final String BUTTON_CONFIRM = "confirm";
-
-    /**
-     * This button will remove the currently rendered structure.
-     */
-    private static final String BUTTON_CANCEL = "cancel";
-
-    /**
-     * This button will rotateWithMirror the structure counterclockwise.
-     */
-    private static final String BUTTON_ROTATE_LEFT = "rotateLeft";
-
-    /**
-     * This button will rotated the structure clockwise.
-     */
-    private static final String BUTTON_ROTATE_RIGHT = "rotateRight";
-
-    /**
-     * Move the structure preview up.
-     */
-    private static final String BUTTON_UP = "up";
-
-    /**
-     * Move the structure preview down.
-     */
-    private static final String BUTTON_DOWN = "down";
-
-    /**
-     * Move the structure preview forward.
-     */
-    private static final String BUTTON_FORWARD = "forward";
-
-    /**
-     * Move the structure preview back.
-     */
-    private static final String BUTTON_BACKWARD = "backward";
-
-    /**
-     * Move the structure preview left.
-     */
-    private static final String BUTTON_LEFT = "left";
-
-    /**
-     * Move the structure preview right.
-     */
-    private static final String BUTTON_RIGHT = "right";
-
-    /**
-     * Rename the scanned structure.
-     */
-    private static final String BUTTON_RENAME = "rename";
-
-    /**
-     * Delete the scanned structure.
-     */
-    private static final String BUTTON_DELETE = "delete";
-
-    /**
-     * Mirror the structure.
-     */
-    private static final String BUTTON_MIRROR = "mirror";
-
-    /**
-     * Resource suffix.
-     */
-    private static final String BUILD_TOOL_RESOURCE_SUFFIX = ":gui/windowbuilldtool.xml";
-
-    /**
-     * Hut prefix.
-     */
-    private static final String HUT_PREFIX = ":blockHut";
-
     /**
      * Enum of possibly free blocks for the normal player.
      */
@@ -257,11 +147,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private       DialogDoneCancel confirmDeleteDialog;
 
     /**
-     * Check if the tool is in the static schematic mode.
-     */
-    private boolean staticSchematicMode = false;
-
-    /**
      * Name of the static schematic if existent.
      */
     private String staticSchematicName = "";
@@ -285,7 +170,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             this.rotation = rotation;
         }
 
-        staticSchematicMode = true;
         renameButton = findPaneOfTypeByID(BUTTON_RENAME, Button.class);
         deleteButton = findPaneOfTypeByID(BUTTON_DELETE, Button.class);
     }
@@ -304,7 +188,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         this.init(pos);
         renameButton = findPaneOfTypeByID(BUTTON_RENAME, Button.class);
         deleteButton = findPaneOfTypeByID(BUTTON_DELETE, Button.class);
-        this.staticSchematicMode = false;
     }
 
     private void init(final BlockPos pos)
@@ -928,7 +811,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * @param complete if pasted, should it be complete.
      * @param structureName of the scan to be built.
      */
-    private void requestScannedSchematic(@NotNull final StructureName structureName, final boolean paste, final boolean complete)
+    public static void requestScannedSchematic(@NotNull final StructureName structureName, final boolean paste, final boolean complete)
     {
         if (!Structures.isPlayerSchematicsAllowed())
         {
@@ -944,8 +827,35 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                 final InputStream stream = Structure.getStream(structureName.toString());
                 if (stream != null)
                 {
-                    Log.getLogger().info("BuilderTool: sending schematic " + structureName + "(md5:" + md5 + ") to the server");
-                    MineColonies.getNetwork().sendToServer(new SchematicSaveMessage(Structure.getStreamAsByteArray(stream)));
+                    final UUID id = UUID.randomUUID();
+                    final byte[] structureAsByteArray = Structure.getStreamAsByteArray(stream);
+
+                    if(structureAsByteArray.length <= MAX_MESSAGE_SIZE)
+                    {
+                        MineColonies.getNetwork().sendToServer(new SchematicSaveMessage(structureAsByteArray, id, 1, 1));
+                    }
+                    else
+                    {
+                        final int pieces = structureAsByteArray.length / MAX_MESSAGE_SIZE;
+
+                        Log.getLogger().info("BuilderTool: sending: " + pieces + " pieces with the schematic " + structureName + "(md5:" + md5 + ") to the server");
+                        for (int i = 1; i <= pieces; i++)
+                        {
+                            final int start = (i - 1) * MAX_MESSAGE_SIZE;
+                            final int size;
+                            if (i == pieces)
+                            {
+                                size = structureAsByteArray.length - (start);
+                            }
+                            else
+                            {
+                                size = MAX_MESSAGE_SIZE;
+                            }
+                            final byte[] bytes = new byte[size];
+                            Array.copy(structureAsByteArray, start, bytes, 0, size);
+                            MineColonies.getNetwork().sendToServer(new SchematicSaveMessage(bytes, id, pieces, i));
+                        }
+                    }
                 }
                 else
                 {
@@ -1013,8 +923,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                         Settings.instance.getMirror()));
             }
 
-            Settings.instance.reset();
-            close();
+            if(!GuiScreen.isShiftKeyDown())
+            {
+                cancelClicked();
+            }
         }
     }
 
@@ -1034,19 +946,56 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
         else if (FreeMode.SUPPLYCAMP == Settings.instance.getFreeMode())
         {
+            final List<PlacementError> placementErrorList = new ArrayList<>();
             if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
-                    Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()))))
+                    Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation())), placementErrorList))
             {
                 pasteNice();
             }
             else
             {
-                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyCampDeployer.invalid");
+                final Map<PlacementErrorType, List<BlockPos>> blockPosListByErrorTypeMap = PlacementError.partitionPlacementErrorsByErrorType(
+                        placementErrorList);
+                for (final Map.Entry<PlacementErrorType, List<BlockPos>> entry : blockPosListByErrorTypeMap.entrySet())
+                {
+                    final PlacementErrorType placementErrorType = entry.getKey();
+                    final List<BlockPos> blockPosList = entry.getValue();
+
+                    final int numberOfBlocksTOReport = blockPosList.size() > 5 ? 5 : blockPosList.size();
+                    final List<BlockPos> blocksToReportList = blockPosList.subList(0, numberOfBlocksTOReport);
+                    String outputList = PlacementError.blockListToCommaSeparatedString(blocksToReportList);
+                    if (blockPosList.size() > numberOfBlocksTOReport)
+                    {
+                        outputList += "...";
+                    }
+                    final String errorMessage;
+                    switch(placementErrorType)
+                    {
+                        case NOT_SOLID:
+                            errorMessage = String.format(TranslationConstants.SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY, outputList);
+                            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage, outputList);
+                            break;
+                        case NEEDS_AIR_ABOVE:
+                            errorMessage = String.format(TranslationConstants.SUPPLY_CAMP_INVALID_NEEDS_AIR_ABOVE_MESSAGE_KEY, outputList);
+                            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage, outputList);
+                            break;
+                        case INSIDE_COLONY:
+                            errorMessage = TranslationConstants.SUPPLY_CAMP_INVALID_INSIDE_COLONY_MESSAGE_KEY;
+                            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage);
+                            break;
+                        default:
+                            errorMessage = TranslationConstants.SUPPLY_CAMP_INVALID;
+                            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage);
+                            break;
+                    }
+                }
             }
         }
 
-        Settings.instance.reset();
-        close();
+        if(!GuiScreen.isShiftKeyDown())
+        {
+            cancelClicked();
+        }
     }
 
     /**

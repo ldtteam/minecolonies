@@ -3,6 +3,7 @@ package com.minecolonies.structures.helpers;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
@@ -31,6 +32,11 @@ public final class Settings
     private             boolean                  isPendingReset = false;
 
     /**
+     * Possible box.
+     */
+    private Tuple<BlockPos, BlockPos> box = null;
+
+    /**
      * Check if the tool is in the static schematic mode.
      */
     private boolean staticSchematicMode = false;
@@ -57,7 +63,8 @@ public final class Settings
 
     /**
      * Set up the static mode.
-     * @param name the name of the schematic.
+     *
+     * @param name     the name of the schematic.
      * @param freeMode the mode.
      */
     public void setupStaticMode(final String name, final WindowBuildTool.FreeMode freeMode)
@@ -75,6 +82,26 @@ public final class Settings
     public BlockPos getPosition()
     {
         return pos;
+    }
+
+    /**
+     * Get a possibly existing box.
+     * @return a blockpos tuple.
+     */
+    @Nullable
+    public Tuple<BlockPos, BlockPos> getBox()
+    {
+        return box;
+    }
+
+    /**
+     * Set a possible box.
+     * @param box
+     */
+    @NotNull
+    public void setBox(final Tuple<BlockPos, BlockPos> box)
+    {
+        this.box = box;
     }
 
     /**
@@ -143,6 +170,8 @@ public final class Settings
         rotation = 0;
         isMirrored = false;
         staticSchematicMode = false;
+        freeMode = null;
+        staticSchematicName = "";
     }
 
     /**
@@ -260,6 +289,7 @@ public final class Settings
 
     /**
      * Check if static mode.
+     *
      * @return true if so.
      */
     public boolean isStaticSchematicMode()
@@ -269,6 +299,7 @@ public final class Settings
 
     /**
      * Get the schematic name of the static mode.
+     *
      * @return the string.
      */
     public String getStaticSchematicName()
@@ -278,6 +309,7 @@ public final class Settings
 
     /**
      * Getter of the mode in static mode.
+     *
      * @return the FreeMode (enum).
      */
     public WindowBuildTool.FreeMode getFreeMode()

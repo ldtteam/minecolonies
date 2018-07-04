@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Pane;
@@ -9,12 +10,13 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.BuildingLumberjack;
-import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
+import com.minecolonies.coremod.network.messages.LumberjackReplantSaplingToggleMessage;
 import com.minecolonies.coremod.network.messages.LumberjackSaplingSelectorMessage;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -39,6 +41,16 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
      * Id of the button to change between true and false of the sapling.
      */
     private static final String BUTTON_CURRENT_SAPLING = "switch";
+
+    /**
+     * Id of the button to switch all buttons.
+     */
+    private static final String BUTTON_TOGGLE_ALL = "toggleAll";
+
+    /**
+     * Id of the button to toggle replant of saplings
+     */
+    private static final String BUTTON_TOGGLE_REPLANT = "saplingReplant";
 
     /**
      * String describing on for the gui.
@@ -68,7 +80,7 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     private ScrollingList saplingsList;
 
     /**
-     * Constructor for the window of the fisherman.
+     * Constructor for the window of the lumberjack.
      *
      * @param building {@link BuildingLumberjack.View}.
      */
@@ -77,6 +89,31 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
         super(building, Constants.MOD_ID + ":gui/windowHutLumberjack.xml");
         this.ownBuilding = building;
         pullLevelsFromHut();
+    }
+
+
+    /**
+     * Method to send the message to switch the toggle to the server, then updates button
+     */
+    private void switchReplant()
+    {
+        ownBuilding.shouldReplant = !ownBuilding.shouldReplant;
+        MineColonies.getNetwork().sendToServer(new LumberjackReplantSaplingToggleMessage(building, ownBuilding.shouldReplant));
+        updateReplantButton();
+    }
+
+    private void updateReplantButton()
+    {
+        final Button buttonReplant = findPaneOfTypeByID(BUTTON_TOGGLE_REPLANT, Button.class);
+
+        if (ownBuilding.shouldReplant)
+        {
+            buttonReplant.setLabel(LanguageHandler.format(TOGGLE_REPLANT_SAPLINGS_ON));
+        }
+        else
+        {
+            buttonReplant.setLabel(LanguageHandler.format(TOGGLE_REPLANT_SAPLINGS_OFF));
+        }
     }
 
     /**
@@ -95,6 +132,7 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     public void onOpened()
     {
         super.onOpened();
+        updateReplantButton();
         saplingsList = findPaneOfTypeByID(LIST_SAPLINGS, ScrollingList.class);
         saplingsList.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -113,7 +151,7 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
 
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_CURRENT_SAPLING, Button.class);
 
-                if (treesToFell.get(new ItemStorage(sapling)))
+                if (treesToFell.containsKey(new ItemStorage(sapling)) && treesToFell.get(new ItemStorage(sapling)))
                 {
                     switchButton.setLabel(ON);
                 }
@@ -165,6 +203,30 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
 
             this.ownBuilding.treesToFell.clear();
             this.ownBuilding.treesToFell.putAll(treesToFell);
+        }
+        else if (button.getID().equals(BUTTON_TOGGLE_ALL))
+        {
+            final boolean on = button.getLabel().equals(LanguageHandler.format(TOGGLE_ALL_OPTIONS_ON));
+
+            if (on)
+            {
+                button.setLabel(LanguageHandler.format(TOGGLE_ALL_OPTIONS_OFF));
+            }
+            else
+            {
+                button.setLabel(LanguageHandler.format(TOGGLE_ALL_OPTIONS_ON));
+            }
+
+            for (final Map.Entry<ItemStorage, Boolean> entry : new HashSet<Map.Entry<ItemStorage, Boolean>>(treesToFell.entrySet()))
+            {
+                treesToFell.put(entry.getKey(), on);
+            }
+            this.ownBuilding.treesToFell.clear();
+            this.ownBuilding.treesToFell.putAll(treesToFell);
+        }
+        else if (button.getID().equals(BUTTON_TOGGLE_REPLANT))
+        {
+            switchReplant();
         }
         else
         {

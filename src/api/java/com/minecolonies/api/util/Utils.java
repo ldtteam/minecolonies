@@ -7,6 +7,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.Objects;
 
 /**
@@ -245,5 +246,18 @@ public final class Utils
     public static int toggleFlag(final int data, final int flag)
     {
         return data ^ flag;
+    }
+
+    /**
+     * Checks if directory exists, else creates it.
+     *
+     * @param directory the directory to check.
+     */
+    public static void checkDirectory(@NotNull final File directory)
+    {
+        if (!directory.exists() && !directory.mkdirs())
+        {
+            Log.getLogger().error("Directory doesn't exist and failed to be created: " + directory.toString());
+        }
     }
 }

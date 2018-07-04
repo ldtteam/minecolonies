@@ -1,219 +1,74 @@
 {
-  "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
+  "__comment": "Minecolonies normal construction tape.",
   "textures": {
-    "particle": "minecolonies:blocks/constructionTape/constructionTape_south",
-    "0": "minecolonies:blocks/constructionTape/constructionTape_north",
-    "1": "minecolonies:blocks/constructionTape/constructionTape_east-west",
-    "2": "minecolonies:blocks/constructionTape/constructionTape_south",
-    "3": "minecolonies:blocks/constructionTape/constructionTape_up-down"
-
+    "particle": "blocks/planks_oak",
+    "0": "blocks/door_iron_lower",
+    "1": "blocks/planks_oak"
   },
   "elements": [
     {
-      "name": "Cube",
-      "from": [
-        0.0,
-        0.0,
-        7.0
-      ],
-      "to": [
-        1.0,
-        16.0,
-        9.0
-      ],
+      "__comment": "PostLeft",
+      "from": [ 0, 0, 6 ],
+      "to": [ 1, 16, 10 ],
       "faces": {
-        "north": {
-          "texture": "#0",
-          "uv": [
-            0.0,
-            0.0,
-            1.0,
-            16.0
-          ]
-        },
-        "east": {
-          "texture": "#1",
-          "uv": [
-            0.0,
-            0.0,
-            2.0,
-            16.0
-          ]
-        },
-        "south": {
-          "texture": "#2",
-          "uv": [
-            0.0,
-            0.0,
-            1.0,
-            16.0
-          ]
-        },
-        "west": {
-          "texture": "#1",
-          "uv": [
-            0.0,
-            0.0,
-            2.0,
-            16.0
-          ]
-        },
-        "up": {
-          "texture": "#3",
-          "uv": [
-            0.0,
-            0.0,
-            1.0,
-            2.0
-          ]
-        },
-        "down": {
-          "texture": "#3",
-          "uv": [
-            0.0,
-            0.0,
-            1.0,
-            2.0
-          ]
-        }
+        "down": { "uv": [ 0, 0, 3.5, 1 ], "texture": "#1" },
+        "up": { "uv": [ 0, 0, 4, 1 ], "texture": "#1", "rotation": 90 },
+        "north": { "uv": [ 4, 0, 5, 16 ], "texture": "#1" },
+        "south": { "uv": [ 12, 0, 13, 16 ], "texture": "#1" },
+        "west": { "uv": [ 5, 0, 9, 16 ], "texture": "#1", "rotation": 180 },
+        "east": { "uv": [ 9, 0, 13, 16 ], "texture": "#1" }
       }
     },
     {
-      "name": "Cube",
-      "from": [
-        15.0,
-        0.0,
-        7.0
-      ],
-      "to": [
-        16.0,
-        16.0,
-        9.0
-      ],
+      "__comment": "PostRight",
+      "from": [ 15, 0, 6 ],
+      "to": [ 16, 16, 10 ],
       "faces": {
-        "north": {
-          "texture": "#0",
-          "uv": [
-            1.0,
-            0.0,
-            0.0,
-            16.0
-          ]
-        },
-        "east": {
-          "texture": "#1",
-          "uv": [
-            0.0,
-            0.0,
-            2.0,
-            16.0
-          ]
-        },
-        "south": {
-          "texture": "#2",
-          "uv": [
-            15.0,
-            0.0,
-            16.0,
-            16.0
-          ]
-        },
-        "west": {
-          "texture": "#1",
-          "uv": [
-            0.0,
-            0.0,
-            2.0,
-            16.0
-          ]
-        },
-        "up": {
-          "texture": "#3",
-          "uv": [
-            0.0,
-            0.0,
-            1.0,
-            2.0
-          ]
-        },
-        "down": {
-          "texture": "#3",
-          "uv": [
-            0.0,
-            0.0,
-            1.0,
-            2.0
-          ]
-        }
+        "down": { "uv": [ 0, 0, 3.5, 1 ], "texture": "#1" },
+        "up": { "uv": [ 0, 0, 4, 1 ], "texture": "#1", "rotation": 90 },
+        "north": { "uv": [ 4, 0, 5, 16 ], "texture": "#1" },
+        "south": { "uv": [ 12, 0, 13, 16 ], "texture": "#1" },
+        "west": { "uv": [ 5, 0, 9, 16 ], "texture": "#1", "rotation": 180 },
+        "east": { "uv": [ 9, 0, 13, 16 ], "texture": "#1" }
       }
     },
     {
-      "name": "Cube",
-      "from": [
-        1.0,
-        12.0,
-        9.0
-      ],
-      "to": [
-        15.0,
-        15.0,
-        9.0
-      ],
+      "__comment": "Chain2",
+      "from": [ 13, 14, 7 ],
+      "to": [ 15, 15, 9 ],
       "faces": {
-        "north": {
-          "texture": "#0",
-          "uv": [
-            1.0,
-            1.0,
-            15.0,
-            4.0
-          ]
-        },
-        "east": {
-          "texture": "#-1",
-          "uv": [
-            0.0,
-            0.0,
-            0.0,
-            3.0
-          ]
-        },
-        "south": {
-          "texture": "#2",
-          "uv": [
-            1.0,
-            1.0,
-            15.0,
-            4.0
-          ]
-        },
-        "west": {
-          "texture": "#-1",
-          "uv": [
-            0.0,
-            0.0,
-            0.0,
-            3.0
-          ]
-        },
-        "up": {
-          "texture": "#-1",
-          "uv": [
-            0.0,
-            0.0,
-            14.0,
-            0.0
-          ]
-        },
-        "down": {
-          "texture": "#-1",
-          "uv": [
-            0.0,
-            0.0,
-            14.0,
-            0.0
-          ]
-        }
+        "down": { "uv": [ 0, 13, 2, 15 ], "texture": "#0" },
+        "up": { "uv": [ 0, 13, 2, 15 ], "texture": "#0" },
+        "north": { "uv": [ 1, 13, 3, 15 ], "texture": "#0" },
+        "south": { "uv": [ 1, 13, 3, 15 ], "texture": "#0" },
+        "west": { "uv": [ 1, 13, 2, 15 ], "texture": "#0" },
+        "east": { "uv": [ 0, 13, 1, 15 ], "texture": "#0" }
+      }
+    },
+    {
+      "__comment": "Chain1",
+      "from": [ 3, 13, 7 ],
+      "to": [ 13, 14, 9 ],
+      "faces": {
+        "down": { "uv": [ 2.5, 14, 12.5, 16 ], "texture": "#0" },
+        "up": { "uv": [ 3, 14, 13, 16 ], "texture": "#0" },
+        "north": { "uv": [ 3, 14, 13, 15 ], "texture": "#0" },
+        "south": { "uv": [ 3, 15, 13, 16 ], "texture": "#0" },
+        "west": { "uv": [ 15, 14, 16, 16 ], "texture": "#0" },
+        "east": { "uv": [ 15, 14, 16, 16 ], "texture": "#0" }
+      }
+    },
+    {
+      "__comment": "Chain0",
+      "from": [ 1, 14, 7 ],
+      "to": [ 3, 15, 9 ],
+      "faces": {
+        "down": { "uv": [ 0, 13, 2, 15 ], "texture": "#0" },
+        "up": { "uv": [ 0, 13, 2, 15 ], "texture": "#0" },
+        "north": { "uv": [ 1, 13, 3, 15 ], "texture": "#0" },
+        "south": { "uv": [ 1, 13, 3, 15 ], "texture": "#0" },
+        "west": { "uv": [ 1, 13, 2, 15 ], "texture": "#0" },
+        "east": { "uv": [ 0, 13, 1, 15 ], "texture": "#0" }
       }
     }
   ]

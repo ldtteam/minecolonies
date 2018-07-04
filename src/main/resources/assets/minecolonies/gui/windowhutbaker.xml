@@ -1,11 +1,7 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        inherit="minecolonies:gui/windowBase.xml"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
+        lightbox="false"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
-    <view id="pageActions" size="100% 200px" pos="0 7">
-        <layout source="minecolonies:gui/layoutWorkerBuildingDefault.xml"/>
+    <view id="pageActions" size="100% 100%">
+        <layout source="minecolonies:gui/windowworkerbuildingdefault.xml"/>
     </view>
-
-    <button id="inventory"
-            align="BOTTOM_MIDDLE" size="116 20" pos="0 13"
-            label="$(container.inventory)"/>
 </window>

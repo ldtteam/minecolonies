@@ -15,8 +15,11 @@ import com.minecolonies.coremod.inventory.GuiHandler;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.*;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -35,6 +38,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.minecolonies.api.util.constant.ColonyConstants.*;
 
 /**
  * CommonProxy of the minecolonies mod (Server and Client).
@@ -117,6 +122,7 @@ public class CommonProxy implements IProxy
         GameRegistry.registerTileEntity(TileEntityWareHouse.class, Constants.MOD_ID + ".WareHouse");
         GameRegistry.registerTileEntity(TileEntityRack.class, Constants.MOD_ID + ".rack");
         GameRegistry.registerTileEntity(TileEntityInfoPoster.class, Constants.MOD_ID + ".InfoPoster");
+        GameRegistry.registerTileEntity(TileEntityMultiBlock.class, Constants.MOD_ID + ".MultiBlock");
 
         NetworkRegistry.INSTANCE.registerGuiHandler(MineColonies.instance, new GuiHandler());
     }
@@ -140,9 +146,6 @@ public class CommonProxy implements IProxy
     {
         final ResourceLocation locationCitizen = new ResourceLocation(Constants.MOD_ID, "Citizen");
         final ResourceLocation locationFishHook = new ResourceLocation(Constants.MOD_ID, "Fishhook");
-        final ResourceLocation locationBarbarian = new ResourceLocation(Constants.MOD_ID, "Barbarian");
-        final ResourceLocation locationArcherBarbarian = new ResourceLocation(Constants.MOD_ID, "ArcherBarbarian");
-        final ResourceLocation locationChiefBarbarian = new ResourceLocation(Constants.MOD_ID, "ChiefBarbarian");
 
         // Half as much tracking range and same update frequency as a player
         // See EntityTracker.addEntityToTracker for more default values
@@ -162,7 +165,7 @@ public class CommonProxy implements IProxy
           Constants.ENTITY_TRACKING_RANGE,
           Constants.ENTITY_UPDATE_FREQUENCY_FISHHOOK,
           true);
-        EntityRegistry.registerModEntity(locationBarbarian,
+        EntityRegistry.registerModEntity(BARBARIAN,
           EntityBarbarian.class,
           "Barbarian",
           getNextEntityId(),
@@ -170,7 +173,7 @@ public class CommonProxy implements IProxy
           Constants.ENTITY_TRACKING_RANGE,
           Constants.ENTITY_UPDATE_FREQUENCY,
           true);
-        EntityRegistry.registerModEntity(locationArcherBarbarian,
+        EntityRegistry.registerModEntity(ARCHER,
           EntityArcherBarbarian.class,
           "ArcherBarbarian",
           getNextEntityId(),
@@ -178,7 +181,7 @@ public class CommonProxy implements IProxy
           Constants.ENTITY_TRACKING_RANGE,
           Constants.ENTITY_UPDATE_FREQUENCY,
           true);
-        EntityRegistry.registerModEntity(locationChiefBarbarian,
+        EntityRegistry.registerModEntity(CHIEF,
           EntityChiefBarbarian.class,
           "ChiefBarbarian",
           getNextEntityId(),
@@ -193,9 +196,9 @@ public class CommonProxy implements IProxy
         LootTableList.register(BarbarianSpawnUtils.ChiefLootTable);
 
         //Register Barbarian spawn eggs
-        EntityRegistry.registerEgg(locationBarbarian, PRIMARY_COLOR, SECONDARY_COLOR);
-        EntityRegistry.registerEgg(locationArcherBarbarian, PRIMARY_COLOR, SECONDARY_COLOR);
-        EntityRegistry.registerEgg(locationChiefBarbarian, PRIMARY_COLOR, SECONDARY_COLOR);
+        EntityRegistry.registerEgg(BARBARIAN, PRIMARY_COLOR, SECONDARY_COLOR);
+        EntityRegistry.registerEgg(ARCHER, PRIMARY_COLOR, SECONDARY_COLOR);
+        EntityRegistry.registerEgg(CHIEF, PRIMARY_COLOR, SECONDARY_COLOR);
     }
 
     @Override
@@ -224,6 +227,22 @@ public class CommonProxy implements IProxy
 
     @Override
     public void openBuildToolWindow(final BlockPos pos)
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
+    @Override
+    public void openScanToolWindow(final BlockPos pos1, final BlockPos pos2)
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
+    @Override
+    public void openMultiBlockWindow(final BlockPos pos)
     {
         /*
          * Intentionally left empty.
@@ -280,5 +299,12 @@ public class CommonProxy implements IProxy
     private int getNextEntityId()
     {
         return nextEntityId++;
+    }
+
+    @NotNull
+    @Override
+    public RecipeBook getRecipeBookFromPlayer(@NotNull final EntityPlayer player)
+    {
+        return ((EntityPlayerMP) player).getRecipeBook();
     }
 }
