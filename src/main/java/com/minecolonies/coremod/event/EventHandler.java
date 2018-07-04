@@ -16,6 +16,8 @@ import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesChunkCapabilityProvider;
+import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldCapabilityProvider;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
 import net.minecraft.block.Block;
@@ -106,14 +108,25 @@ public class EventHandler
     }
 
     /**
-     * Event called to attach capabilities.
+     * Event called to attach capabilities on a chunk.
      *
      * @param event the event.
      */
     @SubscribeEvent
-    public void onAttachingCapabilities(@NotNull final AttachCapabilitiesEvent<Chunk> event)
+    public void onAttachingCapabilitiesChunk(@NotNull final AttachCapabilitiesEvent<Chunk> event)
     {
         event.addCapability(new ResourceLocation(Constants.MOD_ID, "closeColony"), new MinecoloniesChunkCapabilityProvider());
+    }
+
+    /**
+     * Event called to attach capabilities on the world.
+     *
+     * @param event the event.
+     */
+    @SubscribeEvent
+    public void onAttachingCapabilitiesWorld(@NotNull final AttachCapabilitiesEvent<World> event)
+    {
+        event.addCapability(new ResourceLocation(Constants.MOD_ID, "chunkUpdate"), new MinecoloniesWorldCapabilityProvider());
     }
 
     /**
