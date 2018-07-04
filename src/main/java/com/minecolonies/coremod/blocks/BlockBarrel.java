@@ -158,6 +158,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
             if (te instanceof TileEntityBarrel) {
                 ((TileEntityBarrel) te).useBarrel(worldIn, playerIn, itemstack, state, pos);
             }
+
         }
         return true;
     }
