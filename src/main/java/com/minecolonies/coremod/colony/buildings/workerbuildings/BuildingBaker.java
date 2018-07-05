@@ -222,8 +222,10 @@ public class BuildingBaker extends AbstractBuildingWorker
     
         final NBTTagList recipeTagList = compound.getTagList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
         if (recipesAllowed == null)
+        {
         	recipesAllowed = new boolean[recipeTagList.tagCount()];
-
+        }
+        
         for (int i = 0; i < recipeTagList.tagCount(); ++i)
         {
             final NBTTagCompound recipeCompound = recipeTagList.getCompoundTagAt(i);
@@ -464,7 +466,7 @@ public class BuildingBaker extends AbstractBuildingWorker
     }
 
     
-    public boolean isRecipeAllowed(int pos)
+    public boolean isRecipeAllowed(final int pos)
     {
     	if (pos >= recipesAllowed.length)
     		return false;
@@ -476,7 +478,9 @@ public class BuildingBaker extends AbstractBuildingWorker
     public void setRecipeAllowed(int pos, boolean value)
     {
     	if (pos < recipesAllowed.length)
-   	   		recipesAllowed[pos] = value;
+    	{
+    		recipesAllowed[pos] = value;
+    	}
     }
     
     /**
@@ -516,15 +520,17 @@ public class BuildingBaker extends AbstractBuildingWorker
             super(c, l);
         }
 
-        public boolean isRecipeAllowed(int pos)
+        public boolean isRecipeAllowed(final int pos)
         {
         	if (pos >= recipesAllowed.length)
+        	{
         		return false;
+        	}
         	
         	return recipesAllowed[pos];
         }
 
-        public void setRecipeAllowed(int pos, boolean value,BlockPos block)
+        public void setRecipeAllowed(final int pos, boolean value,final BlockPos block)
         {
             MineColonies.getNetwork().sendToServer(new AssignBakerRecipeMessage(this, pos, value, block));
         	if (pos < recipesAllowed.length)

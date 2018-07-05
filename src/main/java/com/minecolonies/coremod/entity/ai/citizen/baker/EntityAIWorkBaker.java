@@ -143,7 +143,6 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
                 return PREPARING;
             }
             currentBakingProduct = bakingProducts.get(0);
-//            currentBakingProduct = null;
         }
 
         if (currentBakingProduct.getState() != ProductState.BAKED)
@@ -153,9 +152,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
         worker.setHeldItem(EnumHand.MAIN_HAND, currentBakingProduct.getEndProduct());
         
-        final IRecipeStorage storage = BakerRecipes.getRecipes().get(currentBakingProduct.getRecipeId());
         final ItemStack newItem = currentBakingProduct.getEndProduct();
-//        worker.setHeldItem(EnumHand.MAIN_HAND, newItem);
         worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getLocation());
 
         if (progress >= getRequiredProgressForKneading())
@@ -283,19 +280,17 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     private AIState createNewProduct()
     {
     	progress = 0;
-//        currentRecipe = -1;
 
-        final List<IItemHandler> handlers = getOwnBuilding().getHandlers();
         boolean recipeFound = false;
         
         IRecipeStorage storage = null;
-        BuildingBaker building = getOwnBuilding();
-//        for (final IRecipeStorage tempStorage : BakerRecipes.getRecipes())
+        final BuildingBaker building = getOwnBuilding();
         currentRecipe++;
         if (currentRecipe+1 >= BakerRecipes.getRecipes().size())
+        {
         	currentRecipe = 0;
+        }
         
-        int v2 = 0;
         for(int i = currentRecipe; i < BakerRecipes.getRecipes().size(); i++)
         {
         	if (building.isRecipeAllowed(i))

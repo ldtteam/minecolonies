@@ -5,7 +5,7 @@
 	    <view id="pageActions" size="100% 100%">
         	<layout source="minecolonies:gui/windowworkerbuildingdefault.xml"/>
     	</view>
-        <view id="pageFields" size="100% 100%" pos="0 1">
+        <view id="pageRecipes" size="100% 100%" pos="0 1">
             <layout source="minecolonies:gui/windowbase.xml"/>
             <label size="100% 11" pos="0 40" label="Recipes:" color="black" textalign="BOTTOM_MIDDLE"/>
 

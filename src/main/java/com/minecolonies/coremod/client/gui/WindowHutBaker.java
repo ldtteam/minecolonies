@@ -11,8 +11,6 @@ import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.item.ItemStack;
 
 import org.jetbrains.annotations.NotNull;
@@ -67,11 +65,6 @@ public class WindowHutBaker extends AbstractWindowWorkerBuilding<BuildingBaker.V
     private static final String VIEW_PAGES = "pages";
 
     /**
-     * Id of the the fields page inside the GUI.
-     */
-    private static final String PAGE_FIELDS = "pageFields";
-
-    /**
      * Tag of the recipe name.
      */
     private static final String TAG_NAME = "name";
@@ -86,11 +79,6 @@ public class WindowHutBaker extends AbstractWindowWorkerBuilding<BuildingBaker.V
      */
     private static final String APPROVE = " ";
 
-
-    /**
-     * The world.
-     */
-    private final WorldClient world = Minecraft.getMinecraft().world;
 
     /**
      * Id of the icon inside the GUI.
@@ -140,7 +128,7 @@ public class WindowHutBaker extends AbstractWindowWorkerBuilding<BuildingBaker.V
     {
         super.onOpened();
 
-        List<IRecipeStorage> recipes = BakerRecipes.getRecipes();
+        final List<IRecipeStorage> recipes = BakerRecipes.getRecipes();
 
         findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class).setEnabled(false);
         buttonPrevPage = findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class);
@@ -159,7 +147,7 @@ public class WindowHutBaker extends AbstractWindowWorkerBuilding<BuildingBaker.V
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final IRecipeStorage recipe = recipes.get(index);
-                    ItemStack stack = recipe.getPrimaryOutput();
+                    final ItemStack stack = recipe.getPrimaryOutput();
                     @NotNull final String owner =  stack.getDisplayName();
 
                     rowPane.findPaneOfTypeByID(TAG_NAME, Label.class).setLabelText(owner);
