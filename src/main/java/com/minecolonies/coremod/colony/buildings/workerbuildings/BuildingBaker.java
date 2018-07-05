@@ -4,6 +4,7 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.views.Window;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -14,6 +15,11 @@ import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
 import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
+import com.minecolonies.coremod.network.messages.AssignBakerRecipeMessage;
+import com.minecolonies.coremod.network.messages.AssignFieldMessage;
+import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.state.IBlockState;
@@ -21,6 +27,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -66,6 +73,16 @@ public class BuildingBaker extends AbstractBuildingWorker
     private static final String TAG_FURNACE_POS = "furnacePos";
 
     /**
+     * Tag used to store the recipes positions.
+     */
+    private static final String TAG_RECIPE_POS = "recipePos";
+    /**
+     * Tag used to store the recipes map.
+     */
+    private static final String TAG_RECIPES = "recipesBaker";
+
+    
+    /**
      * Tag used to store the furnaces map.
      */
     private static final String TAG_FURNACES = "furnaces";
@@ -90,6 +107,10 @@ public class BuildingBaker extends AbstractBuildingWorker
      */
     private int ticksPassed = 0;
 
+    
+    
+    private boolean[] recipesAllowed;
+    
     /**
      * Constructor for the baker building.
      *
@@ -106,6 +127,7 @@ public class BuildingBaker extends AbstractBuildingWorker
                 keepX.put(stack::isItemEqual, WHEAT_TO_KEEP);
             }
         }
+        recipesAllowed = new boolean[BakerRecipes.getRecipes().size()];
     }
 
     /**
@@ -196,6 +218,18 @@ public class BuildingBaker extends AbstractBuildingWorker
             final BakingProduct bakingProduct = BakingProduct.createFromNBT(furnaceCompound);
             furnaces.put(pos, bakingProduct);
         }
+
+    
+        final NBTTagList recipeTagList = compound.getTagList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
+        if (recipesAllowed == null)
+        	recipesAllowed = new boolean[recipeTagList.tagCount()];
+
+        for (int i = 0; i < recipeTagList.tagCount(); ++i)
+        {
+            final NBTTagCompound recipeCompound = recipeTagList.getCompoundTagAt(i);
+            recipesAllowed[i] = recipeCompound.getBoolean(TAG_RECIPE_POS);
+        }
+
     }
 
     @Override
@@ -235,6 +269,17 @@ public class BuildingBaker extends AbstractBuildingWorker
             furnacesTagList.appendTag(furnaceCompound);
         }
         compound.setTag(TAG_FURNACES, furnacesTagList);
+
+        @NotNull final NBTTagList recipesTagList = new NBTTagList();
+        for (int i=0;i< recipesAllowed.length; i++)
+        {
+            @NotNull final NBTTagCompound recipeCompound = new NBTTagCompound();
+            recipeCompound.setBoolean(TAG_RECIPE_POS, recipesAllowed[i]);
+            recipesTagList.appendTag(recipeCompound);
+        }
+        compound.setTag(TAG_RECIPES, recipesTagList);
+    
+    
     }
 
     /**
@@ -418,11 +463,48 @@ public class BuildingBaker extends AbstractBuildingWorker
         furnaces.replace(currentFurnace, bakingProduct);
     }
 
+    
+    public boolean isRecipeAllowed(int pos)
+    {
+    	if (pos >= recipesAllowed.length)
+    		return false;
+    	
+    	return recipesAllowed[pos];
+    }
+
+    
+    public void setRecipeAllowed(int pos, boolean value)
+    {
+    	if (pos < recipesAllowed.length)
+   	   		recipesAllowed[pos] = value;
+    }
+    
+    /**
+     * Method to serialize data to send it to the view.
+     *
+     * @param buf the used ByteBuffer.
+     */
+    @Override
+    public void serializeToView(@NotNull final ByteBuf buf)
+    {
+        super.serializeToView(buf);
+        
+        buf.writeInt(recipesAllowed.length);
+        for (int i = 0; i < recipesAllowed.length; i++)
+        {
+            buf.writeBoolean(recipesAllowed[i]);
+        }
+    }
+
+    
+    
     /**
      * The client view for the baker building.
      */
     public static class View extends AbstractBuildingWorker.View
     {
+        private boolean[] recipesAllowed;
+
         /**
          * The client view constructor for the baker building.
          *
@@ -434,6 +516,22 @@ public class BuildingBaker extends AbstractBuildingWorker
             super(c, l);
         }
 
+        public boolean isRecipeAllowed(int pos)
+        {
+        	if (pos >= recipesAllowed.length)
+        		return false;
+        	
+        	return recipesAllowed[pos];
+        }
+
+        public void setRecipeAllowed(int pos, boolean value,BlockPos block)
+        {
+            MineColonies.getNetwork().sendToServer(new AssignBakerRecipeMessage(this, pos, value, block));
+        	if (pos < recipesAllowed.length)
+        		recipesAllowed[pos] = value;
+        }
+
+        
         /**
          * Creates a new window for the building.
          *
@@ -459,5 +557,21 @@ public class BuildingBaker extends AbstractBuildingWorker
         {
             return Skill.DEXTERITY;
         }
+        
+        
+        @Override
+        public void deserialize(@NotNull final ByteBuf buf)
+        {
+            super.deserialize(buf);
+            final int size = buf.readInt();
+            recipesAllowed = new boolean[size];
+            for (int i = 0; i < size; i++)
+            {
+                recipesAllowed[i] = buf.readBoolean();
+            }
+        }
+
     }
+    
+    
 }
