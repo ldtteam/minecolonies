@@ -555,7 +555,7 @@ public class BuildingBaker extends AbstractBuildingWorker
          * @param value boolean value if Recipe is Allowed to be made 
          * @param block block position of the building.
          */
-        public void setRecipeAllowed(final int pos, final boolean value,final BlockPos block)
+        public void setRecipeAllowed(final int pos, final  boolean value,final BlockPos block)
         {
             MineColonies.getNetwork().sendToServer(new AssignBakerRecipeMessage(this, pos, value, block));
         	if (pos < recipesAllowed.length)
