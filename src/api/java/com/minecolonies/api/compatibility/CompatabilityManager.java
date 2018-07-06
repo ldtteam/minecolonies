@@ -12,6 +12,9 @@ import net.minecraft.block.BlockOre;
 import net.minecraft.block.BlockRedstoneOre;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,6 +25,9 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.oredict.OreDictionary;
+import scala.reflect.internal.Trees.TreeSymSubstTraverser;
+
+import org.hamcrest.core.IsInstanceOf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -163,7 +169,7 @@ public class CompatabilityManager implements ICompatabilityManager
         //Filter duplicated values.
         for(final ItemStorage storage: storages)
         {
-            if(!saplings.contains(storage))
+            if(!saplings.contains(storage) && !(storage.getItem() ==  Items.AIR))	//
             {
                 saplings.add(storage);
             }
