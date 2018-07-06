@@ -16,8 +16,6 @@ import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
 import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
 import com.minecolonies.coremod.network.messages.AssignBakerRecipeMessage;
-import com.minecolonies.coremod.network.messages.AssignFieldMessage;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
@@ -27,7 +25,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -466,6 +463,12 @@ public class BuildingBaker extends AbstractBuildingWorker
     }
 
     
+    /**
+     * Return a boolean to see if the Recipe is Allowed to be produced for this Building.
+     *
+     * @param pos position of the recipe 
+     * @return a boolean if the recipe is allowed to be produced. 
+     */
     public boolean isRecipeAllowed(final int pos)
     {
     	if (pos >= recipesAllowed.length)
@@ -477,6 +480,12 @@ public class BuildingBaker extends AbstractBuildingWorker
     }
 
     
+    /**
+     * update the Recipe Allowed option to the new settings of value
+     *
+     * @param pos   index pointer for array position of which Recipe to alter
+     * @param value boolean value if Recipe is Allowed to be made 
+     */
     public void setRecipeAllowed(final int pos, final boolean value)
     {
     	if (pos < recipesAllowed.length)
@@ -522,6 +531,13 @@ public class BuildingBaker extends AbstractBuildingWorker
             super(c, l);
         }
 
+        
+        /**
+         * Return a boolean to see if the Recipe is Allowed to be produced for this Building.
+         *
+         * @param pos position of the recipe 
+         * @return a boolean if the recipe is allowed to be produced. 
+         */
         public boolean isRecipeAllowed(final int pos)
         {
         	if (pos >= recipesAllowed.length)
@@ -532,6 +548,13 @@ public class BuildingBaker extends AbstractBuildingWorker
         	return recipesAllowed[pos];
         }
 
+        /**
+         * update the Recipe Allowed option to the new settings of value
+         *
+         * @param pos   index pointer for array position of which Recipe to alter
+         * @param value boolean value if Recipe is Allowed to be made 
+         * @param block block position of the building.
+         */
         public void setRecipeAllowed(final int pos, boolean value,final BlockPos block)
         {
             MineColonies.getNetwork().sendToServer(new AssignBakerRecipeMessage(this, pos, value, block));
