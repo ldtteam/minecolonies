@@ -22,6 +22,7 @@ import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAM
 public abstract class AbstractWorkOrder
 {
     private static final String                                          TAG_TYPE       = "type";
+    private static final String                                          TAG_PRIORITY   = "priority";
     private static final String                                          TAG_ID         = "id";
     private static final String                                          TAG_CLAIMED_BY = "claimedBy";
     //  Job and View Class Mapping
@@ -112,6 +113,7 @@ public abstract class AbstractWorkOrder
         }
         try
         {
+        	order.setPriority(compound.getInteger(TAG_PRIORITY));
             order.readFromNBT(compound);
         }
         catch (final RuntimeException ex)
@@ -132,6 +134,7 @@ public abstract class AbstractWorkOrder
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         id = compound.getInteger(TAG_ID);
+        priority = compound.getInteger(TAG_PRIORITY);
         claimedBy = compound.getInteger(TAG_CLAIMED_BY);
     }
 
@@ -278,6 +281,7 @@ public abstract class AbstractWorkOrder
             throw new IllegalStateException(this.getClass() + " is missing a mapping! This is a bug!");
         }
 
+        compound.setInteger(TAG_PRIORITY, priority);
         compound.setString(TAG_TYPE, s);
         compound.setInteger(TAG_ID, id);
         if (claimedBy != 0)
