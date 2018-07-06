@@ -178,7 +178,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
     {
         final List<BlockPos> nodesToTarget = new ArrayList<>();
         com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(buildingMiner.getActiveNode().getParent());
-        while (new Vec2i(currentNode.getX(), currentNode.getZ()).equals(currentNode.getParent()) && currentNode.getParent() != null)
+        while (currentNode != null && new Vec2i(currentNode.getX(), currentNode.getZ()).equals(currentNode.getParent()) && currentNode.getParent() != null)
         {
             nodesToTarget.add(new BlockPos(currentNode.getX(), levelDepth, currentNode.getZ()));
             currentNode = level.getNode(currentNode.getParent());
