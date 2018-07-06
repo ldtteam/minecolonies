@@ -377,18 +377,9 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             getOwnBuilding().addToTasks(ProductState.RAW, currentBakingProduct);
         } else {
         	final List<ItemStack> list = new ArrayList<>();
-
-	        ItemStack copy = null;
 	        for (final ItemStack stack : storage.getInput())
 	        {
-	            if (stack.getItem() != Items.WHEAT)
-	            {
-	                list.add(stack);
-	            }
-	            else
-	            {
-	                copy = stack.copy();
-	            }
+                list.add(stack);
 	        }
 	        final ItemStack[] arrayToRequestAndRetrieve = list.toArray(new ItemStack[list.size()]);
 	        checkIfRequestForItemExistOrCreateAsynch(arrayToRequestAndRetrieve);
