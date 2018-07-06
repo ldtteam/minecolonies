@@ -118,7 +118,11 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
         TileEntity te = worldIn.getTileEntity(pos);
         if(te!=null)
         {
-            ((TileEntityBarrel) te).updateTick(worldIn, pos, state, rand);
+            if(!worldIn.isRemote)
+            {
+                ((TileEntityBarrel) te).updateTick(worldIn, pos, state, rand);
+            }
+            ((TileEntityBarrel) te).updateBlock(worldIn, state);
         }
     }
 
@@ -158,7 +162,11 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
             final ItemStack itemstack = playerIn.inventory.getCurrentItem();
             TileEntity te = worldIn.getTileEntity(pos);
             if (te instanceof TileEntityBarrel) {
-                ((TileEntityBarrel) te).useBarrel(worldIn, playerIn, itemstack, state, pos);
+                if(!worldIn.isRemote)
+                {
+                    ((TileEntityBarrel) te).useBarrel(worldIn, playerIn, itemstack, state, pos);
+                    ((TileEntityBarrel) te).updateBlock(worldIn, state);
+                }
             }
 
         //}
@@ -254,9 +262,6 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     @Override
     public IBlockState getActualState(@NotNull final IBlockState state, @NotNull final IBlockAccess worldIn, @NotNull final BlockPos pos)
     {
-        Log.getLogger().info("getActualState");
-
-
         final TileEntity entity = worldIn.getTileEntity(pos);
 
         if (!(entity instanceof TileEntityBarrel))
@@ -266,6 +271,8 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
 
         return changeStateOverFullness((TileEntityBarrel) entity, worldIn, state, pos);
     }
+
+
 
     // Please note that we shouldn't manipulate the world in any way in this method, in this method we should just calculate the state the barrel should be in and return it
     // the world will do the rest, the world actually calls the getActualState method.

@@ -719,4 +719,4 @@ com.minecolonies.coremod.gui.townHall.population.rangers=Rangers: %d
 com.minecolonies.coremod.gui.townHall.population.knights=Knights: %d
 
 
-tile.minecolonies.barrel_block.name = Barrel
+tile.minecolonies.barrel_block.name=Barrel

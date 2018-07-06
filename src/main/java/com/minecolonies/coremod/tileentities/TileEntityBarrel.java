@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BarrelType;
@@ -32,7 +33,10 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     private int                                     items          = 0;
     private int                                     timer          = 0;
     public static final int                         MAX_ITEMS      = 64;
-    private static final int                        TIMER_END      = 24000; //24000; //Number of Minecraft ticks in 2 whole days
+    private static final int                        TIMER_END      = 24000; //24000; //Number of Minecraft ticks in 2
+                                                                            // whole days
+    private static final int                        AVERAGE_TICKS  = 20;    //The average of ticks that passes between
+                                                                            //actually ticking the tileEntity
 
     @Override
     public void update()
@@ -42,7 +46,14 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         //todo we should do this here in intervals look how we check things in random intervals in the colony.
         // this way we avoid calling this every tick which causes lag. Just calling this probablistically every 20 ticks and
         // make it run until 24000/20 will have the same result but consume way less load on the server.
-        this.updateTick(world, this.getPos(), world.getBlockState(this.getPos()), new Random());
+        if(!world.isRemote)
+        {
+            if (world.getWorldTime() % (world.rand.nextInt(AVERAGE_TICKS * 2) + 1) == 0)
+            {
+                this.updateTick(world, this.getPos(), world.getBlockState(this.getPos()), new Random());
+            }
+        }
+
     }
 
 
@@ -53,7 +64,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         {
             doBarrelCompostTick(worldIn, pos, state);
         }
-        if(this.done && !world.isRemote)
+        if(this.done)
         {
             //If the barrel is done, we spawn particles imitating "bad smell"
             ((WorldServer)worldIn).spawnParticle(
@@ -66,12 +77,12 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     private void doBarrelCompostTick(final World worldIn, final BlockPos pos, final IBlockState blockState)
     {
         timer++;
-        if (timer >= TIMER_END)
+        if (timer >= TIMER_END/AVERAGE_TICKS)
         {
             timer = 0;
             items = 0;
             done = true;
-            updateBlock(worldIn, blockState);
+            this.updateBlock(worldIn, blockState);
         }
     }
 
@@ -85,7 +96,6 @@ public class TileEntityBarrel extends TileEntity implements ITickable
             // playerIn.inventory.addItemStackToInventory(new ItemStack(ModItems.compost, 6));
             done = false;
             playerIn.inventory.addItemStackToInventory(new ItemStack(Items.DYE, 6, 15));
-            updateBlock(worldIn, state);
             return true;
         }
 
@@ -102,7 +112,6 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         else
         {
             this.consumeNeededItems(worldIn, itemstack);
-            this.updateBlock(worldIn, state);
             return true;
         }
 
@@ -112,8 +121,9 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     {
 
         int factor;
-        //Rotten Flesh counts as 2 items
-        factor = itemStack.getItem().equals(Items.ROTTEN_FLESH)?2 : 1;
+        //Saplings and seeds counts as 1 item added, the rest counts as 2 items
+        factor = itemStack.getItem().getRegistryName().toString().contains("sapling")
+                || itemStack.getItem().getRegistryName().toString().contains("seed")?1 : 2;
 
         //The available items the player has in his hand (Rotten Flesh counts as the double)
         int availableItems = itemStack.getCount()*factor;
@@ -131,22 +141,21 @@ public class TileEntityBarrel extends TileEntity implements ITickable
 
     private boolean checkCorrectItem(ItemStack itemStack)
     {
-        // todo we should probably make this configureable in the configuration, but for testing this is okay.
-        //Any new item we want it to accept should be added here
-        return itemStack.getItem().equals(Items.ROTTEN_FLESH)
-                || itemStack.getItem().equals(Items.WHEAT_SEEDS)
-                || itemStack.getItem().equals(Items.MELON_SEEDS)
-                || itemStack.getItem().equals(Items.BEETROOT_SEEDS)
-                || itemStack.getItem().equals(Items.PUMPKIN_SEEDS)
-                || itemStack.getItem().equals(Item.getItemFromBlock(Blocks.SAPLING));
+        for(String string : Configurations.gameplay.listOfCompostableItems)
+        {
+            if(itemStack.getItem().getRegistryName().toString().equals(string))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void updateBlock(World worldIn, IBlockState state)
     {
-         this.markDirty();
          world.notifyBlockUpdate(pos, state, state, 0x03);
          world.markBlockRangeForRenderUpdate(pos,pos);
-
+         this.markDirty();
     }
 
     @Override
@@ -190,6 +199,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     {
         final NBTTagCompound compound = packet.getNbtCompound();
         this.readFromNBT(compound);
+        world.markBlockRangeForRenderUpdate(pos,pos);
     }
 
     @Override
@@ -198,8 +208,6 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         this.items = tag.getInteger("items");
         this.timer = tag.getInteger("timer");
         this.done = tag.getBoolean("done");
-        IBlockState state = world.getBlockState(pos);
-        world.notifyBlockUpdate(pos, state, state, 11);
     }
 
     public int getItems()
