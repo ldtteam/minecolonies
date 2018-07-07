@@ -40,7 +40,6 @@ import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 
-//import java.util.*;
 
 /**
  * Building for the baker.
@@ -526,7 +525,12 @@ public class BuildingBaker extends AbstractBuildingWorker
      */
     public static class View extends AbstractBuildingWorker.View
     {
-        private boolean[] recipesAllowed;
+
+    	/*
+    	 * list of recipes for the baker, 
+    	 * true - indicates baker is able to make recipe
+    	 */
+    	private boolean[] recipesAllowed;
 
         /**
          * The client view constructor for the baker building.

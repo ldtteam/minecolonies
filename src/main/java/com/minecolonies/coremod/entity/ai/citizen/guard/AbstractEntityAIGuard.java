@@ -46,6 +46,10 @@ import java.util.Map;
 import static com.minecolonies.coremod.entity.ai.citizen.guard.GuardConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
+/**
+ *
+ * @param <J>
+ */
 public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends AbstractEntityAIInteract<J>
 {
 
@@ -54,6 +58,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     public final List<ToolType>  toolsNeeded = new ArrayList<>();
     public final List<GuardItemsNeeded> itemsNeeded = new ArrayList<>();
+    
+    /**
+     * Holds a list of required armor for this guard
+     */
     private final Map<EntityEquipmentSlot, Item> requiredArmor = new LinkedHashMap<>();
 
     /**
@@ -91,26 +99,26 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         );
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getStrength() + worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);
-        
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET, Items.LEATHER_BOOTS, 1,2,3));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST,Items.LEATHER_CHESTPLATE, 1,2,3));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,Items.LEATHER_HELMET, 1,2,3));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,Items.LEATHER_LEGGINGS, 1,2,3));
 
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,Items.CHAINMAIL_BOOTS, 1,4,5));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST,Items.CHAINMAIL_CHESTPLATE, 1,4,5));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,Items.CHAINMAIL_HELMET, 1,4,5));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,Items.CHAINMAIL_LEGGINGS, 1,4,5));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.LEATHER_BOOTS, 1, 2, 3));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.LEATHER_CHESTPLATE, 1, 2, 3));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.LEATHER_HELMET, 1, 2, 3));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.LEATHER_LEGGINGS, 1, 2, 3));
 
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,Items.IRON_BOOTS, 1,6,7));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST,Items.IRON_CHESTPLATE, 1,6,7));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,Items.IRON_HELMET, 1,6,7));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,Items.IRON_LEGGINGS, 1,6,7));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.CHAINMAIL_BOOTS, 1, 4, 5));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.CHAINMAIL_CHESTPLATE, 1, 4, 5));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.CHAINMAIL_HELMET, 1, 4, 5));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.CHAINMAIL_LEGGINGS, 1, 4, 5));
 
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,Items.DIAMOND_BOOTS, 1,8,99));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST,Items.DIAMOND_CHESTPLATE, 1,8,99));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,Items.DIAMOND_HELMET, 1,8,99));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,Items.DIAMOND_LEGGINGS, 1,8,99));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.IRON_BOOTS, 1, 6, 7));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.IRON_CHESTPLATE, 1, 6, 7));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.IRON_HELMET, 1, 6, 7));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.IRON_LEGGINGS, 1, 6, 7));
+
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.DIAMOND_BOOTS, 1, 8, 99));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.DIAMOND_CHESTPLATE, 1, 8, 99));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.DIAMOND_HELMET, 1, 8, 99));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.DIAMOND_LEGGINGS, 1, 8, 99));
     }
 
     @Override
@@ -380,6 +388,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         return GUARD_ATTACK_PHYSICAL;
     }
 
+    /**
+     * @return
+     */
     protected AIState attackPhysical()
     {
 
@@ -625,7 +636,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 new InvWrapper(worker.getInventoryCitizen()).extractItem(i, Integer.MAX_VALUE, false);
                 continue;
             }
-            
+
             if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == ItemStackUtils.EMPTY &&
             		requiredArmor.get(((ItemArmor) stack.getItem()).armorType) == stack.getItem()
             	)
@@ -639,18 +650,46 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     {
         return PITCH_DIVIDER / (worker.getRNG().nextDouble() * PITCH_MULTIPLIER + BASE_PITCH);
     }
-    
-    
-    
+
+
+
+    /**
+     * Class to hold information about required item for the guard.
+     *
+     */
     public class GuardItemsNeeded
     {
-    	final private int quantity;
-    	final private int minLevelRequired;
-    	final private int maxLevelRequired;
-    	final private Item itemNeeded;
-    	final private EntityEquipmentSlot type;
-    	
-    	public GuardItemsNeeded(final EntityEquipmentSlot type, final Item item,final int quantity, final int min, final int max)
+    	/**
+    	 * Quantity required on the required
+    	 */
+    	private final int quantity;
+
+    	/**
+    	 * Min level the citizen has to be to required the item
+    	 */
+    	private final int minLevelRequired;
+
+    	/**
+    	 *Max level the citizen can be to required the item
+    	 */
+    	private final int maxLevelRequired;
+    	/**
+    	 * Item that is being required
+    	 */
+    	private final Item itemNeeded;
+    	/**
+    	 * Item type that is required
+    	 */
+    	private final EntityEquipmentSlot type;
+
+    	/**
+    	 * @param type		item type for the required item
+    	 * @param item		item that is being required
+    	 * @param quantity	quantity required for the item
+    	 * @param min		min level required to demand item
+    	 * @param max		max level that the item will be required
+    	 */
+    	public GuardItemsNeeded(final EntityEquipmentSlot type, final Item item, final int quantity, final int min, final int max)
     	{
     		this.type = type;
     		this.minLevelRequired = min;
@@ -658,37 +697,54 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     		this.itemNeeded = item;
     		this.quantity = quantity;
     	}
-    	
+
+    	/**
+    	 * @return  item that is required in stack format
+    	 */
     	public ItemStack getItemStackNeeded()
     	{
-    		return new ItemStack(itemNeeded,quantity);
+    		return new ItemStack(itemNeeded, quantity);
     	}
-    	
+
+    	/**
+    	 * @return item that is required
+    	 */
     	public Item getItemNeeded()
     	{
     		return itemNeeded;
     	}
 
+    	/**
+    	 * @return min level for this item to be required
+    	 */
     	public int getMinLevelRequired()
     	{
     		return minLevelRequired;
     	}
 
+    	/**
+    	 * @return max level for this item to be require
+    	 */
     	public int getmaxLevelRequiMed()
     	{
     		return maxLevelRequired;
     	}
-    	
+
+    	/**
+    	 * @return type of the item
+    	 */
     	public EntityEquipmentSlot getType()
     	{
     		return type;
     	}
-    	
+
+    	/**
+    	 * @return number of items required
+    	 */
     	public int getQuantity()
     	{
     		return quantity;
     	}
-    	
+
     }
-    
 }

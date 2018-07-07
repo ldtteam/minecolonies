@@ -164,7 +164,7 @@ public class CompatabilityManager implements ICompatabilityManager
         //Filter duplicated values.
         for(final ItemStorage storage: storages)
         {
-            if(!saplings.contains(storage) && (storage.getItem() !=  Items.AIR))	//
+            if(!saplings.contains(storage) && (storage.getItem() !=  Items.AIR))
             {
                 saplings.add(storage);
             }

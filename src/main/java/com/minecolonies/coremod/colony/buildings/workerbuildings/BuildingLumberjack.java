@@ -222,7 +222,9 @@ public class BuildingLumberjack extends AbstractBuildingWorker
                 final boolean cut = saplingCompound.getBoolean(TAG_CUT);
                 treesToFell.put(new ItemStorage(stack), cut);
             }
-        } else {
+        } 
+        else
+        {
         	//We have a list of sapplings already, but we nee to load in the NBT file.
         	//check to see if it exist and if so then update it.  Otherwise skip it,
         	//as it doesn't exist in minecraft anymore.

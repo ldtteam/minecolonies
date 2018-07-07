@@ -98,9 +98,12 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      */
     private int progress = 0;
 
-    
+    /**
+     * Pointer to the current recipe, when baker starts
+     * next recipe it starts checking right after this recipe.
+     * So the baker can rotate between recipes.
+     */
     private int currentRecipe = -1;
-    
     /**
      * Constructor for the Fisherman.
      * Defines the tasks the fisherman executes.
@@ -131,6 +134,9 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         return BuildingBaker.class;
     }
 
+    /**
+     * @return new state of the baker
+     */
     private AIState finishing()
     {
         if (currentBakingProduct == null || currentBakingProduct.getState() != ProductState.BAKED)
@@ -151,7 +157,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         }
 
         worker.setHeldItem(EnumHand.MAIN_HAND, currentBakingProduct.getEndProduct());
-        
+
         final ItemStack newItem = currentBakingProduct.getEndProduct();
         worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getLocation());
 
@@ -159,7 +165,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         {
             worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
             getOwnBuilding().removeFromTasks(ProductState.BAKED, currentBakingProduct);
-            if(newItem != null)
+            if (newItem != null)
             {
                 InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), newItem);
             }
@@ -192,11 +198,19 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         return UNTIL_DUMP;
     }
 
+    /**
+     * @return the time required in the Kneading process
+     */
     private int getRequiredProgressForKneading()
     {
         return PROGRESS_MULTIPLIER / Math.min(worker.getCitizenExperienceHandler().getLevel() + 1, MAX_LEVEL) * KNEADING_TIME;
     }
 
+    /**
+     * Take item from oven
+     * @return new state based on what is happening with
+     * removal of item from furnace
+     */
     private AIState takeFromOven()
     {
         if (currentFurnace == null)
@@ -242,19 +256,19 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         {
         	final IRecipeStorage storage = BakerRecipes.getRecipes().get(currentBakingProduct.getRecipeId());
 
-	        if (currentBakingProduct.getState() == ProductState.UNCRAFTED)
+        	if (currentBakingProduct.getState() == ProductState.UNCRAFTED)
 	        {
 	            return craftNewProduct(storage);
 	        }
-	
+
 	        if (currentBakingProduct.getState() != ProductState.RAW)
 	        {
 	            return PREPARING;
 	        }
-	
+
 	        worker.setHeldItem(EnumHand.MAIN_HAND, storage.getInput().get(worker.getRandom().nextInt(storage.getInput().size())).copy());
 	        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getLocation());
-	
+
 	        if (progress >= getRequiredProgressForKneading())
 	        {
 	            worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
@@ -265,7 +279,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 	            currentBakingProduct = null;
 	            return PREPARING;
 	        }
-	
+
 	        progress++;
 	        setDelay(HIT_DELAY);
         }
@@ -282,16 +296,16 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     	progress = 0;
 
         boolean recipeFound = false;
-        
+
         IRecipeStorage storage = null;
         final BuildingBaker building = getOwnBuilding();
         currentRecipe++;
-        if (currentRecipe+1 >= BakerRecipes.getRecipes().size())
+        if (currentRecipe + 1 >= BakerRecipes.getRecipes().size())
         {
         	currentRecipe = 0;
         }
-        
-        for(int i = currentRecipe; i < BakerRecipes.getRecipes().size(); i++)
+
+        for (int i = currentRecipe; i < BakerRecipes.getRecipes().size(); i++)
         {
         	if (building.isRecipeAllowed(i))
         	{
@@ -301,9 +315,10 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     			break;
         	}
         }
-        
-        if (!recipeFound && currentRecipe > 0){
-            for(int i = 0; i <= currentRecipe; i++)
+
+        if (!recipeFound && currentRecipe > 0)
+        {
+            for (int i = 0; i <= currentRecipe; i++)
             {
             	if (building.isRecipeAllowed(i))
             	{
@@ -313,7 +328,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         			break;
             	}
             }
-        	
+
         }
 
         if (recipeFound)
@@ -322,7 +337,9 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             building.addToTasks(bakingProduct.getState(), bakingProduct);
             currentBakingProduct = bakingProduct;
             return getState();
-        } else {
+        }
+        else
+        {
         	setDelay(UNABLE_TO_CRAFT_DELAY);
         	return IDLE;
         }
@@ -354,7 +371,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 	                copy = stack.copy();
 	            }
 	        }
-	
+
 	        if (copy != null)
 	        {
 	            //Wheat will be reduced by chance only (Between 3 and 6- getBuildingLevel, meaning 3-5, 3-4, 3-3, 3-2, 3-1)
@@ -367,7 +384,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 	            ItemStackUtils.changeSize(copy, req);
 	            list.add(copy);
 	        }
-	
+
 	        final ItemStack[] arrayToRequestAndRetrieve = list.toArray(new ItemStack[list.size()]);
 	        checkIfRequestForItemExistOrCreateAsynch(arrayToRequestAndRetrieve);
 
@@ -375,7 +392,9 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             currentBakingProduct.nextState();
             getOwnBuilding().removeFromTasks(ProductState.UNCRAFTED, currentBakingProduct);
             getOwnBuilding().addToTasks(ProductState.RAW, currentBakingProduct);
-        } else {
+        }
+        else
+        {
         	final List<ItemStack> list = new ArrayList<>();
 	        for (final ItemStack stack : storage.getInput())
 	        {
