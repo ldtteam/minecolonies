@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
-@SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
 {
     /**

@@ -25,6 +25,7 @@ import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
@@ -38,12 +39,13 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.coremod.entity.ai.citizen.guard.GuardConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
-@SuppressWarnings("squid:MaximumInheritanceDepth")
 public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends AbstractEntityAIInteract<J>
 {
 
@@ -51,7 +53,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      * Tools and Items needed by the worker.
      */
     public final List<ToolType>  toolsNeeded = new ArrayList<>();
-    public final List<ItemStack> itemsNeeded = new ArrayList<>();
+    public final List<GuardItemsNeeded> itemsNeeded = new ArrayList<>();
+    private final Map<EntityEquipmentSlot, Item> requiredArmor = new LinkedHashMap<>();
 
     /**
      * How many more ticks we have until next attack.
@@ -88,6 +91,26 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         );
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getStrength() + worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);
+        
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET, Items.LEATHER_BOOTS, 1,2,3));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST,Items.LEATHER_CHESTPLATE, 1,2,3));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,Items.LEATHER_HELMET, 1,2,3));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,Items.LEATHER_LEGGINGS, 1,2,3));
+
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,Items.CHAINMAIL_BOOTS, 1,4,5));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST,Items.CHAINMAIL_CHESTPLATE, 1,4,5));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,Items.CHAINMAIL_HELMET, 1,4,5));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,Items.CHAINMAIL_LEGGINGS, 1,4,5));
+
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,Items.IRON_BOOTS, 1,6,7));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST,Items.IRON_CHESTPLATE, 1,6,7));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,Items.IRON_HELMET, 1,6,7));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,Items.IRON_LEGGINGS, 1,6,7));
+
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,Items.DIAMOND_BOOTS, 1,8,99));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST,Items.DIAMOND_CHESTPLATE, 1,8,99));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,Items.DIAMOND_HELMET, 1,8,99));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,Items.DIAMOND_LEGGINGS, 1,8,99));
     }
 
     @Override
@@ -149,9 +172,18 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             }
         }
 
-        for (final ItemStack item : itemsNeeded)
+        final int level = worker.getCitizenData().getLevel();
+        for (final GuardItemsNeeded item : itemsNeeded)
         {
-            checkIfRequestForItemExistOrCreateAsynch(item);
+        	//Could have multiple armor request,  make sure the require armor falls into the guard
+        	//level.
+        	if (level >= item.getMinLevelRequired() && level <= item.getmaxLevelRequiMed())
+        	{
+        		//Save the requested armor item,  so when the guard goes to put it on
+        		//they will put on the correct armor.
+        		requiredArmor.put(item.getType(), item.getItemNeeded());
+        		checkIfRequestForItemExistOrCreateAsynch(item.getItemStackNeeded());
+        	}
         }
 
         if (getOwnBuilding() != null)
@@ -573,7 +605,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     }
 
     /**
-     * Updates the equipment. Always take the first item of each type and set it.
+     * Updates the equipment. Take the first item of the required type only.
+     * Skip over the items not requires. Ex.  Required Iron, skip leather and
+     * everything else.
      */
     protected void updateArmor()
     {
@@ -591,8 +625,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 new InvWrapper(worker.getInventoryCitizen()).extractItem(i, Integer.MAX_VALUE, false);
                 continue;
             }
-
-            if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == ItemStackUtils.EMPTY)
+            
+            if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == ItemStackUtils.EMPTY &&
+            		requiredArmor.get(((ItemArmor) stack.getItem()).armorType) == stack.getItem()
+            	)
             {
                 worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
             }
@@ -603,4 +639,56 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     {
         return PITCH_DIVIDER / (worker.getRNG().nextDouble() * PITCH_MULTIPLIER + BASE_PITCH);
     }
+    
+    
+    
+    public class GuardItemsNeeded
+    {
+    	private int quantity = 1;
+    	private int minLevelRequired  = 0;
+    	private int maxLevelRequired  = 0;
+    	private Item itemNeeded;
+    	private EntityEquipmentSlot type;
+    	
+    	public GuardItemsNeeded(EntityEquipmentSlot type, Item item,int quantity, int min, int max)
+    	{
+    		this.type = type;
+    		this.minLevelRequired = min;
+    		this.maxLevelRequired = max;
+    		this.itemNeeded = item;
+    		this.quantity = quantity;
+    	}
+    	
+    	public ItemStack getItemStackNeeded()
+    	{
+    		return new ItemStack(itemNeeded,quantity);
+    	}
+    	
+    	public Item getItemNeeded()
+    	{
+    		return itemNeeded;
+    	}
+
+    	public int getMinLevelRequired()
+    	{
+    		return minLevelRequired;
+    	}
+
+    	public int getmaxLevelRequiMed()
+    	{
+    		return maxLevelRequired;
+    	}
+    	
+    	public EntityEquipmentSlot getType()
+    	{
+    		return type;
+    	}
+    	
+    	public int getQuantity()
+    	{
+    		return quantity;
+    	}
+    	
+    }
+    
 }

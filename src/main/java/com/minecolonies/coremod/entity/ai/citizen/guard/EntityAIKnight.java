@@ -4,6 +4,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobKnight;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +36,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     {
         super(job);
         toolsNeeded.add(ToolType.SWORD);
-        itemsNeeded.add(new ItemStack(Items.SHIELD, 1));
+        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.MAINHAND,Items.SHIELD, 1,2,99));
     }
 
     @Override
