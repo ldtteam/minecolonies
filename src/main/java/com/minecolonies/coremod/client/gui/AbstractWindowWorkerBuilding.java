@@ -33,12 +33,6 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     private static final String LIST_WORKERS = "workers";
 
     /**
-     * ScrollList with the workers.
-     */
-    private ScrollingList recipeList;
-
-    
-    /**
      * Id of the recall button in the GUI.
      */
     private static final String BUTTON_RECALL = "recall";
@@ -142,7 +136,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
 
         findPaneOfTypeByID(BUTTON_HIRE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.hire"));
 
-        recipeList = findPaneOfTypeByID(LIST_WORKERS, ScrollingList.class);
+        final ScrollingList recipeList = findPaneOfTypeByID(LIST_WORKERS, ScrollingList.class);
         recipeList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
