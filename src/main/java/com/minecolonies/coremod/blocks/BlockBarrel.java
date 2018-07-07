@@ -6,6 +6,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -310,5 +311,22 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     public TileEntity createNewTileEntity(World world, int i)
     {
         return new TileEntityBarrel();
+    }
+
+    @Override
+    public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+    {
+        return worldIn.getBlockState(pos.down()).getBlock().getClass() == BlockAir.class
+               ||worldIn.getBlockState(pos.down()).getBlock().getClass() == BlockBarrel.class ?false:true;
+    }
+
+    @Override
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
+    {
+        if(worldIn.isAirBlock(pos.down()) || worldIn.getBlockState(pos.down()).getBlock() == ModBlocks.blockBarrel)
+        {
+            dropBlockAsItem(worldIn, pos, getDefaultState(), 0);
+            worldIn.setBlockToAir(pos);
+        }
     }
 }

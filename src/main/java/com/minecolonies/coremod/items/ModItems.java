@@ -24,7 +24,7 @@ public final class ModItems
     public static Item clipboard;
     public static Item itemCactusDoor;
     //TODO: register the compost again when it works.
-    //public static Item compost;
+    public static Item compost;
 
     public static Item itemAchievementProxySettlement;
     public static Item itemAchievementProxyTown;
@@ -56,7 +56,7 @@ public final class ModItems
         ancientTome = new ItemAncientTome();
         chiefSword = new ItemChiefSword();
         clipboard = new ItemClipBoard();
-        //compost = new ItemCompost();
+        compost = new ItemCompost();
         itemCactusDoor = new ItemCactusDoor(ModBlocks.blockCactusDoor, "cactusdoor");
         itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement");
         itemAchievementProxyTown = new ItemAchievementProxy("sizeTown");
@@ -78,6 +78,6 @@ public final class ModItems
         registry.register(itemAchievementProxyMetropolis);
         registry.register(clipboard);
         registry.register(itemCactusDoor);
-        //registry.register(compost);
+        registry.register(compost);
     }
 }
