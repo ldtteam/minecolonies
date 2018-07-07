@@ -644,13 +644,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     
     public class GuardItemsNeeded
     {
-    	private int quantity = 1;
-    	private int minLevelRequired  = 0;
-    	private int maxLevelRequired  = 0;
-    	private Item itemNeeded;
-    	private EntityEquipmentSlot type;
+    	final private int quantity;
+    	final private int minLevelRequired;
+    	final private int maxLevelRequired;
+    	final private Item itemNeeded;
+    	final private EntityEquipmentSlot type;
     	
-    	public GuardItemsNeeded(EntityEquipmentSlot type, Item item,int quantity, int min, int max)
+    	public GuardItemsNeeded(final EntityEquipmentSlot type, final Item item,final int quantity, final int min, final int max)
     	{
     		this.type = type;
     		this.minLevelRequired = min;
