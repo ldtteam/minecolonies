@@ -185,6 +185,7 @@ public class MineColonies
         getNetwork().registerMessage(HireFireMessage.class, HireFireMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(WorkOrderChangeMessage.class, WorkOrderChangeMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(AssignFieldMessage.class, AssignFieldMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(AssignBakerRecipeMessage.class, AssignBakerRecipeMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(AssignmentModeMessage.class, AssignmentModeMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(GuardTaskMessage.class, GuardTaskMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(GuardRecalculateMessage.class, GuardRecalculateMessage.class, ++id, Side.SERVER);
