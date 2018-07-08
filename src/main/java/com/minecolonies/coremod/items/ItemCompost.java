@@ -33,8 +33,8 @@ public class ItemCompost extends AbstractItemMinecolonies
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand,
-                                      final EnumFacing facing, float hitX, float hitY, float hitZ)
+    public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, final EnumHand hand,
+                                      final EnumFacing facing, final float hitX, final float hitY, final float hitZ)
     {
         final ItemStack itemstack = player.getHeldItem(hand);
         if (applyBonemeal(itemstack, worldIn, pos, player, hand))
@@ -48,11 +48,11 @@ public class ItemCompost extends AbstractItemMinecolonies
         return EnumActionResult.FAIL;
     }
 
-    public static boolean applyBonemeal(ItemStack stack, World worldIn, BlockPos target, EntityPlayer player,
+    public static boolean applyBonemeal(ItemStack stack, World worldIn, BlockPos target, final EntityPlayer player,
                                         @Nullable final EnumHand hand)
     {
         final IBlockState iblockstate = worldIn.getBlockState(target);
-        int hook = ForgeEventFactory.onApplyBonemeal(player, worldIn, target, iblockstate, stack, hand);
+        final int hook = ForgeEventFactory.onApplyBonemeal(player, worldIn, target, iblockstate, stack, hand);
         if (hook != 0)
         {
             return hook > 0;

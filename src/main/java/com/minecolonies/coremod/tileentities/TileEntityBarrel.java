@@ -103,16 +103,15 @@ public class TileEntityBarrel extends TileEntity implements ITickable
 
     }
 
-    private void consumeNeededItems(World worldIn, final ItemStack itemStack)
+    private void consumeNeededItems(final World worldIn, final ItemStack itemStack)
     {
 
-        int factor;
         //Saplings and seeds counts as 1 item added, the rest counts as 2 items
-        factor = itemStack.getItem().getRegistryName().toString().contains("sapling")
+        final int factor = itemStack.getItem().getRegistryName().toString().contains("sapling")
                 || itemStack.getItem().getRegistryName().toString().contains("seed")?1 : 2;
 
         //The available items the player has in his hand (Rotten Flesh counts as the double)
-        int availableItems = itemStack.getCount()*factor;
+        final int availableItems = itemStack.getCount()*factor;
         //The items we need to complete the barrel
         final int neededItems = MAX_ITEMS - items;
         //The quantity of items that we are going to take from the player

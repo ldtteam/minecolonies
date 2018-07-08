@@ -150,7 +150,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
         //if(!worldIn.isRemote) {
 
             final ItemStack itemstack = playerIn.inventory.getCurrentItem();
-            TileEntity te = worldIn.getTileEntity(pos);
+            final TileEntity te = worldIn.getTileEntity(pos);
             if (te instanceof TileEntityBarrel && !worldIn.isRemote)
             {
                 ((TileEntityBarrel) te).useBarrel(worldIn, playerIn, itemstack, state, pos);
@@ -206,7 +206,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
 
     @NotNull
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, final BlockPos pos)
+    public AxisAlignedBB getBoundingBox(IBlockState state, final IBlockAccess source, final BlockPos pos)
     {
         return BOUNDING_BOX;
     }
@@ -239,7 +239,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     @Override
     public IBlockState getStateForPlacement(
       @NotNull final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing facing, final float hitX, final float hitY,
-                                            final float hitZ, int meta, @NotNull final EntityLivingBase placer, final EnumHand hand) {
+                                            final float hitZ, final int meta, @NotNull final EntityLivingBase placer, final EnumHand hand) {
         return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand).withProperty(FACING, placer.getHorizontalFacing());
     }
 
@@ -261,7 +261,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     }
 
 
-    public static IBlockState changeStateOverFullness(TileEntityBarrel entity, IBlockAccess worldIn, final IBlockState blockState, BlockPos pos)
+    public static IBlockState changeStateOverFullness(final TileEntityBarrel entity, IBlockAccess worldIn, final IBlockState blockState, BlockPos pos)
     {
 
         final TileEntityBarrel te = entity;
@@ -292,20 +292,20 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
 
     @Nullable
     @Override
-    public TileEntity createNewTileEntity(World world, final int i)
+    public TileEntity createNewTileEntity(final World world, final int i)
     {
         return new TileEntityBarrel();
     }
 
     @Override
-    public boolean canPlaceBlockAt(World worldIn, final BlockPos pos)
+    public boolean canPlaceBlockAt(final World worldIn, final BlockPos pos)
     {
         return worldIn.getBlockState(pos.down()).getBlock().getClass() == BlockAir.class
                ||worldIn.getBlockState(pos.down()).getBlock().getClass() == BlockBarrel.class ?false:true;
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World worldIn, final BlockPos pos, final Block blockIn, BlockPos fromPos)
+    public void neighborChanged(IBlockState state, World worldIn, final BlockPos pos, final Block blockIn, final BlockPos fromPos)
     {
         if(worldIn.isAirBlock(pos.down()) || worldIn.getBlockState(pos.down()).getBlock() == ModBlocks.blockBarrel)
         {
