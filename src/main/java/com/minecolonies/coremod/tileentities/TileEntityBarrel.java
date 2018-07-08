@@ -136,7 +136,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         return false;
     }
 
-    public void updateBlock(World worldIn, final IBlockState state)
+    public void updateBlock(final World worldIn, final IBlockState state)
     {
          world.notifyBlockUpdate(pos, state, state, 0x03);
          world.markBlockRangeForRenderUpdate(pos,pos);
