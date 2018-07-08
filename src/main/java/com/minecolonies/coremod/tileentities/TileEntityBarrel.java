@@ -137,7 +137,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         return false;
     }
 
-    public void updateBlock(World worldIn, IBlockState state)
+    public void updateBlock(World worldIn, final IBlockState state)
     {
          world.notifyBlockUpdate(pos, state, state, 0x03);
          world.markBlockRangeForRenderUpdate(pos,pos);
@@ -213,7 +213,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
      * @param item the itemStack to be placed inside it.
      * @return false if it couldnt be completed, true if at least 1 item of the stack was inserted.
      */
-    public boolean addItem(ItemStack item)
+    public boolean addItem(final ItemStack item)
     {
         //Todo implement method
         return false;

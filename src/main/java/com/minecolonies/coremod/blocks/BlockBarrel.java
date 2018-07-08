@@ -298,7 +298,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     }
 
     @Override
-    public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+    public boolean canPlaceBlockAt(World worldIn, final BlockPos pos)
     {
         return worldIn.getBlockState(pos.down()).getBlock().getClass() == BlockAir.class
                ||worldIn.getBlockState(pos.down()).getBlock().getClass() == BlockBarrel.class ?false:true;
