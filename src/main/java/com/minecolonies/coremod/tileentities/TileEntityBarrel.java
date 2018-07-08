@@ -2,6 +2,7 @@ package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.items.ModItems;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -85,10 +86,8 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         //If the barrel has finished composting, we drop and change state
         if (done)
         {
-            // TODO: Add this back in once compost exists again. For now it drops 6 boneMeals
-            // playerIn.inventory.addItemStackToInventory(new ItemStack(ModItems.compost, 6));
+            playerIn.inventory.addItemStackToInventory(new ItemStack(ModItems.compost, 6));
             done = false;
-            playerIn.inventory.addItemStackToInventory(new ItemStack(Items.DYE, 6, 15));
             return true;
         }
 
