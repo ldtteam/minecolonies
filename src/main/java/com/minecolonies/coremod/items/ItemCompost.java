@@ -34,9 +34,9 @@ public class ItemCompost extends AbstractItemMinecolonies
 
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand,
-                                      EnumFacing facing, float hitX, float hitY, float hitZ)
+                                      final EnumFacing facing, float hitX, float hitY, float hitZ)
     {
-        ItemStack itemstack = player.getHeldItem(hand);
+        final ItemStack itemstack = player.getHeldItem(hand);
         if (applyBonemeal(itemstack, worldIn, pos, player, hand))
         {
             if (!worldIn.isRemote)
@@ -49,9 +49,9 @@ public class ItemCompost extends AbstractItemMinecolonies
     }
 
     public static boolean applyBonemeal(ItemStack stack, World worldIn, BlockPos target, EntityPlayer player,
-                                        @Nullable EnumHand hand)
+                                        @Nullable final EnumHand hand)
     {
-        IBlockState iblockstate = worldIn.getBlockState(target);
+        final IBlockState iblockstate = worldIn.getBlockState(target);
         int hook = ForgeEventFactory.onApplyBonemeal(player, worldIn, target, iblockstate, stack, hand);
         if (hook != 0)
         {
@@ -61,7 +61,7 @@ public class ItemCompost extends AbstractItemMinecolonies
             {
             if (iblockstate.getBlock() instanceof IGrowable)
             {
-                IGrowable igrowable = (IGrowable)iblockstate.getBlock();
+                final IGrowable igrowable = (IGrowable)iblockstate.getBlock();
                 if (igrowable.canGrow(worldIn, target, iblockstate, worldIn.isRemote))
                 {
                     if (!worldIn.isRemote)

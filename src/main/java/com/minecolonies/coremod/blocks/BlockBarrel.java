@@ -105,7 +105,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     @Override
     public void updateTick(final World worldIn, final BlockPos pos, final IBlockState state, final Random rand)
     {
-        TileEntity te = worldIn.getTileEntity(pos);
+        final TileEntity te = worldIn.getTileEntity(pos);
         if(te!=null)
         {
             if(!worldIn.isRemote)
@@ -151,12 +151,10 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
 
             final ItemStack itemstack = playerIn.inventory.getCurrentItem();
             TileEntity te = worldIn.getTileEntity(pos);
-            if (te instanceof TileEntityBarrel) {
-                if(!worldIn.isRemote)
-                {
-                    ((TileEntityBarrel) te).useBarrel(worldIn, playerIn, itemstack, state, pos);
-                    ((TileEntityBarrel) te).updateBlock(worldIn, state);
-                }
+            if (te instanceof TileEntityBarrel && !worldIn.isRemote)
+            {
+                ((TileEntityBarrel) te).useBarrel(worldIn, playerIn, itemstack, state, pos);
+                ((TileEntityBarrel) te).updateBlock(worldIn, state);
             }
 
         //}
@@ -208,7 +206,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
 
     @NotNull
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, final BlockPos pos)
     {
         return BOUNDING_BOX;
     }
@@ -240,8 +238,8 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     @NotNull
     @Override
     public IBlockState getStateForPlacement(
-      @NotNull final World world, @NotNull final BlockPos pos, @NotNull EnumFacing facing, float hitX, float hitY,
-                                            float hitZ, int meta, @NotNull final EntityLivingBase placer, final EnumHand hand) {
+      @NotNull final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing facing, final float hitX, final float hitY,
+                                            final float hitZ, int meta, @NotNull final EntityLivingBase placer, final EnumHand hand) {
         return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand).withProperty(FACING, placer.getHorizontalFacing());
     }
 
@@ -263,10 +261,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     }
 
 
-
-    // Please note that we shouldn't manipulate the world in any way in this method, in this method we should just calculate the state the barrel should be in and return it
-    // the world will do the rest, the world actually calls the getActualState method.
-    public static IBlockState changeStateOverFullness(TileEntityBarrel entity, IBlockAccess worldIn, IBlockState blockState, BlockPos pos)
+    public static IBlockState changeStateOverFullness(TileEntityBarrel entity, IBlockAccess worldIn, final IBlockState blockState, BlockPos pos)
     {
 
         final TileEntityBarrel te = entity;
@@ -297,7 +292,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
 
     @Nullable
     @Override
-    public TileEntity createNewTileEntity(World world, int i)
+    public TileEntity createNewTileEntity(World world, final int i)
     {
         return new TileEntityBarrel();
     }
@@ -310,7 +305,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
+    public void neighborChanged(IBlockState state, World worldIn, final BlockPos pos, final Block blockIn, BlockPos fromPos)
     {
         if(worldIn.isAirBlock(pos.down()) || worldIn.getBlockState(pos.down()).getBlock() == ModBlocks.blockBarrel)
         {

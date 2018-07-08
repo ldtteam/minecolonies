@@ -35,17 +35,11 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     @Override
     public void update()
     {
-        World world = this.getWorld();
+        final World world = this.getWorld();
 
-        //todo we should do this here in intervals look how we check things in random intervals in the colony.
-        // this way we avoid calling this every tick which causes lag. Just calling this probablistically every 20 ticks and
-        // make it run until 24000/20 will have the same result but consume way less load on the server.
-        if(!world.isRemote)
+        if (!world.isRemote && (world.getWorldTime() % (world.rand.nextInt(AVERAGE_TICKS * 2) + 1) == 0))
         {
-            if (world.getWorldTime() % (world.rand.nextInt(AVERAGE_TICKS * 2) + 1) == 0)
-            {
-                this.updateTick(world, this.getPos(), world.getBlockState(this.getPos()), new Random());
-            }
+            this.updateTick(world, this.getPos(), world.getBlockState(this.getPos()), new Random());
         }
 
     }
@@ -109,7 +103,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
 
     }
 
-    private void consumeNeededItems(World worldIn, ItemStack itemStack)
+    private void consumeNeededItems(World worldIn, final ItemStack itemStack)
     {
 
         int factor;
@@ -120,7 +114,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         //The available items the player has in his hand (Rotten Flesh counts as the double)
         int availableItems = itemStack.getCount()*factor;
         //The items we need to complete the barrel
-        int neededItems = MAX_ITEMS - items;
+        final int neededItems = MAX_ITEMS - items;
         //The quantity of items that we are going to take from the player
         int itemsToRemove = Math.min(neededItems, availableItems);
 
@@ -131,9 +125,9 @@ public class TileEntityBarrel extends TileEntity implements ITickable
 
     }
 
-    private boolean checkCorrectItem(ItemStack itemStack)
+    private boolean checkCorrectItem(final ItemStack itemStack)
     {
-        for(String string : Configurations.gameplay.listOfCompostableItems)
+        for(final String string : Configurations.gameplay.listOfCompostableItems)
         {
             if(itemStack.getItem().getRegistryName().toString().equals(string))
             {
@@ -151,7 +145,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound)
+    public NBTTagCompound writeToNBT(final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
@@ -163,7 +157,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound)
+    public void readFromNBT(final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
         this.items = compound.getInteger("items");
@@ -195,7 +189,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     }
 
     @Override
-    public final void handleUpdateTag(NBTTagCompound tag)
+    public final void handleUpdateTag(final NBTTagCompound tag)
     {
         this.items = tag.getInteger("items");
         this.timer = tag.getInteger("timer");
