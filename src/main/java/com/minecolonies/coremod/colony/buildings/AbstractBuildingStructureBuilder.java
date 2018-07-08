@@ -310,6 +310,12 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         this.markDirty();
     }
 
+    @Override
+    public boolean canCraftComplexRecipes()
+    {
+        return true;
+    }
+
     /**
      * Check if the structureBuilder requires a certain ItemStack for the current construction.
      *
