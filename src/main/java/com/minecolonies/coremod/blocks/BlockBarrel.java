@@ -261,7 +261,8 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     }
 
 
-    public static IBlockState changeStateOverFullness(final TileEntityBarrel entity, IBlockAccess worldIn, final IBlockState blockState, final BlockPos pos)
+    public static IBlockState changeStateOverFullness(final TileEntityBarrel entity, final IBlockAccess worldIn,
+                                                      final IBlockState blockState, final BlockPos pos)
     {
 
         final TileEntityBarrel te = entity;
