@@ -206,7 +206,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
 
     @NotNull
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, final IBlockAccess source, final BlockPos pos)
+    public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos)
     {
         return BOUNDING_BOX;
     }
@@ -261,7 +261,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     }
 
 
-    public static IBlockState changeStateOverFullness(final TileEntityBarrel entity, IBlockAccess worldIn, final IBlockState blockState, BlockPos pos)
+    public static IBlockState changeStateOverFullness(final TileEntityBarrel entity, IBlockAccess worldIn, final IBlockState blockState, final BlockPos pos)
     {
 
         final TileEntityBarrel te = entity;
@@ -305,7 +305,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World worldIn, final BlockPos pos, final Block blockIn, final BlockPos fromPos)
+    public void neighborChanged(final IBlockState state, final World worldIn, final BlockPos pos, final Block blockIn, final BlockPos fromPos)
     {
         if(worldIn.isAirBlock(pos.down()) || worldIn.getBlockState(pos.down()).getBlock() == ModBlocks.blockBarrel)
         {
