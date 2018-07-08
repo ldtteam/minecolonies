@@ -167,12 +167,12 @@ public class WindowListRecipes extends Window implements ButtonHandler
             building.removeRecipe(row+1);
             MineColonies.getNetwork().sendToServer(new AddRemoveRecipeMessage(data, building, true));
         }
-        else if (button.getID().equals(BUTTON_UP))
+        else if (button.getID().equals(BUTTON_FORWARD))
         {
             building.switchIndex(row, row + 1);
             MineColonies.getNetwork().sendToServer(new ChangeRecipePriorityMessage(building, row, true));
         }
-        else if (button.getID().equals(BUTTON_DOWN))
+        else if (button.getID().equals(BUTTON_BACKWARD))
         {
             building.switchIndex(row, row - 1);
             MineColonies.getNetwork().sendToServer(new ChangeRecipePriorityMessage(building, row, false));
