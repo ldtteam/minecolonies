@@ -240,6 +240,7 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.multiBlock);
         createCustomModel(ModBlocks.blockBarrel);
         createCustomModel(ModItems.itemCactusDoor);
+        createCustomModel(ModItems.compost);
 
         ModelLoader.setCustomStateMapper(ModBlocks.blockCactusDoor, new StateMap.Builder().ignore(BlockCactusDoor.POWERED).build());
         ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());

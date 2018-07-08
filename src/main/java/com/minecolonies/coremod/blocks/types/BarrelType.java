@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.blocks;
+package com.minecolonies.coremod.blocks.types;
 
 import net.minecraft.block.material.MapColor;
 import net.minecraft.util.IStringSerializable;

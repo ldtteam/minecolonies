@@ -2,7 +2,7 @@
   "parent": "minecolonies:block/barrel_block/0perc_crate",
   "display": {
       "gui": {
-        "rotation": [45, 10, 0],
+        "rotation": [45, 170, 0],
         "translation": [0, 0, 0],
         "scale": [0.6, 0.5, 0.6]
       },

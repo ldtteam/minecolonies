@@ -23,7 +23,6 @@ public final class ModItems
     public static Item chiefSword;
     public static Item clipboard;
     public static Item itemCactusDoor;
-    //TODO: register the compost again when it works.
     public static Item compost;
 
     public static Item itemAchievementProxySettlement;
