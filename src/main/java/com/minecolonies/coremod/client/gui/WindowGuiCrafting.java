@@ -19,6 +19,7 @@ import net.minecraft.world.World;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -27,6 +28,8 @@ import java.util.List;
 public class WindowGuiCrafting extends GuiContainer
 {
     private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES = new ResourceLocation(Constants.MOD_ID, "textures/gui/crafting2x2.png");
+
+    private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES3X3 = new ResourceLocation(Constants.MOD_ID, "textures/gui/crafting3x3.png");
 
     /**
      * X offset of the button.
@@ -69,6 +72,11 @@ public class WindowGuiCrafting extends GuiContainer
     private static final int CRAFTING_GRID_SIZE = 4;
 
     /**
+     * Size of the crafting grid.
+     */
+    private static final int MAX_CRAFTING_GRID_SIZE = 9;
+
+    /**
      * The button to click done after finishing the recipe.
      */
     private GuiButton doneButton;
@@ -79,6 +87,11 @@ public class WindowGuiCrafting extends GuiContainer
     private final AbstractBuildingWorker.View building;
 
     /**
+     * Check if the GUI should display for 9 or 4 slots.
+     */
+    private final boolean completeCrafting;
+
+    /**
      * Create a crafting gui window.
      *
      * @param playerInv     the player.
@@ -87,8 +100,16 @@ public class WindowGuiCrafting extends GuiContainer
      */
     public WindowGuiCrafting(final InventoryPlayer playerInv, final World worldIn, final AbstractBuildingWorker.View building)
     {
-        super(new CraftingGUIBuilding(playerInv, worldIn));
+        super(new CraftingGUIBuilding(playerInv, worldIn, building.canCraftComplexRecipes()));
         this.building = building;
+        if(building.canCraftComplexRecipes())
+        {
+            completeCrafting = true;
+        }
+        else
+        {
+            completeCrafting = false;
+        }
     }
 
     @Override
@@ -112,16 +133,12 @@ public class WindowGuiCrafting extends GuiContainer
 
         if (doneButton.isMouseOver())
         {
-            final List<ItemStack> input = new ArrayList<>();
+            final List<ItemStack> input = new LinkedList<>();
             final List<ItemStack> secondaryOutput = new ArrayList<>();
 
-            for(int i = 1; i <= CRAFTING_GRID_SIZE; i++)
+            for(int i = 1; i <= (completeCrafting ? MAX_CRAFTING_GRID_SIZE : CRAFTING_GRID_SIZE); i++)
             {
                 final ItemStack stack = inventorySlots.getInventory().get(i);
-                if(ItemStackUtils.isEmpty(stack))
-                {
-                    continue;
-                }
                 final ItemStack copy = stack.copy();
                 ItemStackUtils.setSize(copy, 1);
 
@@ -137,7 +154,7 @@ public class WindowGuiCrafting extends GuiContainer
 
             if(!ItemStackUtils.isEmpty(primaryOutput))
             {
-                MineColonies.getNetwork().sendToServer(new AddRemoveRecipeMessage(input, 2, primaryOutput, secondaryOutput, building, false));
+                MineColonies.getNetwork().sendToServer(new AddRemoveRecipeMessage(input, completeCrafting ? 3 : 2, primaryOutput, secondaryOutput, building, false));
                 LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.gui.recipe.done");
             }
         }
@@ -158,7 +175,14 @@ public class WindowGuiCrafting extends GuiContainer
     protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY)
     {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(CRAFTING_TABLE_GUI_TEXTURES);
+        if(completeCrafting)
+        {
+            this.mc.getTextureManager().bindTexture(CRAFTING_TABLE_GUI_TEXTURES3X3);
+        }
+        else
+        {
+            this.mc.getTextureManager().bindTexture(CRAFTING_TABLE_GUI_TEXTURES);
+        }
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
     }
 }

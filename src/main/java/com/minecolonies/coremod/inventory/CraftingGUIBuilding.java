@@ -60,6 +60,16 @@ public class CraftingGUIBuilding extends Container
     private static final int Y_OFFSET_CRAFTING = 17;
 
     /**
+     * Amount of slots in the crafting window.
+     */
+    private static final int CRAFTING_SLOTS = 5;
+
+    /**
+     * Amount of slots in the crafting window.
+     */
+    private static final int ADDITIONAL_SLOTS = 5;
+
+    /**
      * Start slot of the player hotbar.
      */
     private static final int HOTBAR_START = 32;
@@ -77,7 +87,7 @@ public class CraftingGUIBuilding extends Container
     /**
      * The crafting matrix inventory (2x2).
      */
-    private final InventoryCrafting craftMatrix = new InventoryCrafting(this, 2, 2);
+    private final InventoryCrafting craftMatrix;
 
     /**
      * The crafting result slot.
@@ -89,13 +99,36 @@ public class CraftingGUIBuilding extends Container
      */
     private final World worldObj;
 
+    /**
+     * The player assigned to it.
+     */
     private final EntityPlayer player;
 
-    public CraftingGUIBuilding(final InventoryPlayer playerInventory, final World worldIn)
+    /**
+     * Boolean variable defining if complete grid or not 3x3(true), 2x2(false).
+     */
+    private final boolean complete;
+
+    /**
+     * Creates a crafting container.
+     * @param playerInventory the players inv.
+     * @param worldIn the world.
+     * @param complete if 3x3(true) or 2x2(false).
+     */
+    public CraftingGUIBuilding(final InventoryPlayer playerInventory, final World worldIn, final boolean complete)
     {
         super();
         this.worldObj = worldIn;
         this.player = playerInventory.player;
+        this.complete = complete;
+        if(complete)
+        {
+            craftMatrix = new InventoryCrafting(this, 3, 3);
+        }
+        else
+        {
+            craftMatrix = new InventoryCrafting(this, 2, 2);
+        }
 
         this.addSlotToContainer(new SlotCrafting(playerInventory.player, this.craftMatrix, this.craftResult, 0, X_CRAFT_RESULT, Y_CRAFT_RESULT)
         {
@@ -106,11 +139,11 @@ public class CraftingGUIBuilding extends Container
             }
         });
 
-        for (int i = 0; i < 2; ++i)
+        for (int i = 0; i < craftMatrix.getWidth(); ++i)
         {
-            for (int j = 0; j < 2; ++j)
+            for (int j = 0; j < craftMatrix.getHeight(); ++j)
             {
-                this.addSlotToContainer(new Slot(this.craftMatrix, j + i * 2, X_OFFSET_CRAFTING + j * INVENTORY_OFFSET_EACH, Y_OFFSET_CRAFTING + i * INVENTORY_OFFSET_EACH)
+                this.addSlotToContainer(new Slot(this.craftMatrix, j + i * (complete ? 3 : 2) , X_OFFSET_CRAFTING + j * INVENTORY_OFFSET_EACH, Y_OFFSET_CRAFTING + i * INVENTORY_OFFSET_EACH)
                 {
                     @Override
                     public int getSlotStackLimit()
@@ -215,7 +248,7 @@ public class CraftingGUIBuilding extends Container
     @Override
     public ItemStack slotClick(final int slotId, final int clickedButton, final ClickType mode, final EntityPlayer playerIn)
     {
-        if (slotId >= 1 && slotId < CRAFTING_SLOTS)
+        if (slotId >= 1 && slotId < CRAFTING_SLOTS + (complete ? ADDITIONAL_SLOTS : 0))
         {
             // 1 is shift-click
             if (mode == ClickType.PICKUP
@@ -260,7 +293,7 @@ public class CraftingGUIBuilding extends Container
     @Override
     public ItemStack transferStackInSlot(final EntityPlayer playerIn, final int index)
     {
-        if (index <= CRAFTING_SLOTS)
+        if (index <= CRAFTING_SLOTS + (complete ? ADDITIONAL_SLOTS : 0))
         {
             return ItemStack.EMPTY;
         }
@@ -273,7 +306,7 @@ public class CraftingGUIBuilding extends Container
             itemstack = itemstack1.copy();
             if (index == 0)
             {
-                if (!this.mergeItemStack(itemstack1, CRAFTING_SLOTS, TOTAL_SLOTS, true))
+                if (!this.mergeItemStack(itemstack1, CRAFTING_SLOTS + (complete ? ADDITIONAL_SLOTS : 0), TOTAL_SLOTS+ (complete ? ADDITIONAL_SLOTS : 0), true))
                 {
                     return ItemStackUtils.EMPTY;
                 }
@@ -281,13 +314,14 @@ public class CraftingGUIBuilding extends Container
             }
             else if (index < HOTBAR_START)
             {
-                if (!this.mergeItemStack(itemstack1, HOTBAR_START, TOTAL_SLOTS, false))
+                if (!this.mergeItemStack(itemstack1, HOTBAR_START, TOTAL_SLOTS + (complete ? ADDITIONAL_SLOTS : 0), false))
                 {
                     return ItemStackUtils.EMPTY;
                 }
             }
-            else if ((index < TOTAL_SLOTS && !this.mergeItemStack(itemstack1, CRAFTING_SLOTS, HOTBAR_START, false))
-                    || !this.mergeItemStack(itemstack1, CRAFTING_SLOTS, TOTAL_SLOTS, false))
+            else if ((index < TOTAL_SLOTS + (complete ? ADDITIONAL_SLOTS : 0)
+                    && !this.mergeItemStack(itemstack1, CRAFTING_SLOTS + (complete ? ADDITIONAL_SLOTS : 0), HOTBAR_START, false))
+                    || !this.mergeItemStack(itemstack1, CRAFTING_SLOTS + (complete ? ADDITIONAL_SLOTS : 0), TOTAL_SLOTS+ (complete ? ADDITIONAL_SLOTS : 0), false))
             {
                 return null;
             }
@@ -309,7 +343,14 @@ public class CraftingGUIBuilding extends Container
 
     public List<Slot> getCraftingSlots()
     {
-        return ImmutableList.of(getSlot(1), getSlot(2), getSlot(3), getSlot(4));
+        if(complete)
+        {
+            return ImmutableList.of(getSlot(1), getSlot(2), getSlot(3), getSlot(4), getSlot(5), getSlot(6), getSlot(7), getSlot(8), getSlot(9));
+        }
+        else
+        {
+            return ImmutableList.of(getSlot(1), getSlot(2), getSlot(3), getSlot(4));
+        }
     }
 
     @Override
@@ -318,18 +359,39 @@ public class CraftingGUIBuilding extends Container
         return slotIn.inventory != this.craftResult && super.canMergeSlot(stack, slotIn);
     }
 
+    /**
+     * Getter for the craft matrix.
+     * @return the matric.
+     */
     public InventoryCrafting getCraftMatrix()
     {
         return craftMatrix;
     }
 
+    /**
+     * Getter for the world obj.
+     * @return the world obj.
+     */
     public World getWorldObj()
     {
         return worldObj;
     }
 
+    /**
+     * Getter for the player.
+     * @return the player.
+     */
     public EntityPlayer getPlayer()
     {
         return player;
+    }
+
+    /**
+     * Getter for completeness.
+     * @return true if 3x3 and false for 2x2.
+     */
+    public boolean isComplete()
+    {
+        return complete;
     }
 }

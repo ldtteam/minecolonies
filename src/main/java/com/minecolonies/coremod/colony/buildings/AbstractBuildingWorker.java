@@ -346,9 +346,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
      */
     public void addRecipe(final IToken token)
     {
+        //todo recipes not getting stored accordingly!
         if(canRecipeBeAdded() && Math.pow(2, getBuildingLevel()) >= (recipes.size() + 1))
         {
             recipes.add(token);
+            markDirty();
         }
     }
 
@@ -359,6 +361,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     public void removeRecipe(final IToken token)
     {
         recipes.remove(token);
+        markDirty();
     }
 
     /**
@@ -431,6 +434,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
         {
             ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(storage));
         }
+
+        buf.writeBoolean(canCraftComplexRecipes());
     }
 
     /**
@@ -475,6 +480,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     }
 
     /**
+     * Check if a building can craft complex recipes.
+     * @return true if so.
+     */
+    public boolean canCraftComplexRecipes()
+    {
+        return false;
+    }
+
+    /**
      * AbstractBuildingWorker View for clients.
      */
     public static class View extends AbstractBuildingView
@@ -488,6 +502,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
          * List of recipes.
          */
         private final List<IRecipeStorage> recipes = new ArrayList<>();
+
+        /**
+         * Variable defining if the building owner can craft complex 3x3 recipes.
+         */
+        private boolean canCraftComplexRecipes;
 
         /**
          * Creates the view representation of the building.
@@ -542,6 +561,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
                     recipes.add(storage);
                 }
             }
+            this.canCraftComplexRecipes = buf.readBoolean();
         }
 
         /**
@@ -617,6 +637,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
         public boolean hasEnoughWorkers()
         {
             return !workerIDs.isEmpty();
+        }
+
+        /**
+         * Check if a building can craft complex recipes.
+         * @return true if so.
+         */
+        public boolean canCraftComplexRecipes()
+        {
+            return this.canCraftComplexRecipes;
         }
     }
 }
