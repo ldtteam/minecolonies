@@ -23,17 +23,36 @@ import java.util.Random;
 
 public class TileEntityBarrel extends TileEntity implements ITickable
 {
+    /**
+     * True if the barrel has finished composting and the items are ready to harvest
+     */
     private boolean                                 done           = false;
+    /**
+     * The number of items that the barrel contains
+     */
     private int                                     items          = 0;
+    /**
+     * The timer for the composting process
+     */
     private int                                     timer          = 0;
+    /**
+     * The number of items it needs to start composting
+     */
     public static final int                         MAX_ITEMS      = 64;
-    private static final int                        TIMER_END      = 24000; //24000; //Number of Minecraft ticks in 2
-                                                                            // whole days
-    private static final int                        AVERAGE_TICKS  = 20;    //The average of ticks that passes between
-                                                                            //actually ticking the tileEntity
+    /**
+     * The number the timer has to reach to finish composting. Number of Minecraft ticks in 2 whole days
+     */
+    private static final int                        TIMER_END      = 24000;
+    /**
+     * The average of ticks that passes between actually ticking the tileEntity
+     */
+    private static final int                        AVERAGE_TICKS  = 20;
 
+    /**
+     * Update method to be called by Minecraft every tick
+     */
     @Override
-    public void update()
+    public void update( )
     {
         final World world = this.getWorld();
 
@@ -44,17 +63,21 @@ public class TileEntityBarrel extends TileEntity implements ITickable
 
     }
 
-
+    /**
+     * Method that does compost ticks if needed or spawns particles if finished
+     * @param worldIn the world
+     * @param pos the position
+     * @param state the state of the block
+     * @param rand Random class
+     */
     public void updateTick(final World worldIn, final BlockPos pos, final IBlockState state, final Random rand)
     {
-        //Check if the barrel is actually full
         if(getItems() == TileEntityBarrel.MAX_ITEMS)
         {
             doBarrelCompostTick(worldIn, pos, state);
         }
         if(this.done)
         {
-            //If the barrel is done, we spawn particles imitating "bad smell"
             ((WorldServer)worldIn).spawnParticle(
                     EnumParticleTypes.VILLAGER_HAPPY, this.getPos().getX()+0.5,
                     this.getPos().getY()+1.5, this.getPos().getZ()+0.5,
@@ -74,10 +97,17 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         }
     }
 
-    //whenever player right click to barrel call this.
+    /**
+     * Method called when a player uses the block. Takes the needed itmes from the player if needed.
+     * @param worldIn the world
+     * @param playerIn the player
+     * @param itemstack the itemStack on the hand of the player
+     * @param state the state of the block
+     * @param pos the position
+     * @return if the barrel took any item
+     */
     public boolean useBarrel(final World worldIn, final EntityPlayer playerIn, final ItemStack itemstack, final IBlockState state, final BlockPos pos)
     {
-        //If the barrel has finished composting, we drop and change state
         if (done)
         {
             playerIn.inventory.addItemStackToInventory(new ItemStack(ModItems.compost, 6));
@@ -136,6 +166,11 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         return false;
     }
 
+    /**
+     * Updates the block between the server and the client
+     * @param worldIn the world
+     * @param state the state of the block
+     */
     public void updateBlock(final World worldIn, final IBlockState state)
     {
          world.notifyBlockUpdate(pos, state, state, 0x03);
@@ -195,11 +230,19 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         this.done = tag.getBoolean("done");
     }
 
+    /**
+     * Returns the number of items that the block contains
+     * @return the number of items
+     */
     public int getItems()
     {
         return items;
     }
 
+    /**
+     * Returns if the barrel has finished composting
+     * @return true if done, false if not
+     */
     public boolean isDone()
     {
         return done;
@@ -226,15 +269,6 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     {
         //Todo implement method
         return ItemStack.EMPTY;
-    }
-
-    /**
-     * Lets the AI know if a barrel is ready to be harvested.
-     * @return true if the barrel is ready, false if not.
-     */
-    public boolean isReady()
-    {
-        return done;
     }
 
 }

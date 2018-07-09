@@ -1,11 +1,10 @@
 package com.minecolonies.coremod.items;
 
-import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -13,7 +12,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.player.BonemealEvent;
 
 import javax.annotation.Nullable;
 
@@ -22,16 +20,30 @@ import javax.annotation.Nullable;
  */
 public class ItemCompost extends AbstractItemMinecolonies
 {
-    private static final int MAX_STACK_SIZE = 64;
 
+    /***
+     * Constructor for the ItemCompost
+     */
     public ItemCompost()
     {
         super("compost");
 
         super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        maxStackSize = MAX_STACK_SIZE;
+        maxStackSize = Constants.STACKSIZE;
     }
 
+    /***
+     * Called whenever the player uses the item
+     * @param player the player that is using the item
+     * @param worldIn the world
+     * @param pos the position
+     * @param hand the hand of hte player (will contain a stack of ItemCompost)
+     * @param facing the direction the player is facing
+     * @param hitX the X coord to where the player used the item
+     * @param hitY the Y coord to where the player used the item
+     * @param hitZ the Z coord to where the player used the item
+     * @return EnumActionResult.SUCCESS if it could apply the event, EnumActionResult.FAIL if not
+     */
     @Override
     public EnumActionResult onItemUse(final EntityPlayer player, final World worldIn, final BlockPos pos, final EnumHand hand,
                                       final EnumFacing facing, final float hitX, final float hitY, final float hitZ)
@@ -48,6 +60,15 @@ public class ItemCompost extends AbstractItemMinecolonies
         return EnumActionResult.FAIL;
     }
 
+    /***
+     * If the target is a IGrowable, it makes it grow
+     * @param stack the stack of items that is used to apply the bone meal event (ItemCompost)
+     * @param worldIn the world
+     * @param target the target for the bone meal event
+     * @param player the player using triggering the event
+     * @param hand the hand of the player
+     * @return true if it could apply the event, false if not
+     */
     public static boolean applyBonemeal(final ItemStack stack, final World worldIn, final BlockPos target, final EntityPlayer player,
                                         @Nullable final EnumHand hand)
     {
@@ -70,7 +91,6 @@ public class ItemCompost extends AbstractItemMinecolonies
                         {
                             igrowable.grow(worldIn, worldIn.rand, target, iblockstate);
                         }
-
                         stack.shrink(1);
                     }
                     return true;

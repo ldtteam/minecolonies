@@ -94,7 +94,6 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
      *
      * @return true
      */
-    //todo: remove once we no longer need to support this
     @SuppressWarnings(DEPRECATION)
     @Override
     public boolean isOpaqueCube(final IBlockState state)
@@ -129,12 +128,16 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
         return new TileEntityBarrel();
     }
 
+
     @Override
     public boolean hasTileEntity(final IBlockState state)
     {
         return true;
     }
 
+    /**
+     * Gets called whenever a player interacts with the block
+     */
     @Override
     public boolean onBlockActivated(
             final World worldIn,
@@ -147,17 +150,15 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
             final float hitY,
             final float hitZ)
     {
-        //if(!worldIn.isRemote) {
 
-            final ItemStack itemstack = playerIn.inventory.getCurrentItem();
-            final TileEntity te = worldIn.getTileEntity(pos);
-            if (te instanceof TileEntityBarrel && !worldIn.isRemote)
-            {
-                ((TileEntityBarrel) te).useBarrel(worldIn, playerIn, itemstack, state, pos);
-                ((TileEntityBarrel) te).updateBlock(worldIn, state);
-            }
+        final ItemStack itemstack = playerIn.inventory.getCurrentItem();
+        final TileEntity te = worldIn.getTileEntity(pos);
+        if (te instanceof TileEntityBarrel && !worldIn.isRemote)
+        {
+            ((TileEntityBarrel) te).useBarrel(worldIn, playerIn, itemstack, state, pos);
+            ((TileEntityBarrel) te).updateBlock(worldIn, state);
+        }
 
-        //}
         return true;
     }
 
@@ -239,7 +240,8 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     @Override
     public IBlockState getStateForPlacement(
       @NotNull final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing facing, final float hitX, final float hitY,
-                                            final float hitZ, final int meta, @NotNull final EntityLivingBase placer, final EnumHand hand) {
+                                            final float hitZ, final int meta, @NotNull final EntityLivingBase placer, final EnumHand hand)
+    {
         return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand).withProperty(FACING, placer.getHorizontalFacing());
     }
 
@@ -267,13 +269,18 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
 
         final TileEntityBarrel te = entity;
 
-        //12.8 -> the number of items needed to go up on a state (having 6 filling states)
-        //So items/12.8 -> meta of the state we should get
+        /**
+         * 12.8 -> the number of items needed to go up on a state (having 6 filling states)
+         * So items/12.8 -> meta of the state we should get
+         */
         BarrelType type = BarrelType.byMetadata((int) Math.round(te.getItems()/12.8));
 
-        //We check if the barrel is marked as empty but it have items inside. If so, means that it
-        //does not have all the items needed to go on TWENTY state, but we need to mark it so the player
-        //knows it have some items inside
+        /**
+         * We check if the barrel is marked as empty but it have items inside. If so, means that it
+         * does not have all the items needed to go on TWENTY state, but we need to mark it so the player
+         * knows it have some items inside
+         */
+
         if(type.equals(BarrelType.ZERO) && te.getItems() > 0)
         {
             type = BarrelType.TWENTY;
