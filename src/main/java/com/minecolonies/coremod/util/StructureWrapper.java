@@ -179,7 +179,7 @@ public final class StructureWrapper
                     }
 
                     final NBTTagCompound tileEntityData = this.structure.getBlockInfo(localPos).tileentityData;
-                    if (tileEntityData != null)
+                    if (tileEntityData != null && world.getTileEntity(worldPos) == null)
                     {
                         final TileEntity entity = TileEntity.create(world, tileEntityData);
                         world.setTileEntity(worldPos, entity);

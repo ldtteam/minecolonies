@@ -313,6 +313,12 @@ public class TileEntityRack extends TileEntity
                 this.main = true;
             }
         }
+
+        if (main && world.getTileEntity(neighbor) instanceof TileEntityRack && ((TileEntityRack) world.getTileEntity(neighbor)).isMain())
+        {
+            this.main = false;
+            this.markDirty();
+        }
     }
 
     /**
@@ -376,13 +382,17 @@ public class TileEntityRack extends TileEntity
         {
             this.neighbor = newNeighbor;
             single = false;
-            if (entity instanceof TileEntityRack && !((TileEntityRack) entity).isMain())
+            if (entity instanceof TileEntityRack)
             {
-                this.main = true;
-                ((TileEntityRack) entity).setMain(false);
+                if (!((TileEntityRack) entity).isMain())
+                {
+                    this.main = true;
+                    ((TileEntityRack) entity).setMain(false);
+                }
+                ((TileEntityRack) entity).setNeighbor(this.getPos());
+                entity.markDirty();
             }
-            ((TileEntityRack) entity).setNeighbor(this.getPos());
-            entity.markDirty();
+
             updateItemStorage();
             this.markDirty();
         }
