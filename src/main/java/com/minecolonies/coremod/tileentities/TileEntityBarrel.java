@@ -163,10 +163,12 @@ public class TileEntityBarrel extends TileEntity implements ITickable
             {
                 return true;
             }
-            if(OreDictionary.getOreIDs(itemStack).length > 0 &&
-                 OreDictionary.getOreName(OreDictionary.getOreIDs(itemStack)[0]).equals(string))
+            for(final int id: OreDictionary.getOreIDs(itemStack))
             {
-                return true;
+                if (OreDictionary.getOreName(id).equals(string))
+                {
+                    return true;
+                }
             }
         }
         return false;
