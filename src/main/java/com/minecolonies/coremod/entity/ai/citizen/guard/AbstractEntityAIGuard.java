@@ -10,6 +10,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
@@ -37,8 +38,10 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +60,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      * Tools and Items needed by the worker.
      */
     public final List<ToolType>  toolsNeeded = new ArrayList<>();
-    public final List<GuardItemsNeeded> itemsNeeded = new ArrayList<>();
+    public final HashMap<Integer,List<GuardItemsNeeded>> itemsNeeded = new HashMap<>();
+//    public final List<GuardItemsNeeded> itemsNeeded = new ArrayList<>();
     
     /**
      * Holds a list of required armor for this guard
@@ -100,26 +104,72 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getStrength() + worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);
 
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.LEATHER_BOOTS, 1, 2, 3));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.LEATHER_CHESTPLATE, 1, 2, 3));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.LEATHER_HELMET, 1, 2, 3));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.LEATHER_LEGGINGS, 1, 2, 3));
+        final List<GuardItemsNeeded> itemlvl1Needed = new ArrayList<>();
+        itemlvl1Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.LEATHER_BOOTS, 1, 2, 4));
+        itemlvl1Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.LEATHER_CHESTPLATE, 1, 2, 4));
+        itemlvl1Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.LEATHER_HELMET, 1, 2, 4));
+        itemlvl1Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.LEATHER_LEGGINGS, 1, 2, 4));
+        itemsNeeded.put(new Integer(1), itemlvl1Needed);
 
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.CHAINMAIL_BOOTS, 1, 4, 5));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.CHAINMAIL_CHESTPLATE, 1, 4, 5));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.CHAINMAIL_HELMET, 1, 4, 5));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.CHAINMAIL_LEGGINGS, 1, 4, 5));
+        final List<GuardItemsNeeded> itemlvl11Needed = new ArrayList<>();
+        itemlvl11Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.GOLDEN_BOOTS, 1, 5, 99));
+        itemlvl11Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.GOLDEN_CHESTPLATE, 1, 5, 99));
+        itemlvl11Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.GOLDEN_HELMET, 1, 5, 99));
+        itemlvl11Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.GOLDEN_LEGGINGS, 1, 5, 99));
+        itemsNeeded.put(new Integer(1), itemlvl11Needed);
 
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.IRON_BOOTS, 1, 6, 7));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.IRON_CHESTPLATE, 1, 6, 7));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.IRON_HELMET, 1, 6, 7));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.IRON_LEGGINGS, 1, 6, 7));
 
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.DIAMOND_BOOTS, 1, 8, 99));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.DIAMOND_CHESTPLATE, 1, 8, 99));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.DIAMOND_HELMET, 1, 8, 99));
-        itemsNeeded.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.DIAMOND_LEGGINGS, 1, 8, 99));
-    }
+        final List<GuardItemsNeeded> itemlvl2Needed = new ArrayList<>();
+        itemlvl2Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.GOLDEN_BOOTS, 1, 1, 4));
+        itemlvl2Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.GOLDEN_CHESTPLATE, 1, 1, 4));
+        itemlvl2Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.GOLDEN_HELMET, 1, 1, 4));
+        itemlvl2Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.GOLDEN_LEGGINGS, 1, 1, 4));
+        itemsNeeded.put(new Integer(2), itemlvl2Needed);
+
+        final List<GuardItemsNeeded> itemlvl21Needed = new ArrayList<>();
+        itemlvl21Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.CHAINMAIL_BOOTS, 1, 5, 99));
+        itemlvl21Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.CHAINMAIL_CHESTPLATE, 1, 5, 99));
+        itemlvl21Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.CHAINMAIL_HELMET, 1, 5, 99));
+        itemlvl21Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.CHAINMAIL_LEGGINGS, 1, 5, 99));
+        itemsNeeded.put(new Integer(2), itemlvl21Needed);
+
+         
+        final List<GuardItemsNeeded> itemlvl3Needed = new ArrayList<>();
+        itemlvl3Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.CHAINMAIL_BOOTS, 1, 1, 8));
+        itemlvl3Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.CHAINMAIL_CHESTPLATE, 1, 1, 8));
+        itemlvl3Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.CHAINMAIL_HELMET, 1, 1, 8));
+        itemlvl3Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.CHAINMAIL_LEGGINGS, 1, 1, 8));
+        itemsNeeded.put(new Integer(3), itemlvl3Needed);
+
+        final List<GuardItemsNeeded> itemlvl31Needed = new ArrayList<>();
+        itemlvl31Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.IRON_BOOTS, 1, 8, 99));
+        itemlvl31Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.IRON_CHESTPLATE, 1, 8, 99));
+        itemlvl31Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.IRON_HELMET, 1, 8, 99));
+        itemlvl31Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.IRON_LEGGINGS, 1, 8, 99));
+        itemsNeeded.put(new Integer(3), itemlvl31Needed);
+
+
+        final List<GuardItemsNeeded> itemlvl4Needed = new ArrayList<>();
+        itemlvl4Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.IRON_BOOTS, 1, 1, 16));
+        itemlvl4Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.IRON_CHESTPLATE, 1, 1, 16));
+        itemlvl4Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.IRON_HELMET, 1, 1, 16));
+        itemlvl4Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.IRON_LEGGINGS, 1, 1, 16));
+        itemsNeeded.put(new Integer(4), itemlvl4Needed);
+        
+        final List<GuardItemsNeeded> itemlvl41Needed = new ArrayList<>();
+        itemlvl41Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.DIAMOND_BOOTS, 1, 17, 99));
+        itemlvl41Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.DIAMOND_CHESTPLATE, 1, 17, 99));
+        itemlvl41Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.DIAMOND_HELMET, 1, 17, 99));
+        itemlvl41Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.DIAMOND_LEGGINGS, 1, 17, 99));
+        itemsNeeded.put(new Integer(4), itemlvl41Needed);
+
+        final List<GuardItemsNeeded> itemlvl5Needed = new ArrayList<>();
+        itemlvl5Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.DIAMOND_BOOTS, 1, 1, 99));
+        itemlvl5Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.DIAMOND_CHESTPLATE, 1, 1, 99));
+        itemlvl5Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.DIAMOND_HELMET, 1, 1, 99));
+        itemlvl5Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.DIAMOND_LEGGINGS, 1, 1, 99));
+        itemsNeeded.put(new Integer(5), itemlvl5Needed);
+}
 
     @Override
     public Class getExpectedBuildingClass()
@@ -180,18 +230,27 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             }
         }
 
-        final int level = worker.getCitizenData().getLevel();
-        for (final GuardItemsNeeded item : itemsNeeded)
+        
+        @Nullable final AbstractBuildingWorker building = getOwnBuilding();
+        if (building != null)
         {
-        	//Could have multiple armor request,  make sure the require armor falls into the guard
-        	//level.
-        	if (level >= item.getMinLevelRequired() && level <= item.getmaxLevelRequiMed())
-        	{
-        		//Save the requested armor item,  so when the guard goes to put it on
-        		//they will put on the correct armor.
-        		requiredArmor.put(item.getType(), item.getItemNeeded());
-        		checkIfRequestForItemExistOrCreateAsynch(item.getItemStackNeeded());
-        	}
+            List<GuardItemsNeeded> itemList = itemsNeeded.get(new Integer(building.getBuildingLevel()));
+            if (itemList != null)
+            {
+                final int level = worker.getCitizenData().getLevel();
+                for (final GuardItemsNeeded item : itemList)
+                {
+                	//Could have multiple armor request,  make sure the require armor falls into the guard
+                	//level.
+                	if (level >= item.getMinLevelRequired() && level <= item.getmaxLevelRequiMed())
+                	{
+                		//Save the requested armor item,  so when the guard goes to put it on
+                		//they will put on the correct armor.
+                		requiredArmor.put(item.getType(), item.getItemNeeded());
+                		checkIfRequestForItemExistOrCreateAsynch(item.getItemStackNeeded());
+                	}
+                }
+            }
         }
 
         if (getOwnBuilding() != null)
