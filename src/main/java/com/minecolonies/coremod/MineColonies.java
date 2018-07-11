@@ -15,6 +15,7 @@ import com.minecolonies.coremod.event.FMLEventHandler;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.util.RecipeHandler;
+import net.minecraft.init.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -30,6 +31,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.oredict.OreDictionary;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -144,6 +146,39 @@ public class MineColonies
         ModAchievements.init();
 
         RecipeHandler.init(Configurations.gameplay.enableInDevelopmentFeatures, Configurations.gameplay.supplyChests);
+
+        //Register Vanilla items with tags
+
+        //FOOD
+        OreDictionary.registerOre("food", Items.APPLE);
+        OreDictionary.registerOre("food", Items.PORKCHOP);
+        OreDictionary.registerOre("food", Items.BEEF);
+        OreDictionary.registerOre("food", Items.BAKED_POTATO);
+        OreDictionary.registerOre("food", Items.WHEAT);
+        OreDictionary.registerOre("food", Items.BEETROOT);
+        OreDictionary.registerOre("food", Items.BREAD);
+        OreDictionary.registerOre("food", Items.CARROT);
+        OreDictionary.registerOre("food", Items.CAKE);
+        OreDictionary.registerOre("food", Items.CHICKEN);
+        OreDictionary.registerOre("food", Items.COOKED_BEEF);
+        OreDictionary.registerOre("food", Items.COOKED_CHICKEN);
+        OreDictionary.registerOre("food", Items.COOKED_FISH);
+        OreDictionary.registerOre("food", Items.COOKED_MUTTON);
+        OreDictionary.registerOre("food", Items.COOKED_PORKCHOP);
+        OreDictionary.registerOre("food", Items.COOKED_RABBIT);
+        OreDictionary.registerOre("food", Items.COOKIE);
+        OreDictionary.registerOre("food", Items.EGG);
+        OreDictionary.registerOre("food", Items.FISH);
+        OreDictionary.registerOre("food", Items.MELON);
+        OreDictionary.registerOre("food", Items.MUTTON);
+        OreDictionary.registerOre("food", Items.POTATO);
+        OreDictionary.registerOre("food", Items.RABBIT);
+
+        //SEEDS
+        OreDictionary.registerOre("seed", Items.BEETROOT_SEEDS);
+        OreDictionary.registerOre("seed", Items.MELON_SEEDS);
+        OreDictionary.registerOre("seed", Items.PUMPKIN_SEEDS);
+        OreDictionary.registerOre("seed", Items.WHEAT_SEEDS);
     }
 
     private static synchronized void initializeNetwork()

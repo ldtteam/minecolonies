@@ -17,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -159,6 +160,11 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         for(final String string : Configurations.gameplay.listOfCompostableItems)
         {
             if(itemStack.getItem().getRegistryName().toString().equals(string))
+            {
+                return true;
+            }
+            if(OreDictionary.getOreIDs(itemStack).length > 0 &&
+                 OreDictionary.getOreName(OreDictionary.getOreIDs(itemStack)[0]).equals(string))
             {
                 return true;
             }

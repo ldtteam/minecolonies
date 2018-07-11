@@ -209,21 +209,19 @@ public class Configurations
                                                              "tconstruct:blueslime"
                                                            };
 
-        @Config.Comment("The items that the composter will use to produce compost.")
+        @Config.Comment("The items and item-tags that the composter can use to produce compost.")
         public String[] listOfCompostableItems = new String[]
                                                             {
                                                               "minecraft:rotten_flesh",
-                                                              "minecraft:wheat_seeds",
-                                                              "minecraft:pumpkin_seeds",
-                                                              "minecraft:melon_seeds",
-                                                              "minecraft:beetroot_seeds",
-                                                              "minecraft:sapling",
                                                               "minecraft:tallgrass",
                                                               "minecraft:yellow_flower",
                                                               "minecraft:red_flower",
                                                               "minecraft:brown_mushroom",
                                                               "minecraft:red_mushroom",
-                                                              "minecraft:double_plant"
+                                                              "minecraft:double_plant",
+                                                              "food",
+                                                              "seed",
+                                                              "treeSapling"
                                                             };
      }
 
