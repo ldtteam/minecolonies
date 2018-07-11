@@ -60,7 +60,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      * Tools and Items needed by the worker.
      */
     public final List<ToolType>  toolsNeeded = new ArrayList<>();
-    public final HashMap<Integer,List<GuardItemsNeeded>> itemsNeeded = new HashMap<>();
+    public final Map<Integer,List<GuardItemsNeeded>> itemsNeeded = new HashMap<>();
 //    public final List<GuardItemsNeeded> itemsNeeded = new ArrayList<>();
     
     /**
@@ -109,14 +109,14 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         itemlvl1Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.LEATHER_CHESTPLATE, 1, 2, 4));
         itemlvl1Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.LEATHER_HELMET, 1, 2, 4));
         itemlvl1Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.LEATHER_LEGGINGS, 1, 2, 4));
-        itemsNeeded.put(new Integer(1), itemlvl1Needed);
+        itemsNeeded.put(Integer.valueOf(1), itemlvl1Needed);
 
         final List<GuardItemsNeeded> itemlvl11Needed = new ArrayList<>();
         itemlvl11Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.GOLDEN_BOOTS, 1, 5, 99));
         itemlvl11Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.GOLDEN_CHESTPLATE, 1, 5, 99));
         itemlvl11Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.GOLDEN_HELMET, 1, 5, 99));
         itemlvl11Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.GOLDEN_LEGGINGS, 1, 5, 99));
-        itemsNeeded.put(new Integer(1), itemlvl11Needed);
+        itemsNeeded.put(Integer.valueOf(1), itemlvl11Needed);
 
 
         final List<GuardItemsNeeded> itemlvl2Needed = new ArrayList<>();
@@ -124,14 +124,14 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         itemlvl2Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.GOLDEN_CHESTPLATE, 1, 1, 4));
         itemlvl2Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.GOLDEN_HELMET, 1, 1, 4));
         itemlvl2Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.GOLDEN_LEGGINGS, 1, 1, 4));
-        itemsNeeded.put(new Integer(2), itemlvl2Needed);
+        itemsNeeded.put(Integer.valueOf(2), itemlvl2Needed);
 
         final List<GuardItemsNeeded> itemlvl21Needed = new ArrayList<>();
         itemlvl21Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.CHAINMAIL_BOOTS, 1, 5, 99));
         itemlvl21Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.CHAINMAIL_CHESTPLATE, 1, 5, 99));
         itemlvl21Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.CHAINMAIL_HELMET, 1, 5, 99));
         itemlvl21Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.CHAINMAIL_LEGGINGS, 1, 5, 99));
-        itemsNeeded.put(new Integer(2), itemlvl21Needed);
+        itemsNeeded.put(Integer.valueOf(2), itemlvl21Needed);
 
          
         final List<GuardItemsNeeded> itemlvl3Needed = new ArrayList<>();
@@ -234,7 +234,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         @Nullable final AbstractBuildingWorker building = getOwnBuilding();
         if (building != null)
         {
-            List<GuardItemsNeeded> itemList = itemsNeeded.get(new Integer(building.getBuildingLevel()));
+            final List<GuardItemsNeeded> itemList = itemsNeeded.get(new Integer(building.getBuildingLevel()));
             if (itemList != null)
             {
                 final int level = worker.getCitizenData().getLevel();
