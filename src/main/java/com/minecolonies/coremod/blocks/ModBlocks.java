@@ -67,19 +67,20 @@ public final class ModBlocks
     /**
      * Utility blocks.
      */
-    public static BlockConstructionTape blockConstructionTape;
-    public static BlockMinecoloniesRack blockRack;
-    public static BlockWaypoint         blockWayPoint;
-    public static BlockInfoPoster       blockInfoPoster;
-    public static BlockPaperwall        blockPaperWall;
-    public static BlockShingle          blockShingleOak;
-    public static BlockShingle          blockShingleBirch;
-    public static BlockShingle          blockShingleJungle;
-    public static BlockShingle          blockShingleSpruce;
-    public static BlockShingle          blockShingleDarkOak;
-    public static BlockShingle          blockShingleAcacia;
-    public static BlockShingleSlab      blockShingleSlab;
-    public static MultiBlock            multiBlock;
+    public static BlockConstructionTape       blockConstructionTape;
+    public static BlockMinecoloniesRack       blockRack;
+    public static BlockWaypoint               blockWayPoint;
+    public static BlockInfoPoster             blockInfoPoster;
+    public static BlockPaperwall              blockPaperWall;
+    public static BlockShingle                blockShingleOak;
+    public static BlockShingle                blockShingleBirch;
+    public static BlockShingle                blockShingleJungle;
+    public static BlockShingle                blockShingleSpruce;
+    public static BlockShingle                blockShingleDarkOak;
+    public static BlockShingle                blockShingleAcacia;
+    public static BlockShingleSlab            blockShingleSlab;
+    public static MultiBlock                  multiBlock;
+    public static BlockBarrel                 blockBarrel;
 
     public static List<BlockTimberFrame> getTimberFrames()
     {
@@ -153,6 +154,7 @@ public final class ModBlocks
           BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.ACACIA.getName()).registerBlock(registry);
         blockShingleSlab = new BlockShingleSlab().registerBlock(registry);
         multiBlock = new MultiBlock().registerBlock(registry);
+        blockBarrel = new BlockBarrel().registerBlock(registry);
 
         for (final BlockPlanks.EnumType type : BlockPlanks.EnumType.values())
         {
@@ -207,7 +209,9 @@ public final class ModBlocks
         blockCactusTrapdoor.registerItemBlock(registry);
         blockCactusStair.registerItemBlock(registry);
         registry.register(new ItemSlab(blockCactusSlabHalf, blockCactusSlabHalf, blockCactusSlabDouble).setRegistryName(blockCactusSlabHalf.getRegistryName()));
-        for (final BlockTimberFrame frame : timberFrames)
+        blockBarrel.registerItemBlock(registry);
+
+        for (final BlockTimberFrame frame: timberFrames)
         {
             frame.registerItemBlock(registry);
         }
