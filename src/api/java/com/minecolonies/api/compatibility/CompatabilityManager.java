@@ -12,6 +12,7 @@ import net.minecraft.block.BlockOre;
 import net.minecraft.block.BlockRedstoneOre;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -163,7 +164,7 @@ public class CompatabilityManager implements ICompatabilityManager
         //Filter duplicated values.
         for(final ItemStorage storage: storages)
         {
-            if(!saplings.contains(storage))
+            if(!saplings.contains(storage) && (storage.getItem() !=  Items.AIR))
             {
                 saplings.add(storage);
             }

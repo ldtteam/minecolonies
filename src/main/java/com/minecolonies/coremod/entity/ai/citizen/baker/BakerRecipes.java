@@ -4,6 +4,9 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
+
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -56,7 +59,15 @@ public final class BakerRecipes
     private static final int COOKIES = 8;
     static
     {
-        final List<ItemStack> inputCake = new ArrayList<>();
+        final List<ItemStack> inputPumpkinPie = new ArrayList<>();
+        inputPumpkinPie.add(new ItemStack(Blocks.PUMPKIN.getItemDropped(null, null, 0), 1));
+//        inputPumpkinPie.add(new ItemStack(Items.PUMPKIN_SEEDS, 4));
+        inputPumpkinPie.add(new ItemStack(Items.SUGAR, 1));
+        inputPumpkinPie.add(new ItemStack(Items.EGG, 1));
+
+    	
+    	
+    	final List<ItemStack> inputCake = new ArrayList<>();
         inputCake.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT));
         inputCake.add(new ItemStack(Items.MILK_BUCKET, 1));
         inputCake.add(new ItemStack(Items.MILK_BUCKET, 1));
@@ -74,7 +85,9 @@ public final class BakerRecipes
         recipes = new ImmutableList.Builder<IRecipeStorage>()
                     .add(sfc.getNewInstance(TypeConstants.RECIPE, sfc.getNewInstance(TypeConstants.ITOKEN), inputCookie, GRID_SIZE, new ItemStack(Items.COOKIE, COOKIES)))
                     .add(sfc.getNewInstance(TypeConstants.RECIPE, sfc.getNewInstance(TypeConstants.ITOKEN), inputCake, GRID_SIZE, new ItemStack(Items.CAKE)))
-                    .add(sfc.getNewInstance(TypeConstants.RECIPE, sfc.getNewInstance(TypeConstants.ITOKEN), inputBread, GRID_SIZE, new ItemStack(Items.BREAD))).build();
+                    .add(sfc.getNewInstance(TypeConstants.RECIPE, sfc.getNewInstance(TypeConstants.ITOKEN), inputBread, GRID_SIZE, new ItemStack(Items.BREAD)))
+                    .add(sfc.getNewInstance(TypeConstants.RECIPE, sfc.getNewInstance(TypeConstants.ITOKEN), inputPumpkinPie, GRID_SIZE, new ItemStack(Items.PUMPKIN_PIE)))
+                    .build();
     }
     /**
      * Private constructor to hide implicit one.
