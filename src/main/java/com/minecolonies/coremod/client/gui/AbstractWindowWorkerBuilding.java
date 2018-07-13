@@ -136,29 +136,33 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
 
         findPaneOfTypeByID(BUTTON_HIRE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.hire"));
 
-        ScrollingList recipeList = findPaneOfTypeByID(LIST_WORKERS, ScrollingList.class);
-        recipeList.setDataProvider(new ScrollingList.DataProvider()
+        if (findPaneByID(LIST_WORKERS) != null)
         {
-            @Override
-            public int getElementCount()
+            ScrollingList workerList = findPaneOfTypeByID(LIST_WORKERS, ScrollingList.class);
+            workerList.setDataProvider(new ScrollingList.DataProvider()
             {
-                return  building.getWorkerId().size();
-            }
-
-            @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
-                if (!building.getWorkerId().isEmpty())
+                @Override
+                public int getElementCount()
                 {
-                    final CitizenDataView worker = building.getColony().getCitizen(building.getWorkerId().get(index));
-                    if (worker != null)
+                    return building.getWorkerId().size();
+                }
+
+                @Override
+                public void updateElement(final int index, @NotNull final Pane rowPane)
+                {
+                    if (!building.getWorkerId().isEmpty())
                     {
-                        rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabelText(worker.getName());
-                        rowPane.findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.workerLevel", worker.getLevel()));
+                        final CitizenDataView worker = building.getColony().getCitizen(building.getWorkerId().get(index));
+                        if (worker != null)
+                        {
+                            rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabelText(worker.getName());
+                            rowPane.findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class)
+                              .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.workerLevel", worker.getLevel()));
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
         
         findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabelText(building.getBuildingDmPrio() + "/10");
     }
