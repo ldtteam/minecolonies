@@ -635,6 +635,7 @@ public final class PlacementHandlers
                 {
                     return IPlacementHandler.ActionProcessingResult.DENY;
                 }
+                placer.handleTileEntityPlacement(pos);
             }
 
             final TileEntity entity = world.getTileEntity(pos);
@@ -663,23 +664,27 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            if (placer != null && !infiniteResources)
+            if (placer != null)
             {
-                final List<ItemStack> itemList = new ArrayList<>();
-                itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
-
-                for (final ItemStack stack : placer.getItemsFromTileEntity())
+                if (!infiniteResources)
                 {
-                    if (!ItemStackUtils.isEmpty(stack))
+                    final List<ItemStack> itemList = new ArrayList<>();
+                    itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
+
+                    for (final ItemStack stack : placer.getItemsFromTileEntity())
                     {
-                        itemList.add(stack);
+                        if (!ItemStackUtils.isEmpty(stack))
+                        {
+                            itemList.add(stack);
+                        }
+                    }
+
+                    if (checkForListInInvAndRequest(placer, itemList))
+                    {
+                        return IPlacementHandler.ActionProcessingResult.DENY;
                     }
                 }
-
-                if (checkForListInInvAndRequest(placer, itemList))
-                {
-                    return IPlacementHandler.ActionProcessingResult.DENY;
-                }
+                placer.handleTileEntityPlacement(pos);
             }
 
             final TileEntity entity = world.getTileEntity(pos);
