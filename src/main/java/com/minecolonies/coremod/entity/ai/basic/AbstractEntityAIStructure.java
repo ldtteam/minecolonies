@@ -390,7 +390,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         {
             if (handlers.canHandle(world, coords, blockState))
             {
-                if (Configurations.gameplay.builderInfiniteResources)
+                if (!Configurations.gameplay.builderInfiniteResources)
                 {
                     final List<ItemStack> requiredItems = handlers.getRequiredItems(world, coords, blockState, job.getStructure().getBlockInfo().tileentityData, false);
 
