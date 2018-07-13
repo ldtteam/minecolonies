@@ -212,37 +212,19 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        if (treesToFell.isEmpty())
+        final NBTTagList saplingTagList = compound.getTagList(TAG_SAPLINGS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < saplingTagList.tagCount(); ++i)
         {
-            final NBTTagList saplingTagList = compound.getTagList(TAG_SAPLINGS, Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < saplingTagList.tagCount(); ++i)
-            {
-                final NBTTagCompound saplingCompound = saplingTagList.getCompoundTagAt(i);
-                final ItemStack stack = new ItemStack(saplingCompound);
-                final boolean cut = saplingCompound.getBoolean(TAG_CUT);
-                treesToFell.put(new ItemStorage(stack), cut);
-            }
-        }
-		else 
-		{
-			// We have a list of sapplings already, but we nee to load in the
-			// NBT file.
-			// check to see if it exist and if so then update it. Otherwise skip
-			// it,
-			// as it doesn't exist in minecraft anymore.
-			final NBTTagList saplingTagList = compound.getTagList(TAG_SAPLINGS, Constants.NBT.TAG_COMPOUND);
-			for (int i = 0; i < saplingTagList.tagCount(); ++i) {
-				final NBTTagCompound saplingCompound = saplingTagList.getCompoundTagAt(i);
-				final ItemStack stack = new ItemStack(saplingCompound);
-				final boolean cut = saplingCompound.getBoolean(TAG_CUT);
-				final ItemStorage storage = new ItemStorage(stack);
-				if (treesToFell.containsKey(storage)) {
-					treesToFell.put(new ItemStorage(stack), cut);
-				}
+            final NBTTagCompound saplingCompound = saplingTagList.getCompoundTagAt(i);
+            final ItemStack stack = new ItemStack(saplingCompound);
+            final boolean cut = saplingCompound.getBoolean(TAG_CUT);
+            final ItemStorage storage = new ItemStorage(stack); 
+            if (treesToFell.containsKey(storage)) {
+				treesToFell.put(new ItemStorage(stack), cut);
 			}
+        }
 
-		}
-    	if (compound.hasKey(TAG_REPLANT))
+        if (compound.hasKey(TAG_REPLANT))
         {
             replant = compound.getBoolean(TAG_REPLANT);
         }
