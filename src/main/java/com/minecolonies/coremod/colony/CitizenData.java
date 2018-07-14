@@ -1035,9 +1035,6 @@ public class CitizenData
     public <R extends IRequestable> IToken createRequestAsync(@NotNull final R requested)
     {
         final IToken requestedToken = getWorkBuilding().createRequest(this, requested);
-
-        job.getAsyncRequests().add(requestedToken);
-
         return requestedToken;
     }
 

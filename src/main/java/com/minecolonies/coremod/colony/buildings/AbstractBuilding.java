@@ -514,7 +514,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public <R extends IRequestable> IToken<?> createRequest(@NotNull final CitizenData citizenData, @NotNull final R requested)
     {
         final IToken requestToken = colony.getRequestManager().createRequest(requester, requested);
-
+        citizenData.getJob().getAsyncRequests().add(requestToken);
         addRequestToMaps(citizenData.getId(), requestToken, TypeToken.of(requested.getClass()));
 
         colony.getRequestManager().assignRequest(requestToken);
