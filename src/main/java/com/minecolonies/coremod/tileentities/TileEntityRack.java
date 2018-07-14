@@ -397,7 +397,7 @@ public class TileEntityRack extends TileEntity
 
         if (compound.hasKey(TAG_NEIGHBOR))
         {
-            final BlockPos neighbor = BlockPosUtil.readFromNBT(compound, TAG_NEIGHBOR);;
+            final BlockPos neighbor = BlockPosUtil.readFromNBT(compound, TAG_NEIGHBOR);
             if (neighbor != BlockPos.ORIGIN)
             {
                 relativeNeighbor = pos.subtract(neighbor);
