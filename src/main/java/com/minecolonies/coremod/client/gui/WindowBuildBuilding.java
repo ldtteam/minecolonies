@@ -102,7 +102,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         if (building.getBuildingLevel() == 0)
         {
             buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.build"));
-            findPaneOfTypeByID(BUTTON_MOVE_BUILDING, Button.class).disable();
+            findPaneOfTypeByID(BUTTON_MOVE_BUILDING, Button.class).hide();
         }
         else if(building.getBuildingLevel() == building.getBuildingMaxLevel())
         {

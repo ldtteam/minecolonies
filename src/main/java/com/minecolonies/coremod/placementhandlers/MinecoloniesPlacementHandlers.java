@@ -80,15 +80,18 @@ public final class MinecoloniesPlacementHandlers
           final boolean complete,
           final BlockPos centerPos)
         {
+            world.setBlockToAir(pos);
             final Colony colony = ColonyManager.getClosestColony(world, pos);
-            if (colony != null && !complete)
+            if (colony != null)
             {
-                world.setBlockState(pos, blockState);
-                colony.addWayPoint(pos, Blocks.AIR.getDefaultState());
-            }
-            else
-            {
-                world.setBlockToAir(pos);
+                if (!complete)
+                {
+                    colony.addWayPoint(pos, Blocks.AIR.getDefaultState());
+                }
+                else
+                {
+                    world.setBlockState(pos, blockState);
+                }
             }
             return blockState;
         }
