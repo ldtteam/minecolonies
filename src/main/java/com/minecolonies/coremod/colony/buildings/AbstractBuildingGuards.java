@@ -227,7 +227,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             final NBTTagCompound mobCompound = mobsTagList.getCompoundTagAt(i);
             final MobEntryView mobEntry = MobEntryView.readFromNBT(mobCompound, NBT_MOB_VIEW);
             if (mobEntry.getEntityEntry() != null)
+            {
             	mobsToAttack.add(mobEntry);
+            }
         }
 
         guardPos = NBTUtil.getPosFromTag(compound.getCompoundTag(NBT_GUARD));
