@@ -168,7 +168,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
             return;
         }
 
-        buttonRepair.setEnabled(buildingView.getBuildingLevel() != 0 && !buildingView.isBuilding());
+        buttonRepair.setVisible(buildingView.getBuildingLevel() != 0 && !buildingView.isBuilding());
         if (buildingView.isRepairing())
         {
             buttonRepair.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.cancelRepair"));
