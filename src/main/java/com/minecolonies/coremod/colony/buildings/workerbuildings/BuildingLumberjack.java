@@ -219,7 +219,8 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             final ItemStack stack = new ItemStack(saplingCompound);
             final boolean cut = saplingCompound.getBoolean(TAG_CUT);
             final ItemStorage storage = new ItemStorage(stack); 
-            if (treesToFell.containsKey(storage)) {
+            if (treesToFell.containsKey(storage)) 
+            {
 				treesToFell.put(new ItemStorage(stack), cut);
 			}
         }
