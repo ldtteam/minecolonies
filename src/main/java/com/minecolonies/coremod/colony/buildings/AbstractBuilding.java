@@ -18,7 +18,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
@@ -109,7 +108,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      */
     public void onWakeUp()
     {
-        /**
+        /*
          * Buildings override this if required.
          */
     }
