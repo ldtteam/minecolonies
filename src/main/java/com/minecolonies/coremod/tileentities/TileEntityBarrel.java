@@ -157,6 +157,11 @@ public class TileEntityBarrel extends TileEntity implements ITickable
 
     private boolean checkCorrectItem(final ItemStack itemStack)
     {
+        if(itemStack.isEmpty())
+        {
+            return false;
+        }
+
         for(final String string : Configurations.gameplay.listOfCompostableItems)
         {
             if(itemStack.getItem().getRegistryName().toString().equals(string))
