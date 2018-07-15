@@ -511,10 +511,21 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         return getDataStore().getCitizensByRequest();
     }
 
-    public <R extends IRequestable> IToken<?> createRequest(@NotNull final CitizenData citizenData, @NotNull final R requested)
+    /**
+     * Create a request for a citizen.
+     * @param citizenData the data of the citizen.
+     * @param requested the request to create.
+     * @param async if async or not.
+     * @param <R> the type of the request.
+     * @return the Token of the request.
+     */
+    public <R extends IRequestable> IToken<?> createRequest(@NotNull final CitizenData citizenData, @NotNull final R requested, final boolean async)
     {
         final IToken requestToken = colony.getRequestManager().createRequest(requester, requested);
-        citizenData.getJob().getAsyncRequests().add(requestToken);
+        if (async)
+        {
+            citizenData.getJob().getAsyncRequests().add(requestToken);
+        }
         addRequestToMaps(citizenData.getId(), requestToken, TypeToken.of(requested.getClass()));
 
         colony.getRequestManager().assignRequest(requestToken);
