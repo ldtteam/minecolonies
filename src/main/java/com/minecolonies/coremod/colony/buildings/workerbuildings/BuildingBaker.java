@@ -569,11 +569,11 @@ public class BuildingBaker extends AbstractBuildingWorker
          */
         public void setRecipeAllowed(final int pos, final  boolean value,final BlockPos block)
         {
-            MineColonies.getNetwork().sendToServer(new AssignBakerRecipeMessage(this, pos, value, block));
+        	MineColonies.getNetwork().sendToServer(new AssignBakerRecipeMessage(this, pos, value, block));
         	if (pos < recipesAllowed.length)
-			{
+        	{
         		recipesAllowed[pos] = value;
-			}
+        	}
         }
 
         
