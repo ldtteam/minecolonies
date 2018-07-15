@@ -94,7 +94,8 @@ public class CitizenStuckHandler
 
         if (stuckTime >= MAX_STUCK_TIME)
         {
-            if (citizen.getNavigator().getDestination().distanceSq(citizen.posX, citizen.posY, citizen.posZ) < MOVE_AWAY_RANGE)
+            if (citizen.getNavigator().getDestination().distanceSq(citizen.posX, citizen.posY, citizen.posZ) < MOVE_AWAY_RANGE
+                  || (Math.abs(citizen.getNavigator().getDestination().getY()-citizen.posY) > 2))
             {
                 stuckTime = 0;
                 return;
