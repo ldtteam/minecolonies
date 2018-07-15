@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -8,29 +9,26 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
+import com.minecolonies.structures.client.TemplateRenderHandler;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.Vector3d;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.gen.structure.template.PlacementSettings;
+import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.lwjgl.opengl.GL11.GL_LINES;
-import static org.lwjgl.opengl.GL11.GL_LINE_LOOP;
-import static org.lwjgl.opengl.GL11.glColor4f;
 
 /**
  * Used to handle client events.
@@ -58,6 +56,11 @@ public class ClientEventHandler
     private double ticksPassed = 0;
 
     /**
+     * Waypoint template to be rendered.
+     */
+    private Template template;
+
+    /**
      * Used to catch the renderWorldLastEvent in order to draw the debug nodes for pathfinding.
      *
      * @param event the catched event.
@@ -75,7 +78,38 @@ public class ClientEventHandler
         {
             if (Settings.instance.getStructureName().contains(AbstractEntityAIStructure.WAYPOINT_STRING))
             {
-                //TODO: Implement waypoint rendering.
+                final ColonyView view = ColonyManager.getClosestColonyView(world, player.getPosition());
+                if (view != null)
+                {
+                    final EntityPlayer perspectiveEntity = Minecraft.getMinecraft().player;
+                    final double interpolatedEntityPosX = perspectiveEntity.lastTickPosX + (perspectiveEntity.posX - perspectiveEntity.lastTickPosX) * event.getPartialTicks();
+                    final double interpolatedEntityPosY = perspectiveEntity.lastTickPosY + (perspectiveEntity.posY - perspectiveEntity.lastTickPosY) * event.getPartialTicks();
+                    final double interpolatedEntityPosZ = perspectiveEntity.lastTickPosZ + (perspectiveEntity.posZ - perspectiveEntity.lastTickPosZ) * event.getPartialTicks();
+
+                    if (template == null)
+                    {
+                        template = new Structure(null,
+                      "schematics/infrastructure/Waypoint",
+                      new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror())).getTemplate();
+                    }
+                    else
+                    {
+                        for (final BlockPos coord : view.getWayPoints())
+                        {
+                            final BlockPos pos = coord.down();
+                            final double renderOffsetX = pos.getX() - interpolatedEntityPosX;
+                            final double renderOffsetY = pos.getY() - interpolatedEntityPosY;
+                            final double renderOffsetZ = pos.getZ() - interpolatedEntityPosZ;
+                            final Vector3d renderOffset = new Vector3d();
+                            renderOffset.x = renderOffsetX;
+                            renderOffset.y = renderOffsetY;
+                            renderOffset.z = renderOffsetZ;
+
+                            TemplateRenderHandler.getInstance()
+                              .draw(template, structure.getSettings().getRotation(), structure.getSettings().getMirror(), renderOffset);
+                        }
+                    }
+                }
             }
             else
             {
