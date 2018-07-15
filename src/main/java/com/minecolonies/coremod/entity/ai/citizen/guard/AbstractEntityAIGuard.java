@@ -60,9 +60,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      * Tools and Items needed by the worker.
      */
     public final List<ToolType>  toolsNeeded = new ArrayList<>();
+    /**
+     * List of items that are required by the guard based on building level
+     * and guard level.  This array holds a pointer to the building level
+     * and then pointer to GuardItemsNeeded
+     */
     public final Map<Integer,List<GuardItemsNeeded>> itemsNeeded = new HashMap<>();
-//    public final List<GuardItemsNeeded> itemsNeeded = new ArrayList<>();
-    
+
     /**
      * Holds a list of required armor for this guard
      */
