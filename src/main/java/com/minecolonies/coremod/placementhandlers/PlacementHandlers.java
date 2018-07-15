@@ -1,22 +1,7 @@
 package com.minecolonies.coremod.placementhandlers;
 
-import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
-import com.minecolonies.api.colony.requestsystem.requestable.Stack;
-import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.util.BlockUtils;
-import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import com.minecolonies.coremod.blocks.schematic.BlockSolidSubstitution;
-import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -24,22 +9,19 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemDoor;
-import net.minecraft.item.ItemFlintAndSteel;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.UPDATE_FLAG;
@@ -54,10 +36,11 @@ import static com.minecolonies.api.util.constant.Constants.UPDATE_FLAG;
 public final class PlacementHandlers
 {
     public static final List<IPlacementHandler> handlers = new ArrayList<>();
+
     static
     {
         handlers.add(new AirPlacementHandler());
-        handlers.add(new FireplacementHandler());
+        handlers.add(new FirePlacementHandler());
         handlers.add(new GrassPlacementHandler());
         handlers.add(new DoorPlacementHandler());
         handlers.add(new BedPlacementHandler());
@@ -66,112 +49,45 @@ public final class PlacementHandlers
         handlers.add(new FlowerPotPlacementHandler());
         handlers.add(new BlockGrassPathPlacementHandler());
         handlers.add(new StairBlockPlacementHandler());
-        handlers.add(new BlockSolidSubstitutionPlacementHandler());
         handlers.add(new ChestPlacementHandler());
-        handlers.add(new WayPointBlockPlacementHandler());
-        handlers.add(new RackPlacementHandler());
         handlers.add(new GeneralBlockPlacementHandler());
-    }
-    private PlacementHandlers()
-    {
-        /**
-         * Intentionally left empty.
-         */
     }
 
     /**
-     * Check the placers inventory for the items in the itemList and remove it of the list if found.
-     *
-     * @param placer   the placer.
-     * @param itemList the list to check.
-     * @return true if need to request.
+     * Private constructor to hide implicit one.
      */
-    public static boolean checkForListInInvAndRequest(@NotNull final AbstractEntityAIStructure<?> placer, final List<ItemStack> itemList)
+    private PlacementHandlers()
     {
-        final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(new InvWrapper(placer.getWorker().getInventoryCitizen()),
-          itemStack -> itemList.stream()
-                         .anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack, true, true)));
-        itemList.removeIf(itemStack -> ItemStackUtils.isEmpty(itemStack) || foundStacks.stream()
-                                                                              .anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack,
-                                                                                targetStack,
-                                                                                true,
-                                                                                true)));
-
-        for (final ItemStack placedStack : itemList)
-        {
-            if (ItemStackUtils.isEmpty(placedStack))
-            {
-                return true;
-            }
-
-            if (placer.getOwnBuilding()
-                  .getOpenRequestsOfTypeFiltered(
-                    placer.getWorker().getCitizenData(),
-                    TypeConstants.DELIVERABLE,
-                    (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(placedStack))
-                  .isEmpty())
-            {
-                final Stack stackRequest = new Stack(placer.getTotalAmount(placedStack));
-                placer.getWorker().getCitizenData().createRequest(stackRequest);
-
-                return true;
-            }
-        }
-        return false;
+        /*
+         * Intentionally left empty.
+         */
     }
-
-    //If he woudln't count the bracket spaces we'd be under 25 easily.
-    public static class FireplacementHandler implements IPlacementHandler
+    
+    public static class FirePlacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(
-          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final AbstractEntityAIStructure<?> placer,
-          final boolean infiniteResources, final boolean complete)
+        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState)
         {
-            if (!(blockState.getBlock() instanceof BlockFire))
-            {
-                return ActionProcessingResult.IGNORE;
-            }
-
-            if (placer != null)
-            {
-                if (!infiniteResources)
-                {
-                    final EntityCitizen citizen = placer.getWorker();
-                    final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(citizen.getInventoryCitizen()), s ->
-                                                                                                                                            s.getItem() == Items.FLINT_AND_STEEL);
-
-                    if (slot == -1)
-                    {
-                        final ItemStack tool = new ItemStack(Items.FLINT_AND_STEEL, 1);
-                        final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(new InvWrapper(placer.getWorker().getInventoryCitizen()),
-                          tool::isItemEqualIgnoreDurability);
-
-                        if (foundStacks.isEmpty())
-                        {
-                            if (citizen.getCitizenColonyHandler().getWorkBuilding()
-                                  .getOpenRequestsOfTypeFiltered(citizen.getCitizenData(), TypeToken.of(Stack.class), (IRequest<? extends Stack> s) ->
-                                                                                                                        s.getRequest().getStack().getItem()
-                                                                                                                          == Items.FLINT_AND_STEEL)
-                                  .isEmpty())
-                            {
-                                final Stack stack = new Stack(new ItemStack(Items.FLINT_AND_STEEL, 1)).setMatchMeta(false).setMatchNBT(false);
-                                placer.getWorker().getCitizenData().createRequest(stack);
-                            }
-                            return ActionProcessingResult.DENY;
-                        }
-                    }
-
-                    final ItemStack item = slot == -1 ? ItemStackUtils.EMPTY : citizen.getInventoryCitizen().getStackInSlot(slot);
-                    if (ItemStackUtils.isEmpty(item) || !(item.getItem() instanceof ItemFlintAndSteel))
-                    {
-                        return ActionProcessingResult.DENY;
-                    }
-                    citizen.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item);
-                    item.damageItem(1, citizen);
-                }
-                placer.handleBuildingOverBlock(pos);
-            }
+            return blockState.getBlock() instanceof BlockFire;
+        }
+        
+        @Override
+        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
+        {
+            final List<ItemStack> itemList = new ArrayList<>();
+            itemList.add(new ItemStack(Items.FLINT_AND_STEEL, 1));
+            return itemList;
+        }
+        
+        @Override
+        public Object handle(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final IBlockState blockState,
+          @Nullable final NBTTagCompound tileEntityData,
+          final boolean complete,
+          final BlockPos centerPos)
+        {
             world.setBlockState(pos, blockState, UPDATE_FLAG);
             return ActionProcessingResult.ACCEPT;
         }
@@ -180,286 +96,267 @@ public final class PlacementHandlers
     public static class GrassPlacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(
-          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState)
         {
-            if (blockState.getBlock() != Blocks.GRASS)
-            {
-                return ActionProcessingResult.IGNORE;
-            }
-
-            if (placer != null && !infiniteResources)
-            {
-                final List<ItemStack> itemList = new ArrayList<>();
-                itemList.add(placer.getTotalAmount(placer.getTotalAmount(new ItemStack(Blocks.DIRT))));
-                if (checkForListInInvAndRequest(placer, itemList))
-                {
-                    return IPlacementHandler.ActionProcessingResult.DENY;
-                }
-
-                placer.handleBuildingOverBlock(pos);
-
-                if (!world.setBlockState(pos, Blocks.DIRT.getDefaultState(), UPDATE_FLAG))
-                {
-                    return ActionProcessingResult.DENY;
-                }
-            }
-            else if (!world.setBlockState(pos, Blocks.GRASS.getDefaultState(), UPDATE_FLAG))
+            return blockState.getBlock() == Blocks.GRASS;
+        }
+        
+        @Override
+        public Object handle(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final IBlockState blockState,
+          @Nullable final NBTTagCompound tileEntityData,
+          final boolean complete,
+          final BlockPos centerPos)
+        {
+            if (!world.setBlockState(pos, Blocks.DIRT.getDefaultState(), UPDATE_FLAG))
             {
                 return ActionProcessingResult.DENY;
             }
-
             return Blocks.DIRT.getDefaultState();
+        }
+        
+        @Override
+        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
+        {
+            final List<ItemStack> itemList = new ArrayList<>();
+            itemList.add(new ItemStack(Blocks.DIRT));
+            return itemList;
         }
     }
 
     public static class DoorPlacementHandler implements IPlacementHandler
     {
         @Override
+        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState)
+        {
+            return blockState.getBlock() instanceof BlockDoor;
+        }
+        
+        @Override
         public Object handle(
           @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+          @Nullable final NBTTagCompound tileEntityData, final boolean complete, final BlockPos centerPos)
         {
-            if (!(blockState.getBlock() instanceof BlockDoor))
-            {
-                return ActionProcessingResult.IGNORE;
-            }
-
-            if (placer != null && !infiniteResources)
-            {
-                final List<ItemStack> itemList = new ArrayList<>();
-                itemList.add(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState)));
-                if (checkForListInInvAndRequest(placer, itemList))
-                {
-                    return IPlacementHandler.ActionProcessingResult.DENY;
-                }
-            }
-
             if (blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
             {
-                if (placer != null)
-                {
-                    placer.handleBuildingOverBlock(pos);
-                }
                 ItemDoor.placeDoor(world, pos, blockState.getValue(BlockDoor.FACING), blockState.getBlock(), false);
             }
 
             return blockState;
+        }
+        
+        @Override
+        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
+        {
+            final List<ItemStack> itemList = new ArrayList<>();
+            itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
+            return itemList;
         }
     }
 
     public static class BedPlacementHandler implements IPlacementHandler
     {
         @Override
+        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState)
+        {
+            return blockState.getBlock() instanceof BlockBed;
+        }
+        
+        @Override
         public Object handle(
           @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+          @Nullable final NBTTagCompound tileEntityData, final boolean complete, final BlockPos centerPos)
         {
-            if (!(blockState.getBlock() instanceof BlockBed))
-            {
-                return ActionProcessingResult.IGNORE;
-            }
-
             if (blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.HEAD)
             {
-                if (placer != null && !infiniteResources)
-                {
-                    final List<ItemStack> itemList = new ArrayList<>();
-                    for (final ItemStack stack : placer.getItemsFromTileEntity())
-                    {
-                        itemList.add(placer.getTotalAmount(stack));
-                    }
-                    if (checkForListInInvAndRequest(placer, itemList))
-                    {
-                        return IPlacementHandler.ActionProcessingResult.DENY;
-                    }
-
-                    placer.handleBuildingOverBlock(pos);
-                }
-
                 final EnumFacing facing = blockState.getValue(BlockBed.FACING);
 
                 //pos.offset(facing) will get the other part of the bed
                 world.setBlockState(pos.offset(facing.getOpposite()), blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT), UPDATE_FLAG);
                 world.setBlockState(pos, blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD), UPDATE_FLAG);
 
-                if (placer != null)
+                if (tileEntityData != null)
                 {
-                    placer.handleTileEntityPlacement(pos);
-                    placer.handleTileEntityPlacement(pos.offset(facing.getOpposite()));
+                    handleTileEntityPlacement(tileEntityData, world, pos);
+                    handleTileEntityPlacement(tileEntityData, world, pos.offset(facing.getOpposite()));
                 }
                 return blockState;
             }
 
             return ActionProcessingResult.ACCEPT;
+        }
+        
+        @Override
+        public List<ItemStack> getRequiredItems(
+          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
+        {
+            return getItemsFromTileEntity(tileEntityData, world);
         }
     }
 
     public static class DoublePlantPlacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(
-          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState)
         {
-            if (!(blockState.getBlock() instanceof BlockDoublePlant))
-            {
-                return ActionProcessingResult.IGNORE;
-            }
+            return blockState.getBlock() instanceof BlockDoublePlant;
+        }
 
-
-            if (placer != null && !infiniteResources)
-            {
-                final List<ItemStack> itemList = new ArrayList<>();
-                itemList.add(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState)));
-                if (checkForListInInvAndRequest(placer, itemList))
-                {
-                    return IPlacementHandler.ActionProcessingResult.DENY;
-                }
-            }
-
+        @Override
+        public Object handle(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final IBlockState blockState,
+          @Nullable final NBTTagCompound tileEntityData,
+          final boolean complete,
+          final BlockPos centerPos)
+        {
             if (blockState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.LOWER))
             {
-                if (placer != null)
-                {
-                    placer.handleBuildingOverBlock(pos);
-                }
                 world.setBlockState(pos, blockState.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.LOWER), UPDATE_FLAG);
                 world.setBlockState(pos.up(), blockState.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.UPPER), UPDATE_FLAG);
                 return blockState;
             }
             return ActionProcessingResult.ACCEPT;
         }
+
+        @Override
+        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
+        {
+            final List<ItemStack> itemList = new ArrayList<>();
+            itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
+            return itemList;
+        }
     }
 
     public static class SpecialBlockPlacementAttemptHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(
-          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState)
         {
-            if (blockState instanceof BlockEndPortal
-                  || blockState instanceof BlockMobSpawner
-                  || blockState instanceof BlockDragonEgg
-                  || blockState instanceof BlockPortal)
-            {
-                return ActionProcessingResult.ACCEPT;
-            }
-            return ActionProcessingResult.IGNORE;
+            return blockState instanceof BlockEndPortal
+                     || blockState instanceof BlockMobSpawner
+                     || blockState instanceof BlockDragonEgg
+                     || blockState instanceof BlockPortal;
+        }
+
+        @Override
+        public Object handle(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final IBlockState blockState,
+          @Nullable final NBTTagCompound tileEntityData,
+          final boolean complete,
+          final BlockPos centerPos)
+        { 
+            return ActionProcessingResult.ACCEPT;
+        }
+
+        @Override
+        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
+        {
+            return new ArrayList<>();
         }
     }
 
     public static class FlowerPotPlacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(
-          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final AbstractEntityAIStructure<?> placer,
-          final boolean infiniteResources, final boolean complete)
+        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState)
         {
-            if (!(blockState.getBlock() instanceof BlockFlowerPot))
-            {
-                return ActionProcessingResult.IGNORE;
-            }
+            return blockState.getBlock() instanceof BlockFlowerPot;
+        }
 
-            if (placer != null)
-            {
-                if (!infiniteResources)
-                {
-                    final List<ItemStack> itemList = new ArrayList<>();
-                    itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
-                    itemList.addAll(placer.getItemsFromTileEntity());
-
-                    itemList.removeIf(ItemStackUtils::isEmpty);
-
-                    if (checkForListInInvAndRequest(placer, itemList))
-                    {
-                        return IPlacementHandler.ActionProcessingResult.DENY;
-                    }
-                }
-
-                placer.handleBuildingOverBlock(pos);
-            }
+        @Override
+        public Object handle(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final IBlockState blockState,
+          @Nullable final NBTTagCompound tileEntityData,
+          final boolean complete,
+          final BlockPos centerPos)
+        {
             if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
             {
                 return false;
             }
 
-            if (placer != null)
+            if (tileEntityData != null)
             {
-                placer.handleTileEntityPlacement(pos);
+                handleTileEntityPlacement(tileEntityData, world, pos);
             }
             return blockState;
+        }
+
+        @Override
+        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
+        {
+            final List<ItemStack> itemList = new ArrayList<>();
+            itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
+            itemList.addAll(getItemsFromTileEntity(tileEntityData, world));
+            itemList.removeIf(ItemStackUtils::isEmpty);
+
+            return itemList;
         }
     }
 
     public static class AirPlacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(
-          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState)
         {
-            if (blockState.getBlock() instanceof BlockAir)
+            return blockState.getBlock() instanceof BlockAir;
+        }
+
+        @Override
+        public Object handle(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final IBlockState blockState,
+          @Nullable final NBTTagCompound tileEntityData,
+          final boolean complete,
+          final BlockPos centerPos)
+        {
+
+            final List<Entity> entityList = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos), entity -> !(entity instanceof EntityLiving || entity instanceof EntityItem));
+            if (!entityList.isEmpty())
             {
-                if (placer != null)
+                for (final Entity entity : entityList)
                 {
-                    placer.getWorker().setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
-
-                    //Meaning there is not supposed to be an entity at this location
-                    if (placer.getEntityInfo() == null)
-                    {
-                        final List<Entity> entityList = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos),
-                          entity -> !(entity instanceof EntityLiving || entity instanceof EntityItem));
-                        if (!entityList.isEmpty())
-                        {
-                            for (final Entity entity : entityList)
-                            {
-                                entity.attackEntityFrom(DamageSource.ANVIL, Float.MAX_VALUE);
-                            }
-                        }
-                    }
-
-                    placer.handleBuildingOverBlock(pos);
+                    entity.setDead();
                 }
-                world.setBlockToAir(pos);
-                return ActionProcessingResult.ACCEPT;
             }
 
-            return ActionProcessingResult.IGNORE;
+            world.setBlockToAir(pos);
+            return ActionProcessingResult.ACCEPT;
+        }
+
+        @Override
+        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
+        {
+            return new ArrayList<>();
         }
     }
 
     public static class BlockGrassPathPlacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(
-          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState)
         {
-            if (!(blockState.getBlock() instanceof BlockGrassPath))
-            {
-                return ActionProcessingResult.IGNORE;
-            }
+            return blockState.getBlock() instanceof BlockGrassPath;
+        }
 
-            if (placer != null && !infiniteResources)
-            {
-                if (!placer.holdEfficientTool(blockState.getBlock(), pos))
-                {
-                    return ActionProcessingResult.DENY;
-                }
-                final ItemStack placedStack = placer.getTotalAmount(new ItemStack(Blocks.DIRT, 1));
-                final List<ItemStack> itemList = new ArrayList<>();
-                itemList.add(placedStack);
-                if (checkForListInInvAndRequest(placer, itemList))
-                {
-                    return IPlacementHandler.ActionProcessingResult.DENY;
-                }
-
-                placer.handleBuildingOverBlock(pos);
-            }
-
+        @Override
+        public Object handle(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final IBlockState blockState,
+          @Nullable final NBTTagCompound tileEntityData,
+          final boolean complete,
+          final BlockPos centerPos)
+        {
             if (!world.setBlockState(pos, Blocks.GRASS_PATH.getDefaultState(), UPDATE_FLAG))
             {
                 return ActionProcessingResult.DENY;
@@ -467,99 +364,62 @@ public final class PlacementHandlers
 
             return Blocks.DIRT.getDefaultState();
         }
+
+        @Override
+        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
+        {
+            final List<ItemStack> itemList = new ArrayList<>();
+            itemList.add(new ItemStack(Blocks.DIRT, 1));
+            return itemList;
+        }
     }
 
     public static class StairBlockPlacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(
-          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState)
         {
-            //Workaround as long as we didn't rescan all of our buildings since BlockStairs now have different metadata values.
-            if (blockState.getBlock() instanceof BlockStairs
-                  && world.getBlockState(pos).getBlock() instanceof BlockStairs
-                  && world.getBlockState(pos).getValue(BlockStairs.FACING) == blockState.getValue(BlockStairs.FACING)
-                  && blockState.getBlock() == world.getBlockState(pos).getBlock())
-            {
-                return ActionProcessingResult.ACCEPT;
-            }
-
-            return ActionProcessingResult.IGNORE;
+            return blockState.getBlock() instanceof BlockStairs
+                     && world.getBlockState(pos).getBlock() instanceof BlockStairs
+                     && world.getBlockState(pos).getValue(BlockStairs.FACING) == blockState.getValue(BlockStairs.FACING)
+                     && blockState.getBlock() == world.getBlockState(pos).getBlock();
         }
-    }
 
-    public static class BlockSolidSubstitutionPlacementHandler implements IPlacementHandler
-    {
         @Override
         public Object handle(
           @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+          @Nullable final NBTTagCompound tileEntityData, final boolean complete, final BlockPos centerPos)
         {
-            if (!(blockState.getBlock() instanceof BlockSolidSubstitution))
-            {
-                return ActionProcessingResult.IGNORE;
-            }
+            return ActionProcessingResult.ACCEPT;
+        }
 
-            final IBlockState newBlockState = BlockUtils.getSubstitutionBlockAtWorld(world, pos);
-
-            if (placer != null && !infiniteResources)
-            {
-                final List<ItemStack> itemList = new ArrayList<>();
-                itemList.add(BlockUtils.getItemStackFromBlockState(newBlockState));
-                if (checkForListInInvAndRequest(placer, itemList))
-                {
-                    return IPlacementHandler.ActionProcessingResult.DENY;
-                }
-                placer.handleBuildingOverBlock(pos);
-            }
-
-            if (complete)
-            {
-                if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
-                {
-                    return ActionProcessingResult.DENY;
-                }
-            }
-            else
-            {
-                if (!world.setBlockState(pos, newBlockState, UPDATE_FLAG))
-                {
-                    return ActionProcessingResult.DENY;
-                }
-            }
-
-            return newBlockState;
+        @Override
+        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
+        {
+            return new ArrayList<>();
         }
     }
 
     public static class GeneralBlockPlacementHandler implements IPlacementHandler
     {
         @Override
+        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState)
+        {
+            return true;
+        }
+
+        @Override
         public Object handle(
-          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final IBlockState blockState,
+          @Nullable final NBTTagCompound tileEntityData,
+          final boolean complete,
+          final BlockPos centerPos)
         {
             if (world.getBlockState(pos).equals(blockState))
             {
                 return ActionProcessingResult.ACCEPT;
-            }
-
-            if (placer != null && !infiniteResources)
-            {
-                final List<ItemStack> itemList = new ArrayList<>();
-                if (!ChiselAndBitsCheck.isChiselAndBitsBlock(blockState))
-                {
-                    itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
-                }
-                itemList.addAll(placer.getItemsFromTileEntity());
-                itemList.removeIf(ItemStackUtils::isEmpty);
-
-                if (checkForListInInvAndRequest(placer, itemList))
-                {
-                    return IPlacementHandler.ActionProcessingResult.DENY;
-                }
-                placer.handleBuildingOverBlock(pos);
             }
 
             if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
@@ -567,132 +427,101 @@ public final class PlacementHandlers
                 return ActionProcessingResult.DENY;
             }
 
-            if (placer != null)
+            if (tileEntityData != null)
             {
-                placer.handleTileEntityPlacement(pos);
+                handleTileEntityPlacement(tileEntityData, world, pos);
             }
 
             return blockState;
         }
-    }
 
-    public static class WayPointBlockPlacementHandler implements IPlacementHandler
-    {
         @Override
-        public Object handle(
-          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
         {
-            if (!(blockState.getBlock() instanceof BlockWaypoint))
-            {
-                return ActionProcessingResult.IGNORE;
-            }
-
-            if (placer == null)
-            {
-                final Colony colony = ColonyManager.getClosestColony(world, pos);
-                if (colony != null && !complete)
-                {
-                    colony.addWayPoint(pos, Blocks.AIR.getDefaultState());
-                }
-                else
-                {
-                    return ActionProcessingResult.IGNORE;
-                }
-            }
-            else
-            {
-                placer.handleBuildingOverBlock(pos);
-                placer.addWayPoint(pos);
-            }
-            world.setBlockToAir(pos);
-
-            return blockState;
+            final List<ItemStack> itemList = new ArrayList<>(getItemsFromTileEntity(tileEntityData, world));
+            itemList.removeIf(ItemStackUtils::isEmpty);
+            return itemList;
         }
     }
 
     public static class ChestPlacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(
-          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState)
         {
-            if (!(blockState.getBlock() instanceof BlockChest))
+            return blockState.getBlock() instanceof BlockChest;
+        }
+
+        @Override
+        public Object handle(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final IBlockState blockState,
+          @Nullable final NBTTagCompound tileEntityData,
+          final boolean complete,
+          final BlockPos centerPos)
+        {
+            if (tileEntityData != null)
             {
-                return ActionProcessingResult.IGNORE;
+                handleTileEntityPlacement(tileEntityData, world, pos);
             }
 
-            if (placer != null && !infiniteResources)
-            {
-                final List<ItemStack> itemList = new ArrayList<>();
-                itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
-                itemList.addAll(placer.getItemsFromTileEntity());
-
-                itemList.removeIf(ItemStackUtils::isEmpty);
-
-                if (checkForListInInvAndRequest(placer, itemList))
-                {
-                    return IPlacementHandler.ActionProcessingResult.DENY;
-                }
-            }
-
-            final TileEntity entity = world.getTileEntity(pos);
-            if (entity instanceof TileEntityChest)
-            {
-                BuildingWareHouse.handleBuildingOverChest(pos, (TileEntityChest) entity, world);
-            }
-            else if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
+            if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
             {
                 return ActionProcessingResult.DENY;
             }
 
             return blockState;
+        }
+
+        @Override
+        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
+        {
+            final List<ItemStack> itemList = new ArrayList<>();
+            itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
+            itemList.addAll(getItemsFromTileEntity(tileEntityData, world));
+
+            itemList.removeIf(ItemStackUtils::isEmpty);
+
+            return itemList;
         }
     }
 
-    public static class RackPlacementHandler implements IPlacementHandler
+    /**
+     * Handles tileEntity placement.
+     * @param tileEntityData the data of the tile entity.
+     * @param world the world.
+     * @param pos the position.
+     */
+    public static void handleTileEntityPlacement(final NBTTagCompound tileEntityData, final World world, @NotNull final BlockPos pos)
     {
-        @Override
-        public Object handle(
-          @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-          @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+        if (tileEntityData != null)
         {
-            if (!(blockState.getBlock() instanceof BlockMinecoloniesRack))
+            final TileEntity tileEntityFlowerpot = world.getTileEntity(pos);
+            if (tileEntityFlowerpot == null)
             {
-                return ActionProcessingResult.IGNORE;
+                TileEntity.create(world, tileEntityData);
             }
-
-            if (placer != null && !infiniteResources)
+            else
             {
-                final List<ItemStack> itemList = new ArrayList<>();
-                itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
-
-                for (final ItemStack stack : placer.getItemsFromTileEntity())
-                {
-                    if (!ItemStackUtils.isEmpty(stack))
-                    {
-                        itemList.add(stack);
-                    }
-                }
-
-                if (checkForListInInvAndRequest(placer, itemList))
-                {
-                    return IPlacementHandler.ActionProcessingResult.DENY;
-                }
+                tileEntityFlowerpot.readFromNBT(tileEntityData);
+                world.setTileEntity(pos, tileEntityFlowerpot);
             }
-
-            final TileEntity entity = world.getTileEntity(pos);
-            if (entity instanceof TileEntityChest)
-            {
-                BuildingWareHouse.handleBuildingOverChest(pos, (TileEntityChest) entity, world);
-            }
-            else if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
-            {
-                return ActionProcessingResult.DENY;
-            }
-
-            return blockState;
         }
+    }
+
+    /**
+     * Gets the list of items from a possible tileEntity.
+     * @param tileEntityData the data.
+     * @param world the world.
+     * @return the required list.
+     */
+    public static List<ItemStack> getItemsFromTileEntity(final NBTTagCompound tileEntityData, final World world)
+    {
+        if (tileEntityData != null)
+        {
+            return ItemStackUtils.getItemStacksOfTileEntity(tileEntityData, world);
+        }
+        return Collections.emptyList();
     }
 }

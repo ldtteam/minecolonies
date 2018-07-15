@@ -25,7 +25,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -36,8 +35,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.IGNORE;
 
 /**
  * Interface for using the structure codebase.
@@ -170,20 +167,11 @@ public final class StructureWrapper
 
                     if (localState.getMaterial().isSolid())
                     {
-                        handleBlockPlacement(worldPos, localState, complete);
+                        handleBlockPlacement(worldPos, localState, complete, this.structure.getBlockInfo(localPos).tileentityData);
                     }
                     else
                     {
                         delayedBlocks.add(localPos);
-                        continue;
-                    }
-
-                    final NBTTagCompound tileEntityData = this.structure.getBlockInfo(localPos).tileentityData;
-                    if (tileEntityData != null)
-                    {
-                        final TileEntity entity = TileEntity.create(world, tileEntityData);
-                        world.setTileEntity(worldPos, entity);
-                        world.markBlockRangeForRenderUpdate(worldPos, worldPos);
                     }
                 }
             }
@@ -194,15 +182,7 @@ public final class StructureWrapper
             final IBlockState localState = this.structure.getBlockState(coords);
             final BlockPos newWorldPos = pos.add(coords);
 
-            handleBlockPlacement(newWorldPos, localState, complete);
-
-            final NBTTagCompound tileEntityData = this.structure.getBlockInfo(coords).tileentityData;
-            if (tileEntityData != null)
-            {
-                final TileEntity entity = TileEntity.create(world, tileEntityData);
-                world.setTileEntity(newWorldPos, entity);
-                world.markBlockRangeForRenderUpdate(newWorldPos, newWorldPos);
-            }
+            handleBlockPlacement(newWorldPos, localState, complete, this.structure.getBlockInfo(coords).tileentityData);
         }
 
         for (int j = 0; j < structure.getHeight(); j++)
@@ -240,30 +220,39 @@ public final class StructureWrapper
         return structure.getOffset();
     }
 
-    private void handleBlockPlacement(final BlockPos pos, final IBlockState localState, final boolean complete)
+    /**
+     * This method handles the block placement.
+     * When we extract this into another mod, we have to override the method.
+     *
+     * @param pos the world position.
+     * @param localState the local state.
+     * @param complete if complete with it.
+     * @param tileEntityData the tileEntity.
+     */
+    private void handleBlockPlacement(final BlockPos pos, final IBlockState localState, final boolean complete, final NBTTagCompound tileEntityData)
     {
         for (final IPlacementHandler handlers : PlacementHandlers.handlers)
         {
-            final Object result = handlers.handle(world, pos, localState, null, true, complete);
-            if (result instanceof  IBlockState)
+            if (handlers.canHandle(world, pos, localState))
             {
-                final IBlockState blockState = (IBlockState) result;
-
-                final Colony colony = ColonyManager.getColony(world, pos);
-                if (colony != null)
+                final Object result = handlers.handle(world, pos, localState, tileEntityData, complete, position);
+                if (result instanceof IBlockState)
                 {
-                    final AbstractBuilding building = colony.getBuildingManager().getBuilding(position);
+                    final IBlockState blockState = (IBlockState) result;
 
-                    if (building != null)
+                    final Colony colony = ColonyManager.getColony(world, pos);
+                    if (colony != null)
                     {
-                        building.registerBlockPosition(blockState, pos, world);
-                    }
-                }
+                        final AbstractBuilding building = colony.getBuildingManager().getBuilding(position);
 
-                return;
-            }
-            else if (!(result instanceof IPlacementHandler.ActionProcessingResult) || result != IGNORE)
-            {
+                        if (building != null)
+                        {
+                            building.registerBlockPosition(blockState, pos, world);
+                        }
+                    }
+
+                    return;
+                }
                 return;
             }
         }
