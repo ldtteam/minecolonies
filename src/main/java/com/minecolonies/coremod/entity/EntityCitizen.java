@@ -387,18 +387,13 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             if (damageSource.getTrueSource() instanceof EntityPlayer)
             {
-                boolean isBarbarianClose = true;
+                boolean isBarbarianClose = false;
                 for(final AbstractEntityBarbarian barbarian : this.getCitizenColonyHandler().getColony().getBarbManager().getHorde())
                 {
-                    final EntityCitizen citizen = new EntityCitizen(this.getEntityWorld());
-                    if(MathUtils.twoDimDistance(barbarian.getPosition(), citizen.getPosition()) < BARB_DISTANCE_FOR_FREE_DEATH)
+                    if(MathUtils.twoDimDistance(barbarian.getPosition(), this.getPosition()) < BARB_DISTANCE_FOR_FREE_DEATH)
                     {
                         isBarbarianClose = true;
                         break;
-                    }
-                    else
-                    {
-                        isBarbarianClose = false;
                     }
                 }
                 for (final Player player : PermissionUtils.getPlayersWithAtLeastRank(citizenColonyHandler.getColony(), Rank.OFFICER))
