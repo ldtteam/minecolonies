@@ -814,7 +814,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             return DesiredActivity.WORK;
         }
 
-        if (BarbarianUtils.getClosestBarbarianToEntity(this, AVOID_BARBARIAN_RANGE) != null && !(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
+        if (getCitizenColonyHandler().getColony() != null && (getCitizenColonyHandler().getColony().getBarbManager().getHorde().size() > 0) && !(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
         {
             return DesiredActivity.SLEEP;
         }
