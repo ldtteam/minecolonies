@@ -55,7 +55,7 @@ public class Burnable implements IDeliverable
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
-        return TileEntityFurnace.isItemFuel(stack) && stack.getCount() >= getCount();
+        return TileEntityFurnace.isItemFuel(stack);
     }
 
     @Override

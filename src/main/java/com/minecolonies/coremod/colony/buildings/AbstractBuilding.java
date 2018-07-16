@@ -18,7 +18,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
@@ -109,7 +108,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      */
     public void onWakeUp()
     {
-        /**
+        /*
          * Buildings override this if required.
          */
     }
@@ -512,10 +511,21 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         return getDataStore().getCitizensByRequest();
     }
 
-    public <R extends IRequestable> IToken<?> createRequest(@NotNull final CitizenData citizenData, @NotNull final R requested)
+    /**
+     * Create a request for a citizen.
+     * @param citizenData the data of the citizen.
+     * @param requested the request to create.
+     * @param async if async or not.
+     * @param <R> the type of the request.
+     * @return the Token of the request.
+     */
+    public <R extends IRequestable> IToken<?> createRequest(@NotNull final CitizenData citizenData, @NotNull final R requested, final boolean async)
     {
         final IToken requestToken = colony.getRequestManager().createRequest(requester, requested);
-
+        if (async)
+        {
+            citizenData.getJob().getAsyncRequests().add(requestToken);
+        }
         addRequestToMaps(citizenData.getId(), requestToken, TypeToken.of(requested.getClass()));
 
         colony.getRequestManager().assignRequest(requestToken);
