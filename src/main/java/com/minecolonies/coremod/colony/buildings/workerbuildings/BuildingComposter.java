@@ -10,6 +10,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class BuildingComposter extends AbstractBuildingWorker
 {
+
+    private static final String COMPOSTER         = "Composter";
+
     /**
      * The abstract constructor of the building.
      *
@@ -38,13 +41,13 @@ public class BuildingComposter extends AbstractBuildingWorker
     @Override
     public String getSchematicName()
     {
-        return null;
+        return COMPOSTER;
     }
 
     @Override
     public int getMaxBuildingLevel()
     {
-        return 0;
+        return 1;
     }
 
     public class View extends AbstractBuildingWorker.View
