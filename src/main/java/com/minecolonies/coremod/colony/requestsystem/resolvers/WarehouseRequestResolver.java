@@ -62,7 +62,8 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
             try
             {
                 return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchinItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack)));
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Log.getLogger().error(e);
             }

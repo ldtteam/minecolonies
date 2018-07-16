@@ -1022,25 +1022,41 @@ public class CitizenData
         return this.saturation;
     }
 
+    /**
+     * Getter for the inventory.
+     * @return the direct reference to the citizen inventory.
+     */
     public InventoryCitizen getInventory()
     {
         return inventory;
     }
 
+    /**
+     * Create a blocking request.
+     * @param requested the request to create.
+     * @param <R> the Type
+     * @return the token of the request.
+     */
     public <R extends IRequestable> IToken createRequest(@NotNull final R requested)
     {
-        return getWorkBuilding().createRequest(this, requested);
+        return getWorkBuilding().createRequest(this, requested, false);
     }
 
+    /**
+     * Create an async request.
+     * @param requested the request to create.
+     * @param <R> the Type
+     * @return the token of the request.
+     */
     public <R extends IRequestable> IToken createRequestAsync(@NotNull final R requested)
     {
-        final IToken requestedToken = getWorkBuilding().createRequest(this, requested);
-
-        job.getAsyncRequests().add(requestedToken);
-
-        return requestedToken;
+        return getWorkBuilding().createRequest(this, requested, true);
     }
 
+    /**
+     * Called on request canceled.
+     * @param token the token to be canceled.
+     */
     public void onRequestCancelled(@NotNull final IToken token)
     {
         if (isRequestAsync(token))
@@ -1049,6 +1065,11 @@ public class CitizenData
         }
     }
 
+    /**
+     * Check if a request is async.
+     * @param token the token to check.
+     * @return true if it is.
+     */
     public boolean isRequestAsync(@NotNull final IToken token)
     {
         return job.getAsyncRequests().contains(token);
