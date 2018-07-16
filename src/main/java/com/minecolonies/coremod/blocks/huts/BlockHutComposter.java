@@ -4,9 +4,12 @@ import com.minecolonies.coremod.blocks.AbstractBlockHut;
 
 public class BlockHutComposter extends AbstractBlockHut<BlockHutComposter>
 {
-    @Override
-    public String getName()
+    public BlockHutComposter()
     {
-        return null;
+        //No different from Abstract parent
+        super();
     }
+
+    @Override
+    public String getName(){return "blockHutComposter";}
 }

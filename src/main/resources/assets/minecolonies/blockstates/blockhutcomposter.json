@@ -1,0 +1,23 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "minecolonies:blockHutComposter"
+    },
+    "facing=east": {
+      "model": "minecolonies:blockHutComposter",
+      "y": 0
+    },
+    "facing=south": {
+      "model": "minecolonies:blockHutComposter",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "minecolonies:blockHutComposter",
+      "y": 180
+    },
+    "facing=north": {
+      "model": "minecolonies:blockHutComposter",
+      "y": 270
+    }
+  }
+}
