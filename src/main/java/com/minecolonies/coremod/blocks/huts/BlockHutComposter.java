@@ -1,5 +1,12 @@
 package com.minecolonies.coremod.blocks.huts;
 
-public class BlockHutComposter
+import com.minecolonies.coremod.blocks.AbstractBlockHut;
+
+public class BlockHutComposter extends AbstractBlockHut<BlockHutComposter>
 {
+    @Override
+    public String getName()
+    {
+        return null;
+    }
 }
