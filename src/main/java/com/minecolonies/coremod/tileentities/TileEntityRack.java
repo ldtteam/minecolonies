@@ -378,6 +378,7 @@ public class TileEntityRack extends TileEntity
     @Override
     public void readFromNBT(final NBTTagCompound compound)
     {
+        super.readFromNBT(compound);
         if (compound.hasKey(TAG_SIZE))
         {
             size = compound.getInteger(TAG_SIZE);
@@ -428,13 +429,13 @@ public class TileEntityRack extends TileEntity
         }
         main = compound.getBoolean(TAG_MAIN);
         updateItemStorage();
-        super.readFromNBT(compound);
     }
 
     @NotNull
     @Override
     public NBTTagCompound writeToNBT(final NBTTagCompound compound)
     {
+        super.writeToNBT(compound);
         compound.setInteger(TAG_SIZE, size);
 
         if (relativeNeighbor != null)
@@ -458,7 +459,7 @@ public class TileEntityRack extends TileEntity
         }
         compound.setTag(TAG_INVENTORY, inventoryTagList);
         compound.setBoolean(TAG_MAIN, main);
-        return super.writeToNBT(compound);
+        return compound;
     }
 
     @Override
