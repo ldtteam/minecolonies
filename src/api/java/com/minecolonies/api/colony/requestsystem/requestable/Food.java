@@ -56,8 +56,10 @@ public class Food implements IDeliverable
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
-        return stack.getItem() instanceof ItemFood && stack.getCount() >= getCount();
-    }    @Override
+        return stack.getItem() instanceof ItemFood;
+    }
+
+    @Override
     public void setResult(@NotNull final ItemStack result)
     {
         this.result = result;
