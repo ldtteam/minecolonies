@@ -98,18 +98,19 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
 
     private void updateBuilding()
     {
-        if (building != null)
+        if (building != null || location == null)
         {
             return;
         }
 
-        if (location == null)
-        {
-            return;
-        }
 
         final World world = MineColonies.proxy.getWorld(location.getDimension());
         final IColony colony = ColonyManager.getClosestIColony(world, location.getInDimensionLocation());
+
+        if (colony == null)
+        {
+            return;
+        }
 
         building = colony.getRequesterBuildingForPosition(location.getInDimensionLocation());
     }
