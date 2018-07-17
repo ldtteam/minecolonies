@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PP",
+    "PP",
+    "PP"
+  ],
+  "key": {
+    "P": {
+      "item": "minecolonies:blockcactusplank"
+    }
+  },
+  "result": {
+    "item": "minecolonies:cactusdoor",
+    "count": 3
+  }
+}
