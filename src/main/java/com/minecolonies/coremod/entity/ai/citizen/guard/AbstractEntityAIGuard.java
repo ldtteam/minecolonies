@@ -246,7 +246,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 {
                 	//Could have multiple armor request,  make sure the require armor falls into the guard
                 	//level.
-                	if (level >= item.getMinLevelRequired() && level <= item.getmaxLevelRequiMed())
+                	if (level >= item.getMinLevelRequired() && level <= item.getMaxLevelRequired())
                 	{
                 		//Save the requested armor item,  so when the guard goes to put it on
                 		//they will put on the correct armor.
@@ -451,9 +451,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         return GUARD_ATTACK_PHYSICAL;
     }
 
-    /**
-     * @return
-     */
     protected AIState attackPhysical()
     {
 
@@ -788,7 +785,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     	/**
     	 * @return max level for this item to be require
     	 */
-    	public int getmaxLevelRequiMed()
+    	public int getMaxLevelRequired()
     	{
     		return maxLevelRequired;
     	}
