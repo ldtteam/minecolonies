@@ -135,7 +135,9 @@ public abstract class AbstractWorkOrder
     {
         id = compound.getInteger(TAG_ID);
         if (compound.hasKey(TAG_TH_PRIORITY))
+        {
         	priority = compound.getInteger(TAG_TH_PRIORITY);
+        }
         claimedBy = compound.getInteger(TAG_CLAIMED_BY);
     }
 
