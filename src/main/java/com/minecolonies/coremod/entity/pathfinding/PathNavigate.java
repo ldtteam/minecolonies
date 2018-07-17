@@ -30,6 +30,11 @@ public class PathNavigate extends PathNavigateGround
 {
     private static final double ON_PATH_SPEED_MULTIPLIER = 1.3D;
 
+    /**
+     * The range multiplier for the lumberjack.
+     */
+    private static final int RANGE_MULTIPLIER_LJ = 4;
+
     //  Parent class private members
     private final EntityLiving ourEntity;
 
@@ -408,9 +413,16 @@ public class PathNavigate extends PathNavigateGround
      */
     public PathJobFindTree.TreePathResult moveToTree(final int range, final double speed, final Map<ItemStorage, Boolean> treesToCut, final Colony colony)
     {
-        @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
+        @NotNull BlockPos start = AbstractPathJob.prepareStart(ourEntity);
+        final BlockPos buildingPos = ((EntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding().getLocation();
+
+        if (BlockPosUtil.getDistance2D(buildingPos, entity.getPosition()) > range * 4)
+        {
+            start = buildingPos;
+        }
+
         return (PathJobFindTree.TreePathResult) setPathJob(
-          new PathJobFindTree(CompatibilityUtils.getWorld(entity), start, ((EntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding().getLocation(), range, treesToCut, colony), null, speed);
+          new PathJobFindTree(CompatibilityUtils.getWorld(entity), start, buildingPos, range, treesToCut, colony), null, speed);
     }
 
     /**
