@@ -1,10 +1,17 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.blockout.Log;
+import com.minecolonies.blockout.views.Window;
+import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.jobs.JobComposter;
+import com.minecolonies.coremod.tileentities.TileEntityBarrel;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,6 +19,10 @@ public class BuildingComposter extends AbstractBuildingWorker
 {
 
     private static final String COMPOSTER         = "Composter";
+
+    private static final int MAX_BUILDING_LEVEL   = 1;
+
+    private static final String HUT_NAME          = "composterHut";
 
     /**
      * The abstract constructor of the building.
@@ -22,20 +33,23 @@ public class BuildingComposter extends AbstractBuildingWorker
     public BuildingComposter(@NotNull final Colony c, final BlockPos l)
     {
         super(c, l);
+        keepX.put((stack) -> TileEntityBarrel.checkCorrectItem(stack)
+          , Integer.MAX_VALUE);
+        Log.getLogger().info("Building created!");
     }
 
     @NotNull
     @Override
     public AbstractJob createJob(final CitizenData citizen)
     {
-        return null;
+        return new JobComposter(citizen);
     }
 
     @NotNull
     @Override
     public String getJobName()
     {
-        return null;
+        return COMPOSTER;
     }
 
     @Override
@@ -47,21 +61,40 @@ public class BuildingComposter extends AbstractBuildingWorker
     @Override
     public int getMaxBuildingLevel()
     {
-        return 1;
+        return MAX_BUILDING_LEVEL;
     }
 
-    public class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingWorker.View
     {
-
         /**
-         * Creates the view representation of the building.
-         *
-         * @param c the colony.
-         * @param l the location.
+         * Instantiates the view of the building.
+         * @param c the colonyView.
+         * @param l the location of the block.
          */
-        public View(final ColonyView c, @NotNull final BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
+        }
+
+        @NotNull
+        @Override
+        public Window getWindow()
+        {
+            return new WindowHutWorkerPlaceholder<AbstractBuildingWorker.View>(this, HUT_NAME);
+        }
+
+        @NotNull
+        @Override
+        public Skill getPrimarySkill()
+        {
+            return Skill.DEXTERITY;
+        }
+
+        @NotNull
+        @Override
+        public Skill getSecondarySkill()
+        {
+            return Skill.STRENGTH;
         }
     }
 

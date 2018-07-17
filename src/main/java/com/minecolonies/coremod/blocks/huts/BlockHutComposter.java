@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.blocks.huts;
 
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockHutComposter extends AbstractBlockHut<BlockHutComposter>
 {
@@ -10,6 +11,7 @@ public class BlockHutComposter extends AbstractBlockHut<BlockHutComposter>
         super();
     }
 
+    @NotNull
     @Override
     public String getName(){return "blockHutComposter";}
 }

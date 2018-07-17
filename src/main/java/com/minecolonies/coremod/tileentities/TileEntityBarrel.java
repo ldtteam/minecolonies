@@ -155,7 +155,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
 
     }
 
-    private boolean checkCorrectItem(final ItemStack itemStack)
+    public static boolean checkCorrectItem(final ItemStack itemStack)
     {
         if(itemStack.isEmpty())
         {

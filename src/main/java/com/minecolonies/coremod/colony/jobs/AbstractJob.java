@@ -59,6 +59,7 @@ public abstract class AbstractJob
     private static final String MAPPING_SMELTER        = "Smelter";
     private static final String MAPPING_RANGER         = "Ranger";
     private static final String MAPPING_KNIGHT         = "Knight";
+    private static final String MAPPING_COMPOSTER      = "Composter";
 
     /**
      * The priority assigned with every main AI job.
@@ -89,6 +90,7 @@ public abstract class AbstractJob
         addMapping(MAPPING_SMELTER, JobSmelter.class);
         addMapping(MAPPING_RANGER, JobRanger.class);
         addMapping(MAPPING_KNIGHT, JobKnight.class);
+        addMapping(MAPPING_COMPOSTER, JobComposter.class);
     }
 
     /**
