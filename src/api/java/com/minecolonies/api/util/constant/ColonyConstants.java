@@ -14,6 +14,11 @@ public final class ColonyConstants
     //  Settings
     public static final int CLEANUP_TICK_INCREMENT = 5 * TICKS_SECOND;
 
+    /**
+     * Default average randomization for onWorldTick() methods
+    */
+    public static final int ONWORLD_TICK_AVERAGE = 1 * TICKS_SECOND;
+
     public static final int NUM_ACHIEVEMENT_FIRST  = 1;
     public static final int NUM_ACHIEVEMENT_SECOND = 25;
     public static final int NUM_ACHIEVEMENT_THIRD  = 100;
