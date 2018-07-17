@@ -1030,4 +1030,13 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         return citizenSleepHandler;
     }
+
+    /**
+     * The Handler to check if a citizen is stuck.
+     * @return the instance of the handler.
+     */
+    public CitizenStuckHandler getCitizenStuckHandler()
+    {
+        return citizenStuckHandler;
+    }
 }
