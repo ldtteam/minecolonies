@@ -221,7 +221,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             final ItemStorage storage = new ItemStorage(stack); 
             if (treesToFell.containsKey(storage)) 
             {
-            	treesToFell.put(new ItemStorage(stack), cut);
+              treesToFell.put(new ItemStorage(stack), cut);
             }
         }
 
