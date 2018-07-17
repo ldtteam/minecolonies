@@ -134,7 +134,8 @@ public abstract class AbstractWorkOrder
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         id = compound.getInteger(TAG_ID);
-        priority = compound.getInteger(TAG_TH_PRIORITY);
+        if (compound.hasKey(TAG_TH_PRIORITY))
+        	priority = compound.getInteger(TAG_TH_PRIORITY);
         claimedBy = compound.getInteger(TAG_CLAIMED_BY);
     }
 
