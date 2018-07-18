@@ -122,7 +122,7 @@ public abstract class AbstractWorkOrder
         catch (final RuntimeException ex)
         {
             Log.getLogger().error(String.format("A WorkOrder %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-              compound.getString(TAG_TYPE), oclass.getName()), ex);
+            compound.getString(TAG_TYPE), oclass.getName()), ex);
             return null;
         }
 
@@ -162,7 +162,7 @@ public abstract class AbstractWorkOrder
         catch (final RuntimeException ex)
         {
             Log.getLogger().error(String.format("A WorkOrder.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-              workOrderView.getId()), ex);
+            workOrderView.getId()), ex);
             workOrderView = null;
         }
 
