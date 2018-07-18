@@ -113,7 +113,10 @@ public abstract class AbstractWorkOrder
         }
         try
         {
-        	order.setPriority(compound.getInteger(TAG_TH_PRIORITY));
+        	if (compound.hasKey(TAG_TH_PRIORITY))
+        	{
+                order.setPriority(compound.getInteger(TAG_TH_PRIORITY));
+        	}
             order.readFromNBT(compound);
         }
         catch (final RuntimeException ex)
