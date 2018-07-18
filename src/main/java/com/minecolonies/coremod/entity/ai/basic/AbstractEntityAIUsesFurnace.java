@@ -92,6 +92,15 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
     protected abstract boolean isSmeltable(final ItemStack stack);
 
     /**
+     * If the worker reached his max amount.
+     * @return true if so.
+     */
+    protected boolean reachedMaxToKeep()
+    {
+        return false;
+    }
+
+    /**
      * Get the furnace which has finished smeltables.
      * For this check each furnace which has been registered to the building.
      * Check if the furnace is turned off and has something in the result slot
@@ -152,7 +161,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         final int amountOfFuelInInv = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel);
 
         if (amountOfSmeltableInBuilding + amountOfSmeltableInInv <= 0
-                && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(getSmeltAbleClass().getClass())))
+                && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(getSmeltAbleClass().getClass())) && !reachedMaxToKeep())
         {
             worker.getCitizenData().createRequestAsync(getSmeltAbleClass());
         }
