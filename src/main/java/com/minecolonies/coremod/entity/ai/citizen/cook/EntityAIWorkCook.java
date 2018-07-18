@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.RESULT_SLOT;
+import static com.minecolonies.api.util.constant.Constants.SLOT_PER_LINE;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.HUNGRY_INV_FULL;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -100,6 +101,12 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     protected boolean isSmeltable(final ItemStack stack)
     {
         return ItemStackUtils.ISCOOKABLE.test(stack);
+    }
+
+    @Override
+    protected boolean reachedMaxToKeep()
+    {
+        return InventoryUtils.getItemCountInProvider(getOwnBuilding(), ItemStackUtils.ISFOOD) > Math.max(1, getOwnBuilding().getBuildingLevel() * getOwnBuilding().getBuildingLevel() / 2) * SLOT_PER_LINE;
     }
 
     /**
