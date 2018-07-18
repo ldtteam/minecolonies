@@ -110,7 +110,6 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
             return;
         }
 
-
         final World world = MineColonies.proxy.getWorld(location.getDimension());
         final IColony colony = ColonyManager.getClosestIColony(world, location.getInDimensionLocation());
 

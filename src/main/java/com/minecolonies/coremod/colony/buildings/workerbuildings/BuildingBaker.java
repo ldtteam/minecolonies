@@ -255,7 +255,7 @@ public class BuildingBaker extends AbstractBuildingWorker
         //
         // Code below this check won't lag each tick anymore
         //
-        if (getColony() == null || !getColony().shallUpdate(event.world, WAIT_TICKS))
+        if (!Colony.shallUpdate(event.world, WAIT_TICKS))
         {
             return;
         }
