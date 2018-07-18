@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.ColonyConstants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
  * Building for the baker.
@@ -255,7 +255,7 @@ public class BuildingBaker extends AbstractBuildingWorker
         //
         // Code below this check won't lag each tick anymore
         //
-        if (getColony() == null || !getColony().shallUpdate(event, WAIT_TICKS))
+        if (getColony() == null || !getColony().shallUpdate(event.world, WAIT_TICKS))
         {
             return;
         }

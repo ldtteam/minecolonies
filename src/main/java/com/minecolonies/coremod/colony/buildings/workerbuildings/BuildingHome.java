@@ -188,7 +188,7 @@ public class BuildingHome extends AbstractBuilding
         //
         // Code below this check won't lag each tick anymore
         //
-        if (getColony() == null || !getColony().shallUpdate(event, ONWORLD_TICK_AVERAGE))
+        if (getColony() == null || !getColony().shallUpdate(event.world, ONWORLD_TICK_AVERAGE))
         {
             return;
         }
