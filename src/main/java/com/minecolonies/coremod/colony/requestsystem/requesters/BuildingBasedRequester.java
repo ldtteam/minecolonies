@@ -96,6 +96,13 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
         return Optional.ofNullable(building);
     }
 
+    @Override
+    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token, final int counter)
+    {
+        updateBuilding();
+        return Optional.ofNullable(building);
+    }
+    
     private void updateBuilding()
     {
         if (building != null || location == null)
