@@ -513,7 +513,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      */
     private static AIState handleEmptyFurnace(final Map<ProductState, List<BakingProduct>> map)
     {
-        if (map.containsKey(ProductState.PREPARED))
+        if (map.containsKey(ProductState.PREPARED) && !map.get(ProductState.PREPARED).isEmpty())
         {
             return BAKER_BAKING;
         }
