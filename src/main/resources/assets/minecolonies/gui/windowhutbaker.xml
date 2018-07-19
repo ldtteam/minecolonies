@@ -1,7 +1,25 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
         lightbox="false"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
-    <view id="pageActions" size="100% 100%">
-        <layout source="minecolonies:gui/windowworkerbuildingdefault.xml"/>
-    </view>
+    <switch id="pages" size="100% 100%">
+	    <view id="pageActions" size="100% 100%">
+        	<layout source="minecolonies:gui/windowworkerbuildingdefault.xml"/>
+    	</view>
+        <view id="pageRecipes" size="100% 100%" pos="0 1">
+            <layout source="minecolonies:gui/windowbase.xml"/>
+            <label size="100% 11" pos="0 40" label="Recipes:" color="black" textalign="BOTTOM_MIDDLE"/>
+
+            <list id="recipes" size="85% 120" pos="5 60" align="TOP_MIDDLE">
+                <view size="100% 30">
+                    <box size="100% 30" linewidth="2">
+                        <button id="assignRecipe" pos="95 10" size="40 15"/>
+                        <label id="name" color="black" pos="20 5"/>
+                        <itemicon id="icon" size="16 16" pos="0 0"/>
+                    </box>
+                </view>
+            </list>
+        </view>
+    </switch>
+    <buttonimage id="prevPage" align="TOP_LEFT" size="26 8" pos="12 15" source="minecolonies:textures/gui/builderhut/builder_sketch_arrow_left_c.png"/>
+    <buttonimage id="nextPage" align="TOP_RIGHT" size="26 8" pos="12 15" source="minecolonies:textures/gui/builderhut/builder_sketch_arrow_right_c.png"/>
 </window>
