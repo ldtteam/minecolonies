@@ -4,6 +4,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
+import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.client.gui.WindowHutBuilder;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -84,8 +85,8 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        //Only the chests because he shouldn't fill up the furnaces.
-        if (block instanceof BlockChest)
+        //Only the chests and racks because he shouldn't fill up the furnaces.
+        if (block instanceof BlockChest || block instanceof BlockMinecoloniesRack)
         {
             addContainerPosition(pos);
         }
