@@ -298,7 +298,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             final List<IRecipeStorage> recipes = BakerRecipes.getRecipes();
             final List<ItemStack> lastRecipe = recipes.get(recipes.size() - 1).getInput();
             final ItemStack[] arrayToRequestAndRetrieve = lastRecipe.toArray(new ItemStack[lastRecipe.size()]);
-            checkIfRequestForItemExistOrCreateAsynch(arrayToRequestAndRetrieve);
+            checkIfRequestForItemExistOrCreate(arrayToRequestAndRetrieve);
             setDelay(UNABLE_TO_CRAFT_DELAY);
             return PREPARING;
         }
