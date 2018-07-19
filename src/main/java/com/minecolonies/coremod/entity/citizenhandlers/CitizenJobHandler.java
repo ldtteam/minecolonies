@@ -57,32 +57,34 @@ public class CitizenJobHandler
     }
 
     /**
-     * Defines job changes and state changes of the citizen.
-     *
-     * @param job the set job.
+     * Set Model depending on job.
+     * @param job the new job.
      */
-    public void onJobChanged(@Nullable final AbstractJob job)
+    public void setModelDependingOnJob(@Nullable final AbstractJob job)
     {
-        //  Model
         if (job == null)
         {
-            if (citizen.getCitizenData() != null)
+            if (citizen.getCitizenColonyHandler().getHomeBuilding() != null)
             {
-                switch (citizen.getCitizenData().getLevel())
+                switch (citizen.getCitizenColonyHandler().getHomeBuilding().getBuildingLevel())
                 {
-                    case 1:
+                    case 3:
                         citizen.setModelId(RenderBipedCitizen.Model.CITIZEN);
                         break;
-                    case 2:
+                    case 4:
                         citizen.setModelId(RenderBipedCitizen.Model.NOBLE);
                         break;
-                    case 3:
+                    case 5:
                         citizen.setModelId(RenderBipedCitizen.Model.ARISTOCRAT);
                         break;
                     default:
                         citizen.setModelId(RenderBipedCitizen.Model.SETTLER);
                         break;
                 }
+            }
+            else
+            {
+                citizen.setModelId(RenderBipedCitizen.Model.SETTLER);
             }
         }
         else
@@ -92,7 +94,17 @@ public class CitizenJobHandler
 
         citizen.getDataManager().set(DATA_MODEL, citizen.getModelID().name());
         citizen.setRenderMetadata("");
+    }
 
+    /**
+     * Defines job changes and state changes of the citizen.
+     *
+     * @param job the set job.
+     */
+    public void onJobChanged(@Nullable final AbstractJob job)
+    {
+        //  Model
+        setModelDependingOnJob(job);
 
         //  AI Tasks
         @NotNull final Object[] currentTasks = citizen.tasks.taskEntries.toArray();
