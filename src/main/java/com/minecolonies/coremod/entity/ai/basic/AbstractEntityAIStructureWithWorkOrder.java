@@ -389,24 +389,6 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     }
 
     @Override
-    public void handleTileEntityPlacement(@NotNull final BlockPos pos)
-    {
-        if (job.getStructure().getBlockInfo().tileentityData != null)
-        {
-            final TileEntity tileentityflowerpot = world.getTileEntity(pos);
-            if (tileentityflowerpot == null)
-            {
-                TileEntity.create(world, job.getStructure().getBlockInfo().tileentityData);
-            }
-            else
-            {
-                tileentityflowerpot.readFromNBT(job.getStructure().getBlockInfo().tileentityData);
-                world.setTileEntity(pos, tileentityflowerpot);
-            }
-        }
-    }
-
-    @Override
     public void handleSpecificCancelActions()
     {
         getOwnBuilding().getColony().getWorkManager().removeWorkOrder(job.getWorkOrderId());

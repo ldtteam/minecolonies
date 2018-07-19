@@ -49,6 +49,7 @@ import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
  * This class provides basic ai functionality.
@@ -60,46 +61,49 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * The maximum range to keep from the current building place.
      */
-    private static final    int EXCEPTION_TIMEOUT             = 100;
-    /**
-     * Buffer time in ticks he will accept a last attacker as valid.
-     */
-    protected static final int ATTACK_TIME_BUFFER            = 50;
+    private static final int EXCEPTION_TIMEOUT = 100;
+
     /**
      * The maximum range to keep from the current building place.
      */
-    private static final   int MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
+    private static final int MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
+
     /**
      * Time in ticks to wait until the next check for items.
      */
-    private static final   int DELAY_RECHECK                 = 10;
+    private static final int DELAY_RECHECK = 10;
+
     /**
      * The default range for any walking to blocks.
      */
-    private static final   int DEFAULT_RANGE_FOR_DELAY       = 4;
+    private static final int DEFAULT_RANGE_FOR_DELAY = 4;
+
     /**
      * The number of actions done before item dump.
      */
-    private static final   int ACTIONS_UNTIL_DUMP            = 32;
+    private static final int ACTIONS_UNTIL_DUMP = 32;
+
     /**
      * Hit a block every x ticks when mining.
      */
-    private static final   int HIT_EVERY_X_TICKS             = 5;
+    private static final int HIT_EVERY_X_TICKS = 5;
 
     /**
      * The block the ai is currently working at or wants to work.
      */
     @Nullable
-    protected BlockPos currentWorkingLocation  = null;
+    protected BlockPos currentWorkingLocation = null;
+
     /**
      * The block the ai is currently standing at or wants to stand.
      */
     @Nullable
     protected BlockPos currentStandingLocation = null;
+
     /**
      * The time in ticks until the next action is made.
      */
-    private   int      delay                   = 0;
+    private int delay = 0;
 
     /**
      * If we have waited one delay.
@@ -900,7 +904,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return INVENTORY_FULL;
         }
 
-        if(InventoryUtils.isProviderFull(getOwnBuilding().getTileEntity()))
+        if(InventoryUtils.isProviderFull(getOwnBuilding()))
         {
             getOwnBuilding().alterPickUpPriority(MAX_PRIO);
             chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST);
@@ -929,12 +933,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 
         return buildingWorker != null
-                 && (walkToBuilding()
-                       || InventoryFunctions.matchFirstInHandlerWithAction(new InvWrapper(worker.getInventoryCitizen()),
+                 && (walkToBuilding() || InventoryFunctions.matchFirstInHandlerWithAction(new InvWrapper(worker.getInventoryCitizen()),
           itemStack -> !ItemStackUtils.isEmpty(itemStack) && !buildingWorker.buildingRequiresCertainAmountOfItem(itemStack, alreadyKept),
           (handler, slot) ->
             InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(
-              new InvWrapper(worker.getInventoryCitizen()), slot, new InvWrapper(buildingWorker.getTileEntity()))
+              new InvWrapper(worker.getInventoryCitizen()), slot, buildingWorker.getCapability(ITEM_HANDLER_CAPABILITY, null))
         ));
     }
 

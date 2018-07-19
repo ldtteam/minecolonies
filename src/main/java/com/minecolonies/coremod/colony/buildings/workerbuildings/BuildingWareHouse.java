@@ -241,9 +241,9 @@ public class BuildingWareHouse extends AbstractBuilding
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        if ((block instanceof BlockContainer || block instanceof BlockMinecoloniesRack) && world != null)
+        if (block instanceof BlockContainer || block instanceof BlockMinecoloniesRack)
         {
-            final TileEntity entity = getColony().getWorld().getTileEntity(pos);
+            final TileEntity entity = world.getTileEntity(pos);
             if (entity instanceof TileEntityChest)
             {
                 handleBuildingOverChest(pos, (TileEntityChest) entity, world);

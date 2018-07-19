@@ -40,6 +40,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.ColonyConstants.ONWORLD_TICK_AVERAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -368,6 +369,14 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
         super.onWorldTick(event);
+
+        //
+        // Code below this check won't lag each tick anymore
+        //
+        if (!Colony.shallUpdate(event.world, ONWORLD_TICK_AVERAGE))
+        {
+            return;
+        }
 
         // If we have no active worker, grab one from the Colony
         // TODO Maybe the Colony should assign jobs out, instead?

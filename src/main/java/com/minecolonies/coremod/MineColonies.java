@@ -13,6 +13,7 @@ import com.minecolonies.coremod.event.BarbarianSpawnEventHandler;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.event.FMLEventHandler;
 import com.minecolonies.coremod.network.messages.*;
+import com.minecolonies.coremod.placementhandlers.MinecoloniesPlacementHandlers;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.util.RecipeHandler;
 import net.minecraft.init.Items;
@@ -144,6 +145,8 @@ public class MineColonies
         proxy.registerRenderer();
 
         ModAchievements.init();
+
+        MinecoloniesPlacementHandlers.initHandlers();
 
         RecipeHandler.init(Configurations.gameplay.enableInDevelopmentFeatures, Configurations.gameplay.supplyChests);
 

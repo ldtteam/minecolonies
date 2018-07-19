@@ -41,6 +41,8 @@ import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
 
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+
 /**
  * Building for the baker.
  */
@@ -93,7 +95,7 @@ public class BuildingBaker extends AbstractBuildingWorker
     /**
      * Wait this amount of ticks before checking again.
      */
-    private static final int WAIT_TICKS = 320;
+    private static final int WAIT_TICKS = 16 * TICKS_SECOND;
     /**
      * Always try to keep at least 2 stacks of wheat in the inventory and in the worker chest.
      */
@@ -106,10 +108,6 @@ public class BuildingBaker extends AbstractBuildingWorker
      * Map of tasks for the baker to work on.
      */
     private final Map<ProductState, List<BakingProduct>> tasks = new EnumMap<>(ProductState.class);
-    /**
-     * Ticks past since the last check.
-     */
-    private int ticksPassed = 0;
 
     /**
      * Arraylist of all recipes the baker is allower to bake.
@@ -306,13 +304,13 @@ public class BuildingBaker extends AbstractBuildingWorker
     {
         super.onWorldTick(event);
 
-        if (ticksPassed != WAIT_TICKS)
+        //
+        // Code below this check won't lag each tick anymore
+        //
+        if (!Colony.shallUpdate(event.world, WAIT_TICKS))
         {
-            ticksPassed++;
             return;
         }
-        ticksPassed = 0;
-
 
         checkFurnaces();
     }

@@ -28,67 +28,41 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+
 /**
  * Tile entity for the warehouse shelves.
  */
 public class TileEntityRack extends TileEntity
 {
     /**
-     * Tag used to store the neighbor pos to NBT.
-     */
-    private static final String TAG_NEIGHBOR = "neighbor";
-
-    /**
-     * Tag used to store the inventory to nbt.
-     */
-    private static final String TAG_INVENTORY = "inventory";
-
-    /**
-     * Tag used to store the size.
-     */
-    private static final String TAG_SIZE = "tagSIze";
-
-    /**
-     * Tag used to store if the entity is the main.
-     */
-    private static final String TAG_MAIN = "main";
-
-    /**
-     * Tag compound of forge.
-     */
-    private static final int TAG_COMPOUND = 10;
-
-    /**
-     * Default size of the inventory.
-     */
-    private static final int DEFAULT_SIZE = 27;
-
-    /**
-     * Slots per line.
-     */
-    private static final int SLOT_PER_LINE = 9;
-    /**
      * The content of the chest.
      */
     private final Map<ItemStorage, Integer> content = new HashMap<>();
+
     /**
      * Variable which determines if it is a single or doublechest.
      */
     private boolean single = true;
+
     /**
      * Neighbor position of the rack (double chest).
      */
-    private BlockPos neighbor = BlockPos.ORIGIN;
+    private BlockPos relativeNeighbor = null;
+
     /**
      * Is this the main chest of the doubleChest.
      */
     private boolean main = false;
+
     /**
      * Size multiplier of the inventory.
      * 0 = default value.
      * 1 = 1*9 additional slots, and so on.
      */
     private int size = 0;
+
     /**
      * The inventory of the tileEntity.
      */
@@ -101,6 +75,7 @@ public class TileEntityRack extends TileEntity
             super.onContentsChanged(slot);
         }
 
+        @NotNull
         @Override
         public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
         {
@@ -272,12 +247,12 @@ public class TileEntityRack extends TileEntity
             final IBlockState typeNeighbor;
             if (content.isEmpty() && (getOtherChest() == null || getOtherChest().isEmpty()))
             {
-                if (getOtherChest() != null && world.getBlockState(neighbor).getBlock() instanceof BlockMinecoloniesRack)
+                if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof BlockMinecoloniesRack)
                 {
 
                     typeHere = world.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
-                    typeNeighbor = world.getBlockState(neighbor).withProperty(BlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE)
-                                     .withProperty(BlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, neighbor));
+                    typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor)).withProperty(BlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE)
+                                     .withProperty(BlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, this.pos.subtract(relativeNeighbor)));
                 }
                 else
                 {
@@ -287,11 +262,11 @@ public class TileEntityRack extends TileEntity
             }
             else
             {
-                if (getOtherChest() != null && world.getBlockState(neighbor).getBlock() instanceof BlockMinecoloniesRack)
+                if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof BlockMinecoloniesRack)
                 {
                     typeHere = world.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
-                    typeNeighbor = world.getBlockState(neighbor).withProperty(BlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
-                                     .withProperty(BlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, neighbor));
+                    typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor)).withProperty(BlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
+                                     .withProperty(BlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, this.pos.subtract(relativeNeighbor)));
                 }
                 else
                 {
@@ -302,15 +277,7 @@ public class TileEntityRack extends TileEntity
             world.setBlockState(pos, typeHere);
             if (typeNeighbor != null)
             {
-                world.setBlockState(neighbor, typeNeighbor);
-            }
-        }
-        else if (!single && !main && world != null && neighbor != null)
-        {
-            final TileEntity entity = world.getTileEntity(getNeighbor());
-            if (entity instanceof TileEntityRack && !((TileEntityRack) entity).main)
-            {
-                this.main = true;
+                world.setBlockState(this.pos.subtract(relativeNeighbor), typeNeighbor);
             }
         }
     }
@@ -322,11 +289,11 @@ public class TileEntityRack extends TileEntity
      */
     public TileEntityRack getOtherChest()
     {
-        if (neighbor.equals(BlockPos.ORIGIN) || world == null)
+        if (relativeNeighbor == null || world == null)
         {
             return null;
         }
-        final TileEntity tileEntity = world.getTileEntity(neighbor);
+        final TileEntity tileEntity = world.getTileEntity(pos.subtract(relativeNeighbor));
         if (tileEntity instanceof TileEntityRack)
         {
             ((TileEntityRack) tileEntity).setNeighbor(this.getPos());
@@ -353,53 +320,44 @@ public class TileEntityRack extends TileEntity
     public void setMain(final boolean main)
     {
         this.main = main;
+        markDirty();
     }
 
     /**
      * On neighbor changed this will be called from the block.
-     *
      * @param newNeighbor the blockPos which has changed.
      */
     public void neighborChanged(final BlockPos newNeighbor)
     {
         final TileEntity entity = world.getTileEntity(newNeighbor);
 
-        if (!this.neighbor.equals(BlockPos.ORIGIN)
-              && this.neighbor.distanceSq(this.pos) > 1
-              && entity instanceof TileEntityRack)
-        {
-            softReset();
-        }
-
-        if (this.neighbor.equals(BlockPos.ORIGIN) && world.getBlockState(newNeighbor).getBlock() instanceof BlockMinecoloniesRack
+        if (relativeNeighbor == null && world.getBlockState(newNeighbor).getBlock() instanceof BlockMinecoloniesRack
               && !(entity instanceof TileEntityRack && ((TileEntityRack) entity).getOtherChest() != null))
         {
-            this.neighbor = newNeighbor;
+            this.relativeNeighbor = this.pos.subtract(newNeighbor);
             single = false;
-            if (entity instanceof TileEntityRack && !((TileEntityRack) entity).isMain())
+            if (entity instanceof TileEntityRack)
             {
-                this.main = true;
+                if (!((TileEntityRack) entity).isMain())
+                {
+                    this.main = true;
+                    ((TileEntityRack) entity).setMain(false);
+                }
+                ((TileEntityRack) entity).setNeighbor(this.getPos());
                 ((TileEntityRack) entity).setMain(false);
+                entity.markDirty();
             }
-            ((TileEntityRack) entity).setNeighbor(this.getPos());
-            entity.markDirty();
+
             updateItemStorage();
             this.markDirty();
         }
-        else if (this.neighbor.equals(newNeighbor) && !(world.getBlockState(newNeighbor).getBlock() instanceof BlockMinecoloniesRack))
+        else if (relativeNeighbor != null && this.pos.subtract(relativeNeighbor).equals(newNeighbor) && !(world.getBlockState(newNeighbor).getBlock() instanceof BlockMinecoloniesRack))
         {
-            this.neighbor = BlockPos.ORIGIN;
+            this.relativeNeighbor = null;
             single = true;
             this.main = false;
             updateItemStorage();
         }
-    }
-
-    public void softReset()
-    {
-        this.neighbor = BlockPos.ORIGIN;
-        single = true;
-        this.main = false;
     }
 
     /**
@@ -420,6 +378,7 @@ public class TileEntityRack extends TileEntity
     @Override
     public void readFromNBT(final NBTTagCompound compound)
     {
+        super.readFromNBT(compound);
         if (compound.hasKey(TAG_SIZE))
         {
             size = compound.getInteger(TAG_SIZE);
@@ -437,9 +396,20 @@ public class TileEntityRack extends TileEntity
             }
         }
 
-        neighbor = BlockPosUtil.readFromNBT(compound, TAG_NEIGHBOR);
+        if (compound.hasKey(TAG_NEIGHBOR))
+        {
+            final BlockPos neighbor = BlockPosUtil.readFromNBT(compound, TAG_NEIGHBOR);
+            if (neighbor != BlockPos.ORIGIN)
+            {
+                relativeNeighbor = pos.subtract(neighbor);
+            }
+        }
+        else if (compound.hasKey(TAG_RELATIVE_NEIGHBOR))
+        {
+            relativeNeighbor = BlockPosUtil.readFromNBT(compound, TAG_RELATIVE_NEIGHBOR);
+        }
 
-        if (!neighbor.equals(BlockPos.ORIGIN))
+        if (relativeNeighbor != null)
         {
             single = false;
         }
@@ -459,14 +429,19 @@ public class TileEntityRack extends TileEntity
         }
         main = compound.getBoolean(TAG_MAIN);
         updateItemStorage();
-        super.readFromNBT(compound);
     }
 
+    @NotNull
     @Override
     public NBTTagCompound writeToNBT(final NBTTagCompound compound)
     {
+        super.writeToNBT(compound);
         compound.setInteger(TAG_SIZE, size);
-        BlockPosUtil.writeToNBT(compound, TAG_NEIGHBOR, neighbor);
+
+        if (relativeNeighbor != null)
+        {
+            BlockPosUtil.writeToNBT(compound, TAG_RELATIVE_NEIGHBOR, relativeNeighbor);
+        }
         @NotNull final NBTTagList inventoryTagList = new NBTTagList();
         for (int slot = 0; slot < inventory.getSlots(); slot++)
         {
@@ -484,34 +459,14 @@ public class TileEntityRack extends TileEntity
         }
         compound.setTag(TAG_INVENTORY, inventoryTagList);
         compound.setBoolean(TAG_MAIN, main);
-        return super.writeToNBT(compound);
+        return compound;
     }
 
     @Override
     public SPacketUpdateTileEntity getUpdatePacket()
     {
         final NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger(TAG_SIZE, size);
-        BlockPosUtil.writeToNBT(compound, TAG_NEIGHBOR, neighbor);
-
-        @NotNull final NBTTagList inventoryTagList = new NBTTagList();
-        for (int slot = 0; slot < inventory.getSlots(); slot++)
-        {
-            @NotNull final NBTTagCompound inventoryCompound = new NBTTagCompound();
-            final ItemStack stack = inventory.getStackInSlot(slot);
-            if (stack == ItemStack.EMPTY)
-            {
-                new ItemStack(Blocks.AIR, 0).writeToNBT(inventoryCompound);
-            }
-            else
-            {
-                stack.writeToNBT(inventoryCompound);
-            }
-            inventoryTagList.appendTag(inventoryCompound);
-        }
-        compound.setTag(TAG_INVENTORY, inventoryTagList);
-        compound.setBoolean(TAG_MAIN, main);
-        return new SPacketUpdateTileEntity(this.pos, 0, compound);
+        return new SPacketUpdateTileEntity(this.pos, 0, this.writeToNBT(compound));
     }
 
     @NotNull
@@ -524,54 +479,17 @@ public class TileEntityRack extends TileEntity
     @Override
     public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
     {
-        final NBTTagCompound compound = packet.getNbtCompound();
-        size = compound.getInteger(TAG_SIZE);
-        if (compound.hasKey(TAG_SIZE))
-        {
-            size = compound.getInteger(TAG_SIZE);
-            if (size > 0)
-            {
-                inventory = new ItemStackHandler(DEFAULT_SIZE + size * SLOT_PER_LINE)
-                {
-                    @Override
-                    protected void onContentsChanged(final int slot)
-                    {
-                        updateItemStorage();
-                        super.onContentsChanged(slot);
-                    }
-                };
-            }
-        }
-        neighbor = BlockPosUtil.readFromNBT(compound, TAG_NEIGHBOR);
-        if (!neighbor.equals(BlockPos.ORIGIN))
-        {
-            single = false;
-        }
-        final NBTTagList inventoryTagList = compound.getTagList(TAG_INVENTORY, TAG_COMPOUND);
-        for (int i = 0; i < inventoryTagList.tagCount(); ++i)
-        {
-            final NBTTagCompound inventoryCompound = inventoryTagList.getCompoundTagAt(i);
-            final ItemStack stack = new ItemStack(inventoryCompound);
-            if (ItemStackUtils.getSize(stack) <= 0)
-            {
-                inventory.setStackInSlot(i, ItemStackUtils.EMPTY);
-            }
-            else
-            {
-                inventory.setStackInSlot(i, stack);
-            }
-        }
-        main = compound.getBoolean(TAG_MAIN);
+        this.readFromNBT(packet.getNbtCompound());
     }
 
     @Override
-    public boolean shouldRefresh(final World world, final BlockPos pos, final IBlockState oldState, final IBlockState newState)
+    public boolean shouldRefresh(final World world, final BlockPos pos, @NotNull final IBlockState oldState, @NotNull final IBlockState newState)
     {
         return oldState.getBlock() != newState.getBlock();
     }
 
     @Override
-    public boolean hasCapability(final Capability<?> capability, final EnumFacing facing)
+    public boolean hasCapability(@NotNull final Capability<?> capability, final EnumFacing facing)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
@@ -581,7 +499,7 @@ public class TileEntityRack extends TileEntity
     }
 
     @Override
-    public <T> T getCapability(final Capability<T> capability, final EnumFacing facing)
+    public <T> T getCapability(@NotNull final Capability<T> capability, final EnumFacing facing)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
@@ -611,7 +529,7 @@ public class TileEntityRack extends TileEntity
      */
     public BlockPos getNeighbor()
     {
-        return neighbor;
+        return pos.subtract(relativeNeighbor);
     }
 
     /**
@@ -621,15 +539,8 @@ public class TileEntityRack extends TileEntity
      */
     public void setNeighbor(final BlockPos neighbor)
     {
-        if (!neighbor.equals(BlockPos.ORIGIN))
-        {
-            this.neighbor = neighbor;
-            this.single = false;
-        }
-        else
-        {
-            this.neighbor = BlockPos.ORIGIN;
-            this.single = true;
-        }
+        this.single = neighbor == null;
+        this.relativeNeighbor = this.pos.subtract(neighbor);
+        markDirty();
     }
 }

@@ -209,6 +209,14 @@ public class BarbarianManager implements IBarbarianManager
     @Override
     public List<AbstractEntityBarbarian> getHorde() 
     {
+        for (final AbstractEntityBarbarian entity : new ArrayList<>(horde))
+        {
+            if (entity.isDead)
+            {
+                horde.remove(entity);
+            }
+        }
+
         return new ArrayList(horde);
     }
 }

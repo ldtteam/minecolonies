@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static com.minecolonies.api.util.constant.ColonyConstants.ONWORLD_TICK_AVERAGE;
 import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT_FIRST;
 import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BEDS;
@@ -184,6 +185,14 @@ public class BuildingHome extends AbstractBuilding
     @Override
     public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
+        //
+        // Code below this check won't lag each tick anymore
+        //
+        if (!Colony.shallUpdate(event.world, ONWORLD_TICK_AVERAGE))
+        {
+            return;
+        }
+
         if (getAssignedCitizen().size() < getMaxInhabitants() && getColony() != null && !getColony().isManualHousing())
         {
             // 'Capture' as many citizens into this house as possible

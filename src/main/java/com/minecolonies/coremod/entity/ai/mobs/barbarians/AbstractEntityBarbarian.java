@@ -62,7 +62,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     /**
      * Amount of ticks to despawn the barbarian.
      */
-    private static final int TICKS_TO_DESPAWN = Constants.TICKS_SECOND * Constants.SECONDS_A_MINUTE * 10;
+    private static final int TICKS_TO_DESPAWN = Constants.TICKS_SECOND * Constants.SECONDS_A_MINUTE * 5;
 
     /**
      * Randomly execute it every this ticks.

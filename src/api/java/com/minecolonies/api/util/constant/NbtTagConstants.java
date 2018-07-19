@@ -273,11 +273,31 @@ public final class NbtTagConstants
     public static final String TAG_ALL_CHUNK_STORAGES = "allchunk";
 
     /**
+     * Tag used to store the neighbor pos to NBT.
+     */
+    public static final String TAG_NEIGHBOR = "neighbor";
+
+    /**
+     * Tag used to store the relative neighbor pos to NBT.
+     */
+    public static final String TAG_RELATIVE_NEIGHBOR = "relNeighbor";
+
+    /**
+     * Tag used to store the size.
+     */
+    public static final String TAG_SIZE = "tagSIze";
+
+    /**
+     * Tag used to store if the entity is the main.
+     */
+    public static final String TAG_MAIN = "main";
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private NbtTagConstants()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }

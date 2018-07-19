@@ -96,20 +96,27 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
         return Optional.ofNullable(building);
     }
 
+    @Override
+    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token, final int counter)
+    {
+        updateBuilding();
+        return Optional.ofNullable(building);
+    }
+    
     private void updateBuilding()
     {
-        if (building != null)
-        {
-            return;
-        }
-
-        if (location == null)
+        if (building != null || location == null)
         {
             return;
         }
 
         final World world = MineColonies.proxy.getWorld(location.getDimension());
         final IColony colony = ColonyManager.getClosestIColony(world, location.getInDimensionLocation());
+
+        if (colony == null)
+        {
+            return;
+        }
 
         building = colony.getRequesterBuildingForPosition(location.getInDimensionLocation());
     }

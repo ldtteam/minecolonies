@@ -60,6 +60,15 @@ public class CitizenStuckHandler
     }
 
     /**
+     * Let worker AIs check if the citizen is stuck to not track it on their own.
+     * @return true if tried to move away already.
+     */
+    public boolean isStuck()
+    {
+        return stuckTime >= MIN_STUCK_TIME + citizen.getRandom().nextInt(MIN_STUCK_TIME) && triedMovingAway;
+    }
+
+    /**
      * Check if the citizen is stuck and try to get him back on track.
      */
     private void checkIfStuck()
@@ -94,7 +103,8 @@ public class CitizenStuckHandler
 
         if (stuckTime >= MAX_STUCK_TIME)
         {
-            if (citizen.getNavigator().getDestination().distanceSq(citizen.posX, citizen.posY, citizen.posZ) < MOVE_AWAY_RANGE)
+            if (citizen.getNavigator().getDestination().distanceSq(citizen.posX, citizen.posY, citizen.posZ) < MOVE_AWAY_RANGE
+                  || (Math.abs(citizen.getNavigator().getDestination().getY()-citizen.posY) > 2))
             {
                 stuckTime = 0;
                 return;

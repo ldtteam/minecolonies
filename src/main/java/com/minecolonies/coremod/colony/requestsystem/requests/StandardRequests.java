@@ -182,8 +182,7 @@ public final class StandardRequests
     public static class FoodRequest extends AbstractRequest<Food>
     {
 
-        private static ImmutableList<ItemStack>
-          foodExamples;
+        private static ImmutableList<ItemStack> foodExamples;
 
         FoodRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Food requested)
         {
