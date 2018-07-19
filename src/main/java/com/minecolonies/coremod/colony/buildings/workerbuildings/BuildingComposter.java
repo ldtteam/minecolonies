@@ -11,21 +11,54 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BuildingComposter extends AbstractBuildingWorker
 {
 
+    /**
+     * Description of the job for this building
+     */
     private static final String COMPOSTER         = "Composter";
 
-    private static final int MAX_BUILDING_LEVEL   = 1;
+    /**
+     * Maxiimum building level
+     */
+    private static final int MAX_BUILDING_LEVEL   = 5;
 
+    /**
+     * Name of the building
+     */
     private static final String HUT_NAME          = "composterHut";
 
     /**
-     * The abstract constructor of the building.
+     * Tag to store the barrel position.
+     */
+    private static final String TAG_POS = "pos";
+
+    /**
+     * Tag to store the barrel list.
+     */
+    private static final String TAG_BARRELS = "barrels";
+
+    /**
+     * List of registered barrels.
+     */
+    private final List<BlockPos> barrels = new ArrayList<>();
+
+    /**
+     * The constructor of the building.
      *
      * @param c the colony
      * @param l the position
@@ -36,6 +69,16 @@ public class BuildingComposter extends AbstractBuildingWorker
         keepX.put((stack) -> TileEntityBarrel.checkCorrectItem(stack)
           , Integer.MAX_VALUE);
         Log.getLogger().info("Building created!");
+    }
+
+    /**
+     * Return a list of barrels assigned to this hut.
+     *
+     * @return copy of the list
+     */
+    public List<BlockPos> getBarrels()
+    {
+        return new ArrayList<>(barrels);
     }
 
     @NotNull
@@ -62,6 +105,42 @@ public class BuildingComposter extends AbstractBuildingWorker
     public int getMaxBuildingLevel()
     {
         return MAX_BUILDING_LEVEL;
+    }
+
+    @Override
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    {
+        super.registerBlockPosition(block, pos, world);
+        if(block == ModBlocks.blockBarrel && !barrels.contains(pos))
+        {
+            barrels.add(pos);
+            Log.getLogger().info("New barrel registered at: " + pos);
+        }
+    }
+
+    @Override
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+        @NotNull final NBTTagList furnacesTagList = new NBTTagList();
+        for (@NotNull final BlockPos entry : barrels)
+        {
+            @NotNull final NBTTagCompound furnaceCompound = new NBTTagCompound();
+            furnaceCompound.setTag(TAG_POS, NBTUtil.createPosTag(entry));
+            furnacesTagList.appendTag(furnaceCompound);
+        }
+        compound.setTag(TAG_BARRELS, furnacesTagList);
+    }
+
+    @Override
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        final NBTTagList furnaceTagList = compound.getTagList(TAG_BARRELS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < furnaceTagList.tagCount(); ++i)
+        {
+            barrels.add(NBTUtil.getPosFromTag(furnaceTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
+        }
     }
 
     public static class View extends AbstractBuildingWorker.View

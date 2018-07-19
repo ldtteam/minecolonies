@@ -1,20 +1,38 @@
 package com.minecolonies.coremod.entity.ai.citizen.composter;
 
+import com.minecolonies.blockout.Log;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.coremod.entity.ai.util.AIState.START_WORKING;
-import static com.minecolonies.coremod.entity.ai.util.AIState.COMPOSTER_FILL;
-import static com.minecolonies.coremod.entity.ai.util.AIState.COMPOSTER_HARVEST;
+import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter>
 {
+
     /**
-     * Creates the abstract part of the AI.
-     * Always use this constructor!
+     * How often should strength factor into the composter's skill modifier.
+     */
+    private static final int STRENGTH_MULTIPLIER = 2;
+
+    /**
+     * How often should intelligence factor into the composter's skill modifier.
+     */
+    private static final int INTELLIGENCE_MULTIPLIER = 1;
+
+    /**
+     * Base xp gain for the composter.
+     */
+    private static final double BASE_XP_GAIN = 5;
+
+    private  BlockPos currentTarget;
+
+    /**
+     * Constructor for the AI
      *
      * @param job the job to fulfill
      */
@@ -22,22 +40,48 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     {
         super(job);
         super.registerTargets(
+          new AITarget(IDLE, START_WORKING),
+          new AITarget(START_WORKING, this::decideWhatToDo),
           new AITarget(COMPOSTER_FILL, this::fillBarrels),
           new AITarget(COMPOSTER_HARVEST, this::harvestBarrels)
         );
+        worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
+                                                                + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
 
         worker.setCanPickUpLoot(true);
     }
 
+    private AIState decideWhatToDo()
+    {
+        return COMPOSTER_FILL;
+    }
+
     private AIState fillBarrels()
     {
-        //TODO implement
-        return START_WORKING;
+        if(currentTarget == null)
+        {
+            BuildingComposter building = this.getOwnBuilding();
+            currentTarget = building.getBarrels().get(0);
+        }
+        if (walkToBlock(currentTarget))
+        {
+            Log.getLogger().info("Going to the barrel!");
+            setDelay(2);
+            return getState();
+        }
+
+        return COMPOSTER_HARVEST;
     }
 
     private AIState harvestBarrels()
     {
-        //TODO implement
+        if (walkToBuilding())
+        {
+            Log.getLogger().info("Going back!");
+            setDelay(2);
+            return getState();
+        }
+        currentTarget = null;
         return START_WORKING;
     }
 }
