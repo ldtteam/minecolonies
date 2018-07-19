@@ -113,7 +113,6 @@ public class BuildingBaker extends AbstractBuildingWorker
 
     /**
      * Arraylist of all recipes the baker is allower to bake.
-     * setting it to true indicate bakable recipe.
      */
     private boolean[] recipesAllowed;
     
