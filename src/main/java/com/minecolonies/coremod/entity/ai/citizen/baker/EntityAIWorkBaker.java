@@ -357,7 +357,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         final List<IItemHandler> handlers = getOwnBuilding().getHandlers();
         if (storage.canFullFillRecipe(handlers.toArray(new IItemHandler[handlers.size()])))
         {
-        	final List<ItemStack> list = new ArrayList<>();
+            final List<ItemStack> list = new ArrayList<>();
 
 	        ItemStack copy = null;
 	        for (final ItemStack stack : storage.getInput())
