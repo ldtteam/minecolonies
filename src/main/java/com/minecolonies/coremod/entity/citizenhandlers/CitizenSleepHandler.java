@@ -110,6 +110,9 @@ public class CitizenSleepHandler
         citizen.motionY = 0.0D;
         citizen.motionZ = 0.0D;
 
+        //Remove item while citizen is asleep.
+        citizen.getCitizenItemHandler().removeHeldItem();
+
         setIsAsleep(true);
 
         citizen.getDataManager().set(DATA_BED_POS, bedLocation);

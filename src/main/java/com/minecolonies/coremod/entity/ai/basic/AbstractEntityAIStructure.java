@@ -1,11 +1,14 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -16,6 +19,7 @@ import com.minecolonies.coremod.placementhandlers.PlacementHandlers;
 import com.minecolonies.coremod.util.StructureWrapper;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockGrassPath;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
@@ -59,7 +63,7 @@ import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.Actio
  *
  * @param <J> the job type this AI has to do.
  */
-public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends AbstractEntityAIInteract<J>
+public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> extends AbstractEntityAIInteract<J>
 {
     /**
      * String which shows if something is a waypoint.
@@ -123,43 +127,43 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         super(job);
         this.registerTargets(
 
-          /**
+          /*
            * Pick up stuff which might've been
            */
           new AITarget(PICK_UP_RESIDUALS, this::pickUpResiduals),
-          /**
+          /*
            * Check if tasks should be executed.
            */
           new AITarget(this::checkIfCanceled, IDLE),
-          /**
+          /*
            * Select the appropriate State to do next.
            */
           new AITarget(START_BUILDING, this::startBuilding),
-          /**
+          /*
            * Check if we have to build something.
            */
           new AITarget(IDLE, this::isThereAStructureToBuild, () -> START_BUILDING),
-          /**
+          /*
            * Clean up area completely.
            */
           new AITarget(REMOVE_STEP, generateStructureGenerator(this::clearStep, COMPLETE_BUILD)),
-          /**
+          /*
            * Clear out the building area.
            */
           new AITarget(CLEAR_STEP, generateStructureGenerator(this::clearStep, BUILDING_STEP)),
-          /**
+          /*
            * Build the structure and foundation of the building.
            */
           new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, SPAWN_STEP)),
-          /**
+          /*
            * Spawn entities on the structure.
            */
           new AITarget(SPAWN_STEP, generateStructureGenerator(this::spawnEntity, DECORATION_STEP)),
-          /**
+          /*
            * Decorate the AbstractBuilding with torches etc.
            */
           new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, COMPLETE_BUILD)),
-          /**
+          /*
            * Finalize the building and give back control to the ai.
            */
           new AITarget(COMPLETE_BUILD, this::completeBuild)
@@ -357,42 +361,133 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         return worker.isWorkerAtSiteWithMove(workFrom, STANDARD_WORKING_RANGE) || MathUtils.twoDimDistance(worker.getPosition(), workFrom) < MIN_WORKING_RANGE;
     }
 
+    /**
+     * Specific actions to execute when building over a block.
+     *
+     * @param pos the position to build at.
+     */
+    private void handleBuildingOverBlock(@NotNull final BlockPos pos)
+    {
+        final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
+        for (final ItemStack item : items)
+        {
+            InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), item);
+        }
+    }
+
     private boolean placeBlockAt(@NotNull final IBlockState blockState, @NotNull final BlockPos coords)
     {
+        if (blockState instanceof BlockGrassPath)
+        {
+            holdEfficientTool(blockState.getBlock(), coords);
+        }
+
         final ItemStack item = BlockUtils.getItemStackFromBlockState(blockState);
         worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? ItemStackUtils.EMPTY : item);
+
         final IBlockState decrease;
         for (final IPlacementHandler handlers : PlacementHandlers.handlers)
         {
-            final Object result = handlers.handle(world, coords, blockState, this, Configurations.gameplay.builderInfiniteResources, false);
-            if (result instanceof IPlacementHandler.ActionProcessingResult)
+            if (handlers.canHandle(world, coords, blockState))
             {
-                if (result == ACCEPT)
+                if (!Configurations.gameplay.builderInfiniteResources)
                 {
+                    final List<ItemStack> requiredItems = handlers.getRequiredItems(world, coords, blockState, job.getStructure().getBlockInfo().tileentityData, false);
+
+                    final List<ItemStack> itemList = new ArrayList<>();
+                    for (final ItemStack stack : requiredItems)
+                    {
+                        itemList.add(this.getTotalAmount(this.getTotalAmount(stack)));
+                    }
+
+                    if (checkForListInInvAndRequest(this, itemList))
+                    {
+                        return false;
+                    }
+                }
+                handleBuildingOverBlock(coords);
+                world.setBlockToAir(coords);
+
+                final Object result = handlers.handle(world, coords, blockState, job.getStructure().getBlockInfo().tileentityData, false, job.getStructure().getPosition());
+                if (result instanceof IPlacementHandler.ActionProcessingResult)
+                {
+                    if (result == ACCEPT)
+                    {
+                        return true;
+                    }
+
+                    if (result == DENY)
+                    {
+                        return false;
+                    }
+                    continue;
+                }
+
+                if (result instanceof IBlockState)
+                {
+                    decrease = (IBlockState) result;
+                    decreaseInventory(coords, decrease.getBlock(), decrease);
+                    connectBlockToBuildingIfNecessary(decrease, coords);
+                    worker.swingArm(worker.getActiveHand());
+                    worker.getCitizenExperienceHandler().addExperience(XP_EACH_BLOCK);
                     return true;
                 }
 
-                if (result == DENY)
+                if (result instanceof ItemStack)
                 {
-                    return false;
+                    final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(worker.getInventoryCitizen()), s -> s.isItemEqual((ItemStack) result));
+                    if (slot != -1)
+                    {
+                        final ItemStack itemStack = worker.getInventoryCitizen().getStackInSlot(slot);
+                        worker.getInventoryCitizen().getStackInSlot(slot);
+                        worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, itemStack);
+                        itemStack.damageItem(1, worker);
+                    }
                 }
-                continue;
-            }
-
-            if (result instanceof IBlockState)
-            {
-                decrease = (IBlockState) result;
-                decreaseInventory(coords, decrease.getBlock(), decrease);
-                connectBlockToBuildingIfNecessary(decrease, coords);
-                worker.swingArm(worker.getActiveHand());
-                worker.getCitizenExperienceHandler().addExperience(XP_EACH_BLOCK);
-
-                return true;
             }
         }
 
         Log.getLogger().warn("Couldn't handle block: " + blockState.getBlock().getUnlocalizedName());
         return true;
+    }
+
+    /**
+     * Check the placers inventory for the items in the itemList and remove it of the list if found.
+     *
+     * @param placer   the placer.
+     * @param itemList the list to check.
+     * @return true if need to request.
+     */
+    public static boolean checkForListInInvAndRequest(@NotNull final AbstractEntityAIStructure<?> placer, final List<ItemStack> itemList)
+    {
+        final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(new InvWrapper(placer.getWorker().getInventoryCitizen()),
+          itemStack -> itemList.stream()
+                         .anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack, true, true)));
+        itemList.removeIf(itemStack -> ItemStackUtils.isEmpty(itemStack) || foundStacks.stream()
+                                                                              .anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack,
+                                                                                targetStack, true, true)));
+
+        for (final ItemStack placedStack : itemList)
+        {
+            if (ItemStackUtils.isEmpty(placedStack))
+            {
+                return true;
+            }
+
+            if (placer.getOwnBuilding()
+                  .getOpenRequestsOfTypeFiltered(
+                    placer.getWorker().getCitizenData(),
+                    TypeConstants.DELIVERABLE,
+                    (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(placedStack))
+                  .isEmpty())
+            {
+                final Stack stackRequest = new Stack(placer.getTotalAmount(placedStack));
+                placer.getWorker().getCitizenData().createRequest(stackRequest);
+
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -790,32 +885,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
-     * Specific actions to execute when building over a block.
-     *
-     * @param pos the position to build at.
-     */
-    public void handleBuildingOverBlock(@NotNull final BlockPos pos)
-    {
-        final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
-        for (final ItemStack item : items)
-        {
-            InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), item);
-        }
-    }
-
-    /**
-     * Handle flower pots and spawn the right flower in it.
-     *
-     * @param pos the position.
-     */
-    public void handleTileEntityPlacement(@NotNull final BlockPos pos)
-    {
-        /**
-         * Should be overwritten and implemented by certain entity if required.
-         */
-    }
-
-    /**
      * Set the currentStructure to null.
      */
     public void resetCurrentStructure()
@@ -869,7 +938,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
             if (!Configurations.gameplay.builderInfiniteResources)
             {
-                if(PlacementHandlers.checkForListInInvAndRequest(this, new ArrayList<>(request)))
+                if(checkForListInInvAndRequest(this, new ArrayList<>(request)))
                 {
                     return false;
                 }
@@ -936,15 +1005,5 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     public int getRotation()
     {
         return rotation;
-    }
-
-    /**
-     * Adds a waypoint to the AI's colony.
-     *
-     * @param pos the position of the point
-     */
-    public void addWayPoint(final BlockPos pos)
-    {
-        worker.getCitizenColonyHandler().getColony().addWayPoint(pos, world.getBlockState(pos));
     }
 }

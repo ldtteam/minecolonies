@@ -456,6 +456,7 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public void update()
     {
+        this.getRetryingRequestResolver().updateManager(this);
         this.getRetryingRequestResolver().update();
     }
 

@@ -387,18 +387,13 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             if (damageSource.getTrueSource() instanceof EntityPlayer)
             {
-                boolean isBarbarianClose = true;
+                boolean isBarbarianClose = false;
                 for(final AbstractEntityBarbarian barbarian : this.getCitizenColonyHandler().getColony().getBarbManager().getHorde())
                 {
-                    final EntityCitizen citizen = new EntityCitizen(this.getEntityWorld());
-                    if(MathUtils.twoDimDistance(barbarian.getPosition(), citizen.getPosition()) < BARB_DISTANCE_FOR_FREE_DEATH)
+                    if(MathUtils.twoDimDistance(barbarian.getPosition(), this.getPosition()) < BARB_DISTANCE_FOR_FREE_DEATH)
                     {
                         isBarbarianClose = true;
                         break;
-                    }
-                    else
-                    {
-                        isBarbarianClose = false;
                     }
                 }
                 for (final Player player : PermissionUtils.getPlayersWithAtLeastRank(citizenColonyHandler.getColony(), Rank.OFFICER))
@@ -814,7 +809,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             return DesiredActivity.WORK;
         }
 
-        if (BarbarianUtils.getClosestBarbarianToEntity(this, AVOID_BARBARIAN_RANGE) != null && !(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
+        if (getCitizenColonyHandler().getColony() != null && (getCitizenColonyHandler().getColony().getBarbManager().getHorde().size() > 0) && !(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
         {
             return DesiredActivity.SLEEP;
         }
@@ -1034,5 +1029,14 @@ public class EntityCitizen extends AbstractEntityCitizen
     public CitizenSleepHandler getCitizenSleepHandler()
     {
         return citizenSleepHandler;
+    }
+
+    /**
+     * The Handler to check if a citizen is stuck.
+     * @return the instance of the handler.
+     */
+    public CitizenStuckHandler getCitizenStuckHandler()
+    {
+        return citizenStuckHandler;
     }
 }

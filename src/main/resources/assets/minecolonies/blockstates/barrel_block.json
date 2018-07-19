@@ -1,0 +1,24 @@
+{
+  "forge_marker": 1,
+  "parent": "block/block",
+  "variants":
+  {
+    "facing": {
+        "up":    {},
+        "east":  {"y": 270},
+        "south": {"y": 0},
+        "west":  {"y": 90},
+        "north": {"y": 180}
+    },
+    "variant": {
+      "0perc":   { "model": "minecolonies:barrel_block/0perc_crate"},
+      "20perc":  { "model": "minecolonies:barrel_block/20perc_crate" },
+      "40perc":  { "model": "minecolonies:barrel_block/40perc_crate"},
+      "60perc":  { "model": "minecolonies:barrel_block/60perc_crate"},
+      "80perc":  { "model": "minecolonies:barrel_block/80perc_crate"},
+      "100perc": { "model": "minecolonies:barrel_block/100perc_crate"},
+      "working": { "model": "minecolonies:barrel_block/working_crate"},
+      "done":    { "model": "minecolonies:barrel_block/100perc_crate"}
+    }
+  }
+}

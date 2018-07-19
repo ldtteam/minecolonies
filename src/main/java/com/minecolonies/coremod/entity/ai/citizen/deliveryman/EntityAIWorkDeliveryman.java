@@ -121,7 +121,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     {
         super(deliveryman);
         super.registerTargets(
-          /**
+          /*
            * Check if tasks should be executed.
            */
           new AITarget(this::checkIfExecute, IDLE),
@@ -262,7 +262,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
     /**
      * Calculates a random building and returns it.
-     * @return
+     * @return a random building.
      */
     private AbstractBuilding returnRandomBuilding()
     {

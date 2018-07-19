@@ -17,10 +17,14 @@
             <label size="100% 11" pos="0 18"
                    label="$(com.minecolonies.coremod.gui.workerHuts.workerAssigned)"
                    textalign="MIDDLE" color="black"/>
-            <label id="workerName" size="100% 11" pos="0 28"
-                   textalign="MIDDLE" color="black"/>
-            <label id="workerLevel" size="100% 11" pos="0 44"
-                   textalign="MIDDLE" color="black"/>
+		    <list id="workers" size="92% 30" pos="3 32" align="TOP_MIDDLE">
+		         <view size="100% 20">
+		             <box size="100% 20" linewidth="2">
+					    <label id="workerName" size="100% 11" pos="1 0"  textalign="MIDDLE" color="black"/>
+					    <label id="workerLevel" size="100% 11" pos="0 9" textalign="MIDDLE" color="black"/>
+		             </box>
+		         </view>
+		    </list>
 
             <buttonimage id="hire" align="TOP_MIDDLE" size="129 17" pos="0 60"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"

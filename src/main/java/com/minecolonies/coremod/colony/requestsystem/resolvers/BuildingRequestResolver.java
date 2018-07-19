@@ -58,6 +58,11 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
         tileEntities.removeIf(Objects::isNull);
 
+        if (building.getCitizenForRequest(request.getToken()).isPresent() && building.getCitizenForRequest(request.getToken()).get().isRequestAsync(request.getToken()))
+        {
+            return false;
+        }
+
         return tileEntities.stream()
                  .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> request.getRequest().matches(itemStack)))
                  .anyMatch(itemStacks -> !itemStacks.isEmpty());

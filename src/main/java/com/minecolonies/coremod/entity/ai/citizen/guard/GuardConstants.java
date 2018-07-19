@@ -69,7 +69,7 @@ public final class GuardConstants
     /**
      * Physical Attack delay in ticks.
      */
-    public static final int RANGED_ATTACK_DELAY_BASE = 20;
+    public static final int RANGED_ATTACK_DELAY_BASE = 100;
 
     /**
      * Ranged hit chance devider.

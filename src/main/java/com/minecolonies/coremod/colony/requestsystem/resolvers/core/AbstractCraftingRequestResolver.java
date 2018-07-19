@@ -25,9 +25,7 @@ import static com.minecolonies.api.util.constant.Constants.MAX_CRAFTING_CYCLE_DE
 
 public abstract class AbstractCraftingRequestResolver extends AbstractBuildingDependentRequestResolver<Stack>
 {
-    public AbstractCraftingRequestResolver(
-      @NotNull final ILocation location,
-      @NotNull final IToken<?> token)
+    public AbstractCraftingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
     {
         super(location, token);
     }
@@ -39,8 +37,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractBuildingDe
     }
 
     @Override
-    public boolean canResolveForBuilding(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request, @NotNull final AbstractBuilding building)
+    public boolean canResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request, @NotNull final AbstractBuilding building)
     {
         if (createsCraftingCycle(manager, request, request))
         {

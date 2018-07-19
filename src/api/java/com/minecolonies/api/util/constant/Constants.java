@@ -104,6 +104,21 @@ public final class Constants
     public static final int MAX_SCHEMATIC_SIZE = 100_000;
 
     /**
+     * Tag compound of forge.
+     */
+    public static final int TAG_COMPOUND = 10;
+
+    /**
+     * Default size of the inventory.
+     */
+    public static final int DEFAULT_SIZE = 27;
+
+    /**
+     * Slots per line.
+     */
+    public static final int SLOT_PER_LINE = 9;
+
+    /**
      * Private constructor to hide implicit public one.
      */
     private Constants()

@@ -130,7 +130,7 @@ public class Stack implements IDeliverable
     {
         if (matchOreDic)
         {
-            return OreDictionary.itemMatches(getStack(), stack, matchMeta) && getCount() <= stack.getCount();
+            return OreDictionary.itemMatches(getStack(), stack, matchMeta);
         }
 
         return ItemStackUtils.compareItemStacksIgnoreStackSize(getStack(), stack, matchMeta, matchNBT);

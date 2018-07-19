@@ -151,8 +151,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
             {
                 if (rack.isMain())
                 {
-                    return state.withProperty(BlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE)
-                             .withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
+                     return state.withProperty(BlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE).withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
                 }
                 else
                 {
@@ -250,7 +249,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
     }
 
     @Override
-    public void breakBlock(final World worldIn, final BlockPos pos, final IBlockState state)
+    public void breakBlock(@NotNull final World worldIn, @NotNull final BlockPos pos, @NotNull final IBlockState state)
     {
         final TileEntity tileentity = worldIn.getTileEntity(pos);
 
