@@ -66,23 +66,27 @@ public class CitizenJobHandler
         //  Model
         if (job == null)
         {
-            if (citizen.getCitizenData() != null)
+            if (citizen.getCitizenColonyHandler().getHomeBuilding() != null)
             {
-                switch (citizen.getCitizenData().getLevel())
+                switch (citizen.getCitizenColonyHandler().getHomeBuilding().getBuildingLevel())
                 {
-                    case 1:
+                    case 3:
                         citizen.setModelId(RenderBipedCitizen.Model.CITIZEN);
                         break;
-                    case 2:
+                    case 4:
                         citizen.setModelId(RenderBipedCitizen.Model.NOBLE);
                         break;
-                    case 3:
+                    case 5:
                         citizen.setModelId(RenderBipedCitizen.Model.ARISTOCRAT);
                         break;
                     default:
                         citizen.setModelId(RenderBipedCitizen.Model.SETTLER);
                         break;
                 }
+            }
+            else
+            {
+                citizen.setModelId(RenderBipedCitizen.Model.SETTLER);
             }
         }
         else
