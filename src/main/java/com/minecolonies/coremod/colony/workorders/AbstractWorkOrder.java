@@ -22,6 +22,7 @@ import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAM
 public abstract class AbstractWorkOrder
 {
     private static final String                                          TAG_TYPE       = "type";
+    private static final String                                          TAG_TH_PRIORITY   = "priority";
     private static final String                                          TAG_ID         = "id";
     private static final String                                          TAG_CLAIMED_BY = "claimedBy";
     //  Job and View Class Mapping
@@ -112,12 +113,16 @@ public abstract class AbstractWorkOrder
         }
         try
         {
+        	if (compound.hasKey(TAG_TH_PRIORITY))
+        	{
+                order.setPriority(compound.getInteger(TAG_TH_PRIORITY));
+        	}
             order.readFromNBT(compound);
         }
         catch (final RuntimeException ex)
         {
             Log.getLogger().error(String.format("A WorkOrder %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-              compound.getString(TAG_TYPE), oclass.getName()), ex);
+            compound.getString(TAG_TYPE), oclass.getName()), ex);
             return null;
         }
 
@@ -132,6 +137,10 @@ public abstract class AbstractWorkOrder
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         id = compound.getInteger(TAG_ID);
+        if (compound.hasKey(TAG_TH_PRIORITY))
+        {
+        	priority = compound.getInteger(TAG_TH_PRIORITY);
+        }
         claimedBy = compound.getInteger(TAG_CLAIMED_BY);
     }
 
@@ -153,7 +162,7 @@ public abstract class AbstractWorkOrder
         catch (final RuntimeException ex)
         {
             Log.getLogger().error(String.format("A WorkOrder.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-              workOrderView.getId()), ex);
+            workOrderView.getId()), ex);
             workOrderView = null;
         }
 
@@ -278,6 +287,7 @@ public abstract class AbstractWorkOrder
             throw new IllegalStateException(this.getClass() + " is missing a mapping! This is a bug!");
         }
 
+        compound.setInteger(TAG_TH_PRIORITY, priority);
         compound.setString(TAG_TYPE, s);
         compound.setInteger(TAG_ID, id);
         if (claimedBy != 0)
