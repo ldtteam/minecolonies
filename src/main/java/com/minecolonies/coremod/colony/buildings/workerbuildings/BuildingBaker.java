@@ -111,8 +111,10 @@ public class BuildingBaker extends AbstractBuildingWorker
      */
     private int ticksPassed = 0;
 
-    
-    
+    /**
+     * Arraylist of all recipes the baker is allower to bake.
+     * setting it to true indicate bakable recipe.
+     */
     private boolean[] recipesAllowed;
     
     /**
@@ -526,11 +528,11 @@ public class BuildingBaker extends AbstractBuildingWorker
     public static class View extends AbstractBuildingWorker.View
     {
 
-    	/*
-    	 * list of recipes for the baker, 
-    	 * true - indicates baker is able to make recipe
-    	 */
-    	private boolean[] recipesAllowed;
+        /*
+         * list of recipes for the baker, 
+         * true - indicates baker is able to make recipe
+         */
+        boolean[] recipesAllowed;
 
         /**
          * The client view constructor for the baker building.
@@ -552,12 +554,12 @@ public class BuildingBaker extends AbstractBuildingWorker
          */
         public boolean isRecipeAllowed(final int pos)
         {
-        	if (pos >= recipesAllowed.length)
-        	{
-        		return false;
-        	}
-        	
-        	return recipesAllowed[pos];
+            if (pos >= recipesAllowed.length)
+            {
+                return false;
+            }
+
+            return recipesAllowed[pos];
         }
 
         /**
@@ -569,11 +571,11 @@ public class BuildingBaker extends AbstractBuildingWorker
          */
         public void setRecipeAllowed(final int pos, final  boolean value,final BlockPos block)
         {
-        	MineColonies.getNetwork().sendToServer(new AssignBakerRecipeMessage(this, pos, value, block));
-        	if (pos < recipesAllowed.length)
-        	{
-        		recipesAllowed[pos] = value;
-        	}
+            MineColonies.getNetwork().sendToServer(new AssignBakerRecipeMessage(this, pos, value, block));
+            if (pos < recipesAllowed.length)
+            {
+                recipesAllowed[pos] = value;
+            }
         }
 
         
@@ -602,8 +604,8 @@ public class BuildingBaker extends AbstractBuildingWorker
         {
             return Skill.DEXTERITY;
         }
-        
-        
+
+
         @Override
         public void deserialize(@NotNull final ByteBuf buf)
         {
@@ -617,6 +619,6 @@ public class BuildingBaker extends AbstractBuildingWorker
         }
 
     }
-    
-    
+
+
 }

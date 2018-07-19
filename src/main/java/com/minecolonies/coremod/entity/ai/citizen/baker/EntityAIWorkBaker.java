@@ -302,31 +302,31 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         currentRecipe++;
         if (currentRecipe + 1 >= BakerRecipes.getRecipes().size())
         {
-        	currentRecipe = 0;
+            currentRecipe = 0;
         }
 
         for (int i = currentRecipe; i < BakerRecipes.getRecipes().size(); i++)
         {
-        	if (building.isRecipeAllowed(i))
-        	{
-        		storage = BakerRecipes.getRecipes().get(i);
-    			currentRecipe = i;
-    			recipeFound = true;
-    			break;
-        	}
+            if (building.isRecipeAllowed(i))
+            {
+                storage = BakerRecipes.getRecipes().get(i);
+                currentRecipe = i;
+                recipeFound = true;
+                break;
+            }
         }
 
         if (!recipeFound && currentRecipe > 0)
         {
             for (int i = 0; i <= currentRecipe; i++)
             {
-            	if (building.isRecipeAllowed(i))
-            	{
-            		storage = BakerRecipes.getRecipes().get(i);
-        			currentRecipe = i;
-        			recipeFound = true;
-        			break;
-            	}
+                if (building.isRecipeAllowed(i))
+                {
+                    storage = BakerRecipes.getRecipes().get(i);
+                    currentRecipe = i;
+                    recipeFound = true;
+                    break;
+                }
             }
 
         }
@@ -340,8 +340,8 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         }
         else
         {
-        	setDelay(UNABLE_TO_CRAFT_DELAY);
-        	return IDLE;
+            setDelay(UNABLE_TO_CRAFT_DELAY);
+            return IDLE;
         }
 
     }
