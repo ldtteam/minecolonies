@@ -624,6 +624,11 @@ public class CitizenData
             homeBuilding = building;
             markDirty();
         }
+
+        if (getCitizenEntity().isPresent() && getCitizenEntity().get().getCitizenJobHandler().getColonyJob() == null)
+        {
+            getCitizenEntity().get().getCitizenJobHandler().setModelDependingOnJob(null);
+        }
     }
 
     /**
