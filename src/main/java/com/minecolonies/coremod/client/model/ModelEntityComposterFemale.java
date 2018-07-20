@@ -15,36 +15,56 @@ public class ModelEntityComposterFemale extends ModelBiped
 
     ModelRenderer chest;
 
-    ModelRenderer hairLeftTop;
-    ModelRenderer hairTop;
+    ModelRenderer hairLeftTop1;
+    ModelRenderer hairLeftTop2;
+    ModelRenderer hairLeftTop3;
+    ModelRenderer hairLeftTop4;
+    ModelRenderer hairLeftTop5;
+    ModelRenderer hairLeftTop6;
+    ModelRenderer hairLeftTop7;
+    ModelRenderer hairLeftTop8;
+    ModelRenderer hairLeftTop9;
+    ModelRenderer hairLeftTop10;
+    ModelRenderer hairLeftTop11;
+    ModelRenderer hairLeftTop12;
+    ModelRenderer hairLeftTop13;
+    ModelRenderer hairLeftTop14;
+
+    ModelRenderer hairTop1;
+    ModelRenderer hairTop2;
+    ModelRenderer hairTop3;
+    ModelRenderer hairTop4;
+    ModelRenderer hairTop5;
+
     public ModelEntityComposterFemale()
     {
         textureWidth = 128;
         textureHeight = 64;
 
         gloveR = new ModelRenderer(this, 20, 32);
-        gloveR.addBox(-3.5F, 5F, -2.5F, 5, 1, 5);
+        gloveR.addBox(1.5F, 3F, -2.5F, 5, 1, 5);
         gloveR.setRotationPoint(-5F, 2F, 0F);
         gloveR.setTextureSize(128, 64);
         gloveR.mirror = true;
         setRotation(gloveR, 0F, 0F, 0F);
 
         gloveL = new ModelRenderer(this, 0, 32);
-        gloveL.addBox(-1.5F, 5F, -2.5F, 5, 1, 5);
+        gloveL.addBox(-6.5F, 3F, -2.5F, 5, 1, 5);
         gloveL.setRotationPoint(5F, 2F, 0F);
         gloveL.setTextureSize(128, 64);
         gloveL.mirror = true;
         setRotation(gloveL, 0F, 0F, 0F);
+        gloveL.mirror = false;
 
         bootR = new ModelRenderer(this, 20, 38);
-        bootR.addBox(-2.5F, 6F, -2.5F, 5, 2, 5);
+        bootR.addBox(-0.5F, -8F, -2.5F, 5, 2, 5);
         bootR.setRotationPoint(-2F, 12F, 0F);
         bootR.setTextureSize(128, 64);
         bootR.mirror = true;
         setRotation(bootR, 0F, 0F, 0F);
 
         bootL = new ModelRenderer(this, 0, 38);
-        bootL.addBox(-2.5F, 6F, -2.5F, 5, 2, 5);
+        bootL.addBox(-4.5F, -8F, -2.5F, 5, 2, 5);
         bootL.setRotationPoint(2F, 12F, 0F);
         bootL.setTextureSize(128, 64);
         bootL.mirror = true;
@@ -56,20 +76,139 @@ public class ModelEntityComposterFemale extends ModelBiped
         chest.setTextureSize(128, 64);
         chest.mirror = true;
         setRotation(chest, -0.5934119F, 0F, 0F);
+        
+        hairLeftTop1 = new ModelRenderer(this, 0, 45);
+        hairLeftTop1.addBox(-1.5F, -7.5F, -4.5F, 4, 1, 8);
+        hairLeftTop1.setRotationPoint(0F, 0F, 0F);
+        hairLeftTop1.setTextureSize(128, 64);
+        hairLeftTop1.mirror = true;
+        setRotation(hairLeftTop1, 0F, 0F, 0F);
 
-        hairLeftTop = new ModelRenderer(this, 0, 45);
-        hairLeftTop.addBox(-1.5F, -7.5F, -4.5F, 4, 1, 8);
-        hairLeftTop.setRotationPoint(0F, 0F, 0F);
-        hairLeftTop.setTextureSize(128, 64);
-        hairLeftTop.mirror = true;
-        setRotation(hairLeftTop, 0F, 0F, 0F);
+        hairTop1 = new ModelRenderer(this, 0, 45);
+        hairTop1.addBox(-2.5F, -7.5F, 3.5F, 5, 7, 1);
+        hairTop1.setRotationPoint(0F, 0F, 0F);
+        hairTop1.setTextureSize(128, 64);
+        hairTop1.mirror = true;
+        setRotation(hairTop1, 0F, 0F, 0F);
 
-        hairTop = new ModelRenderer(this, 0, 45);
-        hairTop.addBox(-2.5F, -7.5F, 3.5F, 5, 7, 1);
-        hairTop.setRotationPoint(0F, 0F, 0F);
-        hairTop.setTextureSize(128, 64);
-        hairTop.mirror = true;
-        setRotation(hairTop, 0F, 0F, 0F);
+        hairLeftTop2 = new ModelRenderer(this, 0, 45);
+        hairLeftTop2.addBox(2.5F, -3.5F, 1.5F, 2, 3, 3);
+        hairLeftTop2.setRotationPoint(0F, 0F, 0F);
+        hairLeftTop2.setTextureSize(128, 64);
+        hairLeftTop2.mirror = true;
+        setRotation(hairLeftTop2, 0F, 0F, 0F);
+
+        hairLeftTop3 = new ModelRenderer(this, 0, 45);
+        hairLeftTop3.addBox(-3.5F, -0.5F, 3.5F, 7, 3, 1);
+        hairLeftTop3.setRotationPoint(0F, 0F, 0F);
+        hairLeftTop3.setTextureSize(128, 64);
+        hairLeftTop3.mirror = true;
+        setRotation(hairLeftTop3, 0F, 0F, 0F);
+
+        hairLeftTop4 = new ModelRenderer(this, 0, 45);
+        hairLeftTop4.addBox(-4.5F, -7.5F, -4.5F, 3, 2, 9);
+        hairLeftTop4.setRotationPoint(0F, 0F, 0F);
+        hairLeftTop4.setTextureSize(128, 64);
+        hairLeftTop4.mirror = true;
+        setRotation(hairLeftTop4, 0F, 0F, 0F);
+
+        hairLeftTop5 = new ModelRenderer(this, 0, 45);
+        hairLeftTop5.addBox(-4.5F, -5.5F, -0.5F, 2, 1, 5);
+        hairLeftTop5.setRotationPoint(0F, 0F, 0F);
+        hairLeftTop5.setTextureSize(128, 64);
+        hairLeftTop5.mirror = true;
+        setRotation(hairLeftTop5, 0F, 0F, 0F);
+
+        hairLeftTop6 = new ModelRenderer(this, 0, 45);
+        hairLeftTop6.addBox(-4.5F, -4.5F, 0.5F, 2, 1, 4);
+        hairLeftTop6.setRotationPoint(0F, 0F, 0F);
+        hairLeftTop6.setTextureSize(128, 64);
+        hairLeftTop6.mirror = true;
+        setRotation(hairLeftTop6, 0F, 0F, 0F);
+
+        hairTop2 = new ModelRenderer(this, 0, 45);
+        hairTop2.addBox(2.5F, -6.5F, -4.5F, 1, 1, 1);
+        hairTop2.setRotationPoint(0F, 0F, 0F);
+        hairTop2.setTextureSize(128, 64);
+        hairTop2.mirror = true;
+        setRotation(hairTop2, 0F, 0F, 0F);
+
+        hairTop3 = new ModelRenderer(this, 0, 45);
+        hairTop3.addBox(-4.5F, -8.5F, -4.5F, 9, 1, 9);
+        hairTop3.setRotationPoint(0F, 0F, 0F);
+        hairTop3.setTextureSize(128, 64);
+        hairTop3.mirror = true;
+        setRotation(hairTop3, 0F, 0F, 0F);
+
+        hairTop4 = new ModelRenderer(this, 0, 45);
+        hairTop4.addBox(2.5F, -7.5F, -4.5F, 2, 1, 9);
+        hairTop4.setRotationPoint(0F, 0F, 0F);
+        hairTop4.setTextureSize(128, 64);
+        hairTop4.mirror = true;
+        setRotation(hairTop4, 0F, 0F, 0F);
+
+        hairLeftTop7 = new ModelRenderer(this, 0, 45);
+        hairLeftTop7.addBox(-4.5F, -5.5F, -4.5F, 1, 3, 1);
+        hairLeftTop7.setRotationPoint(0F, 0F, 0F);
+        hairLeftTop7.setTextureSize(128, 64);
+        hairLeftTop7.mirror = true;
+        setRotation(hairLeftTop7, 0F, 0F, 0F);
+
+        hairLeftTop8 = new ModelRenderer(this, 0, 45);
+        hairLeftTop8.addBox(-4.5F, -5.5F, -3.5F, 9, 1, 1);
+        hairLeftTop8.setRotationPoint(0F, 0F, 0F);
+        hairLeftTop8.setTextureSize(128, 64);
+        hairLeftTop8.mirror = true;
+        setRotation(hairLeftTop8, 0F, 0F, 0F);
+
+        hairLeftTop9 = new ModelRenderer(this, 0, 45);
+        hairLeftTop9.addBox(2.5F, -6.5F, -3.5F, 2, 1, 8);
+        hairLeftTop9.setRotationPoint(0F, 0F, 0F);
+        hairLeftTop9.setTextureSize(128, 64);
+        hairLeftTop9.mirror = true;
+        setRotation(hairLeftTop9, 0F, 0F, 0F);
+
+        hairLeftTop10 = new ModelRenderer(this, 0, 45);
+        hairLeftTop10.addBox(2.5F, -6.5F, -3.5F, 2, 1, 8);
+        hairLeftTop10.setRotationPoint(0F, 0F, 0F);
+        hairLeftTop10.setTextureSize(128, 64);
+        hairLeftTop10.mirror = true;
+        setRotation(hairLeftTop10, 0F, 0F, 0F);
+
+        hairLeftTop11 = new ModelRenderer(this, 0, 45);
+        hairLeftTop11.addBox(2.5F, -5.5F, -0.5F, 2, 2, 5);
+        hairLeftTop11.setRotationPoint(0F, 0F, 0F);
+        hairLeftTop11.setTextureSize(128, 64);
+        hairLeftTop11.mirror = true;
+        setRotation(hairLeftTop11, 0F, 0F, 0F);
+
+        hairLeftTop12 = new ModelRenderer(this, 0, 45);
+        hairLeftTop12.addBox(-4.5F, -3.5F, 1.5F, 2, 3, 3);
+        hairLeftTop12.setRotationPoint(0F, 0F, 0F);
+        hairLeftTop12.setTextureSize(128, 64);
+        hairLeftTop12.mirror = true;
+        setRotation(hairLeftTop12, 0F, 0F, 0F);
+
+        hairLeftTop13 = new ModelRenderer(this, 0, 45);
+        hairLeftTop13.addBox(3.5F, -0.5F, 2.5F, 1, 2, 2);
+        hairLeftTop13.setRotationPoint(0F, 0F, 0F);
+        hairLeftTop13.setTextureSize(128, 64);
+        hairLeftTop13.mirror = true;
+        setRotation(hairLeftTop13, 0F, 0F, 0F);
+
+        hairLeftTop14 = new ModelRenderer(this, 0, 45);
+        hairLeftTop14.addBox(-4.5F, -0.5F, 2.5F, 1, 2, 2);
+        hairLeftTop14.setRotationPoint(0F, 0F, 0F);
+        hairLeftTop14.setTextureSize(128, 64);
+        hairLeftTop14.mirror = true;
+        setRotation(hairLeftTop14, 0F, 0F, 0F);
+
+        hairTop5 = new ModelRenderer(this, 0, 45);
+        hairTop5.addBox(3.5F, -6.5F, -4.5F, 1, 3, 1);
+        hairTop5.setRotationPoint(0F, 0F, 0F);
+        hairTop5.setTextureSize(128, 64);
+        hairTop5.mirror = true;
+        setRotation(hairTop5, 0F, 0F, 0F);
 
         bipedLeftLeg = new ModelRenderer(this, 0, 16);
         bipedLeftLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
@@ -114,14 +253,36 @@ public class ModelEntityComposterFemale extends ModelBiped
         setRotation(bipedRightArm, 0F, 0F, 0F);
 
         bipedBody.addChild(chest);
+        bipedRightArm.addChild(gloveR);
+        bipedLeftArm.addChild(gloveL);
 
-        bipedHead.addChild(hairTop);
-        bipedHead.addChild(hairLeftTop);
-        
+        bipedRightLeg.addChild(bootR);
+        bipedLeftLeg.addChild(bootL);
 
+        bipedHead.addChild(hairTop1);
+        bipedHead.addChild(hairTop2);
+        bipedHead.addChild(hairTop3);
+        bipedHead.addChild(hairTop4);
+        bipedHead.addChild(hairTop5);
+        bipedHead.addChild(hairLeftTop1);
+        bipedHead.addChild(hairLeftTop2);
+        bipedHead.addChild(hairLeftTop3);
+        bipedHead.addChild(hairLeftTop4);
+        bipedHead.addChild(hairLeftTop5);
+        bipedHead.addChild(hairLeftTop6);
+        bipedHead.addChild(hairLeftTop7);
+        bipedHead.addChild(hairLeftTop8);
+        bipedHead.addChild(hairLeftTop9);
+        bipedHead.addChild(hairLeftTop10);
+        bipedHead.addChild(hairLeftTop11);
+        bipedHead.addChild(hairLeftTop12);
+        bipedHead.addChild(hairLeftTop13);
+        bipedHead.addChild(hairLeftTop14);
     }
 
-    public void render(final Entity entity,
+    @Override
+    public void render(
+      @NotNull final Entity entity,
                        final float limbSwing,
                        final float limbSwingAmount,
                        final float ageInTicks,
@@ -131,17 +292,6 @@ public class ModelEntityComposterFemale extends ModelBiped
     {
         super.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
         setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);
-    }
-
-    public void setRotationAngles(final float limbSwing,
-                                  final float limbSwingAmount,
-                                  final float ageInTicks,
-                                  final float netHeadYaw,
-                                  final float headPitch,
-                                  final float scaleFactor,
-                                  final Entity entityIn)
-    {
-        super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
     }
 
     private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)

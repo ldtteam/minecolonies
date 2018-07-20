@@ -19,33 +19,33 @@ public class ModelEntityComposterMale extends ModelBiped
         textureHeight = 64;
 
         gloveR = new ModelRenderer(this, 20, 32);
-        gloveR.addBox(2.5F, 2.5F, -2F, 5, 1, 5);
+        gloveR.addBox(1.5F, 3F, -2.5F, 5, 1, 5);
         gloveR.setRotationPoint(-5F, 2F, 0F);
         gloveR.setTextureSize(128, 64);
         gloveR.mirror = true;
         setRotation(gloveR, 0F, 0F, 0F);
 
         gloveL = new ModelRenderer(this, 0, 32);
-        gloveL.addBox(2.5F, 2.5F, -2F, 5, 1, 5);
+        gloveL.addBox(-6.5F, 3F, -2.5F, 5, 1, 5);
         gloveL.setRotationPoint(5F, 2F, 0F);
         gloveL.setTextureSize(128, 64);
         gloveL.mirror = true;
         setRotation(gloveL, 0F, 0F, 0F);
+        gloveL.mirror = false;
 
         bootR = new ModelRenderer(this, 20, 38);
-        bootR.addBox(2.5F, 2.5F, -12F, 5, 2, 5);
+        bootR.addBox(-0.5F, -8F, -2.5F, 5, 2, 5);
         bootR.setRotationPoint(-2F, 12F, 0F);
         bootR.setTextureSize(128, 64);
         bootR.mirror = true;
         setRotation(bootR, 0F, 0F, 0F);
 
         bootL = new ModelRenderer(this, 0, 38);
-        bootL.addBox(2.5F, 2.5F, -12F, 5, 2, 5);
+        bootL.addBox(-4.5F, -8F, -2.5F, 5, 2, 5);
         bootL.setRotationPoint(2F, 12F, 0F);
         bootL.setTextureSize(128, 64);
         bootL.mirror = true;
         setRotation(bootL, 0F, 0F, 0F);
-
 
         bipedLeftLeg = new ModelRenderer(this, 0, 16);
         bipedLeftLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
@@ -53,6 +53,7 @@ public class ModelEntityComposterMale extends ModelBiped
         bipedLeftLeg.setTextureSize(128, 64);
         bipedLeftLeg.mirror = true;
         setRotation(bipedLeftLeg, 0F, 0F, 0F);
+        bipedLeftLeg.mirror = false;
 
         bipedRightLeg = new ModelRenderer(this, 0, 16);
         bipedRightLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
@@ -89,20 +90,16 @@ public class ModelEntityComposterMale extends ModelBiped
         bipedBody.mirror = true;
         setRotation(bipedBody, 0F, 0F, 0F);
 
-        /**
-         * TODO: uncoment this fragment once I figure the position for the gloves and the boots
-         *
         bipedRightArm.addChild(gloveR);
         bipedLeftArm.addChild(gloveL);
 
         bipedRightLeg.addChild(bootR);
         bipedLeftLeg.addChild(bootL);
-         **/
-
     }
 
-
-    public void render(final Entity entity,
+    @Override
+    public void render(
+      @NotNull final Entity entity,
                        final float limbSwing,
                        final float limbSwingAmount,
                        final float ageInTicks,
@@ -112,17 +109,6 @@ public class ModelEntityComposterMale extends ModelBiped
     {
         super.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
         setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);
-    }
-
-    public void setRotationAngles(final float limbSwing,
-                                  final float limbSwingAmount,
-                                  final float ageInTicks,
-                                  final float netHeadYaw,
-                                  final float headPitch,
-                                  final float scaleFactor,
-                                  final Entity entityIn)
-    {
-        super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
     }
 
     private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
