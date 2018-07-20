@@ -72,7 +72,7 @@ public class WindowHutBaker extends AbstractWindowWorkerBuilding<BuildingBaker.V
     /**
      * String which displays the release of a field.
      */
-    private static final String RED_X = "§4X";
+    private static final String RED_X = "X";
 
     /**
      * String which displays adding a field.
