@@ -7,39 +7,39 @@ import org.jetbrains.annotations.NotNull;
 
 public class ModelEntityDeliverymanFemale extends ModelBiped
 {
-    ModelRenderer Chest;
-    ModelRenderer RightB;
-    ModelRenderer Top;
-    ModelRenderer LeftB;
-    ModelRenderer RightM;
-    ModelRenderer FrontLB;
-    ModelRenderer LeftM;
-    ModelRenderer Back;
-    ModelRenderer BackM;
-    ModelRenderer FrontM;
-    ModelRenderer Front1;
-    ModelRenderer FrontLM;
-    ModelRenderer FrontRM;
-    ModelRenderer FrontRB;
-    ModelRenderer Front2;
-    ModelRenderer Base;
-    ModelRenderer RimL;
-    ModelRenderer Lid1;
-    ModelRenderer Lock1;
-    ModelRenderer Lock2;
-    ModelRenderer RimB;
-    ModelRenderer RimR;
-    ModelRenderer RimF;
-    ModelRenderer Lid2;
-    ModelRenderer Handle;
-    ModelRenderer Block1;
-    ModelRenderer Block2;
-    ModelRenderer Block3;
-    ModelRenderer Block4;
-    ModelRenderer Torch;
-
     public ModelEntityDeliverymanFemale()
     {
+        final ModelRenderer Chest;
+        final ModelRenderer RightB;
+        final ModelRenderer Top;
+        final ModelRenderer LeftB;
+        final ModelRenderer RightM;
+        final ModelRenderer FrontLB;
+        final ModelRenderer LeftM;
+        final ModelRenderer Back;
+        final ModelRenderer BackM;
+        final ModelRenderer FrontM;
+        final ModelRenderer Front1;
+        final ModelRenderer FrontLM;
+        final ModelRenderer FrontRM;
+        final ModelRenderer FrontRB;
+        final ModelRenderer Front2;
+        final ModelRenderer Base;
+        final ModelRenderer RimL;
+        final ModelRenderer Lid1;
+        final ModelRenderer Lock1;
+        final ModelRenderer Lock2;
+        final ModelRenderer RimB;
+        final ModelRenderer RimR;
+        final ModelRenderer RimF;
+        final ModelRenderer Lid2;
+        final ModelRenderer Handle;
+        final ModelRenderer Block1;
+        final ModelRenderer Block2;
+        final ModelRenderer Block3;
+        final ModelRenderer Block4;
+        final ModelRenderer Torch;
+
         textureWidth = 256;
         textureHeight = 128;
 
@@ -72,25 +72,24 @@ public class ModelEntityDeliverymanFemale extends ModelBiped
         setRotation(bipedRightLeg, 0F, 0F, 0F);
 
         bipedLeftArm = new ModelRenderer(this, 40, 16);
-        bipedLeftArm.addBox(0F, 0F, -1.9F, 4, 12, 4);
+        bipedLeftArm.addBox(-1F, 0F, -4.9F, 4, 12, 4, 0F);
         bipedLeftArm.setRotationPoint(4F, 2F, -4F);
         bipedLeftArm.setTextureSize(256, 128);
         bipedLeftArm.mirror = true;
         setRotation(bipedLeftArm, 0F, 0F, 0F);
 
         bipedRightArm = new ModelRenderer(this, 40, 16);
-        bipedRightArm.addBox(-4F, 0F, -1.9F, 4, 12, 4);
+        bipedRightArm.addBox(-3F, 0F, -4.9F, 4, 12, 4, 0F);
         bipedRightArm.setRotationPoint(-4F, 2F, -4F);
         bipedRightArm.setTextureSize(256, 128);
         bipedRightArm.mirror = true;
         setRotation(bipedRightArm, 0F, 0F, 0F);
 
         bipedBody = new ModelRenderer(this, 16, 16);
-        bipedBody.addBox(-4.01F, 0F, -3.9F, 8, 12, 4);
+        bipedBody.addBox(-4F, 0F, -4F, 8, 12, 4, 0F);
         bipedBody.setRotationPoint(0F, 1F, -2F);
-        bipedBody.setTextureSize(256, 128);
-        bipedBody.mirror = true;
-        setRotation(bipedBody, 0.3490659F, 0F, 0F);
+        bipedBody.rotateAngleX = 0.34907F;
+        bipedBody.rotateAngleZ = 0F;
 
         RightB = new ModelRenderer(this, 7, 91);
         RightB.addBox(-5.1F, 3.3F, 3.2F, 1, 4, 1);
