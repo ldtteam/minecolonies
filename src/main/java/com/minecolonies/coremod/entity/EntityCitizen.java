@@ -580,7 +580,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 SoundUtils.playRandomSound(CompatibilityUtils.getWorld(this), this, citizenData.getSaturation());
             }
-            else if (CompatibilityUtils.getWorld(this).isRaining() && 1 >= rand.nextInt(RANT_ABOUT_WEATHER_CHANCE) && citizenJobHandler.getColonyJob() != null)
+            else if (citizenStatusHandler.getStatus() != Status.SLEEPING && CompatibilityUtils.getWorld(this).isRaining() && 1 >= rand.nextInt(RANT_ABOUT_WEATHER_CHANCE) && citizenJobHandler.getColonyJob() != null)
             {
                 SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorld(this), this.getPosition(), citizenJobHandler.getColonyJob().getBadWeatherSound(), 1);
             }
