@@ -61,7 +61,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if(currentTarget == null)
         {
             BuildingComposter building = this.getOwnBuilding();
-            currentTarget = building.getBarrels().get(0);
+            currentTarget = building.getBarrels().get(building.getBarrels().size()-1);
         }
         if (walkToBlock(currentTarget))
         {
@@ -70,6 +70,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             return getState();
         }
 
+        Log.getLogger().info("Harvest!");
         return COMPOSTER_HARVEST;
     }
 
@@ -82,6 +83,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             return getState();
         }
         currentTarget = null;
+        Log.getLogger().info("StartWorking!");
         return START_WORKING;
     }
 }
