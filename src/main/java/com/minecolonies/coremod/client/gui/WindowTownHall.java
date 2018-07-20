@@ -861,7 +861,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         final CitizenDataView view = citizens.get(row);
         WindowCitizen.createXpBar(view, this);
         WindowCitizen.createSkillContent(view, this);
-        findPaneOfTypeByID(JOB_LABEL, Label.class).setLabelText("§l" + LanguageHandler.format(view.getJob().trim()=="" ? GUI_TOWNHALL_CITIZEN_JOB_UNEMPLOYED : view.getJob()));
+        findPaneOfTypeByID(JOB_LABEL, Label.class).setLabelText("§l" + LanguageHandler.format(view.getJob().trim().equals("") ? GUI_TOWNHALL_CITIZEN_JOB_UNEMPLOYED : view.getJob()));
         findPaneOfTypeByID(HIDDEN_CITIZEN_ID, Label.class).setLabelText(String.valueOf(view.getId()));
     }
 
