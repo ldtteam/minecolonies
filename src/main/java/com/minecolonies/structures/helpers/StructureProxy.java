@@ -231,7 +231,6 @@ public class StructureProxy
         structure.setPlacementSettings(new PlacementSettings().setRotation(rotation).setMirror(mirror));
 
         final BlockPos size = structure.getSize(rotation);
-
         this.width = size.getX();
         this.height = size.getY();
         this.length = size.getZ();
@@ -299,7 +298,18 @@ public class StructureProxy
             }
         }
 
-        updateOffSetIfDecoration(foundHut, size, times, minX, minY, minZ);
+        BlockPos temp;
+        if (mirror.equals(Mirror.FRONT_BACK))
+        {
+            temp = new BlockPos(minX > 0 ? -size.getX() : size.getX(), size.getY(), minZ > 0 ? -size.getZ() : size.getZ());
+            temp = temp.rotate(rotation);
+        }
+        else
+        {
+            temp = size;
+        }
+
+        updateOffSetIfDecoration(foundHut, temp, times, minX, minY, minZ);
 
         for (final Template.EntityInfo info : structure.getTileEntities())
         {
