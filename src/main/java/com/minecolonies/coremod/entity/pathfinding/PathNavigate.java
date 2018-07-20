@@ -268,7 +268,7 @@ public class PathNavigate extends PathNavigateGround
             {
                 final Vec3d vec3 = this.getPath().getPosition(this.ourEntity);
 
-                if (vec3.squareDistanceTo(ourEntity.posX, vec3.y, ourEntity.posZ) < 0.1)
+                if (vec3.squareDistanceTo(ourEntity.posX, vec3.y, ourEntity.posZ) < Math.random() * 0.1)
                 {
                     //This way he is less nervous and gets up the ladder
                     double newSpeed = 0.05;

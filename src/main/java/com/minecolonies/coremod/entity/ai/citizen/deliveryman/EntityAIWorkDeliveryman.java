@@ -30,6 +30,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,6 +42,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
  * Delivers item at needs.
@@ -287,17 +289,18 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean gatherFromBuilding(@NotNull final AbstractBuilding building)
     {
-        if (building.getTileEntity() == null)
+        final IItemHandler handler = building.getCapability(ITEM_HANDLER_CAPABILITY, null);
+        if (handler == null)
         {
             return false;
         }
 
-        if (currentSlot >= building.getTileEntity().getSizeInventory())
+        if (currentSlot >= handler.getSlots())
         {
             return true;
         }
 
-        final ItemStack stack = building.getTileEntity().getStackInSlot(currentSlot);
+        final ItemStack stack = handler.getStackInSlot(currentSlot);
         if (workerRequiresItem(building, stack, alreadyKept)
               || (building instanceof BuildingCook
                     && !ItemStackUtils.isEmpty(stack)
@@ -306,13 +309,13 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
-        if (ItemStackUtils.isEmpty(building.getTileEntity().getStackInSlot(currentSlot)))
+        if (ItemStackUtils.isEmpty(handler.getStackInSlot(currentSlot)))
         {
             return false;
         }
 
         hasGathered = true;
-        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(building.getTileEntity().getSingleChestHandler(), currentSlot, new InvWrapper(worker.getInventoryCitizen()));
+        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(handler, currentSlot, new InvWrapper(worker.getInventoryCitizen()));
         building.markDirty();
         setDelay(DUMP_AND_GATHER_DELAY);
         worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, SLOT_HAND);
@@ -346,7 +349,10 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
         final double r = Math.random() * completeWeight;
         double countWeight = 0.0;
-        for (final AbstractBuilding building : worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values())
+
+        final List<AbstractBuilding> buildings = new ArrayList<>(worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values());
+        Collections.shuffle(buildings);
+        for (final AbstractBuilding building : buildings)
         {
             if (!building.isBeingGathered())
             {
