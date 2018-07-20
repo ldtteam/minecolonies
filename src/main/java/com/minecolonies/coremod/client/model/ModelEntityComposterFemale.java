@@ -8,36 +8,36 @@ import org.jetbrains.annotations.NotNull;
 public class ModelEntityComposterFemale extends ModelBiped
 {
     //fields
-    ModelRenderer gloveR;
-    ModelRenderer gloveL;
-    ModelRenderer bootR;
-    ModelRenderer bootL;
-
-    ModelRenderer chest;
-
-    ModelRenderer hairLeftTop1;
-    ModelRenderer hairLeftTop2;
-    ModelRenderer hairLeftTop3;
-    ModelRenderer hairLeftTop4;
-    ModelRenderer hairLeftTop5;
-    ModelRenderer hairLeftTop6;
-    ModelRenderer hairLeftTop7;
-    ModelRenderer hairLeftTop8;
-    ModelRenderer hairLeftTop9;
-    ModelRenderer hairLeftTop10;
-    ModelRenderer hairLeftTop11;
-    ModelRenderer hairLeftTop12;
-    ModelRenderer hairLeftTop13;
-    ModelRenderer hairLeftTop14;
-
-    ModelRenderer hairTop1;
-    ModelRenderer hairTop2;
-    ModelRenderer hairTop3;
-    ModelRenderer hairTop4;
-    ModelRenderer hairTop5;
-
     public ModelEntityComposterFemale()
     {
+        final ModelRenderer gloveR;
+        final ModelRenderer gloveL;
+        final ModelRenderer bootR;
+        final ModelRenderer bootL;
+
+        final ModelRenderer chest;
+
+        final ModelRenderer hairLeftTop1;
+        final ModelRenderer hairLeftTop2;
+        final ModelRenderer hairLeftTop3;
+        final ModelRenderer hairLeftTop4;
+        final ModelRenderer hairLeftTop5;
+        final ModelRenderer hairLeftTop6;
+        final ModelRenderer hairLeftTop7;
+        final ModelRenderer hairLeftTop8;
+        final ModelRenderer hairLeftTop9;
+        final ModelRenderer hairLeftTop10;
+        final ModelRenderer hairLeftTop11;
+        final ModelRenderer hairLeftTop12;
+        final ModelRenderer hairLeftTop13;
+        final ModelRenderer hairLeftTop14;
+
+        final ModelRenderer hairTop1;
+        final ModelRenderer hairTop2;
+        final ModelRenderer hairTop3;
+        final ModelRenderer hairTop4;
+        final ModelRenderer hairTop5;
+
         textureWidth = 128;
         textureHeight = 64;
 
@@ -76,7 +76,7 @@ public class ModelEntityComposterFemale extends ModelBiped
         chest.setTextureSize(128, 64);
         chest.mirror = true;
         setRotation(chest, -0.5934119F, 0F, 0F);
-        
+
         hairLeftTop1 = new ModelRenderer(this, 0, 45);
         hairLeftTop1.addBox(-1.5F, -7.5F, -4.5F, 4, 1, 8);
         hairLeftTop1.setRotationPoint(0F, 0F, 0F);
