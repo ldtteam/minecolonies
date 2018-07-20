@@ -65,12 +65,10 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         }
         if (walkToBlock(currentTarget))
         {
-            Log.getLogger().info("Going to the barrel!");
             setDelay(2);
             return getState();
         }
 
-        Log.getLogger().info("Harvest!");
         return COMPOSTER_HARVEST;
     }
 
@@ -78,12 +76,10 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     {
         if (walkToBuilding())
         {
-            Log.getLogger().info("Going back!");
             setDelay(2);
             return getState();
         }
         currentTarget = null;
-        Log.getLogger().info("StartWorking!");
         return START_WORKING;
     }
 }
