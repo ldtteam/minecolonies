@@ -54,7 +54,6 @@ public class ModelEntityComposterFemale extends ModelBiped
         gloveL.setTextureSize(128, 64);
         gloveL.mirror = true;
         setRotation(gloveL, 0F, 0F, 0F);
-        gloveL.mirror = false;
 
         bootR = new ModelRenderer(this, 20, 38);
         bootR.addBox(-0.5F, -8F, -2.5F, 5, 2, 5);
@@ -258,6 +257,7 @@ public class ModelEntityComposterFemale extends ModelBiped
 
         bipedRightLeg.addChild(bootR);
         bipedLeftLeg.addChild(bootL);
+
 
         bipedHead.addChild(hairTop1);
         bipedHead.addChild(hairTop2);
