@@ -28,6 +28,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
      */
     private static final int MAX_ANIMALS_PER_LEVEL = 2;
 
+    private final ItemStack bucketStack = new ItemStack(Items.BUCKET);
     /**
      * Creates the abstract part of the AI.
      * Always use this constructor!
@@ -38,7 +39,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
     {
         super(job);
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getDexterity() + worker.getCitizenData().getStrength());
-        itemsNeeded.add(new ItemStack(Items.BUCKET));
+        itemsNeeded.add(bucketStack);
         super.registerTargets(
           new AITarget(COWBOY_MILK, this::milkCows)
         );
@@ -72,10 +73,26 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
     public AIState decideWhatToDo()
     {
         final AIState result = super.decideWhatToDo();
+        final BuildingCowboy building = (BuildingCowboy) worker.getCitizenColonyHandler().getWorkBuilding();
 
+        if (!building.isMilkCows())
+        {
+            if (itemsNeeded.contains(bucketStack))
+            {
+                itemsNeeded.remove(bucketStack);
+            }
+            
+        }
+        else
+        {
+            if (!itemsNeeded.contains(bucketStack))
+            {
+                itemsNeeded.add(bucketStack);
+            }
+        }
+        
         final boolean hasBucket = InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), Items.BUCKET, 0);
 
-        final BuildingCowboy building = (BuildingCowboy) worker.getCitizenColonyHandler().getWorkBuilding();
 
         if (building != null && building.isMilkCows() && result.equals(START_WORKING) && hasBucket)
         {
@@ -89,7 +106,10 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
     protected List<ItemStack> itemsNiceToHave()
     {
         final List<ItemStack> list = super.itemsNiceToHave();
-        list.add(new ItemStack(Items.BUCKET, 1));
+        if (! ((BuildingCowboy) worker.getCitizenColonyHandler().getWorkBuilding()).isMilkCows())
+        {
+            list.add(new ItemStack(Items.BUCKET, 1));
+        }
         return list;
     }
 
