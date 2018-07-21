@@ -66,8 +66,8 @@ public class BuildingComposter extends AbstractBuildingWorker
     public BuildingComposter(@NotNull final Colony c, final BlockPos l)
     {
         super(c, l);
-        //keepX.put((stack) -> TileEntityBarrel.checkCorrectItem(stack)
-        //  , Integer.MAX_VALUE);
+        keepX.put((stack) -> TileEntityBarrel.checkCorrectItem(stack)
+          , Integer.MAX_VALUE);
         Log.getLogger().info("Building created!");
     }
 

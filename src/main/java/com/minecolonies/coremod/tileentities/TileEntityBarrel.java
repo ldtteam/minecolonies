@@ -43,7 +43,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     /**
      * The number the timer has to reach to finish composting. Number of Minecraft ticks in 2 whole days
      */
-    private static final int                        TIMER_END      = 500; //24000
+    private static final int                        TIMER_END      = 24000;
     /**
      * The average of ticks that passes between actually ticking the tileEntity
      */
