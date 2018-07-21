@@ -128,13 +128,13 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         }
         else
         {
-            this.consumeNeededItems(worldIn, itemstack);
+            this.consumeNeededItems(itemstack);
             return true;
         }
 
     }
 
-    private void consumeNeededItems(final World worldIn, final ItemStack itemStack)
+    private void consumeNeededItems(final ItemStack itemStack)
     {
 
         //Saplings and seeds counts as 1 item added, the rest counts as 2 items
@@ -266,11 +266,15 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     /***
      * Lets the AI insert items into the barrel.
      * @param item the itemStack to be placed inside it.
-     * @return false if it couldnt be completed, true if at least 1 item of the stack was inserted.
+     * @return false if the item couldn't be cosumed. True if it could
      */
     public boolean addItem(final ItemStack item)
     {
-        //Todo implement method
+        if(checkCorrectItem(item) && this.items < this.MAX_ITEMS)
+        {
+            consumeNeededItems(item);
+            return true;
+        }
         return false;
     }
 
@@ -278,9 +282,13 @@ public class TileEntityBarrel extends TileEntity implements ITickable
      * Lets the AI retrieve the compost when the barrel has done processing it.
      * @return The generated compost. If the barrel is not ready yet to be harvested, it will return an empty itemStack.
      */
-    public ItemStack retrieveCompost()
+    public ItemStack retrieveCompost(int multiplier)
     {
-        //Todo implement method
+        if(this.done)
+        {
+            this.done = false;
+            return new ItemStack(ModItems.compost, 6*multiplier);
+        }
         return ItemStack.EMPTY;
     }
 

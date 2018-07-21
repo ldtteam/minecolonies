@@ -17,12 +17,12 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     /**
      * How often should strength factor into the composter's skill modifier.
      */
-    private static final int STRENGTH_MULTIPLIER = 2;
+    private static final int STRENGTH_MULTIPLIER = 1;
 
     /**
      * How often should intelligence factor into the composter's skill modifier.
      */
-    private static final int INTELLIGENCE_MULTIPLIER = 1;
+    private static final int INTELLIGENCE_MULTIPLIER = 2;
 
     /**
      * Base xp gain for the composter.
