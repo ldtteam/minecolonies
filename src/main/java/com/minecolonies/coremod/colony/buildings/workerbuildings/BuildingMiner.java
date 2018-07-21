@@ -365,6 +365,8 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     public void setCurrentLevel(final int currentLevel)
     {
         this.currentLevel = currentLevel;
+        this.activeNode = null;
+        this.oldNode = null;
     }
 
     /**
