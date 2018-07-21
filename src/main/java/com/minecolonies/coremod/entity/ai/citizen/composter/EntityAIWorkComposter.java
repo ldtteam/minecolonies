@@ -1,14 +1,22 @@
 package com.minecolonies.coremod.entity.ai.citizen.composter;
 
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
+import com.minecolonies.coremod.colony.requestable.Compostable;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.tileentities.TileEntityBarrel;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter>
@@ -41,6 +49,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         super(job);
         super.registerTargets(
           new AITarget(IDLE, START_WORKING),
+          new AITarget(GATHERING_REQUIRED_MATERIALS, this::getMaterials),
           new AITarget(START_WORKING, this::decideWhatToDo),
           new AITarget(COMPOSTER_FILL, this::fillBarrels),
           new AITarget(COMPOSTER_HARVEST, this::harvestBarrels)
@@ -49,19 +58,91 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
                                                                 + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
 
         worker.setCanPickUpLoot(true);
+
+    }
+
+    private AIState getMaterials()
+    {
+        if (walkToBuilding())
+        {
+            setDelay(2);
+            return getState();
+        }
+        if(InventoryUtils.hasItemInProvider(getOwnBuilding(), TileEntityBarrel::checkCorrectItem))
+        {
+            InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(
+              getOwnBuilding(),
+              InventoryUtils.findFirstSlotInProviderWith(getOwnBuilding(), TileEntityBarrel::checkCorrectItem),
+              new InvWrapper(worker.getInventoryCitizen()));
+
+        }
+
+        final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
+          new InvWrapper(worker.getInventoryCitizen()),
+          TileEntityBarrel::checkCorrectItem
+        );
+        if(slot >= 0)
+        {
+            worker.setHeldItem(EnumHand.MAIN_HAND, worker.getInventoryCitizen().getStackInSlot(slot));
+            return START_WORKING;
+        }
+
+        worker.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+        //worker.getCitizenData().createRequestAsync(new Compostable(STACKSIZE));
+
+        setDelay(2);
+        return START_WORKING;
     }
 
     private AIState decideWhatToDo()
     {
-        return COMPOSTER_FILL;
+        final BuildingComposter building = this.getOwnBuilding();
+
+        for(final BlockPos barrel : building.getBarrels())
+        {
+            if(world.getTileEntity(barrel) instanceof TileEntityBarrel)
+            {
+                final TileEntityBarrel te = ((TileEntityBarrel) world.getTileEntity(barrel));
+                this.currentTarget = barrel;
+                if (te.isDone())
+                {
+                    return COMPOSTER_HARVEST;
+                }
+            }
+        }
+
+        for(final BlockPos barrel : building.getBarrels())
+        {
+            if(world.getTileEntity(barrel) instanceof TileEntityBarrel)
+            {
+                final TileEntityBarrel te = ((TileEntityBarrel) world.getTileEntity(barrel));
+                if (!te.checkIfWorking())
+                {
+                    this.currentTarget = barrel;
+                    return COMPOSTER_FILL;
+                }
+            }
+        }
+
+        setDelay(2);
+        return START_WORKING;
     }
 
     private AIState fillBarrels()
     {
-        if(currentTarget == null)
+        if(worker.getHeldItem(EnumHand.MAIN_HAND) == ItemStack.EMPTY)
         {
-            BuildingComposter building = this.getOwnBuilding();
-            currentTarget = building.getBarrels().get(building.getBarrels().size()-1);
+            final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
+                            new InvWrapper(worker.getInventoryCitizen()), TileEntityBarrel::checkCorrectItem);
+
+            if(slot >= 0)
+            {
+                worker.setHeldItem(EnumHand.MAIN_HAND, worker.getInventoryCitizen().getStackInSlot(slot));
+            }
+            else
+            {
+                return GATHERING_REQUIRED_MATERIALS;
+            }
         }
         if (walkToBlock(currentTarget))
         {
@@ -69,17 +150,48 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             return getState();
         }
 
-        return COMPOSTER_HARVEST;
+        if(world.getTileEntity(currentTarget) instanceof TileEntityBarrel)
+        {
+
+            TileEntityBarrel barrel = (TileEntityBarrel) world.getTileEntity(currentTarget);
+
+            worker.getCitizenItemHandler().hitBlockWithToolInHand(currentTarget);
+            barrel.addItem(worker.getHeldItem(EnumHand.MAIN_HAND));
+            worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
+            worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+
+            incrementActionsDone();
+
+        }
+        setDelay(2);
+        return START_WORKING;
     }
 
     private AIState harvestBarrels()
     {
-        if (walkToBuilding())
+        if (walkToBlock(currentTarget))
         {
             setDelay(2);
             return getState();
         }
-        currentTarget = null;
+
+        if(world.getTileEntity(currentTarget) instanceof TileEntityBarrel)
+        {
+            worker.getCitizenItemHandler().hitBlockWithToolInHand(currentTarget);
+
+            TileEntityBarrel te = (TileEntityBarrel) world.getTileEntity(currentTarget);
+
+            ItemStack compost = te.retrieveCompost(1);
+
+            InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), compost);
+        }
+
         return START_WORKING;
+    }
+
+    @Override
+    protected int getActionsDoneUntilDumping()
+    {
+        return 1;
     }
 }

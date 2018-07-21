@@ -43,7 +43,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     /**
      * The number the timer has to reach to finish composting. Number of Minecraft ticks in 2 whole days
      */
-    private static final int                        TIMER_END      = 24000;
+    private static final int                        TIMER_END      = 500; //24000
     /**
      * The average of ticks that passes between actually ticking the tileEntity
      */
@@ -258,10 +258,19 @@ public class TileEntityBarrel extends TileEntity implements ITickable
      */
     public boolean isDone()
     {
-        return done;
+        return this.done;
     }
 
     //INTERFACE WITH AI PAWNS
+
+    /***
+     * Checks if the barrel is composting
+     * @return true if the number of items is equal to the maximum. If not, false.
+     */
+    public boolean checkIfWorking()
+    {
+        return this.items == this.MAX_ITEMS;
+    }
 
     /***
      * Lets the AI insert items into the barrel.
@@ -272,7 +281,8 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     {
         if(checkCorrectItem(item) && this.items < this.MAX_ITEMS)
         {
-            consumeNeededItems(item);
+            this.consumeNeededItems(item);
+            this.updateBlock(this.world, this.world.getBlockState(this.pos));
             return true;
         }
         return false;
@@ -282,11 +292,12 @@ public class TileEntityBarrel extends TileEntity implements ITickable
      * Lets the AI retrieve the compost when the barrel has done processing it.
      * @return The generated compost. If the barrel is not ready yet to be harvested, it will return an empty itemStack.
      */
-    public ItemStack retrieveCompost(int multiplier)
+    public ItemStack retrieveCompost(final int multiplier)
     {
         if(this.done)
         {
             this.done = false;
+            this.updateBlock(this.world, this.world.getBlockState(this.pos));
             return new ItemStack(ModItems.compost, 6*multiplier);
         }
         return ItemStack.EMPTY;
