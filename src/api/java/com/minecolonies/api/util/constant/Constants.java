@@ -64,6 +64,11 @@ public final class Constants
     public static final float  WATCH_CLOSEST2_FAR_CHANCE        = 0.02F;
 
     /**
+     * The oredict entry of an ore.
+     */
+    public static final String ORE_STRING = "ore";
+
+    /**
      * Max crafting cycle depth.
      */
     public static final int MAX_CRAFTING_CYCLE_DEPTH = 20;
