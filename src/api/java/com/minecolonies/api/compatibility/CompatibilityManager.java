@@ -31,9 +31,9 @@ import static com.minecolonies.api.util.constant.Constants.SAPLINGS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
- * CompatibilityManager handlign certain list and maps of itemStacks of certain types.
+ * CompatibilityManager handling certain list and maps of itemStacks of certain types.
  */
-public class CompatibilityManager implements ICompatabilityManager
+public class CompatibilityManager implements ICompatibilityManager
 {
     /**
      * BiMap of saplings and leaves.

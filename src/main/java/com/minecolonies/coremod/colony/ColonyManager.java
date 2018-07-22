@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.compatibility.CompatibilityManager;
-import com.minecolonies.api.compatibility.ICompatabilityManager;
+import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.util.ChunkLoadStorage;
@@ -177,7 +177,7 @@ public final class ColonyManager
     /**
      * Creates a new compatibilityManager.
      */
-    private static final ICompatabilityManager compatibilityManager = new CompatibilityManager();
+    private static final ICompatibilityManager compatibilityManager = new CompatibilityManager();
 
     private ColonyManager()
     {
@@ -1517,7 +1517,7 @@ public final class ColonyManager
      * Get an instance of the compatibilityManager.
      * @return the manager.
      */
-    public static ICompatabilityManager getCompatibilityManager()
+    public static ICompatibilityManager getCompatibilityManager()
     {
         return compatibilityManager;
     }

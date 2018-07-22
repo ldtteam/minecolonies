@@ -13,7 +13,7 @@ import java.util.List;
  * Interface for all compatabilityManagers.
  * The compatability manager retrieves certain blocks from oreData and stores them.
  */
-public interface ICompatabilityManager
+public interface ICompatibilityManager
 {
     /**
      * Method called to instantiate the requirements.
