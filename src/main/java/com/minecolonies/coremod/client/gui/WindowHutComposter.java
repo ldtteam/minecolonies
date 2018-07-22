@@ -10,7 +10,7 @@ public class WindowHutComposter extends AbstractWindowWorkerBuilding<BuildingCom
      * @param building class extending {@link AbstractBuildingWorker.View}.
      * @param resource Resource of the window.
      */
-    WindowHutComposter(final BuildingComposter.View building, final String resource)
+    public WindowHutComposter(final BuildingComposter.View building, final String resource)
     {
         super(building, resource);
     }
@@ -18,6 +18,6 @@ public class WindowHutComposter extends AbstractWindowWorkerBuilding<BuildingCom
     @Override
     public String getBuildingName()
     {
-        return null;
+        return "Composter Hut";
     }
 }

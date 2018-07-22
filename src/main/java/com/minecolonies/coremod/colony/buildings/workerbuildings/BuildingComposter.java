@@ -1,8 +1,12 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.compatibility.CompatabilityManager;
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.coremod.client.gui.WindowHutComposter;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -12,6 +16,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -19,9 +24,11 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class BuildingComposter extends AbstractBuildingWorker
@@ -58,6 +65,11 @@ public class BuildingComposter extends AbstractBuildingWorker
     private final List<BlockPos> barrels = new ArrayList<>();
 
     /**
+     * List of allowed items to compost
+     */
+    private HashMap<ItemStack, String> itemsAllowed;
+
+    /**
      * The constructor of the building.
      *
      * @param c the colony
@@ -68,7 +80,7 @@ public class BuildingComposter extends AbstractBuildingWorker
         super(c, l);
         keepX.put((stack) -> TileEntityBarrel.checkCorrectItem(stack)
           , Integer.MAX_VALUE);
-        Log.getLogger().info("Building created!");
+
     }
 
     /**
@@ -114,7 +126,6 @@ public class BuildingComposter extends AbstractBuildingWorker
         if(block == ModBlocks.blockBarrel && !barrels.contains(pos))
         {
             barrels.add(pos);
-            Log.getLogger().info("New barrel registered at: " + pos);
         }
     }
 
@@ -159,7 +170,7 @@ public class BuildingComposter extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<AbstractBuildingWorker.View>(this, HUT_NAME);
+            return new WindowHutComposter(this, HUT_NAME);
         }
 
         @NotNull

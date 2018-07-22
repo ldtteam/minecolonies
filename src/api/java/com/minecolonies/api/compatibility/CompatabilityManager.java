@@ -2,6 +2,8 @@ package com.minecolonies.api.compatibility;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
@@ -12,6 +14,7 @@ import net.minecraft.block.BlockOre;
 import net.minecraft.block.BlockRedstoneOre;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,7 +29,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.constant.Constants.SAPLINGS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -52,6 +58,11 @@ public class CompatabilityManager implements ICompatabilityManager
     private final List<Block> ores = new ArrayList<>();
 
     /**
+     * List of all the items that can be composted
+     */
+    private final List<ItemStorage> compostableItems = new ArrayList<>();
+
+    /**
      * The oredict entry of an ore.
      */
     public static final String ORE_STRING = "ore";
@@ -67,6 +78,7 @@ public class CompatabilityManager implements ICompatabilityManager
                 discoverOres(string);
             }
         }
+        discoverCompostableItems();
     }
 
     @Override
@@ -133,19 +145,6 @@ public class CompatabilityManager implements ICompatabilityManager
                 leavesToSaplingMap.entrySet().stream().map(entry ->  writeLeaveSaplingEntryToNBT(entry.getKey(), entry.getValue())).collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_SAP_LEAVE, saplingsLeavesTagList);
 
-        @NotNull final NBTTagList saplingTagList =
-                saplings.stream().map(sap ->  sap.getItemStack().writeToNBT(new NBTTagCompound())).collect(NBTUtils.toNBTTagList());
-        compound.setTag(TAG_SAPLINGS, saplingTagList);
-
-        try
-        {
-            @NotNull final NBTTagList oresTagList = ores.stream().map(ore -> NBTUtil.writeBlockState(new NBTTagCompound(), ore.getDefaultState())).collect(NBTUtils.toNBTTagList());
-            compound.setTag(TAG_ORES, oresTagList);
-        }
-        catch (final Exception e)
-        {
-            Log.getLogger().error("Error caught during ore serialization!", e);
-        }
     }
 
     @Override
@@ -155,31 +154,6 @@ public class CompatabilityManager implements ICompatabilityManager
                 .map(CompatabilityManager::readLeaveSaplingEntryFromNBT)
                 .filter(key -> !leavesToSaplingMap.containsKey(key.getFirst()) && !leavesToSaplingMap.containsValue(key.getSecond()))
                 .forEach(key -> leavesToSaplingMap.put(key.getFirst(), key.getSecond()));
-
-        final List<ItemStorage> storages = NBTUtils.streamCompound(compound.getTagList(TAG_SAPLINGS, Constants.NBT.TAG_COMPOUND))
-                .map(tempCompound -> new ItemStorage(new ItemStack(tempCompound), false, true))
-                .collect(Collectors.toList());
-
-        //Filter duplicated values.
-        for(final ItemStorage storage: storages)
-        {
-            if(!saplings.contains(storage))
-            {
-                saplings.add(storage);
-            }
-        }
-
-        final List<IBlockState> states = NBTUtils.streamCompound(compound.getTagList(TAG_ORES, Constants.NBT.TAG_COMPOUND))
-                .map(NBTUtil::readBlockState)
-                .collect(Collectors.toList());
-
-        for(final IBlockState state: states)
-        {
-            if(!ores.contains(state.getBlock()))
-            {
-                ores.add(state.getBlock());
-            }
-        }
     }
 
     @Override
@@ -241,6 +215,11 @@ public class CompatabilityManager implements ICompatabilityManager
             }
         }
         Log.getLogger().info("Finished discovering saplings");
+    }
+
+    private void discoverCompostableItems()
+    {
+        //Todo: implement this method
     }
 
     private static NBTTagCompound writeLeaveSaplingEntryToNBT(final IBlockState state, final ItemStorage storage)
