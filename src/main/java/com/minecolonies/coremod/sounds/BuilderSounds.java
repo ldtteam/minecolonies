@@ -37,7 +37,6 @@ public final class BuilderSounds extends AbstractWorkerSounds
         public static final SoundEvent badWeather        = ModSoundEvents.getSoundID("mob.builder.female.badWeather");
         public static final SoundEvent saturationVeryLow = ModSoundEvents.getSoundID("mob.builder.female.saturationVeryLow");
         public static final SoundEvent saturationLow     = ModSoundEvents.getSoundID("mob.builder.female.saturationLow");
-        public static final SoundEvent saturationHigh    = ModSoundEvents.getSoundID("mob.builder.female.saturationHigh");
         public static final SoundEvent greeting          = ModSoundEvents.getSoundID("mob.builder.female.greeting");
         public static final SoundEvent farewell          = ModSoundEvents.getSoundID("mob.builder.female.farewell");
         public static final SoundEvent interaction       = ModSoundEvents.getSoundID("mob.builder.female.interaction");
@@ -157,10 +156,6 @@ public final class BuilderSounds extends AbstractWorkerSounds
         else if (saturation < AVERAGE_SATURATION)
         {
             saturationFeedback = Female.saturationLow;
-        }
-        else
-        {
-            saturationFeedback = Female.saturationHigh;
         }
         SoundUtils.playSoundAtCitizenWithChance(worldIn, position, saturationFeedback, getBasicSoundChance());
     }

@@ -595,6 +595,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         final String numberOfCitizens =
             LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens",
                 citizensSize, townHall.getColony().getMaxCitizens());
+        findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
 
         final Integer unemployed = jobCountMap.get("") == null ? 0 : jobCountMap.get("");
         final String numberOfUnemployed = LanguageHandler.format(
@@ -602,7 +603,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         jobCountMap.remove("");
 
         final Integer maxJobs = jobCountMap.size();
-        final Integer preJobsHeaders = 3;
+        final Integer preJobsHeaders = 1;
 
         list.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -621,12 +622,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 }
 
                 final Label label = rowPane.findPaneOfTypeByID(CITIZENS_AMOUNT_LABEL, Label.class);
-                // preJobsHeaders = number of all citizens + empty row + number of all unemployed citizens
+                // preJobsHeaders = number of all unemployed citizens
                 if (index == 0)
-                {
-                    label.setLabelText(numberOfCitizens);
-                }
-                if (index == 2)
                 {
                     label.setLabelText(numberOfUnemployed);
                 }

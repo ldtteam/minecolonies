@@ -8,20 +8,18 @@
 
         <view id="levelActions" size="100% 100%">
             <layout source="minecolonies:gui/windowbase.xml"/>
-            <label size="100% 11" pos="0 10"
-                   label="$(com.minecolonies.coremod.gui.workerHuts.minerNodeList)" color="black"
-                   textalign="BOTTOM_MIDDLE"/>
-            <list id="levels" size="78% 85%" pos="30 30">
-                <box size="100% 30" linewidth="2">
+            <label size="100% 11" pos="0 14" textalign="MIDDLE"
+                   label="$(com.minecolonies.coremod.gui.workerHuts.minerNodeList):" color="black"/>
+            <list id="levels" size="161 198" pos="15 30">
+                <box size="100% 28" linewidth="2">
                     <label id="lvl" size="100 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
-                    <button id="changeToLevel" size="100 12" pos="5 2" align="TOP_RIGHT"
+                    <button id="changeToLevel" size="100 12" pos="35 2"
                             label="$(com.minecolonies.coremod.gui.workerHuts.minerMineNode)"/>
                     <label id="nONodes" size="50 12" pos="35 16" textalign="MIDDLE_LEFT" color="black"/>
                 </box>
             </list>
 
         </view>
-
 
     </switch>
     <buttonimage id="prevPage" align="TOP_LEFT" size="26 8" pos="12 15" source="minecolonies:textures/gui/builderhut/builder_sketch_arrow_left_c.png"/>
