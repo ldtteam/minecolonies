@@ -278,7 +278,7 @@ public final class StandardRequests
                                 Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
                             }
 
-                            return stacks.stream().filter(ColonyManager.getCompatabilityManager()::isOre);
+                            return stacks.stream().filter(ColonyManager.getCompatibilityManager()::isOre);
                         }).collect(Collectors.toList()));
             }
             return oreExamples;

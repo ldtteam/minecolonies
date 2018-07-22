@@ -54,7 +54,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
     public BuildingSmeltery(final Colony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(ColonyManager.getCompatabilityManager()::isOre, Integer.MAX_VALUE);
+        keepX.put(ColonyManager.getCompatibilityManager()::isOre, Integer.MAX_VALUE);
         keepX.put(TileEntityFurnace::isItemFuel, Integer.MAX_VALUE);
         keepX.put(stack -> !ItemStackUtils.isEmpty(stack)
                 && (stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool || stack.getItem() instanceof ItemArmor)

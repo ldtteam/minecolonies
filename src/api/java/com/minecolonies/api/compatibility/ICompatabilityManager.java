@@ -17,9 +17,8 @@ public interface ICompatabilityManager
 {
     /**
      * Method called to instantiate the requirements.
-     * @param world the world.
      */
-    void discover(final World world);
+    void discover();
 
     /**
      * Gets the leave matching a sapling.
