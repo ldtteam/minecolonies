@@ -219,7 +219,49 @@ public class CompatabilityManager implements ICompatabilityManager
 
     private void discoverCompostableItems()
     {
-        //Todo: implement this method
+        if (compostableItems == null)
+        {
+            compostableItems =
+              ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
+                  final NonNullList<ItemStack> stacks = NonNullList.create();
+                  try
+                  {
+                      item.getSubItems(CreativeTabs.SEARCH, stacks);
+                  }
+                  catch (Exception ex)
+                  {
+                      Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
+                  }
+
+
+                  return stacks.stream().filter(CompatabilityManager::isCompost); // Here where we do ::isOre you could add the check from the TileEntity if the stack matches the requirements
+
+              }).collect(Collectors.toList()));
+        }
+    }
+
+    public static boolean isCompost(final ItemStack itemStack)
+    {
+        if(itemStack.isEmpty())
+        {
+            return false;
+        }
+
+        for(final String string : Configurations.gameplay.listOfCompostableItems)
+        {
+            if(itemStack.getItem().getRegistryName().toString().equals(string))
+            {
+                return true;
+            }
+            for(final int id: OreDictionary.getOreIDs(itemStack))
+            {
+                if (OreDictionary.getOreName(id).equals(string))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static NBTTagCompound writeLeaveSaplingEntryToNBT(final IBlockState state, final ItemStorage storage)

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.minecolonies.api.compatibility.CompatabilityManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.items.ModItems;
@@ -157,6 +158,8 @@ public class TileEntityBarrel extends TileEntity implements ITickable
 
     public static boolean checkCorrectItem(final ItemStack itemStack)
     {
+        return CompatabilityManager.isCompost(itemStack);
+        /**
         if(itemStack.isEmpty())
         {
             return false;
@@ -176,7 +179,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
                 }
             }
         }
-        return false;
+        return false;**/
     }
 
     /**
