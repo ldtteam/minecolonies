@@ -1,12 +1,10 @@
 package com.minecolonies.coremod.tileentities;
 
-import com.minecolonies.api.compatibility.CompatabilityManager;
-import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.items.ModItems;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -18,7 +16,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -158,7 +155,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
 
     public static boolean checkCorrectItem(final ItemStack itemStack)
     {
-        return CompatabilityManager.isCompost(itemStack);
+        return CompatibilityManager.isCompost(itemStack);
         /**
         if(itemStack.isEmpty())
         {

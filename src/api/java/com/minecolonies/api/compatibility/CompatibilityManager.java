@@ -88,7 +88,6 @@ public class CompatibilityManager implements ICompatibilityManager
 
     private void discoverCompostableItems()
     {
-        //Todo: implement this method
         if (compostableItems.isEmpty())
         {
             compostableItems.addAll(
@@ -104,7 +103,7 @@ public class CompatibilityManager implements ICompatibilityManager
                   }
 
 
-                  return stacks.stream().filter(CompatabilityManager::isCompost); // Here where we do ::isOre you could add the check from the TileEntity if the stack matches the requirements
+                  return stacks.stream().filter(CompatibilityManager::isCompost); // Here where we do ::isOre you could add the check from the TileEntity if the stack matches the requirements
 
               }).map(ItemStorage::new).collect(Collectors.toList())));
         }
