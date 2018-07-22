@@ -180,7 +180,7 @@ public class Structure
                                                                @NotNull final Block worldBlock, @NotNull final IBlockState worldMetadata)
         {
             return structureBlock == ModBlocks.blockSubstitution || (structureBlock == ModBlocks.blockSolidSubstitution
-                    && worldMetadata.getMaterial().isSolid() && !(ColonyManager.getCompatabilityManager().isOre(worldMetadata))
+                    && worldMetadata.getMaterial().isSolid() && !(ColonyManager.getCompatibilityManager().isOre(worldMetadata))
                     && worldBlock != Blocks.AIR);
         }
     }
