@@ -302,9 +302,9 @@ public class BuildingLumberjack extends AbstractBuildingWorker
      */
     private void checkTreesToFell()
     {
-        if(treesToFell.size() != ColonyManager.getCompatabilityManager().getCopyOfSaplings().size())
+        if(treesToFell.size() != ColonyManager.getCompatibilityManager().getCopyOfSaplings().size())
         {
-            for(final ItemStorage storage : ColonyManager.getCompatabilityManager().getCopyOfSaplings())
+            for(final ItemStorage storage : ColonyManager.getCompatibilityManager().getCopyOfSaplings())
             {
                 if(!treesToFell.containsKey(storage))
                 {

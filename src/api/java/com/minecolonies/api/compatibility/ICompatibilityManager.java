@@ -13,13 +13,12 @@ import java.util.List;
  * Interface for all compatabilityManagers.
  * The compatability manager retrieves certain blocks from oreData and stores them.
  */
-public interface ICompatabilityManager
+public interface ICompatibilityManager
 {
     /**
      * Method called to instantiate the requirements.
-     * @param world the world.
      */
-    void discover(final World world);
+    void discover();
 
     /**
      * Gets the leave matching a sapling.

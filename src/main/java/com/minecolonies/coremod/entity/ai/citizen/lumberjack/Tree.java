@@ -194,7 +194,7 @@ public class Tree
                     {
                         if(OreDictionary.getOreName(oreId).equals(SAPLINGS))
                         {
-                            ColonyManager.getCompatabilityManager().connectLeaveToSapling(world.getBlockState(pos), stack);
+                            ColonyManager.getCompatibilityManager().connectLeaveToSapling(world.getBlockState(pos), stack);
                             return stack;
                         }
                     }
@@ -337,7 +337,7 @@ public class Tree
     {
         for (final ItemStorage stack : treesToCut.entrySet().stream().filter(entry -> !entry.getValue()).map(Map.Entry::getKey).collect(Collectors.toList()))
         {
-            final ItemStack sap = ColonyManager.getCompatabilityManager().getSaplingForLeave(world.getBlockState(leafPos));
+            final ItemStack sap = ColonyManager.getCompatibilityManager().getSaplingForLeave(world.getBlockState(leafPos));
             if(sap != null && sap.isItemEqual(stack.getItemStack()))
             {
                 return false;

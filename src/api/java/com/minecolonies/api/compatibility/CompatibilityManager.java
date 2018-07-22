@@ -19,22 +19,21 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.Constants.ORE_STRING;
 import static com.minecolonies.api.util.constant.Constants.SAPLINGS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
- * CompatabilityManager handlign certain list and maps of itemStacks of certain types.
+ * CompatibilityManager handling certain list and maps of itemStacks of certain types.
  */
-public class CompatabilityManager implements ICompatabilityManager
+public class CompatibilityManager implements ICompatibilityManager
 {
     /**
      * BiMap of saplings and leaves.
@@ -43,21 +42,26 @@ public class CompatabilityManager implements ICompatabilityManager
 
     /**
      * List of saplings.
+     * Works on client and server-side.
      */
     private final List<ItemStorage> saplings = new ArrayList<>();
 
     /**
      * List of all ore-like blocks.
+     * Works on client and server-side.
      */
     private final List<Block> ores = new ArrayList<>();
 
     /**
-     * The oredict entry of an ore.
+     * Instantiates the compatibilityManager.
      */
-    public static final String ORE_STRING = "ore";
+    public CompatibilityManager()
+    {
+        discover();
+    }
 
     @Override
-    public void discover(final World world)
+    public void discover()
     {
         discoverSaplings();
         for(final String string: OreDictionary.getOreNames())
@@ -132,54 +136,15 @@ public class CompatabilityManager implements ICompatabilityManager
         @NotNull final NBTTagList saplingsLeavesTagList =
                 leavesToSaplingMap.entrySet().stream().map(entry ->  writeLeaveSaplingEntryToNBT(entry.getKey(), entry.getValue())).collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_SAP_LEAVE, saplingsLeavesTagList);
-
-        @NotNull final NBTTagList saplingTagList =
-                saplings.stream().map(sap ->  sap.getItemStack().writeToNBT(new NBTTagCompound())).collect(NBTUtils.toNBTTagList());
-        compound.setTag(TAG_SAPLINGS, saplingTagList);
-
-        try
-        {
-            @NotNull final NBTTagList oresTagList = ores.stream().map(ore -> NBTUtil.writeBlockState(new NBTTagCompound(), ore.getDefaultState())).collect(NBTUtils.toNBTTagList());
-            compound.setTag(TAG_ORES, oresTagList);
-        }
-        catch (final Exception e)
-        {
-            Log.getLogger().error("Error caught during ore serialization!", e);
-        }
     }
 
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         NBTUtils.streamCompound(compound.getTagList(TAG_SAP_LEAVE, Constants.NBT.TAG_COMPOUND))
-                .map(CompatabilityManager::readLeaveSaplingEntryFromNBT)
+                .map(CompatibilityManager::readLeaveSaplingEntryFromNBT)
                 .filter(key -> !leavesToSaplingMap.containsKey(key.getFirst()) && !leavesToSaplingMap.containsValue(key.getSecond()))
                 .forEach(key -> leavesToSaplingMap.put(key.getFirst(), key.getSecond()));
-
-        final List<ItemStorage> storages = NBTUtils.streamCompound(compound.getTagList(TAG_SAPLINGS, Constants.NBT.TAG_COMPOUND))
-                .map(tempCompound -> new ItemStorage(new ItemStack(tempCompound), false, true))
-                .collect(Collectors.toList());
-
-        //Filter duplicated values.
-        for(final ItemStorage storage: storages)
-        {
-            if(!saplings.contains(storage))
-            {
-                saplings.add(storage);
-            }
-        }
-
-        final List<IBlockState> states = NBTUtils.streamCompound(compound.getTagList(TAG_ORES, Constants.NBT.TAG_COMPOUND))
-                .map(NBTUtil::readBlockState)
-                .collect(Collectors.toList());
-
-        for(final IBlockState state: states)
-        {
-            if(!ores.contains(state.getBlock()))
-            {
-                ores.add(state.getBlock());
-            }
-        }
     }
 
     @Override
