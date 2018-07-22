@@ -249,6 +249,8 @@ public final class TranslationConstants
     public static final String CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN                                = "com.minecolonies.coremod.tooClose";
     @NonNls
     public static final String CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN                                = "com.minecolonies.coremod.tooFar";
+    @NonNls
+    public static final String GUI_TOWNHALL_CITIZEN_JOB_UNEMPLOYED                                 = "com.minecolonies.coremod.gui.townHall.citizens.unemployed";
 
     private TranslationConstants()
     {
