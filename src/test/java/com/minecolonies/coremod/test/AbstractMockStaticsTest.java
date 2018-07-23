@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.test;
 
+import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -7,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -29,6 +31,9 @@ public abstract class AbstractMockStaticsTest
     @Before
     public void setupStaticMocks() throws Exception
     {
+        CompatibilityManager testedClass = Mockito.spy(new CompatibilityManager());
+        doNothing().when(testedClass).discover();
+
         mockStatic(ColonyManager.class);
         mockStatic(LanguageHandler.class);
         mockStatic(Log.class);
