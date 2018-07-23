@@ -124,7 +124,6 @@ public final class ModSoundEvents
         registry.register(BakerSounds.Female.interaction);
 
         registry.register(BuilderSounds.Female.hostile);
-        registry.register(BuilderSounds.Female.saturationHigh);
         registry.register(BuilderSounds.Female.saturationLow);
         registry.register(BuilderSounds.Female.saturationVeryLow);
         registry.register(BuilderSounds.Female.badWeather);

@@ -157,6 +157,10 @@ public final class BuilderSounds extends AbstractWorkerSounds
         {
             saturationFeedback = Female.saturationLow;
         }
+        else
+        {
+            return;
+        }
         SoundUtils.playSoundAtCitizenWithChance(worldIn, position, saturationFeedback, getBasicSoundChance());
     }
 }
