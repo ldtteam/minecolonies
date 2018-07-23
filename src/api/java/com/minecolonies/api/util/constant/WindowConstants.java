@@ -165,6 +165,11 @@ public final class WindowConstants
     public static final String LIST_PERM_EVENT = "permeventslist";
 
     /**
+     * Id of the total citizens label in the GUI.
+     */
+    public static final String TOTAL_CITIZENS_LABEL = "totalCitizens";
+
+    /**
      * Id of the citizens list in the GUI.
      */
     public static final String LIST_CITIZENS = "citizenList";
