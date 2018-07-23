@@ -595,6 +595,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         final String numberOfCitizens =
             LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens",
                 citizensSize, townHall.getColony().getMaxCitizens());
+        findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
 
         final Integer unemployed = jobCountMap.get("") == null ? 0 : jobCountMap.get("");
         final String numberOfUnemployed = LanguageHandler.format(
@@ -602,7 +603,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         jobCountMap.remove("");
 
         final Integer maxJobs = jobCountMap.size();
-        final Integer preJobsHeaders = 3;
+        final Integer preJobsHeaders = 1;
 
         list.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -621,12 +622,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 }
 
                 final Label label = rowPane.findPaneOfTypeByID(CITIZENS_AMOUNT_LABEL, Label.class);
-                // preJobsHeaders = number of all citizens + empty row + number of all unemployed citizens
+                // preJobsHeaders = number of all unemployed citizens
                 if (index == 0)
-                {
-                    label.setLabelText(numberOfCitizens);
-                }
-                if (index == 2)
                 {
                     label.setLabelText(numberOfUnemployed);
                 }
@@ -861,7 +858,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         final CitizenDataView view = citizens.get(row);
         WindowCitizen.createXpBar(view, this);
         WindowCitizen.createSkillContent(view, this);
-        findPaneOfTypeByID(JOB_LABEL, Label.class).setLabelText("§l" + LanguageHandler.format(view.getJob()));
+        findPaneOfTypeByID(JOB_LABEL, Label.class).setLabelText("§l" + LanguageHandler.format(view.getJob().trim().isEmpty() ? GUI_TOWNHALL_CITIZEN_JOB_UNEMPLOYED : view.getJob()));
         findPaneOfTypeByID(HIDDEN_CITIZEN_ID, Label.class).setLabelText(String.valueOf(view.getId()));
     }
 

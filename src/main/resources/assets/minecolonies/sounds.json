@@ -2813,16 +2813,6 @@
     ]
   },
 
-  "mob.builder.female.saturationHigh": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/builder/female/eattoomuch",
-        "stream": false
-      }
-    ]
-  },
-
   "mob.builder.female.badWeather": {
     "category": "neutral",
     "sounds": [
