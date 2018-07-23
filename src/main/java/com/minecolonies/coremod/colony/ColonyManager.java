@@ -181,6 +181,7 @@ public final class ColonyManager
 
     private ColonyManager()
     {
+        compatibilityManager.discover();
         //Hides default constructor.
     }
 
