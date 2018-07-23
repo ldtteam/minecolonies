@@ -300,7 +300,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         IRecipeStorage storage = null;
         final BuildingBaker building = getOwnBuilding();
         currentRecipe++;
-        if (currentRecipe + 1 >= BakerRecipes.getRecipes().size())
+        if (currentRecipe + 1 > BakerRecipes.getRecipes().size())
         {
             currentRecipe = 0;
         }

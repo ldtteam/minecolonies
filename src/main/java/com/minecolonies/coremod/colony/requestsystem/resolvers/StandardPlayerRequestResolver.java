@@ -82,7 +82,6 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
         return null;
     }
 
-    @Nullable
     @Override
     public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest request) throws RuntimeException
     {
@@ -119,23 +118,32 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
             final EntityPlayer owner = ServerUtils.getPlayerFromUUID(colony.getWorld(), ((Colony) colony).getPermissions().getOwner());
             final TextComponentString colonyDescription = new TextComponentString(colony.getName() + ":");
 
-            if (manager.getColony().getWorld().isDaytime())
-            {
-                if (owner != null)
-                {
-                    players.remove(owner);
+            final ILocation requester = request.getRequester().getRequesterLocation();
+            final AbstractBuilding building = ((Colony) colony).getBuildingManager().getBuilding(requester.getInDimensionLocation());
 
-                    LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
-                            request.getRequester().getDisplayName(manager, request.getToken()).getFormattedText(),
-                            getRequestMessage(request).getFormattedText(),
-                            request.getRequester().getRequesterLocation().toString()
-                    );
+            if (building == null || (building.getCitizenForRequest(request.getToken()).isPresent() && !building.getCitizenForRequest(request.getToken())
+                                                                                                         .get()
+                                                                                                         .isRequestAsync(request.getToken())))
+            {
+                if (manager.getColony().getWorld().isDaytime())
+                {
+                    if (owner != null)
+                    {
+                        players.remove(owner);
+
+                        LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
+                          request.getRequester().getDisplayName(manager, request.getToken()).getFormattedText(),
+                          getRequestMessage(request).getFormattedText(),
+                          request.getRequester().getRequesterLocation().toString()
+                        );
+                    }
+                    LanguageHandler.sendPlayersMessage(players, "com.minecolonies.requestsystem.playerresolver",
+                      colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(manager, request.getToken()).getFormattedText(),
+                      getRequestMessage(request).getFormattedText(),
+                      request.getRequester().getRequesterLocation().toString());
                 }
-                LanguageHandler.sendPlayersMessage(players, "com.minecolonies.requestsystem.playerresolver",
-                        colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(manager, request.getToken()).getFormattedText(),
-                        getRequestMessage(request).getFormattedText(),
-                        request.getRequester().getRequesterLocation().toString());
             }
+
         }
         assignedRequests.add(request.getToken());
     }
@@ -195,7 +203,6 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
         return location;
     }
 
-    @NotNull
     @Override
     public void onRequestComplete(@NotNull final IRequestManager manager,@NotNull final IToken token)
     {
@@ -204,7 +211,6 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
          */
     }
 
-    @NotNull
     @Override
     public void onRequestCancelled(@NotNull final IRequestManager manager,@NotNull final IToken token)
     {

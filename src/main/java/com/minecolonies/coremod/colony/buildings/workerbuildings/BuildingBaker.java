@@ -222,19 +222,23 @@ public class BuildingBaker extends AbstractBuildingWorker
             furnaces.put(pos, bakingProduct);
         }
 
-    
-        final NBTTagList recipeTagList = compound.getTagList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
-        if (recipesAllowed == null)
+        if (compound.hasKey(TAG_RECIPES))
         {
-        	recipesAllowed = new boolean[recipeTagList.tagCount()];
+            final NBTTagList recipeTagList = compound.getTagList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
+            
+            for (int i = 0; i < recipeTagList.tagCount(); ++i)
+            {
+                final NBTTagCompound recipeCompound = recipeTagList.getCompoundTagAt(i);
+                recipesAllowed[i] = recipeCompound.getBoolean(TAG_RECIPE_POS);
+            }
         }
-        
-        for (int i = 0; i < recipeTagList.tagCount(); ++i)
+        else
         {
-            final NBTTagCompound recipeCompound = recipeTagList.getCompoundTagAt(i);
-            recipesAllowed[i] = recipeCompound.getBoolean(TAG_RECIPE_POS);
+            for (int i = 0; i < recipesAllowed.length; ++i)
+            {
+                recipesAllowed[i] = true;
+            }
         }
-
     }
 
     @Override
