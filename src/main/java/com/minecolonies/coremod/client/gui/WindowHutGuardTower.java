@@ -63,6 +63,11 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     private boolean patrolManually = false;
 
     /**
+     * Whether tight grouping is used on type of Follow.
+     */
+    private boolean tightGrouping = true;
+
+    /**
      * The GuardTask of the guard.
      */
     private GuardTask task = GuardTask.GUARD;
@@ -284,6 +289,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         this.assignManually = building.isAssignManually();
         this.patrolManually = building.isPatrolManually();
         this.retrieveOnLowHealth = building.isRetrieveOnLowHealth();
+        this.tightGrouping = building.isTightGrouping();
         this.task = building.getTask();
         this.job = building.getJob();
         this.patrolTargets = building.getPatrolTargets();
@@ -296,7 +302,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     private void sendChangesToServer()
     {
         final int ordinal = building.getJob() == null ? -1 : job.ordinal();
-        MineColonies.getNetwork().sendToServer(new GuardTaskMessage(building, ordinal, assignManually, patrolManually, retrieveOnLowHealth, task.ordinal()));
+        MineColonies.getNetwork().sendToServer(new GuardTaskMessage(building, ordinal, assignManually, patrolManually, retrieveOnLowHealth, task.ordinal(), tightGrouping));
     }
 
     /**
@@ -398,11 +404,23 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             {
                 buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.targetPatrol"));
             }
+            else
+            {
+                buttonSetTarget.setLabel("");
+            }
             buttonTaskPatrol.setEnabled(false);
         }
         else if (task.equals(GuardTask.FOLLOW))
         {
             buttonTaskFollow.setEnabled(false);
+            if (tightGrouping)
+            {
+                buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.followTight"));
+            }
+            else
+            {
+                buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.followLoose"));
+            }
         }
         else if (task.equals(GuardTask.GUARD))
         {
@@ -435,8 +453,8 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             buttonTaskPatrol.setEnabled(true);
             buttonTaskFollow.setEnabled(false);
             buttonTaskGuard.setEnabled(true);
-
-            buttonSetTarget.hide();
+            buttonSetTarget.setEnabled(true);
+            buttonSetTarget.show();
         }
         else
         {
@@ -470,6 +488,14 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         {
             givePlayerScepter(GuardTask.PATROL);
             LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.job.guard.tool.taskPatrol");
+        }
+        else if (task.equals(GuardTask.FOLLOW))
+        {
+            tightGrouping = !tightGrouping;
+            building.setTightGrouping(tightGrouping);
+            pullInfoFromHut();
+            sendChangesToServer();
+            return;
         }
         else if (task.equals(GuardTask.GUARD))
         {
