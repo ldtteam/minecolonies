@@ -134,6 +134,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     private double lastDistance = 0.0f;
 
     private static final int TIME_STRAFING_BEFORE_SWITCHING_DIRECTIONS = 20;
+    private static final double SWITCH_STRAFING_DIRECTION = 0.3d;
     
     /**
      * Creates the abstract part of the AI.
@@ -677,12 +678,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
                 if (strafingTime >= TIME_STRAFING_BEFORE_SWITCHING_DIRECTIONS)
                 {
-                    if ((double)worker.getRNG().nextFloat() < 0.3D)
+                    if ((double)worker.getRNG().nextFloat() < SWITCH_STRAFING_DIRECTION)
                     {
                         strafingClockwise = !strafingClockwise;
                     }
 
-                    if ((double)worker.getRNG().nextFloat() < 0.3D)
+                    if ((double)worker.getRNG().nextFloat() < SWITCH_STRAFING_DIRECTION)
                     {
                         strafingBackwards = !strafingBackwards;
                     }
@@ -782,9 +783,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                         }
                     }
                 }
-                else if (--attackTime <= 0)
+                else 
                 {
-                    worker.setActiveHand(EnumHand.MAIN_HAND);
+                    attackTime--;
+                    if (attackTime <= 0)
+                    {
+                        worker.setActiveHand(EnumHand.MAIN_HAND);
+                    }
                 }
                 lastDistance = distance1;
             }
