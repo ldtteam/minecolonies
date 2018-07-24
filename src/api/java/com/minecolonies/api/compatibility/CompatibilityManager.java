@@ -86,29 +86,6 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverCompostableItems();
     }
 
-    private void discoverCompostableItems()
-    {
-        if (compostableItems.isEmpty())
-        {
-            compostableItems.addAll(
-              ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
-                  final NonNullList<ItemStack> stacks = NonNullList.create();
-                  try
-                  {
-                      item.getSubItems(CreativeTabs.SEARCH, stacks);
-                  }
-                  catch (Exception ex)
-                  {
-                      Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
-                  }
-
-
-                  return stacks.stream().filter(CompatibilityManager::isCompost); // Here where we do ::isOre you could add the check from the TileEntity if the stack matches the requirements
-
-              }).map(ItemStorage::new).collect(Collectors.toList())));
-        }
-    }
-
     public static boolean isCompost(final ItemStack itemStack)
     {
         if(itemStack.isEmpty())
@@ -266,6 +243,29 @@ public class CompatibilityManager implements ICompatibilityManager
             }
         }
         Log.getLogger().info("Finished discovering saplings");
+    }
+
+    private void discoverCompostableItems()
+    {
+        if (compostableItems.isEmpty())
+        {
+            compostableItems.addAll(
+              ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
+                  final NonNullList<ItemStack> stacks = NonNullList.create();
+                  try
+                  {
+                      item.getSubItems(CreativeTabs.SEARCH, stacks);
+                  }
+                  catch (Exception ex)
+                  {
+                      Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
+                  }
+
+
+                  return stacks.stream().filter(CompatibilityManager::isCompost);
+
+              }).map(ItemStorage::new).collect(Collectors.toList())));
+        }
     }
 
     private static NBTTagCompound writeLeaveSaplingEntryToNBT(final IBlockState state, final ItemStorage storage)

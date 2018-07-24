@@ -1,5 +1,9 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowHutComposter;
@@ -10,7 +14,9 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -18,6 +24,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -58,9 +65,19 @@ public class BuildingComposter extends AbstractBuildingWorker
     private final List<BlockPos> barrels = new ArrayList<>();
 
     /**
+     * Tag to store the item list
+     */
+    private static final String TAG_ITEMLIST = "itemList";
+
+    /**
+     * Tag to store the item
+     */
+    private static final String TAG_ITEM = "item";
+
+    /**
      * List of allowed items to compost
      */
-    private HashMap<ItemStack, String> itemsAllowed;
+    private List<ItemStorage> itemsAllowed = new ArrayList<>();
 
     /**
      * The constructor of the building.
@@ -134,6 +151,14 @@ public class BuildingComposter extends AbstractBuildingWorker
             furnacesTagList.appendTag(furnaceCompound);
         }
         compound.setTag(TAG_BARRELS, furnacesTagList);
+
+        @NotNull final NBTTagList itemsToCompost = new NBTTagList();
+        for(@NotNull final ItemStorage entry : itemsAllowed)
+        {
+            @NotNull final NBTTagCompound itemCompound = new NBTTagCompound();
+            entry.getItemStack().writeToNBT(itemCompound);
+        }
+        compound.setTag(TAG_ITEMLIST, itemsToCompost);
     }
 
     @Override
@@ -144,6 +169,51 @@ public class BuildingComposter extends AbstractBuildingWorker
         for (int i = 0; i < furnaceTagList.tagCount(); ++i)
         {
             barrels.add(NBTUtil.getPosFromTag(furnaceTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
+        }
+        final NBTTagList itemsToCompost = compound.getTagList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < itemsToCompost.tagCount(); ++i)
+        {
+            try
+            {
+                itemsAllowed.add(new ItemStorage(
+                  new ItemStack(itemsToCompost.getCompoundTagAt(i).getCompoundTag(TAG_ITEM))
+                ));
+            }catch (Exception e)
+            {
+                Log.getLogger().info("Removing incompatible stack");
+            }
+        }
+    }
+
+    public void addCompostableItem(ItemStorage item)
+    {
+        if(!itemsAllowed.contains(item))
+        {
+            itemsAllowed.add(item);
+        }
+    }
+
+    public boolean isAllowedItem(ItemStorage item)
+    {
+        return itemsAllowed.contains(item);
+    }
+
+    public void removeCompostableItem(ItemStorage item)
+    {
+        if(itemsAllowed.contains(item))
+        {
+            itemsAllowed.remove(item);
+        }
+    }
+
+    @Override
+    public void serializeToView(@NotNull final ByteBuf buf)
+    {
+        super.serializeToView(buf);
+        buf.writeInt(itemsAllowed.size());
+        for (ItemStorage item : itemsAllowed)
+        {
+            ByteBufUtils.writeItemStack(buf, item.getItemStack());
         }
     }
 
