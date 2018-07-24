@@ -69,7 +69,7 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     public CompatibilityManager()
     {
-        discover();
+
     }
 
     @Override

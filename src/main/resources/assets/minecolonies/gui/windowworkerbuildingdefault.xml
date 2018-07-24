@@ -7,15 +7,14 @@
            label="$(com.minecolonies.coremod.gui.workerHuts.workerAssigned)"
            textalign="MIDDLE" color="black"/>
 
-     <list id="workers" size="92% 30" pos="3 42" align="TOP_MIDDLE">
-         <view size="100% 20">
-             <box size="100% 20" linewidth="2">
-			    <label id="workerName" size="100% 11" pos="1 0"  textalign="MIDDLE" color="black"/>
-			    <label id="workerLevel" size="100% 11" pos="0 9" textalign="MIDDLE" color="black"/>
-             </box>
-         </view>
-     </list>
-
+    <list id="workers" size="92% 30" pos="3 42" align="TOP_MIDDLE">
+        <view size="100% 20">
+            <box size="100% 20" linewidth="0">
+                <label id="workerName" size="100% 11" pos="0 0"  textalign="MIDDLE" color="black"/>
+                <label id="workerLevel" size="100% 11" pos="0 9" textalign="MIDDLE" color="black"/>
+            </box>
+        </view>
+    </list>
 
     <label size="100% 11" pos="0 149"
            label="$(com.minecolonies.coremod.gui.workerHuts.buildPrio)"
