@@ -181,7 +181,6 @@ public final class ColonyManager
 
     private ColonyManager()
     {
-        compatibilityManager.discover();
         //Hides default constructor.
     }
 
@@ -999,6 +998,11 @@ public final class ColonyManager
         if (event.phase == TickEvent.Phase.END)
         {
             getColonies(event.world).forEach(c -> c.onWorldTick(event));
+        }
+
+        if (!compatibilityManager.isDiscoveredAlready())
+        {
+            compatibilityManager.discover();
         }
     }
 

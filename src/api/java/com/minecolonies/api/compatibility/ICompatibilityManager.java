@@ -87,4 +87,10 @@ public interface ICompatibilityManager
      * @param stack the sapling.
      */
     void connectLeaveToSapling(IBlockState block, ItemStack stack);
+
+    /**
+     * If discovery process ran already.
+     * @return true if so.
+     */
+    boolean isDiscoveredAlready();
 }

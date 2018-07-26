@@ -65,6 +65,11 @@ public class CompatibilityManager implements ICompatibilityManager
     private final List<ItemStorage> compostableItems = new ArrayList<>();
 
     /**
+     * If discovery is finished already.
+     */
+    private boolean discoveredAlready = false;
+
+    /**
      * Instantiates the compatibilityManager.
      */
     public CompatibilityManager()
@@ -84,6 +89,8 @@ public class CompatibilityManager implements ICompatibilityManager
             }
         }
         discoverCompostableItems();
+
+        discoveredAlready = true;
     }
 
     @Override
@@ -200,6 +207,12 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             leavesToSaplingMap.put(tempLeave, new ItemStorage(stack, false, true));
         }
+    }
+
+    @Override
+    public boolean isDiscoveredAlready()
+    {
+        return discoveredAlready;
     }
 
     //------------------------------- Private Utility Methods -------------------------------//
