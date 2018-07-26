@@ -86,7 +86,8 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverCompostableItems();
     }
 
-    public static boolean isCompost(final ItemStack itemStack)
+    @Override
+    public boolean isCompost(final ItemStack itemStack)
     {
         if(itemStack.isEmpty())
         {
@@ -136,6 +137,12 @@ public class CompatibilityManager implements ICompatibilityManager
     public List<ItemStorage> getCopyOfSaplings()
     {
         return new ArrayList<>(saplings);
+    }
+
+    @Override
+    public  List<ItemStorage> getCopyOfCompostableItems()
+    {
+        return new ArrayList<>(compostableItems);
     }
 
     @Override
@@ -262,7 +269,7 @@ public class CompatibilityManager implements ICompatibilityManager
                   }
 
 
-                  return stacks.stream().filter(CompatibilityManager::isCompost);
+                  return stacks.stream().filter(this::isCompost);
 
               }).map(ItemStorage::new).collect(Collectors.toList())));
         }

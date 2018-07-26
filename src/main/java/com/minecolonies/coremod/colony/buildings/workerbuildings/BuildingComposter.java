@@ -5,6 +5,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowHutComposter;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -13,6 +14,7 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
+import com.minecolonies.coremod.network.messages.AssignComposterItemMessage;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
@@ -219,6 +221,9 @@ public class BuildingComposter extends AbstractBuildingWorker
 
     public static class View extends AbstractBuildingWorker.View
     {
+
+        ArrayList<ItemStorage> listOfItems = new ArrayList<>();
+
         /**
          * Instantiates the view of the building.
          * @param c the colonyView.
@@ -229,11 +234,34 @@ public class BuildingComposter extends AbstractBuildingWorker
             super(c, l);
         }
 
+        public void addCompostableItem(ItemStorage item)
+        {
+            MineColonies.getNetwork().sendToServer(new AssignComposterItemMessage(this, item, true));
+            if(!listOfItems.contains(item))
+            {
+                listOfItems.add(item);
+            }
+        }
+
+        public boolean isAllowedItem(ItemStorage item)
+        {
+            return listOfItems.contains(item);
+        }
+
+        public void removeCompostableItem(ItemStorage item)
+        {
+            MineColonies.getNetwork().sendToServer(new AssignComposterItemMessage(this, item, false));
+            if(listOfItems.contains(item))
+            {
+                listOfItems.remove(item);
+            }
+        }
+
         @NotNull
         @Override
         public Window getWindow()
         {
-            return new WindowHutComposter(this, HUT_NAME);
+            return new WindowHutComposter(this);
         }
 
         @NotNull
