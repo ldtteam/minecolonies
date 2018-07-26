@@ -53,6 +53,11 @@ public class CompatibilityManager implements ICompatibilityManager
     private final List<Block> ores = new ArrayList<>();
 
     /**
+     * If discovery is finished already.
+     */
+    private boolean discoveredAlready = false;
+
+    /**
      * Instantiates the compatibilityManager.
      */
     public CompatibilityManager()
@@ -71,6 +76,8 @@ public class CompatibilityManager implements ICompatibilityManager
                 discoverOres(string);
             }
         }
+
+        discoveredAlready = true;
     }
 
     @Override
@@ -156,6 +163,12 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             leavesToSaplingMap.put(tempLeave, new ItemStorage(stack, false, true));
         }
+    }
+
+    @Override
+    public boolean isDiscoveredAlready()
+    {
+        return discoveredAlready;
     }
 
     //------------------------------- Private Utility Methods -------------------------------//
