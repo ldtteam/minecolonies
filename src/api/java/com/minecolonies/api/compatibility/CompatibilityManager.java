@@ -286,6 +286,7 @@ public class CompatibilityManager implements ICompatibilityManager
 
               }).map(ItemStorage::new).collect(Collectors.toList())));
         }
+        Log.getLogger().info("Finished discovering compostables");
     }
 
     private static NBTTagCompound writeLeaveSaplingEntryToNBT(final IBlockState state, final ItemStorage storage)

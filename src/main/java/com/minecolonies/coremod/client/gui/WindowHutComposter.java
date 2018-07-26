@@ -39,7 +39,7 @@ public class WindowHutComposter extends AbstractWindowWorkerBuilding<BuildingCom
     /**
      * Id of the the fields list inside the GUI.
      */
-    private static final String LIST_RECIPES = "recipes";
+    private static final String LIST_RECIPES = "items";
 
     /**
      * Button leading to the previous page.
