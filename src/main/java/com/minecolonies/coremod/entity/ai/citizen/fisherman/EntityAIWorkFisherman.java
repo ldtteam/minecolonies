@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.fisherman;
 
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFisherman;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
@@ -645,4 +646,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         return worker;
     }
+
+    @Override 
+    protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType) 
+    { 
+        final boolean needTool = super.checkForToolOrWeapon(toolType); 
+        worker.getCitizenData().getCitizenHappinessHandler().setNeedsATool(toolType,needTool); 
+        return needTool; 
+    } 
 }
