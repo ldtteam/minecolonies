@@ -3,6 +3,7 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
@@ -73,6 +74,7 @@ public class AssignComposterItemMessage extends AbstractMessage<AssignComposterI
     @Override
     public void messageOnServerThread(final AssignComposterItemMessage message, final EntityPlayerMP player)
     {
+        Log.getLogger().info("Processing composter message.");
         final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
@@ -88,10 +90,12 @@ public class AssignComposterItemMessage extends AbstractMessage<AssignComposterI
                 if(message.assign)
                 {
                     building.addCompostableItem(message.item);
+                    Log.getLogger().info("Added item: "+ message.item.getItem().getUnlocalizedName());
                 }
                 else
                 {
                     building.removeCompostableItem(message.item);
+                    Log.getLogger().info("Removed item: "+ message.item.getItem().getUnlocalizedName());
                 }
             }
         }

@@ -178,7 +178,7 @@ public class BuildingComposter extends AbstractBuildingWorker
             try
             {
                 itemsAllowed.add(new ItemStorage(
-                  new ItemStack(itemsToCompost.getCompoundTagAt(i).getCompoundTag(TAG_ITEM))
+                  new ItemStack(itemsToCompost.getCompoundTagAt(i))
                 ));
             }catch (Exception e)
             {
@@ -192,6 +192,10 @@ public class BuildingComposter extends AbstractBuildingWorker
         if(!itemsAllowed.contains(item))
         {
             itemsAllowed.add(item);
+            for (ItemStorage storage : itemsAllowed)
+            {
+                Log.getLogger().info("Item allowed: "+storage.getItem().getUnlocalizedName());
+            }
         }
     }
 
@@ -276,6 +280,18 @@ public class BuildingComposter extends AbstractBuildingWorker
         public Skill getSecondarySkill()
         {
             return Skill.STRENGTH;
+        }
+
+        @Override
+        public void deserialize(@NotNull final ByteBuf buf)
+        {
+            super.deserialize(buf);
+
+            int size = buf.readInt();
+            for(int i = 0; i < size; i++)
+            {
+                listOfItems.add(new ItemStorage(ByteBufUtils.readItemStack(buf)));
+            }
         }
     }
 
