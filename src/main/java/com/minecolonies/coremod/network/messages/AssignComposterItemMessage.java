@@ -74,7 +74,6 @@ public class AssignComposterItemMessage extends AbstractMessage<AssignComposterI
     @Override
     public void messageOnServerThread(final AssignComposterItemMessage message, final EntityPlayerMP player)
     {
-        Log.getLogger().info("Processing composter message.");
         final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
@@ -90,12 +89,10 @@ public class AssignComposterItemMessage extends AbstractMessage<AssignComposterI
                 if(message.assign)
                 {
                     building.addCompostableItem(message.item);
-                    Log.getLogger().info("Added item: "+ message.item.getItem().getUnlocalizedName());
                 }
                 else
                 {
                     building.removeCompostableItem(message.item);
-                    Log.getLogger().info("Removed item: "+ message.item.getItem().getUnlocalizedName());
                 }
             }
         }

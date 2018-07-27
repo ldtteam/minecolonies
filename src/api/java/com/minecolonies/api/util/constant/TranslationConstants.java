@@ -1,6 +1,7 @@
 package com.minecolonies.api.util.constant;
 
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Constants for translation
@@ -121,6 +122,8 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_REQUESTS_TOOL_PREMINLEVEL                          = "com.minecolonies.coremod.request.tool.preminlevel";
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_TOOL_PREMAXLEVEL                          = "com.minecolonies.coremod.request.tool.premaxlevel";
+    @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_COMPOSTABLE                               = "com.minecolonies.coremod.request.compostable";
     @NonNls
     public static final String COM_MINECOLONIES_GENERAL_AND                                        = "com.minecolonies.coremod.general.and";
     @NonNls

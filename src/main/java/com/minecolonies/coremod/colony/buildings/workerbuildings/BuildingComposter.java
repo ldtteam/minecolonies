@@ -90,7 +90,7 @@ public class BuildingComposter extends AbstractBuildingWorker
     public BuildingComposter(@NotNull final Colony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put((stack) -> TileEntityBarrel.checkCorrectItem(stack)
+        keepX.put((stack) -> isAllowedItem(new ItemStorage(stack))
           , Integer.MAX_VALUE);
 
     }
@@ -159,6 +159,7 @@ public class BuildingComposter extends AbstractBuildingWorker
         {
             @NotNull final NBTTagCompound itemCompound = new NBTTagCompound();
             entry.getItemStack().writeToNBT(itemCompound);
+            itemsToCompost.appendTag(itemCompound);
         }
         compound.setTag(TAG_ITEMLIST, itemsToCompost);
     }
@@ -192,10 +193,6 @@ public class BuildingComposter extends AbstractBuildingWorker
         if(!itemsAllowed.contains(item))
         {
             itemsAllowed.add(item);
-            for (ItemStorage storage : itemsAllowed)
-            {
-                Log.getLogger().info("Item allowed: "+storage.getItem().getUnlocalizedName());
-            }
         }
     }
 
@@ -210,6 +207,11 @@ public class BuildingComposter extends AbstractBuildingWorker
         {
             itemsAllowed.remove(item);
         }
+    }
+
+    public ArrayList<ItemStorage> getCopyOfAllowedItems()
+    {
+        return new ArrayList<>(itemsAllowed);
     }
 
     @Override

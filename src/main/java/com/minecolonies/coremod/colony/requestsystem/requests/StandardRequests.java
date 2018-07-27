@@ -10,7 +10,9 @@ import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.requestable.Compostable;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
+import com.minecolonies.coremod.tileentities.TileEntityBarrel;
 import com.minecolonies.coremod.util.text.NonSiblingFormattingTextComponent;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -337,4 +339,57 @@ public final class StandardRequests
             return burnableExamples;
         }
     }
+
+    public static class CompostableRequest extends AbstractRequest<Compostable>
+    {
+        private static ImmutableList<ItemStack> compostableExamples;
+
+        CompostableRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Compostable requested)
+        {
+            super(requester, token, requested);
+        }
+
+        CompostableRequest(
+          @NotNull final IRequester requester,
+          @NotNull final IToken token,
+          @NotNull final RequestState state,
+          @NotNull final Compostable requested)
+        {
+            super(requester, token, state, requested);
+        }
+
+        @NotNull
+        @Override
+        public ITextComponent getShortDisplayString()
+        {
+            final ITextComponent result = new NonSiblingFormattingTextComponent();
+            result.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_COMPOSTABLE));
+            return result;
+        }
+
+        @Override
+        public List<ItemStack> getDisplayStacks()
+        {
+            if (compostableExamples == null)
+            {
+                compostableExamples =
+                  ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
+                      final NonNullList<ItemStack> stacks = NonNullList.create();
+                      try
+                      {
+                          item.getSubItems( CreativeTabs.SEARCH, stacks);
+                      }
+                      catch (Exception ex)
+                      {
+                          Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
+                      }
+
+                      return stacks.stream().filter(TileEntityBarrel::checkCorrectItem);
+                  }).collect(Collectors.toList()));
+            }
+
+            return compostableExamples;
+        }
+    }
+
 }

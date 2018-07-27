@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.composter;
 
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
@@ -68,18 +69,18 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             setDelay(2);
             return getState();
         }
-        if(InventoryUtils.hasItemInProvider(getOwnBuilding(), TileEntityBarrel::checkCorrectItem))
+        if(InventoryUtils.hasItemInProvider(getOwnBuilding(), stack -> getOwnBuilding(BuildingComposter.class).isAllowedItem(new ItemStorage(stack))))
         {
             InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(
               getOwnBuilding(),
-              InventoryUtils.findFirstSlotInProviderWith(getOwnBuilding(), TileEntityBarrel::checkCorrectItem),
+              InventoryUtils.findFirstSlotInProviderWith(getOwnBuilding(), stack -> getOwnBuilding(BuildingComposter.class).isAllowedItem(new ItemStorage(stack))),
               new InvWrapper(worker.getInventoryCitizen()));
 
         }
 
         final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
           new InvWrapper(worker.getInventoryCitizen()),
-          TileEntityBarrel::checkCorrectItem
+          stack -> getOwnBuilding(BuildingComposter.class).isAllowedItem(new ItemStorage(stack))
         );
         if(slot >= 0)
         {
@@ -88,7 +89,15 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         }
 
         worker.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
-        //worker.getCitizenData().createRequestAsync(new Compostable(STACKSIZE));
+
+        if(!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()))
+        {
+            for(ItemStorage item : getOwnBuilding(BuildingComposter.class).getCopyOfAllowedItems())
+            {
+                //TODO: add requests when finished
+                //worker.getCitizenData().createRequestAsync(new Compostable(Integer.MAX_VALUE, item.getItemStack()));
+            }
+        }
 
         setDelay(2);
         return START_WORKING;
@@ -133,7 +142,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if(worker.getHeldItem(EnumHand.MAIN_HAND) == ItemStack.EMPTY)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
-                            new InvWrapper(worker.getInventoryCitizen()), TileEntityBarrel::checkCorrectItem);
+                            new InvWrapper(worker.getInventoryCitizen()), stack -> getOwnBuilding(BuildingComposter.class).isAllowedItem(new ItemStorage(stack)));
 
             if(slot >= 0)
             {
@@ -184,6 +193,8 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             ItemStack compost = te.retrieveCompost(1);
 
             InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), compost);
+
+            worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         }
 
         return START_WORKING;
