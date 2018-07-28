@@ -550,6 +550,37 @@ public final class ItemStackUtils
     }
 
     /**
+     * Method to check if a stack is in a list of stacks.
+     * @param stacks the list of stacks.
+     * @param stack the stack.
+     * @return true if so.
+     */
+    public static boolean compareItemStackListIgnoreStackSize(final List<ItemStack> stacks, final ItemStack stack)
+    {
+        return compareItemStackListIgnoreStackSize(stacks, stack, true, true);
+    }
+
+    /**
+     * Method to check if a stack is in a list of stacks.
+     * @param stacks the list of stacks.
+     * @param stack the stack.
+     * @param matchMeta if meta has to match.
+     * @param matchNBT if nbt has to match.
+     * @return true if so.
+     */
+    public static boolean compareItemStackListIgnoreStackSize(final List<ItemStack> stacks, final ItemStack stack, final boolean matchMeta, final boolean matchNBT)
+    {
+        for (final ItemStack tempStack : stacks)
+        {
+            if (compareItemStacksIgnoreStackSize(tempStack, stack, matchMeta, matchNBT))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * set the size of the stack.
      * This is for compatibility between 1.10 and 1.11
      *
