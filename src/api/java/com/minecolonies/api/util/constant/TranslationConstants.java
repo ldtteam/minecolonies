@@ -200,7 +200,7 @@ public final class TranslationConstants
     @NonNls
     public static final String TOGGLE_REPLANT_SAPLINGS_ON                                          = "com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOn";
     @NonNls
-    public static final String TOGGLE_REPLANT_SAPLINGS_OFF                                          = "com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOff";
+    public static final String TOGGLE_REPLANT_SAPLINGS_OFF                                         = "com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOff";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_COMPAT_JEI_CRAFTIN_TEACHING_UNKNOWN_RECIPE = "com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe";
     @NonNls
@@ -251,6 +251,8 @@ public final class TranslationConstants
     public static final String CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN                                = "com.minecolonies.coremod.tooFar";
     @NonNls
     public static final String GUI_TOWNHALL_CITIZEN_JOB_UNEMPLOYED                                 = "com.minecolonies.coremod.gui.townHall.citizens.unemployed";
+    @NonNls
+    public static final String LIST_REQUEST_DISPLAY_STRING                                         = "com.minecolonies.coremod.request.stacklist";
 
     private TranslationConstants()
     {
