@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.composter;
 
+import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -7,6 +8,7 @@ import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import com.minecolonies.coremod.colony.requestable.Compostable;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -16,6 +18,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -92,11 +96,12 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
         if(!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()))
         {
+            ArrayList<ItemStack> itemList = new ArrayList<>();
             for(ItemStorage item : getOwnBuilding(BuildingComposter.class).getCopyOfAllowedItems())
             {
-                //TODO: add requests when finished
-                //worker.getCitizenData().createRequestAsync(new Compostable(Integer.MAX_VALUE, item.getItemStack()));
+                itemList.add(item.getItemStack());
             }
+            //worker.getCitizenData().createRequestAsync(new StackList(itemList));
         }
 
         setDelay(2);
