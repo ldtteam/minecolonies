@@ -375,7 +375,6 @@ public class CitizenManager implements ICitizenManager
 
             if (citizen.getCitizenEntity().isPresent()) 
             { 
-              final EntityCitizen citizenEnity = citizen.getCitizenEntity().get(); 
               citizen.getCitizenHappinessHandler().processDailyHappiness(hasHouse, hasJob); 
             } 
             saturation += citizen.getSaturation();

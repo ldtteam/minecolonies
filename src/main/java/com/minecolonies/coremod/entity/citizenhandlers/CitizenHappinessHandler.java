@@ -300,7 +300,7 @@ public class CitizenHappinessHandler
         }
 
         noToolModifier = 0;
-        for (Map.Entry<IToolType, Integer> entry : needsTool.entrySet())
+        for (final Map.Entry<IToolType, Integer> entry : needsTool.entrySet())
         {
             final int numDays = entry.getValue() + 1;
             final IToolType toolType = entry.getKey();
@@ -335,7 +335,7 @@ public class CitizenHappinessHandler
      */
     public void setDamageModifier()
     {
-        Optional<EntityCitizen> entityCitizen = citizen.getCitizenEntity();
+        final Optional<EntityCitizen> entityCitizen = citizen.getCitizenEntity();
         if (entityCitizen.isPresent())
         {
             final double health = entityCitizen.get().getHealth() / entityCitizen.get().getMaxHealth();

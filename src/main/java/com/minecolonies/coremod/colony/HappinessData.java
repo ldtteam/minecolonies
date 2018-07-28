@@ -295,7 +295,9 @@ public class HappinessData implements IMessage
     {
         int numDays = MAX_DAYS_DEATH_MODIFIER_LAST;
         if (isGuard)
+        {
             numDays = MAX_DAYS_DEATH_MODIFIER_LAST_GUARDS;
+        }
     	final DeathModifierData data = new DeathModifierData(0, modifier, numDays);
     	deathModifier.add(data);
     }
@@ -385,7 +387,7 @@ public class HappinessData implements IMessage
          */
         private double modifier;
         
-        private int numDaysLast;
+        final private int numDaysLast;
 
         private double adjustment;
         
