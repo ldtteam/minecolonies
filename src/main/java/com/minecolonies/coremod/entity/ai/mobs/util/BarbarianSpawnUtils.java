@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.mobs.util;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.constant.ColonyConstants;
@@ -114,7 +115,7 @@ public final class BarbarianSpawnUtils
         if (colony != null)
         {
             final int raidLevel = (int) (MobEventsUtils.getColonyRaidLevel(colony) * BARBARIAN_HEALTH_MULTIPLIER);
-            return Math.max(BARBARIAN_BASE_HEALTH, (BARBARIAN_BASE_HEALTH + raidLevel) * ColonyConstants.BARBARIAN_HORDE_DIFFICULTY);
+            return Math.max(BARBARIAN_BASE_HEALTH, (BARBARIAN_BASE_HEALTH + raidLevel) * ((double) Configurations.gameplay.barbarianHordeDifficulty * 0.1));
         }
         return BARBARIAN_BASE_HEALTH;
     }
