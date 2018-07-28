@@ -96,7 +96,6 @@ public final class ColonyConstants
     public static final ResourceLocation BARBARIAN                    = new ResourceLocation(Constants.MOD_ID, "Barbarian");
     public static final ResourceLocation ARCHER                       = new ResourceLocation(Constants.MOD_ID, "ArcherBarbarian");
     public static final ResourceLocation CHIEF                        = new ResourceLocation(Constants.MOD_ID, "ChiefBarbarian");
-    public static final int              BARBARIAN_MAX_SIZE           = Configurations.gameplay.maxBarbarianSize;
     public static final double           BARBARIANS_MULTIPLIER        = 0.6;
     public static final double           ARCHER_BARBARIANS_MULTIPLIER = 0.30;
     public static final double           CHIEF_BARBARIANS_MULTIPLIER  = 0.1;
