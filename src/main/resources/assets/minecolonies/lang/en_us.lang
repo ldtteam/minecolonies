@@ -724,3 +724,4 @@ item.minecolonies.compost.name=Compost
 com.minecolonies.coremod.gui.townHall.citizens.unemployed=Unemployed
 com.minecolonies.coremod.gui.townHall.events=Events
 com.minecolonies.coremod.gui.townHall.workorders=Workorders
+com.minecolonies.coremod.request.stacklist = StackList

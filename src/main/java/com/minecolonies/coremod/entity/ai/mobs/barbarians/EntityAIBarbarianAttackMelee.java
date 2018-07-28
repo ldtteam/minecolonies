@@ -1,5 +1,9 @@
 package com.minecolonies.coremod.entity.ai.mobs.barbarians;
 
+import static com.minecolonies.coremod.entity.ai.citizen.guard.GuardConstants.RANGED_ATTACK_DELAY_BASE;
+
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianSpawnUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -13,7 +17,7 @@ import net.minecraft.util.EnumHand;
 public class EntityAIBarbarianAttackMelee extends EntityAIBase
 {
 
-    private static final int    CYCLES_TO_WAIT          = 16;
+    private static final int    CYCLES_TO_WAIT          = 100;
     private static final double PITCH_MULTIPLIER        = 0.4;
     private static final double PITCH_ADDER             = 0.8;
     private static final double HALF_ROTATION           = 180;
@@ -90,7 +94,7 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
                 entity.swingArm(EnumHand.MAIN_HAND);
                 entity.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) 1.0D, (float) getRandomPitch());
                 target.setRevengeTarget(entity);
-                lastAttack = CYCLES_TO_WAIT;
+                lastAttack = getAttackDelay();
             }
             if (lastAttack > 0)
             {
@@ -102,6 +106,16 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
 
             entity.getNavigator().tryMoveToEntityLiving(target, ATTACK_SPEED);
         }
+    }
+
+    /**
+     * Gets the delay time for a next attack by the barbarian.
+     *
+     * @return the reload time
+     */
+    protected int getAttackDelay()
+    {
+        return CYCLES_TO_WAIT / Math.max(1, (int) ((Constants.MAX_BARBARIAN_DIFFICULTY - Configurations.gameplay.barbarianHordeDifficulty) * 0.1));
     }
 
     /**
