@@ -70,6 +70,42 @@ public final class StandardRequests
         }
     }
 
+    public static class ItemStackListRequest extends AbstractRequest<StackList>
+    {
+        private static ImmutableList<ItemStack> displayList;
+
+        public ItemStackListRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final StackList requested)
+        {
+            super(requester, token, requested);
+            displayList = ImmutableList.copyOf(requested.getStacks());
+        }
+
+        public ItemStackListRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final StackList requested)
+        {
+            super(requester, token, state, requested);
+            displayList = ImmutableList.copyOf(requested.getStacks());
+        }
+
+        @NotNull
+        @Override
+        public ITextComponent getShortDisplayString()
+        {
+            final ITextComponent result = new NonSiblingFormattingTextComponent();
+            result.appendSibling(new TextComponentTranslation(TranslationConstants.LIST_REQUEST_DISPLAY_STRING));
+            return result;
+        }
+
+        @Override
+        public List<ItemStack> getDisplayStacks()
+        {
+            if (displayList.isEmpty())
+            {
+                return ImmutableList.of();
+            }
+            return displayList;
+        }
+    }
+
     public static class DeliveryRequest extends AbstractRequest<Delivery>
     {
 
