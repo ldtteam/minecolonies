@@ -8,6 +8,7 @@ import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import com.minecolonies.coremod.colony.requestable.Compostable;
+import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -28,14 +29,14 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 {
 
     /**
-     * How often should strength factor into the composter's skill modifier.
+     * How often should intelligence factor into the composter's skill modifier.
      */
-    private static final int STRENGTH_MULTIPLIER = 1;
+    private static final int INTELLIGENCE_MULTIPLIER = 2;
 
     /**
      * How often should intelligence factor into the composter's skill modifier.
      */
-    private static final int INTELLIGENCE_MULTIPLIER = 2;
+    private static final int DESTERITY_MULTIPLIER = 1;
 
     /**
      * Base xp gain for the composter.
@@ -59,7 +60,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
           new AITarget(COMPOSTER_FILL, this::fillBarrels),
           new AITarget(COMPOSTER_HARVEST, this::harvestBarrels)
         );
-        worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
+        worker.getCitizenExperienceHandler().setSkillModifier(DESTERITY_MULTIPLIER * worker.getCitizenData().getDexterity()
                                                                 + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
 
         worker.setCanPickUpLoot(true);
@@ -101,7 +102,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             {
                 itemList.add(item.getItemStack());
             }
-            //worker.getCitizenData().createRequestAsync(new StackList(itemList));
+            worker.getCitizenData().createRequestAsync(new StackList(itemList));
         }
 
         setDelay(2);

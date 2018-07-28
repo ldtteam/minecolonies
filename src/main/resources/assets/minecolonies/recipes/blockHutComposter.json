@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "WTW",
+    "WGW",
+    "WWW"
+  ],
+  "key": {
+    "W": {
+      "type": "forge:ore_dict",
+      "ore": "plankWood"
+    },
+    "G": {
+      "item": "minecolonies:barrel_block"
+    },
+    "T":
+    {
+      "item": "minecolonies:sceptergold"
+    }
+  },
+  "result": {
+    "item": "minecolonies:blockHutComposter",
+    "data": 0
+  }
+}
