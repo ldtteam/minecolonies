@@ -160,7 +160,13 @@ public class StackList implements IDeliverable
     {
         if (matchOreDic)
         {
-            return OreDictionary.itemMatches(getStacks(), stack, matchMeta);
+            for (final ItemStack tempStack : theStacks)
+            {
+                if (OreDictionary.itemMatches(tempStack, stack, matchMeta))
+                {
+                    return true;
+                }
+            }
         }
 
         return ItemStackUtils.compareItemStackListIgnoreStackSize(getStacks(), stack, matchMeta, matchNBT);
