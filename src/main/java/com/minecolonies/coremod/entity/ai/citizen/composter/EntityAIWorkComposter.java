@@ -4,12 +4,8 @@ import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
-import com.minecolonies.coremod.colony.requestable.Compostable;
-import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
-import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -21,7 +17,9 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Random;
 
+import static com.minecolonies.api.util.constant.Constants.DOUBLE;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -100,7 +98,9 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             ArrayList<ItemStack> itemList = new ArrayList<>();
             for(ItemStorage item : getOwnBuilding(BuildingComposter.class).getCopyOfAllowedItems())
             {
-                itemList.add(item.getItemStack());
+                ItemStack itemStack = item.getItemStack();
+                itemStack.setCount(STACKSIZE);
+                itemList.add(itemStack);
             }
             worker.getCitizenData().createRequestAsync(new StackList(itemList));
         }
@@ -196,7 +196,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
             TileEntityBarrel te = (TileEntityBarrel) world.getTileEntity(currentTarget);
 
-            ItemStack compost = te.retrieveCompost(1);
+            ItemStack compost = te.retrieveCompost(getLoopMultiplier(new Random()));
 
             InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), compost);
 
@@ -204,6 +204,29 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         }
 
         return START_WORKING;
+    }
+
+    //level2 % chance to double it, level4% chance to make 50% more, level*8% chance to make 25% more
+    private double getLoopMultiplier( final Random random)
+    {
+        int citizenLevel = worker.getCitizenData().getLevel();
+
+        int diceResult = random.nextInt(100);
+
+        if(diceResult <= citizenLevel*2)
+        {
+            return DOUBLE;
+        }
+        if(diceResult <= citizenLevel*4)
+        {
+            return 1.5;
+        }
+        if(diceResult <= citizenLevel*8)
+        {
+            return 1.25;
+        }
+
+        return 1;
     }
 
     @Override

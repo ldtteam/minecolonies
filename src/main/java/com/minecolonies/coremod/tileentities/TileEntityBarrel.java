@@ -293,13 +293,13 @@ public class TileEntityBarrel extends TileEntity implements ITickable
      * Lets the AI retrieve the compost when the barrel has done processing it.
      * @return The generated compost. If the barrel is not ready yet to be harvested, it will return an empty itemStack.
      */
-    public ItemStack retrieveCompost(final int multiplier)
+    public ItemStack retrieveCompost(final double multiplier)
     {
         if(this.done)
         {
             this.done = false;
             this.updateBlock(this.world, this.world.getBlockState(this.pos));
-            return new ItemStack(ModItems.compost, 6*multiplier);
+            return new ItemStack(ModItems.compost, (int) (6*multiplier));
         }
         return ItemStack.EMPTY;
     }
