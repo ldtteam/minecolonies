@@ -102,7 +102,7 @@ public final class MobEventsUtils
             return new Horde(0, 0, 0, 0);
         }
 
-        final int raidLevel = Math.min(BARBARIAN_MAX_SIZE,(int) ((getColonyRaidLevel(colony) / SPAWN_MODIFIER) * BARBARIAN_SPAWN_SIZE));
+        final int raidLevel = Math.min(BARBARIAN_MAX_SIZE,(int) ((getColonyRaidLevel(colony) / SPAWN_MODIFIER) * ((double) Configurations.gameplay.spawnBarbarianSize * 0.1)));
         final int numberOfChiefs = Math.max(1, (int) (raidLevel * CHIEF_BARBARIANS_MULTIPLIER));
         final int numberOfArchers = Math.max(1,(int) (raidLevel * ARCHER_BARBARIANS_MULTIPLIER));
         final int numberOfBarbarians = raidLevel - numberOfChiefs - numberOfArchers;
