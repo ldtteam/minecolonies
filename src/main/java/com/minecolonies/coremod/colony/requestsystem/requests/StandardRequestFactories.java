@@ -109,6 +109,79 @@ public final class StandardRequestFactories
     }
 
     @SuppressWarnings(Suppression.BIG_CLASS)
+    public static final class ItemStackListRequestFactory implements IRequestFactory<StackList, StandardRequests.ItemStackListRequest>
+    {
+        /**
+         * Method to get a new instance of a request given the input and token.
+         *
+         * @param input        The input to build a new request for.
+         * @param location     The location of the requester.
+         * @param token        The token to build the request from.
+         * @param initialState The initial state of the request request.
+         * @return The new output instance for a given input.
+         */
+        @Override
+        public StandardRequests.ItemStackListRequest getNewInstance(
+          @NotNull final StackList input,
+          @NotNull final IRequester location,
+          @NotNull final IToken token,
+          @NotNull final RequestState initialState)
+        {
+            return new StandardRequests.ItemStackListRequest(location, token, initialState, input);
+        }
+
+        @NotNull
+        @Override
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
+        public TypeToken<StandardRequests.ItemStackListRequest> getFactoryOutputType()
+        {
+            return TypeToken.of(StandardRequests.ItemStackListRequest.class);
+        }
+
+        @NotNull
+        @Override
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
+        public TypeToken<StackList> getFactoryInputType()
+        {
+            return TypeToken.of(StackList.class);
+        }
+
+        /**
+         * Method to serialize a given Request.
+         *
+         * @param controller The controller that can be used to serialize complicated types.
+         * @param request    The request to serialize.
+         * @return The serialized data of the given requets.
+         */
+        @NotNull
+        @Override
+        public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemStackListRequest request)
+        {
+            return serializeToNBT(controller, request, StackList::serialize);
+        }
+
+        /**
+         * Method to deserialize a given Request.
+         *
+         * @param controller The controller that can be used to deserialize complicated types.
+         * @param nbt        The data of the request that should be deserialized.
+         * @return The request that corresponds with the given data in the nbt
+         */
+        @NotNull
+        @Override
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
+        public StandardRequests.ItemStackListRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+        {
+            return deserializeFromNBT(controller, nbt, StackList::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemStackListRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
+        }
+    }
+
+    @SuppressWarnings(Suppression.BIG_CLASS)
     public static final class DeliveryRequestFactory implements IRequestFactory<Delivery, StandardRequests.DeliveryRequest>
     {
 
