@@ -35,6 +35,7 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new StaticLocation.Factory());
         StandardFactoryController.getInstance().registerNewFactory(new EntityLocation.Factory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.ItemStackRequestFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.ItemStackListRequestFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.DeliveryRequestFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.ToolRequestFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.FoodRequestFactory());
