@@ -985,6 +985,11 @@ public final class ColonyManager
             //  Player has left the game, clear the Colony View cache
             colonyViews.clear();
         }
+
+        if (!compatibilityManager.isDiscoveredAlready())
+        {
+            compatibilityManager.discover();
+        }
     }
 
     /**
