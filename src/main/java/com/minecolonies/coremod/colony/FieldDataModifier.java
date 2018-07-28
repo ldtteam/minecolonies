@@ -38,7 +38,7 @@ public class FieldDataModifier
      *
      * @return returns a boolean indicating if a field can be farmed
      */
-    public boolean getCanFarm()
+    public boolean isCanFarm()
     {
         return canFarm;
     }

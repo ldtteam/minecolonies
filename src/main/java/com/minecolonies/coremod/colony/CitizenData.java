@@ -781,8 +781,8 @@ public class CitizenData
 
     /**
      * Writes the citizen data to an NBT-compound.
-     *
      * @param compound NBT-Tag compound.
+     * @return return the data in NBT format
      */
     public NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound)
     {
@@ -817,7 +817,7 @@ public class CitizenData
         compound.setTag(TAG_INVENTORY, inventory.writeToNBT(new NBTTagList()));
         compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.MAIN_HAND));
         compound.setInteger(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.OFF_HAND));
-        citizenHappinessHandler.writeToNBT(compound); 
+        citizenHappinessHandler.writeToNBT(compound);
         return compound;
     }
 
@@ -859,7 +859,7 @@ public class CitizenData
         buf.writeInt(getIntelligence());
         buf.writeInt(getDexterity());
         buf.writeDouble(getSaturation());
-        buf.writeDouble(citizenHappinessHandler.getHappiness()); 
+        buf.writeDouble(citizenHappinessHandler.getHappiness());
         
         ByteBufUtils.writeUTF8String(buf, (job != null) ? job.getName() : "");
 
@@ -1091,11 +1091,12 @@ public class CitizenData
         return job.getAsyncRequests().contains(token);
     }
 
-    /** 
-     * The Handler for the citizens happiness. 
-     * @return the instance of the handler. 
-     */ 
-    public CitizenHappinessHandler getCitizenHappinessHandler() { 
-        return citizenHappinessHandler; 
-    } 
+    /**
+     * The Handler for the citizens happiness.
+     * @return the instance of the handler
+     */
+    public CitizenHappinessHandler getCitizenHappinessHandler()
+    {
+        return citizenHappinessHandler;
+    }
 }

@@ -167,7 +167,7 @@ public class CitizenHappinessHandler
     /**
      * holds an array of all the fields the farmer has assigned to them.
      */
-    private Map<BlockPos, FieldDataModifier> fieldModifier = new HashMap<BlockPos, FieldDataModifier>();
+    private final Map<BlockPos, FieldDataModifier> fieldModifier = new HashMap<BlockPos, FieldDataModifier>();
 
     /**
      * holds an indicator citizen needing a tool
@@ -232,10 +232,8 @@ public class CitizenHappinessHandler
      * Called once a day to update the citizens daily happiness
      * modifiers.
      *
-     * @param hasHouse
-     *            boolean if the citizen is assigned to a house
-     * @param hasJob
-     *            boolean to indicate if citizen has a job
+     * @param hasHouse  boolean if the citizen is assigned to a house
+     * @param hasJob boolean to indicate if citizen has a job
      */
     public void processDailyHappiness(final boolean hasHouse, final boolean hasJob)
     {
@@ -279,7 +277,7 @@ public class CitizenHappinessHandler
         hasNoFields = true;
         for (final FieldDataModifier field : fieldModifier.values())
         {
-            if (field.getCanFarm())
+            if (field.isCanFarm())
             {
                 farmerModifier += FIELD_MODIFIER_POSITIVE;
                 hasNoFields = false;
@@ -489,8 +487,7 @@ public class CitizenHappinessHandler
     /**
      * Store the level to nbt.
      *
-     * @param compound
-     *            compound to use.
+     * @param compound  compound to use.
      */
     public void writeToNBT(final NBTTagCompound compound)
     {
@@ -517,7 +514,7 @@ public class CitizenHappinessHandler
             @NotNull
             final NBTTagCompound fieldCompound = new NBTTagCompound();
             fieldCompound.setInteger(TAG_FIELD_DAYS_INACTIVE, field.getInactiveDays());
-            fieldCompound.setBoolean(TAG_FIELD_CAN_FARM, field.getCanFarm());
+            fieldCompound.setBoolean(TAG_FIELD_CAN_FARM, field.isCanFarm());
 
             @NotNull
             final NBTTagList containerTagList = new NBTTagList();
@@ -551,8 +548,7 @@ public class CitizenHappinessHandler
     /**
      * Reads in Happiness data from the NBT file.
      *
-     * @param compound
-     *            pointer to NBT fields
+     * @param compound pointer to NBT fields
      */
     public void readFromNBT(final NBTTagCompound compound)
     {
