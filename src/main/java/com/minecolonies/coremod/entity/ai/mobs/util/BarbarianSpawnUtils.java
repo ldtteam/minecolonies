@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.entity.ai.mobs.util;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -68,7 +70,7 @@ public final class BarbarianSpawnUtils
     private static final double MOVEMENT_SPEED              = 0.25D;
     private static final double ARMOR                       = 1.5D;
     private static final double CHIEF_ARMOR                 = 8D;
-    private static final double BARBARIAN_BASE_HEALTH       = 10;
+    private static final double BARBARIAN_BASE_HEALTH       = 5;
     private static final double BARBARIAN_HEALTH_MULTIPLIER = 0.2;
 
     /**
@@ -113,7 +115,7 @@ public final class BarbarianSpawnUtils
         if (colony != null)
         {
             final int raidLevel = (int) (MobEventsUtils.getColonyRaidLevel(colony) * BARBARIAN_HEALTH_MULTIPLIER);
-            return BARBARIAN_BASE_HEALTH + raidLevel;
+            return Math.max(BARBARIAN_BASE_HEALTH, (BARBARIAN_BASE_HEALTH + raidLevel) * ((double) Configurations.gameplay.barbarianHordeDifficulty * 0.1));
         }
         return BARBARIAN_BASE_HEALTH;
     }
