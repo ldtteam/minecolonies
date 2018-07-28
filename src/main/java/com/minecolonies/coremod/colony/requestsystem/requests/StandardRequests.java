@@ -43,11 +43,14 @@ public final class StandardRequests
      */
     private StandardRequests()
     {
+        super();
     }
 
+    /**
+     * Request for a single ItemStack.
+     */
     public static class ItemStackRequest extends AbstractRequest<Stack>
     {
-
         public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Stack requested)
         {
             super(requester, token, requested);
@@ -70,9 +73,15 @@ public final class StandardRequests
         }
     }
 
+    /**
+     * Request for a list of potential candidates.
+     */
     public static class ItemStackListRequest extends AbstractRequest<StackList>
     {
-        private static ImmutableList<ItemStack> displayList;
+        /**
+         * The list to display to the player.
+         */
+        private ImmutableList<ItemStack> displayList;
 
         public ItemStackListRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final StackList requested)
         {
@@ -95,6 +104,7 @@ public final class StandardRequests
             return result;
         }
 
+        @NotNull
         @Override
         public List<ItemStack> getDisplayStacks()
         {
@@ -106,9 +116,11 @@ public final class StandardRequests
         }
     }
 
+    /**
+     * Generic delivery request.
+     */
     public static class DeliveryRequest extends AbstractRequest<Delivery>
     {
-
         public DeliveryRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Delivery requested)
         {
             super(requester, token, requested);
@@ -145,6 +157,7 @@ public final class StandardRequests
             return result;
         }
 
+        @NotNull
         @Override
         public List<ItemStack> getDisplayStacks()
         {
@@ -159,6 +172,9 @@ public final class StandardRequests
         }
     }
 
+    /**
+     * Generic Tool Request.
+     */
     public static class ToolRequest extends AbstractRequest<Tool>
     {
         public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Tool requested)
@@ -215,9 +231,14 @@ public final class StandardRequests
         }
     }
 
+    /**
+     * Generic food request.
+     */
     public static class FoodRequest extends AbstractRequest<Food>
     {
-
+        /**
+         * Food examples to display.
+         */
         private static ImmutableList<ItemStack> foodExamples;
 
         FoodRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Food requested)
@@ -243,6 +264,7 @@ public final class StandardRequests
             return result;
         }
 
+        @NotNull
         @Override
         public List<ItemStack> getDisplayStacks()
         {
@@ -270,9 +292,14 @@ public final class StandardRequests
         }
     }
 
+    /**
+     * Generic smeltable ore request.
+     */
     public static class SmeltAbleOreRequest extends AbstractRequest<SmeltableOre>
     {
-
+        /**
+         * Ore examples to display.
+         */
         private static ImmutableList<ItemStack> oreExamples;
 
         SmeltAbleOreRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final SmeltableOre requested)
@@ -297,6 +324,7 @@ public final class StandardRequests
             return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE);
         }
 
+        @NotNull
         @Override
         public List<ItemStack> getDisplayStacks()
         {
@@ -321,9 +349,14 @@ public final class StandardRequests
         }
     }
 
+    /**
+     * Generic burnable request.
+     */
     public static class BurnableRequest extends AbstractRequest<Burnable>
     {
-
+        /**
+         * List of burnable examples.
+         */
         private static ImmutableList<ItemStack> burnableExamples;
 
         BurnableRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Burnable requested)
@@ -349,6 +382,7 @@ public final class StandardRequests
             return result;
         }
 
+        @NotNull
         @Override
         public List<ItemStack> getDisplayStacks()
         {
