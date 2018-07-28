@@ -229,9 +229,20 @@ public class StackList implements IDeliverable
         {
             return false;
         }
-        if (!ItemStackUtils.compareItemStackListIgnoreStackSize(getStacks(), stack1.getStack()))
+
+        for (final ItemStack tempStack : stack1.getStacks())
         {
-            return false;
+            if (!ItemStackUtils.compareItemStackListIgnoreStackSize(getStacks(), tempStack))
+            {
+                return false;
+            }
+        }
+        for (final ItemStack tempStack : getStacks())
+        {
+            if (!ItemStackUtils.compareItemStackListIgnoreStackSize(stack1.getStacks(), tempStack))
+            {
+                return false;
+            }
         }
         return ItemStackUtils.compareItemStacksIgnoreStackSize(getResult(), stack1.getResult());
     }
