@@ -24,7 +24,7 @@ public class FieldDataModifier
      * @param value
      *            boolean to indicate if the field can be farmed
      */
-    public void setCanFarm(final boolean value)
+    public void isCanFarm(final boolean value)
     {
         canFarm = value;
         if (value)

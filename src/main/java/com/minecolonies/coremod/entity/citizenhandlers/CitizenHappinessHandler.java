@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Handler for the citizens happiness.
  * This keeps all the modifiers related to the citizen.
- * 
+ *
  * @author kevin
  *
  */
@@ -86,6 +86,7 @@ public class CitizenHappinessHandler
     public static final double FIELD_MODIFIER_MIN = -0.15;
     public static final double FIELD_MODIFIER_POSITIVE = 0.2;
     public static final double NO_FIELD_MODIFIER = -3.0;
+    public static final int NO_FIELDS_COMPLAINS_DAYS = 7;
 
     /**
      * constants for damage modifiers
@@ -93,7 +94,10 @@ public class CitizenHappinessHandler
     public static final int DAMAGE_MODIFIER_MAX = -2;
     public static final int DAMAGE_MODIFIER_MID = -1;
     public static final double DAMAGE_MODIFIER_MIN = -0.5;
-
+    public static final double DAMAGE_LOWEST_POINT = 0.25d;
+    public static final double DAMAGE_MEDIUM_POINT = 0.50d;
+    public static final double DAMAGE_HIGHEST_POINT = 0.75d;
+    
     /**
      * constants for happiness min/max and start happines values.
      */
@@ -168,7 +172,7 @@ public class CitizenHappinessHandler
     /**
      * holds an indicator citizen needing a tool
      */
-    private Map<IToolType, Integer> needsTool = new HashMap<IToolType, Integer>();
+    private final Map<IToolType, Integer> needsTool = new HashMap<IToolType, Integer>();
 
     /**
      * holds the modifier for citizen not having a tool.
@@ -177,7 +181,7 @@ public class CitizenHappinessHandler
 
     /**
      * Constructor for the experience handler.
-     * 
+     *
      * @param citizen
      *            the citizen owning the handler.
      */
@@ -283,7 +287,7 @@ public class CitizenHappinessHandler
             else
             {
                 field.increaseInactiveDays();
-                if (field.getInactiveDays() < 7)
+                if (field.getInactiveDays() < NO_FIELDS_COMPLAINS_DAYS)
                 {
                     farmerModifier += FIELD_MODIFIER_MIN;
                 }
@@ -339,15 +343,15 @@ public class CitizenHappinessHandler
         if (entityCitizen.isPresent())
         {
             final double health = entityCitizen.get().getHealth() / entityCitizen.get().getMaxHealth();
-            if (health < 0.24d)
+            if (health < DAMAGE_LOWEST_POINT)
             {
                 damageModifier = DAMAGE_MODIFIER_MAX;
-            } 
-            else if (health < 0.5d)
+            }
+            else if (health < DAMAGE_MEDIUM_POINT)
             {
                 damageModifier = DAMAGE_MODIFIER_MID;
-            } 
-            else if (health < 0.75d)
+            }
+            else if (health < DAMAGE_HIGHEST_POINT)
             {
                 damageModifier = DAMAGE_MODIFIER_MIN;
             }
@@ -372,26 +376,36 @@ public class CitizenHappinessHandler
             fieldModifier.put(pos, field);
         }
 
-        field.setCanFarm(canFarm);
+        field.isCanFarm(canFarm);
     }
 
+    /**
+     * Indicates the farmer has not fields to farm.
+     */
     public void setNoFieldsToFarm()
     {
         hasNoFields = true;
     }
 
-    public void setNeedsATool(@NotNull final IToolType toolType, final boolean needsTool)
+    /**
+     * Call this function to add a tool type that is needed by the citizen.
+     * If citizen gets its tool, then passing in false will remove it from the needed tools.
+     *
+     * @param toolType Tooltype to indicate
+     * @param needs indicate if the tool type is needed
+     */
+    public void setNeedsATool(@NotNull final IToolType toolType, final boolean needs)
     {
-        if (needsTool)
+        if (needs)
         {
-            if (!this.needsTool.containsKey(toolType))
+            if (!needsTool.containsKey(toolType))
             {
-                this.needsTool.put(toolType, 0);
+                needsTool.put(toolType, 0);
             }
         }
         else
         {
-            this.needsTool.remove(toolType);
+            needsTool.remove(toolType);
         }
     }
 
@@ -560,7 +574,7 @@ public class CitizenHappinessHandler
             final FieldDataModifier field = new FieldDataModifier();
             final NBTTagCompound containerCompound = fieldTagList.getCompoundTagAt(i);
             field.setInactiveDays(containerCompound.getInteger(TAG_FIELD_DAYS_INACTIVE));
-            field.setCanFarm(containerCompound.getBoolean(TAG_FIELD_CAN_FARM));
+            field.isCanFarm(containerCompound.getBoolean(TAG_FIELD_CAN_FARM));
 
             final NBTTagList blockPosTagList = containerCompound.getTagList(TAG_FIELD_ID, Constants.NBT.TAG_COMPOUND);
             final NBTTagCompound blockPoCompound = blockPosTagList.getCompoundTagAt(0);
