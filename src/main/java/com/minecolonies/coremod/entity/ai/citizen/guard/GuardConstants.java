@@ -17,16 +17,6 @@ public final class GuardConstants
     public static final int GUARD_POS_RANGE = 0;
 
     /**
-     * Range a guard should be within of Follow for Tight Formation.
-     */
-    public static final int GUARD_FOLLOW_TIGHT_RANGE = 8;
-
-    /**
-     * Range a guard should be within of Follow for Lose Formation.
-     */
-    public static final int GUARD_FOLLOW_LOSE_RANGE = 20;
-
-    /**
      * double damage threshold
      */
     public static final int DOUBLE_DAMAGE_THRESHOLD = 2;

@@ -51,7 +51,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     private static final String NBT_ASSIGN         = "assign";
     private static final String NBT_RETRIEVE       = "retrieve";
     private static final String NBT_PATROL         = "patrol";
-    private static final String NBT_TIGHT_GROUPING = "tightGrouping";
     private static final String NBT_PATROL_TARGETS = "patrol targets";
     private static final String NBT_TARGET         = "target";
     private static final String NBT_GUARD          = "guard";
@@ -175,12 +174,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     private EntityPlayer followPlayer;
 
     /**
-     * Indicates if in Follow mode what type of follow is use.
-     * True - tight grouping, false - lose grouping.
-     */
-    private boolean tightGrouping;
-
-    /**
      * The abstract constructor of the building.
      *
      * @param c the colony
@@ -219,14 +212,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         assignManually = compound.getBoolean(NBT_ASSIGN);
         retrieveOnLowHealth = compound.getBoolean(NBT_RETRIEVE);
         patrolManually = compound.getBoolean(NBT_PATROL);
-        if (compound.hasKey(NBT_TIGHT_GROUPING))
-        {
-            tightGrouping = compound.getBoolean(NBT_TIGHT_GROUPING);
-        }
-        else
-        {
-            tightGrouping = true;
-        }
 
         final NBTTagList wayPointTagList = compound.getTagList(NBT_PATROL_TARGETS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < wayPointTagList.tagCount(); ++i)
@@ -259,7 +244,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         compound.setBoolean(NBT_ASSIGN, assignManually);
         compound.setBoolean(NBT_RETRIEVE, retrieveOnLowHealth);
         compound.setBoolean(NBT_PATROL, patrolManually);
-        compound.setBoolean(NBT_TIGHT_GROUPING, tightGrouping);
 
         @NotNull final NBTTagList wayPointTagList = new NBTTagList();
         for (@NotNull final BlockPos pos : patrolTargets)
@@ -294,7 +278,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         buf.writeBoolean(assignManually);
         buf.writeBoolean(retrieveOnLowHealth);
         buf.writeBoolean(patrolManually);
-        buf.writeBoolean(tightGrouping);
         buf.writeInt(task.ordinal());
         buf.writeInt(job == GuardJob.KNIGHT ? -1 : job.ordinal());
         buf.writeInt(patrolTargets.size());
@@ -642,26 +625,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     /**
-     * Returns whether tight grouping in Follow mode is being used.
-     *
-     * @return whether tight grouping is being used.
-     */
-    public boolean isTightGrouping()
-    {
-        return tightGrouping;
-    }
-
-    /**
-     * Set whether to use tight grouping or lose grouping.
-     *
-     * @param tightGrouping - indicates if you are using tight grouping
-     */
-    public void setTightGrouping(final boolean tightGrouping)
-    {
-        this.tightGrouping = tightGrouping;
-    }
-
-    /**
      * Get the position the guard should guard.
      *
      * @return the {@link BlockPos} of the guard position.
@@ -853,12 +816,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         private GuardJob job = null;
 
         /**
-         * Indicates whether tight grouping is use or
-         * lose grouping.
-         */
-        private boolean tightGrouping = true;
-
-        /**
          * The list of manual patrol targets.
          */
         private List<BlockPos> patrolTargets = new ArrayList<>();
@@ -898,7 +855,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             assignManually = buf.readBoolean();
             retrieveOnLowHealth = buf.readBoolean();
             patrolManually = buf.readBoolean();
-            tightGrouping = buf.readBoolean();
             task = GuardTask.values()[buf.readInt()];
             final int jobId = buf.readInt();
             job = jobId == -1 ? null : GuardJob.values()[jobId];
@@ -969,26 +925,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             return retrieveOnLowHealth;
         }
 
-        /**
-         * Set whether to use tight grouping or lose grouping.
-         * 
-         * @param tightGrouping - indicates if you are using tight grouping
-         */
-        public void setTightGrouping(final boolean tightGrouping)
-        {
-            this.tightGrouping = tightGrouping;
-        }
-        
-        /**
-         * Returns whether tight grouping in Follow mode is being used.
-         * 
-         * @return whether tight grouping is being used.
-         */
-        public boolean isTightGrouping()
-        {
-            return tightGrouping;
-        }
-        
         public void setPatrolManually(final boolean patrolManually)
         {
             this.patrolManually = patrolManually;

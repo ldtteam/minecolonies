@@ -27,11 +27,6 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
     private int      task;
 
     /**
-     * Indicates whether tight grouping is used in mode Follow.
-     */
-    private boolean  tightGrouping;
-
-    /**
      * Empty standard constructor.
      */
     public GuardTaskMessage()
@@ -55,8 +50,7 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
                              final boolean assignmentMode,
                              final boolean patrollingMode,
                              final boolean retrieval,
-                             final int task,
-                             final boolean tightGrouping
+                             final int task
     )
     {
         super();
@@ -67,7 +61,6 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
         this.patrollingMode = patrollingMode;
         this.retrieval = retrieval;
         this.task = task;
-        this.tightGrouping = tightGrouping;
     }
 
     @Override
@@ -78,7 +71,6 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
         job = buf.readInt();
         assignmentMode = buf.readBoolean();
         patrollingMode = buf.readBoolean();
-        tightGrouping = buf.readBoolean();
         retrieval = buf.readBoolean();
         task = buf.readInt();
     }
@@ -91,7 +83,6 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
         buf.writeInt(job);
         buf.writeBoolean(assignmentMode);
         buf.writeBoolean(patrollingMode);
-        buf.writeBoolean(tightGrouping);
         buf.writeBoolean(retrieval);
         buf.writeInt(task);
     }
@@ -117,7 +108,6 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
                 }
                 building.setAssignManually(message.assignmentMode);
                 building.setPatrolManually(message.patrollingMode);
-                building.setTightGrouping(message.tightGrouping);
                 building.setRetrieveOnLowHealth(message.retrieval);
                 building.setTask(GuardTask.values()[message.task]);
 
