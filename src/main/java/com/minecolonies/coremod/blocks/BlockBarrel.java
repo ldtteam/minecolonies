@@ -5,10 +5,7 @@ import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.blocks.types.BarrelType;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockAir;
-import net.minecraft.block.BlockHorizontal;
-import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
@@ -16,6 +13,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.*;
 import net.minecraft.tileentity.TileEntity;
@@ -213,6 +211,13 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
         return BOUNDING_BOX;
     }
 
+    @Nullable
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(final IBlockState blockState, final IBlockAccess worldIn, final BlockPos pos)
+    {
+        return BOUNDING_BOX;
+    }
+
     /**
      * Convert the BlockState into the correct metadata value.
      *
@@ -321,5 +326,17 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
             dropBlockAsItem(worldIn, pos, getDefaultState(), 0);
             worldIn.setBlockToAir(pos);
         }
+    }
+
+    @Override
+    public boolean isPassable(final IBlockAccess worldIn, final BlockPos pos)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isFullCube(final IBlockState state)
+    {
+        return false;
     }
 }

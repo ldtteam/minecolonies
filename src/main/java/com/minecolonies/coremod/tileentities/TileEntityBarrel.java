@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.tileentities;
 
-import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.items.ModItems;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -15,9 +15,9 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -123,18 +123,18 @@ public class TileEntityBarrel extends TileEntity implements ITickable
 
         if (items == MAX_ITEMS)
         {
-            playerIn.sendMessage(new TextComponentString("The barrel is working!"));
+            playerIn.sendMessage(new TextComponentTranslation("entity.barrel.working"));
             return false;
         }
         else
         {
-            this.consumeNeededItems(worldIn, itemstack);
+            this.consumeNeededItems(itemstack);
             return true;
         }
 
     }
 
-    private void consumeNeededItems(final World worldIn, final ItemStack itemStack)
+    private void consumeNeededItems(final ItemStack itemStack)
     {
 
         //Saplings and seeds counts as 1 item added, the rest counts as 2 items
@@ -155,28 +155,9 @@ public class TileEntityBarrel extends TileEntity implements ITickable
 
     }
 
-    private boolean checkCorrectItem(final ItemStack itemStack)
+    public static boolean checkCorrectItem(final ItemStack itemStack)
     {
-        if(itemStack.isEmpty())
-        {
-            return false;
-        }
-
-        for(final String string : Configurations.gameplay.listOfCompostableItems)
-        {
-            if(itemStack.getItem().getRegistryName().toString().equals(string))
-            {
-                return true;
-            }
-            for(final int id: OreDictionary.getOreIDs(itemStack))
-            {
-                if (OreDictionary.getOreName(id).equals(string))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return ColonyManager.getCompatibilityManager().isCompost(itemStack);
     }
 
     /**
@@ -258,19 +239,33 @@ public class TileEntityBarrel extends TileEntity implements ITickable
      */
     public boolean isDone()
     {
-        return done;
+        return this.done;
     }
 
     //INTERFACE WITH AI PAWNS
 
     /***
+     * Checks if the barrel is composting
+     * @return true if the number of items is equal to the maximum. If not, false.
+     */
+    public boolean checkIfWorking()
+    {
+        return this.items == this.MAX_ITEMS;
+    }
+
+    /***
      * Lets the AI insert items into the barrel.
      * @param item the itemStack to be placed inside it.
-     * @return false if it couldnt be completed, true if at least 1 item of the stack was inserted.
+     * @return false if the item couldn't be cosumed. True if it could
      */
     public boolean addItem(final ItemStack item)
     {
-        //Todo implement method
+        if(checkCorrectItem(item) && this.items < this.MAX_ITEMS)
+        {
+            this.consumeNeededItems(item);
+            this.updateBlock(this.world, this.world.getBlockState(this.pos));
+            return true;
+        }
         return false;
     }
 
@@ -278,9 +273,14 @@ public class TileEntityBarrel extends TileEntity implements ITickable
      * Lets the AI retrieve the compost when the barrel has done processing it.
      * @return The generated compost. If the barrel is not ready yet to be harvested, it will return an empty itemStack.
      */
-    public ItemStack retrieveCompost()
+    public ItemStack retrieveCompost(final double multiplier)
     {
-        //Todo implement method
+        if(this.done)
+        {
+            this.done = false;
+            this.updateBlock(this.world, this.world.getBlockState(this.pos));
+            return new ItemStack(ModItems.compost, (int) (6*multiplier));
+        }
         return ItemStack.EMPTY;
     }
 

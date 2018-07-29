@@ -1,6 +1,7 @@
 package com.minecolonies.api.util.constant;
 
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Constants for translation
@@ -121,6 +122,8 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_REQUESTS_TOOL_PREMINLEVEL                          = "com.minecolonies.coremod.request.tool.preminlevel";
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_TOOL_PREMAXLEVEL                          = "com.minecolonies.coremod.request.tool.premaxlevel";
+    @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_COMPOSTABLE                               = "com.minecolonies.coremod.request.compostable";
     @NonNls
     public static final String COM_MINECOLONIES_GENERAL_AND                                        = "com.minecolonies.coremod.general.and";
     @NonNls
@@ -253,6 +256,12 @@ public final class TranslationConstants
     public static final String GUI_TOWNHALL_CITIZEN_JOB_UNEMPLOYED                                 = "com.minecolonies.coremod.gui.townHall.citizens.unemployed";
     @NonNls
     public static final String LIST_REQUEST_DISPLAY_STRING                                         = "com.minecolonies.coremod.request.stacklist";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_FILLING                   = "com.minecolonies.coremod.status.fillingBarrels";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_HARVESTING                = "com.minecolonies.coremod.status.harvestingBarrels";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST                 = "entity.composter.noItems";
 
     private TranslationConstants()
     {

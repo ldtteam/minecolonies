@@ -36,6 +36,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LOCATION;
  */
 public class BuildingRegistry
 {
+
     /**
      * Map to resolve names to class.
      */
@@ -80,6 +81,7 @@ public class BuildingRegistry
         addMapping("SwingHerder", BuildingSwineHerder.class, BuildingSwineHerder.View.class, BlockHutSwineHerder.class);
         addMapping("ChickenHerder", BuildingChickenHerder.class, BuildingChickenHerder.View.class, BlockHutChickenHerder.class);
         addMapping("Smeltery", BuildingSmeltery.class, BuildingSmeltery.View.class, BlockHutSmeltery.class);
+        addMapping("Composter", BuildingComposter.class, BuildingComposter.View.class, BlockHutComposter.class);
     }
 
     /**

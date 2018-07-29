@@ -11,6 +11,7 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
+import com.minecolonies.coremod.tileentities.TileEntityBarrel;
 import com.minecolonies.coremod.util.text.NonSiblingFormattingTextComponent;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -407,4 +408,5 @@ public final class StandardRequests
             return burnableExamples;
         }
     }
+
 }

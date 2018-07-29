@@ -484,6 +484,10 @@ public class Permissions implements IPermissions
             {
                 ownerUUID = owner.getKey();
             }
+            else
+            {
+                restoreOwnerIfNull();
+            }
         }
         return ownerUUID;
     }
