@@ -5,6 +5,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.blocks.BlockBarrel;
 import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
 import com.minecolonies.coremod.blocks.huts.BlockHutField;
 import net.minecraft.block.*;
@@ -968,7 +969,8 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (block instanceof BlockFence
               || block instanceof BlockFenceGate
               || block instanceof BlockWall
-              || block instanceof BlockHutField)
+              || block instanceof BlockHutField
+              || block instanceof BlockBarrel)
         {
             return SurfaceType.NOT_PASSABLE;
         }
