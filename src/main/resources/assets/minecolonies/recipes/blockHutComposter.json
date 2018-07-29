@@ -11,7 +11,8 @@
       "ore": "plankWood"
     },
     "G": {
-      "item": "minecolonies:barrel_block"
+      "item": "minecolonies:barrel_block",
+      "data": 0
     },
     "T":
     {
@@ -19,7 +20,6 @@
     }
   },
   "result": {
-    "item": "minecolonies:blockHutComposter",
-    "data": 0
+    "item": "minecolonies:blockhutcomposter"
   }
 }
