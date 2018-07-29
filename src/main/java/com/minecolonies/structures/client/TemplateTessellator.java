@@ -10,6 +10,8 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -55,11 +57,11 @@ public class TemplateTessellator
 
         this.buffer.bindBuffer();
 
-        preTemplateDraw();
+        final int currentShader = preTemplateDraw();
 
         this.buffer.drawArrays(GL_QUADS);
 
-        postTemplateDraw();
+        postTemplateDraw(currentShader);
 
         this.buffer.unbindBuffer();
 
@@ -87,7 +89,7 @@ public class TemplateTessellator
         GlStateManager.pushMatrix();
     }
 
-    private static void preTemplateDraw()
+    private static int preTemplateDraw()
     {
         GlStateManager.glEnableClientState(GL_VERTEX_ARRAY);
         OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
@@ -105,9 +107,14 @@ public class TemplateTessellator
         OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
 
         GlStateManager.disableCull();
+
+        final int currentProgram = GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
+        GL20.glUseProgram(0);
+
+        return currentProgram;
     }
 
-    private void postTemplateDraw()
+    private void postTemplateDraw(final int shaderProgramm)
     {
         GlStateManager.enableCull();
 
@@ -135,6 +142,8 @@ public class TemplateTessellator
                     break;
             }
         }
+
+        GL20.glUseProgram(shaderProgramm);
     }
 
     private void postTemplateBufferUnbinding()
