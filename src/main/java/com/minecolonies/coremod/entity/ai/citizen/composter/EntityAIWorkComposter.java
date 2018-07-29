@@ -10,9 +10,12 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,6 +24,7 @@ import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Constants.DOUBLE;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter>
@@ -39,9 +43,19 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     /**
      * Base xp gain for the composter.
      */
-    private static final double BASE_XP_GAIN = 5;
+    private static final double BASE_XP_GAIN = 1;
 
     private  BlockPos currentTarget;
+
+    /**
+     * The number of times the AI will check if the player has set any items on the list until messaging him
+     */
+    private static final int TICKS_UNTIL_COMPLAIN = 12000;
+
+    /**
+     * The ticks elapsed since the last complain
+     */
+    private int ticksToComplain = 0;
 
     /**
      * Constructor for the AI
@@ -72,6 +86,10 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             setDelay(2);
             return getState();
         }
+        if(getOwnBuilding(BuildingComposter.class).getCopyOfAllowedItems().isEmpty())
+        {
+            complain();
+        }
         if(InventoryUtils.hasItemInProvider(getOwnBuilding(), stack -> getOwnBuilding(BuildingComposter.class).isAllowedItem(new ItemStorage(stack))))
         {
             InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(
@@ -96,13 +114,16 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if(!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()))
         {
             ArrayList<ItemStack> itemList = new ArrayList<>();
-            for(ItemStorage item : getOwnBuilding(BuildingComposter.class).getCopyOfAllowedItems())
+            for (ItemStorage item : getOwnBuilding(BuildingComposter.class).getCopyOfAllowedItems())
             {
                 ItemStack itemStack = item.getItemStack();
                 itemStack.setCount(STACKSIZE);
                 itemList.add(itemStack);
             }
-            worker.getCitizenData().createRequestAsync(new StackList(itemList));
+            if (!itemList.isEmpty())
+            {
+                worker.getCitizenData().createRequestAsync(new StackList(itemList));
+            }
         }
 
         setDelay(2);
@@ -111,6 +132,8 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
     private AIState decideWhatToDo()
     {
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
+
         final BuildingComposter building = this.getOwnBuilding();
 
         for(final BlockPos barrel : building.getBarrels())
@@ -145,6 +168,8 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
     private AIState fillBarrels()
     {
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_FILLING));
+
         if(worker.getHeldItem(EnumHand.MAIN_HAND) == ItemStack.EMPTY)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
@@ -184,6 +209,8 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
     private AIState harvestBarrels()
     {
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_HARVESTING));
+
         if (walkToBlock(currentTarget))
         {
             setDelay(2);
@@ -233,5 +260,21 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     protected int getActionsDoneUntilDumping()
     {
         return 1;
+    }
+
+    private void complain()
+    {
+        if(ticksToComplain <= 0)
+        {
+            ticksToComplain = TICKS_UNTIL_COMPLAIN;
+            for(EntityPlayer player : getOwnBuilding().getColony().getMessageEntityPlayers())
+            {
+                player.sendMessage(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST));
+            }
+        }
+        else
+        {
+            ticksToComplain--;
+        }
     }
 }

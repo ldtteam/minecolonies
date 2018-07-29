@@ -15,6 +15,7 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import org.jetbrains.annotations.NotNull;
@@ -122,7 +123,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
 
         if (items == MAX_ITEMS)
         {
-            playerIn.sendMessage(new TextComponentString("The barrel is working!"));
+            playerIn.sendMessage(new TextComponentTranslation("entity.barrel.working"));
             return false;
         }
         else

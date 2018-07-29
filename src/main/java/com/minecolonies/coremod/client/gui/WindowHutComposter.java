@@ -67,14 +67,14 @@ public class WindowHutComposter extends AbstractWindowWorkerBuilding<BuildingCom
     private static final String TAG_NAME = "name";
 
     /**
-     * String which displays the release of a field.
+     * String which displays a non assigned item.
      */
     private static final String RED_X = "X";
 
     /**
-     * String which displays adding a field.
+     * String which displays an assigned item.
      */
-    private static final String APPROVE = " ";
+    private static final String APPROVE = Character.toString((char)10003);;
 
 
     /**
@@ -113,14 +113,14 @@ public class WindowHutComposter extends AbstractWindowWorkerBuilding<BuildingCom
     {
         final int row = recipeList.getListElementIndexByPane(button);
 
-        if (button.getLabel().equals(RED_X))
+        if (button.getLabel().equals(APPROVE))
         {
-            button.setLabel(APPROVE);
+            button.setLabel(RED_X);
             building.removeCompostableItem(compostableItems.get(row));
         }
         else
         {
-            button.setLabel(RED_X);
+            button.setLabel(APPROVE);
             building.addCompostableItem(compostableItems.get(row));
         }
 
@@ -159,11 +159,11 @@ public class WindowHutComposter extends AbstractWindowWorkerBuilding<BuildingCom
 
                 if (building.isAllowedItem(item))
                 {
-                    assignButton.setLabel(RED_X);
+                    assignButton.setLabel(APPROVE);
                 }
                 else
                 {
-                    assignButton.setLabel(APPROVE);
+                    assignButton.setLabel(RED_X);
                 }
 
                 rowPane.findPaneOfTypeByID(TAG_ICON, ItemIcon.class).setItem(stack);
