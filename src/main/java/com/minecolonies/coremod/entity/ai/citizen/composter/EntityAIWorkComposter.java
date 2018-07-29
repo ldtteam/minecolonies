@@ -14,7 +14,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -113,10 +112,10 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
         if(!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()))
         {
-            ArrayList<ItemStack> itemList = new ArrayList<>();
-            for (ItemStorage item : getOwnBuilding(BuildingComposter.class).getCopyOfAllowedItems())
+            final ArrayList<ItemStack> itemList = new ArrayList<>();
+            for (final ItemStorage item : getOwnBuilding(BuildingComposter.class).getCopyOfAllowedItems())
             {
-                ItemStack itemStack = item.getItemStack();
+                final ItemStack itemStack = item.getItemStack();
                 itemStack.setCount(STACKSIZE);
                 itemList.add(itemStack);
             }
@@ -193,7 +192,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if(world.getTileEntity(currentTarget) instanceof TileEntityBarrel)
         {
 
-            TileEntityBarrel barrel = (TileEntityBarrel) world.getTileEntity(currentTarget);
+            final TileEntityBarrel barrel = (TileEntityBarrel) world.getTileEntity(currentTarget);
 
             worker.getCitizenItemHandler().hitBlockWithToolInHand(currentTarget);
             barrel.addItem(worker.getHeldItem(EnumHand.MAIN_HAND));
@@ -221,9 +220,9 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         {
             worker.getCitizenItemHandler().hitBlockWithToolInHand(currentTarget);
 
-            TileEntityBarrel te = (TileEntityBarrel) world.getTileEntity(currentTarget);
+            final TileEntityBarrel te = (TileEntityBarrel) world.getTileEntity(currentTarget);
 
-            ItemStack compost = te.retrieveCompost(getLoopMultiplier(new Random()));
+            final ItemStack compost = te.retrieveCompost(getLootMultiplier(new Random()));
 
             InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), compost);
 
@@ -233,12 +232,11 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         return START_WORKING;
     }
 
-    //level2 % chance to double it, level4% chance to make 50% more, level*8% chance to make 25% more
-    private double getLoopMultiplier( final Random random)
+    private double getLootMultiplier( final Random random)
     {
-        int citizenLevel = worker.getCitizenData().getLevel();
+        final int citizenLevel = worker.getCitizenData().getLevel();
 
-        int diceResult = random.nextInt(100);
+        final int diceResult = random.nextInt(100);
 
         if(diceResult <= citizenLevel*2)
         {
@@ -267,7 +265,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if(ticksToComplain <= 0)
         {
             ticksToComplain = TICKS_UNTIL_COMPLAIN;
-            for(EntityPlayer player : getOwnBuilding().getColony().getMessageEntityPlayers())
+            for(final EntityPlayer player : getOwnBuilding().getColony().getMessageEntityPlayers())
             {
                 player.sendMessage(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST));
             }

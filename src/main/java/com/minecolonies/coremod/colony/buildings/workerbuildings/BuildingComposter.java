@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
@@ -15,10 +13,8 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import com.minecolonies.coremod.network.messages.AssignComposterItemMessage;
-import com.minecolonies.coremod.tileentities.TileEntityBarrel;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -30,7 +26,6 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class BuildingComposter extends AbstractBuildingWorker
@@ -45,11 +40,6 @@ public class BuildingComposter extends AbstractBuildingWorker
      * Maxiimum building level
      */
     private static final int MAX_BUILDING_LEVEL   = 5;
-
-    /**
-     * Name of the building
-     */
-    private static final String HUT_NAME          = "composterHut";
 
     /**
      * Tag to store the barrel position.
@@ -72,14 +62,9 @@ public class BuildingComposter extends AbstractBuildingWorker
     private static final String TAG_ITEMLIST = "itemList";
 
     /**
-     * Tag to store the item
-     */
-    private static final String TAG_ITEM = "item";
-
-    /**
      * List of allowed items to compost
      */
-    private List<ItemStorage> itemsAllowed = new ArrayList<>();
+    private final List<ItemStorage> itemsAllowed = new ArrayList<>();
 
     /**
      * The constructor of the building.
@@ -188,7 +173,7 @@ public class BuildingComposter extends AbstractBuildingWorker
         }
     }
 
-    public void addCompostableItem(ItemStorage item)
+    public void addCompostableItem(final ItemStorage item)
     {
         if(!itemsAllowed.contains(item))
         {
@@ -196,12 +181,12 @@ public class BuildingComposter extends AbstractBuildingWorker
         }
     }
 
-    public boolean isAllowedItem(ItemStorage item)
+    public boolean isAllowedItem(final ItemStorage item)
     {
         return itemsAllowed.contains(item);
     }
 
-    public void removeCompostableItem(ItemStorage item)
+    public void removeCompostableItem(final ItemStorage item)
     {
         if(itemsAllowed.contains(item))
         {
@@ -209,7 +194,7 @@ public class BuildingComposter extends AbstractBuildingWorker
         }
     }
 
-    public ArrayList<ItemStorage> getCopyOfAllowedItems()
+    public List<ItemStorage> getCopyOfAllowedItems()
     {
         return new ArrayList<>(itemsAllowed);
     }
@@ -228,7 +213,7 @@ public class BuildingComposter extends AbstractBuildingWorker
     public static class View extends AbstractBuildingWorker.View
     {
 
-        ArrayList<ItemStorage> listOfItems = new ArrayList<>();
+        List<ItemStorage> listOfItems = new ArrayList<>();
 
         /**
          * Instantiates the view of the building.
@@ -289,7 +274,7 @@ public class BuildingComposter extends AbstractBuildingWorker
         {
             super.deserialize(buf);
 
-            int size = buf.readInt();
+            final int size = buf.readInt();
             for(int i = 0; i < size; i++)
             {
                 listOfItems.add(new ItemStorage(ByteBufUtils.readItemStack(buf)));

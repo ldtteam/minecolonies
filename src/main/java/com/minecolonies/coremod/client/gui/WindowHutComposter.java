@@ -85,7 +85,7 @@ public class WindowHutComposter extends AbstractWindowWorkerBuilding<BuildingCom
     /**
      * List of the items that can be used by the barrel
      */
-    private ArrayList<ItemStorage> compostableItems;
+    private final List<ItemStorage> compostableItems;
 
 
     /**

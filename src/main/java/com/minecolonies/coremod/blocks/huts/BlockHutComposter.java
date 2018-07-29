@@ -5,11 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class BlockHutComposter extends AbstractBlockHut<BlockHutComposter>
 {
-    public BlockHutComposter()
-    {
-        //No different from Abstract parent
-        super();
-    }
 
     @NotNull
     @Override
