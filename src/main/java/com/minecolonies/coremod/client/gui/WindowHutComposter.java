@@ -100,7 +100,7 @@ public class WindowHutComposter extends AbstractWindowWorkerBuilding<BuildingCom
         registerButton(BUTTON_NEXT_PAGE, this::nextClicked);
         registerButton(TAG_BUTTON_ASSIGN, this::assignClicked);
 
-        compostableItems = (ArrayList<ItemStorage>) ColonyManager.getCompatibilityManager().getCopyOfCompostableItems();
+        compostableItems = ColonyManager.getCompatibilityManager().getCopyOfCompostableItems();
 
     }
 
