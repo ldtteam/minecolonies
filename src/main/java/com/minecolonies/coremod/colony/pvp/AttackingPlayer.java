@@ -1,0 +1,110 @@
+package com.minecolonies.coremod.colony.pvp;
+
+import com.google.common.collect.ImmutableList;
+import com.minecolonies.coremod.entity.EntityCitizen;
+import net.minecraft.entity.player.EntityPlayer;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Objects;
+
+/**
+ * Represents an attacking player.
+ */
+public class AttackingPlayer
+{
+    /**
+     * The player which is attacking.
+     */
+    private final EntityPlayer player;
+
+    /**
+     * The guards coming with him.
+     */
+    private final List<EntityCitizen> guards = new ArrayList<>();
+
+    /**
+     * Creates a new Attacking player.
+     * @param player the attacking player.
+     */
+    public AttackingPlayer(final EntityPlayer player)
+    {
+        this.player = player;
+    }
+
+    /**
+     * Get the attacking player.
+     * @return the EntityPlayer.
+     */
+    public EntityPlayer getPlayer()
+    {
+        return player;
+    }
+
+    /**
+     * Getter for a copy of the guard list.
+     * @return an immutable copy the list.
+     */
+    public List<EntityCitizen> getGuards()
+    {
+        return ImmutableList.copyOf(guards);
+    }
+
+    /**
+     * Adds a new guard to the list.
+     * @param guard the guard to add.
+     */
+    public boolean addGuard(final EntityCitizen guard)
+    {
+        if (!guards.contains(guard))
+        {
+            guards.add(guard);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Removes a guard to the list.
+     * @param guard the guard to remove.
+     */
+    public void removeGuard(final EntityCitizen guard)
+    {
+        guards.add(guard);
+    }
+
+    /**
+     * Refreshes the list and checks if all are still alive.
+     */
+    public void refreshList()
+    {
+        for (final EntityCitizen citizen : new ArrayList<>(guards))
+        {
+            if (citizen.isDead)
+            {
+                guards.remove(citizen);
+            }
+        }
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        final AttackingPlayer that = (AttackingPlayer) o;
+        return Objects.equals(player, that.player);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(player);
+    }
+}

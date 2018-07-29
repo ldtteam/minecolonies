@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Colony;
@@ -66,7 +67,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         //Blast resistance for creepers etc. makes them explosion proof
         setResistance(RESISTANCE);
         //Hardness of 10 takes a long time to mine to not loose progress
-        setHardness(HARDNESS);
+        setHardness(Configurations.gameplay.pvp_mode ? HARDNESS * 2 : HARDNESS);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
     }
 

@@ -5,6 +5,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
@@ -254,7 +255,7 @@ public class ColonyPermissionEventHandler
             {
                 if (!perms.hasPermission(event.getEntityPlayer(), Action.RIGHTCLICK_BLOCK) && block != null && block != Blocks.AIR)
                 {
-                    cancelEvent(event, event.getEntityPlayer(), colony, Action.RIGHTCLICK_BLOCK, event.getPos());
+                    checkEventCancelation(Action.RIGHTCLICK_BLOCK, event.getEntityPlayer(), event.getWorld(), event, event.getPos());
                     return;
                 }
 
@@ -267,7 +268,7 @@ public class ColonyPermissionEventHandler
 
                 if (event.getWorld().getTileEntity(event.getPos()) != null && !perms.hasPermission(event.getEntityPlayer(), Action.RIGHTCLICK_ENTITY))
                 {
-                    cancelEvent(event, event.getEntityPlayer(), colony, Action.RIGHTCLICK_ENTITY, event.getPos());
+                    checkEventCancelation(Action.RIGHTCLICK_ENTITY, event.getEntityPlayer(), event.getWorld(), event, event.getPos());
                     return;
                 }
 
@@ -277,10 +278,10 @@ public class ColonyPermissionEventHandler
                     return;
                 }
 
-                if (stack.getItem() instanceof ItemPotion && !perms.hasPermission(event.getEntityPlayer(),
-                  Action.THROW_POTION))
+
+                if (stack.getItem() instanceof ItemPotion)
                 {
-                    cancelEvent(event, event.getEntityPlayer(), colony, Action.THROW_POTION, event.getPos());
+                    checkEventCancelation(Action.THROW_POTION, event.getEntityPlayer(), event.getWorld(), event, event.getPos());
                     return;
                 }
 
@@ -288,7 +289,6 @@ public class ColonyPermissionEventHandler
                       && !perms.hasPermission(event.getEntityPlayer(), Action.USE_SCAN_TOOL))
                 {
                     cancelEvent(event, event.getEntityPlayer(), colony, Action.USE_SCAN_TOOL, event.getPos());
-                    return;
                 }
             }
         }
@@ -352,6 +352,10 @@ public class ColonyPermissionEventHandler
               && colony.isCoordInColony(player.getEntityWorld(), positionToCheck)
               && !colony.getPermissions().hasPermission(player, action))
         {
+            if (Configurations.gameplay.pvp_mode && colony.isAttackingPlayer(playerIn))
+            {
+                return false;
+            }
             cancelEvent(event, player, colony, action, positionToCheck);
             return true;
         }

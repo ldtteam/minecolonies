@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -285,12 +286,21 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             }
         }
 
-        if (!(worker.getLastAttackedEntity() != null
-              && !worker.getLastAttackedEntity().isDead)
-              && getOwnBuilding(AbstractBuildingGuards.class) != null
+        if (getOwnBuilding(AbstractBuildingGuards.class) != null
               && target == null)
         {
-            final AbstractBuildingGuards guardBuilding = (AbstractBuildingGuards) getOwnBuilding();
+            if (worker.getLastAttackedEntity() != null && !worker.getLastAttackedEntity().isDead)
+            {
+                if (worker.getDistance(worker.getLastAttackedEntity()) > getAttackRange() * 5 && !worker.canEntityBeSeen(worker.getLastAttackedEntity()))
+                {
+                    worker.setLastAttackedEntity(null);
+                    return START_WORKING;
+                }
+                target = worker.getLastAttackedEntity();
+                return START_WORKING;
+            }
+
+            final AbstractBuildingGuards guardBuilding = getOwnBuilding();
 
             switch (guardBuilding.getTask())
             {
@@ -511,7 +521,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     damageToBeDealt += EnchantmentHelper.getModifierForCreature(heldItem, target.getCreatureAttribute());
                 }
 
-                target.attackEntityFrom(new DamageSource(worker.getName()), (float) damageToBeDealt);
+                final DamageSource source = new DamageSource(worker.getName());
+                if (Configurations.gameplay.pvp_mode && target instanceof EntityPlayer)
+                {
+                    source.setDamageBypassesArmor();
+                }
+
+                target.attackEntityFrom(source, (float) damageToBeDealt);
                 target.setRevengeTarget(worker);
 
                 worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
@@ -577,6 +593,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getLevel() + 1);
 
                 arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
+
+                if (Configurations.gameplay.pvp_mode && target instanceof EntityPlayer)
+                {
+                    damage *= 2;
+                }
 
                 if (worker.getHealth() <= DOUBLE_DAMAGE_THRESHOLD)
                 {

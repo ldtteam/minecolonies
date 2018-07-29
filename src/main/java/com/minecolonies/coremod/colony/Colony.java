@@ -10,12 +10,15 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Suppression;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.managers.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.colony.pvp.AttackingPlayer;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.WorkManager;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
@@ -29,6 +32,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -193,6 +197,11 @@ public class Colony implements IColony
      * List of players visiting the colony.
      */
     private final List<EntityPlayer> visitingPlayers = new ArrayList<>();
+
+    /**
+     * List of players attacking the colony.
+     */
+    private final List<AttackingPlayer> attackingPlayers = new ArrayList<>();
 
     /**
      * Datas about the happiness of a colony
@@ -526,12 +535,14 @@ public class Colony implements IColony
         packageManager.updateSubscribers();
 
         final List<EntityPlayer> visitors = new ArrayList<>(visitingPlayers);
+
         //Clean up visiting player.
         for(final EntityPlayer player: visitors)
         {
             if(!packageManager.getSubscribers().contains(player))
             {
                 visitingPlayers.remove(player);
+                attackingPlayers.remove(new AttackingPlayer(player));
             }
         }
     }
@@ -657,6 +668,18 @@ public class Colony implements IColony
                 && MobEventsUtils.isItTimeToRaid(event.world, this))
         {
             MobEventsUtils.barbarianEvent(event.world, this);
+        }
+
+        if (shallUpdate(world, TICKS_SECOND))
+        {
+            for (final AttackingPlayer player : attackingPlayers)
+            {
+                player.refreshList();
+                if (player.getGuards().isEmpty())
+                {
+                    LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), "You successfully defended your colony against, " + player.getPlayer().getName());
+                }
+            }
         }
 
         buildingManager.onWorldTick(event);
@@ -1181,5 +1204,58 @@ public class Colony implements IColony
     public void setNightsSinceLastRaid(final int nights)
     {
         this.nightsSinceLastRaid = nights;
+    }
+
+    /**
+     * Add a guard to the list of attacking guards.
+     * @param entityCitizen the citizen to add.
+     */
+    public void addGuardToAttackers(final EntityCitizen entityCitizen, final EntityPlayer player)
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        for (final AttackingPlayer attackingPlayer : attackingPlayers)
+        {
+            if (attackingPlayer.getPlayer().equals(player))
+            {
+                if (attackingPlayer.addGuard(entityCitizen))
+                {
+                    LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(),
+                      "Beware, " + attackingPlayer.getPlayer().getName() + " has now: " + attackingPlayer.getGuards().size() + " guards!");
+                }
+                return;
+            }
+        }
+
+        for (final EntityPlayer visitingPlayer : visitingPlayers)
+        {
+            if (visitingPlayer.equals(player))
+            {
+                final AttackingPlayer attackingPlayer = new AttackingPlayer(visitingPlayer);
+                attackingPlayer.addGuard(entityCitizen);
+                attackingPlayers.add(attackingPlayer);
+                LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), "Beware, " + visitingPlayer.getName() + " is attacking you and he brought guards.");
+            }
+        }
+    }
+
+    /**
+     * Is player part of a wave trying to invade the colony?
+     * @param player the player to check..
+     * @return true if so.
+     */
+    public boolean isAttackingPlayer(final EntityPlayer player)
+    {
+        for (final AttackingPlayer attackingPlayer : attackingPlayers)
+        {
+            if (attackingPlayer.getPlayer().equals(player))
+            {
+                return !attackingPlayer.getGuards().isEmpty();
+            }
+        }
+        return false;
     }
 }

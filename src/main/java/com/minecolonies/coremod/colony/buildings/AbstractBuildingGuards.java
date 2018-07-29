@@ -667,6 +667,15 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     /**
+     * Entity of player to follow.
+     * @return the entityPlayer reference.
+     */
+    public EntityPlayer getFollowPlayer()
+    {
+        return followPlayer;
+    }
+
+    /**
      * Gets the player to follow.
      *
      * @return the entity player.
