@@ -44,6 +44,9 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
      */
     private static final double BASE_XP_GAIN = 1;
 
+    /**
+     * The block pos to which the AI is going.
+     */
     private  BlockPos currentTarget;
 
     /**
@@ -78,6 +81,10 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
     }
 
+    /**
+     * Method for the AI to try to get the materials needed for the task he's doing. Will request if there are no materials
+     * @return the new AIState after doing this
+     */
     private AIState getMaterials()
     {
         if (walkToBuilding())
@@ -129,6 +136,10 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         return START_WORKING;
     }
 
+    /**
+     * Method for the AI to decide what to do. Possible actions: harvest barrels, fill barrels or idle
+     * @return the decision it made
+     */
     private AIState decideWhatToDo()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
@@ -165,6 +176,10 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         return START_WORKING;
     }
 
+    /**
+     * The AI will now fill the barrel that he found empty on his building
+     * @return the nex AIState after doing this
+     */
     private AIState fillBarrels()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_FILLING));
@@ -206,6 +221,10 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         return START_WORKING;
     }
 
+    /**
+     * The AI will harvest the barrels he found finished on his building.
+     * @return the next AIState after doing this
+     */
     private AIState harvestBarrels()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_HARVESTING));
@@ -232,6 +251,11 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         return START_WORKING;
     }
 
+    /**
+     * Gives the loot multiplier based on the citizen level and a random number.
+     * @param random the random number to get the percentages
+     * @return the multiplier for the amount of compost (base amount: 6)
+     */
     private double getLootMultiplier( final Random random)
     {
         final int citizenLevel = worker.getCitizenData().getLevel();
@@ -260,6 +284,10 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         return 1;
     }
 
+    /**
+     * If the list of allowed items is empty, the AI will message all the officers of the colony asking for them to set the list.
+     * Happens more or less once a day if the list is not filled
+     */
     private void complain()
     {
         if(ticksToComplain <= 0)

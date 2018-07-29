@@ -158,27 +158,6 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     public static boolean checkCorrectItem(final ItemStack itemStack)
     {
         return ColonyManager.getCompatibilityManager().isCompost(itemStack);
-        /**
-        if(itemStack.isEmpty())
-        {
-            return false;
-        }
-
-        for(final String string : Configurations.gameplay.listOfCompostableItems)
-        {
-            if(itemStack.getItem().getRegistryName().toString().equals(string))
-            {
-                return true;
-            }
-            for(final int id: OreDictionary.getOreIDs(itemStack))
-            {
-                if (OreDictionary.getOreName(id).equals(string))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;**/
     }
 
     /**
