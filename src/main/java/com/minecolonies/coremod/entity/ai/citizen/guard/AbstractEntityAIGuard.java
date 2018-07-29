@@ -703,16 +703,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     {
                         worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
                     }
-                    else
-                    {
-                    }
                 }
             }
         }
 
-        if (requiredArmor.size() > 0)
+        if (requiredArmor.size() != 0)
         {
-            for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) 
+            for (final EntityEquipmentSlot slot : EntityEquipmentSlot.values()) 
             {
                 if (slot == EntityEquipmentSlot.MAINHAND || slot == EntityEquipmentSlot.OFFHAND)
                 {

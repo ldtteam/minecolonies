@@ -191,7 +191,7 @@ public class Tool implements IDeliverable
              * armor to send back what type of armor this if for the request
              * system.
              */
-            ItemArmor armor = (ItemArmor) stack.getItem();
+            final ItemArmor armor = (ItemArmor) stack.getItem();
             if (armor.getEquipmentSlot() == EntityEquipmentSlot.CHEST)
             {
                 set.add("chestplate");
