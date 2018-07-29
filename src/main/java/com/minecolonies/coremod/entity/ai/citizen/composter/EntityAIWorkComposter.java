@@ -181,15 +181,11 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         for(final BlockPos barrel : building.getBarrels())
         {
             final TileEntity te =world.getTileEntity(barrel);
-            if(te instanceof TileEntityBarrel)
+            if(te instanceof TileEntityBarrel && !((TileEntityBarrel) te).checkIfWorking())
             {
-
-                if (!((TileEntityBarrel) te).checkIfWorking())
-                {
-                    this.currentTarget = barrel;
-                    setDelay(DECIDE_DELAY);
-                    return COMPOSTER_FILL;
-                }
+                this.currentTarget = barrel;
+                setDelay(DECIDE_DELAY);
+                return COMPOSTER_FILL;
             }
         }
 
