@@ -12,6 +12,7 @@ import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -58,6 +59,11 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
      * The ticks elapsed since the last complain
      */
     private int ticksToComplain = 0;
+
+    /**
+     * Number of ticks that the AI should wait before deciding again
+     */
+    private static final int DECIDE_DELAY = 40;
 
     /**
      * Constructor for the AI
@@ -144,16 +150,24 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
 
+        if(walkToBuilding())
+        {
+            setDelay(2);
+            return getState();
+        }
+
         final BuildingComposter building = this.getOwnBuilding();
 
         for(final BlockPos barrel : building.getBarrels())
         {
-            if(world.getTileEntity(barrel) instanceof TileEntityBarrel)
+            final TileEntity te =world.getTileEntity(barrel);
+            if(te instanceof TileEntityBarrel)
             {
-                final TileEntityBarrel te = ((TileEntityBarrel) world.getTileEntity(barrel));
+
                 this.currentTarget = barrel;
-                if (te.isDone())
+                if (((TileEntityBarrel) te).isDone())
                 {
+                    setDelay(DECIDE_DELAY);
                     return COMPOSTER_HARVEST;
                 }
             }
@@ -161,18 +175,20 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
         for(final BlockPos barrel : building.getBarrels())
         {
-            if(world.getTileEntity(barrel) instanceof TileEntityBarrel)
+            final TileEntity te =world.getTileEntity(barrel);
+            if(te instanceof TileEntityBarrel)
             {
-                final TileEntityBarrel te = ((TileEntityBarrel) world.getTileEntity(barrel));
-                if (!te.checkIfWorking())
+
+                if (!((TileEntityBarrel) te).checkIfWorking())
                 {
                     this.currentTarget = barrel;
+                    setDelay(DECIDE_DELAY);
                     return COMPOSTER_FILL;
                 }
             }
         }
 
-        setDelay(2);
+        setDelay(DECIDE_DELAY);
         return START_WORKING;
     }
 
