@@ -66,6 +66,11 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     private static final int DECIDE_DELAY = 40;
 
     /**
+     * Number of ticks that the AI should wait after completing a task
+     */
+    private static final int AFTER_TASK_DELAY = 5;
+
+    /**
      * Constructor for the AI
      *
      * @param job the job to fulfill
@@ -233,7 +238,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             incrementActionsDone();
 
         }
-        setDelay(2);
+        setDelay(AFTER_TASK_DELAY);
         return START_WORKING;
     }
 
@@ -263,7 +268,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         }
-
+        setDelay(AFTER_TASK_DELAY);
         return START_WORKING;
     }
 
