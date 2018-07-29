@@ -1,5 +1,6 @@
 package com.minecolonies.structures.client;
 
+import com.minecolonies.blockout.Log;
 import com.minecolonies.structures.lib.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
@@ -109,6 +110,7 @@ public class TemplateTessellator
         GlStateManager.disableCull();
 
         final int currentProgram = GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
+        Log.getLogger().info(String.format("Disabled Shader Programm: %d", currentProgram));
         GL20.glUseProgram(0);
 
         return currentProgram;
@@ -144,6 +146,7 @@ public class TemplateTessellator
         }
 
         GL20.glUseProgram(shaderProgramm);
+        Log.getLogger().info(String.format("Enabled Shader programm: %d", shaderProgramm));
     }
 
     private void postTemplateBufferUnbinding()
