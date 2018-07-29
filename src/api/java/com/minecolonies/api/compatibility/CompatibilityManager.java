@@ -26,10 +26,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -149,7 +146,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public  List<ItemStorage> getCopyOfCompostableItems()
     {
-        return new ArrayList<>(compostableItems);
+        return ImmutableList.copyOf(compostableItems);
     }
 
     @Override

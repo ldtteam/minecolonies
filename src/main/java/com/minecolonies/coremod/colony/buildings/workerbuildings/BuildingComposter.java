@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
@@ -87,7 +88,7 @@ public class BuildingComposter extends AbstractBuildingWorker
      */
     public List<BlockPos> getBarrels()
     {
-        return new ArrayList<>(barrels);
+        return ImmutableList.copyOf(barrels);
     }
 
     @NotNull
