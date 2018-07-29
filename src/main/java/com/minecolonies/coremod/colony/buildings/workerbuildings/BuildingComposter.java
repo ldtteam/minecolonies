@@ -204,7 +204,7 @@ public class BuildingComposter extends AbstractBuildingWorker
     {
         super.serializeToView(buf);
         buf.writeInt(itemsAllowed.size());
-        for (ItemStorage item : itemsAllowed)
+        for (final ItemStorage item : itemsAllowed)
         {
             ByteBufUtils.writeItemStack(buf, item.getItemStack());
         }
@@ -212,8 +212,8 @@ public class BuildingComposter extends AbstractBuildingWorker
 
     public static class View extends AbstractBuildingWorker.View
     {
-
-        List<ItemStorage> listOfItems = new ArrayList<>();
+        /*default*/
+        private List<ItemStorage> listOfItems = new ArrayList<>();
 
         /**
          * Instantiates the view of the building.
@@ -225,7 +225,7 @@ public class BuildingComposter extends AbstractBuildingWorker
             super(c, l);
         }
 
-        public void addCompostableItem(ItemStorage item)
+        public void addCompostableItem(final ItemStorage item)
         {
             MineColonies.getNetwork().sendToServer(new AssignComposterItemMessage(this, item, true));
             if(!listOfItems.contains(item))
@@ -234,12 +234,12 @@ public class BuildingComposter extends AbstractBuildingWorker
             }
         }
 
-        public boolean isAllowedItem(ItemStorage item)
+        public boolean isAllowedItem(final ItemStorage item)
         {
             return listOfItems.contains(item);
         }
 
-        public void removeCompostableItem(ItemStorage item)
+        public void removeCompostableItem(final ItemStorage item)
         {
             MineColonies.getNetwork().sendToServer(new AssignComposterItemMessage(this, item, false));
             if(listOfItems.contains(item))
