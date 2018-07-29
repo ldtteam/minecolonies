@@ -213,7 +213,7 @@ public class BuildingComposter extends AbstractBuildingWorker
     public static class View extends AbstractBuildingWorker.View
     {
         /*default*/
-        private List<ItemStorage> listOfItems = new ArrayList<>();
+        private final List<ItemStorage> listOfItems = new ArrayList<>();
 
         /**
          * Instantiates the view of the building.
