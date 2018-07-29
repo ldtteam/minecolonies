@@ -39,11 +39,11 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
         super(job);
         toolsNeeded.add(ToolType.SWORD);
         final List<GuardItemsNeeded> itemlvl1Needed = new ArrayList<>();
-        itemlvl1Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.MAINHAND,  Items.SHIELD, 1, 4, 99));
+        itemlvl1Needed.add(new GuardItemsNeeded(ToolType.SHIELD, EntityEquipmentSlot.MAINHAND, 0, 0, 1, 4, 99));
         itemsNeeded.put(Integer.valueOf(1), itemlvl1Needed);
 
         final List<GuardItemsNeeded> itemlvl2Needed = new ArrayList<>();
-        itemlvl2Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.MAINHAND,  Items.SHIELD, 1, 1, 99));
+        itemlvl2Needed.add(new GuardItemsNeeded(ToolType.SHIELD, EntityEquipmentSlot.MAINHAND, 0,0 , 1, 1, 99));
         itemsNeeded.put(Integer.valueOf(2), itemlvl2Needed);
         itemsNeeded.put(Integer.valueOf(3), itemlvl2Needed);
         itemsNeeded.put(Integer.valueOf(4), itemlvl2Needed);

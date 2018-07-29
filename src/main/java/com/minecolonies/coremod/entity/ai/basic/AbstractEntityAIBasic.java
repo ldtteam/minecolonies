@@ -837,6 +837,33 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
+     * Ensures that we have a appropriate tool available.
+     * ASync call on the tool.
+     * 
+     * @param toolType  Tool type that is requested
+     * @param minimalLevel min. level of the tool
+     */
+    protected void checkForToolorWeaponASync(@NotNull final IToolType toolType, final int minimalLevel)
+    {
+        final ImmutableList<IRequest<? extends Tool>> openToolRequests =
+          getOwnBuilding().getOpenRequestsOfTypeFiltered(
+            worker.getCitizenData(),
+            TypeToken.of(Tool.class),
+            r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minimalLevel);
+        final ImmutableList<IRequest<? extends Tool>> completedToolRequests =
+          getOwnBuilding().getCompletedRequestsOfTypeFiltered(
+            worker.getCitizenData(),
+            TypeToken.of(Tool.class),
+            r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minimalLevel);
+
+        if (openToolRequests.isEmpty() && completedToolRequests.isEmpty())
+        {
+            final Tool request = new Tool(toolType, minimalLevel, getOwnBuilding().getMaxToolLevel() < minimalLevel ? minimalLevel : getOwnBuilding().getMaxToolLevel());
+            worker.getCitizenData().createRequestAsync(request);
+        }
+    }
+
+    /**
      * Check if we need a tool.
      * <p>
      * Do not use it to find a pickaxe as it need a minimum level.

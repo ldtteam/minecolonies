@@ -5,6 +5,8 @@ import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
+
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
@@ -180,6 +182,32 @@ public class Tool implements IDeliverable
         else if(stack.getItem() instanceof  ItemShears)
         {
             set.add("shears");
+        }
+        else if(stack.getItem() instanceof ItemArmor)
+        {
+            /*
+             * There is no armor class for each type of armor.
+             * So what we need to do is check the equipment Slot of this
+             * armor to send back what type of armor this if for the request
+             * system.
+             */
+            ItemArmor armor = (ItemArmor) stack.getItem();
+            if (armor.getEquipmentSlot() == EntityEquipmentSlot.CHEST)
+            {
+                set.add("chestplate");
+            }
+            else if (armor.getEquipmentSlot() == EntityEquipmentSlot.FEET)
+            {
+                set.add("boots");
+            }
+            else if (armor.getEquipmentSlot() == EntityEquipmentSlot.HEAD)
+            {
+                set.add("helmet");
+            }
+            else if (armor.getEquipmentSlot() == EntityEquipmentSlot.LEGS)
+            {
+                set.add("leggings");
+            }
         }
         return set;
     }
