@@ -19,6 +19,7 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
@@ -27,6 +28,7 @@ import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
+import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.util.PermissionUtils;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.block.material.Material;
@@ -312,9 +314,14 @@ public class EntityCitizen extends AbstractEntityCitizen
     public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
     {
         final Entity sourceEntity = damageSource.getTrueSource();
-        if (sourceEntity instanceof EntityCitizen && ((EntityCitizen) sourceEntity).citizenColonyHandler.getColonyId() == citizenColonyHandler.getColonyId())
+        if (sourceEntity instanceof EntityCitizen)
         {
-            return false;
+            if (((EntityCitizen) sourceEntity).citizenColonyHandler.getColonyId() == citizenColonyHandler.getColonyId())
+            {
+                return false;
+            }
+            final Permissions permission = ((EntityCitizen) sourceEntity).citizenColonyHandler.getColony().getPermissions();
+            citizenColonyHandler.getColony().getPermissions().addPlayer(permission.getOwner(), permission.getOwnerName(), Rank.HOSTILE);
         }
         setLastAttackedEntity(damageSource.getTrueSource());
         final boolean result = super.attackEntityFrom(damageSource, damage);
@@ -378,7 +385,6 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @param damageSource the attacking entity.
      */
-
     @Override
     public void onDeath(@NotNull final DamageSource damageSource)
     {

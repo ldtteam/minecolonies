@@ -1,7 +1,10 @@
 package com.minecolonies.coremod.colony.pvp;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.List;
@@ -71,6 +74,42 @@ public class AttackingPlayer
     public void removeGuard(final EntityCitizen guard)
     {
         guards.add(guard);
+    }
+
+    /**
+     * Check if the attack is valid.
+     * @return true if so.
+     */
+    public boolean isValidAttack(final Colony colony)
+    {
+        if (guards.isEmpty())
+        {
+            return false;
+        }
+
+        return AttackingPlayer.isValidAttack(guards.get(0), colony);
+    }
+
+    /**
+     * Check if guard is part of valid attack.
+     * @param citizen the attacking guard.
+     * @param colony the colony.
+     * @return true if so.
+     */
+    public static boolean isValidAttack(final EntityCitizen citizen, final Colony colony)
+    {
+        final Colony guardColony = citizen.getCitizenColonyHandler().getColony();
+        if (guardColony == null)
+        {
+            return false;
+        }
+
+        if (colony.getPermissions().getRank(guardColony.getPermissions().getOwner()) == Rank.HOSTILE)
+        {
+            return true;
+        }
+
+        return guardColony.getPermissions().getRank(colony.getPermissions().getOwner()) == Rank.HOSTILE && MobEventsUtils.getColonyRaidLevel(guardColony) < MobEventsUtils.getColonyRaidLevel(colony) * 2;
     }
 
     /**

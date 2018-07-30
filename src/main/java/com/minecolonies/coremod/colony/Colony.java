@@ -1247,15 +1247,35 @@ public class Colony implements IColony
      * @param player the player to check..
      * @return true if so.
      */
-    public boolean isAttackingPlayer(final EntityPlayer player)
+    public boolean isValidAttackingPlayer(final EntityPlayer player)
     {
+        if (packageManager.getLastContactInHours() > 1)
+        {
+            return false;
+        }
+
         for (final AttackingPlayer attackingPlayer : attackingPlayers)
         {
             if (attackingPlayer.getPlayer().equals(player))
             {
-                return !attackingPlayer.getGuards().isEmpty();
+                return attackingPlayer.isValidAttack(this);
             }
         }
         return false;
+    }
+
+    /**
+     * Check if attack of guard is valid.
+     * @param entity the guard entity.
+     * @return true if so.
+     */
+    public boolean isValidAttackingGuard(final EntityCitizen entity)
+    {
+        if (packageManager.getLastContactInHours() > 1)
+        {
+            return false;
+        }
+
+        return AttackingPlayer.isValidAttack(entity, this);
     }
 }

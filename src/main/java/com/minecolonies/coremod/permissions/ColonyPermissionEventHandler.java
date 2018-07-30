@@ -5,7 +5,6 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.Colony;
@@ -454,7 +453,7 @@ public class ColonyPermissionEventHandler
               && colony.isCoordInColony(player.getEntityWorld(), positionToCheck)
               && !colony.getPermissions().hasPermission(player, action))
         {
-            if (Configurations.gameplay.pvp_mode && colony.isAttackingPlayer(playerIn))
+            if (Configurations.gameplay.pvp_mode && colony.isValidAttackingPlayer(playerIn))
             {
                 return false;
             }
