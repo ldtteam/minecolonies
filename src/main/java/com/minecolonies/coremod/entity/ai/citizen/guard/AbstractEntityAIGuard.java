@@ -697,17 +697,15 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             {
                 final GuardItemsNeeded guardNeeds = requiredArmor.get(((ItemArmor) stack.getItem()).armorType);
                 final ItemArmor itemArmor = (ItemArmor) stack.getItem();
-                if (itemArmor != null && itemArmor instanceof ItemArmor && guardNeeds != null)
+                if (itemArmor != null && itemArmor instanceof ItemArmor && guardNeeds != null
+                    && ItemStackUtils.hasToolLevel(stack, guardNeeds.getItemNeeded(), guardNeeds.getArmorMinimalLevel(), guardNeeds.getArmorMaximumLevel()))
                 {
-                    if (ItemStackUtils.hasToolLevel(stack, guardNeeds.getItemNeeded(), guardNeeds.getArmorMinimalLevel(), guardNeeds.getArmorMaximumLevel()))
-                    {
-                        worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
-                    }
+                    worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
                 }
             }
         }
 
-        if (requiredArmor.size() != 0)
+        if (!requiredArmor.isEmpty())
         {
             for (final EntityEquipmentSlot slot : EntityEquipmentSlot.values()) 
             {
