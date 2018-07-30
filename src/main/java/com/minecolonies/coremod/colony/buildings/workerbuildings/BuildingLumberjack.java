@@ -219,7 +219,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             final ItemStack stack = new ItemStack(saplingCompound);
             final boolean cut = saplingCompound.getBoolean(TAG_CUT);
             final ItemStorage storage = new ItemStorage(stack); 
-            if (treesToFell.containsKey(storage)) 
+            if (treesToFell.containsKey(storage) && !storage.getItemStack().isEmpty()) 
             {
               treesToFell.put(new ItemStorage(stack), cut);
             }
@@ -306,7 +306,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         {
             for(final ItemStorage storage : ColonyManager.getCompatibilityManager().getCopyOfSaplings())
             {
-                if(!treesToFell.containsKey(storage))
+                if(!treesToFell.containsKey(storage) && !storage.getItemStack().isEmpty())
                 {
                     treesToFell.put(storage, true);
                 }

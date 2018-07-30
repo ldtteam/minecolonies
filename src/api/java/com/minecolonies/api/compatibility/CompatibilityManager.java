@@ -2,6 +2,8 @@ package com.minecolonies.api.compatibility;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
@@ -12,6 +14,7 @@ import net.minecraft.block.BlockOre;
 import net.minecraft.block.BlockRedstoneOre;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,8 +26,9 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.constant.Constants.ORE_STRING;
 import static com.minecolonies.api.util.constant.Constants.SAPLINGS;
@@ -53,6 +57,16 @@ public class CompatibilityManager implements ICompatibilityManager
     private final List<Block> ores = new ArrayList<>();
 
     /**
+     * List of all the items that can be composted
+     */
+    private final List<ItemStorage> compostableItems = new ArrayList<>();
+
+    /**
+     * If discovery is finished already.
+     */
+    private boolean discoveredAlready = false;
+
+    /**
      * Instantiates the compatibilityManager.
      */
     public CompatibilityManager()
@@ -71,6 +85,34 @@ public class CompatibilityManager implements ICompatibilityManager
                 discoverOres(string);
             }
         }
+        discoverCompostableItems();
+
+        discoveredAlready = true;
+    }
+
+    @Override
+    public boolean isCompost(final ItemStack itemStack)
+    {
+        if(itemStack.isEmpty())
+        {
+            return false;
+        }
+
+        for(final String string : Configurations.gameplay.listOfCompostableItems)
+        {
+            if(itemStack.getItem().getRegistryName().toString().equals(string))
+            {
+                return true;
+            }
+            for(final int id: OreDictionary.getOreIDs(itemStack))
+            {
+                if (OreDictionary.getOreName(id).equals(string))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -99,6 +141,12 @@ public class CompatibilityManager implements ICompatibilityManager
     public List<ItemStorage> getCopyOfSaplings()
     {
         return new ArrayList<>(saplings);
+    }
+
+    @Override
+    public  List<ItemStorage> getCopyOfCompostableItems()
+    {
+        return ImmutableList.copyOf(compostableItems);
     }
 
     @Override
@@ -158,6 +206,12 @@ public class CompatibilityManager implements ICompatibilityManager
         }
     }
 
+    @Override
+    public boolean isDiscoveredAlready()
+    {
+        return discoveredAlready;
+    }
+
     //------------------------------- Private Utility Methods -------------------------------//
 
     private void discoverOres(final String string)
@@ -206,6 +260,30 @@ public class CompatibilityManager implements ICompatibilityManager
             }
         }
         Log.getLogger().info("Finished discovering saplings");
+    }
+
+    private void discoverCompostableItems()
+    {
+        if (compostableItems.isEmpty())
+        {
+            compostableItems.addAll(
+              ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
+                  final NonNullList<ItemStack> stacks = NonNullList.create();
+                  try
+                  {
+                      item.getSubItems(CreativeTabs.SEARCH, stacks);
+                  }
+                  catch (Exception ex)
+                  {
+                      Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
+                  }
+
+
+                  return stacks.stream().filter(this::isCompost);
+
+              }).map(ItemStorage::new).collect(Collectors.toList())));
+        }
+        Log.getLogger().info("Finished discovering compostables");
     }
 
     private static NBTTagCompound writeLeaveSaplingEntryToNBT(final IBlockState state, final ItemStorage storage)

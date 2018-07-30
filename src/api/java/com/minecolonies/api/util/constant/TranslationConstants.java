@@ -1,6 +1,7 @@
 package com.minecolonies.api.util.constant;
 
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Constants for translation
@@ -122,6 +123,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_TOOL_PREMAXLEVEL                          = "com.minecolonies.coremod.request.tool.premaxlevel";
     @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_COMPOSTABLE                               = "com.minecolonies.coremod.request.compostable";
+    @NonNls
     public static final String COM_MINECOLONIES_GENERAL_AND                                        = "com.minecolonies.coremod.general.and";
     @NonNls
     public static final String COM_MINECOLONIES_TOOLTYPE_NONE                                      = "com.minecolonies.coremod.tooltype.none";
@@ -143,6 +146,14 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_TOOLTYPE_SHEARS                                    = "com.minecolonies.coremod.tooltype.shears";
     @NonNls
     public static final String COM_MINECOLONIES_TOOLTYPE_SHIELD                                    = "com.minecolonies.coremod.tooltype.shield";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_HELMET                                    = "com.minecolonies.coremod.tooltype.helmet";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_LEGGINGS                                  = "com.minecolonies.coremod.tooltype.leggings";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_CHESTPLATE                                = "com.minecolonies.coremod.tooltype.chestplate";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_BOOTS                                     = "com.minecolonies.coremod.tooltype.boots";
     @NonNls
     public static final String COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME                            = "com.minecolonies.coremod.buildings.warehouse.name";
     @NonNls
@@ -200,7 +211,7 @@ public final class TranslationConstants
     @NonNls
     public static final String TOGGLE_REPLANT_SAPLINGS_ON                                          = "com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOn";
     @NonNls
-    public static final String TOGGLE_REPLANT_SAPLINGS_OFF                                          = "com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOff";
+    public static final String TOGGLE_REPLANT_SAPLINGS_OFF                                         = "com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOff";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_COMPAT_JEI_CRAFTIN_TEACHING_UNKNOWN_RECIPE = "com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe";
     @NonNls
@@ -251,6 +262,14 @@ public final class TranslationConstants
     public static final String CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN                                = "com.minecolonies.coremod.tooFar";
     @NonNls
     public static final String GUI_TOWNHALL_CITIZEN_JOB_UNEMPLOYED                                 = "com.minecolonies.coremod.gui.townHall.citizens.unemployed";
+    @NonNls
+    public static final String LIST_REQUEST_DISPLAY_STRING                                         = "com.minecolonies.coremod.request.stacklist";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_FILLING                   = "com.minecolonies.coremod.status.fillingBarrels";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_HARVESTING                = "com.minecolonies.coremod.status.harvestingBarrels";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST                 = "entity.composter.noItems";
 
     private TranslationConstants()
     {
