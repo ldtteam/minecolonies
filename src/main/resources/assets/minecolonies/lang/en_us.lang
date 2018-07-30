@@ -547,6 +547,10 @@ com.minecolonies.coremod.tooltype.bow=Bow
 com.minecolonies.coremod.tooltype.fishingrod=Fishingrod
 com.minecolonies.coremod.tooltype.shears=Shears
 com.minecolonies.coremod.tooltype.shield=Shield
+com.minecolonies.coremod.tooltype.helmet=Helmet
+com.minecolonies.coremod.tooltype.leggings=Leggings
+com.minecolonies.coremod.tooltype.chestplate=Chest Plate
+com.minecolonies.coremod.tooltype.boots=Boots
 
 com.minecolonies.coremod.gui.citizen.requests=Open requests:
 com.minecolonies.coremod.gui.citizen.requestTitle=Requests
