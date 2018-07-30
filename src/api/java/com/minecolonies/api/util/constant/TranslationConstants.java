@@ -147,6 +147,14 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_TOOLTYPE_SHIELD                                    = "com.minecolonies.coremod.tooltype.shield";
     @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_HELMET                                    = "com.minecolonies.coremod.tooltype.helmet";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_LEGGINGS                                  = "com.minecolonies.coremod.tooltype.leggings";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_CHESTPLATE                                = "com.minecolonies.coremod.tooltype.chestplate";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_BOOTS                                     = "com.minecolonies.coremod.tooltype.boots";
+    @NonNls
     public static final String COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME                            = "com.minecolonies.coremod.buildings.warehouse.name";
     @NonNls
     public static final String COM_MINECOLONIES_CLIPBOARD_NEED_COLONY                              = "com.minecolonies.coremod.item.clipboard.needColony";
