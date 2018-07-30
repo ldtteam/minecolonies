@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
  * Datas about the happiness level
  */
 
-public class HappinessData implements IMessage
+public class HappinessData 
 {
     /**
     *  TAGS for string pointer for the NBT field data.
@@ -164,7 +164,6 @@ public class HappinessData implements IMessage
      * {@inheritDoc}
      * @param byteBuf
      */
-    @Override
     public void fromBytes(final ByteBuf byteBuf)
     {
         this.guards = byteBuf.readInt();
@@ -190,7 +189,6 @@ public class HappinessData implements IMessage
      * {@inheritDoc}
      * @param byteBuf
      */
-    @Override
     public void toBytes(final ByteBuf byteBuf)
     {
         byteBuf.writeInt(guards);
