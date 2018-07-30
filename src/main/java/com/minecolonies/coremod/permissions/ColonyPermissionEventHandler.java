@@ -191,7 +191,7 @@ public class ColonyPermissionEventHandler
                 return;
             }
 
-            if (event.getState().getBlock() == ModBlocks.blockHutTownHall && !validTownHallBreak)
+            if (event.getState().getBlock() == ModBlocks.blockHutTownHall && !validTownHallBreak && !event.getPlayer().capabilities.isCreativeMode)
             {
                 cancelEvent(event, event.getPlayer(), colony, Action.BREAK_HUTS, event.getPos());
                 return;
