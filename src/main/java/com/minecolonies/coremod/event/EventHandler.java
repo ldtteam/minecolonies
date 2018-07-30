@@ -253,30 +253,7 @@ public class EventHandler
     @SubscribeEvent
     public void onBlockBreak(@NotNull final BlockEvent.BreakEvent event)
     {
-        final World world = event.getWorld();
-
-        if (!world.isRemote && event.getState().getBlock() instanceof AbstractBlockHut)
-        {
-            @Nullable final AbstractBuilding building = ColonyManager.getBuilding(world, event.getPos());
-            if (building == null)
-            {
-                return;
-            }
-
-            if (!building.getColony().getPermissions().hasPermission(event.getPlayer(), Action.BREAK_HUTS))
-            {
-                event.setCanceled(true);
-                return;
-            }
-            building.destroy();
-
-            if (Configurations.gameplay.pvp_mode && building instanceof BuildingTownHall)
-            {
-                ColonyManager.deleteColony(building.getColony().getID(), false);
-            }
-        }
-
-        if (event.getPlayer() instanceof EntityPlayer && event.getPlayer().getHeldItem(EnumHand.MAIN_HAND).getItem() == ModItems.scanTool)
+        if (event.getPlayer() != null && event.getPlayer().getHeldItem(EnumHand.MAIN_HAND).getItem() == ModItems.scanTool)
         {
             final ItemStack itemstack = event.getPlayer().getHeldItem(EnumHand.MAIN_HAND);
             if (!itemstack.hasTagCompound())

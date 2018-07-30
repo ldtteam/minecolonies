@@ -28,7 +28,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     /**
      * Hardness for townhall block in pvp mode.
      */
-    public static final float PVP_MODE_HARDNESS = 100F;
+    public static final float PVP_MODE_HARDNESS = 200F;
 
     public BlockHutTownHall()
     {
@@ -44,14 +44,6 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     public String getName()
     {
         return "blockHutTownHall";
-    }
-
-    @Override
-    public void onBlockClicked(final World worldIn, final BlockPos pos, final EntityPlayer playerIn)
-    {
-        //todo message player about event.
-        Log.getLogger().warn("Clicked");
-        super.onBlockClicked(worldIn, pos, playerIn);
     }
 
     @Override
