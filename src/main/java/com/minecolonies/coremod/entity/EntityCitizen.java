@@ -12,10 +12,7 @@ import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
@@ -320,8 +317,13 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 return false;
             }
-            final Permissions permission = ((EntityCitizen) sourceEntity).citizenColonyHandler.getColony().getPermissions();
-            citizenColonyHandler.getColony().getPermissions().addPlayer(permission.getOwner(), permission.getOwnerName(), Rank.HOSTILE);
+
+            final Colony attackerColony = ((EntityCitizen) sourceEntity).citizenColonyHandler.getColony();
+            if (attackerColony != null &&  citizenColonyHandler.getColony() != null)
+            {
+                final Permissions permission = attackerColony.getPermissions();
+                citizenColonyHandler.getColony().getPermissions().addPlayer(permission.getOwner(), permission.getOwnerName(), Rank.HOSTILE);
+            }
         }
         setLastAttackedEntity(damageSource.getTrueSource());
         final boolean result = super.attackEntityFrom(damageSource, damage);
