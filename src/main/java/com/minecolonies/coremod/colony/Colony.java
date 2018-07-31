@@ -281,6 +281,7 @@ public class Colony implements IColony
             this.colonyTeamColor = colonyColor;
             this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id).setColor(colonyColor);
             this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id).setPrefix(colonyColor.toString());
+            this.markDirty();
         }
     }
 

@@ -37,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -210,23 +211,27 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     {
         registerButton(BUTTON_PREVIOUS_COLOR_ID, this::previousStyle);
         registerButton(BUTTON_NEXT_COLOR_ID, this::nextStyle);
+        findPaneOfTypeByID(DROPDOWN_COLOR_ID, DropDownList.class).setEnabled(enabled);
         colorDropDownList = findPaneOfTypeByID(DROPDOWN_COLOR_ID, DropDownList.class);
 
         colorDropDownList.setHandler(this::onDropDownListChanged);
+
+        final List<TextFormatting> textColors = Arrays.stream(TextFormatting.values()).filter(TextFormatting::isColor).collect(Collectors.toList());
+
         colorDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
             @Override
             public int getElementCount()
             {
-                return TextFormatting.values().length;
+                return textColors.size();
             }
 
             @Override
             public String getLabel(final int index)
             {
-                if (index >= 0 && index < TextFormatting.values().length)
+                if (index >= 0 && index < textColors.size())
                 {
-                    return TextFormatting.values()[index].getFriendlyName();
+                    return textColors.get(index).getFriendlyName();
                 }
                 return "";
             }
@@ -239,7 +244,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void onDropDownListChanged(final DropDownList dropDownList)
     {
-        colorDropDownList.setSelectedIndex(townHall.getColony().getTeamColonyColor().ordinal());
         MineColonies.getNetwork().sendToServer(new TeamColonyColorChangeMessage(dropDownList.getSelectedIndex(), townHall));
     }
 

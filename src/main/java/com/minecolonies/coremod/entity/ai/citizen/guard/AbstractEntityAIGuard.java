@@ -52,6 +52,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
 import static com.minecolonies.coremod.entity.ai.citizen.guard.GuardConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -304,16 +305,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     protected AIState decide()
     {
-        worker.addPotionEffect(new PotionEffect(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER));
-
-        if (this.world.getScoreboard().getTeam("teamcolony1") == null)
-        {
-
-
-            this.world.getScoreboard().addPlayerToTeam(worker.getName(), "teamcolony1");
-            this.world.getScoreboard().addPlayerToTeam("ray", "teamcolony1");
-        }
-
         setDelay(Constants.TICKS_SECOND);
         for (final ToolType toolType : toolsNeeded)
         {
@@ -359,6 +350,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     worker.isWorkerAtSiteWithMove(guardBuilding.getGuardPos(), GUARD_POS_RANGE);
                     break;
                 case FOLLOW:
+                    worker.addPotionEffect(new PotionEffect(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER));
+                    this.world.getScoreboard().addPlayerToTeam(worker.getName(), TEAM_COLONY_NAME + worker.getCitizenColonyHandler().getColonyId());
                     worker.isWorkerAtSiteWithMove(guardBuilding.getPlayerToFollow(), GUARD_POS_RANGE);
                     break;
                 default:
@@ -501,7 +494,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     protected AIState attackPhysical()
     {
-
         if (worker.getRevengeTarget() != null
               && !worker.getRevengeTarget().isDead
               && worker.getDistance(worker.getRevengeTarget()) < getAttackRange())

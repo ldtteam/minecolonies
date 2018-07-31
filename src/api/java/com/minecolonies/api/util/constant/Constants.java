@@ -133,6 +133,8 @@ public final class Constants
     public static final int GLOW_EFFECT_MULTIPLIER = 20;
     public static final int GLOW_EFFECT_DISTANCE   = 60;
 
+    public static final int GLOW_EFFECT_DURATION_TEAM   = 20*60*10;
+
     /**
      * Private constructor to hide implicit public one.
      */
