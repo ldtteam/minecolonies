@@ -978,6 +978,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         public void setTask(final GuardTask task)
         {
             this.task = task;
+            this.getColony().markDirty();
         }
 
         public GuardTask getTask()
