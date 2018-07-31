@@ -12,6 +12,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.*;
+import com.minecolonies.blockout.views.DropDownList;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
@@ -97,6 +98,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private final Map<String, String> tabsToPages = new HashMap<>();
 
     /**
+     * Drop down list for style.
+     */
+    private DropDownList colorDropDownList;
+
+    /**
      * The button f the last tab -> will be filled later on.
      */
     private Button lastTabButton;
@@ -144,6 +150,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         alliesList = findPaneOfTypeByID(LIST_ALLIES, ScrollingList.class);
         feudsList = findPaneOfTypeByID(LIST_FEUDS, ScrollingList.class);
 
+        initColorPicker();
         updateUsers();
         updateCitizens();
         updateWorkOrders();
@@ -193,6 +200,63 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         }
         findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setVisible(false);
         findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(false);
+        colorDropDownList.setSelectedIndex(townHall.getColony().getTeamColonyColor().ordinal());
+    }
+
+    /**
+     * Initialise the previous/next and drop down list for style.
+     */
+    private void initColorPicker()
+    {
+        registerButton(BUTTON_PREVIOUS_COLOR_ID, this::previousStyle);
+        registerButton(BUTTON_NEXT_COLOR_ID, this::nextStyle);
+        colorDropDownList = findPaneOfTypeByID(DROPDOWN_COLOR_ID, DropDownList.class);
+
+        colorDropDownList.setHandler(this::onDropDownListChanged);
+        colorDropDownList.setDataProvider(new DropDownList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return TextFormatting.values().length;
+            }
+
+            @Override
+            public String getLabel(final int index)
+            {
+                if (index >= 0 && index < TextFormatting.values().length)
+                {
+                    return TextFormatting.values()[index].getFriendlyName();
+                }
+                return "";
+            }
+        });
+    }
+
+    /**
+     * Called when the dropdownList changed.
+     * @param dropDownList the list.
+     */
+    private void onDropDownListChanged(final DropDownList dropDownList)
+    {
+        colorDropDownList.setSelectedIndex(townHall.getColony().getTeamColonyColor().ordinal());
+        MineColonies.getNetwork().sendToServer(new TeamColonyColorChangeMessage(dropDownList.getSelectedIndex(), townHall));
+    }
+
+    /**
+     * Change to the next style.
+     */
+    private void nextStyle()
+    {
+        colorDropDownList.selectNext();
+    }
+
+    /**
+     * Change to the previous style.
+     */
+    private void previousStyle()
+    {
+        colorDropDownList.selectPrevious();
     }
 
     /**

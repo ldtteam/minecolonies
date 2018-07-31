@@ -293,6 +293,11 @@ public final class NbtTagConstants
     public static final String TAG_MAIN = "main";
 
     /**
+     * Tag used to store the team color of the colony.
+     */
+    public static final String TAG_TEAM_COLOR = "teamcolor";
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private NbtTagConstants()

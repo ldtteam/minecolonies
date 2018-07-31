@@ -208,6 +208,11 @@ public class Colony implements IColony
     private final HappinessData happinessData = new HappinessData();
 
     /**
+     * The colony team color.
+     */
+    private TextFormatting colonyTeamColor = TextFormatting.WHITE;
+
+    /**
      * Constructor for a newly created Colony.
      *
      * @param id The id of the colony to create.
@@ -236,9 +241,12 @@ public class Colony implements IColony
         this.dimensionId = world.provider.getDimension();
         this.world = world;
         this.permissions = new Permissions(this);
-        this.world.getScoreboard().createTeam(TEAM_COLONY_NAME + id);
-        this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id).setAllowFriendlyFire(false);
-        this.setColonyColor(TextFormatting.WHITE);
+
+        if (this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id) == null)
+        {
+            this.world.getScoreboard().createTeam(TEAM_COLONY_NAME + id);
+            this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id).setAllowFriendlyFire(false);
+        }
 
         // Register a new event handler
         eventHandler = new ColonyPermissionEventHandler(this);
@@ -270,6 +278,7 @@ public class Colony implements IColony
     {
         if (this.world != null)
         {
+            this.colonyTeamColor = colonyColor;
             this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id).setColor(colonyColor);
             this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id).setPrefix(colonyColor.toString());
         }
@@ -404,6 +413,11 @@ public class Colony implements IColony
             this.canColonyBeAutoDeleted = true;
         }
 
+        if (compound.hasKey(TAG_TEAM_COLOR))
+        {
+            this.setColonyColor(TextFormatting.values()[compound.getInteger(TAG_TEAM_COLOR)]);
+        }
+
         this.colonyTag = compound;
     }
 
@@ -491,7 +505,7 @@ public class Colony implements IColony
         compound.setString(TAG_STYLE, style);
         compound.setBoolean(TAG_RAIDABLE, barbarianManager.canHaveBarbEvents());
         compound.setBoolean(TAG_AUTO_DELETE, canColonyBeAutoDeleted);
-
+        compound.setInteger(TAG_TEAM_COLOR, colonyTeamColor.ordinal());
         this.colonyTag = compound;
     }
 
@@ -1292,5 +1306,14 @@ public class Colony implements IColony
         }
 
         return AttackingPlayer.isValidAttack(entity, this);
+    }
+
+    /**
+     * Getter for the colony team color.
+     * @return the TextFormatting enum color.
+     */
+    public TextFormatting getTeamColonyColor()
+    {
+        return colonyTeamColor;
     }
 }
