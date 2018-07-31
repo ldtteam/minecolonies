@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
@@ -311,9 +310,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             }
         }
 
-        if (!(worker.getLastAttackedEntity() != null
-              && !worker.getLastAttackedEntity().isDead)
-              && getOwnBuilding(AbstractBuildingGuards.class) != null
+        if (getOwnBuilding(AbstractBuildingGuards.class) != null
               && target == null)
         {
             if (worker.getLastAttackedEntity() != null && !worker.getLastAttackedEntity().isDead)
@@ -327,6 +324,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 return DECIDE;
             }
 
+            final AbstractBuildingGuards guardBuilding = getOwnBuilding();
             switch (guardBuilding.getTask())
             {
                 case PATROL:
