@@ -10,7 +10,6 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Suppression;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.managers.*;
@@ -32,7 +31,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -237,6 +236,9 @@ public class Colony implements IColony
         this.dimensionId = world.provider.getDimension();
         this.world = world;
         this.permissions = new Permissions(this);
+        this.world.getScoreboard().createTeam(TEAM_COLONY_NAME + id);
+        this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id).setAllowFriendlyFire(false);
+        this.setColonyColor(TextFormatting.WHITE);
 
         // Register a new event handler
         eventHandler = new ColonyPermissionEventHandler(this);
@@ -257,6 +259,19 @@ public class Colony implements IColony
             {
                 freeBlocks.add(block);
             }
+        }
+    }
+
+    /**
+     * Set up the colony color for team handling for pvp.
+     * @param colonyColor the colony color.
+     */
+    public void setColonyColor(final TextFormatting colonyColor)
+    {
+        if (this.world != null)
+        {
+            this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id).setColor(colonyColor);
+            this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id).setPrefix(colonyColor.toString());
         }
     }
 

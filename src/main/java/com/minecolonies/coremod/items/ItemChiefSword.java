@@ -9,26 +9,19 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
+import static com.minecolonies.api.util.constant.Constants.*;
+
 /**
  * Class handling the Chief Sword item.
  */
 public class ItemChiefSword extends ItemSword
 {
-    private static final String ITEM_NAME         = "chiefsword";
-    private static final Potion LEVITATION_EFFECT = Potion.getPotionById(25);
-    private static final Potion GLOW_EFFECT       = Potion.getPotionById(24);
-
-    private static final int GLOW_EFFECT_DURATION   = 20*30;
-    private static final int GLOW_EFFECT_MULTIPLIER = 20;
-    private static final int GLOW_EFFECT_DISTANCE   = 60;
-
     private static final int LEVITATION_EFFECT_DURATION   = 20*10;
     private static final int LEVITATION_EFFECT_MULTIPLIER = 3;
 

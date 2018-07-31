@@ -1,5 +1,7 @@
 package com.minecolonies.api.util.constant;
 
+import net.minecraft.potion.Potion;
+
 /**
  * Some constants needed for the whole mod.
  */
@@ -122,6 +124,14 @@ public final class Constants
      * Slots per line.
      */
     public static final int SLOT_PER_LINE = 9;
+
+    public static final String ITEM_NAME         = "chiefsword";
+    public static final Potion LEVITATION_EFFECT = Potion.getPotionById(25);
+    public static final Potion GLOW_EFFECT       = Potion.getPotionById(24);
+
+    public static final int GLOW_EFFECT_DURATION   = 20*30;
+    public static final int GLOW_EFFECT_MULTIPLIER = 20;
+    public static final int GLOW_EFFECT_DISTANCE   = 60;
 
     /**
      * Private constructor to hide implicit public one.
