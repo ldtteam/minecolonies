@@ -313,9 +313,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         if (getOwnBuilding(AbstractBuildingGuards.class) != null
               && target == null)
         {
+            final AbstractBuildingGuards guardBuilding = getOwnBuilding();
             if (worker.getLastAttackedEntity() != null && !worker.getLastAttackedEntity().isDead)
             {
-                if (worker.getDistance(worker.getLastAttackedEntity()) > getAttackRange() * 5 && !worker.canEntityBeSeen(worker.getLastAttackedEntity()))
+                if ((worker.getDistance(worker.getLastAttackedEntity()) > getAttackRange() * 5 && !worker.canEntityBeSeen(worker.getLastAttackedEntity())) || (guardBuilding.getTask() == GuardTask.FOLLOW && worker.getLastAttackedEntity().equals(guardBuilding.getFollowPlayer())))
                 {
                     worker.setLastAttackedEntity(null);
                     return DECIDE;
@@ -324,7 +325,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 return DECIDE;
             }
 
-            final AbstractBuildingGuards guardBuilding = getOwnBuilding();
+
             switch (guardBuilding.getTask())
             {
                 case PATROL:
@@ -361,8 +362,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
             target = null;
         }
+        else if (target != null && (worker.getDistance(worker.getLastAttackedEntity()) > getAttackRange() * 5 && !worker.canEntityBeSeen(worker.getLastAttackedEntity())))
+        {
+            target = null;
+        }
 
-        return START_WORKING;
+
+        return PREPARING;
     }
 
     /**
@@ -486,6 +492,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         if (target == null || target.isDead)
         {
             worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
+            return DECIDE;
+        }
+        else if (worker.getDistance(worker.getLastAttackedEntity()) > getAttackRange() * 5 && !worker.canEntityBeSeen(worker.getLastAttackedEntity()))
+        {
+            target = null;
             return DECIDE;
         }
 
