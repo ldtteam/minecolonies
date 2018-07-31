@@ -76,7 +76,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     {
         final AIState superState = super.decide();
 
-        if (superState != DECIDE || target == null)
+        if ((superState != DECIDE && superState != PREPARING) || target == null)
         {
             return superState;
         }
