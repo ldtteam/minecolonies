@@ -362,7 +362,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
             target = null;
         }
-        else if (target != null && (worker.getDistance(worker.getLastAttackedEntity()) > getAttackRange() * 5 && !worker.canEntityBeSeen(worker.getLastAttackedEntity())))
+        else if (target != null && (worker.getDistance(target) > getAttackRange() * 5 && !worker.canEntityBeSeen(target)))
         {
             target = null;
         }
@@ -494,7 +494,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
             return DECIDE;
         }
-        else if (worker.getDistance(worker.getLastAttackedEntity()) > getAttackRange() * 5 && !worker.canEntityBeSeen(worker.getLastAttackedEntity()))
+        else if (worker.getDistance(target) > getAttackRange() * 5 && !worker.canEntityBeSeen(target))
         {
             target = null;
             return DECIDE;
