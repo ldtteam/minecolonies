@@ -8,6 +8,6 @@ public class BlockHutFlorist extends AbstractBlockHut<BlockHutFlorist>
     @Override
     public String getName()
     {
-        return null;
+        return "blockHutFlorist";
     }
 }

@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.blocks.types.CompostedDirtType;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
 import net.minecraft.block.ITileEntityProvider;
@@ -32,9 +31,6 @@ import javax.annotation.Nullable;
  */
 public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockCompostedDirt> implements ITileEntityProvider
 {
-
-    public static final PropertyEnum<CompostedDirtType> VARIANT = PropertyEnum.create("variant", CompostedDirtType.class);
-
     private static final String BLOCK_NAME = "composted_dirt";
 
     private static final float BLOCK_HARDNESS = 5f;
@@ -46,7 +42,6 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
     public BlockCompostedDirt()
     {
         super(Material.GROUND);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, CompostedDirtType.NOT_COMPOSTED));
         this.initBlock();
     }
 
@@ -72,7 +67,10 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
       final float hitZ)
     {
 
-        playerIn.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.composted_dirt.player_use_message"));
+        if(!worldIn.isRemote)
+        {
+            playerIn.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.composted_dirt.player_use_message"));
+        }
 
         return true;
     }
@@ -87,13 +85,6 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
     public boolean isOpaqueCube(final IBlockState state)
     {
         return false;
-    }
-
-    @NotNull
-    @Override
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, VARIANT);
     }
 
     @Override
@@ -126,14 +117,7 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
     @Override
     public IBlockState getActualState(final IBlockState state, final IBlockAccess worldIn, final BlockPos pos)
     {
-        final TileEntity entity = worldIn.getTileEntity(pos);
-
-        if (!(entity instanceof TileEntityCompostedDirt))
-        {
-            return super.getActualState(state, worldIn, pos);
-        }
-
-        return getStateFromTileEntity((TileEntityCompostedDirt) entity);
+        return super.getActualState(state, worldIn, pos);
     }
 
     @Override
@@ -146,13 +130,6 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
     public boolean isFullCube(final IBlockState state)
     {
         return true;
-    }
-
-    private IBlockState getStateFromTileEntity(TileEntityCompostedDirt entity)
-    {
-
-        //Todo: calculate state from the te values
-        return null;
     }
 
 }

@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "particle": "minecolonies:blocks/barrel_block/compost",
+    "down": "minecolonies:blocks/barrel_block/compost",
+    "up": "minecolonies:blocks/barrel_block/compost",
+    "north": "minecolonies:blocks/barrel_block/compost",
+    "east": "minecolonies:blocks/barrel_block/compost",
+    "south": "minecolonies:blocks/barrel_block/compost",
+    "west": "minecolonies:blocks/barrel_block/compost"
+  }
+}
