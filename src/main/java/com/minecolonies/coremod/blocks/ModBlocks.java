@@ -63,6 +63,7 @@ public final class ModBlocks
     public static        BlockCactusStair               blockCactusStair;
     public static        BlockCactusSlabHalf            blockCactusSlabHalf;
     public static        BlockCactusSlabDouble          blockCactusSlabDouble;
+    public static        BlockHutComposter              blockHutComposter;
 
     /**
      * Utility blocks.
@@ -155,6 +156,7 @@ public final class ModBlocks
         blockShingleSlab = new BlockShingleSlab().registerBlock(registry);
         multiBlock = new MultiBlock().registerBlock(registry);
         blockBarrel = new BlockBarrel().registerBlock(registry);
+        blockHutComposter = new BlockHutComposter().registerBlock(registry);
 
         for (final BlockPlanks.EnumType type : BlockPlanks.EnumType.values())
         {
@@ -210,6 +212,7 @@ public final class ModBlocks
         blockCactusStair.registerItemBlock(registry);
         registry.register(new ItemSlab(blockCactusSlabHalf, blockCactusSlabHalf, blockCactusSlabDouble).setRegistryName(blockCactusSlabHalf.getRegistryName()));
         blockBarrel.registerItemBlock(registry);
+        blockHutComposter.registerItemBlock(registry);
 
         for (final BlockTimberFrame frame: timberFrames)
         {

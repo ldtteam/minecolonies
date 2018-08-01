@@ -1,24 +1,25 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "XTX",
-    "XBX",
-    "XXX"
+    "WTW",
+    "WGW",
+    "WWW"
   ],
   "key": {
-    "X": {
+    "W": {
       "type": "forge:ore_dict",
       "ore": "plankWood"
     },
-    "B": {
-      "item": "minecraft:bow"
+    "G": {
+      "item": "minecolonies:barrel_block",
+      "data": 0
     },
-    "T": {
+    "T":
+    {
       "item": "minecolonies:sceptergold"
     }
   },
   "result": {
-    "item": "minecolonies:BlockHutGuardTower",
-    "count": 2
+    "item": "minecolonies:blockhutcomposter"
   }
 }

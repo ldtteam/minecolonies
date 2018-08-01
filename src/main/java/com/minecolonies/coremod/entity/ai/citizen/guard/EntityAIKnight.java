@@ -2,14 +2,12 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobKnight;
-import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard.GuardItemsNeeded;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -38,16 +36,14 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     {
         super(job);
         toolsNeeded.add(ToolType.SWORD);
-        final List<GuardItemsNeeded> itemlvl1Needed = new ArrayList<>();
-        itemlvl1Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.MAINHAND,  Items.SHIELD, 1, 4, 99));
-        itemsNeeded.put(Integer.valueOf(1), itemlvl1Needed);
+        final GuardItemsNeeded itemlvl1Needed = new GuardItemsNeeded(ToolType.SHIELD, EntityEquipmentSlot.MAINHAND, 0, 0, 1, 4, 99);
+        itemsNeeded.get(1).add(itemlvl1Needed);
 
-        final List<GuardItemsNeeded> itemlvl2Needed = new ArrayList<>();
-        itemlvl2Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.MAINHAND,  Items.SHIELD, 1, 1, 99));
-        itemsNeeded.put(Integer.valueOf(2), itemlvl2Needed);
-        itemsNeeded.put(Integer.valueOf(3), itemlvl2Needed);
-        itemsNeeded.put(Integer.valueOf(4), itemlvl2Needed);
-        itemsNeeded.put(Integer.valueOf(5), itemlvl2Needed);
+        final GuardItemsNeeded itemlvl2Needed = new GuardItemsNeeded(ToolType.SHIELD, EntityEquipmentSlot.MAINHAND, 0,0 , 1, 1, 99);
+        itemsNeeded.get(2).add(itemlvl2Needed);
+        itemsNeeded.get(3).add(itemlvl2Needed);
+        itemsNeeded.get(4).add(itemlvl2Needed);
+        itemsNeeded.get(5).add(itemlvl2Needed);
     }
 
     @Override
@@ -80,7 +76,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     {
         final AIState superState = super.decide();
 
-        if (superState != DECIDE || target == null)
+        if ((superState != DECIDE && superState != PREPARING) || target == null)
         {
             return superState;
         }

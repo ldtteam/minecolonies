@@ -1,6 +1,9 @@
 package com.minecolonies.coremod.entity.ai.mobs.barbarians;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.constant.Constants;
+
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -14,7 +17,7 @@ import net.minecraft.util.math.MathHelper;
  */
 public class EntityAIAttackArcher extends EntityAIBase
 {
-    private static final int    CYCLES_TO_WAIT                 = 32;
+    private static final int    CYCLES_TO_WAIT                 = 200;
     private static final double PITCH_MULTIPLIER               = 0.4;
     private static final double HALF_ROTATION                  = 180;
     private static final double ATTACK_SPEED                   = 1.3;
@@ -102,13 +105,23 @@ public class EntityAIAttackArcher extends EntityAIBase
             CompatibilityUtils.spawnEntity(CompatibilityUtils.getWorld(entity), arrowEntity);
             entity.swingArm(EnumHand.MAIN_HAND);
             entity.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) 1.0D, (float) getRandomPitch());
-            lastAttack = CYCLES_TO_WAIT;
+            lastAttack = getAttackDelay();
         }
 
         if (lastAttack > 0)
         {
             lastAttack -= 1;
         }
+    }
+
+    /**
+     * Gets the delay time for a next attack by the barbarian.
+     *
+     * @return the reload time
+     */
+    protected int getAttackDelay()
+    {
+        return CYCLES_TO_WAIT / Math.max(1, (int) ((Constants.MAX_BARBARIAN_DIFFICULTY - Configurations.gameplay.barbarianHordeDifficulty) * 0.1));
     }
 
     /**

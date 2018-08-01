@@ -38,7 +38,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     {
         final AIState superState = super.decide();
 
-        if (superState != DECIDE || target == null)
+        if ((superState != DECIDE && superState != PREPARING) || target == null)
         {
             return superState;
         }
