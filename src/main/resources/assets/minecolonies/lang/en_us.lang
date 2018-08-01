@@ -737,3 +737,6 @@ entity.barrel.working=The barrel is working!
 
 com.minecolonies.coremod.status.fillingBarrels=Filling the barrels
 com.minecolonies.coremod.status.harvestingBarrels=Harvesting the barrels
+
+tile.minecolonies.composted_dirt.name=Composted Dirt
+com.minecolonies.coremod.composted_dirt.player_use_message=This block can be only used by the Florist worker!
