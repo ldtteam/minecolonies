@@ -113,7 +113,7 @@ public class StructureName
     }
 
     /**
-     * get the hut name.
+     * Get the hut name.
      * such as Builder, Citizen, ...
      *
      * @return the name of the hut.
@@ -145,7 +145,7 @@ public class StructureName
     }
 
     /**
-     * get the style for the schematic.
+     * Get the style for the schematic.
      *
      * @return the style of the schematic.
      */
@@ -188,7 +188,7 @@ public class StructureName
     }
 
     /**
-     * Whether the schematic is a huit or not.
+     * Whether the schematic is a hit or not.
      * This is done using the naming convention only, should start by huts/
      * and a minecolonies block name should exist.
      *
