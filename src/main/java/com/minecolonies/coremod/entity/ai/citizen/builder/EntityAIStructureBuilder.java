@@ -41,12 +41,22 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     /**
      * At this y level the builder will be slower.
      */
+    private static final int DEPTH_LEVEL_0 = 60;
+
+    /**
+     * At this y level the builder will be slower.
+     */
     private static final int DEPTH_LEVEL_1 = 30;
 
     /**
      * At this y level the builder will be way slower..
      */
     private static final int DEPTH_LEVEL_2 = 15;
+
+    /**
+     * Speed buff at 0 depth level.
+     */
+    private static final double SPEED_BUFF_0 = 0.5;
 
     /**
      * Speed buff at first depth level.
@@ -221,6 +231,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     public int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
     {
         final int initialDelay = super.getBlockMiningDelay(block, pos);
+
+        if (pos.getY() > DEPTH_LEVEL_0)
+        {
+            return (int) (initialDelay * SPEED_BUFF_0);
+        }
 
         if (pos.getY() > DEPTH_LEVEL_1)
         {
