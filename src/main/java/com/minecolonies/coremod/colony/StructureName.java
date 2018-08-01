@@ -188,7 +188,7 @@ public class StructureName
     }
 
     /**
-     * Whether the schematic is a hit or not.
+     * Whether the schematic is a hut or not.
      * This is done using the naming convention only, should start by huts/
      * and a minecolonies block name should exist.
      *
