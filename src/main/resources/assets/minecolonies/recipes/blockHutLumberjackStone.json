@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "XTX",
-    "XBX",
+    "XAX",
     "XXX"
   ],
   "key": {
@@ -10,15 +10,15 @@
       "type": "forge:ore_dict",
       "ore": "plankWood"
     },
-    "B": {
-      "item": "minecraft:bow"
+    "A": {
+      "item": "minecraft:stone_axe"
     },
     "T": {
       "item": "minecolonies:sceptergold"
     }
   },
   "result": {
-    "item": "minecolonies:BlockHutGuardTower",
+    "item": "minecolonies:blockhutlumberjack",
     "count": 2
   }
 }
