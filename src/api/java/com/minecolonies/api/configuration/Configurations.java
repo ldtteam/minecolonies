@@ -81,9 +81,13 @@ public class Configurations
         @Config.Comment("The difficulty setting for barbarians")
         public int barbarianHordeDifficulty = 5;
 
+        @Config.RangeInt(min = (MIN_SPAWN_BARBARIAN_HORDE_SIZE), max = MAX_SPAWN_BARBARIAN_HORDE_SIZE)
+        @Config.Comment("The spawn size of a barbarian horde")
+        public int spawnBarbarianSize = 5;
+
         @Config.RangeInt(min = (MIN_BARBARIAN_HORDE_SIZE), max = MAX_BARBARIAN_HORDE_SIZE)
         @Config.Comment("The max size of a barbarian horde")
-        public int maxBarbarianHordeSize = 40;
+        public int maxBarbarianSize = 20;
 
         @Config.Comment("The average amount of nights between raids")
         public int averageNumberOfNightsBetweenRaids = 3;

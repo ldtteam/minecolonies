@@ -28,8 +28,10 @@ public final class Constants
     public static final int    TICKS_SECOND                     = 20;
     public static final int    SECONDS_A_MINUTE                 = 60;
     public static final int    STACKSIZE                        = 64;
-    public static final int    MAX_BARBARIAN_HORDE_SIZE         = 60;
-    public static final int    MIN_BARBARIAN_HORDE_SIZE         = 5;
+    public static final int    MAX_BARBARIAN_HORDE_SIZE         = 40;
+    public static final int    MIN_BARBARIAN_HORDE_SIZE         = 6;
+    public static final int    MAX_SPAWN_BARBARIAN_HORDE_SIZE   = 10;
+    public static final int    MIN_SPAWN_BARBARIAN_HORDE_SIZE   = 1;
     public static final int    MAX_BARBARIAN_DIFFICULTY         = 10;
     public static final int    MIN_BARBARIAN_DIFFICULTY         = 0;
     public static final int    ENTITY_TRACKING_RANGE            = 256;

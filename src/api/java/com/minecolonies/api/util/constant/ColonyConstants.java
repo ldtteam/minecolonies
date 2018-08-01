@@ -49,12 +49,7 @@ public final class ColonyConstants
      * Saturation at which a citizen starts being happy.
      */
     public static final int WELL_SATURATED_LIMIT = 5;
-
-    /**
-     * Average happiness of a citizen.
-     */
-    public static final double AVERAGE_HAPPINESS = 5.0;
-
+    
     /**
      * Max overall happiness.
      */
@@ -101,14 +96,8 @@ public final class ColonyConstants
     public static final ResourceLocation BARBARIAN                    = new ResourceLocation(Constants.MOD_ID, "Barbarian");
     public static final ResourceLocation ARCHER                       = new ResourceLocation(Constants.MOD_ID, "ArcherBarbarian");
     public static final ResourceLocation CHIEF                        = new ResourceLocation(Constants.MOD_ID, "ChiefBarbarian");
-    public static final int              MAX_SIZE                     = Configurations.gameplay.maxBarbarianHordeSize; 
-    public static final double           BARBARIANS_MULTIPLIER        = 0.5; 
-    public static final double           ARCHER_BARBARIANS_MULTIPLIER = 0.25; 
+    public static final double           ARCHER_BARBARIANS_MULTIPLIER = 0.30;
     public static final double           CHIEF_BARBARIANS_MULTIPLIER  = 0.1;
-    public static final int              PREFERRED_MAX_HORDE_SIZE     = 40;
-    public static final int              PREFERRED_MAX_BARBARIANS     = 22;
-    public static final int              PREFERRED_MAX_ARCHERS        = 16;
-    public static final int              PREFERRED_MAX_CHIEFS         = 2;
     public static final int              MIN_CITIZENS_FOR_RAID        = 5;
     public static final int              NUMBER_OF_CITIZENS_NEEDED    = 5;
     /**
