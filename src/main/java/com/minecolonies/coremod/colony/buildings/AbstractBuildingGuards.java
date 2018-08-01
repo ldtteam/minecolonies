@@ -691,6 +691,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             return followPlayer.getPosition();
         }
         task = GuardTask.GUARD;
+        markDirty();
         return this.getLocation();
     }
 
