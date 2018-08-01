@@ -109,7 +109,7 @@ public class AttackingPlayer
             return true;
         }
 
-        return guardColony.getPermissions().getRank(colony.getPermissions().getOwner()) == Rank.HOSTILE && MobEventsUtils.getColonyRaidLevel(guardColony) < MobEventsUtils.getColonyRaidLevel(colony) * 2;
+        return guardColony.getPermissions().getRank(colony.getPermissions().getOwner()) == Rank.HOSTILE && MobEventsUtils.getColonyRaidLevel(guardColony) <= MobEventsUtils.getColonyRaidLevel(colony) * 2;
     }
 
     /**

@@ -453,12 +453,18 @@ public class ColonyPermissionEventHandler
               && colony.isCoordInColony(player.getEntityWorld(), positionToCheck)
               && !colony.getPermissions().hasPermission(player, action))
         {
-            if (Configurations.gameplay.pvp_mode && colony.isValidAttackingPlayer(playerIn))
+            if (Configurations.gameplay.pvp_mode)
             {
-                return false;
+                if (!world.isRemote && colony.isValidAttackingPlayer(playerIn))
+                {
+                    return false;
+                }
             }
-            cancelEvent(event, player, colony, action, positionToCheck);
-            return true;
+            else
+            {
+                cancelEvent(event, player, colony, action, positionToCheck);
+                return true;
+            }
         }
         return false;
     }
