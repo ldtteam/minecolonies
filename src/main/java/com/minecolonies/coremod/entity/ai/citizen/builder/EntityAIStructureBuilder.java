@@ -39,7 +39,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     private static final int STRENGTH_MULTIPLIER = 1;
 
     /**
-     * At this y level the builder will be slower.
+     * over this y level the builder will be faster.
      */
     private static final int DEPTH_LEVEL_0 = 60;
 
