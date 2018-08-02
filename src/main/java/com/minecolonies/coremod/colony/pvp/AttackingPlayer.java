@@ -115,11 +115,11 @@ public class AttackingPlayer
     /**
      * Refreshes the list and checks if all are still alive.
      */
-    public void refreshList()
+    public void refreshList(final Colony colony)
     {
         for (final EntityCitizen citizen : new ArrayList<>(guards))
         {
-            if (citizen.isDead)
+            if (citizen.isDead || !colony.isCoordInColony(colony.getWorld(), citizen.getPosition()))
             {
                 guards.remove(citizen);
             }
