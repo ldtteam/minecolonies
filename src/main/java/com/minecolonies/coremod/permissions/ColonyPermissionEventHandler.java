@@ -283,8 +283,9 @@ public class ColonyPermissionEventHandler
               && !(event instanceof PlayerInteractEvent.EntityInteract || event instanceof PlayerInteractEvent.EntityInteractSpecific))
         {
             final Block block = event.getWorld().getBlockState(event.getPos()).getBlock();
+
             // Huts
-            if (block instanceof AbstractBlockHut
+            if (event instanceof PlayerInteractEvent.RightClickBlock && block instanceof AbstractBlockHut
                   && !colony.getPermissions().hasPermission(event.getEntityPlayer(), Action.ACCESS_HUTS))
             {
                 cancelEvent(event, event.getEntityPlayer(), colony, Action.ACCESS_HUTS, event.getPos());
@@ -389,30 +390,31 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final PlayerEvent.BreakSpeed event)
     {
-        if (Configurations.gameplay.pvp_mode && event.getState().getBlock() == ModBlocks.blockHutTownHall && event.getEntityPlayer().world instanceof WorldServer)
+        if (colony.isCoordInColony(event.getEntity().world, event.getPos()) && Configurations.gameplay.pvp_mode && event.getState().getBlock() == ModBlocks.blockHutTownHall
+              && event.getEntityPlayer().world instanceof WorldServer)
         {
             final World world = event.getEntityPlayer().world;
             final double localProgress = breakProgressOnTownHall;
             final double hardness = event.getState().getBlockHardness(world, event.getPos()) * 20.0 * 1.5 / event.getNewSpeed();
 
-            if (localProgress >= hardness/10.0*9.0 && localProgress <= hardness/10.0*9.0+1)
+            if (localProgress >= hardness / 10.0 * 9.0 && localProgress <= hardness / 10.0 * 9.0 + 1)
             {
                 LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), TOWNHALL_BREAKING_MESSAGE, event.getEntityPlayer().getName(), 90);
             }
-            if (localProgress >= hardness/4.0*3.0 && localProgress <= hardness/4.0*3.0+1)
+            if (localProgress >= hardness / 4.0 * 3.0 && localProgress <= hardness / 4.0 * 3.0 + 1)
             {
                 LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), TOWNHALL_BREAKING_MESSAGE, event.getEntityPlayer().getName(), 75);
             }
-            else if (localProgress >= hardness/2.0 && localProgress <= hardness/2.0+1)
+            else if (localProgress >= hardness / 2.0 && localProgress <= hardness / 2.0 + 1)
             {
                 LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), TOWNHALL_BREAKING_MESSAGE, event.getEntityPlayer().getName(), 50);
             }
-            else if (localProgress >= hardness/4.0 && localProgress <= hardness/4.0+1)
+            else if (localProgress >= hardness / 4.0 && localProgress <= hardness / 4.0 + 1)
             {
                 LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), TOWNHALL_BREAKING_MESSAGE, event.getEntityPlayer().getName(), 25);
             }
 
-            if (localProgress >= hardness-1)
+            if (localProgress >= hardness - 1)
             {
                 validTownHallBreak = true;
             }
