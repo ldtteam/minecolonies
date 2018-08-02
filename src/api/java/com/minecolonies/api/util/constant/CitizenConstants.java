@@ -161,27 +161,4 @@ public final class CitizenConstants
      * Distance between Barbarian and Citizen to not remove happiness.
      */
     public static final int BARB_DISTANCE_FOR_FREE_DEATH = 21;
-
-
-
-    /**
-     * Tag names for NBT fields
-     */
-    public static final String TAG_NAME = "happiness";
-    public static final String TAG_BASE = "base";
-    public static final String TAG_FOOD = "foodModifier";
-    public static final String TAG_DAMAGE = "damageModifier";
-    public static final String TAG_HOUSE = "houseModifier";
-    public static final String TAG_NUMBER_OF_DAYS_HOUSE = "numberOfDaysWithoutHouse";
-    public static final String TAG_JOB = "jobModifier";
-    public static final String TAG_NUMBER_OF_DAYS_JOB = "numberOfDaysWithoutJob";
-    public static final String TAG_FIELDS = "fields";
-    public static final String TAG_HAS_NO_FIELDS = "hasNoFields";
-    public static final String TAG_FIELD_DAYS_INACTIVE = "daysinactive";
-    public static final String TAG_FIELD_ID = "id";
-    public static final String TAG_FIELD_CAN_FARM = "canfarm";
-    public static final String TAG_NO_TOOLS = "noTools";
-    public static final String TAG_NO_TOOLS_NUMBER_DAYS = "numberOfDaysNoTools";
-    public static final String TAG_NO_TOOLS_TOOL_TYPE = "toolType";
-
 }

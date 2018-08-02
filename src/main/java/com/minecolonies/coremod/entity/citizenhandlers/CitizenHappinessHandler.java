@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.citizenhandlers;
 
 import com.minecolonies.api.util.constant.CitizenConstants;
+import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -475,15 +476,15 @@ public class CitizenHappinessHandler
         final NBTTagList tasksTagList = new NBTTagList();
         @NotNull
         final NBTTagCompound taskCompound = new NBTTagCompound();
-        taskCompound.setDouble(CitizenConstants.TAG_BASE, baseHappiness);
-        taskCompound.setDouble(CitizenConstants.TAG_FOOD, foodModifier);
-        taskCompound.setDouble(CitizenConstants.TAG_DAMAGE, damageModifier);
-        taskCompound.setDouble(CitizenConstants.TAG_HOUSE, houseModifier);
-        taskCompound.setInteger(CitizenConstants.TAG_NUMBER_OF_DAYS_HOUSE, numberOfDaysWithoutHouse);
+        taskCompound.setDouble(NbtTagConstants.TAG_BASE, baseHappiness);
+        taskCompound.setDouble(NbtTagConstants.TAG_FOOD, foodModifier);
+        taskCompound.setDouble(NbtTagConstants.TAG_DAMAGE, damageModifier);
+        taskCompound.setDouble(NbtTagConstants.TAG_HOUSE, houseModifier);
+        taskCompound.setInteger(NbtTagConstants.TAG_NUMBER_OF_DAYS_HOUSE, numberOfDaysWithoutHouse);
 
-        taskCompound.setDouble(CitizenConstants.TAG_JOB, jobModifier);
-        taskCompound.setInteger(CitizenConstants.TAG_NUMBER_OF_DAYS_JOB, numberOfDaysWithoutJob);
-        taskCompound.setBoolean(CitizenConstants.TAG_HAS_NO_FIELDS, hasNoFields);
+        taskCompound.setDouble(NbtTagConstants.TAG_JOB, jobModifier);
+        taskCompound.setInteger(NbtTagConstants.TAG_NUMBER_OF_DAYS_JOB, numberOfDaysWithoutJob);
+        taskCompound.setBoolean(NbtTagConstants.TAG_HAS_NO_FIELDS, hasNoFields);
 
         @NotNull
         final NBTTagList fieldsTagList = new NBTTagList();
@@ -493,17 +494,17 @@ public class CitizenHappinessHandler
             final FieldDataModifier field = entry.getValue();
             @NotNull
             final NBTTagCompound fieldCompound = new NBTTagCompound();
-            fieldCompound.setInteger(CitizenConstants.TAG_FIELD_DAYS_INACTIVE, field.getInactiveDays());
-            fieldCompound.setBoolean(CitizenConstants.TAG_FIELD_CAN_FARM, field.isCanFarm());
+            fieldCompound.setInteger(NbtTagConstants.TAG_FIELD_DAYS_INACTIVE, field.getInactiveDays());
+            fieldCompound.setBoolean(NbtTagConstants.TAG_FIELD_CAN_FARM, field.isCanFarm());
 
             @NotNull
             final NBTTagList containerTagList = new NBTTagList();
             containerTagList.appendTag(NBTUtil.createPosTag(pos));
-            fieldCompound.setTag(CitizenConstants.TAG_FIELD_ID, containerTagList);
+            fieldCompound.setTag(NbtTagConstants.TAG_ID, containerTagList);
 
             fieldsTagList.appendTag(fieldCompound);
         }
-        taskCompound.setTag(CitizenConstants.TAG_FIELDS, fieldsTagList);
+        taskCompound.setTag(NbtTagConstants.TAG_FIELDS, fieldsTagList);
 
         @NotNull
         final NBTTagList noToolsTagList = new NBTTagList();
@@ -513,16 +514,16 @@ public class CitizenHappinessHandler
             final int numDays = entry.getValue();
             @NotNull
             final NBTTagCompound noToolsCompound = new NBTTagCompound();
-            noToolsCompound.setInteger(CitizenConstants.TAG_NO_TOOLS_NUMBER_DAYS, numDays);
-            noToolsCompound.setString(CitizenConstants.TAG_NO_TOOLS_TOOL_TYPE, toolType.getName());
+            noToolsCompound.setInteger(NbtTagConstants.TAG_NO_TOOLS_NUMBER_DAYS, numDays);
+            noToolsCompound.setString(NbtTagConstants.TAG_NO_TOOLS_TOOL_TYPE, toolType.getName());
 
             noToolsTagList.appendTag(noToolsCompound);
         }
-        taskCompound.setTag(CitizenConstants.TAG_FIELDS, fieldsTagList);
+        taskCompound.setTag(NbtTagConstants.TAG_FIELDS, fieldsTagList);
 
         tasksTagList.appendTag(taskCompound);
 
-        compound.setTag(CitizenConstants.TAG_NAME, tasksTagList);
+        compound.setTag(NbtTagConstants.TAG_NAME, tasksTagList);
     }
 
     /**
@@ -532,38 +533,38 @@ public class CitizenHappinessHandler
      */
     public void readFromNBT(final NBTTagCompound compound)
     {
-        final NBTTagList tagListCompound = compound.getTagList(CitizenConstants.TAG_NAME, Constants.NBT.TAG_COMPOUND);
+        final NBTTagList tagListCompound = compound.getTagList(NbtTagConstants.TAG_NAME, Constants.NBT.TAG_COMPOUND);
         final NBTTagCompound tagCompound = tagListCompound.getCompoundTagAt(0);
-        baseHappiness = tagCompound.getDouble(CitizenConstants.TAG_BASE);
-        foodModifier = tagCompound.getDouble(CitizenConstants.TAG_FOOD);
-        damageModifier = tagCompound.getDouble(CitizenConstants.TAG_DAMAGE);
-        houseModifier = tagCompound.getDouble(CitizenConstants.TAG_HOUSE);
-        numberOfDaysWithoutHouse = tagCompound.getInteger(CitizenConstants.TAG_NUMBER_OF_DAYS_HOUSE);
+        baseHappiness = tagCompound.getDouble(NbtTagConstants.TAG_BASE);
+        foodModifier = tagCompound.getDouble(NbtTagConstants.TAG_FOOD);
+        damageModifier = tagCompound.getDouble(NbtTagConstants.TAG_DAMAGE);
+        houseModifier = tagCompound.getDouble(NbtTagConstants.TAG_HOUSE);
+        numberOfDaysWithoutHouse = tagCompound.getInteger(NbtTagConstants.TAG_NUMBER_OF_DAYS_HOUSE);
 
-        jobModifier = tagCompound.getDouble(CitizenConstants.TAG_JOB);
-        numberOfDaysWithoutJob = tagCompound.getInteger(CitizenConstants.TAG_NUMBER_OF_DAYS_JOB);
-        hasNoFields = tagCompound.getBoolean(CitizenConstants.TAG_HAS_NO_FIELDS);
+        jobModifier = tagCompound.getDouble(NbtTagConstants.TAG_JOB);
+        numberOfDaysWithoutJob = tagCompound.getInteger(NbtTagConstants.TAG_NUMBER_OF_DAYS_JOB);
+        hasNoFields = tagCompound.getBoolean(NbtTagConstants.TAG_HAS_NO_FIELDS);
 
-        final NBTTagList fieldTagList = tagCompound.getTagList(CitizenConstants.TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
+        final NBTTagList fieldTagList = tagCompound.getTagList(NbtTagConstants.TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < fieldTagList.tagCount(); ++i)
         {
             final FieldDataModifier field = new FieldDataModifier();
             final NBTTagCompound containerCompound = fieldTagList.getCompoundTagAt(i);
-            field.setInactiveDays(containerCompound.getInteger(CitizenConstants.TAG_FIELD_DAYS_INACTIVE));
-            field.isCanFarm(containerCompound.getBoolean(CitizenConstants.TAG_FIELD_CAN_FARM));
+            field.setInactiveDays(containerCompound.getInteger(NbtTagConstants.TAG_FIELD_DAYS_INACTIVE));
+            field.isCanFarm(containerCompound.getBoolean(NbtTagConstants.TAG_FIELD_CAN_FARM));
 
-            final NBTTagList blockPosTagList = containerCompound.getTagList(CitizenConstants.TAG_FIELD_ID, Constants.NBT.TAG_COMPOUND);
+            final NBTTagList blockPosTagList = containerCompound.getTagList(NbtTagConstants.TAG_ID, Constants.NBT.TAG_COMPOUND);
             final NBTTagCompound blockPoCompound = blockPosTagList.getCompoundTagAt(0);
             final BlockPos pos = NBTUtil.getPosFromTag(blockPoCompound);
             fieldModifier.put(pos, field);
         }
 
-        final NBTTagList noToolsTagList = tagCompound.getTagList(CitizenConstants.TAG_NO_TOOLS, Constants.NBT.TAG_COMPOUND);
+        final NBTTagList noToolsTagList = tagCompound.getTagList(NbtTagConstants.TAG_NO_TOOLS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < noToolsTagList.tagCount(); ++i)
         {
             final NBTTagCompound containerCompound = noToolsTagList.getCompoundTagAt(i);
-            final int numDays = containerCompound.getInteger(CitizenConstants.TAG_NO_TOOLS_NUMBER_DAYS);
-            final IToolType toolType = ToolType.getToolType(containerCompound.getString(CitizenConstants.TAG_NO_TOOLS_TOOL_TYPE));
+            final int numDays = containerCompound.getInteger(NbtTagConstants.TAG_NO_TOOLS_NUMBER_DAYS);
+            final IToolType toolType = ToolType.getToolType(containerCompound.getString(NbtTagConstants.TAG_NO_TOOLS_TOOL_TYPE));
             needsTool.put(toolType, numDays);
         }
 
