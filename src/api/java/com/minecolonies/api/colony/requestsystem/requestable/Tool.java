@@ -192,19 +192,19 @@ public class Tool implements IDeliverable
              * system.
              */
             final ItemArmor armor = (ItemArmor) stack.getItem();
-            if (armor.getEquipmentSlot() == EntityEquipmentSlot.CHEST)
+            if (armor.armorType == EntityEquipmentSlot.CHEST)
             {
                 set.add("chestplate");
             }
-            else if (armor.getEquipmentSlot() == EntityEquipmentSlot.FEET)
+            else if (armor.armorType == EntityEquipmentSlot.FEET)
             {
                 set.add("boots");
             }
-            else if (armor.getEquipmentSlot() == EntityEquipmentSlot.HEAD)
+            else if (armor.armorType == EntityEquipmentSlot.HEAD)
             {
                 set.add("helmet");
             }
-            else if (armor.getEquipmentSlot() == EntityEquipmentSlot.LEGS)
+            else if (armor.armorType == EntityEquipmentSlot.LEGS)
             {
                 set.add("leggings");
             }

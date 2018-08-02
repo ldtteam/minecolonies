@@ -102,32 +102,12 @@ public final class MobEventsUtils
             return new Horde(0, 0, 0, 0);
         }
 
-        final int raidLevel = getColonyRaidLevel(colony);
+        final int raidLevel = Math.min(Configurations.gameplay.maxBarbarianSize,(int) ((getColonyRaidLevel(colony) / SPAWN_MODIFIER) * ((double) Configurations.gameplay.spawnBarbarianSize * 0.1)));
+        final int numberOfChiefs = Math.max(1, (int) (raidLevel * CHIEF_BARBARIANS_MULTIPLIER));
+        final int numberOfArchers = Math.max(1,(int) (raidLevel * ARCHER_BARBARIANS_MULTIPLIER));
+        final int numberOfBarbarians = raidLevel - numberOfChiefs - numberOfArchers;
 
-        int numberOfBarbarians = (int) (BARBARIANS_MULTIPLIER * raidLevel / SPAWN_MODIFIER);
-        int numberOfArchers = (int) (ARCHER_BARBARIANS_MULTIPLIER * raidLevel / SPAWN_MODIFIER);
-        int numberOfChiefs = (int) (CHIEF_BARBARIANS_MULTIPLIER * raidLevel / SPAWN_MODIFIER);
-
-        int hordeTotal = numberOfBarbarians + numberOfArchers + numberOfChiefs;
-
-        if (hordeTotal > PREFERRED_MAX_HORDE_SIZE && MAX_SIZE == PREFERRED_MAX_HORDE_SIZE)
-        {
-            //set the preferred horde style if the total spawns is greater that the config's max size
-            numberOfBarbarians = PREFERRED_MAX_BARBARIANS;
-            numberOfArchers = PREFERRED_MAX_ARCHERS;
-            numberOfChiefs = PREFERRED_MAX_CHIEFS;
-        }
-        else if (hordeTotal > MAX_SIZE)
-        {
-            //Equalize the spawns so that there is less spawns than the config's max size
-            numberOfBarbarians = equalizeBarbarianSpawns(hordeTotal, numberOfBarbarians);
-            hordeTotal = numberOfArchers + numberOfBarbarians + numberOfChiefs;
-            numberOfArchers = equalizeBarbarianSpawns(hordeTotal, numberOfArchers);
-            hordeTotal = numberOfArchers + numberOfBarbarians + numberOfChiefs;
-            numberOfChiefs = equalizeBarbarianSpawns(hordeTotal, numberOfChiefs);
-        }
-
-        return new Horde(hordeTotal, numberOfBarbarians, numberOfArchers, numberOfChiefs);
+        return new Horde(raidLevel, numberOfBarbarians, numberOfArchers, numberOfChiefs);
     }
 
     /**
@@ -172,29 +152,6 @@ public final class MobEventsUtils
         }
 
         return levels;
-    }
-
-    /**
-     * Reduces barbarian spawns to less than the maximum allowed (set via the config)
-     *
-     * @param total    The current horde size
-     * @param numberOf The number of barbarians which we are reducing
-     * @return the new number that the barbarians should be set to.
-     */
-    private static int equalizeBarbarianSpawns(final int total, final int numberOf)
-    {
-        int returnValue = numberOf;
-        if (total > MAX_SIZE)
-        {
-            returnValue = total - MAX_SIZE;
-
-            if (returnValue < 0)
-            {
-                return 0;
-            }
-            return returnValue;
-        }
-        return returnValue;
     }
 
     public static boolean isItTimeToRaid(final World world, final Colony colony)
