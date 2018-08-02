@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
@@ -15,6 +16,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -26,17 +28,20 @@ import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Items;
+import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,9 +52,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
 import static com.minecolonies.coremod.entity.ai.citizen.guard.GuardConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
  * Class taking of the abstract guard methods for both archer and knights.
@@ -343,6 +350,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     worker.isWorkerAtSiteWithMove(guardBuilding.getGuardPos(), GUARD_POS_RANGE);
                     break;
                 case FOLLOW:
+                    worker.addPotionEffect(new PotionEffect(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER));
+                    this.world.getScoreboard().addPlayerToTeam(worker.getName(), TEAM_COLONY_NAME + worker.getCitizenColonyHandler().getColonyId());
                     worker.isWorkerAtSiteWithMove(guardBuilding.getPlayerToFollow(), GUARD_POS_RANGE);
                     break;
                 default:
@@ -404,11 +413,15 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     final EntityPlayer player = (EntityPlayer) entity;
 
                     if (worker.getCitizenColonyHandler().getColony() != null
-                          && worker.getCitizenColonyHandler().getColony().getPermissions().hasPermission(player, Action.GUARDS_ATTACK)
+                          && worker.getCitizenColonyHandler().getColony().getPermissions().hasPermission(player, Action.GUARDS_ATTACK) || worker.getCitizenColonyHandler().getColony().isValidAttackingPlayer(player)
                           && worker.canEntityBeSeen(player))
                     {
                         return entity;
                     }
+                }
+                else if (entity instanceof EntityCitizen && worker.getCitizenColonyHandler().getColony().isValidAttackingGuard((EntityCitizen) entity) && worker.canEntityBeSeen(entity))
+                {
+                    return entity;
                 }
             }
 
@@ -481,7 +494,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     protected AIState attackPhysical()
     {
-
         if (worker.getRevengeTarget() != null
               && !worker.getRevengeTarget().isDead
               && worker.getDistance(worker.getRevengeTarget()) < getAttackRange())
@@ -556,7 +568,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     damageToBeDealt += EnchantmentHelper.getModifierForCreature(heldItem, target.getCreatureAttribute());
                 }
 
-                target.attackEntityFrom(new DamageSource(worker.getName()), (float) damageToBeDealt);
+                final DamageSource source = new DamageSource(worker.getName());
+                if (Configurations.gameplay.pvp_mode && target instanceof EntityPlayer)
+                {
+                    source.setDamageBypassesArmor();
+                }
+
+                target.attackEntityFrom(source, (float) damageToBeDealt);
                 target.setRevengeTarget(worker);
 
                 worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
@@ -623,6 +641,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getLevel() + 1);
 
                 arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
+
+                if (Configurations.gameplay.pvp_mode && target instanceof EntityPlayer)
+                {
+                    damage *= 2;
+                }
 
                 if (worker.getHealth() <= DOUBLE_DAMAGE_THRESHOLD)
                 {
