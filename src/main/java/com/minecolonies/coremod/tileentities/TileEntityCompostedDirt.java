@@ -16,7 +16,7 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
 
     private int ticker = 0;
 
-    private float percentage = 0.2f;
+    private int percentage = 20;
 
     private final static int TICKER_LIMIT = 4500;
 
@@ -61,9 +61,12 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
 
     // AI interface
 
-    public void compost(final float percentage)
+    public void compost(final int percentage)
     {
-        this.percentage = percentage;
+        if(percentage >= 0 && percentage <= 100)
+        {
+            this.percentage = percentage;
+        }
         this.composted = true;
     }
 
