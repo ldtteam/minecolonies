@@ -22,6 +22,7 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler; 
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsToCitizenRequestMessage;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
@@ -139,11 +140,22 @@ public class WindowCitizen extends AbstractWindowSkeleton
     private static final int XP_BAR_EMPTY_ROW = 64;
 
     /**
+     * The row where the emtpy Happiness bar starts. 
+     */ 
+
+    private static final int HAPPINESS_BAR_EMPTY_ROW = 74; 
+ 
+    /** 
      * The row where the full xpBar starts.
      */
     private static final int XP_BAR_FULL_ROW = 69;
 
     /**
+     * The row where the full happiness bar starts. 
+     */ 
+    private static final int HAPPINESS_BAR_FULL_ROW = 79; 
+ 
+    /** 
      * Row position of the empty heart icon.
      */
     private static final int EMPTY_HEART_ICON_ROW_POS = 16;
@@ -219,6 +231,11 @@ public class WindowCitizen extends AbstractWindowSkeleton
     private static final String WINDOW_ID_XP = "xpLabel";
 
     /**
+     * The label to find the happiness label in the gui. 
+     */ 
+    private static final String WINDOW_ID_HAPPINESS = "happinessLabel"; 
+
+    /** 
      * The label to find xpBar in the gui.
      */
     private static final String WINDOW_ID_XPBAR = "xpBar";
@@ -249,6 +266,11 @@ public class WindowCitizen extends AbstractWindowSkeleton
     private static final String WINDOW_ID_SATURATION_BAR = "saturationBar";
 
     /**
+     * The saturation bar of the citizen. 
+     */ 
+    private static final String WINDOW_ID_HAPPINESS_BAR = "happinessBar"; 
+ 
+    /** 
      * Id of the gender button.
      */
     private static final String WINDOW_ID_GENDER = "gender";
@@ -367,6 +389,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
         createHealthBar();
         createSaturationBar();
+        createHappinessBar(); 
         createXpBar(citizen, this);
         createSkillContent(citizen, this);
 
@@ -528,6 +551,39 @@ public class WindowCitizen extends AbstractWindowSkeleton
         }
     }
 
+    
+   /** 
++
+    * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness. 
+    */ 
+   private void createHappinessBar() 
+   { 
+       final double experienceRatio = (citizen.getHappiness() / CitizenHappinessHandler.MAX_HAPPINESS) * XP_BAR_WIDTH; 
+       findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT); 
+       window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Label.class).setLabelText(Integer.toString((int)citizen.getHappiness())); 
+
+        
+       @NotNull final Image xpBar = new Image(); 
+       xpBar.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false); 
+       xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y); 
+
+       @NotNull final Image xpBar2 = new Image(); 
+       xpBar2.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false); 
+       xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y); 
+
+       window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar); 
+       window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar2); 
+
+       if (experienceRatio > 0) 
+       { 
+           @NotNull final Image xpBarFull = new Image(); 
+           xpBarFull.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false); 
+           xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y); 
+           window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull); 
+       } 
+   } 
+
+
     /**
      * Creates the xp bar for each citizen.
      * Calculates an xpBarCap which is the maximum of xp to fit into the bar.
@@ -561,6 +617,39 @@ public class WindowCitizen extends AbstractWindowSkeleton
         }
     }
 
+    /** 
+     * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness. 
+     *  
+     * @param citizen  pointer to the citizen data view 
+     * @param window  pointer to the current window 
+     */ 
+    public static void createHappinessBar(final CitizenDataView citizen, final AbstractWindowSkeleton window) 
+    { 
+        //Calculates how much percent of the next level has been completed. 
+        final double experienceRatio = (citizen.getHappiness() / CitizenHappinessHandler.MAX_HAPPINESS) * XP_BAR_WIDTH; 
+        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT); 
+        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Label.class).setLabelText(Integer.toString((int)citizen.getHappiness())); 
+ 
+        @NotNull final Image xpBar = new Image(); 
+        xpBar.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false); 
+        xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y); 
+ 
+        @NotNull final Image xpBar2 = new Image(); 
+        xpBar2.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false); 
+        xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y); 
+ 
+        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar); 
+        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar2); 
+ 
+        if (experienceRatio > 0) 
+        { 
+            @NotNull final Image xpBarFull = new Image(); 
+            xpBarFull.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false); 
+            xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y); 
+            window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull); 
+        } 
+    } 
+ 
     /**
      * Fills the citizen gui with it's skill values.
      * @param citizen the citizen to use.
