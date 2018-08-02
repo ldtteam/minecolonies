@@ -22,6 +22,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -52,6 +53,11 @@ public final class ColonyView implements IColony
     private       String                              name        = "Unknown";
     private int      dimensionId;
     private BlockPos center = BlockPos.ORIGIN;
+
+    /**
+     * Colony team color.
+     */
+    private TextFormatting teamColonyColor = TextFormatting.WHITE;
 
     /**
      * Datas about the happiness of a colony
@@ -192,6 +198,8 @@ public final class ColonyView implements IColony
         {
             BlockPosUtil.writeToByteBuf(buf, block);
         }
+
+        buf.writeInt(colony.getTeamColonyColor().ordinal());
     }
 
     /**
@@ -500,6 +508,8 @@ public final class ColonyView implements IColony
             lastSpawnPoints.add(BlockPosUtil.readFromByteBuf(buf));
         }
         Collections.reverse(lastSpawnPoints);
+
+        this.teamColonyColor = TextFormatting.values()[buf.readInt()];
         return null;
     }
 
@@ -678,6 +688,15 @@ public final class ColonyView implements IColony
     public String getName()
     {
         return name;
+    }
+
+    /**
+     * Getter for the team colony color.
+     * @return the color.
+     */
+    public TextFormatting getTeamColonyColor()
+    {
+        return teamColonyColor;
     }
 
     /**

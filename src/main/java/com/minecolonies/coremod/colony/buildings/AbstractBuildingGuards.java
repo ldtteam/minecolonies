@@ -5,6 +5,7 @@ import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
@@ -18,6 +19,7 @@ import com.minecolonies.coremod.colony.jobs.JobRanger;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.network.messages.GuardMobAttackListMessage;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,6 +28,7 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -37,6 +40,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -57,6 +62,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     private static final String NBT_GUARD          = "guard";
     private static final String NBT_MOBS           = "mobs";
     private static final String NBT_MOB_VIEW       = "mobview";
+
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     ////// --------------------------- GuardJob Enum --------------------------- \\\\\\
@@ -704,6 +710,15 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     /**
+     * Entity of player to follow.
+     * @return the entityPlayer reference.
+     */
+    public EntityPlayer getFollowPlayer()
+    {
+        return followPlayer;
+    }
+
+    /**
      * Gets the player to follow.
      *
      * @return the entity player.
@@ -715,6 +730,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             return followPlayer.getPosition();
         }
         task = GuardTask.GUARD;
+        markDirty();
         return this.getLocation();
     }
 
@@ -725,6 +741,28 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      */
     public void setPlayerToFollow(final EntityPlayer player)
     {
+        if (this.getColony().getWorld() != null)
+        {
+            this.getColony().getWorld().getScoreboard().addPlayerToTeam(player.getName(), TEAM_COLONY_NAME + getColony().getID());
+            player.addPotionEffect(new PotionEffect(GLOW_EFFECT, GLOW_EFFECT_DURATION_TEAM, GLOW_EFFECT_MULTIPLIER));
+
+            if (followPlayer != null)
+            {
+                try
+                {
+                    this.getColony()
+                      .getWorld()
+                      .getScoreboard()
+                      .removePlayerFromTeam(followPlayer.getName(), this.getColony().getWorld().getScoreboard().getTeam(TEAM_COLONY_NAME + getColony().getID()));
+                    player.removePotionEffect(GLOW_EFFECT);
+
+                }
+                catch (final Exception e)
+                {
+                    Log.getLogger().warn("Unable to remove player " + followPlayer.getName() + " from team " + TEAM_COLONY_NAME + getColony().getID());
+                }
+            }
+        }
         this.followPlayer = player;
     }
 
@@ -814,6 +852,18 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
                                                                                player));
 
         return mobs;
+    }
+
+    /**
+     * Check if a guard should take damage by a player..
+     * @param citizen the citizen.
+     * @param player the player.
+     * @return false if in follow mode and following the player.
+     */
+    public static boolean checkIfGuardShouldTakeDamage(final EntityCitizen citizen, final EntityPlayer player)
+    {
+        final AbstractBuildingWorker buildingWorker =  citizen.getCitizenColonyHandler().getWorkBuilding();
+        return !(buildingWorker instanceof AbstractBuildingGuards) || ((AbstractBuildingGuards) buildingWorker).task != GuardTask.FOLLOW || !player.equals(((AbstractBuildingGuards) buildingWorker).followPlayer);
     }
 
     /**
@@ -1007,6 +1057,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         public void setTask(final GuardTask task)
         {
             this.task = task;
+            this.getColony().markDirty();
         }
 
         public GuardTask getTask()
