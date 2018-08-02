@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.TOWNHALL_BREAKING_MESSAGE;
+
 /**
  * This class handles all permission checks on events and cancels them if needed.
  */
@@ -395,19 +397,19 @@ public class ColonyPermissionEventHandler
 
             if (localProgress >= hardness/10.0*9.0 && localProgress <= hardness/10.0*9.0+1)
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.pvp.townhall.broke", event.getEntityPlayer().getName(), 90);
+                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), TOWNHALL_BREAKING_MESSAGE, event.getEntityPlayer().getName(), 90);
             }
             if (localProgress >= hardness/4.0*3.0 && localProgress <= hardness/4.0*3.0+1)
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.pvp.townhall.broke", event.getEntityPlayer().getName(), 75);
+                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), TOWNHALL_BREAKING_MESSAGE, event.getEntityPlayer().getName(), 75);
             }
             else if (localProgress >= hardness/2.0 && localProgress <= hardness/2.0+1)
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.pvp.townhall.broke", event.getEntityPlayer().getName(), 50);
+                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), TOWNHALL_BREAKING_MESSAGE, event.getEntityPlayer().getName(), 50);
             }
             else if (localProgress >= hardness/4.0 && localProgress <= hardness/4.0+1)
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.pvp.townhall.broke", event.getEntityPlayer().getName(), 25);
+                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), TOWNHALL_BREAKING_MESSAGE, event.getEntityPlayer().getName(), 25);
             }
 
             if (localProgress >= hardness-1)
