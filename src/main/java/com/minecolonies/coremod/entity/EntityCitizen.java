@@ -354,7 +354,11 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
         citizenItemHandler.updateArmorDamage(damage);
-
+        if (citizenData != null) 
+        { 
+            getCitizenData().getCitizenHappinessHandler().setDamageModifier(); 
+        } 
+        
         return result;
     }
 
@@ -436,7 +440,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
             citizenExperienceHandler.dropExperience();
             this.setDead();
-            citizenColonyHandler.getColony().decreaseOverallHappiness(penalty);
+            citizenColonyHandler.getColony().getHappinessData().setDeathModifier(penalty,citizenJobHandler.getColonyJob() instanceof AbstractJobGuard); 
             triggerDeathAchievement(damageSource, citizenJobHandler.getColonyJob());
             citizenChatHandler.notifyDeath(damageSource);
             citizenColonyHandler.getColony().getCitizenManager().removeCitizen(getCitizenData());
@@ -633,7 +637,11 @@ public class EntityCitizen extends AbstractEntityCitizen
 
             if (citizenData.getSaturation() < HIGH_SATURATION)
             {
-                tryToEat();
+                citizenData.getCitizenHappinessHandler().setFoodModifier(tryToEat()); 
+            } 
+            else  
+            { 
+                citizenData.getCitizenHappinessHandler().setSaturated();
             }
 
             if((distanceWalkedModified + 1.0) % ACTIONS_EACH_BLOCKS_WALKED == 0)
@@ -698,16 +706,18 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
-     * Lets the citizen tryToEat to replentish saturation.
+     * Lets the citizen tryToEat to replenish saturation. 
+     *  
+     * @return return true or not if citizen eat food. 
      */
-    private void tryToEat()
+    private boolean tryToEat()
     {
         final int slot = InventoryUtils.findFirstSlotInProviderWith(this,
           itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
 
         if (slot == -1)
         {
-            return;
+            return false;
         }
 
         final ItemStack stack = getCitizenData().getInventory().getStackInSlot(slot);
@@ -718,6 +728,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             getCitizenData().getInventory().decrStackSize(slot, 1);
             citizenData.markDirty();
         }
+        return true;
     }
 
     /**

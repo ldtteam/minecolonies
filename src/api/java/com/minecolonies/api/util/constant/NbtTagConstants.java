@@ -65,6 +65,21 @@ public final class NbtTagConstants
     public static final String TAG_DAY                    = "day";
     public static final String OWNED_CHUNKS_TO_LOAD_TAG   = "ownedChunks";
     public static final String CLOSE_CHUNKS_TO_LOAD_TAG   = "closeChunks";
+    public static final String TAG_HAPPINESS_NAME         = "happiness";
+    public static final String TAG_BASE                   = "base";
+    public static final String TAG_FOOD                   = "foodModifier";
+    public static final String TAG_DAMAGE                 = "damageModifier";
+    public static final String TAG_HOUSE                  = "houseModifier";
+    public static final String TAG_NUMBER_OF_DAYS_HOUSE   = "numberOfDaysWithoutHouse";
+    public static final String TAG_JOB                    = "jobModifier";
+    public static final String TAG_NUMBER_OF_DAYS_JOB     = "numberOfDaysWithoutJob";
+    public static final String TAG_HAS_NO_FIELDS          = "hasNoFields";
+    public static final String TAG_FIELD_DAYS_INACTIVE    = "daysinactive";
+    public static final String TAG_FIELD_CAN_FARM         = "canfarm";
+    public static final String TAG_NO_TOOLS               = "noTools";
+    public static final String TAG_NO_TOOLS_NUMBER_DAYS   = "numberOfDaysNoTools";
+    public static final String TAG_NO_TOOLS_TOOL_TYPE     = "toolType";
+
 
     /**
      * Tag used to store the containers to NBT.

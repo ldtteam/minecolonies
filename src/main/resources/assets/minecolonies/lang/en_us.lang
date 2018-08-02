@@ -97,6 +97,12 @@ entity.farmer.noSeedSet=Please define a seed to grow in the scarecrow.
 entity.farmer.NeedSeed=I need %s to plant.
 entity.farmer.noFreeFields=Place more fields to get me working.
 achievement.upgrade.fisher.first=A fisherman.
+entity.citizen.noJob=%s would like to have a job.
+entity.citizen.demandsJob=%s demands to have a job and is getting very upset standing around.
+entity.citizen.noHouse=%s would like to have a house to go to every night.
+entity.citizen.demandsHouse=%s demands to have a house to live in and is getting very upset.
+entity.citizen.noTool=%s would like to get %s.
+entity.citizen.demandsTool=%s demand to get a %s. achievement.upgrade.fisher.first=A fisherman.
 achievement.upgrade.fisher.max=The whale catcher!
 achievement.upgrade.farmer.first=A farmer.
 achievement.upgrade.farmer.first.desc=agricultural economy.

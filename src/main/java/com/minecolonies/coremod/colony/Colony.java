@@ -173,11 +173,6 @@ public class Colony implements IColony
     private Permissions permissions;
 
     /**
-     * Overall happyness of the colony.
-     */
-    private double overallHappiness = DEFAULT_OVERALL_HAPPYNESS;
-
-    /**
      * The request manager assigned to the colony.
      */
     private IRequestManager requestManager;
@@ -382,7 +377,7 @@ public class Colony implements IColony
             freePositions.add(block);
         }
 
-        this.overallHappiness = compound.getDouble(TAG_HAPPINESS);
+        happinessData.readFromNBT(compound); 
         packageManager.setLastContactInHours(compound.getInteger(TAG_ABANDONED));
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
 
@@ -499,7 +494,7 @@ public class Colony implements IColony
         }
         compound.setTag(TAG_FREE_POSITIONS, freePositionsTagList);
 
-        compound.setDouble(TAG_HAPPINESS, overallHappiness);
+        happinessData.writeToNBT(compound); 
         compound.setInteger(TAG_ABANDONED, packageManager.getLastContactInHours());
         compound.setBoolean(TAG_MANUAL_HOUSING, manualHousing);
         compound.setTag(TAG_REQUESTMANAGER, getRequestManager().serializeNBT());
@@ -725,6 +720,7 @@ public class Colony implements IColony
             {
                 citizenManager.checkCitizensForHappiness();
             }
+            happinessData.processDeathModifiers(); 
         }
         else if (!isDay && world.isDaytime())
         {
@@ -935,28 +931,6 @@ public class Colony implements IColony
         return buildingManager.getBuilding(pos);
     }
 
-    /**
-     * Increase the overall happiness by an amount, cap at max.
-     *
-     * @param amount the amount.
-     */
-    public void increaseOverallHappiness(final double amount)
-    {
-        this.overallHappiness = Math.min(this.overallHappiness + Math.abs(amount), MAX_OVERALL_HAPPINESS);
-        this.markDirty();
-    }
-
-    /**
-     * Decrease the overall happiness by an amount, cap at min.
-     *
-     * @param amount the amount.
-     */
-    public void decreaseOverallHappiness(final double amount)
-    {
-        this.overallHappiness = Math.max(this.overallHappiness - Math.abs(amount), MIN_OVERALL_HAPPINESS);
-        this.markDirty();
-    }
-
     @NotNull
     public List<EntityPlayer> getMessageEntityPlayers()
     {
@@ -1089,7 +1063,19 @@ public class Colony implements IColony
      */
     public double getOverallHappiness()
     {
-        return this.overallHappiness;
+        double happinessTotal = 0; 
+        for (final CitizenData citizen : citizenManager.getCitizens()) 
+        { 
+            happinessTotal += citizen.getCitizenHappinessHandler().getHappiness(); 
+        } 
+        final double happinessAverage = happinessTotal /  citizenManager.getCitizens().size(); 
+         
+        happinessTotal = happinessAverage + happinessData.getTotalHappinessModifier();  
+        if (happinessTotal > HappinessData.MAX_HAPPINESS) 
+        { 
+            happinessTotal = HappinessData.MIN_HAPPINESS; 
+        } 
+        return happinessTotal; 
     }
 
     /**
