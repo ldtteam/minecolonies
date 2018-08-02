@@ -15,6 +15,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.managers.ICitizenManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler; 
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
@@ -168,6 +169,12 @@ public class CitizenData
      */
     private BlockPos lastPosition = new BlockPos(0, 0, 0);
 
+    /** 
+     * The citizen happiness handler. 
++
+     */ 
+    private final CitizenHappinessHandler citizenHappinessHandler; 
+ 
     /**
      * Create a CitizenData given an ID.
      * Used as a super-constructor or during loading.
@@ -180,6 +187,7 @@ public class CitizenData
         this.id = id;
         this.colony = colony;
         inventory = new InventoryCitizen("Minecolonies Inventory", true, this);
+        this.citizenHappinessHandler = new CitizenHappinessHandler(this); 
     }
 
     /**
@@ -235,6 +243,7 @@ public class CitizenData
             this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInteger(TAG_HELD_ITEM_SLOT));
             this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInteger(TAG_OFFHAND_HELD_ITEM_SLOT));
         }
+        citizenHappinessHandler.readFromNBT(compound); 
     }
 
     /**
@@ -772,8 +781,8 @@ public class CitizenData
 
     /**
      * Writes the citizen data to an NBT-compound.
-     *
      * @param compound NBT-Tag compound.
+     * @return return the data in NBT format
      */
     public NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound)
     {
@@ -808,6 +817,7 @@ public class CitizenData
         compound.setTag(TAG_INVENTORY, inventory.writeToNBT(new NBTTagList()));
         compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.MAIN_HAND));
         compound.setInteger(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.OFF_HAND));
+        citizenHappinessHandler.writeToNBT(compound);
         return compound;
     }
 
@@ -849,7 +859,8 @@ public class CitizenData
         buf.writeInt(getIntelligence());
         buf.writeInt(getDexterity());
         buf.writeDouble(getSaturation());
-
+        buf.writeDouble(citizenHappinessHandler.getHappiness());
+        
         ByteBufUtils.writeUTF8String(buf, (job != null) ? job.getName() : "");
 
         writeStatusToBuffer(buf);
@@ -1078,5 +1089,14 @@ public class CitizenData
     public boolean isRequestAsync(@NotNull final IToken token)
     {
         return job.getAsyncRequests().contains(token);
+    }
+
+    /**
+     * The Handler for the citizens happiness.
+     * @return the instance of the handler
+     */
+    public CitizenHappinessHandler getCitizenHappinessHandler()
+    {
+        return citizenHappinessHandler;
     }
 }
