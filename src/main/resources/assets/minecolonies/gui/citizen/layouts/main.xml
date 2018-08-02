@@ -7,8 +7,10 @@
     <view id="healthBar" size="100% 11" pos="30 28"/>
     <view id="saturationBar" size="100% 11" pos="30 40"/>
     <view id="xpBar" size="100% 11" pos="30 52"/>
-    <label id="xpLabel" size="100% 11" color="black" pos="90 70"/>
-
+    <label id="xpLabel" size="100% 11" color="black" pos="145 58"/> 
+    <view id="happinessBar" size="100% 11" pos="30 60"/> 
+    <label id="happinessLabel" size="100% 11" color="black" pos="145 69"/> 
+    
     <image id="deco2" size="73 16" source="minecolonies:textures/gui/citizen/colonist_decor_down.png" pos="16 85"/>
     <label id="title" size="100% 11" pos="40 93" color="black"
            label="§l$(com.minecolonies.coremod.gui.citizen.skills)"/>
