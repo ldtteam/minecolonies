@@ -323,7 +323,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             final AbstractBuildingGuards guardBuilding = getOwnBuilding();
             if (worker.getLastAttackedEntity() != null && !worker.getLastAttackedEntity().isDead)
             {
-                if ((worker.getDistance(worker.getLastAttackedEntity()) > getAttackRange() * 5 && !worker.canEntityBeSeen(worker.getLastAttackedEntity())) || (guardBuilding.getTask() == GuardTask.FOLLOW && worker.getLastAttackedEntity().equals(guardBuilding.getFollowPlayer())))
+                if ((worker.getDistance(worker.getLastAttackedEntity()) > getAttackRange() * 5 && !worker.canEntityBeSeen(worker.getLastAttackedEntity())))
                 {
                     worker.setLastAttackedEntity(null);
                     return DECIDE;

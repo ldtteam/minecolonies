@@ -8,12 +8,15 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
+import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.permissions.Permissions;
@@ -333,6 +336,16 @@ public class EntityCitizen extends AbstractEntityCitizen
                 citizenColonyHandler.getColony().getPermissions().addPlayer(permission.getOwner(), permission.getOwnerName(), Rank.HOSTILE);
             }
         }
+
+        if (sourceEntity instanceof EntityPlayer && getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
+        {
+            final AbstractBuildingWorker buildingWorker =  getCitizenColonyHandler().getWorkBuilding();
+            if (buildingWorker instanceof AbstractBuildingGuards && ((AbstractBuildingGuards) buildingWorker).getTask() == GuardTask.FOLLOW)
+            {
+                return false;
+            }
+        }
+
         setLastAttackedEntity(damageSource.getTrueSource());
         final boolean result = super.attackEntityFrom(damageSource, damage);
 
