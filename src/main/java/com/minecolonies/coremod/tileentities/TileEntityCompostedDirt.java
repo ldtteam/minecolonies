@@ -45,7 +45,7 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
 
         if(this.ticker%(TICKER_LIMIT/20)==0)
         {
-            if(random.nextInt(100) >= this.percentage)
+            if(random.nextInt(100) <= this.percentage)
             {
                 //Todo: spawn flower over the block if the block above is AIR
             }
