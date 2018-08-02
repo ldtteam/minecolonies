@@ -339,8 +339,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (sourceEntity instanceof EntityPlayer && getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
         {
-            final AbstractBuildingWorker buildingWorker =  getCitizenColonyHandler().getWorkBuilding();
-            if (buildingWorker instanceof AbstractBuildingGuards && ((AbstractBuildingGuards) buildingWorker).getTask() == GuardTask.FOLLOW)
+            if (!AbstractBuildingGuards.checkIfGuardShouldTakeDamage(this, (EntityPlayer) sourceEntity))
             {
                 return false;
             }

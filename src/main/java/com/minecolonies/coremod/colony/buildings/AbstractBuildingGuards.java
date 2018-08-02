@@ -19,6 +19,7 @@ import com.minecolonies.coremod.colony.jobs.JobRanger;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.network.messages.GuardMobAttackListMessage;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -60,6 +61,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     private static final String NBT_GUARD          = "guard";
     private static final String NBT_MOBS           = "mobs";
     private static final String NBT_MOB_VIEW       = "mobview";
+
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     ////// --------------------------- GuardJob Enum --------------------------- \\\\\\
@@ -813,6 +815,18 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
                                                                                player));
 
         return mobs;
+    }
+
+    /**
+     * Check if a guard should take damage by a player..
+     * @param citizen the citizen.
+     * @param player the player.
+     * @return false if in follow mode and following the player.
+     */
+    public static boolean checkIfGuardShouldTakeDamage(final EntityCitizen citizen, final EntityPlayer player)
+    {
+        final AbstractBuildingWorker buildingWorker =  citizen.getCitizenColonyHandler().getWorkBuilding();
+        return !(buildingWorker instanceof AbstractBuildingGuards) || ((AbstractBuildingGuards) buildingWorker).task != GuardTask.FOLLOW || !player.equals(((AbstractBuildingGuards) buildingWorker).followPlayer);
     }
 
     /**
