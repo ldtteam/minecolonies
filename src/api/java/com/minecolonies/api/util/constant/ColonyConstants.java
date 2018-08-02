@@ -15,6 +15,11 @@ public final class ColonyConstants
     public static final int CLEANUP_TICK_INCREMENT = 5 * TICKS_SECOND;
 
     /**
+     * The colony name in the team + the id.
+     */
+    public static final String TEAM_COLONY_NAME = "teamcolony";
+
+    /**
      * Default average randomization for onWorldTick() methods
     */
     public static final int ONWORLD_TICK_AVERAGE = 1 * TICKS_SECOND;

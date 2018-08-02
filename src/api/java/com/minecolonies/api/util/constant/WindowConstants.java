@@ -435,6 +435,26 @@ public final class WindowConstants
     public static final String BUTTON_NEXT_STYLE_ID = "nextStyle";
 
     /**
+     * This button is used to set the previous available Color.
+     */
+    public static final String BUTTON_PREVIOUS_COLOR_ID = "previousColor";
+
+    /**
+     * This drop down list is used to choose which Color should be used.
+     */
+    public static final String DROPDOWN_COLOR_ID = "colorPicker";
+
+    /**
+     * This button is used to set the next available Color.
+     */
+    public static final String BUTTON_NEXT_COLOR_ID = "nextColor";
+
+    /**
+     * This button is used to set a specific Color.
+     */
+    public static final String BUTTON_PICK_COLOR_ID = "pickColor";
+
+    /**
      * This button is used to set the previous available schematic.
      */
     public static final String BUTTON_PREVIOUS_SCHEMATIC_ID = "previousSchematic";

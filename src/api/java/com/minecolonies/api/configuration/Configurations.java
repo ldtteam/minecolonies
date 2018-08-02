@@ -227,6 +227,9 @@ public class Configurations
                                                               "seed",
                                                               "treeSapling"
                                                             };
+
+        @Config.Comment("Turn on Minecolonies pvp mode, attention (colonies can be destroyed and can be griefed under certain conditions.)")
+        public boolean pvp_mode = false;
      }
 
     public static class Pathfinding

@@ -15,7 +15,6 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 {
-
     /**
      * This guard's minimum distance for attack.
      */
