@@ -4,12 +4,10 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.ItemIcon;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
-import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -30,19 +28,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.coremod.client.gui.WindowHutBuilder.*;
 
 /**
  * Window for the resource list item.
  */
 public class WindowResourceList extends AbstractWindowSkeleton
 {
-    private static final String LABEL_CONSTRUCTION_NAME =  "constructionName";
-    private static final String LABEL_CONSTRUCTION_POS =  "constructionPos";
-
-    private static final int RED       = Color.getByName("red", 0);
-    private static final int DARKGREEN = Color.getByName("darkgreen", 0);
-    private static final int BLACK     = Color.getByName("black", 0);
-
     @Nullable
     private final BuildingBuilder.View builder;
 

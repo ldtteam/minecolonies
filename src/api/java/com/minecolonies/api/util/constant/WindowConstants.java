@@ -678,6 +678,9 @@ public final class WindowConstants
     public static final String YELLOW_ICON = "minecolonies:textures/gui/yellow_icon.png";
     public static final String GREEN_ICON  = "minecolonies:textures/gui/green_icon.png";
 
+    public static final String LABEL_CONSTRUCTION_NAME =  "constructionName";
+    public static final String LABEL_CONSTRUCTION_POS =  "constructionPos";
+
     /**
      * public constructor to hide implicit public one.
      */
