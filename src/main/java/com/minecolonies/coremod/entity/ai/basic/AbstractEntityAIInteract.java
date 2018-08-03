@@ -263,7 +263,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             return (int) world.getBlockState(pos).getBlockHardness(world, pos);
         }
 
-        return (int) ((Configurations.gameplay.blockMiningDelayModifier
+        return (int) ((Configurations.gameplay.pvp_mode ? Configurations.gameplay.blockMiningDelayModifier/2 : Configurations.gameplay.blockMiningDelayModifier
                          * Math.pow(LEVEL_MODIFIER, worker.getCitizenExperienceHandler().getLevel()))
                         * (double) world.getBlockState(pos).getBlockHardness(world, pos)
                         / (double) (worker.getHeldItemMainhand().getItem()

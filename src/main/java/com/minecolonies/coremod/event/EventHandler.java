@@ -16,6 +16,10 @@ import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesChunkCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldCapabilityProvider;
 import com.minecolonies.coremod.items.ModItems;
@@ -38,6 +42,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -209,6 +214,36 @@ public class EventHandler
         }
     }
 
+
+    /**
+     * Event called when the player enters a new chunk.
+     *
+     * @param event the event.
+     */
+    @SubscribeEvent
+    public void onEnteringChunkEntity(@NotNull final EntityEvent.EnteringChunk event)
+    {
+        if (event.getEntity() instanceof EntityCitizen)
+        {
+            final EntityCitizen entityCitizen = (EntityCitizen) event.getEntity();
+            if (entityCitizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && entityCitizen.getEntityWorld().isBlockLoaded(entityCitizen.getPosition()))
+            {
+                final World world = entityCitizen.getEntityWorld();
+                final Chunk chunk = world.getChunkFromChunkCoords(event.getNewChunkX(), event.getNewChunkZ());
+                final IColonyTagCapability chunkCapability = chunk.getCapability(CLOSE_COLONY_CAP, null);
+                if (chunkCapability != null && chunkCapability.getOwningColony() != 0
+                      && entityCitizen.getCitizenColonyHandler().getColonyId() != chunkCapability.getOwningColony())
+                {
+                    final Colony colony = ColonyManager.getColony(chunkCapability.getOwningColony());
+                    if (colony != null)
+                    {
+                        colony.addGuardToAttackers(entityCitizen, ((AbstractBuildingGuards) entityCitizen.getCitizenColonyHandler().getWorkBuilding()).getFollowPlayer());
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Event when a block is broken.
      * Event gets cancelled when there no permission to break a hut.
@@ -218,26 +253,7 @@ public class EventHandler
     @SubscribeEvent
     public void onBlockBreak(@NotNull final BlockEvent.BreakEvent event)
     {
-        final World world = event.getWorld();
-
-        if (!world.isRemote && event.getState().getBlock() instanceof AbstractBlockHut)
-        {
-            @Nullable final AbstractBuilding building = ColonyManager.getBuilding(world, event.getPos());
-            if (building == null)
-            {
-                return;
-            }
-
-            if (!building.getColony().getPermissions().hasPermission(event.getPlayer(), Action.BREAK_HUTS))
-            {
-                event.setCanceled(true);
-                return;
-            }
-
-            building.destroy();
-        }
-
-        if (event.getPlayer() instanceof EntityPlayer && event.getPlayer().getHeldItem(EnumHand.MAIN_HAND).getItem() == ModItems.scanTool)
+        if (event.getPlayer() != null && event.getPlayer().getHeldItem(EnumHand.MAIN_HAND).getItem() == ModItems.scanTool)
         {
             final ItemStack itemstack = event.getPlayer().getHeldItem(EnumHand.MAIN_HAND);
             if (!itemstack.hasTagCompound())
