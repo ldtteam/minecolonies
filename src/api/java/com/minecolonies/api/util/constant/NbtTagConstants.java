@@ -65,6 +65,9 @@ public final class NbtTagConstants
     public static final String TAG_DAY                    = "day";
     public static final String OWNED_CHUNKS_TO_LOAD_TAG   = "ownedChunks";
     public static final String CLOSE_CHUNKS_TO_LOAD_TAG   = "closeChunks";
+    public static final String TAG_NEED_TO_MOURN          = "needToMourn";
+    public static final String TAG_MOURNING               = "mourning";
+
 
     /**
      * Tag used to store the containers to NBT.

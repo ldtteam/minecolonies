@@ -270,6 +270,8 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_HARVESTING                = "com.minecolonies.coremod.status.harvestingBarrels";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST                 = "entity.composter.noItems";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_MOURN                                      = "com.minecolonies.coremod.mourning";
 
     private TranslationConstants()
     {

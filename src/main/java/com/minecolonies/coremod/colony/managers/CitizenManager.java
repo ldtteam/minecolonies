@@ -14,6 +14,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveCitizenMessage;
@@ -443,5 +444,19 @@ public class CitizenManager implements ICitizenManager
                 spawnCitizen();
             }
         }
+    }
+    
+
+    @Override
+    public void updateCitizenMourn(final boolean mourn)
+    {
+        for (final CitizenData citizen : getCitizens())
+        {
+            if (citizen.getCitizenEntity().isPresent() && !(citizen.getJob() instanceof AbstractJobGuard))
+            {
+                citizen.getCitizenEntity().get().setMourning(mourn);
+            }
+        }
+        
     }
 }
