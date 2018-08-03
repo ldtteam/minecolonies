@@ -311,6 +311,7 @@ public class CitizenDataView
         intelligence = buf.readInt();
         dexterity = buf.readInt();
         saturation = buf.readDouble();
+        happiness = buf.readDouble();
 
         job = ByteBufUtils.readUTF8String(buf);
 
@@ -330,8 +331,6 @@ public class CitizenDataView
         this.inventory.readFromNBT(nbttaglist);
         this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInteger(TAG_HELD_ITEM_SLOT));
         this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInteger(TAG_OFFHAND_HELD_ITEM_SLOT));
-
-        happiness = buf.readDouble();
     }
 
     /**
