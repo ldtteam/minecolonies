@@ -859,8 +859,7 @@ public class CitizenData
         buf.writeInt(getIntelligence());
         buf.writeInt(getDexterity());
         buf.writeDouble(getSaturation());
-        buf.writeDouble(citizenHappinessHandler.getHappiness());
-        
+
         ByteBufUtils.writeUTF8String(buf, (job != null) ? job.getName() : "");
 
         writeStatusToBuffer(buf);
@@ -870,6 +869,7 @@ public class CitizenData
         final NBTTagCompound compound = new NBTTagCompound();
         compound.setTag("inventory", inventory.writeToNBT(new NBTTagList()));
         ByteBufUtils.writeTag(buf, compound);
+        buf.writeDouble(citizenHappinessHandler.getHappiness());
     }
 
     /**
