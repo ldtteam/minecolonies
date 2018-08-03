@@ -61,16 +61,18 @@ public class WindowResourceList extends AbstractWindowSkeleton
     {
         super(Constants.MOD_ID + RESOURCE_SCROLL_RESOURCE_SUFFIX);
         final ColonyView colonyView = ColonyManager.getColonyView(colonyId);
-        final AbstractBuildingView buildingView = colonyView.getBuilding(buildingPos);
-        if (buildingView instanceof AbstractBuildingBuilderView)
+        if (colonyView != null)
         {
-            this.builder = (BuildingBuilder.View) buildingView;
+            final AbstractBuildingView buildingView = colonyView.getBuilding(buildingPos);
+            if (buildingView instanceof AbstractBuildingBuilderView)
+            {
+                this.builder = (BuildingBuilder.View) buildingView;
+                return;
+            }
         }
-        else
-        {
-            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.gui.resourcescroll.nobuilder");
-            this.builder = null;
-        }
+
+        LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.gui.resourcescroll.nobuilder");
+        this.builder = null;
     }
 
     /**
