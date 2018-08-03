@@ -57,6 +57,12 @@ public class CitizenDataView
     private int    dexterity;
     private double saturation;
 
+    /** 
+     * holds the current citizen happiness value 
+     */ 
+
+    private double happiness; 
+
     /**
      * Job identifier.
      */
@@ -219,6 +225,16 @@ public class CitizenDataView
         return charisma;
     }
 
+    /** 
+     * Gets the current Happiness value for the citizen 
+     * 
+     * @return citizens current Happiness value 
+     */ 
+    public double getHappiness() 
+    { 
+      return happiness; 
+    } 
+
     /**
      * Get the saturation of the citizen.
      *
@@ -295,6 +311,7 @@ public class CitizenDataView
         intelligence = buf.readInt();
         dexterity = buf.readInt();
         saturation = buf.readDouble();
+        happiness = buf.readDouble();
 
         job = ByteBufUtils.readUTF8String(buf);
 
