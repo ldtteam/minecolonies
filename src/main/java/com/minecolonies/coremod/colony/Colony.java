@@ -701,7 +701,7 @@ public class Colony implements IColony
             {
                 if (!player.getGuards().isEmpty())
                 {
-                    player.refreshList();
+                    player.refreshList(this);
                     if (player.getGuards().isEmpty())
                     {
                         LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), "You successfully defended your colony against, " + player.getPlayer().getName());

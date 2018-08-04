@@ -173,10 +173,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         worker.setCanPickUpLoot(true);
 
         final List<GuardItemsNeeded> itemlvl1Needed = new ArrayList<>();
-        itemlvl1Needed.add(new GuardItemsNeeded(ToolType.BOOTS, EntityEquipmentSlot.FEET,  ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_LEATHER, 1, 2, 4));
-        itemlvl1Needed.add(new GuardItemsNeeded(ToolType.CHESTPLATE, EntityEquipmentSlot.CHEST, ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_LEATHER, 1, 2, 4));
-        itemlvl1Needed.add(new GuardItemsNeeded(ToolType.HELMET, EntityEquipmentSlot.HEAD,  ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_LEATHER, 1, 2, 4));
-        itemlvl1Needed.add(new GuardItemsNeeded(ToolType.LEGGINGS, EntityEquipmentSlot.LEGS,  ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_LEATHER, 1, 2, 4));
+        itemlvl1Needed.add(new GuardItemsNeeded(ToolType.BOOTS, EntityEquipmentSlot.FEET,  ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_LEATHER, 1, 0, 4));
+        itemlvl1Needed.add(new GuardItemsNeeded(ToolType.CHESTPLATE, EntityEquipmentSlot.CHEST, ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_LEATHER, 1, 0, 4));
+        itemlvl1Needed.add(new GuardItemsNeeded(ToolType.HELMET, EntityEquipmentSlot.HEAD,  ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_LEATHER, 1, 0, 4));
+        itemlvl1Needed.add(new GuardItemsNeeded(ToolType.LEGGINGS, EntityEquipmentSlot.LEGS,  ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_LEATHER, 1, 0, 4));
 
         itemlvl1Needed.add(new GuardItemsNeeded(ToolType.BOOTS, EntityEquipmentSlot.FEET,  ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_GOLD, 1, 5, 99));
         itemlvl1Needed.add(new GuardItemsNeeded(ToolType.CHESTPLATE, EntityEquipmentSlot.CHEST, ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_GOLD, 1, 5, 99));
@@ -186,10 +186,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
 
         final List<GuardItemsNeeded> itemlvl2Needed = new ArrayList<>();
-        itemlvl2Needed.add(new GuardItemsNeeded(ToolType.BOOTS, EntityEquipmentSlot.FEET,  ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_GOLD, 1, 1, 4));
-        itemlvl2Needed.add(new GuardItemsNeeded(ToolType.CHESTPLATE, EntityEquipmentSlot.CHEST, ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_GOLD, 1, 1, 4));
-        itemlvl2Needed.add(new GuardItemsNeeded(ToolType.HELMET, EntityEquipmentSlot.HEAD,  ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_GOLD, 1, 1, 4));
-        itemlvl2Needed.add(new GuardItemsNeeded(ToolType.LEGGINGS, EntityEquipmentSlot.LEGS,  ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_GOLD, 1, 1, 4));
+        itemlvl2Needed.add(new GuardItemsNeeded(ToolType.BOOTS, EntityEquipmentSlot.FEET,  ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_GOLD, 1, 0, 4));
+        itemlvl2Needed.add(new GuardItemsNeeded(ToolType.CHESTPLATE, EntityEquipmentSlot.CHEST, ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_GOLD, 1, 0, 4));
+        itemlvl2Needed.add(new GuardItemsNeeded(ToolType.HELMET, EntityEquipmentSlot.HEAD,  ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_GOLD, 1, 0, 4));
+        itemlvl2Needed.add(new GuardItemsNeeded(ToolType.LEGGINGS, EntityEquipmentSlot.LEGS,  ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_GOLD, 1, 0, 4));
 
         itemlvl2Needed.add(new GuardItemsNeeded(ToolType.BOOTS, EntityEquipmentSlot.FEET,  ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_CHAIN, 1, 5, 99));
         itemlvl2Needed.add(new GuardItemsNeeded(ToolType.CHESTPLATE, EntityEquipmentSlot.CHEST, ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_CHAIN, 1, 5, 99));
@@ -199,10 +199,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
          
         final List<GuardItemsNeeded> itemlvl3Needed = new ArrayList<>();
-        itemlvl3Needed.add(new GuardItemsNeeded(ToolType.BOOTS, EntityEquipmentSlot.FEET,  ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_CHAIN, 1, 1, 8));
-        itemlvl3Needed.add(new GuardItemsNeeded(ToolType.CHESTPLATE, EntityEquipmentSlot.CHEST, ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_CHAIN, 1, 1, 8));
-        itemlvl3Needed.add(new GuardItemsNeeded(ToolType.HELMET, EntityEquipmentSlot.HEAD,  ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_CHAIN, 1, 1, 8));
-        itemlvl3Needed.add(new GuardItemsNeeded(ToolType.LEGGINGS, EntityEquipmentSlot.LEGS,  ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_CHAIN, 1, 1, 8));
+        itemlvl3Needed.add(new GuardItemsNeeded(ToolType.BOOTS, EntityEquipmentSlot.FEET,  ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_CHAIN, 1, 0, 8));
+        itemlvl3Needed.add(new GuardItemsNeeded(ToolType.CHESTPLATE, EntityEquipmentSlot.CHEST, ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_CHAIN, 1, 0, 8));
+        itemlvl3Needed.add(new GuardItemsNeeded(ToolType.HELMET, EntityEquipmentSlot.HEAD,  ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_CHAIN, 1, 0, 8));
+        itemlvl3Needed.add(new GuardItemsNeeded(ToolType.LEGGINGS, EntityEquipmentSlot.LEGS,  ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_CHAIN, 1, 0, 8));
 
         itemlvl3Needed.add(new GuardItemsNeeded(ToolType.BOOTS, EntityEquipmentSlot.FEET,  ARMOR_LEVEL_GOLD, ARMOR_LEVEL_IRON, 1, 9, 99));
         itemlvl3Needed.add(new GuardItemsNeeded(ToolType.CHESTPLATE, EntityEquipmentSlot.CHEST, ARMOR_LEVEL_GOLD, ARMOR_LEVEL_IRON, 1, 9, 99));
@@ -212,10 +212,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
 
         final List<GuardItemsNeeded> itemlvl4Needed = new ArrayList<>();
-        itemlvl4Needed.add(new GuardItemsNeeded(ToolType.BOOTS, EntityEquipmentSlot.FEET,  ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_IRON, 1, 1, 14));
-        itemlvl4Needed.add(new GuardItemsNeeded(ToolType.CHESTPLATE, EntityEquipmentSlot.CHEST, ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_IRON, 1, 1, 14));
-        itemlvl4Needed.add(new GuardItemsNeeded(ToolType.HELMET, EntityEquipmentSlot.HEAD,  ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_IRON, 1, 1, 14));
-        itemlvl4Needed.add(new GuardItemsNeeded(ToolType.LEGGINGS, EntityEquipmentSlot.LEGS,  ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_IRON, 1, 1, 14));
+        itemlvl4Needed.add(new GuardItemsNeeded(ToolType.BOOTS, EntityEquipmentSlot.FEET,  ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_IRON, 1, 0, 14));
+        itemlvl4Needed.add(new GuardItemsNeeded(ToolType.CHESTPLATE, EntityEquipmentSlot.CHEST, ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_IRON, 0, 1, 14));
+        itemlvl4Needed.add(new GuardItemsNeeded(ToolType.HELMET, EntityEquipmentSlot.HEAD,  ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_IRON, 1, 0, 14));
+        itemlvl4Needed.add(new GuardItemsNeeded(ToolType.LEGGINGS, EntityEquipmentSlot.LEGS,  ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_IRON, 1, 0, 14));
 
         itemlvl4Needed.add(new GuardItemsNeeded(ToolType.BOOTS, EntityEquipmentSlot.FEET,  ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_DIAMOND, 1, 15, 99));
         itemlvl4Needed.add(new GuardItemsNeeded(ToolType.CHESTPLATE, EntityEquipmentSlot.CHEST, ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_DIAMOND, 1, 15, 99));
@@ -224,10 +224,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         itemsNeeded.put(4, itemlvl4Needed);
 
         final List<GuardItemsNeeded> itemlvl5Needed = new ArrayList<>();
-        itemlvl5Needed.add(new GuardItemsNeeded(ToolType.BOOTS, EntityEquipmentSlot.FEET,  ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_IRON, 1, 1, 14));
-        itemlvl5Needed.add(new GuardItemsNeeded(ToolType.CHESTPLATE, EntityEquipmentSlot.CHEST, ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_IRON, 1, 1, 14));
-        itemlvl5Needed.add(new GuardItemsNeeded(ToolType.HELMET, EntityEquipmentSlot.HEAD,  ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_IRON, 1, 1, 14));
-        itemlvl5Needed.add(new GuardItemsNeeded(ToolType.LEGGINGS, EntityEquipmentSlot.LEGS,  ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_IRON, 1, 1, 14));
+        itemlvl5Needed.add(new GuardItemsNeeded(ToolType.BOOTS, EntityEquipmentSlot.FEET,  ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_IRON, 1, 0, 14));
+        itemlvl5Needed.add(new GuardItemsNeeded(ToolType.CHESTPLATE, EntityEquipmentSlot.CHEST, ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_IRON, 1, 0, 14));
+        itemlvl5Needed.add(new GuardItemsNeeded(ToolType.HELMET, EntityEquipmentSlot.HEAD,  ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_IRON, 1, 0, 14));
+        itemlvl5Needed.add(new GuardItemsNeeded(ToolType.LEGGINGS, EntityEquipmentSlot.LEGS,  ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_IRON, 1, 0, 14));
 
         itemlvl5Needed.add(new GuardItemsNeeded(ToolType.BOOTS, EntityEquipmentSlot.FEET,  ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_DIAMOND, 1, 15, 99));
         itemlvl5Needed.add(new GuardItemsNeeded(ToolType.CHESTPLATE, EntityEquipmentSlot.CHEST, ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_DIAMOND, 1, 15, 99));

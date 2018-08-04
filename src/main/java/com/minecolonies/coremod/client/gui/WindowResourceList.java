@@ -2,43 +2,40 @@ package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.Pane;
-import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.ItemIcon;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
-import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
-import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.coremod.client.gui.WindowHutBuilder.*;
 
 /**
- * Window for the builder hut.
+ * Window for the resource list item.
  */
-public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuilder.View>
+public class WindowResourceList extends AbstractWindowSkeleton
 {
-    /**
-     * Color constants for builder list.
-     */
-    public static final int RED       = Color.getByName("red", 0);
-    public static final int DARKGREEN = Color.getByName("darkgreen", 0);
-    public static final int BLACK     = Color.getByName("black", 0);
-
+    @Nullable
     private final BuildingBuilder.View builder;
 
     /**
@@ -48,16 +45,26 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     private final List<BuildingBuilderResource> resources = new ArrayList<>();
 
     /**
-     * Constructor for window builder hut.
-     *
-     * @param building {@link BuildingBuilder.View}.
+     * Constructor for the resource scroll window.
+     * @param colonyId the colony id.
+     * @param buildingPos the building position.
      */
-    public WindowHutBuilder(final BuildingBuilder.View building)
+    public WindowResourceList(final int colonyId, final BlockPos buildingPos)
     {
-        super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
-        this.builder = building;
-        pullResourcesFromHut();
-        registerButton(RESOURCE_ADD, this::transferItems);
+        super(Constants.MOD_ID + RESOURCE_SCROLL_RESOURCE_SUFFIX);
+        final ColonyView colonyView = ColonyManager.getColonyView(colonyId);
+        if (colonyView != null)
+        {
+            final AbstractBuildingView buildingView = colonyView.getBuilding(buildingPos);
+            if (buildingView instanceof AbstractBuildingBuilderView)
+            {
+                this.builder = (BuildingBuilder.View) buildingView;
+                return;
+            }
+        }
+
+        LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.gui.resourcescroll.nobuilder");
+        this.builder = null;
     }
 
     /**
@@ -97,6 +104,11 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     @Override
     public void onOpened()
     {
+        if (this.builder == null)
+        {
+            close();
+            return;
+        }
         super.onOpened();
 
         pullResourcesFromHut();
@@ -118,11 +130,9 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         });
 
         //Make sure we have a fresh view
-        MineColonies.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.building));
+        MineColonies.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.builder));
 
-        findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Label.class).setLabelText(building.getConstructionName());
-        findPaneOfTypeByID(LABEL_CONSTRUCTION_POS, Label.class).setLabelText(building.getConstructionPos());
-
+        findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Label.class).setLabelText(builder.getConstructionName());
     }
 
     /**
@@ -137,41 +147,31 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
         final Label resourceMissingLabel = rowPane.findPaneOfTypeByID(RESOURCE_MISSING, Label.class);
         final Label neededLabel = rowPane.findPaneOfTypeByID(RESOURCE_AVAILABLE_NEEDED, Label.class);
-        final Button addButton = rowPane.findPaneOfTypeByID(RESOURCE_ADD, Button.class);
 
         switch (resource.getAvailabilityStatus())
         {
             case DONT_HAVE:
-                addButton.disable();
                 resourceLabel.setColor(RED, RED);
                 resourceMissingLabel.setColor(RED, RED);
                 neededLabel.setColor(RED, RED);
                 break;
             case NEED_MORE:
-                addButton.enable();
                 resourceLabel.setColor(RED, RED);
                 resourceMissingLabel.setColor(RED, RED);
                 neededLabel.setColor(RED, RED);
                 break;
             case HAVE_ENOUGH:
-                addButton.enable();
                 resourceLabel.setColor(DARKGREEN, DARKGREEN);
                 resourceMissingLabel.setColor(DARKGREEN, DARKGREEN);
                 neededLabel.setColor(DARKGREEN, DARKGREEN);
                 break;
             case NOT_NEEDED:
             default:
-                addButton.disable();
                 resourceLabel.setColor(BLACK, BLACK);
                 resourceMissingLabel.setColor(BLACK, BLACK);
                 neededLabel.setColor(BLACK, BLACK);
                 break;
         }
-
-        //position the addResource Button to the right
-        final int buttonX = rowPane.getWidth() - addButton.getWidth() - (rowPane.getHeight() - addButton.getHeight()) / 2;
-        final int buttonY = rowPane.getHeight() - addButton.getHeight() - 2;
-        addButton.setPosition(buttonX, buttonY);
 
         resourceLabel.setLabelText(resource.getName());
         final int missing = resource.getMissingFromPlayer();
@@ -193,56 +193,12 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(stack);
     }
 
-    /**
-     * Returns the name of a building.
-     *
-     * @return Name of a building.
-     */
-    @NotNull
-    @Override
-    public String getBuildingName()
-    {
-        return "com.minecolonies.coremod.gui.workerHuts.buildersHut";
-    }
-
     @Override
     public void onUpdate()
     {
         super.onUpdate();
 
-        final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
-        if (currentPage.equals(PAGE_RESOURCES))
-        {
-            pullResourcesFromHut();
-            window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).refreshElementPanes();
-        }
-    }
-
-    /**
-     * On Button click transfert Items.
-     *
-     * @param button the clicked button.
-     */
-    private void transferItems(@NotNull final Button button)
-    {
-        final Pane pane = button.getParent();
-
-        final Label idLabel = pane.findPaneOfTypeByID(RESOURCE_ID, Label.class);
-        final int index = Integer.parseInt(idLabel.getLabelText());
-        final BuildingBuilderResource res = resources.get(index);
-        if (res == null)
-        {
-            Log.getLogger().warn("WindowHutBuilder.transferItems: Error - Could not find the resource.");
-        }
-        else
-        {
-            // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
-            // and use quantity for the size
-            @NotNull final ItemStack itemStack = new ItemStack(res.getItem(), 1, res.getDamageValue());
-            itemStack.setTagCompound(res.getItemStack().getTagCompound());
-            final Label quantityLabel = pane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class);
-            final int quantity = Integer.parseInt(quantityLabel.getLabelText());
-            MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, itemStack, quantity, true));
-        }
+        pullResourcesFromHut();
+        window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).refreshElementPanes();
     }
 }

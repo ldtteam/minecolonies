@@ -749,3 +749,5 @@ com.minecolonies.coremod.status.harvestingBarrels=Harvesting the barrels
 com.minecolonies.coremod.pvp.townhall.break.start=Beware! %s started breaking your town-hall!
 com.minecolonies.coremod.pvp.townhall.broke=Beware!!! %s broke your town-hall by over %d%%! At 100%% it will be lost!!!
 com.minecolonies.coremod.gui.townHall.pickTeamColor=Pick Team Color:
+item.minecolonies.resourcescroll.name=Resource-Scroll
+com.minecolonies.coremod.gui.resourcescroll.nobuilder=Couldn't find a registered builder, please shift-right-click an existing builders hut.
