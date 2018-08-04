@@ -77,7 +77,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
                 LanguageHandler.sendPlayerMessage(playerIn, TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET, ((TileEntityColonyBuilding) entity).getColonyId());
             }
         }
-        else if (compound.hasKey(TAG_COLONY_ID) && compound.hasKey(TAG_BUILDER) && !worldIn.isRemote)
+        else if (compound.hasKey(TAG_COLONY_ID) && compound.hasKey(TAG_BUILDER) && worldIn.isRemote)
         {
             final int colonyId = compound.getInteger(TAG_COLONY_ID);
             final BlockPos builderPos = BlockPosUtil.readFromNBT(compound, TAG_BUILDER);
