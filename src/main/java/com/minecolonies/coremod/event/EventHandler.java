@@ -225,6 +225,10 @@ public class EventHandler
     {
         if (Configurations.gameplay.pvp_mode && event.getEntity() instanceof EntityCitizen)
         {
+            if (event.getEntity().world != null && !event.getEntity().world.isBlockLoaded(new BlockPos(event.getNewChunkX()*BLOCKS_PER_CHUNK, 70, event.getNewChunkZ()*BLOCKS_PER_CHUNK)))
+            {
+                return;
+            }
             final EntityCitizen entityCitizen = (EntityCitizen) event.getEntity();
             if (entityCitizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && entityCitizen.getEntityWorld().isBlockLoaded(entityCitizen.getPosition()))
             {
