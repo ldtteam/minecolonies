@@ -419,7 +419,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     {
         if (getOwnBuilding() != null)
         {
-            Stream<T> animal = searchForAnimals()
+            final Stream<T> animal = searchForAnimals()
                     .stream()
                     .filter(animalToButcher -> animalToButcher.getGrowingAge() == 0);
 
