@@ -65,7 +65,7 @@ public class CitizenData
     /**
      * The chance the citizen has to level. is 1 in this number.
      */
-    private static final int CHANCE_TO_LEVEL = 50;
+    private static final int CHANCE_TO_LEVEL = 100;
 
     /**
      * The number of skills the citizen has.
@@ -1133,5 +1133,6 @@ public class CitizenData
                 dexterity = Math.min(dexterity + 1, levelCap);
                 break;
         }
+        markDirty();
     }
 }
