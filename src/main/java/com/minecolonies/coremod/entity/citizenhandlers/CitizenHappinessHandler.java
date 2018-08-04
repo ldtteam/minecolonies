@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
@@ -472,10 +473,7 @@ public class CitizenHappinessHandler
      */
     public void writeToNBT(final NBTTagCompound compound)
     {
-        @NotNull
-        final NBTTagList tasksTagList = new NBTTagList();
-        @NotNull
-        final NBTTagCompound taskCompound = new NBTTagCompound();
+        @NotNull final NBTTagCompound taskCompound = new NBTTagCompound();
         taskCompound.setDouble(NbtTagConstants.TAG_BASE, baseHappiness);
         taskCompound.setDouble(NbtTagConstants.TAG_FOOD, foodModifier);
         taskCompound.setDouble(NbtTagConstants.TAG_DAMAGE, damageModifier);
@@ -486,19 +484,16 @@ public class CitizenHappinessHandler
         taskCompound.setInteger(NbtTagConstants.TAG_NUMBER_OF_DAYS_JOB, numberOfDaysWithoutJob);
         taskCompound.setBoolean(NbtTagConstants.TAG_HAS_NO_FIELDS, hasNoFields);
 
-        @NotNull
-        final NBTTagList fieldsTagList = new NBTTagList();
+        @NotNull final NBTTagList fieldsTagList = new NBTTagList();
         for (final Map.Entry<BlockPos, FieldDataModifier> entry : fieldModifier.entrySet())
         {
             final BlockPos pos = entry.getKey();
             final FieldDataModifier field = entry.getValue();
-            @NotNull
-            final NBTTagCompound fieldCompound = new NBTTagCompound();
+            @NotNull final NBTTagCompound fieldCompound = new NBTTagCompound();
             fieldCompound.setInteger(NbtTagConstants.TAG_FIELD_DAYS_INACTIVE, field.getInactiveDays());
             fieldCompound.setBoolean(NbtTagConstants.TAG_FIELD_CAN_FARM, field.isCanFarm());
 
-            @NotNull
-            final NBTTagList containerTagList = new NBTTagList();
+            @NotNull final NBTTagList containerTagList = new NBTTagList();
             containerTagList.appendTag(NBTUtil.createPosTag(pos));
             fieldCompound.setTag(NbtTagConstants.TAG_ID, containerTagList);
 
@@ -506,14 +501,12 @@ public class CitizenHappinessHandler
         }
         taskCompound.setTag(NbtTagConstants.TAG_FIELDS, fieldsTagList);
 
-        @NotNull
-        final NBTTagList noToolsTagList = new NBTTagList();
+        @NotNull final NBTTagList noToolsTagList = new NBTTagList();
         for (final Map.Entry<IToolType, Integer> entry : needsTool.entrySet())
         {
             final IToolType toolType = entry.getKey();
             final int numDays = entry.getValue();
-            @NotNull
-            final NBTTagCompound noToolsCompound = new NBTTagCompound();
+            @NotNull final NBTTagCompound noToolsCompound = new NBTTagCompound();
             noToolsCompound.setInteger(NbtTagConstants.TAG_NO_TOOLS_NUMBER_DAYS, numDays);
             noToolsCompound.setString(NbtTagConstants.TAG_NO_TOOLS_TOOL_TYPE, toolType.getName());
 
@@ -521,9 +514,7 @@ public class CitizenHappinessHandler
         }
         taskCompound.setTag(NbtTagConstants.TAG_FIELDS, fieldsTagList);
 
-        tasksTagList.appendTag(taskCompound);
-
-        compound.setTag(NbtTagConstants.TAG_NAME, tasksTagList);
+        compound.setTag(NbtTagConstants.TAG_HAPPINESS_NAME, taskCompound);
     }
 
     /**
@@ -533,8 +524,7 @@ public class CitizenHappinessHandler
      */
     public void readFromNBT(final NBTTagCompound compound)
     {
-        final NBTTagList tagListCompound = compound.getTagList(NbtTagConstants.TAG_NAME, Constants.NBT.TAG_COMPOUND);
-        final NBTTagCompound tagCompound = tagListCompound.getCompoundTagAt(0);
+        final NBTTagCompound tagCompound = compound.getCompoundTag(NbtTagConstants.TAG_HAPPINESS_NAME);
         baseHappiness = tagCompound.getDouble(NbtTagConstants.TAG_BASE);
         foodModifier = tagCompound.getDouble(NbtTagConstants.TAG_FOOD);
         damageModifier = tagCompound.getDouble(NbtTagConstants.TAG_DAMAGE);

@@ -94,6 +94,13 @@ public interface IProxy
     void openClipBoardWindow(int colonyId);
 
     /**
+     * Opens the resource scroll window.
+     *
+     * @param colonyId the colony id.
+     */
+    void openResourceScrollWindow(final int colonyId, final BlockPos pos);
+
+    /**
      * Registers all block and item renderer.
      */
     void registerRenderer();

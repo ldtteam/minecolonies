@@ -12,6 +12,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraft.util.math.BlockPos;
@@ -60,6 +62,9 @@ public class ColonyTest
     @Mock
     private EventBus eventBus;
 
+    @Mock
+    private Scoreboard board;
+
     private Colony colony;
 
     private final UUID id = UUID.randomUUID();
@@ -73,6 +78,8 @@ public class ColonyTest
         ReflectionUtil.setFinalField(world, "provider", worldProvider);
         ReflectionUtil.setStaticFinalField(MinecraftForge.class, "EVENT_BUS", eventBus);
         StandardFactoryControllerInitializer.onPreInit();
+        when(world.getScoreboard()).thenReturn(board);
+        when(board.getTeam(any())).thenReturn(new ScorePlayerTeam(board, "team"));
         colony = list.create(world, center);
     }
 

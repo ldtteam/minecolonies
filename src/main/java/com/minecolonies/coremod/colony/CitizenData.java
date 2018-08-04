@@ -243,7 +243,12 @@ public class CitizenData
             this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInteger(TAG_HELD_ITEM_SLOT));
             this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInteger(TAG_OFFHAND_HELD_ITEM_SLOT));
         }
-        citizenHappinessHandler.readFromNBT(compound); 
+        citizenHappinessHandler.readFromNBT(compound);
+
+        if (name.isEmpty())
+        {
+            name = generateName(new Random());
+        }
     }
 
     /**
@@ -860,7 +865,7 @@ public class CitizenData
         buf.writeInt(getDexterity());
         buf.writeDouble(getSaturation());
         buf.writeDouble(citizenHappinessHandler.getHappiness());
-        
+
         ByteBufUtils.writeUTF8String(buf, (job != null) ? job.getName() : "");
 
         writeStatusToBuffer(buf);
@@ -1088,7 +1093,11 @@ public class CitizenData
      */
     public boolean isRequestAsync(@NotNull final IToken token)
     {
-        return job.getAsyncRequests().contains(token);
+        if (job != null)
+        {
+            return job.getAsyncRequests().contains(token);
+        }
+        return false;
     }
 
     /**
