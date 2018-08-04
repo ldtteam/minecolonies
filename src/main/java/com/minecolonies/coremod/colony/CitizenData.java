@@ -1108,4 +1108,36 @@ public class CitizenData
     {
         return citizenHappinessHandler;
     }
+
+    /**
+     * Try a random level up.
+     */
+    public void tryRandomLevelUp(final Random random)
+    {
+        final int levelCap = (int) getCitizenHappinessHandler().getHappiness();
+
+        if (random.nextInt(100) > 0)
+        {
+            return;
+        }
+
+        switch (random.nextInt(5))
+        {
+            case 0:
+                intelligence = Math.min(intelligence + 1, levelCap);
+                break;
+            case 1:
+                charisma = Math.min(charisma + 1, levelCap);
+                break;
+            case 2:
+                strength = Math.min(strength + 1, levelCap);
+                break;
+            case 3:
+                endurance = Math.min(endurance + 1, levelCap);
+                break;
+            default:
+                dexterity = Math.min(dexterity + 1, levelCap);
+                break;
+        }
+    }
 }

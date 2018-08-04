@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BOOKCASES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
@@ -37,7 +39,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
     /**
      * Description of the block used to set this block.
      */
-    private static final String LIBRARY_HUT_NAME = "library";
+    private static final String LIBRARY_HUT_NAME = "Library";
 
     /**
      * List of registered barrels.
@@ -48,6 +50,11 @@ public class BuildingLibrary extends AbstractBuildingWorker
      * Max building level of the hut.
      */
     private static final int MAX_BUILDING_LEVEL = 5;
+
+    /**
+     * Random obj for random calc.
+     */
+    private final Random random = new Random();
 
     /**
      * Instantiates the building.
@@ -89,7 +96,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
     @Override
     public boolean hasAssignedCitizen()
     {
-        return getAssignedCitizen().size() >= getBuildingLevel();
+        return getAssignedCitizen().size() >= getBuildingLevel() * 2;
     }
 
     @Override
@@ -128,6 +135,25 @@ public class BuildingLibrary extends AbstractBuildingWorker
     }
 
     /**
+     * Returns a random bookshelf from the list.
+     * @return the position of it.
+     */
+    public BlockPos getRandomBookShelf()
+    {
+        if (bookCases.isEmpty())
+        {
+            return getLocation();
+        }
+        final BlockPos returnPos = bookCases.get(random.nextInt(bookCases.size()));
+        if ((colony.getWorld().getBlockState(returnPos).getBlock() instanceof BlockBookshelf))
+        {
+            return returnPos;
+        }
+        bookCases.remove(returnPos);
+        return getLocation();
+    }
+
+    /**
      * ClientSide representation of the building.
      */
     public static class View extends AbstractBuildingWorker.View
@@ -147,6 +173,17 @@ public class BuildingLibrary extends AbstractBuildingWorker
         public Window getWindow()
         {
             return new WindowHutWorkerPlaceholder<AbstractBuildingWorker.View>(this, LIBRARY_HUT_NAME);
+        }
+
+        /**
+         * Check if it has enough workers.
+         *
+         * @return true if so.
+         */
+        @Override
+        public boolean hasEnoughWorkers()
+        {
+            return getWorkerId().size() >= getBuildingLevel() * 2;
         }
 
         @NotNull

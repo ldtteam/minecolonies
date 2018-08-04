@@ -749,3 +749,5 @@ com.minecolonies.coremod.pvp.townhall.break.start=Beware! %s started breaking yo
 com.minecolonies.coremod.pvp.townhall.broke=Beware!!! %s broke your town-hall by over %d%%! At 100%% it will be lost!!!
 com.minecolonies.coremod.gui.townHall.pickTeamColor=Pick Team Color:
 tile.minecolonies.blockhutlibrary.name=Library
+com.minecolonies.coremod.gui.workerHuts.Library=Library
+com.minecolonies.coremod.job.student=Student
