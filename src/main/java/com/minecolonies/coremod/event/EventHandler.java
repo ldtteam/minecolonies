@@ -223,7 +223,7 @@ public class EventHandler
     @SubscribeEvent
     public void onEnteringChunkEntity(@NotNull final EntityEvent.EnteringChunk event)
     {
-        if (event.getEntity() instanceof EntityCitizen)
+        if (Configurations.gameplay.pvp_mode && event.getEntity() instanceof EntityCitizen)
         {
             final EntityCitizen entityCitizen = (EntityCitizen) event.getEntity();
             if (entityCitizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && entityCitizen.getEntityWorld().isBlockLoaded(entityCitizen.getPosition()))
