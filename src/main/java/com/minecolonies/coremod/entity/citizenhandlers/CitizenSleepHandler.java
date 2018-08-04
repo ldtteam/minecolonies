@@ -107,7 +107,7 @@ public class CitizenSleepHandler
         }
 
         citizen.setPosition( ((float) bedLocation.getX() + HALF_BLOCK),
-          (double) ((float) bedLocation.getY() + BED_HEIGHT),
+          (double) ((float) bedLocation.getY()),
           ((float) bedLocation.getZ() + HALF_BLOCK));
 
         citizen.motionX = 0.0D;
