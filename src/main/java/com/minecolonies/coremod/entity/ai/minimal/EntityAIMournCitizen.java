@@ -57,7 +57,7 @@ public class EntityAIMournCitizen extends EntityAIBase
     /**
      * Max distance for the look for another citizen
      */
-    private int maxDistanceForPlayer = 1;
+    private final int maxDistanceForPlayer = 1;
 
     /**
      * Pointer to the closest citizen to look at.
