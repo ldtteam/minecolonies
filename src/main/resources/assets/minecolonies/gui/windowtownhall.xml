@@ -251,16 +251,15 @@
             <label id="assignHouses" label="$(com.minecolonies.coremod.gui.townHall.housing)" pos="25 122" size="147 11" textalign="MIDDLE" color="black"/>
             <button id="toggleHousing" size="57 20" pos="70 135" label="$(com.minecolonies.coremod.gui.hiring.off)"/>
 
-
-            <label id="pickColor" label="$(com.minecolonies.coremod.gui.townHall.pickTeamColor)" pos="185 92" size="147 11" textalign="MIDDLE" color="black"/>
-            <buttonimage id="previousColor" size="14 15"  pos="206 105" label="&lt;" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
-            <dropdown id="colorPicker" size="100 17" pos="220 105" maxContentHeight="75" dropDownSize="100 75" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black">
+            <label id="pickColor" label="$(com.minecolonies.coremod.gui.townHall.pickTeamColor)" pos="201 28" size="147 11" textalign="MIDDLE" color="black"/>
+            <buttonimage id="previousColor" size="14 15"  pos="217 42" label="&lt;" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
+            <dropdown id="colorPicker" size="86 17" pos="231 42" maxContentHeight="75" dropDownSize="86 75" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black" scrollbarOffset="8 0">
                 <view size="100% 15">
-                    <label id="id" size="100% 100%" label="" pos="0 0"/>
+                    <label id="id" size="100% 100%" label="" pos="0 0" textalign="MIDDLE"/>
                     <buttonimage id="button" size="86 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
                 </view>
             </dropdown>
-            <buttonimage id="nextColor" size="14 15" pos="306 105" label="&gt;" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
+            <buttonimage id="nextColor" size="14 15" pos="317 42" label="&gt;" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
 
         </view>
         <view id="pageHappiness">
@@ -276,7 +275,7 @@
         <view id="pageWorkOrder">
             <label size="147 11" pos="201 28" textalign="MIDDLE" label="§n§4$(com.minecolonies.coremod.gui.townHall.workorders):"/>
 
-            <list id="workOrderList" size="147 70%" pos="201 168">
+            <list id="workOrderList" size="147 70%" pos="201 40">
                 <view size="100% 30">
                     <box size="100% 30" linewidth="2">
                         <button id="plus" size="15 15" label="↥" pos="0 0"/>
