@@ -83,7 +83,7 @@ public class EntityAIMournCitizen extends EntityAIBase
      */
     private static final int MIN_DESTINATION_TO_LOCATION = 15;
     private static final int MIN_MOURN_TIME = 2000;
-    private static final int MIN_MOURN_RANDOM_TIME = 2000;
+    private static final int MIN_MOURN_RANDOM_TIME = 1000;
 
     /**
      * Instantiates this task.
