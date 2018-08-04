@@ -1109,13 +1109,12 @@ public class CitizenData
      */
     public void tryRandomLevelUp(final Random random)
     {
-        final int levelCap = (int) getCitizenHappinessHandler().getHappiness();
-
         if (random.nextInt(CHANCE_TO_LEVEL) > 0)
         {
             return;
         }
 
+        final int levelCap = (int) getCitizenHappinessHandler().getHappiness();
         switch (random.nextInt(AMOUNT_OF_SKILLS))
         {
             case 0:
