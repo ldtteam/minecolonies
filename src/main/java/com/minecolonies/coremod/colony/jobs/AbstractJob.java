@@ -49,7 +49,7 @@ public abstract class AbstractJob
     private static final String MAPPING_LUMBERJACK     = "Lumberjack";
     private static final String MAPPING_FARMER         = "Farmer";
     private static final String MAPPING_FISHERMAN      = "Fisherman";
-    private static final String MAPPING_TOWER_GUARD    = "GuardTower";
+    //private static final String MAPPING_TOWER_GUARD    = "GuardTower";
     private static final String MAPPING_BAKER          = "Baker";
     private static final String MAPPING_COOK           = "Cook";
     private static final String MAPPING_SHEPHERD       = "Shepherd";
