@@ -267,6 +267,14 @@ public class CommonProxy implements IProxy
     }
 
     @Override
+    public void openResourceScrollWindow(final int colonyId, final BlockPos pos)
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
+    @Override
     public void registerRenderer()
     {
         /*

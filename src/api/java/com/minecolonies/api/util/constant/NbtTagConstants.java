@@ -331,6 +331,11 @@ public final class NbtTagConstants
     public static final String TAG_SATURATION             = "saturation";
 
     /**
+     * Tag of the colony.
+     */
+    public static final String TAG_BUILDER = "builder";
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private NbtTagConstants()

@@ -243,6 +243,7 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockBarrel);
         createCustomModel(ModItems.itemCactusDoor);
         createCustomModel(ModItems.compost);
+        createCustomModel(ModItems.resourceScroll);
 
         ModelLoader.setCustomStateMapper(ModBlocks.blockCactusDoor, new StateMap.Builder().ignore(BlockCactusDoor.POWERED).build());
         ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());
@@ -294,6 +295,13 @@ public class ClientProxy extends CommonProxy
     public void openClipBoardWindow(final int colonyId)
     {
         @Nullable final WindowClipBoard window = new WindowClipBoard(colonyId);
+        window.open();
+    }
+
+    @Override
+    public void openResourceScrollWindow(final int colonyId, final BlockPos buildingPos)
+    {
+        @Nullable final WindowResourceList window = new WindowResourceList(colonyId, buildingPos);
         window.open();
     }
 

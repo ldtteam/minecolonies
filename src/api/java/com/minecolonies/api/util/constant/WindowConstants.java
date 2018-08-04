@@ -545,6 +545,11 @@ public final class WindowConstants
     public static final String RESOURCE_ICON               = "resourceIcon";
 
     /**
+     * Window resource list gui file.
+     */
+    public static final String RESOURCE_SCROLL_RESOURCE_SUFFIX = ":gui/windowresourcescroll.xml";
+
+    /**
      * Id of the type label in the GUI.
      */
     public static final String LABEL_BUILDINGTYPE = "type";
@@ -672,6 +677,9 @@ public final class WindowConstants
     public static final String RED_ICON    = "minecolonies:textures/gui/red_icon.png";
     public static final String YELLOW_ICON = "minecolonies:textures/gui/yellow_icon.png";
     public static final String GREEN_ICON  = "minecolonies:textures/gui/green_icon.png";
+
+    public static final String LABEL_CONSTRUCTION_NAME =  "constructionName";
+    public static final String LABEL_CONSTRUCTION_POS =  "constructionPos";
 
     /**
      * public constructor to hide implicit public one.
