@@ -321,6 +321,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
     {
+        if (damageSource.getDamageType().equals(DamageSource.IN_WALL.getDamageType()) && citizenSleepHandler.isAsleep())
+        {
+            return false;
+        }
+
         final Entity sourceEntity = damageSource.getTrueSource();
         if (sourceEntity instanceof EntityCitizen)
         {
