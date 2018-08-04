@@ -147,8 +147,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private double lastDistance = 0.0f;
 
-    private static final int TIME_STRAFING_BEFORE_SWITCHING_DIRECTIONS = 20;
+    private static final int TIME_STRAFING_BEFORE_SWITCHING_DIRECTIONS = 15;
     private static final double SWITCH_STRAFING_DIRECTION = 0.3d;
+    private static final float STRAFING_SPEED = 0.2f;
     
     /**
      * Creates the abstract part of the AI.
@@ -788,7 +789,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     else
                     {
                         worker.getMoveHelper().strafe(strafingBackwards ? (float) (getAttackDistance() - distanceToEntity) * -1 : getAttackSpeed(),
-                                strafingClockwise ? getAttackSpeed() * 1.2f : getAttackSpeed() * 1.2f * -1);
+                                strafingClockwise ? getAttackSpeed() * STRAFING_SPEED : getAttackSpeed() * STRAFING_SPEED * -1);
                     }
                     worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
                 }
