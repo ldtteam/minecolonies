@@ -149,7 +149,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     private static final int TIME_STRAFING_BEFORE_SWITCHING_DIRECTIONS = 15;
     private static final double SWITCH_STRAFING_DIRECTION = 0.3d;
-    private static final float STRAFING_SPEED = 0.2f;
+    private static final float STRAFING_SPEED = 0.6f;
     
     /**
      * Creates the abstract part of the AI.
@@ -668,12 +668,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     protected AIState attackRanged()
     {
-        if (worker.getLastAttackedEntity() != null
-              && !worker.getLastAttackedEntity().isDead
-              && worker.getDistance(worker.getLastAttackedEntity()) < getAttackRange())
-        {
-            target = worker.getLastAttackedEntity();
-        }
+        if (worker.getRevengeTarget() != null
+                && !worker.getRevengeTarget().isDead
+                && worker.getDistance(worker.getRevengeTarget()) < getAttackRange())
+          {
+              target = worker.getRevengeTarget();
+          }
 
         if (target == null || target.isDead)
         {
@@ -773,24 +773,25 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
                 if (strafingTime > -1 || toCloseNumTicks > 0)
                 {
-                    if (distanceToEntity > (double) (getAttackRange() * 0.75F))
+                    if (distanceToEntity < getAttackDistance() && toCloseNumTicks > 5  && (timeCanSee > -10))
                     {
-                        strafingBackwards = false;
-                    }
-                    else if (distanceToEntity < (double) (getAttackRange() * 0.25F))
-                    {
-                        strafingBackwards = true;
-                    }
-                    if (distanceToEntity < getAttackDistance() * 0.50f && toCloseNumTicks > 5 && (timeCanSee > -10))
-                    {
-                        worker.getNavigator().moveAwayFromEntityLiving(target, 10, getAttackSpeed());
+                        worker.getNavigator().moveAwayFromEntityLiving(target, 80, getAttackSpeed());
                         worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
                     }
                     else
                     {
+                        if (distanceToEntity > (double) (getAttackRange() * 0.75F))
+                        {
+                            strafingBackwards = false;
+                        }
+                        else if (distanceToEntity < (double) (getAttackRange() * 0.5F) && toCloseNumTicks <= 5)
+                        {
+                            strafingBackwards = true;
+                        }
                         worker.getMoveHelper().strafe(strafingBackwards ? (float) (getAttackDistance() - distanceToEntity) * -1 : getAttackSpeed(),
                                 strafingClockwise ? getAttackSpeed() * STRAFING_SPEED : getAttackSpeed() * STRAFING_SPEED * -1);
                     }
+
                     worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
                 }
                 else
