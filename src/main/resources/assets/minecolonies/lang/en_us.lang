@@ -751,3 +751,4 @@ com.minecolonies.coremod.gui.townHall.pickTeamColor=Pick Team Color:
 tile.minecolonies.blockhutlibrary.name=Library
 com.minecolonies.coremod.gui.workerHuts.Library=Library
 com.minecolonies.coremod.job.student=Student
+com.minecolonies.coremod.gui.townHall.population.students=Students: %d

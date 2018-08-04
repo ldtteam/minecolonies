@@ -276,7 +276,7 @@
         <view id="pageWorkOrder">
             <label size="147 11" pos="201 28" textalign="MIDDLE" label="§n§4$(com.minecolonies.coremod.gui.townHall.workorders):"/>
 
-            <list id="workOrderList" size="147 70%" pos="201 168">
+            <list id="workOrderList" size="147 70%" pos="201 40">
                 <view size="100% 30">
                     <box size="100% 30" linewidth="2">
                         <button id="plus" size="15 15" label="↥" pos="0 0"/>
