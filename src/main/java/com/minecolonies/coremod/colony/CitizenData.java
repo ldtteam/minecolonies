@@ -1093,7 +1093,11 @@ public class CitizenData
      */
     public boolean isRequestAsync(@NotNull final IToken token)
     {
-        return job.getAsyncRequests().contains(token);
+        if (job != null)
+        {
+            return job.getAsyncRequests().contains(token);
+        }
+        return false;
     }
 
     /**
