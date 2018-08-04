@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -418,7 +419,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     {
         if (getOwnBuilding() != null)
         {
-            final int numOfAnimals = searchForAnimals().size();
+            Stream<T> animal = searchForAnimals()
+                    .stream()
+                    .filter(animalToButcher -> animalToButcher.getGrowingAge() == 0);
+
+            final int numOfAnimals = (int) animal.count();
             final int maxAnimals = getOwnBuilding().getBuildingLevel() * getMaxAnimalMultiplier();
 
             return numOfAnimals > maxAnimals;
