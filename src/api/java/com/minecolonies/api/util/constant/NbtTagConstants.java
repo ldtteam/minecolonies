@@ -314,6 +314,23 @@ public final class NbtTagConstants
     public static final String TAG_TEAM_COLOR = "teamcolor";
 
     /**
+     * Citizen data Tags.
+     */
+    public static final String TAG_FEMALE                 = "female";
+    public static final String TAG_TEXTURE                = "texture";
+    public static final String TAG_LEVEL                  = "level";
+    public static final String TAG_EXPERIENCE             = "experience";
+    public static final String TAG_HEALTH                 = "health";
+    public static final String TAG_MAX_HEALTH             = "maxHealth";
+    public static final String TAG_SKILLS                 = "skills";
+    public static final String TAG_SKILL_STRENGTH         = "strength";
+    public static final String TAG_SKILL_STAMINA          = "endurance";
+    public static final String TAG_SKILL_SPEED            = "charisma";
+    public static final String TAG_SKILL_INTELLIGENCE     = "intelligence";
+    public static final String TAG_SKILL_DEXTERITY        = "dexterity";
+    public static final String TAG_SATURATION             = "saturation";
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private NbtTagConstants()
