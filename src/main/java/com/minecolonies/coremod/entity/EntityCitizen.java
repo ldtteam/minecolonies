@@ -239,13 +239,12 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         int priority = 0;
         this.tasks.addTask(priority, new EntityAISwimming(this));
-
+        this.tasks.addTask(++priority, new EntityAISleep(this));
         if (citizenJobHandler.getColonyJob() == null || !"com.minecolonies.coremod.job.Guard".equals(citizenJobHandler.getColonyJob().getName()))
         {
             this.tasks.addTask(++priority, new EntityAICitizenAvoidEntity(this, EntityMob.class, (float) DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
         }
         this.tasks.addTask(++priority, new EntityAIGoHome(this));
-        this.tasks.addTask(++priority, new EntityAISleep(this));
         this.tasks.addTask(++priority, new EntityAIOpenDoor(this, true));
         this.tasks.addTask(priority, new EntityAIOpenFenceGate(this, true));
         this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, EntityPlayer.class, WATCH_CLOSEST2, 1.0F));
@@ -317,6 +316,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
     {
+        if (damageSource.getDamageType().equals(DamageSource.IN_WALL.getDamageType()) && citizenSleepHandler.isAsleep())
+        {
+            return false;
+        }
+
         final Entity sourceEntity = damageSource.getTrueSource();
         if (sourceEntity instanceof EntityCitizen)
         {
