@@ -2,8 +2,6 @@ package com.minecolonies.api.util.constant;
 
 import org.jetbrains.annotations.NonNls;
 
-import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-
 /**
  * Command wide constants.
  */

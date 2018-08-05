@@ -3,7 +3,6 @@ package com.minecolonies.api.compatibility.candb;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
