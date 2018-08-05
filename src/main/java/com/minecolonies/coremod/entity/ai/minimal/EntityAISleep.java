@@ -66,6 +66,16 @@ public class EntityAISleep extends EntityAIBase
     @Override
     public boolean shouldContinueExecuting()
     {
+        if (usedBed == null && citizen.getCitizenData() != null)
+        {
+            this.wokeUp = !citizen.getCitizenData().isAsleep();
+            this.usedBed = citizen.getCitizenData().getBedPos();
+            if (citizen.getCitizenData().getBedPos().equals(BlockPos.ORIGIN))
+            {
+                this.usedBed = null;
+            }
+        }
+
         if (citizen.getDesiredActivity() == DesiredActivity.SLEEP)
         {
             wokeUp = false;
