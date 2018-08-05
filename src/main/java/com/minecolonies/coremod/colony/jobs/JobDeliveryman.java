@@ -29,8 +29,8 @@ import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
  */
 public class JobDeliveryman extends AbstractJob
 {
-    private static final String TAG_CURRENT_TASK = "currentTask";
-    private static final String TAG_RETURNING    = "returning";
+    //private static final String TAG_CURRENT_TASK = "currentTask";
+    //private static final String TAG_RETURNING    = "returning";
 
     private IToken<?> rsDataStoreToken;
 

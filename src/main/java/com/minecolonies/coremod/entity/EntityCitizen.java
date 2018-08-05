@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
-import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -16,19 +15,16 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
 import com.minecolonies.coremod.entity.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
-import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.util.PermissionUtils;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.block.material.Material;
@@ -320,6 +316,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
     {
+        if (damageSource.getDamageType().equals(DamageSource.IN_WALL.getDamageType()) && citizenSleepHandler.isAsleep())
+        {
+            return false;
+        }
+
         final Entity sourceEntity = damageSource.getTrueSource();
         if (sourceEntity instanceof EntityCitizen)
         {

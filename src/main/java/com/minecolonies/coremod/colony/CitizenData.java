@@ -104,6 +104,16 @@ public class CitizenData
     private       int                          textureId;
 
     /**
+     * If the citizen is asleep right now.
+     */
+    private boolean isAsleep;
+
+    /**
+     * The citizens current bedBos.
+     */
+    private BlockPos bedPos = BlockPos.ORIGIN;
+
+    /**
      * The home building of the citizen.
      */
     @Nullable
@@ -243,6 +253,12 @@ public class CitizenData
         if (name.isEmpty())
         {
             name = generateName(new Random());
+        }
+
+        if (compound.hasKey(TAG_ASLEEP))
+        {
+            bedPos = BlockPosUtil.readFromNBT(compound, TAG_POS);
+            isAsleep = compound.getBoolean(TAG_ASLEEP);
         }
     }
 
@@ -817,6 +833,10 @@ public class CitizenData
         compound.setTag(TAG_INVENTORY, inventory.writeToNBT(new NBTTagList()));
         compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.MAIN_HAND));
         compound.setInteger(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.OFF_HAND));
+
+        BlockPosUtil.writeToNBT(compound, TAG_POS, bedPos);
+        compound.setBoolean(TAG_ASLEEP, isAsleep);
+
         citizenHappinessHandler.writeToNBT(compound);
         return compound;
     }
@@ -1045,6 +1065,42 @@ public class CitizenData
     public InventoryCitizen getInventory()
     {
         return inventory;
+    }
+
+    /**
+     * Check if citizen is asleep.
+     * @return true if so.
+     */
+    public boolean isAsleep()
+    {
+        return isAsleep;
+    }
+
+    /**
+     * Getter for the bedPos.
+     * @return the bedPos.
+     */
+    public BlockPos getBedPos()
+    {
+        return bedPos;
+    }
+
+    /**
+     * Set asleep.
+     * @param asleep true if asleep.
+     */
+    public void setAsleep(final boolean asleep)
+    {
+        isAsleep = asleep;
+    }
+
+    /**
+     * Set the bed pos.
+     * @param bedPos the pos to set.
+     */
+    public void setBedPos(final BlockPos bedPos)
+    {
+        this.bedPos = bedPos;
     }
 
     /**

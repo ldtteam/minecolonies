@@ -50,7 +50,7 @@ public class WindowScan extends AbstractWindowSkeleton
     /**
      * Id of clicking enter.
      */
-    private static final int ENTER_KEY = 28;
+    //private static final int ENTER_KEY = 28;
 
     /**
      * Contains all resources needed for a certain build.
@@ -313,11 +313,6 @@ public class WindowScan extends AbstractWindowSkeleton
                         {
                             entities.put(entity.getName(), entity);
                         }
-                    }
-
-                    if (here == null)
-                    {
-                        continue;
                     }
 
                     @Nullable final Block block = blockState.getBlock();

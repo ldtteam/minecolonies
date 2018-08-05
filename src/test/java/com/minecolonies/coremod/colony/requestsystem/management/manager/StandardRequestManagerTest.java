@@ -48,17 +48,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.doThrow;
 import static org.powermock.api.mockito.PowerMockito.spy;
-import static org.powermock.api.support.membermodification.MemberMatcher.method;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StandardRequestManagerTest

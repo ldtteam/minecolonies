@@ -19,7 +19,6 @@ import com.minecolonies.coremod.colony.jobs.JobRanger;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.network.messages.GuardMobAttackListMessage;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;

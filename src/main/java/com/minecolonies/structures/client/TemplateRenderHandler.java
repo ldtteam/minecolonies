@@ -3,7 +3,6 @@ package com.minecolonies.structures.client;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
-import com.google.common.collect.Lists;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.structures.lib.TemplateUtils;
 import net.minecraft.client.Minecraft;
@@ -13,12 +12,8 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.world.gen.structure.template.Template;
-import net.minecraft.world.gen.structure.template.Template.BlockInfo;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Predicate;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 

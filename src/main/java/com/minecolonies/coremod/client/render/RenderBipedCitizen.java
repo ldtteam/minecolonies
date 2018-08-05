@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.EnumMap;
 import java.util.Map;
 
+import static com.minecolonies.api.util.constant.Constants.BED_HEIGHT;
+
 /**
  * Renderer for the citizens.
  */
@@ -79,7 +81,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     {
         if (entityLivingBaseIn.isEntityAlive() && entityLivingBaseIn.getCitizenSleepHandler().isAsleep())
         {
-            super.renderLivingAt(entityLivingBaseIn, x + (double)entityLivingBaseIn.getCitizenSleepHandler().getRenderOffsetX(), y, z + (double)entityLivingBaseIn.getCitizenSleepHandler().getRenderOffsetZ());
+            super.renderLivingAt(entityLivingBaseIn, x + (double)entityLivingBaseIn.getCitizenSleepHandler().getRenderOffsetX(), y + BED_HEIGHT, z + (double)entityLivingBaseIn.getCitizenSleepHandler().getRenderOffsetZ());
         }
         else
         {
