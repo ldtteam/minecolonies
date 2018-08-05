@@ -10,7 +10,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 /**
  * Datas about the happiness level

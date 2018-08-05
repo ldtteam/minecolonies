@@ -110,6 +110,7 @@ public class TextFieldVanilla extends TextField
         super.handleClick(mouseX, my);
     }
 
+    /*
     private static class FilterNumeric implements Filter
     {
         @Override
@@ -132,6 +133,7 @@ public class TextFieldVanilla extends TextField
             return Character.isDigit(c);
         }
     }
+    */
 
     private static class FilterVanilla implements Filter
     {

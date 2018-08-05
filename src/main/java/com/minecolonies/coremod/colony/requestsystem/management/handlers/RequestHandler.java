@@ -537,10 +537,12 @@ public final class RequestHandler
             this.children = new ArrayList<>(children);
         }
 
+        /*
         public List<IToken<T>> getChildren()
         {
             return Collections.unmodifiableList(children);
         }
+        */
 
         @Override
         public int compareTo(@NotNull final AssigningResult<T> o)

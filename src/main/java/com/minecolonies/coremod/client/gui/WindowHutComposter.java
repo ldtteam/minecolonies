@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.compatibility.CompatibilityManager;
-import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Pane;
@@ -15,7 +13,6 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCompost
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class WindowHutComposter extends AbstractWindowWorkerBuilding<BuildingComposter.View>
