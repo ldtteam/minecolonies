@@ -390,4 +390,10 @@ public enum AIState
      * Take the compost from the barrels
      */
     COMPOSTER_HARVEST,
+
+    /*
+### Student ###
+     */
+
+    STUDY,
 }
