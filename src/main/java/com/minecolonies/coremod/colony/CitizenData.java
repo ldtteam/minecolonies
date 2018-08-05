@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Extra data for Citizens.
@@ -46,39 +46,31 @@ public class CitizenData
      * Maximum saturation of a citizen.
      */
     public static final  int    MAX_SATURATION          = 10;
+
+    /**
+     * The max health.
+     */
     private static final float  MAX_HEALTH              = 20.0F;
+
     /**
      * Max level of an attribute a citizen may initially have.
      */
-
     private static final int    LETTERS_IN_THE_ALPHABET = 26;
-    /**
-     * Tags.
-     */
-    private static final String TAG_ID                     = "id";
-    private static final String TAG_NAME                   = "name";
-    private static final String TAG_FEMALE                 = "female";
-    private static final String TAG_TEXTURE                = "texture";
-    private static final String TAG_LEVEL                  = "level";
-    private static final String TAG_EXPERIENCE             = "experience";
-    private static final String TAG_HEALTH                 = "health";
-    private static final String TAG_MAX_HEALTH             = "maxHealth";
-    private static final String TAG_SKILLS                 = "skills";
-    private static final String TAG_SKILL_STRENGTH         = "strength";
-    private static final String TAG_SKILL_STAMINA          = "endurance";
-    private static final String TAG_SKILL_SPEED            = "charisma";
-    private static final String TAG_SKILL_INTELLIGENCE     = "intelligence";
-    private static final String TAG_SKILL_DEXTERITY        = "dexterity";
-    private static final String TAG_SATURATION             = "saturation";
-    private static final String TAG_HELD_ITEM_SLOT         = "HeldItemSlot";
-    private static final String TAG_OFFHAND_HELD_ITEM_SLOT = "OffhandHeldItemSlot";
-    private static final String TAG_INVENTORY              = "inventory";
-    private static final String TAG_ASLEEP     = "asleep";
 
     /**
      * Minimum saturation of a citizen.
      */
-    private static final int MIN_SATURATION = 0;
+    private static final int MIN_SATURATION  = 0;
+
+    /**
+     * The chance the citizen has to level. is 1 in this number.
+     */
+    private static final int CHANCE_TO_LEVEL = 100;
+
+    /**
+     * The number of skills the citizen has.
+     */
+    private static final int AMOUNT_OF_SKILLS = 5;
 
     /**
      * The unique citizen id.
@@ -1166,5 +1158,37 @@ public class CitizenData
     public CitizenHappinessHandler getCitizenHappinessHandler()
     {
         return citizenHappinessHandler;
+    }
+
+    /**
+     * Try a random level up.
+     */
+    public void tryRandomLevelUp(final Random random)
+    {
+        if (random.nextInt(CHANCE_TO_LEVEL) > 0)
+        {
+            return;
+        }
+
+        final int levelCap = (int) getCitizenHappinessHandler().getHappiness();
+        switch (random.nextInt(AMOUNT_OF_SKILLS))
+        {
+            case 0:
+                intelligence = Math.min(intelligence + 1, levelCap);
+                break;
+            case 1:
+                charisma = Math.min(charisma + 1, levelCap);
+                break;
+            case 2:
+                strength = Math.min(strength + 1, levelCap);
+                break;
+            case 3:
+                endurance = Math.min(endurance + 1, levelCap);
+                break;
+            default:
+                dexterity = Math.min(dexterity + 1, levelCap);
+                break;
+        }
+        markDirty();
     }
 }
