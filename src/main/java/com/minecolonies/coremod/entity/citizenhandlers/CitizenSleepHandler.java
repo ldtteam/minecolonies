@@ -13,8 +13,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.Constants.BED_HEIGHT;
-import static com.minecolonies.api.util.constant.Constants.HALF_BLOCK;
 import static com.minecolonies.coremod.entity.AbstractEntityCitizen.DATA_BED_POS;
 import static com.minecolonies.coremod.entity.AbstractEntityCitizen.DATA_IS_ASLEEP;
 
