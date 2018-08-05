@@ -67,7 +67,7 @@ public class ScrollingView extends View
     public void setSize(final int w, final int h)
     {
         super.setSize(w, h);
-        container.setSize(getInteriorWidth() - scrollbarWidth, getInteriorHeight());
+        container.setSize(getInteriorWidth() - scrollbarWidth + (scrollbar.getScrollOffsetX()>scrollbarWidth ? scrollbarWidth : scrollbar.getScrollOffsetX()), getInteriorHeight());
         scrollbar.setPosition(getInteriorWidth() - scrollbarWidth, 0);
         scrollbar.setSize(scrollbarWidth, getInteriorHeight());
     }

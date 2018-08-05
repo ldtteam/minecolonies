@@ -1,7 +1,6 @@
 package com.minecolonies.api.util.constant;
 
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Constants for translation

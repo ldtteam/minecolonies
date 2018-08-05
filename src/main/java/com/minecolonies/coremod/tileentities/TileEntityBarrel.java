@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.tileentities;
 
-import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.items.ModItems;
@@ -14,7 +13,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
