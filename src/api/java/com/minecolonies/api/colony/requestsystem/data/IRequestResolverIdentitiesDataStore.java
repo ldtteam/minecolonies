@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.requestsystem.data;
 
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 
