@@ -206,6 +206,10 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
 
     private void setPage(@NotNull final String button)
     {
+        if (findPaneByID(LABEL_PAGE_NUMBER) == null)
+        {
+            return;
+        }
         final Label pageNum = findPaneOfTypeByID(LABEL_PAGE_NUMBER, Label.class);
         int curPage = pageNum.getLabelText().equals("") ? 1 : Integer.parseInt(pageNum.getLabelText().substring(0, pageNum.getLabelText().indexOf("/")));
 

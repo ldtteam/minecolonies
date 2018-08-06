@@ -1,5 +1,6 @@
 package com.minecolonies.blockout;
 
+import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.views.View;
 import com.minecolonies.blockout.views.Window;
 import net.minecraft.client.Minecraft;
@@ -24,6 +25,7 @@ public class Pane extends Gui
     private static final int SCISSOR_Y_INDEX = 13;
     protected static Pane lastClickedPane;
     protected static Pane focus;
+    protected        Pane onHover;
     protected static boolean   debugging = false;
     protected        Minecraft mc        = Minecraft.getMinecraft();
     //  Attributes
@@ -35,6 +37,7 @@ public class Pane extends Gui
     protected        Alignment alignment = Alignment.TOP_LEFT;
     protected        boolean   visible   = true;
     protected        boolean   enabled   = true;
+    protected        String    onHoverId = "";
     //  Runtime
     protected Window window;
     protected View   parent;
@@ -86,6 +89,7 @@ public class Pane extends Gui
         alignment = params.getEnumAttribute("align", Alignment.class, alignment);
         visible = params.getBooleanAttribute("visible", visible);
         enabled = params.getBooleanAttribute("enabled", enabled);
+        onHoverId = params.getStringAttribute("onHoverId");
     }
 
     /**
@@ -630,6 +634,40 @@ public class Pane extends Gui
             this.y = y;
             this.width = w;
             this.height = h;
+        }
+    }
+
+    /**
+     * Handle onHover element
+     */
+    public void handleHover(final int mx, final int my)
+    { 
+        if (onHover == null)
+        {
+            if (!onHoverId.isEmpty())
+            {
+                onHover = window.findPaneByID(onHoverId);
+                Log.getLogger().info("Hover for: " + id + ", on: " + onHover.getID() + ", 0xy base: " + x + "," + y);
+            }
+            return;
+        }
+        if (onHover.isPointInPane(mx, my) && onHover.isVisible())
+        {
+            Log.getLogger().info("IM IN: " + mx + "," + my);
+            return;
+        }
+        if (this.isPointInPane(mx, my) && !onHover.isVisible())
+        {
+            Log.getLogger().info("Should show: " + onHover.getID() + ", from: " + id);
+            onHover.show();
+            onHover.enable();
+            return;
+        }
+        if (!this.isPointInPane(mx, my) && onHover.isVisible())
+        {
+            Log.getLogger().info("Should hide: " + onHover.getID());
+            onHover.hide();
+            onHover.disable();
         }
     }
 }

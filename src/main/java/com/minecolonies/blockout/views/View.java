@@ -1,5 +1,6 @@
 package com.minecolonies.blockout.views;
 
+import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.Alignment;
 import com.minecolonies.blockout.Loader;
 import com.minecolonies.blockout.Pane;
@@ -91,6 +92,19 @@ public class View extends Pane
                 child.scrollInput(wheel);
             }
         }
+    } 
+
+    @Override
+    public void handleHover(final int mx, final int my)
+    {
+        for (final Pane child : new ArrayList<>(children))
+        {
+            if (child != null)
+            {
+                child.handleHover(mx, my);
+            }
+        }
+
     }
 
     @Nullable
