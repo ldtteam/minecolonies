@@ -1,7 +1,15 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
         lightbox="false"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
-    <view id="pageActions" size="100% 100%">
-        <layout source="minecolonies:gui/windowworkerbuildingdefault.xml"/>
-    </view>
+    <switch id="pages" size="100% 100%">
+        <view id="pageActions" size="100% 100%">
+        	<layout source="minecolonies:gui/layouthutpageactions.xml"/>
+        </view>
+        <view id="anotherPageAndMoreCanBeOmitted" size="100% 100%">
+            <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+        </view>
+    </switch>
+    <buttonimage id="prevPage" size="18 10" pos="12 12" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
+    <buttonimage id="nextPage" size="18 10" pos="160 12" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
+    <label id="pageNum" size="20 11" pos="158 221" textalign="MIDDLE" label="" color="black"/>
 </window>

@@ -1,0 +1,6 @@
+<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+    <layout source="minecolonies:gui/layouthutpageactionsminwoinv.xml"/>
+    <buttonimage id="inventory" size="86 17" pos="52 214" textcolor="black"
+                source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+                label="$(container.inventory)"/>
+</layout>

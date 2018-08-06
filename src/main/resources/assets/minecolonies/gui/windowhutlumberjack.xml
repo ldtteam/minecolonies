@@ -3,25 +3,24 @@
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
     <switch id="pages" size="100% 100%">
         <view id="pageActions" size="100% 100%">
-            <layout source="minecolonies:gui/windowworkerbuildingdefault.xml"/>
+        	<layout source="minecolonies:gui/layouthutpageactions.xml"/>
         </view>
-
         <view id="saplingActions" size="100% 100%">
-            <layout source="minecolonies:gui/windowbase.xml"/>
-            <label size="100% 11" pos="0 10"
-                   label="$(com.minecolonies.coremod.gui.workerHuts.saplingList)" color="black" textalign="BOTTOM_MIDDLE"/>
-            <list id="trees" size="78% 70%" pos="30 27">
+            <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+            <label size="130 11" pos="30 14" color="black" textalign="MIDDLE"
+                   label="$(com.minecolonies.coremod.gui.workerHuts.saplingList)"/>
+            <list id="trees" size="166 149" pos="12 29">
                 <box size="100% 30" linewidth="2">
                     <itemicon id="symbol" size="16 16" pos="5 2"/>
                     <label id="name" size="50 12" pos="35 16" textalign="MIDDLE_LEFT" color="black"/>
                     <button id="switch" size="100 12" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOn)"/>
                 </box>
             </list>
-            <button id="toggleAll" size="100 15" pos="45 200" label="$(com.minecolonies.coremod.gui.workerHuts.toggleAllOn)"/>
-            <button id="saplingReplant" size="100 15" pos="45 215" label="replant"/>
-
+            <button id="toggleAll" size="100 15" pos="45 180" label="$(com.minecolonies.coremod.gui.workerHuts.toggleAllOn)"/>
+            <button id="saplingReplant" size="100 15" pos="45 198" label=""/>
         </view>
     </switch>
-    <buttonimage id="prevPage" align="TOP_LEFT" size="26 8" pos="12 15" source="minecolonies:textures/gui/builderhut/builder_sketch_arrow_left_c.png"/>
-    <buttonimage id="nextPage" align="TOP_RIGHT" size="26 8" pos="12 15" source="minecolonies:textures/gui/builderhut/builder_sketch_arrow_right_c.png"/>
+    <buttonimage id="prevPage" size="18 10" pos="12 12" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
+    <buttonimage id="nextPage" size="18 10" pos="160 12" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
+    <label id="pageNum" size="20 11" pos="158 221" textalign="MIDDLE" label="" color="black"/>
 </window>

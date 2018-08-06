@@ -30,6 +30,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
     private final   Button     buttonNextPage;
     private final   Button     buttonBuild;
     private final   Button     buttonRepair;
+    private         int        switchPagesSize;
 
     /**
      * Constructor for the windows that are associated with buildings.
@@ -180,26 +181,77 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
     }
 
     @Override
+    public void onOpened() {
+        super.onOpened();
+        switchPagesSize = switchView.getChildrenSize();
+        setPage("");
+    }
+
+    @Override
     public void onButtonClicked(@NotNull final Button button)
     {
         switch (button.getID())
         {
             case BUTTON_PREVPAGE:
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
-                buttonPrevPage.setEnabled(false);
-                buttonNextPage.setEnabled(true);
-                buttonPrevPage.hide();
-                buttonNextPage.show();
+                setPage(BUTTON_PREVPAGE);
                 break;
             case BUTTON_NEXTPAGE:
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
-                buttonPrevPage.setEnabled(true);
-                buttonNextPage.setEnabled(false);
-                buttonPrevPage.show();
-                buttonNextPage.hide();
+                setPage(BUTTON_NEXTPAGE);
                 break;
             default:
                 super.onButtonClicked(button);
+                break;
+        }
+    }
+
+    private void setPage(@NotNull final String button)
+    {
+        final Label pageNum = findPaneOfTypeByID(LABEL_PAGE_NUMBER, Label.class);
+        int curPage = pageNum.getLabelText().equals("") ? 1 : Integer.parseInt(pageNum.getLabelText().substring(0, pageNum.getLabelText().indexOf("/")));
+
+        switch (button)
+        {
+            case BUTTON_PREVPAGE:
+                switchView.previousView();
+                pageNum.setLabelText(--curPage + "/" + switchPagesSize);
+                if (curPage == 1)
+                {
+                    buttonPrevPage.hide();
+                    buttonPrevPage.disable();
+                }
+                else
+                {
+                    buttonPrevPage.show();
+                    buttonPrevPage.enable();
+                }
+                buttonNextPage.show();
+                buttonNextPage.enable();
+                break;
+            case BUTTON_NEXTPAGE:
+                switchView.nextView();
+                pageNum.setLabelText(++curPage + "/" + switchPagesSize);
+                if (curPage == switchPagesSize)
+                {
+                    buttonNextPage.hide();
+                    buttonNextPage.disable();
+                }
+                else
+                {
+                    buttonNextPage.show();
+                    buttonNextPage.enable();
+                }
+                buttonPrevPage.show();
+                buttonPrevPage.enable();
+                break;
+            default:
+                switchView.setView(PAGE_ACTIONS);
+                buttonPrevPage.hide();
+                if (switchPagesSize == 1)
+                {
+                    buttonNextPage.hide();
+                    break;
+                }
+                pageNum.setLabelText(curPage + "/" + switchPagesSize);
                 break;
         }
     }

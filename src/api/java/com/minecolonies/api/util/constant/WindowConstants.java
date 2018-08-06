@@ -681,6 +681,8 @@ public final class WindowConstants
     public static final String LABEL_CONSTRUCTION_NAME =  "constructionName";
     public static final String LABEL_CONSTRUCTION_POS =  "constructionPos";
 
+    public static final String LABEL_PAGE_NUMBER = "pageNum";
+
     /**
      * public constructor to hide implicit public one.
      */

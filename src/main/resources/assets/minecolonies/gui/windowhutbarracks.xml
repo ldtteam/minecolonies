@@ -1,14 +1,19 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
         lightbox="false"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
-    <view id="pageActions" size="100% 100%">
-        <layout source="minecolonies:gui/layoutbuildingdefault.xml"/>
-        <label size="100% 11" pos="30 35"
-               label="$(com.minecolonies.coremod.gui.workerHuts.barbpoints)" color="black"/>
-        <list id="positions" size="88% 25%" pos="16 50">
-            <box size="160 12" linewidth="1">
-                <label id="pos" size="120 12" color="black"/>
-            </box>
-        </list>
-    </view>
+    <switch id="pages" size="100% 100%">
+        <view id="pageActions" size="100% 100%">
+            <layout source="minecolonies:gui/layouthutpageactionsmin.xml"/>
+            <label size="166 11" pos="12 32" color="black"
+                label="$(com.minecolonies.coremod.gui.workerHuts.barbpoints):"/>
+            <list id="positions" size="166 66" pos="12 43">
+                <box size="100% 11" linewidth="1">
+                    <label id="pos" size="100% 11" color="black"/>
+                </box>
+            </list>
+        </view>
+    </switch>
+    <buttonimage id="prevPage" size="18 10" pos="12 12" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
+    <buttonimage id="nextPage" size="18 10" pos="160 12" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
+    <label id="pageNum" size="20 11" pos="158 221" textalign="MIDDLE" label="" color="black"/>
 </window>
