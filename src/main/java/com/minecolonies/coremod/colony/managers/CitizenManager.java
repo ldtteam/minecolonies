@@ -68,7 +68,7 @@ public class CitizenManager implements ICitizenManager
     /**
      * Datas about the happiness of a colony
      */
-    private final HappinessData happinessData = new HappinessData();
+    //private final HappinessData happinessData = new HappinessData();
 
     /**
      * Creates the Citizenmanager for a colony.

@@ -48,7 +48,7 @@ public class Structure
     /**
      * Max amount of entities to render.
      */
-    private static final int MAX_ENTITIES_TO_RENDER = 10;
+    //private static final int MAX_ENTITIES_TO_RENDER = 10;
 
     /**
      * Rotation by 90°.
@@ -58,17 +58,17 @@ public class Structure
     /**
      * Rotation by 270°.
      */
-    private static final double TWO_HUNDRED_SEVENTY_DEGREES = 270D;
+    //private static final double TWO_HUNDRED_SEVENTY_DEGREES = 270D;
 
     /**
      * Rotation by 180°.
      */
-    private static final double ONE_HUNDED_EIGHTY_DEGREES = 180D;
+    //private static final double ONE_HUNDED_EIGHTY_DEGREES = 180D;
 
     /**
      * Used for scale.
      */
-    private static final double SCALE = 1.001;
+    //private static final double SCALE = 1.001;
 
     /**
      * Size of the buffer.
@@ -83,7 +83,7 @@ public class Structure
     /**
      * The last starting position.
      */
-    private BlockPos lastStartingPos = BlockPos.ORIGIN;
+    //private BlockPos lastStartingPos = BlockPos.ORIGIN;
 
     /**
      * Template of the structure.

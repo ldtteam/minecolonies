@@ -1,6 +1,5 @@
 package com.minecolonies.api.configuration;
 
-import net.minecraft.init.Items;
 import net.minecraftforge.common.config.Config;
 
 import static com.minecolonies.api.util.constant.Constants.*;

@@ -19,7 +19,7 @@ public class WorkManager
 {
     private static final String TAG_WORK_ORDERS              = "workOrders";
     //  Once a second
-    private static final int    WORK_ORDER_FULFILL_INCREMENT = 1 * 20;
+    //private static final int    WORK_ORDER_FULFILL_INCREMENT = 1 * 20;
     /**
      * The Colony the workManager takes part of.
      */

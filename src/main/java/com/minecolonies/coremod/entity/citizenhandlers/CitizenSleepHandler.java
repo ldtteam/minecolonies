@@ -55,6 +55,10 @@ public class CitizenSleepHandler
      */
     private void setIsAsleep(final boolean isAsleep)
     {
+        if (citizen.getCitizenData() != null)
+        {
+            citizen.getCitizenData().setAsleep(isAsleep);
+        }
         citizen.getDataManager().set(DATA_IS_ASLEEP, isAsleep);
     }
 
@@ -103,7 +107,7 @@ public class CitizenSleepHandler
         }
 
         citizen.setPosition( ((float) bedLocation.getX() + HALF_BLOCK),
-          (double) ((float) bedLocation.getY() + BED_HEIGHT),
+          (double) ((float) bedLocation.getY()),
           ((float) bedLocation.getZ() + HALF_BLOCK));
 
         citizen.motionX = 0.0D;
@@ -115,6 +119,10 @@ public class CitizenSleepHandler
 
         setIsAsleep(true);
 
+        if (citizen.getCitizenData() != null)
+        {
+            citizen.getCitizenData().setBedPos(bedLocation);
+        }
         citizen.getDataManager().set(DATA_BED_POS, bedLocation);
     }
 
@@ -161,6 +169,10 @@ public class CitizenSleepHandler
         }
 
         setIsAsleep(false);
+        if (citizen.getCitizenData() != null)
+        {
+            citizen.getCitizenData().setBedPos(new BlockPos(0, 0, 0));
+        }
         citizen.getDataManager().set(DATA_BED_POS, new BlockPos(0, 0, 0));
     }
 

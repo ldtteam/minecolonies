@@ -87,12 +87,14 @@ public final class InventoryFunctions
      * @param tester   the function to use for testing slots
      * @return true if it found a stack
      */
+    /*
     private static boolean matchFirstInProvider(
                                                  final ICapabilityProvider provider,
                                                  @NotNull final Function<ICapabilityProvider, Function<Integer, Predicate<ItemStack>>> tester)
     {
         return matchInProvider(provider, tester, true);
     }
+    */
 
     /**
      * Search for a stack in an Inventory matching the predicate.
