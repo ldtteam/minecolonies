@@ -249,6 +249,8 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
                 if (switchPagesSize == 1)
                 {
                     buttonNextPage.hide();
+                    buttonNextPage.disable();
+                    buttonPrevPage.disable();
                     break;
                 }
                 pageNum.setLabelText(curPage + "/" + switchPagesSize);
