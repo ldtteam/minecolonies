@@ -133,8 +133,6 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     {
         super.onOpened();
 
-        //findPaneOfTypeByID(BUTTON_HIRE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.hire"));
-
         if (findPaneByID(LIST_WORKERS) != null)
         {
             ScrollingList workerList = findPaneOfTypeByID(LIST_WORKERS, ScrollingList.class);

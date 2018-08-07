@@ -1,6 +1,5 @@
 package com.minecolonies.blockout.views;
 
-import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.Alignment;
 import com.minecolonies.blockout.Loader;
 import com.minecolonies.blockout.Pane;
