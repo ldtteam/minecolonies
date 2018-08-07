@@ -98,12 +98,6 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
         {
             final AbstractBuildingView buildingView = building.getColony().getBuilding(building.getID());
 
-            if (buttonPrevPage != null)
-            {
-                buttonPrevPage.disable();
-                buttonPrevPage.hide();
-            }
-
             if (title != null)
             {
                 title.setLabelText(LanguageHandler.format(getBuildingName()) + " " + buildingView.getBuildingLevel());
@@ -217,48 +211,35 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
         {
             case BUTTON_PREVPAGE:
                 switchView.previousView();
-                pageNum.setLabelText(--curPage + "/" + switchPagesSize);
-                if (curPage == 1)
-                {
-                    buttonPrevPage.hide();
-                    buttonPrevPage.disable();
-                }
-                else
-                {
-                    buttonPrevPage.show();
-                    buttonPrevPage.enable();
-                }
-                buttonNextPage.show();
-                buttonNextPage.enable();
+                curPage--;
                 break;
             case BUTTON_NEXTPAGE:
                 switchView.nextView();
-                pageNum.setLabelText(++curPage + "/" + switchPagesSize);
-                if (curPage == switchPagesSize)
-                {
-                    buttonNextPage.hide();
-                    buttonNextPage.disable();
-                }
-                else
-                {
-                    buttonNextPage.show();
-                    buttonNextPage.enable();
-                }
-                buttonPrevPage.show();
-                buttonPrevPage.enable();
+                curPage++;
                 break;
             default:
-                switchView.setView(PAGE_ACTIONS);
-                buttonPrevPage.hide();
                 if (switchPagesSize == 1)
                 {
-                    buttonNextPage.hide();
-                    buttonNextPage.disable();
-                    buttonPrevPage.disable();
-                    break;
+                    buttonPrevPage.off();
+                    buttonNextPage.off();
+                    pageNum.off();
+                    return;
                 }
-                pageNum.setLabelText(curPage + "/" + switchPagesSize);
                 break;
         }
+
+        buttonNextPage.on();
+        buttonPrevPage.on();
+        if (curPage == 1)
+        {
+            buttonPrevPage.off();
+        }
+        if (curPage == switchPagesSize)
+        {
+            buttonNextPage.off();
+        }
+        pageNum.setLabelText(curPage + "/" + switchPagesSize);
+
+        // Additional handlers - now none
     }
 }

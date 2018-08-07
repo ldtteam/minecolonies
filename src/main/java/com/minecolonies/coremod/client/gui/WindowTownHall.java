@@ -99,6 +99,12 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private final Map<String, String> tabsToPages = new HashMap<>();
 
     /**
+     * Map of the sub-switches.
+     */
+    @NotNull
+    private final Map<String, String> tabsToSwitches = new HashMap<>();
+
+    /**
      * Drop down list for style.
      */
     private DropDownList colorDropDownList;
@@ -166,6 +172,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         tabsToPages.put(BUTTON_WORKORDER, PAGE_WORKORDER);
         tabsToPages.put(BUTTON_HAPPINESS, PAGE_HAPPINESS);
 
+        tabsToSwitches.put(BUTTON_PERMISSIONS, VIEW_PERM_PAGES);
+
         tabsToPages.keySet().forEach(key -> registerButton(key, this::onTabClicked));
         registerButton(BUTTON_ADD_PLAYER, this::addPlayerCLicked);
         registerButton(BUTTON_RENAME, this::renameClicked);
@@ -179,8 +187,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(NAME_LABEL, this::fillCitizenInfo);
         registerButton(RECALL_ONE, this::recallOneClicked);
 
-        registerButton(BUTTON_PREV_PAGE_PERM, this::switchPage);
-        registerButton(BUTTON_NEXT_PAGE_PERM, this::switchPage);
+        registerButton(BUTTON_PREVPAGE + VIEW_PERM_PAGES, this::setTabPage);
+        registerButton(BUTTON_NEXTPAGE + VIEW_PERM_PAGES, this::setTabPage);
 
         registerButton(BUTTON_MANAGE_OFFICER, this::editOfficer);
         registerButton(BUTTON_MANAGE_FRIEND, this::editFriend);
@@ -195,11 +203,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_TRIGGER, this::trigger);
         registerButton(BUTTON_ADD_BLOCK, this::addBlock);
         registerButton(BUTTON_REMOVE_BLOCK, this::removeBlock);
-        if (findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class) == null)
-        {
-            return;
-        }
-        findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setVisible(false);
         findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(false);
         colorDropDownList.setSelectedIndex(townHall.getColony().getTeamColonyColor().ordinal());
     }
@@ -519,35 +522,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         else
         {
             button.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON));
-        }
-    }
-
-    /**
-     * Switch between previous and next page.
-     */
-    private void switchPage(@NotNull final Button button)
-    {
-        if (button.getID().equals(BUTTON_PREV_PAGE_PERM))
-        {
-            findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).previousView();
-
-            findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setVisible(false);
-            findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setVisible(true);
-        }
-        else
-        {
-            findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).nextView();
-
-            findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setVisible(true);
-            findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setVisible(false);
-        }
-
-        if (findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).getCurrentView().getID().equals(PERMISSION_VIEW))
-        {
-            findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setVisible(true);
-            findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setVisible(true);
-
-            fillPermissionList(VIEW_OFFICER);
         }
     }
 
@@ -1087,6 +1061,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         lastTabButton.on();
         button.off();
         lastTabButton = button;
+        setTabPage(null);
     }
 
     /**
@@ -1209,5 +1184,62 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private void recallClicked()
     {
         MineColonies.getNetwork().sendToServer(new RecallTownhallMessage(townHall));
+    }
+
+    /**
+     * For switches inside of tabs
+     */
+    private void setTabPage(@NotNull final Button button)
+    {
+        final String curSwitch = (button == null) ? tabsToSwitches.get(lastTabButton.getID()) : button.getID().replaceFirst(BUTTON_PREVPAGE + "|" + BUTTON_NEXTPAGE, "");
+        if (curSwitch == null)
+        {
+            return;
+        }
+        final Label pageNum = window.findPaneOfTypeByID(LABEL_PAGE_NUMBER + curSwitch, Label.class);
+        final Button buttonPrevPage = window.findPaneOfTypeByID(BUTTON_PREVPAGE + curSwitch, Button.class);
+        final Button buttonNextPage = window.findPaneOfTypeByID(BUTTON_NEXTPAGE + curSwitch, Button.class);
+        final SwitchView switchView = window.findPaneOfTypeByID(curSwitch, SwitchView.class);
+        final int switchPagesSize = switchView.getChildrenSize();
+        int curPage = pageNum.getLabelText().equals("") ? 1 : Integer.parseInt(pageNum.getLabelText().substring(0, pageNum.getLabelText().indexOf("/")));
+
+        switch ((button == null) ? "" : button.getID().replace(curSwitch, ""))
+        {
+            case BUTTON_PREVPAGE:
+                switchView.previousView();
+                curPage--;
+                break;
+            case BUTTON_NEXTPAGE:
+                switchView.nextView();
+                curPage++;
+                break;
+            default:
+                if (switchPagesSize == 1)
+                {
+                    buttonPrevPage.off();
+                    buttonNextPage.off();
+                    pageNum.off();
+                    return;
+                }
+                break;
+        }
+
+        buttonNextPage.on();
+        buttonPrevPage.on();
+        if (curPage == 1)
+        {
+            buttonPrevPage.off();
+        }
+        if (curPage == switchPagesSize)
+        {
+            buttonNextPage.off();
+        }
+        pageNum.setLabelText(curPage + "/" + switchPagesSize);
+
+        // Additional handlers
+        if (switchView.getCurrentView().getID().equals(PERMISSION_VIEW))
+        {
+            editOfficer();
+        }
     }
 }

@@ -270,24 +270,9 @@ public final class WindowConstants
     public static final int HIDDEN_ID_POSITION = 5;
 
     /**
-     * The distance to move the ribbon.
-     */
-    public static final int RIBBON_OFFSET = 5;
-
-    /**
      * Link to the xml file of the window.
      */
     public static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/windowtownhall.xml";
-
-    /**
-     * The button to go to the previous permission settings page.
-     */
-    public static final String BUTTON_PREV_PAGE_PERM = "prevPagePerm";
-
-    /**
-     * The button to go to the next permission settings page.
-     */
-    public static final String BUTTON_NEXT_PAGE_PERM = "nextPagePerm";
 
     /**
      * The button to go to the officer permission settings page.

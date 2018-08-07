@@ -52,6 +52,11 @@ public class DropDownList extends View implements ButtonHandler
     protected int selectedIndex = -1;
 
     /**
+     * Temporary fix until new release
+     */
+    protected int dropDownFixX = 0;
+
+    /**
      * Default constructor required by Blockout.
      */
     public DropDownList()
@@ -71,6 +76,7 @@ public class DropDownList extends View implements ButtonHandler
         dropDownWidth = dropDownSize == null ? width : dropDownSize.getX();
         //When unknown, we use the same height as it is wide.
         dropDownHeight = dropDownSize == null ? width : dropDownSize.getY();
+        dropDownFixX = params.getIntegerAttribute("dropfixx", dropDownFixX);
 
         if(params.getStringAttribute("source", "").isEmpty())
         {
@@ -88,7 +94,7 @@ public class DropDownList extends View implements ButtonHandler
 
         list = new ScrollingList(params);
         list.setSize(dropDownWidth, dropDownHeight);
-        list.setPosition((x + width / 2) - dropDownWidth / 2, y + height);
+        list.setPosition((x + width / 2) - dropDownWidth / 2 + dropDownFixX, y + height);
         list.putInside(overlay);
         list.parseChildren(params);
 
