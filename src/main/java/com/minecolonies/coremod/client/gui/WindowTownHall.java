@@ -355,10 +355,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
 
         lastTabButton = findPaneOfTypeByID(BUTTON_ACTIONS, Button.class);
-        lastTabButton.setEnabled(false);
-        findPaneOfTypeByID(lastTabButton.getID() + "0", Image.class).setVisible(false);
-        findPaneOfTypeByID(lastTabButton.getID() + "1", ButtonImage.class).setVisible(true);
-        lastTabButton.setPosition(lastTabButton.getX() + RIBBON_OFFSET, findPaneOfTypeByID(lastTabButton.getID() + "1", ButtonImage.class).getY());
+        lastTabButton.off();
+        findPaneOfTypeByID(lastTabButton.getID() + "0", Image.class).hide();
+        findPaneOfTypeByID(lastTabButton.getID() + "1", ButtonImage.class).show();
 
         fillUserList();
         fillCitizensList();
@@ -1079,19 +1078,15 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     {
         final String oldId = lastTabButton.getID();
         final String newId = button.getID();
-        final String page = tabsToPages.get(newId);
-        final Image image = findPaneOfTypeByID(oldId + "0", Image.class);
-        lastTabButton.setPosition(lastTabButton.getX() - RIBBON_OFFSET, image.getY() + image.getParent().getY() - 2);
-        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(page);
-        findPaneOfTypeByID(oldId + "0", Image.class).setVisible(true);
-        findPaneOfTypeByID(oldId + "1", ButtonImage.class).setVisible(false);
-        findPaneOfTypeByID(newId + "0", Image.class).setVisible(false);
-        findPaneOfTypeByID(newId + "1", ButtonImage.class).setVisible(true);
+        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(tabsToPages.get(newId));
+        findPaneOfTypeByID(oldId + "0", Image.class).show();
+        findPaneOfTypeByID(oldId + "1", ButtonImage.class).hide();
+        findPaneOfTypeByID(newId + "0", Image.class).hide();
+        findPaneOfTypeByID(newId + "1", ButtonImage.class).show();
 
-        lastTabButton.setEnabled(true);
-        button.setEnabled(false);
+        lastTabButton.on();
+        button.off();
         lastTabButton = button;
-        lastTabButton.setPosition(lastTabButton.getX() + RIBBON_OFFSET, findPaneOfTypeByID(lastTabButton.getID() + "1", ButtonImage.class).getY());
     }
 
     /**

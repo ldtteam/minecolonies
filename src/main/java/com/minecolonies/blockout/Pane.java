@@ -1,6 +1,5 @@
 package com.minecolonies.blockout;
 
-import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.views.View;
 import com.minecolonies.blockout.views.Window;
 import net.minecraft.client.Minecraft;
@@ -245,6 +244,32 @@ public class Pane extends Gui
     public void disable()
     {
         setEnabled(false);
+    }
+
+    /**
+     * Is pane visible and enabled
+     */
+    public boolean isOn()
+    {
+        return enabled && visible;
+    }
+
+    /**
+     * Enable and show this pane.
+     */
+    public void on()
+    {
+        setEnabled(true);
+        setVisible(true);
+    }
+
+    /**
+     * Disable and hide this pane.
+     */
+    public void off()
+    {
+        setEnabled(false);
+        setVisible(false);
     }
 
     /**
@@ -638,36 +663,42 @@ public class Pane extends Gui
     }
 
     /**
-     * Handle onHover element
+     * Handle onHover element, element must be visible
+     * TODO: bug: must have pos set from xml (or be not in a group)
      */
     public void handleHover(final int mx, final int my)
-    { 
+    {
         if (onHover == null)
         {
             if (!onHoverId.isEmpty())
             {
                 onHover = window.findPaneByID(onHoverId);
-                Log.getLogger().info("Hover for: " + id + ", on: " + onHover.getID() + ", 0xy base: " + x + "," + y);
+            }
+            else
+            {
+                return;
+            }
+        }
+        if (!this.isVisible())
+        {
+            if (onHover.isVisible())
+            {
+                onHover.off();
             }
             return;
         }
         if (onHover.isPointInPane(mx, my) && onHover.isVisible())
         {
-            Log.getLogger().info("IM IN: " + mx + "," + my);
             return;
         }
         if (this.isPointInPane(mx, my) && !onHover.isVisible())
         {
-            Log.getLogger().info("Should show: " + onHover.getID() + ", from: " + id);
-            onHover.show();
-            onHover.enable();
+            onHover.on();
             return;
         }
         if (!this.isPointInPane(mx, my) && onHover.isVisible())
         {
-            Log.getLogger().info("Should hide: " + onHover.getID());
-            onHover.hide();
-            onHover.disable();
+            onHover.off();
         }
     }
 }

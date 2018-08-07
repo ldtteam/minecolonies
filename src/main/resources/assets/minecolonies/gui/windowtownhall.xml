@@ -1,96 +1,86 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="374 243" pause="false"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="524 243" pause="false"
         lightbox="false"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
 
-    <image source="minecolonies:textures/gui/townhall_book.png" size="100% 100%"/>
+    <image source="minecolonies:textures/gui/townhall_book.png" pos="75 0" size="374 243" />
+    
+    <image id="info0" pos="56 73" size="32 14" source="minecolonies:textures/gui/bookmark_short_ribbon_01.png"/>
+    <image id="actions0" pos="56 97" size="32 14" source="minecolonies:textures/gui/bookmark_short_ribbon_02.png"/>
+    <image id="permissions0" pos="56 121" size="32 14" source="minecolonies:textures/gui/bookmark_short_ribbon_03.png"/>
+    <image id="citizens0" pos="56 145" size="32 14" source="minecolonies:textures/gui/bookmark_short_ribbon_04.png"/>
+    <image id="settings0" pos="56 169" size="32 14" source="minecolonies:textures/gui/bookmark_short_ribbon_05.png"/>
+    <image id="workOrder0" pos="56 193" size="32 14" source="minecolonies:textures/gui/bookmark_short_ribbon_06.png"/>
+    <image id="happiness0" pos="56 217" size="32 14" source="minecolonies:textures/gui/bookmark_short_ribbon_01.png"/>
 
-    <group size="100 185" pos="-19 63" spacing="10">
-        <image id="info0" size="32 14" source="minecolonies:textures/gui/bookmark_short_ribbon_01.png"/>
-        <image id="actions0" size="32 14" source="minecolonies:textures/gui/bookmark_short_ribbon_02.png"/>
-        <image id="permissions0" size="32 14" source="minecolonies:textures/gui/bookmark_short_ribbon_03.png"/>
-        <image id="citizens0" size="32 14" source="minecolonies:textures/gui/bookmark_short_ribbon_04.png"/>
-        <image id="settings0" size="32 14" source="minecolonies:textures/gui/bookmark_short_ribbon_05.png"/>
-        <image id="workOrder0" size="32 14" source="minecolonies:textures/gui/bookmark_short_ribbon_06.png"/>
-        <image id="happiness0" size="32 14" source="minecolonies:textures/gui/bookmark_short_ribbon_01.png"/>
-    </group>
+    <buttonimage id="info1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_01.png" visible="false"
+                label="$(com.minecolonies.coremod.gui.workerHuts.information)"
+                textalign="MIDDLE_LEFT" textoffset="25 1"
+                textcolor="White" textdisabledcolor="DarkGray"/>
+    <buttonimage id="actions1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_02.png" visible="false"
+                label="$(com.minecolonies.coremod.gui.townHall.actions)"
+                textalign="MIDDLE_LEFT" textoffset="25 1"
+                textcolor="White" textdisabledcolor="DarkGray"/>
+    <buttonimage id="permissions1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_03.png" visible="false"
+                label="$(com.minecolonies.coremod.gui.townHall.permissions)"
+                textalign="MIDDLE_LEFT" textoffset="25 1"
+                textcolor="White" textdisabledcolor="DarkGray"/>
+    <buttonimage id="citizens1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_04.png" visible="false"
+                label="$(com.minecolonies.coremod.gui.townHall.citizens)"
+                textalign="MIDDLE_LEFT" textoffset="25 1"
+                textcolor="White" textdisabledcolor="DarkGray"/>
+    <buttonimage id="settings1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_05.png" visible="false"
+                label="$(com.minecolonies.coremod.gui.workerHuts.settings)"
+                textalign="MIDDLE_LEFT" textoffset="25 1"
+                textcolor="White" textdisabledcolor="DarkGray"/>
+    <buttonimage id="workOrder1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_06.png" visible="false"
+                label="$(com.minecolonies.coremod.gui.workerHuts.workOrder)"
+                textalign="MIDDLE_LEFT" textoffset="25 1"
+                textcolor="White" textdisabledcolor="DarkGray"/>
+    <buttonimage id="happiness1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_01.png" visible="false"
+                label="$(com.minecolonies.coremod.gui.workerHuts.happiness)"
+                textalign="MIDDLE_LEFT" textoffset="25 1"
+                textcolor="White" textdisabledcolor="DarkGray"/>
 
-    <buttonimage id="info1" size="204 17" pos="-17 43" source="minecolonies:textures/gui/bookmark_ribbon_01.png" visible="false"
-                 label="$(com.minecolonies.coremod.gui.workerHuts.information)"
-                 textalign="MIDDLE_RIGHT" textoffset="-117 1"
-                 textcolor="White" textdisabledcolor="DarkGray"/>
-    <buttonimage id="actions1" size="204 17" pos="-17 43" source="minecolonies:textures/gui/bookmark_ribbon_02.png" visible="false"
-                 label="$(com.minecolonies.coremod.gui.townHall.actions)"
-                 textalign="MIDDLE_RIGHT" textoffset="-137 1"
-                 textcolor="White" textdisabledcolor="DarkGray"/>
-    <buttonimage id="permissions1" size="204 17" pos="-17 43" source="minecolonies:textures/gui/bookmark_ribbon_03.png" visible="false"
-                 label="$(com.minecolonies.coremod.gui.townHall.permissions)"
-                 textalign="MIDDLE_RIGHT" textoffset="-117 1"
-                 textcolor="White" textdisabledcolor="DarkGray"/>
-    <buttonimage id="citizens1" size="204 17" pos="-17 43" source="minecolonies:textures/gui/bookmark_ribbon_04.png" visible="false"
-                 label="$(com.minecolonies.coremod.gui.townHall.citizens)"
-                 textalign="MIDDLE_RIGHT" textoffset="-136 1"
-                 textcolor="White" textdisabledcolor="DarkGray"/>
-    <buttonimage id="settings1" size="204 17" pos="-17 43" source="minecolonies:textures/gui/bookmark_ribbon_05.png" visible="false"
-                 label="$(com.minecolonies.coremod.gui.workerHuts.settings)"
-                 textalign="MIDDLE_RIGHT" textoffset="-135 1"
-                 textcolor="White" textdisabledcolor="DarkGray"/>
-    <buttonimage id="workOrder1" size="204 17" pos="-17 43" source="minecolonies:textures/gui/bookmark_ribbon_06.png" visible="false"
-                 label="$(com.minecolonies.coremod.gui.workerHuts.workOrder)"
-                 textalign="MIDDLE_RIGHT" textoffset="-112 1"
-                 textcolor="White" textdisabledcolor="DarkGray"/>
-    <buttonimage id="happiness1" size="204 17" pos="-17 43" source="minecolonies:textures/gui/bookmark_ribbon_01.png" visible="false"
-                 label="$(com.minecolonies.coremod.gui.workerHuts.happiness)"
-                 textalign="MIDDLE_RIGHT" textoffset="-87 1"
-                 textcolor="White" textdisabledcolor="DarkGray"/>
+    <buttonimage id="infoExt" pos="-40 71" size="128 17" source="minecolonies:textures/gui/bookmark_medium_ribbon_01.png" visible="false"
+                label="$(com.minecolonies.coremod.gui.workerHuts.information)"
+                textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1"/>
+    <buttonimage id="actionsExt" pos="-40 95" size="128 17" source="minecolonies:textures/gui/bookmark_medium_ribbon_01.png" visible="false"
+                label="$(com.minecolonies.coremod.gui.townHall.actions)"
+                textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1"/>
+    <buttonimage id="permissionsExt" pos="-40 119" size="128 17" source="minecolonies:textures/gui/bookmark_medium_ribbon_01.png" visible="false"
+                label="$(com.minecolonies.coremod.gui.townHall.permissions)"
+                textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1"/>
+    <buttonimage id="citizensExt" pos="-40 143" size="128 17" source="minecolonies:textures/gui/bookmark_medium_ribbon_01.png" visible="false"
+                label="$(com.minecolonies.coremod.gui.townHall.citizens)"
+                textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1"/>
+    <buttonimage id="settingsExt" pos="-40 167" size="128 17" source="minecolonies:textures/gui/bookmark_medium_ribbon_01.png" visible="false"
+                label="$(com.minecolonies.coremod.gui.workerHuts.settings)"
+                textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1"/>
+    <buttonimage id="workOrderExt" pos="-40 191" size="128 17" source="minecolonies:textures/gui/bookmark_medium_ribbon_01.png" visible="false"
+                label="$(com.minecolonies.coremod.gui.workerHuts.workOrder)"
+                textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1"/>
+    <buttonimage id="happinessExt" pos="-40 215" size="128 17" source="minecolonies:textures/gui/bookmark_medium_ribbon_01.png" visible="false"
+                label="$(com.minecolonies.coremod.gui.workerHuts.happiness)"
+                textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1"/>
 
-    <group size="200 200" pos="-115 63" spacing="10">
-        <buttonimage id="infoExt" size="128 17" source="minecolonies:textures/gui/bookmark_medium_ribbon_01.png" visible="false"
-                    label="$(com.minecolonies.coremod.gui.workerHuts.information)"
-                    textalign="MIDDLE_LEFT" textcolor="White"/>
-        <buttonimage id="actionsExt" size="128 17" source="minecolonies:textures/gui/bookmark_medium_ribbon_01.png" visible="false"
-                    label="$(com.minecolonies.coremod.gui.townHall.actions)"
-                    textalign="MIDDLE_LEFT" textcolor="White"/>
-        <buttonimage id="permissionsExt" size="128 17" source="minecolonies:textures/gui/bookmark_medium_ribbon_01.png" visible="false"
-                    label="$(com.minecolonies.coremod.gui.townHall.permissions)"
-                    textalign="MIDDLE_LEFT" textcolor="White"/>
-        <buttonimage id="citizensExt" size="128 17" source="minecolonies:textures/gui/bookmark_medium_ribbon_01.png" visible="false"
-                    label="$(com.minecolonies.coremod.gui.townHall.citizens)"
-                    textalign="MIDDLE_LEFT" textcolor="White"/>
-        <buttonimage id="settingsExt" size="128 17" source="minecolonies:textures/gui/bookmark_medium_ribbon_01.png" visible="false"
-                    label="$(com.minecolonies.coremod.gui.workerHuts.settings)"
-                    textalign="MIDDLE_LEFT" textcolor="White"/>
-        <buttonimage id="workOrderExt" size="128 17" source="minecolonies:textures/gui/bookmark_medium_ribbon_01.png" visible="false"
-                    label="$(com.minecolonies.coremod.gui.workerHuts.workOrder)"
-                    textalign="MIDDLE_LEFT" textcolor="White"/>
-        <buttonimage id="happinessExt" size="128 17" source="minecolonies:textures/gui/bookmark_medium_ribbon_01.png" visible="false"
-                    label="$(com.minecolonies.coremod.gui.workerHuts.happiness)"
-                    textalign="MIDDLE_LEFT" textcolor="White"/>
-    </group>
-
-    <buttonimage id="info" size="17 17" pos="-13 71" onHoverId="infoExt"
+    <buttonimage id="info" size="17 17" pos="62 71" onHoverId="infoExt"
                  source="minecolonies:textures/gui/red_wax_information.png"/>
-
-    <buttonimage id="actions" size="17 17" pos="-13 95" onHoverId="actionsExt"
+    <buttonimage id="actions" size="17 17" pos="62 95" onHoverId="actionsExt"
                  source="minecolonies:textures/gui/red_wax_actions.png"/>
-
-    <buttonimage id="permissions" size="17 17" pos="-13 119" onHoverId="permissionsExt"
+    <buttonimage id="permissions" size="17 17" pos="62 119" onHoverId="permissionsExt"
                  source="minecolonies:textures/gui/red_wax_permissions.png"/>
-
-    <buttonimage id="citizens" size="17 17" pos="-13 143" onHoverId="citizensExt"
+    <buttonimage id="citizens" size="17 17" pos="62 143" onHoverId="citizensExt"
                  source="minecolonies:textures/gui/red_wax_citizens.png"/>
-
-    <buttonimage id="settings" size="17 17" pos="-13 167" onHoverId="settingsExt"
+    <buttonimage id="settings" size="17 17" pos="62 167" onHoverId="settingsExt"
                  source="minecolonies:textures/gui/red_wax_settings.png"/>
-
-    <buttonimage id="workOrder" size="17 17" pos="-13 191" onHoverId="workOrderExt"
+    <buttonimage id="workOrder" size="17 17" pos="62 191" onHoverId="workOrderExt"
                  source="minecolonies:textures/gui/red_wax_work_orders.png"/>
     <!-- todo Create the texture -->
-    <buttonimage id="happiness" size="17 17" pos="-13 215" onHoverId="happinessExt"
+    <buttonimage id="happiness" size="17 17" pos="62 215" onHoverId="happinessExt"
                  source="minecolonies:textures/gui/red_wax_information.png"/>
 
-    <switch id="pages" size="100% 100%" pos="0 0" default="pageActions">
+    <switch id="pages" size="100% 100%" pos="75 0" default="pageActions">
         <view id="pageActions">
-
             <group align="TOP_MIDDLE" size="80% 100%" pos="0 22">
                 <label size="100% 11" color="green"
                        label="$(com.minecolonies.coremod.gui.townHall.currTownHallName)"/>
