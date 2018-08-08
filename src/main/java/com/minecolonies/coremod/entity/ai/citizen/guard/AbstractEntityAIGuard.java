@@ -557,6 +557,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
             if (ItemStackUtils.isEmpty(stack))
             {
+                worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, ItemStackUtils.EMPTY);
                 continue;
             }
 
