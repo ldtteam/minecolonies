@@ -248,7 +248,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         {
             final List<Integer> slotsWorker = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),
               itemStack -> entry.getValue().stream().anyMatch(guardItems -> guardItems.doesMatchItemStack(itemStack)));
-            int bestLevel = 0;
+            int bestLevel = -1;
             final List<Integer> nonOptimalSlots = new ArrayList<>();
             int bestSlot = -1;
             for (final int slot : slotsWorker)
@@ -269,7 +269,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 }
             }
 
-            int bestLevelChest = 0;
+            int bestLevelChest = -1;
             int bestSlotChest = -1;
             IItemHandler bestHandler = null;
             final Map<IItemHandler, List<Integer>> slotsChest =
