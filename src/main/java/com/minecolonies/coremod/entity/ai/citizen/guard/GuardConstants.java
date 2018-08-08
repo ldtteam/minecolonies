@@ -40,25 +40,6 @@ public final class GuardConstants
 
     // -- Delays -- \\
 
-    // -- Sound Crap -- \\
-
-    /**
-     * The base pitch, add more to this to change the sound.
-     */
-    public static final double BASE_PITCH = 0.8D;
-
-    /**
-     * The pitch will be divided by this to calculate it for the arrow sound.
-     */
-    public static final double PITCH_DIVIDER = 1.0D;
-
-    /**
-     * Random is multiplied by this to get a random sound.
-     */
-    public static final double PITCH_MULTIPLIER = 0.4D;
-
-    // -- Sound Crap -- \\
-
     // -- Ranged Guard Stuff -- \\
 
     /**
