@@ -3,6 +3,9 @@ package com.minecolonies.api.entity.ai.citizen.guards;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.ItemStackHelper;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemShield;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -150,6 +153,6 @@ public class GuardItems
      */
     public boolean doesMatchItemStack(final ItemStack stack)
     {
-        return ItemStackUtils.hasToolLevel(stack, itemNeeded, armorLevel, armorLevel);
+        return (ItemStackUtils.hasToolLevel(stack, itemNeeded, armorLevel, armorLevel) && stack.getItem() instanceof ItemArmor && ((ItemArmor) stack.getItem()).armorType == getType()) || (stack.getItem() instanceof ItemShield && getType() == EntityEquipmentSlot.MAINHAND);
     }
 }

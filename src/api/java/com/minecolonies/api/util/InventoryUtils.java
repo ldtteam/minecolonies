@@ -7,6 +7,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IntegerCache;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -525,7 +526,11 @@ public class InventoryUtils
         final Map<IItemHandler, List<Integer>> map = new HashMap<>();
         for (final IItemHandler handler : getItemHandlersFromProvider(provider))
         {
-            map.put(handler, findAllSlotsInItemHandlerWith(handler, itemStackSelectionPredicate));
+            final List<Integer> tempList = findAllSlotsInItemHandlerWith(handler, itemStackSelectionPredicate);
+            if (!tempList.isEmpty())
+            {
+                map.put(handler, tempList);
+            }
         }
 
         return map;

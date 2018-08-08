@@ -143,7 +143,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
                 }
                 InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(
                   getOwnBuilding(),
-                  InventoryUtils.findFirstSlotInProviderWith(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableToolOrWeapon),
+                  InventoryUtils.findFirstSlotInProviderNotEmptyWith(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableToolOrWeapon),
                   new InvWrapper(worker.getInventoryCitizen()));
             }
 

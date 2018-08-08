@@ -29,15 +29,11 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
@@ -67,7 +63,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     /**
      * Holds a list of required armor for this guard
      */
-    private final Map<EntityEquipmentSlot, List<GuardItems>> requiredArmor = new LinkedHashMap<>();
+    private final Map<IToolType, List<GuardItems>> requiredArmor = new LinkedHashMap<IToolType, List<GuardItems>>();
+
+    /**
+     * Holds a list of required armor for this guard
+     */
+    private final Map<EntityEquipmentSlot, ItemStack> armorToWear = new HashMap<>();
 
     /**
      * Entities to kill before dumping into chest.
@@ -217,6 +218,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             }
         }
 
+        requiredArmor.clear();
+        armorToWear.clear();
         final Map<IToolType, List<GuardItems>> correctArmor = new LinkedHashMap<>();
         for (final List<GuardItems> itemList : itemsNeeded)
         {
@@ -232,9 +235,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     final List<GuardItems> listOfItems = new ArrayList<>();
                     listOfItems.add(item);
 
-                    if (correctArmor.containsKey(item.getType()))
+                    if (correctArmor.containsKey(item.getItemNeeded()))
                     {
-                        listOfItems.addAll(correctArmor.get(item.getType()));
+                        listOfItems.addAll(correctArmor.get(item.getItemNeeded()));
                     }
                     correctArmor.put(item.getItemNeeded(), listOfItems);
                 }
@@ -243,7 +246,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         for (final Map.Entry<IToolType, List<GuardItems>> entry : correctArmor.entrySet())
         {
-            final List<Integer> slotsWorker = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()), itemStack -> entry.getValue().stream().anyMatch(guardItems -> guardItems.doesMatchItemStack(itemStack)));
+            final List<Integer> slotsWorker = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),
+              itemStack -> entry.getValue().stream().anyMatch(guardItems -> guardItems.doesMatchItemStack(itemStack)));
             int bestLevel = 0;
             final List<Integer> nonOptimalSlots = new ArrayList<>();
             int bestSlot = -1;
@@ -260,7 +264,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                             nonOptimalSlots.add(bestLevel);
                         }
                         bestLevel = level;
-                        bestSlot  = slot;
+                        bestSlot = slot;
                     }
                 }
             }
@@ -268,12 +272,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             int bestLevelChest = 0;
             int bestSlotChest = -1;
             IItemHandler bestHandler = null;
-            final Map<IItemHandler, List<Integer>> slotsChest = InventoryUtils.findAllSlotsInProviderWith(building, itemStack -> entry.getValue().stream().anyMatch(guardItems -> guardItems.doesMatchItemStack(itemStack)));
+            final Map<IItemHandler, List<Integer>> slotsChest =
+              InventoryUtils.findAllSlotsInProviderWith(building, itemStack -> entry.getValue().stream().anyMatch(guardItems -> guardItems.doesMatchItemStack(itemStack)));
             for (final Map.Entry<IItemHandler, List<Integer>> handlers : slotsChest.entrySet())
             {
                 for (final int slot : handlers.getValue())
                 {
-                    final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
+                    final ItemStack stack = handlers.getKey().getStackInSlot(slot);
                     if (!ItemStackUtils.isEmpty(stack))
                     {
                         final int level = ItemStackUtils.getMiningLevel(stack, entry.getKey());
@@ -287,22 +292,39 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 }
             }
 
-            if (bestLevelChest > bestLevel)
+            if (!entry.getValue().isEmpty())
             {
-                if (!entry.getValue().isEmpty())
+                if (bestLevelChest > bestLevel)
                 {
-                    correctArmor.put(entry.getValue().stream()., )
-                }
-                InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(bestHandler, bestSlotChest ,new InvWrapper(worker.getInventoryCitizen()));
-                if (bestSlot != -1)
-                {
-                    nonOptimalSlots.add(bestSlot);
-                }
-            }
+                    final ItemStack armorStack = bestHandler.getStackInSlot(bestSlotChest).copy();
+                    if (armorStack.getItem() instanceof ItemArmor)
+                    {
+                        armorToWear.put(((ItemArmor) armorStack.getItem()).armorType, armorStack);
+                    }
 
-            for (final int slot : nonOptimalSlots)
-            {
-                InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(new InvWrapper(worker.getInventoryCitizen()), slot , building);
+                    InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(bestHandler, bestSlotChest, new InvWrapper(worker.getInventoryCitizen()));
+                    if (bestSlot != -1)
+                    {
+                        nonOptimalSlots.add(bestSlot);
+                    }
+                }
+                else if (bestSlot == -1)
+                {
+                    requiredArmor.put(entry.getKey(), entry.getValue());
+                }
+                else
+                {
+                    final ItemStack armorStack = new InvWrapper(worker.getInventoryCitizen()).getStackInSlot(bestSlot).copy();
+                    if (armorStack.getItem() instanceof ItemArmor)
+                    {
+                        armorToWear.put(((ItemArmor) armorStack.getItem()).armorType, armorStack);
+                    }
+                }
+
+                for (final int slot : nonOptimalSlots)
+                {
+                    InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(new InvWrapper(worker.getInventoryCitizen()), slot, building);
+                }
             }
         }
 
@@ -521,47 +543,40 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStackUtils.EMPTY);
         worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStackUtils.EMPTY);
 
-        for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
+        for (final ItemStack armorStack : armorToWear.values())
         {
-            final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
-
+            if (ItemStackUtils.isEmpty(armorStack))
+            {
+                continue;
+            }
+            final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()), itemStack -> itemStack.isItemEqual(armorStack));
+            if (slot == -1)
+            {
+                continue;
+            }
+            final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
             if (ItemStackUtils.isEmpty(stack))
             {
-                new InvWrapper(worker.getInventoryCitizen()).extractItem(i, Integer.MAX_VALUE, false);
                 continue;
             }
 
             if (stack.getItem() instanceof ItemArmor)
             {
-                final GuardItems guardNeeds = requiredArmor.get(((ItemArmor) stack.getItem()).armorType);
-                final ItemArmor itemArmor = (ItemArmor) stack.getItem();
-                if (itemArmor != null && itemArmor instanceof ItemArmor && guardNeeds != null
-                    && ItemStackUtils.hasToolLevel(stack, guardNeeds.getItemNeeded(), guardNeeds.getArmorLevel(), guardNeeds.getArmorLevel()))
-                {
-                    worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
-                }
+                worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
             }
         }
 
-        if (!requiredArmor.isEmpty())
+        for (Map.Entry<IToolType, List<GuardItems>> entry : requiredArmor.entrySet())
         {
-            for (final EntityEquipmentSlot slot : EntityEquipmentSlot.values()) 
+            int minlevel = Integer.MAX_VALUE;
+            for (final GuardItems item : entry.getValue())
             {
-                if (slot == EntityEquipmentSlot.MAINHAND || slot == EntityEquipmentSlot.OFFHAND)
+                if (item.getArmorLevel() < minlevel)
                 {
-                    continue;
-                }
-
-                if (worker.getItemStackFromSlot(slot) == ItemStackUtils.EMPTY)
-                {
-                    final GuardItems guardNeeds = requiredArmor.get(slot);
-                    //Request the armor
-                    if (guardNeeds != null)
-                    {
-                        //checkForToolorWeaponASync(guardNeeds.getItemNeeded(),guardNeeds.getArmorMinimalLevel());
-                    }
+                    minlevel = item.getArmorLevel();
                 }
             }
+            checkForToolorWeaponASync(entry.getKey(), minlevel);
         }
     }
 

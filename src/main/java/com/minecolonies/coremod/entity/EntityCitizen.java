@@ -712,7 +712,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     private boolean tryToEat()
     {
-        final int slot = InventoryUtils.findFirstSlotInProviderWith(this,
+        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(this,
           itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
 
         if (slot == -1)
