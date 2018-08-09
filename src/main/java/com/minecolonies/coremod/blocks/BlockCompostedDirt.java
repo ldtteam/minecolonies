@@ -3,22 +3,29 @@ package com.minecolonies.coremod.blocks;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFlower;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemColored;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,6 +77,28 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
         if(!worldIn.isRemote)
         {
             playerIn.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.composted_dirt.player_use_message"));
+
+
+            //DEBUGGING PURPOSES ONLY Todo: remove when done
+            TileEntity te = worldIn.getTileEntity(pos);
+            if(te instanceof  TileEntityCompostedDirt)
+            {
+                ItemStack item = playerIn.inventory.getCurrentItem();
+                Block block = Block.getBlockFromItem(item.getItem());
+
+                if(block == Blocks.AIR || !(block instanceof BlockFlower)) return false;
+
+                BlockFlower flower = (BlockFlower) block;
+
+                try
+                {
+                    ((TileEntityCompostedDirt) te).compost(20, flower.getTypeProperty().getValueClass().newInstance());
+                }catch (Exception e)
+                {
+                    playerIn.sendMessage(new TextComponentString(e.getMessage()));
+                }
+            }
+
         }
 
         return true;

@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.minecolonies.blockout.Log;
+import net.minecraft.block.BlockFlower;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
@@ -22,6 +24,8 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
 
     private final Random random = new Random();
 
+    private BlockFlower.EnumFlowerType flowerType;
+
     @Override
     public void update()
     {
@@ -38,7 +42,7 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
         {
             ((WorldServer)worldIn).spawnParticle(
               EnumParticleTypes.VILLAGER_HAPPY, this.getPos().getX()+0.5,
-              this.getPos().getY()+1.5, this.getPos().getZ()+0.5,
+              this.getPos().getY()+1, this.getPos().getZ()+0.5,
               1, 0.2, 0, 0.2, 0);
         }
         ticker ++;
@@ -47,6 +51,7 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
         {
             if(random.nextInt(100) <= this.percentage)
             {
+                Log.getLogger().info("SPAWNING A FLOWER");
                 //Todo: spawn flower over the block if the block above is AIR
             }
         }
@@ -61,11 +66,12 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
 
     // AI interface
 
-    public void compost(final int percentage)
+    public void compost(final int percentage, BlockFlower.EnumFlowerType flowerType)
     {
         if(percentage >= 0 && percentage <= 100)
         {
             this.percentage = percentage;
+            this.flowerType = flowerType;
         }
         this.composted = true;
     }
