@@ -3,21 +3,18 @@ package com.minecolonies.api.entity.ai.citizen.guards;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemShield;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Tuple;
+
+import java.util.function.Predicate;
 
 /**
  * Class to hold information about required item for the guard.
  */
-public class GuardItems
+public class GuardGear implements Predicate<ItemStack>
 {
-    /**
-     * Quantity required on the required.
-     */
-    private final int quantity;
-
     /**
      * Min level the citizen has to be to required the item.
      */
@@ -57,29 +54,24 @@ public class GuardItems
     /**
      * Create a classification for a tool level.
      *
-     * @param item        item that is being required.
-     * @param type        item type for the required item.
-     * @param quantity    quantity required for the item.
-     * @param min         min level required to demand item.
-     * @param max         max level that the item will be required.
-     * @param minBuilding the minimum building level required.
-     * @param maxBuilding the maximum building level for this.
+     * @param item               item that is being required.
+     * @param type               item type for the required item.
+     * @param citizenLevelRange  level range required to demand item.
+     * @param buildingLevelRange level range that the item will be required.
      */
-    public GuardItems(
+    public GuardGear(
       final IToolType item, final EntityEquipmentSlot type,
       final int armorLevel,
-      final int quantity,
-      final int min, final int max,
-      final int minBuilding, final int maxBuilding)
+      final Tuple<Integer, Integer> citizenLevelRange,
+      final Tuple<Integer, Integer> buildingLevelRange)
     {
         this.type = type;
         this.itemNeeded = item;
-        this.minLevelRequired = min;
-        this.maxLevelRequired = max;
-        this.quantity = quantity;
+        this.minLevelRequired = citizenLevelRange.getFirst();
+        this.maxLevelRequired = citizenLevelRange.getSecond();
         this.armorLevel = armorLevel;
-        this.minBuildingLevelRequired = minBuilding;
-        this.maxBuildingLevelRequired = maxBuilding;
+        this.minBuildingLevelRequired = buildingLevelRange.getFirst();
+        this.maxBuildingLevelRequired = buildingLevelRange.getSecond();
     }
 
     /**
@@ -104,14 +96,6 @@ public class GuardItems
     public EntityEquipmentSlot getType()
     {
         return type;
-    }
-
-    /**
-     * @return number of items required.
-     */
-    public int getQuantity()
-    {
-        return quantity;
     }
 
     /**
@@ -146,12 +130,8 @@ public class GuardItems
         return maxBuildingLevelRequired;
     }
 
-    /**
-     * Check if it matches with an itemStack.
-     * @param stack the stack to check.
-     * @return true if so.
-     */
-    public boolean doesMatchItemStack(final ItemStack stack)
+    @Override
+    public boolean test(final ItemStack stack)
     {
         return (ItemStackUtils.hasToolLevel(stack, itemNeeded, armorLevel, armorLevel) && stack.getItem() instanceof ItemArmor && ((ItemArmor) stack.getItem()).armorType == getType()) || (stack.getItem() instanceof ItemShield && getType() == EntityEquipmentSlot.MAINHAND);
     }

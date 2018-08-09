@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.entity.ai.citizen.guards.GuardItems;
+import com.minecolonies.api.entity.ai.citizen.guards.GuardGear;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
@@ -24,8 +24,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.minecolonies.coremod.entity.ai.citizen.guard.GuardConstants.*;
-import static com.minecolonies.coremod.entity.ai.citizen.guard.GuardConstants.DOUBLE_DAMAGE_THRESHOLD;
+import static com.minecolonies.api.util.constant.GuardConstants.*;
+import static com.minecolonies.api.util.constant.GuardConstants.DOUBLE_DAMAGE_THRESHOLD;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
@@ -56,9 +56,9 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
         );
         toolsNeeded.add(ToolType.SWORD);
 
-        for (List<GuardItems> list: itemsNeeded)
+        for (List<GuardGear> list: itemsNeeded)
         {
-            list.add(new GuardItems(ToolType.SHIELD, EntityEquipmentSlot.MAINHAND, 0, 1, 2, 99, 1, 5));
+            list.add(new GuardGear(ToolType.SHIELD, EntityEquipmentSlot.MAINHAND, 0, 1, 2, 99, 1, 5));
         }
     }
 
