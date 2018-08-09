@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardItems;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -96,50 +95,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private static final double ATTACK_SPEED = 0.8;
 
-    /**
-     * Indicates if strafing should be moving backwards or not.
-     */
-    private boolean strafingBackwards = false;
-
-    /**
-     * Indicates if strafing should be clockwise or not.
-     */
-    private boolean strafingClockwise = false;
-
-    /**
-     * Amount of time strafing is able to run.
-     */
-    private int strafingTime = -1;
- 
-    /**
-     * Amount of time the guard has been in one spot.
-     */
-    private int timeAtSameSpot = 0;
-
-    /**
-     * Amount of time left until guard can attack again.
-     */
-    private int attackTime = 0;
-
-    /**
-     * Number of ticks the guard has been way to close to target.
-     */
-    private int toCloseNumTicks = 0;
-
-    /**
-     * Amount of time the guard has been able to see their target. 
-     */
-    private int timeCanSee = 0;
-
-    /**
-     * Last distance to determine if the guard is stuck.
-     */
-    private double lastDistance = 0.0f;
-
-    private static final int TIME_STRAFING_BEFORE_SWITCHING_DIRECTIONS = 15;
-    private static final double SWITCH_STRAFING_DIRECTION = 0.3d;
-    private static final float STRAFING_SPEED = 0.6f;
-    
     /**
      * Creates the abstract part of the AI.
      * Always use this constructor!
@@ -519,11 +474,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     protected EntityLivingBase getTarget()
     {
         final AbstractBuildingGuards building = getOwnBuilding();
-        strafingTime =  0;
-        toCloseNumTicks = 0;
-        timeAtSameSpot = 0;
-        timeCanSee = 0;
-        
         if (building != null && target == null && worker.getCitizenColonyHandler().getColony() != null)
         {
             for (final CitizenData citizen : worker.getCitizenColonyHandler().getColony().getCitizenManager().getCitizens())

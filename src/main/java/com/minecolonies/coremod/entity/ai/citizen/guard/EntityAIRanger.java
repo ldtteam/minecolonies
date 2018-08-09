@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.ToolType;
@@ -9,8 +8,8 @@ import com.minecolonies.coremod.colony.jobs.JobRanger;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.util.SoundUtils;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.EnumHand;
@@ -112,6 +111,21 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
         }
 
         return GUARD_ATTACK_RANGED;
+    }
+
+    /**
+     * Get a target for the guard.
+     *
+     * @return The next AIState to go to.
+     */
+    @Override
+    protected EntityLivingBase getTarget()
+    {
+        strafingTime = 0;
+        toCloseNumTicks = 0;
+        timeAtSameSpot = 0;
+        timeCanSee = 0;
+        return super.getTarget();
     }
 
     /**
