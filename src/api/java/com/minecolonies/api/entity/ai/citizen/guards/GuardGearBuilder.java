@@ -7,7 +7,7 @@ import net.minecraft.util.Tuple;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuardGearBuilder
+public final class GuardGearBuilder
 {
     /**
      * Private constructor to hide implicit one.

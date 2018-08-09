@@ -596,17 +596,17 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             }
         }
 
-        for (Map.Entry<IToolType, List<GuardGear>> entry : requiredArmor.entrySet())
+        for (final Map.Entry<IToolType, List<GuardGear>> entry : requiredArmor.entrySet())
         {
-            int minlevel = Integer.MAX_VALUE;
+            int minLevel = Integer.MAX_VALUE;
             for (final GuardGear item : entry.getValue())
             {
-                if (item.getArmorLevel() < minlevel)
+                if (item.getArmorLevel() < minLevel)
                 {
-                    minlevel = item.getArmorLevel();
+                    minLevel = item.getArmorLevel();
                 }
             }
-            checkForToolorWeaponASync(entry.getKey(), minlevel);
+            checkForToolorWeaponASync(entry.getKey(), minLevel);
         }
     }
 }
