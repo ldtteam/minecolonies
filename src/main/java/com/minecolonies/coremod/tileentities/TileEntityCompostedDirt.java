@@ -66,12 +66,24 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
 
     // AI interface
 
-    public void compost(final int percentage, BlockFlower.EnumFlowerType flowerType)
+    public void compost(final int percentage, Class flowerType)
     {
         if(percentage >= 0 && percentage <= 100)
         {
             this.percentage = percentage;
-            this.flowerType = flowerType;
+            try
+            {
+                if(flowerType.newInstance() instanceof BlockFlower.EnumFlowerType)
+                this.flowerType = (BlockFlower.EnumFlowerType)flowerType.newInstance();
+            }
+            catch (InstantiationException e)
+            {
+                e.printStackTrace();
+            }
+            catch (IllegalAccessException e)
+            {
+                e.printStackTrace();
+            }
         }
         this.composted = true;
     }

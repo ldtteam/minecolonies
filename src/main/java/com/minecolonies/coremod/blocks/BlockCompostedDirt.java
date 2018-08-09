@@ -4,6 +4,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDirt;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -14,6 +15,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemColored;
+import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -25,6 +27,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -92,7 +95,7 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
 
                 try
                 {
-                    ((TileEntityCompostedDirt) te).compost(20, flower.getTypeProperty().getValueClass().newInstance());
+                    ((TileEntityCompostedDirt) te).compost(20, flower.getTypeProperty().getValueClass());
                 }catch (Exception e)
                 {
                     playerIn.sendMessage(new TextComponentString(e.getMessage()));
