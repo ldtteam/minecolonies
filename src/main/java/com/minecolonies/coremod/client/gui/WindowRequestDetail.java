@@ -70,7 +70,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     /**
      * Wrap after x amount of symbols the text.
      */
-    private static final int WRAP_AFTER_X = 30;
+    //private static final int WRAP_AFTER_X = 30;
 
     /**
      * Resolver string.

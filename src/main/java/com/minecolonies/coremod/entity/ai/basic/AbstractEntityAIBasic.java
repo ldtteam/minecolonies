@@ -31,7 +31,6 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -755,10 +754,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @param chat the Item Name
      */
+    /*
     private void requestWithoutSpam(@NotNull final TextComponentBase chat)
     {
         chatSpamFilter.requestTextComponentWithoutSpam(chat);
     }
+    */
 
     /**
      * Finds the first @see ItemStack the type of {@code is}.

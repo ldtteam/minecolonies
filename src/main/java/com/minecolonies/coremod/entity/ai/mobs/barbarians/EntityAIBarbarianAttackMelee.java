@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.entity.ai.mobs.barbarians;
 
-import static com.minecolonies.coremod.entity.ai.citizen.guard.GuardConstants.RANGED_ATTACK_DELAY_BASE;
-
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianSpawnUtils;

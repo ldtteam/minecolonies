@@ -95,6 +95,9 @@ public class CitizenColonyHandler
         citizen.getDataManager().set(DATA_CITIZEN_ID, citizen.getCitizenId());
         citizen.getDataManager().set(DATA_IS_FEMALE, citizen.isFemale() ? 1 : 0);
         citizen.getDataManager().set(DATA_TEXTURE, citizen.getTextureId());
+        citizen.getDataManager().set(DATA_IS_ASLEEP, citizen.getCitizenData().isAsleep());
+        citizen.getDataManager().set(DATA_BED_POS, citizen.getCitizenData().getBedPos());
+
         citizen.getCitizenExperienceHandler().updateLevel();
 
         citizen.getCitizenData().setCitizenEntity(citizen);
@@ -186,7 +189,7 @@ public class CitizenColonyHandler
     }
 
     /**
-     * Update the client side of the citizen entitz.
+     * Update the client side of the citizen entity.
      */
     public void updateColonyClient()
     {

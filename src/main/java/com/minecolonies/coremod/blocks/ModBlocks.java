@@ -64,6 +64,7 @@ public final class ModBlocks
     public static        BlockCactusSlabHalf            blockCactusSlabHalf;
     public static        BlockCactusSlabDouble          blockCactusSlabDouble;
     public static        BlockHutComposter              blockHutComposter;
+    public static        BlockHutLibrary                blockHutLibrary;
     public static        BlockHutFlorist                blockHutFlorist;
 
     /**
@@ -105,7 +106,6 @@ public final class ModBlocks
      */
     public static void init(final IForgeRegistry<Block> registry)
     {
-        blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
         blockHutBaker = new BlockHutBaker().registerBlock(registry);
         blockHutBlacksmith = new BlockHutBlacksmith().registerBlock(registry);
         blockHutBuilder = new BlockHutBuilder().registerBlock(registry);
@@ -124,17 +124,22 @@ public final class ModBlocks
         blockHutCowboy = new BlockHutCowboy().registerBlock(registry);
         blockHutSwineHerder = new BlockHutSwineHerder().registerBlock(registry);
         blockHutChickenHerder = new BlockHutChickenHerder().registerBlock(registry);
+        blockHutBarracks = new BlockHutBarracks().registerBlock(registry);
+        blockHutBarracksTower = new BlockHutBarracksTower().registerBlock(registry);
+        blockHutCook = new BlockHutCook().registerBlock(registry);
+        blockHutSmeltery = new BlockHutSmeltery().registerBlock(registry);
+        blockHutComposter = new BlockHutComposter().registerBlock(registry);
+        blockHutLibrary =  new BlockHutLibrary().registerBlock(registry);
+
+        blockInfoPoster = new BlockInfoPoster().registerBlock(registry);
+        blockPaperWall = new BlockPaperwall().registerBlock(registry);
+        blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
         blockSolidSubstitution = new BlockSolidSubstitution().registerBlock(registry);
         blockBarracksTowerSubstitution = new BlockBarracksTowerSubstitution().registerBlock(registry);
         blockSubstitution = new BlockSubstitution().registerBlock(registry);
         blockRack = new BlockMinecoloniesRack().registerBlock(registry);
         blockWayPoint = new BlockWaypoint().registerBlock(registry);
-        blockHutBarracks = new BlockHutBarracks().registerBlock(registry);
-        blockHutBarracksTower = new BlockHutBarracksTower().registerBlock(registry);
-        blockInfoPoster = new BlockInfoPoster().registerBlock(registry);
-        blockPaperWall = new BlockPaperwall().registerBlock(registry);
-        blockHutCook = new BlockHutCook().registerBlock(registry);
-        blockHutSmeltery = new BlockHutSmeltery().registerBlock(registry);
+
         blockCactusPlank = new BlockCactusPlank().registerBlock(registry);
         blockCactusDoor = new BlockCactusDoor(blockCactusDoor).registerBlock(registry);
         blockCactusTrapdoor = new BlockCactusTrapdoor().registerBlock(registry);
@@ -173,7 +178,6 @@ public final class ModBlocks
 
     public static void registerItemBlock(final IForgeRegistry<Item> registry)
     {
-        blockConstructionTape.registerItemBlock(registry);
         blockHutBaker.registerItemBlock(registry);
         blockHutBlacksmith.registerItemBlock(registry);
         blockHutBuilder.registerItemBlock(registry);
@@ -192,16 +196,21 @@ public final class ModBlocks
         blockHutCowboy.registerItemBlock(registry);
         blockHutSwineHerder.registerItemBlock(registry);
         blockHutChickenHerder.registerItemBlock(registry);
+        blockHutBarracksTower.registerItemBlock(registry);
+        blockHutBarracks.registerItemBlock(registry);
+        blockHutCook.registerItemBlock(registry);
+        blockHutSmeltery.registerItemBlock(registry);
+        blockHutComposter.registerItemBlock(registry);
+        blockHutLibrary.registerItemBlock(registry);
+
+        blockConstructionTape.registerItemBlock(registry);
         blockSolidSubstitution.registerItemBlock(registry);
         blockSubstitution.registerItemBlock(registry);
         blockBarracksTowerSubstitution.registerItemBlock(registry);
         blockRack.registerItemBlock(registry);
         blockWayPoint.registerItemBlock(registry);
-        blockHutBarracksTower.registerItemBlock(registry);
-        blockHutBarracks.registerItemBlock(registry);
         blockInfoPoster.registerItemBlock(registry);
         blockPaperWall.registerItemBlock(registry);
-        blockHutCook.registerItemBlock(registry);
         blockShingleOak.registerItemBlock(registry);
         blockShingleBirch.registerItemBlock(registry);
         blockShingleJungle.registerItemBlock(registry);
@@ -209,7 +218,6 @@ public final class ModBlocks
         blockShingleDarkOak.registerItemBlock(registry);
         blockShingleAcacia.registerItemBlock(registry);
         blockShingleSlab.registerItemBlock(registry);
-        blockHutSmeltery.registerItemBlock(registry);
         multiBlock.registerItemBlock(registry);
         blockCactusPlank.registerItemBlock(registry);
         blockCactusTrapdoor.registerItemBlock(registry);

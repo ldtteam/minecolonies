@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
@@ -90,7 +89,6 @@ public class CitizenHappinessHandler
     /**
      * constants for no tools.
      */
-    public static final double NO_TOOL_MODIFIER = -3.0;
     public static final int NO_TOOLS_MODIFIER = 3;
     public static final int NO_TOOLS_COMPLAINS_DAYS = 7;
     public static final int NO_TOOLS_DEMANDS_DAYS = 14;
@@ -188,8 +186,7 @@ public class CitizenHappinessHandler
      * This function applies eating adjust to the base hapiness for
      * the citizen.
      *
-     * @param eatFood
-     *            true or false indicate citizen was unable to eat
+     * @param eatFood true or false indicate citizen was unable to eat
      */
     public void setFoodModifier(final boolean eatFood)
     {

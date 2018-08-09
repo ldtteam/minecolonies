@@ -49,7 +49,7 @@ public abstract class AbstractJob
     private static final String MAPPING_LUMBERJACK     = "Lumberjack";
     private static final String MAPPING_FARMER         = "Farmer";
     private static final String MAPPING_FISHERMAN      = "Fisherman";
-    private static final String MAPPING_TOWER_GUARD    = "GuardTower";
+    //private static final String MAPPING_TOWER_GUARD    = "GuardTower";
     private static final String MAPPING_BAKER          = "Baker";
     private static final String MAPPING_COOK           = "Cook";
     private static final String MAPPING_SHEPHERD       = "Shepherd";
@@ -60,6 +60,7 @@ public abstract class AbstractJob
     private static final String MAPPING_RANGER         = "Ranger";
     private static final String MAPPING_KNIGHT         = "Knight";
     private static final String MAPPING_COMPOSTER      = "Composter";
+    private static final String MAPPING_STUDENT        = "Student";
     private static final String MAPPING_FLORIST        = "Florist";
 
     /**
@@ -92,6 +93,7 @@ public abstract class AbstractJob
         addMapping(MAPPING_RANGER, JobRanger.class);
         addMapping(MAPPING_KNIGHT, JobKnight.class);
         addMapping(MAPPING_COMPOSTER, JobComposter.class);
+        addMapping(MAPPING_STUDENT, JobStudent.class);
         addMapping(MAPPING_FLORIST, JobFlorist.class);
     }
 

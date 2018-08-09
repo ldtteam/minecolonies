@@ -2,6 +2,8 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.test.ReflectionUtil;
+import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
@@ -17,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -46,6 +49,9 @@ public class ColonyListTest
     private World world;
 
     @Mock
+    private Scoreboard board;
+
+    @Mock
     private EventBus eventBus;
 
     private ColonyList<Colony> list;
@@ -64,6 +70,8 @@ public class ColonyListTest
         when(colony1.getWorld()).thenReturn(world);
         when(colony1Copy.getWorld()).thenReturn(world);
         when(colony2.getWorld()).thenReturn(world);
+        when(world.getScoreboard()).thenReturn(board);
+        when(board.getTeam(any())).thenReturn(new ScorePlayerTeam(board, "team"));
 
         when(worldProvider.getDimension()).thenReturn(1);
         ReflectionUtil.setFinalField(world, "provider", worldProvider);
