@@ -69,7 +69,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     /**
      * Holds a list of required armor for this guard
      */
-    private final Map<EntityEquipmentSlot, ItemStack> armorToWear = new HashMap<>();
+    private final Map<IToolType, ItemStack> armorToWear = new HashMap<>();
 
     /**
      * Entities to kill before dumping into chest.
@@ -135,7 +135,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     @Override
     protected void updateRenderMetaData()
     {
-        updateArmor();
+        if (getState() != NEEDS_ITEM)
+        {
+            updateArmor();
+        }
     }
 
     protected abstract int getAttackRange();
@@ -275,7 +278,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     final ItemStack armorStack = bestHandler.getStackInSlot(bestSlotChest).copy();
                     if (armorStack.getItem() instanceof ItemArmor)
                     {
-                        armorToWear.put(((ItemArmor) armorStack.getItem()).armorType, armorStack);
+                        armorToWear.put(entry.getKey(), armorStack);
                     }
 
                     InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(bestHandler, bestSlotChest, new InvWrapper(worker.getInventoryCitizen()));
@@ -293,7 +296,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     final ItemStack armorStack = new InvWrapper(worker.getInventoryCitizen()).getStackInSlot(bestSlot).copy();
                     if (armorStack.getItem() instanceof ItemArmor)
                     {
-                        armorToWear.put(((ItemArmor) armorStack.getItem()).armorType, armorStack);
+                        armorToWear.put(entry.getKey(), armorStack);
                     }
                 }
 
@@ -567,13 +570,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStackUtils.EMPTY);
         worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStackUtils.EMPTY);
 
-        for (final ItemStack armorStack : armorToWear.values())
+        for (final Map.Entry<IToolType, ItemStack> armorStack : armorToWear.entrySet())
         {
-            if (ItemStackUtils.isEmpty(armorStack))
+            if (ItemStackUtils.isEmpty(armorStack.getValue()))
             {
                 continue;
             }
-            final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()), itemStack -> itemStack.isItemEqual(armorStack));
+            final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()), itemStack -> itemStack.isItemEqualIgnoreDurability(armorStack.getValue()));
             if (slot == -1)
             {
                 continue;
@@ -588,6 +591,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             if (stack.getItem() instanceof ItemArmor)
             {
                 worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
+                requiredArmor.remove(armorStack.getKey());
+                cancelAsynchRequestForArmor(armorStack.getKey());
             }
         }
 
@@ -604,6 +609,4 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             checkForToolorWeaponASync(entry.getKey(), minlevel);
         }
     }
-
-
 }

@@ -118,6 +118,9 @@ public final class GuardConstants
     public static final Tuple<Integer, Integer> IRON_BUILDING_LEVEL_RANGE = new Tuple<>(3, 5);
     public static final Tuple<Integer, Integer> DIA_BUILDING_LEVEL_RANGE = new Tuple<>(4, 5);
 
+    public static final Tuple<Integer, Integer> SHIELD_LEVEL_RANGE = new Tuple<>(2, 99);
+    public static final Tuple<Integer, Integer> SHIELD_BUILDING_LEVEL_RANGE = new Tuple<>(1, 5);
+
     /**
      * Private constructor to hide the implicit one.
      */
