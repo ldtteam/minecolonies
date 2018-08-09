@@ -485,6 +485,31 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         return DECIDE;
     }
+    /**
+     * This gets the attack speed for the guard
+     * with adjustment for guards level.
+     *
+     * @return attack speed for guard
+     */
+    public float getAttackSpeed()
+    {
+        final float speed = (float) ATTACK_SPEED;
+        final float levelAdjustment = ((float) worker.getCitizenData().getLevel() / 50);
+
+        return speed + levelAdjustment;
+    }
+
+    /**
+     * Returns the attack distance for guard with current weapon
+     * plus adjustment for guards level.
+     *
+     * @return attack distance
+     */
+    public double getAttackDistance()
+    {
+        final float levelAdjustment = ((float) worker.getCitizenData().getLevel() / 50);
+        return getAttackRange() + ((double) 120 * levelAdjustment);
+    }
 
     /**
      * Get a target for the guard.
