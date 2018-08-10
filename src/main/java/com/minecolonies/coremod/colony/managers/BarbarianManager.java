@@ -227,7 +227,7 @@ public class BarbarianManager implements IBarbarianManager
         for (final UUID uuid : new ArrayList<>(horde))
         {
             final Entity barbarian = world.getEntityFromUuid(uuid);
-            if (barbarian == null || !barbarian.isEntityAlive() || !(barbarian instanceof AbstractEntityBarbarian))
+            if (!(barbarian instanceof AbstractEntityBarbarian) || !barbarian.isEntityAlive())
             {
                 horde.remove(uuid);
                 sendHordeMessage();

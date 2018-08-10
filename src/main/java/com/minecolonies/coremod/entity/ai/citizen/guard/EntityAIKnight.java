@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.api.util.constant.GuardConstants.DOUBLE_DAMAGE_THRESHOLD;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
@@ -56,7 +55,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
         );
         toolsNeeded.add(ToolType.SWORD);
 
-        for (List<GuardGear> list: itemsNeeded)
+        for (final List<GuardGear> list: itemsNeeded)
         {
             list.add(new GuardGear(ToolType.SHIELD, EntityEquipmentSlot.MAINHAND, 0, SHIELD_LEVEL_RANGE, SHIELD_BUILDING_LEVEL_RANGE));
         }

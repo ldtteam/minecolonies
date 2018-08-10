@@ -18,8 +18,6 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
-import static com.minecolonies.api.util.constant.GuardConstants.MOVE_MINIMAL;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
