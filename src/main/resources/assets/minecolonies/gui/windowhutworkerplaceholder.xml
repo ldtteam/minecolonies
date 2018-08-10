@@ -5,9 +5,9 @@
         <view id="pageActions" size="100% 100%">
         	<layout source="minecolonies:gui/layouthutpageactions.xml"/>
         </view>
-        <view id="anotherPageAndMoreCanBeOmitted" size="100% 100%">
+        <!--<view id="anotherPageAndMore" size="100% 100%">
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
-        </view>
+        </view>-->
     </switch>
     <buttonimage id="prevPage" size="18 10" pos="12 12" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
     <buttonimage id="nextPage" size="18 10" pos="160 12" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>

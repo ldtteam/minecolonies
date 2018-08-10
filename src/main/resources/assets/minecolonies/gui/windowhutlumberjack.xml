@@ -9,7 +9,7 @@
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
             <label size="130 11" pos="30 14" color="black" textalign="MIDDLE"
                    label="$(com.minecolonies.coremod.gui.workerHuts.saplingList)"/>
-            <list id="trees" size="166 149" pos="12 29">
+            <list id="trees" size="166 149" pos="13 29">
                 <box size="100% 30" linewidth="2">
                     <itemicon id="symbol" size="16 16" pos="5 2"/>
                     <label id="name" size="50 12" pos="35 16" textalign="MIDDLE_LEFT" color="black"/>

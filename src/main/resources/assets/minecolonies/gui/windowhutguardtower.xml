@@ -32,11 +32,11 @@
                         source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                         label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
 
-            <button id="patrolling" size="30% 14" pos="14 139"
+            <button id="patrolling" size="30% 14" pos="15 139"
                     label="$(com.minecolonies.coremod.gui.workerHuts.task.patrol)"/>
-            <button id="following" size="30% 14" pos="66 139"
+            <button id="following" size="30% 14" pos="67 139"
                     label="$(com.minecolonies.coremod.gui.workerHuts.task.follow)"/>
-            <button id="guarding" size="30% 14" pos="118 139"
+            <button id="guarding" size="30% 14" pos="119 139"
                     label="$(com.minecolonies.coremod.gui.workerHuts.task.guard)"/>
 
             <buttonimage id="setTarget" size="129 17" pos="30 164" textcolor="black"
@@ -56,7 +56,7 @@
                    label="$(com.minecolonies.coremod.gui.workerHuts.mobsList)"/>
             <button id="recalculate" size="50% 14" pos="42 29"
                     label="$(com.minecolonies.coremod.gui.workerHuts.calculate)"/>
-            <list id="mobs" size="166 169" pos="12 45">
+            <list id="mobs" size="166 169" pos="13 45">
                 <box size="100% 30" linewidth="2">
                     <button id="prioUp" size="15 15" label="↥" pos="0 0"/>
                     <button id="prioDown" size="15 15" label="↧" pos="0 15"/>

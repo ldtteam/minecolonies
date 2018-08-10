@@ -4,7 +4,7 @@
     <switch id="pages" size="100% 100%">
         <view id="pageActions" size="100% 100%">
             <layout source="minecolonies:gui/layouthutpageactionsmin.xml"/>
-            <label size="166 11" pos="12 32" color="black"
+            <label size="166 11" pos="12 32" color="black" textalign="MIDDLE"
                 label="$(com.minecolonies.coremod.gui.workerHuts.barbpoints):"/>
             <list id="positions" size="166 66" pos="12 43">
                 <box size="100% 11" linewidth="1">

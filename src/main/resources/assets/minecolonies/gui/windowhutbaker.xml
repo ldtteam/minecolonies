@@ -10,7 +10,7 @@
             <label size="130 11" pos="30 14" color="black" textalign="MIDDLE"
                 label="$(com.minecolonies.coremod.gui.workerHuts.baker.recipes):"/>
 
-            <list id="recipes" size="166 185" pos="12 29">
+            <list id="recipes" size="166 185" pos="13 29">
                 <view size="100% 30">
                     <box size="100% 30" linewidth="2">
                         <button id="assignRecipe" pos="95 10" size="40 15"/>

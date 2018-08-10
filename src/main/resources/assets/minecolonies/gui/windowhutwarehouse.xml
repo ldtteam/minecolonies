@@ -10,7 +10,7 @@
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
             <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
                    label="$(com.minecolonies.coremod.gui.warehouse.upgrade)"/>
-            <box size="166 30" linewidth="2" pos="12 29">
+            <box size="166 30" linewidth="2" pos="13 29">
                 <itemicon id="resourceIcon" size="16 16" pos="1 1"/>
                 <label id="resourceName" size="100 12" pos="20 3" textalign="MIDDLE_LEFT" color="black"/>
                 <label id="resourceMissing" size="50 12" pos="2 18" textalign="MIDDLE_LEFT" color="black"/>

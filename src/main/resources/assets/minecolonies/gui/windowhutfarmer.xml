@@ -5,16 +5,16 @@
         <view id="pageActions" size="100% 100%">
         	<layout source="minecolonies:gui/layouthutpageactions.xml"/>
         </view>
-        <view id="pageFields" size="100% 100%" pos="0 1">
+        <view id="pageFields" size="100% 100%">
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
             <label size="130 11" pos="30 14" color="black" textalign="MIDDLE"
                 label="$(com.minecolonies.coremod.gui.workerHuts.farmerHut.fields):"/>
-            <label id="AssignmentModeLabel" size="166 11" pos="12 29"
+            <label id="AssignmentModeLabel" size="166 11" pos="12 29" color="black" textalign="MIDDLE"
                 label="$(com.minecolonies.coremod.gui.workerHuts.farmerHut.AssignmentMode)"/>
-            <button id="assignmentMode" size="60 15" pos="53 42"
+            <button id="assignmentMode" size="60 15" pos="65 42"
                 label="$(com.minecolonies.coremod.gui.hiring.off)"/>
 
-            <list id="fields" size="166 154" pos="12 60" align="TOP_MIDDLE">
+            <list id="fields" size="166 154" pos="13 60">
                 <view size="100% 30">
                     <box size="100% 30" linewidth="2">
                         <button id="assignFarm" pos="95 10" size="40 15"/>
