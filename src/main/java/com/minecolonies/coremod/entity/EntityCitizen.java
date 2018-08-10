@@ -51,6 +51,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -417,10 +418,10 @@ public class EntityCitizen extends AbstractEntityCitizen
         double penalty = CITIZEN_DEATH_PENALTY;
         if (citizenColonyHandler.getColony() != null && getCitizenData()  != null)
         {
-            if (damageSource.getTrueSource() instanceof EntityPlayer)
+            if (damageSource.getTrueSource() instanceof EntityPlayer && !world.isRemote)
             {
                 boolean isBarbarianClose = false;
-                for(final AbstractEntityBarbarian barbarian : this.getCitizenColonyHandler().getColony().getBarbManager().getHorde())
+                for(final AbstractEntityBarbarian barbarian : this.getCitizenColonyHandler().getColony().getBarbManager().getHorde((WorldServer) world))
                 {
                     if(MathUtils.twoDimDistance(barbarian.getPosition(), this.getPosition()) < BARB_DISTANCE_FOR_FREE_DEATH)
                     {
@@ -848,7 +849,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             return DesiredActivity.WORK;
         }
 
-        if (getCitizenColonyHandler().getColony() != null && (getCitizenColonyHandler().getColony().getBarbManager().getHorde().size() > 0) && !(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
+        if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (getCitizenColonyHandler().getColony().getBarbManager().getHorde((WorldServer) world).size() > 0) && !(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
         {
             return DesiredActivity.SLEEP;
         }

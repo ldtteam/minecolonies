@@ -4,14 +4,17 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
@@ -50,7 +53,7 @@ public class BarbarianManager implements IBarbarianManager
     /**
      * List of barbarians registered to the colony.
      */
-    private final List<AbstractEntityBarbarian> horde = new ArrayList<>();
+    private final List<UUID> horde = new ArrayList<>();
 
     /**
      * Creates the BarbarianManager for a colony.
@@ -168,15 +171,16 @@ public class BarbarianManager implements IBarbarianManager
     @Override
     public void registerBarbarian(final AbstractEntityBarbarian abstractEntityBarbarian)
     {
-        this.horde.add(abstractEntityBarbarian);
+        this.horde.add(abstractEntityBarbarian.getUniqueID());
     }
 
     @Override
-    public void unregisterBarbarian(@NotNull final AbstractEntityBarbarian abstractEntityBarbarian)
+    public void unregisterBarbarian(@NotNull final AbstractEntityBarbarian abstractEntityBarbarian, final WorldServer world)
     {
-        for(final AbstractEntityBarbarian barbarian : new ArrayList<>(horde))
+        for(final UUID uuid : new ArrayList<>(horde))
         {
-            if(barbarian.isDead || barbarian.getUniqueID().equals(abstractEntityBarbarian.getUniqueID()))
+            final Entity barbarian = world.getEntityFromUuid(uuid);
+            if(barbarian == null || !barbarian.isEntityAlive() || uuid.equals(abstractEntityBarbarian.getUniqueID()))
             {
                 horde.remove(barbarian);
             }
@@ -207,13 +211,14 @@ public class BarbarianManager implements IBarbarianManager
     }
 
     @Override
-    public List<AbstractEntityBarbarian> getHorde() 
+    public List<AbstractEntityBarbarian> getHorde(final WorldServer world)
     {
-        for (final AbstractEntityBarbarian entity : new ArrayList<>(horde))
+        for (final UUID uuid : new ArrayList<>(horde))
         {
-            if (entity.isDead)
+            final Entity barbarian = world.getEntityFromUuid(uuid);
+            if (barbarian == null || !barbarian.isEntityAlive())
             {
-                horde.remove(entity);
+                horde.remove(uuid);
             }
         }
 
