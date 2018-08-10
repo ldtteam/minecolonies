@@ -111,6 +111,12 @@ public class BarbarianManager implements IBarbarianManager
     {
         final BlockPos center = colony.getCenter();
         final World world = colony.getWorld();
+
+        if (world == null)
+        {
+            return center;
+        }
+
         final List<BlockPos> positions = colony.getWayPoints().keySet().stream().filter(
                 pos -> isInDirection(directionX, directionZ, pos.subtract(center))).collect(Collectors.toList());
         positions.addAll(colony.getBuildingManager().getBuildings().keySet().stream().filter(
@@ -169,7 +175,7 @@ public class BarbarianManager implements IBarbarianManager
     }
 
     @Override
-    public void registerBarbarian(final AbstractEntityBarbarian abstractEntityBarbarian)
+    public void registerBarbarian(@NotNull final AbstractEntityBarbarian abstractEntityBarbarian)
     {
         this.horde.add(abstractEntityBarbarian.getUniqueID());
     }
@@ -182,10 +188,15 @@ public class BarbarianManager implements IBarbarianManager
             final Entity barbarian = world.getEntityFromUuid(uuid);
             if(barbarian == null || !barbarian.isEntityAlive() || uuid.equals(abstractEntityBarbarian.getUniqueID()))
             {
-                horde.remove(barbarian);
+                horde.remove(uuid);
             }
         }
 
+        sendHordeMessage();
+    }
+
+    private void sendHordeMessage()
+    {
         if(horde.isEmpty())
         {
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), ALL_BARBARIANS_KILLED_MESSAGE);
@@ -194,7 +205,6 @@ public class BarbarianManager implements IBarbarianManager
         {
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), ONLY_X_BARBARIANS_LEFT_MESSAGE, horde.size());
         }
-
     }
 
     /**
@@ -213,15 +223,21 @@ public class BarbarianManager implements IBarbarianManager
     @Override
     public List<AbstractEntityBarbarian> getHorde(final WorldServer world)
     {
+        final List<AbstractEntityBarbarian> barbarians = new ArrayList<>();
         for (final UUID uuid : new ArrayList<>(horde))
         {
             final Entity barbarian = world.getEntityFromUuid(uuid);
-            if (barbarian == null || !barbarian.isEntityAlive())
+            if (barbarian == null || !barbarian.isEntityAlive() || !(barbarian instanceof AbstractEntityBarbarian))
             {
                 horde.remove(uuid);
+                sendHordeMessage();
             }
-        }
+            else
+            {
+                barbarians.add((AbstractEntityBarbarian) barbarian);
+            }
 
-        return new ArrayList(horde);
+        }
+        return barbarians;
     }
 }
