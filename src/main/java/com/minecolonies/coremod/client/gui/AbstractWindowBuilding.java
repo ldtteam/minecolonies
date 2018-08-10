@@ -24,13 +24,14 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
      * Type B is a class that extends {@link AbstractBuildingWorker.View}.
      */
     protected final B          building;
-    private final   SwitchView switchView;
     private final   Label      title;
-    private final   Button     buttonPrevPage;
-    private final   Button     buttonNextPage;
     private final   Button     buttonBuild;
     private final   Button     buttonRepair;
-    private         int        switchPagesSize;
+    protected       SwitchView switchView;
+    protected       int        switchPagesSize;
+    protected final Label      pageNum;
+    protected final Button     buttonPrevPage;
+    protected final Button     buttonNextPage;
 
     /**
      * Constructor for the windows that are associated with buildings.
@@ -50,6 +51,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
         title = findPaneOfTypeByID(LABEL_BUILDING_NAME, Label.class);
         buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
         buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
+        pageNum = findPaneOfTypeByID(LABEL_PAGE_NUMBER, Label.class);
         buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
         buttonRepair = findPaneOfTypeByID(BUTTON_REPAIR, Button.class);
     }
@@ -198,14 +200,9 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
         }
     }
 
-    private void setPage(@NotNull final String button)
+    public void setPage(@NotNull final String button)
     {
-        if (findPaneByID(LABEL_PAGE_NUMBER) == null)
-        {
-            return;
-        }
-        final Label pageNum = findPaneOfTypeByID(LABEL_PAGE_NUMBER, Label.class);
-        int curPage = pageNum.getLabelText().equals("") ? 1 : Integer.parseInt(pageNum.getLabelText().substring(0, pageNum.getLabelText().indexOf("/")));
+        int curPage = pageNum.getLabelText().isEmpty() ? 1 : Integer.parseInt(pageNum.getLabelText().substring(0, pageNum.getLabelText().indexOf("/")));
 
         switch (button)
         {
@@ -239,7 +236,5 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
             buttonNextPage.off();
         }
         pageNum.setLabelText(curPage + "/" + switchPagesSize);
-
-        // Additional handlers - now none
     }
 }

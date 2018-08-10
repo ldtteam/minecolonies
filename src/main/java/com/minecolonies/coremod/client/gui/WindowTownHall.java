@@ -99,12 +99,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private final Map<String, String> tabsToPages = new HashMap<>();
 
     /**
-     * Map of the sub-switches.
-     */
-    @NotNull
-    private final Map<String, String> tabsToSwitches = new HashMap<>();
-
-    /**
      * Drop down list for style.
      */
     private DropDownList colorDropDownList;
@@ -172,8 +166,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         tabsToPages.put(BUTTON_WORKORDER, PAGE_WORKORDER);
         tabsToPages.put(BUTTON_HAPPINESS, PAGE_HAPPINESS);
 
-        tabsToSwitches.put(BUTTON_PERMISSIONS, VIEW_PERM_PAGES);
-
         tabsToPages.keySet().forEach(key -> registerButton(key, this::onTabClicked));
         registerButton(BUTTON_ADD_PLAYER, this::addPlayerCLicked);
         registerButton(BUTTON_RENAME, this::renameClicked);
@@ -186,9 +178,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_TOGGLE_HOUSING, this::toggleHousing);
         registerButton(NAME_LABEL, this::fillCitizenInfo);
         registerButton(RECALL_ONE, this::recallOneClicked);
-
-        registerButton(BUTTON_PREVPAGE + VIEW_PERM_PAGES, this::setTabPage);
-        registerButton(BUTTON_NEXTPAGE + VIEW_PERM_PAGES, this::setTabPage);
 
         registerButton(BUTTON_MANAGE_OFFICER, this::editOfficer);
         registerButton(BUTTON_MANAGE_FRIEND, this::editFriend);
@@ -1061,7 +1050,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         lastTabButton.on();
         button.off();
         lastTabButton = button;
-        setTabPage(null);
+        setPage("");
     }
 
     /**
@@ -1189,52 +1178,14 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * For switches inside of tabs
      */
-    private void setTabPage(@NotNull final Button button)
+    @Override
+    public void setPage(@NotNull final String button)
     {
-        final String curSwitch = (button == null) ? tabsToSwitches.get(lastTabButton.getID()) : button.getID().replaceFirst(BUTTON_PREVPAGE + "|" + BUTTON_NEXTPAGE, "");
-        if (curSwitch == null)
-        {
-            return;
-        }
-        final Label pageNum = window.findPaneOfTypeByID(LABEL_PAGE_NUMBER + curSwitch, Label.class);
-        final Button buttonPrevPage = window.findPaneOfTypeByID(BUTTON_PREVPAGE + curSwitch, Button.class);
-        final Button buttonNextPage = window.findPaneOfTypeByID(BUTTON_NEXTPAGE + curSwitch, Button.class);
-        final SwitchView switchView = window.findPaneOfTypeByID(curSwitch, SwitchView.class);
-        final int switchPagesSize = switchView.getChildrenSize();
-        int curPage = pageNum.getLabelText().equals("") ? 1 : Integer.parseInt(pageNum.getLabelText().substring(0, pageNum.getLabelText().indexOf("/")));
-
-        switch ((button == null) ? "" : button.getID().replace(curSwitch, ""))
-        {
-            case BUTTON_PREVPAGE:
-                switchView.previousView();
-                curPage--;
-                break;
-            case BUTTON_NEXTPAGE:
-                switchView.nextView();
-                curPage++;
-                break;
-            default:
-                if (switchPagesSize == 1)
-                {
-                    buttonPrevPage.off();
-                    buttonNextPage.off();
-                    pageNum.off();
-                    return;
-                }
-                break;
-        }
-
-        buttonNextPage.on();
-        buttonPrevPage.on();
-        if (curPage == 1)
-        {
-            buttonPrevPage.off();
-        }
-        if (curPage == switchPagesSize)
-        {
-            buttonNextPage.off();
-        }
-        pageNum.setLabelText(curPage + "/" + switchPagesSize);
+        final String curSwitch = (lastTabButton == null) ? findPaneOfTypeByID(BUTTON_ACTIONS, Button.class).getID() : lastTabButton.getID();
+        super.switchView = findPaneOfTypeByID(GUI_LIST_BUTTON_SWITCH + tabsToPages.get(curSwitch), SwitchView.class);
+        super.switchPagesSize = switchView.getChildrenSize();
+        super.pageNum.on();
+        super.setPage(button);
 
         // Additional handlers
         if (switchView.getCurrentView().getID().equals(PERMISSION_VIEW))
