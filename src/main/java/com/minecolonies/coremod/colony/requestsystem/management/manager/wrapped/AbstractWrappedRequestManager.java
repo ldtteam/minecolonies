@@ -121,7 +121,7 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      *
      * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the given type T.
      */
-    @NotNull
+    @Nullable
     @Override
     public IRequest<?> getRequestForToken(@NotNull final IToken<?> token) throws IllegalArgumentException
     {

@@ -146,7 +146,7 @@ public class Tool implements IDeliverable
 
         if (!toolTypeResult)
         {
-            return stack.getItem() instanceof ItemHoe && toolClass.equals(ToolType.HOE);
+            return stack.getItem() instanceof ItemHoe && toolClass.equals(ToolType.HOE) || stack.getItem() instanceof ItemShield && toolClass.equals(ToolType.SHIELD);
         }
 
         return toolTypeResult;
@@ -182,6 +182,10 @@ public class Tool implements IDeliverable
         else if(stack.getItem() instanceof  ItemShears)
         {
             set.add("shears");
+        }
+        else if(stack.getItem() instanceof  ItemShield)
+        {
+            set.add("shield");
         }
         else if(stack.getItem() instanceof ItemArmor)
         {

@@ -98,52 +98,6 @@ public class TextField extends Pane
         return getWidth();
     }
 
-    public int getMaxTextLength()
-    {
-        return maxTextLength;
-    }
-
-    public void setMaxTextLength(final int m)
-    {
-        maxTextLength = m;
-    }
-
-    public int getTextColor()
-    {
-        return textColor;
-    }
-
-    public void setTextColor(final int c)
-    {
-        textColor = c;
-    }
-
-    public int getTextColorDisabled()
-    {
-        return textColorDisabled;
-    }
-
-    public void setTextColorDisabled(final int c)
-    {
-        textColorDisabled = c;
-    }
-
-    @Nullable
-    public String getTabNextPaneID()
-    {
-        return tabNextPaneID;
-    }
-
-    public void setTabNextPaneID(final String nextID)
-    {
-        tabNextPaneID = nextID;
-    }
-
-    public int getCursorPosition()
-    {
-        return cursorPosition;
-    }
-
     public void setCursorPosition(final int pos)
     {
         cursorPosition = MathHelper.clamp(pos, 0, text.length());
