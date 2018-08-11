@@ -21,6 +21,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -266,7 +267,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
         super.onDeath(cause);
         if (!world.isRemote && getColony() != null)
         {
-            getColony().getBarbManager().unregisterBarbarian(this);
+            getColony().getBarbManager().unregisterBarbarian(this, (WorldServer) world);
         }
     }
 
