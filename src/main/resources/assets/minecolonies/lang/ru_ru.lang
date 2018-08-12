@@ -721,4 +721,11 @@ com.minecolonies.coremod.status.harvestingBarrels=Опорожняю бочки
 com.minecolonies.coremod.pvp.townhall.break.start=Внимание! %s начал ломать вашу ратушу!
 com.minecolonies.coremod.pvp.townhall.broke=Внимание!!! %s уже сломал вашу ратушу на %d%%! К 100%% она будет утеряна!!!
 com.minecolonies.coremod.gui.townHall.pickTeamColor=Выбрать цвет команды:
+tile.minecolonies.blockhutlibrary.name=Библиотека
+com.minecolonies.coremod.gui.workerHuts.Library=Библиотека
+com.minecolonies.coremod.job.student=Ученик
+com.minecolonies.coremod.gui.townHall.population.students=Учеников: %d
+item.minecolonies.resourcescroll.name=Свиток-Ресурсов
+com.minecolonies.coremod.gui.resourcescroll.nobuilder=Не найден зарегистрированный строитель, SHIFT-ПКМ по нужной хижине строителя, чтобы зарегистрировать свиток.
+
 
