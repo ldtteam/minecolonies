@@ -25,7 +25,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.managers.IBuildingManager;
+import com.minecolonies.coremod.colony.managers.interfaces.IBuildingManager;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFactories;

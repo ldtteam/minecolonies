@@ -757,3 +757,25 @@ com.minecolonies.coremod.gui.townHall.population.students=Students: %d
 item.minecolonies.resourcescroll.name=Resource-Scroll
 com.minecolonies.coremod.gui.resourcescroll.nobuilder=Couldn't find a registered builder, please shift-right-click an existing builders hut.
 com.minecolonies.coremod.gui.workerHuts.getTool=Get GuardTool
+
+com.minecolonies.coremod.progress.supplies_placed=§6 Welcome to Minecolonies, you just placed your supplyship how about searching a nice place for your colony now. Far away from a village if possible.
+com.minecolonies.coremod.progress.colony_founded=§6 Word is out about a new colony, soon the first settlers will join your newly founded colony. Experienced magistrates can turn off these helpful messages in the townhall block.
+com.minecolonies.coremod.progress.first_citizen_spawned=§6 The first settler arrived at your colony, you should place a builder's hut to start your settlement.
+com.minecolonies.coremod.progress.builder_placed=§6 Great job on the placement of the buildershut block. However that's not enough. You need to access it and click the build button! Soon your npc will be creating new structures for the village.
+com.minecolonies.coremod.progress.built_enqueued=§6 While your builder is working you can check on the resources he needs on the second page of the building GUI.
+com.minecolonies.coremod.progress.builder_built=§6 With the builders hut completed, we should turn our attention to resource production. I suggest you get a lumberjack or miner.
+com.minecolonies.coremod.progress.resource_prod_built=§6 Producing resources costs energy and makes your settlers hungry, you might want to place a farmer or fisherman.
+com.minecolonies.coremod.progress.food_prod_built=§6 Your town starts to flourish, to improve the productivity you might want to upgrade the buildings.
+com.minecolonies.coremod.progress.four_citizen_employed=§6 All your initial settlers are employed, to attract more settlers you have to build or upgrade housing for them.
+com.minecolonies.coremod.progress.all_citizens_homed=§6 I see, all your settlers have a nice home now, if you build or upgrade one more citizen hut you will get a new settler, but beware this will attract barbarians.
+com.minecolonies.coremod.progress.five_citizens_spawned=§6 A new settler arrived at your colony, and he brings word that barbarian spies have found the growing village, you might want to build a guard tower.
+com.minecolonies.coremod.progress.six_citizens_spawned=§6 A growing settlement means a growing responsibility, you should consider placing a restaurant to keep your settlers well saturated.
+com.minecolonies.coremod.progress.seven_citizens_spawned=§6 Your citizens urge you to build a warehouse to lessen your load so that they may get their merchandise faster!
+com.minecolonies.coremod.progress.warehouse_built=§6 You've built a warehouse. However your people are too tasked as it is to fill it. Build some deliveryhuts to attract the deliverymen. Up to 5 can work per warehouse.
+com.minecolonies.coremod.progress.eight_citizens_spawned=§6 It seems that the skills of the citizen influence their leveling speed, you can manually employ citizens if turned on in the townhall configurations.
+com.minecolonies.coremod.progress.manual_employment_on=§6 While manually employing citizens makes them more efficient, manually assigning them to houses makes their way to their work shorter.
+com.minecolonies.coremod.progress.nine_citizens_spawned=§6 A growing colony increases the necessities of your settlers, you should consider upgrading your worker buildings.
+com.minecolonies.coremod.progress.twenty_building_levels=§6 A barbarian spy had been caught next to our colony, he seems to be of a bigger group, you should consider building barracks to defend your colony.
+com.minecolonies.coremod.progress.not_enough_jobs=§6 Building more citizen huts than available jobs has a bad influence on your citizens happiness.
+
+com.minecolonies.coremod.gui.townHall.printProgress=Print help messages:
