@@ -890,6 +890,8 @@ public class CitizenData
         final NBTTagCompound compound = new NBTTagCompound();
         compound.setTag("inventory", inventory.writeToNBT(new NBTTagList()));
         ByteBufUtils.writeTag(buf, compound);
+
+        BlockPosUtil.writeToByteBuf(buf, lastPosition);
     }
 
     /**

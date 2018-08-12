@@ -1,0 +1,38 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="420 240" pause="false"
+        lightbox="false" xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+    <label size="50 11" pos="42 12" label="$(com.minecolonies.coremod.gui.workerHuts.patrol)" color="white" style="bold"/>
+    <buttonimage id="patrol" size="86 17" pos="42 23"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+                 label="$(com.minecolonies.coremod.gui.workerHuts.modeA)" textcolor="black"/>
+
+    <label size="50 11" pos="12 42" label="$(com.minecolonies.coremod.gui.workerHuts.retrieve)" color="white" style="bold"/>
+    <buttonimage id="retrieve" size="86 17" pos="42 53"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+                 label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)" textcolor="black"/>
+
+    <button id="patrolling" size="50 14" pos="15 72"
+            label="$(com.minecolonies.coremod.gui.workerHuts.task.patrol)"/>
+    <button id="following" size="50 14" pos="67 72"
+            label="$(com.minecolonies.coremod.gui.workerHuts.task.follow)"/>
+    <button id="guarding" size="50 14" pos="119 72"
+            label="$(com.minecolonies.coremod.gui.workerHuts.task.guard)"/>
+
+    <buttonimage id="setTarget" size="129 17" pos="25 100"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(com.minecolonies.coremod.gui.workerHuts.setTarget)" textcolor="black"/>
+
+    <list id="positions" size="129 100" pos="25 122">
+        <box size="100% 15" linewidth="2">
+            <label id="position" size="100 12" pos="5 2" color="white"/>
+        </box>
+    </list>
+
+    <list id="workers" size="129 180" pos="300 12">
+        <box size="100% 45" linewidth="0">
+            <label id="name" size="100% 12" color="white" pos="0 0"/>
+            <label id="position" size="75 12" pos="0 12" color="white"/>
+            <label id="level" size="75 12" color="white" pos="80 12"/>
+            <view id="healthBar" size="100% 12" pos="0 15"/>
+        </box>
+    </list>
+</window>

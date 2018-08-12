@@ -756,3 +756,4 @@ com.minecolonies.coremod.job.student=Student
 com.minecolonies.coremod.gui.townHall.population.students=Students: %d
 item.minecolonies.resourcescroll.name=Resource-Scroll
 com.minecolonies.coremod.gui.resourcescroll.nobuilder=Couldn't find a registered builder, please shift-right-click an existing builders hut.
+com.minecolonies.coremod.gui.workerHuts.getTool=Get GuardTool
