@@ -59,9 +59,13 @@ public class CitizenDataView
 
     /** 
      * holds the current citizen happiness value 
-     */ 
+     */
+    private double happiness;
 
-    private double happiness; 
+    /**
+     * The position of the guard.
+     */
+    private BlockPos position;
 
     /**
      * Job identifier.
@@ -286,6 +290,15 @@ public class CitizenDataView
     }
 
     /**
+     * Get the last registered position of the citizen.
+     * @return the BlockPos.
+     */
+    public BlockPos getPosition()
+    {
+        return position;
+    }
+
+    /**
      * Deserialize the attributes and variables from transition.
      *
      * @param buf Byte buffer to deserialize.
@@ -331,6 +344,8 @@ public class CitizenDataView
         this.inventory.readFromNBT(nbttaglist);
         this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInteger(TAG_HELD_ITEM_SLOT));
         this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInteger(TAG_OFFHAND_HELD_ITEM_SLOT));
+
+        position = BlockPosUtil.readFromByteBuf(buf);
     }
 
     /**

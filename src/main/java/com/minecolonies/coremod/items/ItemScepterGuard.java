@@ -3,20 +3,26 @@ package com.minecolonies.coremod.items;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.coremod.client.gui.WindowGuardControl;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Guard Scepter Item class. Used to give tasks to guards.
@@ -29,7 +35,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
     private static final String TAG_LAST_POS = "lastPos";
 
     /**
-     * Caliper constructor. Sets max stack to 1, like other tools.
+     * GuardScepter constructor. Sets max stack to 1, like other tools.
      */
     public ItemScepterGuard()
     {
@@ -77,6 +83,41 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         return handleItemUsage(worldIn, pos, compound, playerIn);
     }
 
+    @NotNull
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(final World worldIn, final EntityPlayer playerIn, @NotNull final EnumHand hand)
+    {
+        final ItemStack stack = playerIn.getHeldItem(hand);
+        if (!stack.hasTagCompound())
+        {
+            stack.setTagCompound(new NBTTagCompound());
+        }
+        final NBTTagCompound compound = stack.getTagCompound();
+
+        if (worldIn.isRemote && compound != null)
+        {
+            if (!compound.hasKey(TAG_ID))
+            {
+                return ActionResult.newResult(EnumActionResult.FAIL, stack);
+            }
+            final ColonyView colony = ColonyManager.getColonyView(compound.getInteger(TAG_ID));
+            if (colony == null)
+            {
+                return ActionResult.newResult(EnumActionResult.FAIL, stack);
+            }
+            final BlockPos guardTower = BlockPosUtil.readFromNBT(compound, TAG_POS);
+            final AbstractBuildingView hut = colony.getBuilding(guardTower);
+
+            if (hut instanceof AbstractBuildingGuards.View && playerIn.isSneaking())
+            {
+                final WindowGuardControl window = new WindowGuardControl((AbstractBuildingGuards.View) hut);
+                window.open();
+            }
+        }
+
+        return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
+    }
+
     /**
      * Handles the usage of the item.
      *
@@ -89,13 +130,17 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
     @NotNull
     private static EnumActionResult handleItemUsage(final World worldIn, final BlockPos pos, final NBTTagCompound compound, final EntityPlayer playerIn)
     {
-        final Colony colony = ColonyManager.getClosestColony(worldIn, pos);
+        if (!compound.hasKey(TAG_ID))
+        {
+            return EnumActionResult.FAIL;
+        }
+        final Colony colony = ColonyManager.getColony(compound.getInteger(TAG_ID));
         if (colony == null)
         {
             return EnumActionResult.FAIL;
         }
 
-        final BlockPos guardTower = BlockPosUtil.readFromNBT(compound, "pos");
+        final BlockPos guardTower = BlockPosUtil.readFromNBT(compound, TAG_POS);
         final AbstractBuilding hut = colony.getBuildingManager().getBuilding(guardTower);
         if (!(hut instanceof AbstractBuildingGuards))
         {
