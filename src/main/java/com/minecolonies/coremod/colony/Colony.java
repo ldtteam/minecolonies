@@ -114,7 +114,7 @@ public class Colony implements IColony
     /**
      * The progress manager of the colony.
      */
-    private IProgressManager progressManager = new ProgressManager(this);
+    private final IProgressManager progressManager = new ProgressManager(this);
 
     /**
      * The Positions which players can freely interact.

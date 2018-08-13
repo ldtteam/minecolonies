@@ -445,9 +445,9 @@ com.minecolonies.coremod.permission.attack_entity=Attack entities
 com.minecolonies.coremod.permission.access_free_blocks=Access free-blocks
 com.minecolonies.coremod.permission.explode=Explode
 
-item.supplyCampDeployer.invalid=Requiring a flat ground of at least 16*17.
-item.supplyCampDeployer.invalid.solid_block_needed=Placing a supply camp requires flat ground of at least 16*17.  These blocks must be solid: %s.
-item.supplyCampDeployer.invalid.air_block_needed=Placing a supply camp requires flat ground of at least 16*17.  These blocks must be air: %s.
+item.supplyCampDeployer.invalid=Requiring a flat ground of at least 16*17 without grass or flowers on them.
+item.supplyCampDeployer.invalid.solid_block_needed=Placing a supply camp requires flat ground of at least 16*17 without grass or flowers on them..  These blocks must be solid: %s.
+item.supplyCampDeployer.invalid.air_block_needed=Placing a supply camp requires flat ground of at least 16*17 without grass or flowers on them..  These blocks must be air: %s.
 item.supplyCampDeployer.invalid.inside_existing_colony=You cannot place your supply camp near an existing colony.
 item.minecolonies.supplyChestDeployer.name=SupplyShip Chest
 item.minecolonies.supplyCampDeployer.name=SupplyCamp Chest
@@ -758,7 +758,7 @@ item.minecolonies.resourcescroll.name=Resource-Scroll
 com.minecolonies.coremod.gui.resourcescroll.nobuilder=Couldn't find a registered builder, please shift-right-click an existing builders hut.
 com.minecolonies.coremod.gui.workerHuts.getTool=Get GuardTool
 
-com.minecolonies.coremod.progress.supplies_placed=§6 Welcome to Minecolonies, you just placed your supplyship how about searching a nice place for your colony now. Far away from a village if possible.
+com.minecolonies.coremod.progress.supplies_placed=§6 Welcome to Minecolonies, now that you got your supplies, how about searching a nice location to place your town hall to create your colony. Far away from a village if possible.
 com.minecolonies.coremod.progress.colony_founded=§6 Word is out about a new colony, soon the first settlers will join your newly founded colony. Experienced magistrates can turn off these helpful messages in the townhall block.
 com.minecolonies.coremod.progress.first_citizen_spawned=§6 The first settler arrived at your colony, you should place a builder's hut to start your settlement.
 com.minecolonies.coremod.progress.builder_placed=§6 Great job on the placement of the buildershut block. However that's not enough. You need to access it and click the build button! Soon your npc will be creating new structures for the village.

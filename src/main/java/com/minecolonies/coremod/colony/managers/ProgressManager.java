@@ -24,6 +24,9 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.colony.ColonyProgressType.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
+/**
+ * The Progress manager which tracks the colony progress to send help messages to the player.
+ */
 public class ProgressManager implements IProgressManager
 {
     /**
@@ -183,7 +186,7 @@ public class ProgressManager implements IProgressManager
         final NBTTagCompound progressCompound = compound.getCompoundTag(TAG_PROGRESS_MANAGER);
         final NBTTagList progressTags = progressCompound.getTagList(TAG_PROGRESS_LIST, Constants.NBT.TAG_COMPOUND);
         notifiedProgress.addAll(NBTUtils.streamCompound(progressTags)
-                         .map(recipeCompound -> ColonyProgressType.values()[new NBTTagCompound().getInteger(TAG_PROGRESS_TYPE)])
+                         .map(recipeCompound -> values()[new NBTTagCompound().getInteger(TAG_PROGRESS_TYPE)])
                          .collect(Collectors.toList()));
         printProgress = progressCompound.getBoolean(TAG_PRINT_PROGRESS);
     }
