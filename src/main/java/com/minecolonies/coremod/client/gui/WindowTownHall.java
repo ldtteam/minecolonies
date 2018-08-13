@@ -375,6 +375,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             findPaneOfTypeByID(BUTTON_TOGGLE_JOB, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
         }
 
+        if (!townHall.getColony().isPrintingProgress())
+        {
+            findPaneOfTypeByID(BUTTON_TOGGLE_PRINT_PROGRESS, Button.class).setLabel(LanguageHandler.format(OFF_STRING));
+        }
+
         if (townHall.getColony().isManualHousing())
         {
             findPaneOfTypeByID(BUTTON_TOGGLE_HOUSING, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
@@ -1075,8 +1080,16 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Toggles printing progress.
      */
-    private void togglePrintProgress()
+    private void togglePrintProgress(@NotNull final Button button)
     {
+        if (button.getLabel().equals(LanguageHandler.format(OFF_STRING)))
+        {
+            button.setLabel(LanguageHandler.format(ON_STRING));
+        }
+        else
+        {
+            button.setLabel(LanguageHandler.format(OFF_STRING));
+        }
         MineColonies.getNetwork().sendToServer(new ToggleHelpMessage(this.building.getColony()));
     }
 

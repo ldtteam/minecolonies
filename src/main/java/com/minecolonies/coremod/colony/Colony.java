@@ -301,6 +301,11 @@ public class Colony implements IColony
         c.center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
         c.setRequestManager();
         c.readFromNBT(compound);
+
+        if (c.getProgressManager().isPrintingProgress() && (c.getBuildingManager().getBuildings().size() > BUILDING_LIMIT_FOR_HELP || c.getCitizenManager().getCitizens().size() > CITIZEN_LIMIT_FOR_HELP))
+        {
+            c.getProgressManager().togglePrintProgress();
+        }
         return c;
     }
 

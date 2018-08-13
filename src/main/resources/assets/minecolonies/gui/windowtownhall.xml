@@ -251,8 +251,8 @@
             <label id="assignHouses" label="$(com.minecolonies.coremod.gui.townHall.housing)" pos="25 122" size="147 11" textalign="MIDDLE" color="black"/>
             <button id="toggleHousing" size="57 20" pos="70 135" label="$(com.minecolonies.coremod.gui.hiring.off)"/>
 
-            <label id="printProgress" label="$(com.minecolonies.coremod.gui.townHall.printProgress)" pos="25 149" size="147 11" textalign="MIDDLE" color="black"/>
-            <button id="togglePrintProgress" size="57 20" pos="70 162" label="$(com.minecolonies.coremod.gui.hiring.on)"/>
+            <label id="printProgress" label="$(com.minecolonies.coremod.gui.townHall.printProgress)" pos="25 159" size="147 11" textalign="MIDDLE" color="black"/>
+            <button id="togglePrintProgress" size="57 20" pos="70 172" label="$(com.minecolonies.coremod.gui.townHall.on)"/>
 
             <label id="pickColor" label="$(com.minecolonies.coremod.gui.townHall.pickTeamColor)" pos="201 28" size="147 11" textalign="MIDDLE" color="black"/>
             <buttonimage id="previousColor" size="14 15"  pos="217 42" label="&lt;" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>

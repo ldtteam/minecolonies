@@ -271,6 +271,10 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST                 = "entity.composter.noItems";
     @NonNls
     public static final String TOWNHALL_BREAKING_MESSAGE                                           = "com.minecolonies.coremod.pvp.townhall.broke";
+    @NonNls
+    public static final String ON_STRING                                                           = "com.minecolonies.coremod.gui.townHall.on";
+    @NonNls
+    public static final String OFF_STRING                                                          = "com.minecolonies.coremod.gui.townHall.off";
 
     private TranslationConstants()
     {

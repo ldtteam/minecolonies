@@ -779,3 +779,5 @@ com.minecolonies.coremod.progress.twenty_building_levels=§6 A barbarian spy had
 com.minecolonies.coremod.progress.not_enough_jobs=§6 Building more citizen huts than available jobs has a bad influence on your citizens happiness.
 
 com.minecolonies.coremod.gui.townHall.printProgress=Print help messages:
+com.minecolonies.coremod.gui.townHall.on=On
+com.minecolonies.coremod.gui.townHall.off=Off
