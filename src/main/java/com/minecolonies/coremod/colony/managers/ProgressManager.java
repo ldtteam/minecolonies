@@ -164,6 +164,7 @@ public class ProgressManager implements IProgressManager
         {
             notifiedProgress.add(type);
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.progress." + type.name().toLowerCase(Locale.US));
+            colony.markDirty();
         }
     }
 
@@ -186,7 +187,7 @@ public class ProgressManager implements IProgressManager
         final NBTTagCompound progressCompound = compound.getCompoundTag(TAG_PROGRESS_MANAGER);
         final NBTTagList progressTags = progressCompound.getTagList(TAG_PROGRESS_LIST, Constants.NBT.TAG_COMPOUND);
         notifiedProgress.addAll(NBTUtils.streamCompound(progressTags)
-                         .map(recipeCompound -> values()[new NBTTagCompound().getInteger(TAG_PROGRESS_TYPE)])
+                         .map(progressTypeCompound -> values()[new NBTTagCompound().getInteger(TAG_PROGRESS_TYPE)])
                          .collect(Collectors.toList()));
         printProgress = progressCompound.getBoolean(TAG_PRINT_PROGRESS);
     }
