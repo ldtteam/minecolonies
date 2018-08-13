@@ -340,7 +340,7 @@ public final class NbtTagConstants
      * Progress manager tags.
      */
     public static final String TAG_PROGRESS_MANAGER = "progressManager";
-    public static final String TAG_PROGRESS_TYPE = "progressYype";
+    public static final String TAG_PROGRESS_TYPE = "progressType";
     public static final String TAG_PROGRESS_LIST = "progressList";
     public static final String TAG_PRINT_PROGRESS = "printProgrss";
 
