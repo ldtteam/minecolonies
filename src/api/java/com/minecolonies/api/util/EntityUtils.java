@@ -284,7 +284,7 @@ public final class EntityUtils
     {
         if (!isLivingAtSite(entity, x, y, z, TELEPORT_RANGE))
         {
-            final BlockPos spawnPoint =
+            BlockPos spawnPoint =
               Utils.scanForBlockNearPoint(entity.getEntityWorld(),
                 new BlockPos(x, y, z),
                 SCAN_RADIUS, SCAN_RADIUS, SCAN_RADIUS, 2,
@@ -294,6 +294,11 @@ public final class EntityUtils
                 Blocks.RED_FLOWER,
                 Blocks.YELLOW_FLOWER,
                 Blocks.CARPET);
+
+            if (spawnPoint == null)
+            {
+                spawnPoint = new BlockPos(x,y,z);
+            }
 
             entity.setLocationAndAngles(
               spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
