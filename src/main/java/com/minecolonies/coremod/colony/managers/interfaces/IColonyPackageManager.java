@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.managers;
+package com.minecolonies.coremod.colony.managers.interfaces;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import org.jetbrains.annotations.NotNull;

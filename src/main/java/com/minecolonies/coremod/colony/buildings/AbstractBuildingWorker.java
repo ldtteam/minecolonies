@@ -259,6 +259,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
             });
 
             citizen.setWorkBuilding(this);
+            colony.getProgressManager().progressEmploy(colony.getCitizenManager().getCitizens().stream().filter(citizenData -> citizenData.getJob() != null).collect(Collectors.toList()).size());
         }
         return true;
     }

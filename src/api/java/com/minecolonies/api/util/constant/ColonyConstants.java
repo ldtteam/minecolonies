@@ -22,7 +22,7 @@ public final class ColonyConstants
     /**
      * Default average randomization for onWorldTick() methods
     */
-    public static final int ONWORLD_TICK_AVERAGE = 1 * TICKS_SECOND;
+    public static final int ONWORLD_TICK_AVERAGE = TICKS_SECOND;
 
     public static final int NUM_ACHIEVEMENT_FIRST  = 1;
     public static final int NUM_ACHIEVEMENT_SECOND = 25;
@@ -49,16 +49,6 @@ public final class ColonyConstants
      * Saturation at which a citizen starts being happy.
      */
     public static final int WELL_SATURATED_LIMIT = 5;
-    
-    /**
-     * Max overall happiness.
-     */
-    public static final double MAX_OVERALL_HAPPINESS = 10;
-
-    /**
-     * Min overall happiness.
-     */
-    public static final double MIN_OVERALL_HAPPINESS = 1;
 
     /**
      * Amount of ticks to wait until checking if a waypoint is still valid.
@@ -79,11 +69,6 @@ public final class ColonyConstants
      * Size of a chunk.
      */
     public static final int CONST_CHUNKSIZE = 16;
-
-    /**
-     * Overall hapiness when the colony is started.
-     */
-    public static final int DEFAULT_OVERALL_HAPPYNESS = 5;
 
     /**
      * Max amount of permission events to store in the colony.
@@ -112,11 +97,17 @@ public final class ColonyConstants
     public static final int              BIG_HORDE_SIZE               = 20;
 
     /**
+     * Turn off the help manager when one of these applies.
+     */
+    public static final int CITIZEN_LIMIT_FOR_HELP = 20;
+    public static final int BUILDING_LIMIT_FOR_HELP = 10;
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private ColonyConstants()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }

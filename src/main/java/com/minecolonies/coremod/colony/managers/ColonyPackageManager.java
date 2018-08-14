@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.Structures;
+import com.minecolonies.coremod.colony.managers.interfaces.IColonyPackageManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkManager;
