@@ -218,6 +218,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
                 chestHeight = 0;
             }
 
+            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.progress.supplies_placed");
             player.addStat(StatList.getObjectUseStats(ModItems.supplyChest));
             if(InventoryUtils.removeStacksFromItemHandler(new InvWrapper(player.inventory), stacks))
             {
