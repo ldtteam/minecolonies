@@ -20,11 +20,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 
@@ -53,19 +51,9 @@ public final class TemplateRenderHandler
     private BlockRendererDispatcher rendererDispatcher;
 
     /**
-     * Cached template.
-     */
-    private Template template;
-
-    /**
      * Cached entity renderer.
      */
     private RenderManager entityRenderer;
-
-    /**
-     * List of tileEntities to render.
-     */
-    private List<TileEntity> tileEntities = new ArrayList<>();
 
     /**
      * Private constructor to hide public one.
@@ -106,11 +94,6 @@ public final class TemplateRenderHandler
             entityRenderer = Minecraft.getMinecraft().getRenderManager();
         }
 
-        if (template != this.template)
-        {
-            tileEntities.clear();
-            this.template = template;
-        }
         final TemplateBlockAccess blockAccess = new TemplateBlockAccess(template);
 
         try
@@ -126,11 +109,8 @@ public final class TemplateRenderHandler
                 return tessellator;
             }).draw(rotation, mirror, drawingOffset, TemplateUtils.getPrimaryBlockOffset(template));
 
-            if (tileEntities.isEmpty())
-            {
-                tileEntities = template.blocks.stream().filter(blockInfo -> blockInfo.tileentityData != null).map(b -> constructTileEntities(b, pos)).filter(Objects::nonNull).collect(Collectors.toList());
-            }
-            renderTileEntities(partialTicks, pos);
+
+            template.blocks.stream().filter(blockInfo -> blockInfo.tileentityData != null).map(b -> constructTileEntities(b, pos)).filter(Objects::nonNull).forEach(tileEntity -> TileEntityRendererDispatcher.instance.render(tileEntity, partialTicks, 0));
         }
         catch (ExecutionException e)
         {
@@ -152,16 +132,6 @@ public final class TemplateRenderHandler
     }
 
     /**
-     * Render the list of tileEntities.
-     * @param partialTicks the partial ticks.
-     * @param pos the position.
-     */
-    private void renderTileEntities(final float partialTicks, final BlockPos pos)
-    {
-        tileEntities.forEach(tileEntity -> TileEntityRendererDispatcher.instance.render(tileEntity, partialTicks, 0));
-    }
-
-    /**
      * Render a template at a list of points.
      *
      * @param points       the points to render it at.
@@ -179,11 +149,6 @@ public final class TemplateRenderHandler
         final double interpolatedEntityPosY = perspectiveEntity.lastTickPosY + (perspectiveEntity.posY - perspectiveEntity.lastTickPosY) * partialTicks;
         final double interpolatedEntityPosZ = perspectiveEntity.lastTickPosZ + (perspectiveEntity.posZ - perspectiveEntity.lastTickPosZ) * partialTicks;
 
-        if (template != this.template)
-        {
-            this.template = template;
-        }
-
         for (final BlockPos coord : points)
         {
             final BlockPos pos = coord.down();
@@ -194,7 +159,6 @@ public final class TemplateRenderHandler
             renderOffset.x = renderOffsetX;
             renderOffset.y = renderOffsetY;
             renderOffset.z = renderOffsetZ;
-            tileEntities.clear();
 
             draw(template, Rotation.NONE, Mirror.NONE, renderOffset, partialTicks, coord);
         }
