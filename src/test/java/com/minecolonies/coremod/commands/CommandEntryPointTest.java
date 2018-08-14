@@ -18,7 +18,7 @@ import org.junit.Test;
 
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.managers.ICitizenManager;
+import com.minecolonies.coremod.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.coremod.commands.AbstractCommandParser.ModuleContext;
 import com.minecolonies.coremod.commands.AbstractCommandParser.PermissionsChecker;
 import com.minecolonies.coremod.commands.CommandEntryPointNew.MineColonyDataProvider;

@@ -13,6 +13,7 @@ import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.managers.*;
+import com.minecolonies.coremod.colony.managers.interfaces.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.pvp.AttackingPlayer;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
@@ -109,6 +110,11 @@ public class Colony implements IColony
      * The colony package manager.
      */
     private final IColonyPackageManager packageManager = new ColonyPackageManager(this);
+
+    /**
+     * The progress manager of the colony.
+     */
+    private final IProgressManager progressManager = new ProgressManager(this);
 
     /**
      * The Positions which players can freely interact.
@@ -295,6 +301,11 @@ public class Colony implements IColony
         c.center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
         c.setRequestManager();
         c.readFromNBT(compound);
+
+        if (c.getProgressManager().isPrintingProgress() && (c.getBuildingManager().getBuildings().size() > BUILDING_LIMIT_FOR_HELP || c.getCitizenManager().getCitizens().size() > CITIZEN_LIMIT_FOR_HELP))
+        {
+            c.getProgressManager().togglePrintProgress();
+        }
         return c;
     }
 
@@ -346,6 +357,11 @@ public class Colony implements IColony
         {
             //Compatability with old version!
             statsManager.readFromNBT(compound);
+        }
+
+        if(compound.hasKey(TAG_PROGRESS_MANAGER))
+        {
+            progressManager.readFromNBT(compound);
         }
 
         //  Workload
@@ -463,6 +479,8 @@ public class Colony implements IColony
         @NotNull final NBTTagCompound workManagerCompound = new NBTTagCompound();
         workManager.writeToNBT(workManagerCompound);
         compound.setTag(TAG_WORK, workManagerCompound);
+
+        progressManager.writeToNBT(compound);
 
         // Waypoints
         @NotNull final NBTTagList wayPointTagList = new NBTTagList();
@@ -955,6 +973,7 @@ public class Colony implements IColony
     public void setManualHiring(final boolean manualHiring)
     {
         this.manualHiring = manualHiring;
+        progressManager.progressEmploymentModeChange();
         markDirty();
     }
 
@@ -1160,6 +1179,15 @@ public class Colony implements IColony
     public IColonyPackageManager getPackageManager()
     {
         return packageManager;
+    }
+
+    /**
+     * Get the progress manager of the colony.
+     * @return the manager.
+     */
+    public IProgressManager getProgressManager()
+    {
+        return progressManager;
     }
 
     /**

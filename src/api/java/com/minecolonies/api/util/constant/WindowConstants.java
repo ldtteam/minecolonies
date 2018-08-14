@@ -75,6 +75,11 @@ public final class WindowConstants
     public static final String BUTTON_TOGGLE_HOUSING = "toggleHousing";
 
     /**
+     * Id of the toggle print progress button in the GUI.
+     */
+    public static final String BUTTON_TOGGLE_PRINT_PROGRESS= "togglePrintProgress";
+
+    /**
      * Id of the remove player button in the GUI..
      */
     public static final String BUTTON_REMOVE_PLAYER = "removePlayer";
