@@ -565,48 +565,52 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     protected void updateArmor()
     {
-        worker.setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStackUtils.EMPTY);
-        worker.setItemStackToSlot(EntityEquipmentSlot.FEET, ItemStackUtils.EMPTY);
-        worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStackUtils.EMPTY);
-        worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStackUtils.EMPTY);
-
-        for (final Map.Entry<IToolType, ItemStack> armorStack : armorToWear.entrySet())
+        if (worker.getRandom().nextInt(60) <= 0)
         {
-            if (ItemStackUtils.isEmpty(armorStack.getValue()))
-            {
-                continue;
-            }
-            final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()), itemStack -> itemStack.isItemEqualIgnoreDurability(armorStack.getValue()));
-            if (slot == -1)
-            {
-                continue;
-            }
-            final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
-            if (ItemStackUtils.isEmpty(stack))
-            {
-                worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, ItemStackUtils.EMPTY);
-                continue;
-            }
+            worker.setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStackUtils.EMPTY);
+            worker.setItemStackToSlot(EntityEquipmentSlot.FEET, ItemStackUtils.EMPTY);
+            worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStackUtils.EMPTY);
+            worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStackUtils.EMPTY);
 
-            if (stack.getItem() instanceof ItemArmor)
+            for (final Map.Entry<IToolType, ItemStack> armorStack : armorToWear.entrySet())
             {
-                worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
-                requiredArmor.remove(armorStack.getKey());
-                cancelAsynchRequestForArmor(armorStack.getKey());
-            }
-        }
-
-        for (final Map.Entry<IToolType, List<GuardGear>> entry : requiredArmor.entrySet())
-        {
-            int minLevel = Integer.MAX_VALUE;
-            for (final GuardGear item : entry.getValue())
-            {
-                if (item.getArmorLevel() < minLevel)
+                if (ItemStackUtils.isEmpty(armorStack.getValue()))
                 {
-                    minLevel = item.getArmorLevel();
+                    continue;
+                }
+                final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),
+                  itemStack -> itemStack.isItemEqualIgnoreDurability(armorStack.getValue()));
+                if (slot == -1)
+                {
+                    continue;
+                }
+                final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
+                if (ItemStackUtils.isEmpty(stack))
+                {
+                    worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, ItemStackUtils.EMPTY);
+                    continue;
+                }
+
+                if (stack.getItem() instanceof ItemArmor)
+                {
+                    worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
+                    requiredArmor.remove(armorStack.getKey());
+                    cancelAsynchRequestForArmor(armorStack.getKey());
                 }
             }
-            checkForToolorWeaponASync(entry.getKey(), minLevel);
+
+            for (final Map.Entry<IToolType, List<GuardGear>> entry : requiredArmor.entrySet())
+            {
+                int minLevel = Integer.MAX_VALUE;
+                for (final GuardGear item : entry.getValue())
+                {
+                    if (item.getArmorLevel() < minLevel)
+                    {
+                        minLevel = item.getArmorLevel();
+                    }
+                }
+                checkForToolorWeaponASync(entry.getKey(), minLevel);
+            }
         }
     }
 }

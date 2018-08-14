@@ -1,14 +1,18 @@
 package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
+import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.structures.client.TemplateRenderHandler;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
@@ -16,9 +20,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.client.renderer.Vector3d;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
@@ -29,6 +34,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
 /**
  * Used to handle client events.
@@ -56,9 +65,14 @@ public class ClientEventHandler
     private double ticksPassed = 0;
 
     /**
-     * Waypoint template to be rendered.
+     * Cached wayPointTemplate.
      */
-    private Template template;
+    private Template wayPointTemplate;
+
+    /**
+     * Cached wayPointTemplate.
+     */
+    private Template partolPointTemplate;
 
     /**
      * Used to catch the renderWorldLastEvent in order to draw the debug nodes for pathfinding.
@@ -81,34 +95,13 @@ public class ClientEventHandler
                 final ColonyView view = ColonyManager.getClosestColonyView(world, player.getPosition());
                 if (view != null)
                 {
-                    final EntityPlayer perspectiveEntity = Minecraft.getMinecraft().player;
-                    final double interpolatedEntityPosX = perspectiveEntity.lastTickPosX + (perspectiveEntity.posX - perspectiveEntity.lastTickPosX) * event.getPartialTicks();
-                    final double interpolatedEntityPosY = perspectiveEntity.lastTickPosY + (perspectiveEntity.posY - perspectiveEntity.lastTickPosY) * event.getPartialTicks();
-                    final double interpolatedEntityPosZ = perspectiveEntity.lastTickPosZ + (perspectiveEntity.posZ - perspectiveEntity.lastTickPosZ) * event.getPartialTicks();
-
-                    if (template == null)
+                    if (wayPointTemplate == null)
                     {
-                        template = new Structure(null,
-                      "schematics/infrastructure/Waypoint",
-                      new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror())).getTemplate();
+                        wayPointTemplate = new Structure(null,
+                          "schematics/infrastructure/Waypoint",
+                          new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror())).getTemplate();
                     }
-                    else
-                    {
-                        for (final BlockPos coord : view.getWayPoints())
-                        {
-                            final BlockPos pos = coord.down();
-                            final double renderOffsetX = pos.getX() - interpolatedEntityPosX;
-                            final double renderOffsetY = pos.getY() - interpolatedEntityPosY;
-                            final double renderOffsetZ = pos.getZ() - interpolatedEntityPosZ;
-                            final Vector3d renderOffset = new Vector3d();
-                            renderOffset.x = renderOffsetX;
-                            renderOffset.y = renderOffsetY;
-                            renderOffset.z = renderOffsetZ;
-
-                            TemplateRenderHandler.getInstance()
-                              .draw(template, structure.getSettings().getRotation(), structure.getSettings().getMirror(), renderOffset);
-                        }
-                    }
+                    TemplateRenderHandler.getInstance().drawTemplateAtListOfPositions(new ArrayList<>(view.getWayPoints()), event.getPartialTicks(), wayPointTemplate);
                 }
             }
             else
@@ -177,6 +170,37 @@ public class ClientEventHandler
             GlStateManager.depthMask(true);
             GlStateManager.enableTexture2D();
             GlStateManager.disableBlend();
+        }
+        else if (player.getHeldItemMainhand().getItem() == ModItems.scepterGuard)
+        {
+            final ItemStack stack = player.getHeldItemMainhand();
+            if (!stack.hasTagCompound())
+            {
+                return;
+            }
+            final NBTTagCompound compound = stack.getTagCompound();
+
+            final ColonyView colony = ColonyManager.getColonyView(compound.getInteger(TAG_ID));
+            if (colony == null)
+            {
+                return;
+            }
+
+            final BlockPos guardTower = BlockPosUtil.readFromNBT(compound, TAG_POS);
+            final AbstractBuildingView hut = colony.getBuilding(guardTower);
+
+            if (partolPointTemplate == null)
+            {
+                partolPointTemplate = new Structure(null,
+                  "schematics/infrastructure/PatrolPoint",
+                  new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror())).getTemplate();
+            }
+
+            if (hut instanceof AbstractBuildingGuards.View)
+            {
+                TemplateRenderHandler.getInstance().drawTemplateAtListOfPositions(((AbstractBuildingGuards.View) hut).getPatrolTargets().stream().map(BlockPos::up).collect(Collectors.toList()), event.getPartialTicks(),
+                  partolPointTemplate);
+            }
         }
         else
         {

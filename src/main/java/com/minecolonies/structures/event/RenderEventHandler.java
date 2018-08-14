@@ -24,7 +24,7 @@ public class RenderEventHandler
 
         if (structure != null)
         {
-            StructureClientHandler.renderStructure(structure, event.getPartialTicks());
+            StructureClientHandler.renderStructure(structure, event.getPartialTicks(), Settings.instance.getPosition());
         }
     }
 }
