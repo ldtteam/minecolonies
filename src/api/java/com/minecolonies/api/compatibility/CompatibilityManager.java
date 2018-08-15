@@ -236,6 +236,15 @@ public class CompatibilityManager implements ICompatibilityManager
                 }
             }
         }
+        
+        for (final String oreString : Configurations.gameplay.extraOres) 
+        {
+            final Block block = Block.getBlockFromName(oreString);
+            if (!(block == null || ores.contains(block)))
+            {
+                ores.add(block);
+            }
+        }
     }
 
     private void discoverSaplings()
