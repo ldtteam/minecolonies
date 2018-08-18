@@ -1,9 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.BlockUtils;
-import com.minecolonies.api.util.EntityUtils;
-import com.minecolonies.api.util.MathUtils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
@@ -17,10 +14,17 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.function.Predicate;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_GATHERING;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -70,19 +74,29 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     private static final int SPEED_BUFF_2 = 4;
 
     /**
-     * Offset from the building to stand.
+     * The standard delay after each terminated action.
      */
-    private static final int STAND_OFFSET = 3;
-
-    /**
-     * Base y height to start searching a suitable position.
-     */
-    private static final int BASE_Y_HEIGHT = 70;
+    private static final int STANDARD_DELAY = 5;
 
     /**
      * After how many actions should the builder dump his inventory.
      */
     private static final int ACTIONS_UNTIL_DUMP = 1024;
+
+    /**
+     * The id in the list of the last picked up item.
+     */
+    private int pickUpCount = 0;
+
+    /**
+     * The currently needed item to pickUp.
+     */
+    private Predicate<ItemStack> needsCurrently;
+
+    /**
+     * The position to walk to at the moment to gather something.
+     */
+    private BlockPos walkTo;
 
     /**
      * Initialize the builder and add all his tasks.
@@ -95,11 +109,86 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         super.registerTargets(
           new AITarget(IDLE, START_WORKING),
           new AITarget(this::checkIfExecute, this::getState),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding)
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+          new AITarget(PICK_UP, this::pickUpMaterial),
+          new AITarget(GATHERING_REQUIRED_MATERIALS, this::getNeededItem)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
                                   + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
         worker.setCanPickUpLoot(true);
+    }
+
+    /**
+     * State to pick up material before going back to work.
+     * @return the next state to go to.
+     */
+    public AIState pickUpMaterial()
+    {
+        final BuildingBuilder building = getOwnBuilding();
+        final List<Predicate<ItemStack>> neededItemsList = new ArrayList<>(building.getRequiredItemsAndAmount().keySet());
+        if (neededItemsList.size() <= pickUpCount)
+        {
+            pickUpCount = 0;
+            return START_WORKING;
+        }
+
+        needsCurrently = neededItemsList.get(pickUpCount);
+        pickUpCount++;
+        return GATHERING_REQUIRED_MATERIALS;
+    }
+
+    /**
+     * Retrieve burnable material from the building to get to start smelting.
+     * For this go to the building if no position has been set.
+     * Then check for the chest with the required material and set the position and return.
+     *
+     * If the position has been set navigate to it.
+     * On arrival transfer to inventory and return to StartWorking.
+     *
+     * @return the next state to transfer to.
+     */
+    private AIState getNeededItem()
+    {
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_GATHERING));
+        setDelay(STANDARD_DELAY);
+
+        if (walkTo == null && walkToBuilding())
+        {
+            return getState();
+        }
+
+        if (needsCurrently == null || !InventoryUtils.hasItemInProvider(getOwnBuilding(), needsCurrently))
+        {
+            return PICK_UP;
+        }
+        else
+        {
+            if (walkTo == null)
+            {
+                final BlockPos pos = getOwnBuilding().getTileEntity().getPositionOfChestWithItemStack(needsCurrently);
+                if (pos == null)
+                {
+                    return PICK_UP;
+                }
+                walkTo = pos;
+            }
+
+            if (walkToBlock(walkTo))
+            {
+                setDelay(2);
+                return getState();
+            }
+
+            final boolean transfered = tryTransferFromPosToWorker(walkTo, needsCurrently);
+            if (!transfered)
+            {
+                walkTo = null;
+                return PICK_UP;
+            }
+            walkTo = null;
+        }
+
+        return PICK_UP;
     }
 
     @Override
@@ -159,6 +248,18 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return getState();
         }
         return START_BUILDING;
+    }
+
+    @Override
+    public AIState afterRequestPickUp()
+    {
+        return INVENTORY_FULL;
+    }
+
+    @Override
+    public AIState afterDump()
+    {
+        return PICK_UP;
     }
 
     @Override
