@@ -85,6 +85,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 discoverOres(string);
             }
         }
+        Log.getLogger().info("Finished discovering ores");
         discoverCompostableItems();
 
         discoveredAlready = true;
@@ -235,7 +236,15 @@ public class CompatibilityManager implements ICompatibilityManager
                 }
             }
         }
-        Log.getLogger().info("Finished discovering ores");
+        
+        for (final String oreString : Configurations.gameplay.extraOres) 
+        {
+            final Block block = Block.getBlockFromName(oreString);
+            if (!(block == null || ores.contains(block)))
+            {
+                ores.add(block);
+            }
+        }
     }
 
     private void discoverSaplings()

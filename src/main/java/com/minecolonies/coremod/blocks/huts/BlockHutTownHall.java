@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.blocks.huts;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.Colony;
@@ -21,9 +22,18 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
 {
+    /**
+     * Hardness for townhall block in pvp mode.
+     */
+    public static final float PVP_MODE_HARDNESS = 200F;
+
     public BlockHutTownHall()
     {
         super();
+        if (Configurations.gameplay.pvp_mode)
+        {
+            setHardness(PVP_MODE_HARDNESS);
+        }
     }
 
     @NotNull

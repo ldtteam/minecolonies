@@ -248,7 +248,10 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
         if (citizen != null)
         {
             citizen.getCitizenEntity().ifPresent(tempCitizen -> {
-                if(!tempCitizen.getCitizenJobHandler().getLastJob().isEmpty() && !tempCitizen.getCitizenJobHandler().getLastJob().equals(getJobName()))
+                if(!tempCitizen.getCitizenJobHandler().getLastJob().isEmpty()
+                     && !tempCitizen.getCitizenJobHandler().getLastJob().equals(getJobName())
+                     && !tempCitizen.getCitizenJobHandler().getLastJob().contains("student")
+                     && !getJobName().contains("student"))
                 {
                     citizen.resetExperienceAndLevel();
                 }
@@ -256,6 +259,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
             });
 
             citizen.setWorkBuilding(this);
+            colony.getProgressManager().progressEmploy(colony.getCitizenManager().getCitizens().stream().filter(citizenData -> citizenData.getJob() != null).collect(Collectors.toList()).size());
         }
         return true;
     }
@@ -311,24 +315,21 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        if (hasAssignedCitizen())
+        @NotNull final NBTTagList workersTagList = new NBTTagList();
+        for (@NotNull final CitizenData data : getAssignedCitizen())
         {
-            @NotNull final NBTTagList workersTagList = new NBTTagList();
-            for (@NotNull final CitizenData data : getAssignedCitizen())
+            if (data != null)
             {
-                if (data != null)
-                {
-                    final NBTTagCompound idCompound = new NBTTagCompound();
-                    idCompound.setInteger(TAG_WORKER_ID, data.getId());
-                    workersTagList.appendTag(idCompound);
-                }
+                final NBTTagCompound idCompound = new NBTTagCompound();
+                idCompound.setInteger(TAG_WORKER_ID, data.getId());
+                workersTagList.appendTag(idCompound);
             }
-            compound.setTag(TAG_WORKER, workersTagList);
         }
+        compound.setTag(TAG_WORKER, workersTagList);
 
         @NotNull final NBTTagList recipesTagList = recipes.stream()
-                .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
-                .collect(NBTUtils.toNBTTagList());
+                                                     .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
+                                                     .collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_RECIPES, recipesTagList);
     }
 

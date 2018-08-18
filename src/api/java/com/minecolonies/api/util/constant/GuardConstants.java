@@ -1,11 +1,12 @@
-package com.minecolonies.coremod.entity.ai.citizen.guard;
+package com.minecolonies.api.util.constant;
+
+import net.minecraft.util.Tuple;
 
 /**
  * Constants used by the Guard AIs.
  */
 public final class GuardConstants
 {
-
     /**
      * Default vision range.
      */
@@ -15,6 +16,16 @@ public final class GuardConstants
      * Range a guard should be within of GuardPos.
      */
     public static final int GUARD_POS_RANGE = 0;
+
+    /**
+     * Range a guard should be within of Follow for Tight Formation.
+     */
+    public static final int GUARD_FOLLOW_TIGHT_RANGE = 8;
+
+    /**
+     * Range a guard should be within of Follow for Lose Formation.
+     */
+    public static final int GUARD_FOLLOW_LOSE_RANGE = 20;
 
     /**
      * double damage threshold
@@ -39,25 +50,6 @@ public final class GuardConstants
     public static final int PREPARE_DELAY_SECONDS = 5;
 
     // -- Delays -- \\
-
-    // -- Sound Crap -- \\
-
-    /**
-     * The base pitch, add more to this to change the sound.
-     */
-    public static final double BASE_PITCH = 0.8D;
-
-    /**
-     * The pitch will be divided by this to calculate it for the arrow sound.
-     */
-    public static final double PITCH_DIVIDER = 1.0D;
-
-    /**
-     * Random is multiplied by this to get a random sound.
-     */
-    public static final double PITCH_MULTIPLIER = 0.4D;
-
-    // -- Sound Crap -- \\
 
     // -- Ranged Guard Stuff -- \\
 
@@ -112,11 +104,29 @@ public final class GuardConstants
     // -- Guard Movement -- \\
 
     /**
+     * Guard armor constants
+     */
+    public static final Tuple<Integer, Integer> LEATHER_LEVEL_RANGE = new Tuple<>(0, 20);
+    public static final Tuple<Integer, Integer> GOLD_LEVEL_RANGE = new Tuple<>(0, 20);
+    public static final Tuple<Integer, Integer> CHAIN_LEVEL_RANGE = new Tuple<>(0, 20);
+    public static final Tuple<Integer, Integer> IRON_LEVEL_RANGE = new Tuple<>(5, 30);
+    public static final Tuple<Integer, Integer> DIA_LEVEL_RANGE = new Tuple<>(15, 99);
+
+    public static final Tuple<Integer, Integer> LEATHER_BUILDING_LEVEL_RANGE = new Tuple<>(1, 3);
+    public static final Tuple<Integer, Integer> GOLD_BUILDING_LEVEL_RANGE = new Tuple<>(1, 4);
+    public static final Tuple<Integer, Integer> CHAIN_BUILDING_LEVEL_RANGE = new Tuple<>(2, 5);
+    public static final Tuple<Integer, Integer> IRON_BUILDING_LEVEL_RANGE = new Tuple<>(3, 5);
+    public static final Tuple<Integer, Integer> DIA_BUILDING_LEVEL_RANGE = new Tuple<>(4, 5);
+
+    public static final Tuple<Integer, Integer> SHIELD_LEVEL_RANGE = new Tuple<>(2, 99);
+    public static final Tuple<Integer, Integer> SHIELD_BUILDING_LEVEL_RANGE = new Tuple<>(1, 5);
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private GuardConstants()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }

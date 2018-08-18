@@ -22,6 +22,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -52,6 +53,11 @@ public final class ColonyView implements IColony
     private       String                              name        = "Unknown";
     private int      dimensionId;
     private BlockPos center = BlockPos.ORIGIN;
+
+    /**
+     * Colony team color.
+     */
+    private TextFormatting teamColonyColor = TextFormatting.WHITE;
 
     /**
      * Datas about the happiness of a colony
@@ -117,6 +123,11 @@ public final class ColonyView implements IColony
      * The world.
      */
     private World world;
+
+    /**
+     * Print progress.
+     */
+    private boolean printProgress;
 
     /**
      * Base constructor for a colony.
@@ -192,6 +203,10 @@ public final class ColonyView implements IColony
         {
             BlockPosUtil.writeToByteBuf(buf, block);
         }
+
+        buf.writeInt(colony.getTeamColonyColor().ordinal());
+
+        buf.writeBoolean(colony.getProgressManager().isPrintingProgress());
     }
 
     /**
@@ -500,6 +515,10 @@ public final class ColonyView implements IColony
             lastSpawnPoints.add(BlockPosUtil.readFromByteBuf(buf));
         }
         Collections.reverse(lastSpawnPoints);
+
+        this.teamColonyColor = TextFormatting.values()[buf.readInt()];
+
+        this.printProgress = buf.readBoolean();
         return null;
     }
 
@@ -681,6 +700,15 @@ public final class ColonyView implements IColony
     }
 
     /**
+     * Getter for the team colony color.
+     * @return the color.
+     */
+    public TextFormatting getTeamColonyColor()
+    {
+        return teamColonyColor;
+    }
+
+    /**
      * Sets the name of the view.
      *
      * @param name Name of the view.
@@ -839,5 +867,14 @@ public final class ColonyView implements IColony
     public List<BlockPos> getLastSpawnPoints()
     {
         return new ArrayList<>(lastSpawnPoints);
+    }
+
+    /**
+     * Get if progress should be printed.
+     * @return true if so.
+     */
+    public boolean isPrintingProgress()
+    {
+        return printProgress;
     }
 }

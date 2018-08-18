@@ -33,7 +33,7 @@ public class PathNavigate extends PathNavigateGround
     /**
      * The range multiplier for the lumberjack.
      */
-    private static final int RANGE_MULTIPLIER_LJ = 4;
+    //private static final int RANGE_MULTIPLIER_LJ = 4;
 
     //  Parent class private members
     private final EntityLiving ourEntity;

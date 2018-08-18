@@ -1,6 +1,5 @@
 package com.minecolonies.api.configuration;
 
-import net.minecraft.init.Items;
 import net.minecraftforge.common.config.Config;
 
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -65,13 +64,20 @@ public class Configurations
         @Config.Comment("Delay modifier to mine a block (Decreasing it, decreases the delay)")
         public int blockMiningDelayModifier = 500;
 
+        @Config.Comment("Ores for the miner to mine that aren't autodetected")
+        public String[] extraOres = new String[]
+                {
+                        "minestuck:ore_cruxite",
+                        "minestuck:ore_uranium",
+                };
+
         @Config.Comment("Should workers work during the rain?")
         public boolean workersAlwaysWorkInRain = false;
 
         @Config.Comment("Should the colony protection be enabled?")
         public boolean enableColonyProtection = true;
 
-        @Config.Comment("Independend from the colony protection, should explosions be turned off?")
+        @Config.Comment("Independent from the colony protection, should explosions be turned off?")
         public boolean turnOffExplosionsInColonies = true;
 
         @Config.Comment("Whether or not to spawn barbarians")
@@ -81,9 +87,13 @@ public class Configurations
         @Config.Comment("The difficulty setting for barbarians")
         public int barbarianHordeDifficulty = 5;
 
+        @Config.RangeInt(min = (MIN_SPAWN_BARBARIAN_HORDE_SIZE), max = MAX_SPAWN_BARBARIAN_HORDE_SIZE)
+        @Config.Comment("The spawn size of a barbarian horde")
+        public int spawnBarbarianSize = 5;
+
         @Config.RangeInt(min = (MIN_BARBARIAN_HORDE_SIZE), max = MAX_BARBARIAN_HORDE_SIZE)
         @Config.Comment("The max size of a barbarian horde")
-        public int maxBarbarianHordeSize = 40;
+        public int maxBarbarianSize = 20;
 
         @Config.Comment("The average amount of nights between raids")
         public int averageNumberOfNightsBetweenRaids = 3;
@@ -161,7 +171,7 @@ public class Configurations
         public boolean canPlayerUseBackupCommand = false;
 
         /* Colony TP configs */
-        @Config.Comment("Amount of attemps to find a save rtp")
+        @Config.Comment("Amount of attempts to find a save rtp")
         public int numberOfAttemptsForSafeTP = 4;
 
         @Config.Comment("Should the min/max distance from spawn also affect colony placement?")
@@ -223,6 +233,9 @@ public class Configurations
                                                               "seed",
                                                               "treeSapling"
                                                             };
+
+        @Config.Comment("Turn on Minecolonies pvp mode, attention (colonies can be destroyed and can be griefed under certain conditions.)")
+        public boolean pvp_mode = false;
      }
 
     public static class Pathfinding

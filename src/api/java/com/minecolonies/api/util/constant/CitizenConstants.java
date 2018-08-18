@@ -1,10 +1,5 @@
 package com.minecolonies.api.util.constant;
 
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.math.BlockPos;
-
 /**
  * Constants regarding citizens.
  */

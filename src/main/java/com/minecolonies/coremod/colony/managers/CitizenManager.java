@@ -14,6 +14,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
+import com.minecolonies.coremod.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ColonyViewCitizenViewMessage;
@@ -69,7 +70,7 @@ public class CitizenManager implements ICitizenManager
     /**
      * Datas about the happiness of a colony
      */
-    private final HappinessData happinessData = new HappinessData();
+    //private final HappinessData happinessData = new HappinessData();
 
     /**
      * Creates the Citizenmanager for a colony.
@@ -208,6 +209,7 @@ public class CitizenManager implements ICitizenManager
             entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
             world.spawnEntity(entity);
 
+            colony.getProgressManager().progressCitizenSpawn(citizens.size(), citizens.values().stream().filter(tempDate -> tempDate.getJob() != null).collect(Collectors.toList()).size());
             colony.getStatsManager().checkAchievements();
             markCitizensDirty();
         }
@@ -346,12 +348,17 @@ public class CitizenManager implements ICitizenManager
         int guards = 1;
         int housing = 0;
         int workers = 1;
+        boolean hasJob = false; 
+        boolean hasHouse = false;
         double saturation = 0;
         for (final CitizenData citizen : getCitizens())
         {
+            hasJob = false; 
+            hasHouse = false; 
             final AbstractBuildingWorker buildingWorker = citizen.getWorkBuilding();
             if (buildingWorker != null)
             {
+                hasJob = true;
                 if (buildingWorker instanceof AbstractBuildingGuards)
                 {
                     guards += buildingWorker.getBuildingLevel();
@@ -365,9 +372,14 @@ public class CitizenManager implements ICitizenManager
             final AbstractBuilding home = citizen.getHomeBuilding();
             if (home != null)
             {
+                hasHouse = true;
                 housing += home.getBuildingLevel();
             }
 
+            if (citizen.getCitizenEntity().isPresent()) 
+            { 
+              citizen.getCitizenHappinessHandler().processDailyHappiness(hasHouse, hasJob); 
+            } 
             saturation += citizen.getSaturation();
         }
 
@@ -375,7 +387,6 @@ public class CitizenManager implements ICitizenManager
 
         if (averageHousing > 1)
         {
-            colony.increaseOverallHappiness(averageHousing * HAPPINESS_FACTOR);
             colony.getHappinessData().setHousing(HappinessData.INCREASE);
         }
         else if (averageHousing < 1)
@@ -390,12 +401,10 @@ public class CitizenManager implements ICitizenManager
         final int averageSaturation = (int) (saturation / getCitizens().size());
         if (averageSaturation < WELL_SATURATED_LIMIT)
         {
-            colony.decreaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * -HAPPINESS_FACTOR);
             colony.getHappinessData().setSaturation(HappinessData.DECREASE);
         }
         else if (averageSaturation > WELL_SATURATED_LIMIT)
         {
-            colony.increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
             colony.getHappinessData().setSaturation(HappinessData.INCREASE);
         }
         else
@@ -407,7 +416,7 @@ public class CitizenManager implements ICitizenManager
 
         if (relation > 1)
         {
-            colony.decreaseOverallHappiness(relation * HAPPINESS_FACTOR);
+            colony.getHappinessData().setHousingModifier(relation * HAPPINESS_FACTOR);
             colony.getHappinessData().setGuards(HappinessData.DECREASE);
         }
         else if (relation < 1)

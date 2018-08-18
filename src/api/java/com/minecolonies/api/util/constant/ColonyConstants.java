@@ -15,9 +15,14 @@ public final class ColonyConstants
     public static final int CLEANUP_TICK_INCREMENT = 5 * TICKS_SECOND;
 
     /**
+     * The colony name in the team + the id.
+     */
+    public static final String TEAM_COLONY_NAME = "teamcolony";
+
+    /**
      * Default average randomization for onWorldTick() methods
     */
-    public static final int ONWORLD_TICK_AVERAGE = 1 * TICKS_SECOND;
+    public static final int ONWORLD_TICK_AVERAGE = TICKS_SECOND;
 
     public static final int NUM_ACHIEVEMENT_FIRST  = 1;
     public static final int NUM_ACHIEVEMENT_SECOND = 25;
@@ -46,21 +51,6 @@ public final class ColonyConstants
     public static final int WELL_SATURATED_LIMIT = 5;
 
     /**
-     * Average happiness of a citizen.
-     */
-    public static final double AVERAGE_HAPPINESS = 5.0;
-
-    /**
-     * Max overall happiness.
-     */
-    public static final double MAX_OVERALL_HAPPINESS = 10;
-
-    /**
-     * Min overall happiness.
-     */
-    public static final double MIN_OVERALL_HAPPINESS = 1;
-
-    /**
      * Amount of ticks to wait until checking if a waypoint is still valid.
      */
     public static final int    CHECK_WAYPOINT_EVERY              = 100;
@@ -81,11 +71,6 @@ public final class ColonyConstants
     public static final int CONST_CHUNKSIZE = 16;
 
     /**
-     * Overall hapiness when the colony is started.
-     */
-    public static final int DEFAULT_OVERALL_HAPPYNESS = 5;
-
-    /**
      * Max amount of permission events to store in the colony.
      */
     public static final int MAX_PERMISSION_EVENTS = 100;
@@ -96,14 +81,8 @@ public final class ColonyConstants
     public static final ResourceLocation BARBARIAN                    = new ResourceLocation(Constants.MOD_ID, "Barbarian");
     public static final ResourceLocation ARCHER                       = new ResourceLocation(Constants.MOD_ID, "ArcherBarbarian");
     public static final ResourceLocation CHIEF                        = new ResourceLocation(Constants.MOD_ID, "ChiefBarbarian");
-    public static final int              MAX_SIZE                     = Configurations.gameplay.maxBarbarianHordeSize; 
-    public static final double           BARBARIANS_MULTIPLIER        = 0.5; 
-    public static final double           ARCHER_BARBARIANS_MULTIPLIER = 0.25; 
+    public static final double           ARCHER_BARBARIANS_MULTIPLIER = 0.30;
     public static final double           CHIEF_BARBARIANS_MULTIPLIER  = 0.1;
-    public static final int              PREFERRED_MAX_HORDE_SIZE     = 40;
-    public static final int              PREFERRED_MAX_BARBARIANS     = 22;
-    public static final int              PREFERRED_MAX_ARCHERS        = 16;
-    public static final int              PREFERRED_MAX_CHIEFS         = 2;
     public static final int              MIN_CITIZENS_FOR_RAID        = 5;
     public static final int              NUMBER_OF_CITIZENS_NEEDED    = 5;
     /**
@@ -118,11 +97,17 @@ public final class ColonyConstants
     public static final int              BIG_HORDE_SIZE               = 20;
 
     /**
+     * Turn off the help manager when one of these applies.
+     */
+    public static final int CITIZEN_LIMIT_FOR_HELP = 20;
+    public static final int BUILDING_LIMIT_FOR_HELP = 10;
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private ColonyConstants()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }

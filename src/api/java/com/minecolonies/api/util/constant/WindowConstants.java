@@ -75,6 +75,11 @@ public final class WindowConstants
     public static final String BUTTON_TOGGLE_HOUSING = "toggleHousing";
 
     /**
+     * Id of the toggle print progress button in the GUI.
+     */
+    public static final String BUTTON_TOGGLE_PRINT_PROGRESS= "togglePrintProgress";
+
+    /**
      * Id of the remove player button in the GUI..
      */
     public static final String BUTTON_REMOVE_PLAYER = "removePlayer";
@@ -435,6 +440,26 @@ public final class WindowConstants
     public static final String BUTTON_NEXT_STYLE_ID = "nextStyle";
 
     /**
+     * This button is used to set the previous available Color.
+     */
+    public static final String BUTTON_PREVIOUS_COLOR_ID = "previousColor";
+
+    /**
+     * This drop down list is used to choose which Color should be used.
+     */
+    public static final String DROPDOWN_COLOR_ID = "colorPicker";
+
+    /**
+     * This button is used to set the next available Color.
+     */
+    public static final String BUTTON_NEXT_COLOR_ID = "nextColor";
+
+    /**
+     * This button is used to set a specific Color.
+     */
+    public static final String BUTTON_PICK_COLOR_ID = "pickColor";
+
+    /**
      * This button is used to set the previous available schematic.
      */
     public static final String BUTTON_PREVIOUS_SCHEMATIC_ID = "previousSchematic";
@@ -525,6 +550,11 @@ public final class WindowConstants
     public static final String RESOURCE_ICON               = "resourceIcon";
 
     /**
+     * Window resource list gui file.
+     */
+    public static final String RESOURCE_SCROLL_RESOURCE_SUFFIX = ":gui/windowresourcescroll.xml";
+
+    /**
      * Id of the type label in the GUI.
      */
     public static final String LABEL_BUILDINGTYPE = "type";
@@ -573,6 +603,16 @@ public final class WindowConstants
     public static final String  GUI_RESOURCE               = ":gui/windowHutGuardTower.xml";
     //GUI Other
     public static final Integer GUI_LIST_ELEMENT_NAME_POS  = 2;
+    //Get GuardTool GUI
+    public static final String  BUTTON_GET_TOOL            = "getTool";
+
+    /*
+     * GuardControl GUI
+     */
+    public static final String GUARD_CONTROL  = ":gui/windowguardcontrol.xml";
+    public static final String LIST_WORKERS   = "workers";
+    public static final String POSITION_LABEL = "position";
+    public static final String LEVEL_LABEL    = "level";
 
     /**
      * Name of the input range field.
@@ -653,12 +693,300 @@ public final class WindowConstants
     public static final String YELLOW_ICON = "minecolonies:textures/gui/yellow_icon.png";
     public static final String GREEN_ICON  = "minecolonies:textures/gui/green_icon.png";
 
+    public static final String LABEL_CONSTRUCTION_NAME =  "constructionName";
+    public static final String LABEL_CONSTRUCTION_POS =  "constructionPos";
+
+    /**
+     * Citizen view constants.
+     */
+
+    /**
+     * The label to find the inventory button.
+     */
+    public static final String INVENTORY_BUTTON_ID = "inventory";
+
+    /**
+     * The label to find the gui of the citizen.
+     */
+    public static final String CITIZEN_RESOURCE_SUFFIX = ":gui/windowcitizen.xml";
+
+    /**
+     * The label to find strength in the gui.
+     */
+    public static final String STRENGTH = "strength";
+
+    /**
+     * The label to find endurance in the gui.
+     */
+    public static final String ENDURANCE = "endurance";
+
+    /**
+     * The label to find charisma in the gui.
+     */
+    public static final String CHARISMA = "charisma";
+
+    /**
+     * The label to find intelligence in the gui.
+     */
+    public static final String INTELLIGENCE = "intelligence";
+
+    /**
+     * The label to find dexterity in the gui.
+     */
+    public static final String DEXTERITY = "dexterity";
+
+    /**
+     * Id of the resource add button.
+     */
+    public static final String REQUEST_FULLFIL = "fulfill";
+
+    /**
+     * Id of the resource add button.
+     */
+    public static final String REQUEST_CANCEL = "cancel";
+
+    /**
+     * Xp-bar height.
+     */
+    public static final int XP_HEIGHT = 5;
+
+    /**
+     * The x-distance to the left border of the gui of the xpBar.
+     */
+    public static final int LEFT_BORDER_X = 10;
+
+    /**
+     * The y-distance to the top-left border of the gui of the xpBar.
+     */
+    public static final int LEFT_BORDER_Y = 10;
+
+    /**
+     * The column in which the icon starts.
+     */
+    public static final int XP_BAR_ICON_COLUMN = 0;
+
+    /**
+     * The column where the icon ends.
+     */
+    public static final int XP_BAR_ICON_COLUMN_END = 172;
+
+    /**
+     * The width of the end piece of the xpBar.
+     */
+    public static final int XP_BAR_ICON_COLUMN_END_WIDTH = 10;
+
+    /**
+     * The offset where the end should be placed in the GUI.
+     */
+    public static final int XP_BAR_ICON_END_OFFSET = 90;
+
+    /**
+     * The width of the xpBar (Original width is halved to fit in the gui).
+     */
+    public static final int XP_BAR_WIDTH = 182 / 2;
+
+    /**
+     * The row where the empty xpBar starts.
+     */
+    public static final int XP_BAR_EMPTY_ROW = 64;
+
+    /**
+     * The row where the emtpy Happiness bar starts. 
+     */
+
+    public static final int HAPPINESS_BAR_EMPTY_ROW = 74;
+
+    /**
+     * The row where the full xpBar starts.
+     */
+    public static final int XP_BAR_FULL_ROW = 69;
+
+    /**
+     * The row where the full happiness bar starts. 
+     */
+    public static final int HAPPINESS_BAR_FULL_ROW = 79;
+
+    /**
+     * Row position of the empty heart icon.
+     */
+    public static final int EMPTY_HEART_ICON_ROW_POS = 16;
+
+    /**
+     * Row position of the full heart icon.
+     */
+    public static final int FULL_HEART_ICON_ROW_POS = 53;
+
+    /**
+     * Row position of the half/full heart icon.
+     */
+    public static final int HALF_HEART_ICON_ROW_POS = 62;
+
+    /**
+     * Column position of the heart icons.
+     */
+    public static final int HEART_ICON_COLUMN = 0;
+
+    /**
+     * Dimension of the hearts.
+     */
+    public static final int HEART_ICON_HEIGHT_WIDTH = 9;
+
+    /**
+     * The position x where the heart is placed.
+     */
+    public static final int HEART_ICON_POS_X = 10;
+
+    /**
+     * The offset x where the next heart should be placed.
+     */
+    public static final int HEART_ICON_OFFSET_X = 10;
+
+    /**
+     * The position y where the heart is placed.
+     */
+    public static final int HEART_ICON_POS_Y = 10;
+
+    /**
+     * The position y where the saturation is placed.
+     */
+    public static final int SATURATION_ICON_POS_Y = 10;
+
+    /**
+     * Column of the saturation icon.
+     */
+    public static final int SATURATION_ICON_COLUMN = 27;
+
+    /**
+     * Dimension of the hearts.
+     */
+    public static final int SATURATION_ICON_HEIGHT_WIDTH = 9;
+
+    /**
+     * Saturation icon x position.
+     */
+    public static final int SATURATION_ICON_POS_X = 10;
+
+    /**
+     * Saturation item x offset.
+     */
+    public static final int SATURATION_ICON_OFFSET_X = 10;
+
+    /**
+     * The label to find name in the gui.
+     */
+    public static final String WINDOW_ID_NAME = "name";
+
+    /**
+     * The label to find xpLabel in the gui.
+     */
+    public static final String WINDOW_ID_XP = "xpLabel";
+
+    /**
+     * The label to find the happiness label in the gui. 
+     */
+    public static final String WINDOW_ID_HAPPINESS = "happinessLabel";
+
+    /**
+     * The label to find xpBar in the gui.
+     */
+    public static final String WINDOW_ID_XPBAR = "xpBar";
+
+    /**
+     * The label to find healthBar in the gui.
+     */
+    public static final String WINDOW_ID_HEALTHBAR = "healthBar";
+
+    /**
+     * The position of the empty saturation icon.
+     */
+    public static final int EMPTY_SATURATION_ITEM_ROW_POS = 16;
+
+    /**
+     * The position of the full saturation icon.
+     */
+    public static final int FULL_SATURATION_ITEM_ROW_POS = 16 + 36;
+
+    /**
+     * The position of the half saturation icon.
+     */
+    public static final int HALF_SATURATION_ITEM_ROW_POS = 16 + 45;
+
+    /**
+     * The saturation bar of the citizen.
+     */
+    public static final String WINDOW_ID_SATURATION_BAR = "saturationBar";
+
+    /**
+     * The saturation bar of the citizen. 
+     */
+    public static final String WINDOW_ID_HAPPINESS_BAR = "happinessBar";
+
+    /**
+     * Id of the gender button.
+     */
+    public static final String WINDOW_ID_GENDER = "gender";
+
+    /**
+     * Requests list id.
+     */
+    public static final String WINDOW_ID_LIST_REQUESTS = "requests";
+
+    /**
+     * Requests box id.
+     */
+    public static final String WINDOW_ID_REQUEST_BOX = "requestx";
+
+    /**
+     * Requestst stack id.
+     */
+    public static final String LIST_ELEMENT_ID_REQUEST_STACK = "requestStack";
+
+    /**
+     * Resolver string.
+     */
+    public static final String DELIVERY_IMAGE = "deliveryImage";
+
+    /**
+     * Button id of the requests page.
+     */
+    public static final String BUTTON_REQUESTS = "requestsTitle";
+
+    /**
+     * Button id to get back from the requests page.
+     */
+    public static final String BUTTON_BACK = "back";
+
+    /**
+     * Source of the female wax location.
+     */
+    public static final String FEMALE_SOURCE = "minecolonies:textures/gui/citizen/colonist_wax_female_smaller.png";
+
+    /**
+     * Id of the detail button
+     */
+    public static final String REQUEST_DETAIL = "detail";
+
+    /**
+     * Id of the short detail label.
+     */
+    public static final String REQUEST_SHORT_DETAIL = "shortDetail";
+
+    /**
+     * Id of the requester label.
+     */
+    public static final String REQUESTER = "requester";
+
+    /**
+     * The divider for the life count.
+     */
+    public static final int LIFE_COUNT_DIVIDER = 30;
+
     /**
      * public constructor to hide implicit public one.
      */
     private WindowConstants()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }

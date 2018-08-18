@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
@@ -31,7 +32,6 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -755,10 +755,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @param chat the Item Name
      */
+    /*
     private void requestWithoutSpam(@NotNull final TextComponentBase chat)
     {
         chatSpamFilter.requestTextComponentWithoutSpam(chat);
     }
+    */
 
     /**
      * Finds the first @see ItemStack the type of {@code is}.
@@ -856,11 +858,34 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             TypeToken.of(Tool.class),
             r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minimalLevel);
 
-        if (openToolRequests.isEmpty() && completedToolRequests.isEmpty())
+        if (openToolRequests.isEmpty() && completedToolRequests.isEmpty() && !hasOpenToolRequest(toolType))
         {
             final Tool request = new Tool(toolType, minimalLevel, getOwnBuilding().getMaxToolLevel() < minimalLevel ? minimalLevel : getOwnBuilding().getMaxToolLevel());
             worker.getCitizenData().createRequestAsync(request);
         }
+    }
+
+    /**
+     * Cancel all requests for a certain armor type for a certain citizen.
+     * @param armorType the armor type.
+     */
+    protected void cancelAsynchRequestForArmor(final IToolType armorType)
+    {
+        final List<IRequest<? extends Tool>> openRequests = getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeToken.of(Tool.class), iRequest -> iRequest.getRequest().getToolClass() == armorType);
+        for (final IRequest token : openRequests)
+        {
+            worker.getCitizenColonyHandler().getColony().getRequestManager().updateRequestState(token.getToken(), RequestState.COMPLETED);
+        }
+    }
+
+    /**
+     * Check if there is an open request for a certain tooltype.
+     * @param key the tooltype.
+     * @return true if so.
+     */
+    private boolean hasOpenToolRequest(final IToolType key)
+    {
+        return getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(), iRequest -> iRequest.getRequest() instanceof Tool && ((Tool) iRequest.getRequest()).getToolClass() == key);
     }
 
     /**

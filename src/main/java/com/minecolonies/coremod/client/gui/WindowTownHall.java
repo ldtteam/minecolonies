@@ -12,6 +12,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.*;
+import com.minecolonies.blockout.views.DropDownList;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
@@ -36,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -97,6 +99,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private final Map<String, String> tabsToPages = new HashMap<>();
 
     /**
+     * Drop down list for style.
+     */
+    private DropDownList colorDropDownList;
+
+    /**
      * The button f the last tab -> will be filled later on.
      */
     private Button lastTabButton;
@@ -144,6 +151,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         alliesList = findPaneOfTypeByID(LIST_ALLIES, ScrollingList.class);
         feudsList = findPaneOfTypeByID(LIST_FEUDS, ScrollingList.class);
 
+        initColorPicker();
         updateUsers();
         updateCitizens();
         updateWorkOrders();
@@ -168,6 +176,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_TOGGLE_JOB, this::toggleHiring);
         registerButton(BUTTON_TOGGLE_HOUSING, this::toggleHousing);
+        registerButton(BUTTON_TOGGLE_PRINT_PROGRESS, this::togglePrintProgress);
+
         registerButton(NAME_LABEL, this::fillCitizenInfo);
         registerButton(RECALL_ONE, this::recallOneClicked);
 
@@ -193,6 +203,66 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         }
         findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setVisible(false);
         findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(false);
+        colorDropDownList.setSelectedIndex(townHall.getColony().getTeamColonyColor().ordinal());
+    }
+
+    /**
+     * Initialise the previous/next and drop down list for style.
+     */
+    private void initColorPicker()
+    {
+        registerButton(BUTTON_PREVIOUS_COLOR_ID, this::previousStyle);
+        registerButton(BUTTON_NEXT_COLOR_ID, this::nextStyle);
+        findPaneOfTypeByID(DROPDOWN_COLOR_ID, DropDownList.class).setEnabled(enabled);
+        colorDropDownList = findPaneOfTypeByID(DROPDOWN_COLOR_ID, DropDownList.class);
+
+        colorDropDownList.setHandler(this::onDropDownListChanged);
+
+        final List<TextFormatting> textColors = Arrays.stream(TextFormatting.values()).filter(TextFormatting::isColor).collect(Collectors.toList());
+
+        colorDropDownList.setDataProvider(new DropDownList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return textColors.size();
+            }
+
+            @Override
+            public String getLabel(final int index)
+            {
+                if (index >= 0 && index < textColors.size())
+                {
+                    return textColors.get(index).getFriendlyName();
+                }
+                return "";
+            }
+        });
+    }
+
+    /**
+     * Called when the dropdownList changed.
+     * @param dropDownList the list.
+     */
+    private void onDropDownListChanged(final DropDownList dropDownList)
+    {
+        MineColonies.getNetwork().sendToServer(new TeamColonyColorChangeMessage(dropDownList.getSelectedIndex(), townHall));
+    }
+
+    /**
+     * Change to the next style.
+     */
+    private void nextStyle()
+    {
+        colorDropDownList.selectNext();
+    }
+
+    /**
+     * Change to the previous style.
+     */
+    private void previousStyle()
+    {
+        colorDropDownList.selectPrevious();
     }
 
     /**
@@ -303,6 +373,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         if (townHall.getColony().isManualHiring())
         {
             findPaneOfTypeByID(BUTTON_TOGGLE_JOB, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
+        }
+
+        if (!townHall.getColony().isPrintingProgress())
+        {
+            findPaneOfTypeByID(BUTTON_TOGGLE_PRINT_PROGRESS, Button.class).setLabel(LanguageHandler.format(OFF_STRING));
         }
 
         if (townHall.getColony().isManualHousing())
@@ -857,6 +932,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         button.disable();
         final CitizenDataView view = citizens.get(row);
         WindowCitizen.createXpBar(view, this);
+        WindowCitizen.createHappinessBar(view, this); 
         WindowCitizen.createSkillContent(view, this);
         findPaneOfTypeByID(JOB_LABEL, Label.class).setLabelText("§l" + LanguageHandler.format(view.getJob().trim().isEmpty() ? GUI_TOWNHALL_CITIZEN_JOB_UNEMPLOYED : view.getJob()));
         findPaneOfTypeByID(HIDDEN_CITIZEN_ID, Label.class).setLabelText(String.valueOf(view.getId()));
@@ -999,6 +1075,22 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             toggle = false;
         }
         MineColonies.getNetwork().sendToServer(new ToggleHousingMessage(this.building.getColony(), toggle));
+    }
+
+    /**
+     * Toggles printing progress.
+     */
+    private void togglePrintProgress(@NotNull final Button button)
+    {
+        if (button.getLabel().equals(LanguageHandler.format(OFF_STRING)))
+        {
+            button.setLabel(LanguageHandler.format(ON_STRING));
+        }
+        else
+        {
+            button.setLabel(LanguageHandler.format(OFF_STRING));
+        }
+        MineColonies.getNetwork().sendToServer(new ToggleHelpMessage(this.building.getColony()));
     }
 
     /**

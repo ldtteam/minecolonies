@@ -32,12 +32,12 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
  */
 public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuilder.View>
 {
-    private static final String LABEL_CONSTRUCTION_NAME =  "constructionName";
-    private static final String LABEL_CONSTRUCTION_POS =  "constructionPos";
-
-    private static final int RED       = Color.getByName("red", 0);
-    private static final int DARKGREEN = Color.getByName("darkgreen", 0);
-    private static final int BLACK     = Color.getByName("black", 0);
+    /**
+     * Color constants for builder list.
+     */
+    public static final int RED       = Color.getByName("red", 0);
+    public static final int DARKGREEN = Color.getByName("darkgreen", 0);
+    public static final int BLACK     = Color.getByName("black", 0);
 
     private final BuildingBuilder.View builder;
 

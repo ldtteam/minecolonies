@@ -16,8 +16,8 @@ tile.minecolonies.blockSubstitution.name=Блок-местозаполнител
 tile.minecolonies.blockConstructionTape.name=Строительная лента
 tile.blockHut.messageNoPermission=У вас нет разрешения на открытие хижины в '%s'.
 tile.blockHut.messageNoPermissionPlace=У вас нет разрешения на размещение хижины в '%s'.
-tile.blockHutTownHall.messageMaxSize=Колония полностью заселена
-tile.blockHutTownHall.messageColonistDead=Колонист '%s' умер на %d %d %d!
+tile.blockHutTownHall.messageMaxSize=Колония %d полностью заселена
+tile.blockHutTownHall.messageColonistDead=Колонист %s умер на %d %d %d!
 tile.blockHutTownHall.messagePlacedAlready=Вы уже разместили ратушу
 tile.blockHutTownHall.messageInvalidWorld=Вы не можете размещать ратушу в этом мире
 tile.blockHutTownHall.messageTooClose=Слишком близко к другой ратуше
@@ -429,12 +429,12 @@ com.minecolonies.coremod.permission.access_free_blocks=Доступ к бесп�
 com.minecolonies.coremod.permission.explode=Взорвать
 
 item.supplyCampDeployer.invalid=Требуется плоская территория минимум 16*17
-item.supplyCampDeployer.invalid.solid_block_needed=Для размещения Лагеря Поддержки требуется плоская территория, как минимум с размерами 16*17 блоков. Данные блоки должны быть цельными: %s.
-item.supplyCampDeployer.invalid.air_block_needed=Для рамещения Лагеря Поддержки требуется плоская территория, как минимум с размерами 16*17 блоков. Данные блоки должны быть пустыми: %s.
-item.supplyCampDeployer.invalid.inside_existing_colony=Вы не можете разместить ваш лагерь поддержки рядом с существующей колонией.
+item.supplyCampDeployer.invalid.solid_block_needed=Для размещения Лагеря Снаюжения требуется плоская территория, как минимум с размерами 16*17 блоков. Данные блоки должны быть цельными: %s.
+item.supplyCampDeployer.invalid.air_block_needed=Для рамещения Лагеря Снабжения требуется плоская территория, как минимум с размерами 16*17 блоков. Данные блоки должны быть пустыми: %s.
+item.supplyCampDeployer.invalid.inside_existing_colony=Вы не можете разместить ваш лагерь снабжения рядом с существующей колонией.
 item.minecolonies.supplyChestDeployer.name=Сундук корабля снабжения
-item.minecolonies.supplyCampDeployer.name=Сундук лагеря с припасами
-com.minecolonies.coremod.gui.townHall.currentHappiness=Общее счастье:
+item.minecolonies.supplyCampDeployer.name=Сундук лагеря снабжения
+com.minecolonies.coremod.gui.townHall.currentHappiness=Общее счастье населения:
 com.minecolonies.coremod.job.guard.toolClickGuardTooFar=Слишком далеко от сторожевой башни, пожалуйста, улучшите вашу сторожевую башню.
 com.minecolonies.coremod.saturation.0=Я голодаю и не могу больше работать
 com.minecolonies.coremod.saturation.3=Я голодаю и чувствую себя не продуктивно
@@ -492,9 +492,9 @@ tile.minecolonies.blockHutBarracksTower.name=Башня казарм
 tile.minecolonies.blockHutBarracks.name=Казармы
 com.minecolonies.coremod.gui.workerHuts.buildBarracks=Казармы
 
-com.minecolonies.coremod.permission.teleport_to_colony=Телепорнтироваться к колонии
+com.minecolonies.coremod.permission.teleport_to_colony=Телепортироваться к колонии
 com.minecolonies.coremod.gui.hiring.buttonFire=Уволить
-com.minecolonies.coremod.worker.noUpgrade=Нед доступных улучшений
+com.minecolonies.coremod.worker.noUpgrade=Нет доступных улучшений
 com.minecolonies.coremod.worker.needBarracks=Сначала улучшите казармы.
 com.minecolonies.coremod.gui.warehouse.upgrade=Увеличить хранилище
 
@@ -534,36 +534,36 @@ com.minecolonies.coremod.tooltype.sword=Меч
 com.minecolonies.coremod.tooltype.bow=Лук
 com.minecolonies.coremod.tooltype.fishingrod=Удочка
 com.minecolonies.coremod.tooltype.shears=Ножницы
-com.minecolonies.coremod.tooltype.shield=Защита
+com.minecolonies.coremod.tooltype.shield=Щит
 
 com.minecolonies.coremod.gui.citizen.requests=Открытые запросы:
 com.minecolonies.coremod.gui.citizen.requestTitle=Запросы
-com.minecolonies.coremod.gui.citizen.requestsCancel=Отменён
-com.minecolonies.coremod.gui.citizen.requestsFulfill=Выполняется
+com.minecolonies.coremod.gui.citizen.requestsCancel=Отменить
+com.minecolonies.coremod.gui.citizen.requestsFulfill=Выпалонить
 
-item.minecolonies.clipboard.name=Буффер обмена
+item.minecolonies.clipboard.name=Блокнот
 
-com.minecolonies.coremod.item.clipboard.needColony=Пожалуйста выполните щелчок ПКМ с зажатым по колонии, чтобы прикрепить к ней ваш буффер обмена.
+com.minecolonies.coremod.item.clipboard.needColony=Пожалуйста выполните щелчок ПКМ с зажатым по колонии, чтобы прикрепить к ней ваш блокнот.
 com.minecolonies.coremod.item.clipboard.registered=Зарегистрирован в колонии %d.
 achievement.upgrade.guard.first=Убийца
-achievement.upgrade.guard.last=Уборщик
+achievement.upgrade.guard.last=Зачиститель
 com.minecolonies.requestsystem.playerresolver=%s нуждается в %s на %s.
 com.minecolonies.coremod.buildings.warehouse.name=Склад
 tile.minecolonies.blockPaperwall.name=Бумажная стена
 
 com.minecolonies.coremod.gui.workerHuts.buildPrio=Приоритет доставки:
 item.supplyChestDeployer.invalid=Вы должны быть около большого водоема
-item.supplyChestDeployer.missing=Да ты разыгрываешь меня, сделать Корабль поддерки снова?
-com.minecolonies.coremod.citizen.rename.same=Переименование провалилось: Двум жителям запрещено иметь одинаковые имена!
-com.minecolonies.coremod.citizen.rename.notAllowed=Переименование провалилось: Вам не разрещено переименовывать ваших Жителей.
+item.supplyChestDeployer.missing=Да ты разыгрываешь меня, создать Корабль снабжения снова?
+com.minecolonies.coremod.citizen.rename.same=Переименование не удалось: Двум жителям запрещено иметь одинаковые имена!
+com.minecolonies.coremod.citizen.rename.notAllowed=Переименование не удалось: Вам не разрещено переименовывать Жителей.
 
-tile.minecolonies.blockshingle_oak.name=Дубовая Галька
-tile.minecolonies.blockshingle_birch.name=Берёзовая Галька
-tile.minecolonies.blockshingle_spruce.name=Еловая Галька
-tile.minecolonies.blockshingle_jungle.name=Тропическая Галька
-tile.minecolonies.blockshingle_dark_oak.name=Галька из тёмного дуба
-tile.minecolonies.blockshingle_acacia.name=Галька из Акации
-tile.minecolonies.blockShingleSlab.name=Галька
+tile.minecolonies.blockshingle_oak.name=Дубовая Черепица
+tile.minecolonies.blockshingle_birch.name=Берёзовая Черепица
+tile.minecolonies.blockshingle_spruce.name=Еловая Черепица
+tile.minecolonies.blockshingle_jungle.name=Тропическая Черепица
+tile.minecolonies.blockshingle_dark_oak.name=Черепица из тёмного дуба
+tile.minecolonies.blockshingle_acacia.name=Черепица из Акации
+tile.minecolonies.blockShingleSlab.name=Черепица
 tile.minecolonies.blockshingle_oak.name=Дубовая черепица
 tile.minecolonies.blockshingle_birch.name=Берёзовая черепица
 tile.minecolonies.blockshingle_spruce.name=Еловая черепица
@@ -576,19 +576,19 @@ tile.minecolonies.blockhutsmeltery.name=Плавильня
 com.minecolonies.coremod.gui.workerHuts.Smeltery=Плавильня
 com.minecolonies.coremod.job.smelter=Металлург
 tile.minecolonies.blockHutSmeltery.name=Плавильня
-com.minecolonies.coremod.enteringColony=Осторожно, ты заходишь в колонию %s.
-com.minecolonies.coremod.leavingColony=Прощай, ты покидаешь колонию %s.
+com.minecolonies.coremod.enteringColony=Осторожно, вы заходите в колонию %s.
+com.minecolonies.coremod.leavingColony=Прощай, вы покидаете колонию %s.
 com.minecolonies.coremod.enteringColonyNotify=Внимание! %s только что вошёл в вашу колонию.
-com.minecolonies.coremod.leavingColonyNotify=Фьюх! %s, только что покинул вашу колонию.
+com.minecolonies.coremod.leavingColonyNotify=%s, только что покинул вашу колонию.
 
 event.minecolonies.raidMessage1=Таинственные воины были замечены возле лагеря.
 event.minecolonies.raidMessage2=Граждане сообщают слухи о рейдерах поблизости!
-event.minecolonies.raidMessage3=Соберист ковбой! Этой ночью парочка проклятых рейдеров пришли по твою душу!
+event.minecolonies.raidMessage3=Соберист ковбой! Этой ночью проклятые рейдеры пришли по твою душу!
 event.minecolonies.raidMessage4=Огромная орда рейдеров преградила тебе путь и они здесь не для того, чтобы поиграть!
 com.minecolonies.coremod.gui.workerHuts.toggleAllOn=Переключить всё (Вкл.)
 com.minecolonies.coremod.gui.workerHuts.toggleAllOff=Переключить всё (Выкл.)
 com.minecolonies.coremod.gui.recipe.remove=Удалить
-com.minecolonies.coremod.gui.workerHuts.crafting=Выучить рецепт
+com.minecolonies.coremod.gui.workerHuts.crafting=Научить рецепту
 com.minecolonies.coremod.gui.recipe.done=Рецепт успешно сохранён!
 com.minecolonies.coremod.gui.workerHuts.listRecipes=Список рецептов
 com.minecolonies.coremod.resolvers.crafter.private=Крафтить
@@ -597,11 +597,11 @@ com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe=Вы ещё
 
 com.minecolonies.coremod.gui.townHall.allies=Союзники:
 com.minecolonies.coremod.gui.townHall.feuds=Противники:
-com.minecolonies.coremod.gui.townHall.tp=Вы действительно желаете телепортироваться в: %s [YES]
-com.minecolonies.coremod.gui.workerHuts.switchStyle=Переключить Стиль
+com.minecolonies.coremod.gui.townHall.tp=Вы действительно желаете телепортироваться в: %s [Да]
+com.minecolonies.coremod.gui.workerHuts.switchStyle=Изменить Стиль
 com.minecolonies.coremod.gui.townHall.tooLow=Ратуша слишком слаба
-com.minecolonies.coremod.gui.recipe.full=Достигнут максимум для уровня
-com.minecolonies.coremod.cook.full=Нельзя отдать еду рабочему, пока его инвентарь пуст.
+com.minecolonies.coremod.gui.recipe.full=Достигнут максимум рецептов для уровня здания
+com.minecolonies.coremod.cook.full=Нельзя отдать еду рабочему, пока его инвентарь полон.
 
 tile.minecolonies.blockTimberFrame_oak_plain.name= Простой фахверх из дуба
 tile.minecolonies.blockTimberFrame_oak_doublecrossed.name= Крестовой фахверх из дуба
@@ -663,13 +663,69 @@ tile.minecolonies.blockTimberFrame_dark_oak_onecrossedrl.name= Диагонал�
 tile.minecolonies.blockTimberFrame_dark_oak_downgated.name= Перевёрнутый П-образный фахверх из тёмного дуба
 tile.minecolonies.blockTimberFrame_dark_oak_horizontalplain.name= Горизонтальный фахверх из тёмного дуба
 tile.minecolonies.blockTimberFrame_dark_oak_horizontalnocap.name= Н-образный фахверх из тёмного дуба
+tile.minecolonies.blockcactusplank.name=Кактусовые доски
+tile.minecolonies.blockcactuspdoor.name=Кактусовый люк
+item.minecolonies.cactusdoor.name=Кактусовая дверь
+tile.minecolonies.blockcactusslab_half.name=Кактусовая плита
 
 
 com.minecolonies.coremod.request.toolow=Нельзя добыть блок %s из %s. Необходимо модернизировать здание, чтобы использовать инструмент с более высоким уровнем добычи.
 com.minecolonies.coremod.dimension.no=Вы не можете размещать колонии в иных измерениях. (Задаётся значением параметра в конфигурации)
 com.minecolonies.coremod.max.schematic.reached=Достигнут максимальный размер схемы %d блоков.
 
-com.minecolonies.coremod.max.schematic.quiteclose=Quite close in the
-com.minecolonies.coremod.max.schematic.quitefar=Quite far in the
-com.minecolonies.coremod.max.schematic.reallyfar=Really far in the
+com.minecolonies.coremod.max.schematic.quiteclose=Близко к
+com.minecolonies.coremod.max.schematic.quitefar=Недалеко на
+com.minecolonies.coremod.max.schematic.reallyfar=Очень далеко на
 com.minecolonies.coremod.gui.workerHuts.barbpoints=Последние точки появления Варваров:
+com.minecolonies.coremod.barbarians.left=Осталось %d Варваров!
+com.minecolonies.coremod.barbarians.killed=Вы удачно отразили атаку варваров!
+com.minecolonies.coremod.gui.workerHuts.reposition=Переместить
+tile.minecolonies.multiBlock.name=MultiBlock
+
+com.minecolonies.coremod.tooClose=Слишком близко к точке спауна, вы должны быть на расстоянии минимум на %d блоков.
+com.minecolonies.coremod.tooFar=Слишком далеко от точки спауна, вы должны быть на расстоянии минимум %d блоков.
+
+com.minecolonies.coremod.gui.scanTool.showRes=Показать ресурсы
+com.minecolonies.coremod.gui.scanTool.to=К:
+com.minecolonies.coremod.gui.scanTool.from=От:
+com.minecolonies.coremod.gui.scanTool.name=Название сканирования:
+com.minecolonies.coremod.gui.scanTool.remove=Убрать
+com.minecolonies.coremod.gui.scanTool.replace=Заменить
+com.minecolonies.coremod.gui.scan.replace.title=Интерфейс Замены Блоков
+com.minecolonies.coremod.gui.scanTool.select=Выбрать
+
+com.minecolonies.coremod.gui.townHall.guards=Количество воинов:
+com.minecolonies.coremod.gui.townHall.house=Количество домов:
+com.minecolonies.coremod.gui.townHall.saturation=Сытость жителей:
+com.minecolonies.coremod.gui.workerHuts.happiness=Показатель счастья
+
+com.minecolonies.coremod.gui.townHall.population.rangers=Лучников: %d
+com.minecolonies.coremod.gui.townHall.population.knights=Воинов: %d
+
+tile.minecolonies.barrel_block.name=Бочка
+item.minecolonies.compost.name=Компост
+
+tile.minecolonies.blockHutComposter.name=Хижина компостера
+
+com.minecolonies.coremod.gui.townHall.citizens.unemployed=Безработные
+com.minecolonies.coremod.gui.townHall.events=События
+com.minecolonies.coremod.gui.townHall.workorders=Заказы на постройку
+com.minecolonies.coremod.request.stacklist=StackList
+
+entity.composter.noItems=Укажите список предметов, которые можно использовать для создания компоста.
+entity.barrel.working=Бочка заполнена!
+
+com.minecolonies.coremod.status.fillingBarrels=Заполняю бочки
+com.minecolonies.coremod.status.harvestingBarrels=Опорожняю бочки
+
+com.minecolonies.coremod.pvp.townhall.break.start=Внимание! %s начал ломать вашу ратушу!
+com.minecolonies.coremod.pvp.townhall.broke=Внимание!!! %s уже сломал вашу ратушу на %d%%! К 100%% она будет утеряна!!!
+com.minecolonies.coremod.gui.townHall.pickTeamColor=Выбрать цвет команды:
+tile.minecolonies.blockhutlibrary.name=Библиотека
+com.minecolonies.coremod.gui.workerHuts.Library=Библиотека
+com.minecolonies.coremod.job.student=Ученик
+com.minecolonies.coremod.gui.townHall.population.students=Учеников: %d
+item.minecolonies.resourcescroll.name=Свиток-Ресурсов
+com.minecolonies.coremod.gui.resourcescroll.nobuilder=Не найден зарегистрированный строитель, SHIFT-ПКМ по нужной хижине строителя, чтобы зарегистрировать свиток.
+
+

@@ -6,6 +6,7 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -55,6 +56,10 @@ public class CitizenSleepHandler
      */
     private void setIsAsleep(final boolean isAsleep)
     {
+        if (citizen.getCitizenData() != null)
+        {
+            citizen.getCitizenData().setAsleep(isAsleep);
+        }
         citizen.getDataManager().set(DATA_IS_ASLEEP, isAsleep);
     }
 
@@ -103,7 +108,7 @@ public class CitizenSleepHandler
         }
 
         citizen.setPosition( ((float) bedLocation.getX() + HALF_BLOCK),
-          (double) ((float) bedLocation.getY() + BED_HEIGHT),
+          (double) ((float) bedLocation.getY()),
           ((float) bedLocation.getZ() + HALF_BLOCK));
 
         citizen.motionX = 0.0D;
@@ -115,6 +120,10 @@ public class CitizenSleepHandler
 
         setIsAsleep(true);
 
+        if (citizen.getCitizenData() != null)
+        {
+            citizen.getCitizenData().setBedPos(bedLocation);
+        }
         citizen.getDataManager().set(DATA_BED_POS, bedLocation);
     }
 
@@ -146,7 +155,7 @@ public class CitizenSleepHandler
         }
 
         final BlockPos spawn;
-        if (!getBedLocation().equals(BlockPos.ORIGIN))
+        if (!getBedLocation().equals(BlockPos.ORIGIN) && !citizen.world.isAirBlock(getBedLocation()))
         {
             spawn = BlockBed.getSafeExitLocation(citizen.world, getBedLocation(), 0);
         }
@@ -161,6 +170,10 @@ public class CitizenSleepHandler
         }
 
         setIsAsleep(false);
+        if (citizen.getCitizenData() != null)
+        {
+            citizen.getCitizenData().setBedPos(new BlockPos(0, 0, 0));
+        }
         citizen.getDataManager().set(DATA_BED_POS, new BlockPos(0, 0, 0));
     }
 
