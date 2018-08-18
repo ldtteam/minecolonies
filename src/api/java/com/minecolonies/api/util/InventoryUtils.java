@@ -12,6 +12,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -310,6 +311,18 @@ public class InventoryUtils
                  .filter(slot -> ItemStackUtils.isEmpty(itemHandler.getStackInSlot(slot)))
                  .findFirst()
                  .orElse(-1);
+    }
+
+    /**
+     * Count all open slots in inventory.
+     * @param itemHandler the inventory.
+     * @return the amount of open slots.
+     */
+    public static long openSlotCount(final IItemHandler itemHandler)
+    {
+        return IntStream.range(0, itemHandler.getSlots())
+                 .filter(slot -> ItemStackUtils.isEmpty(itemHandler.getStackInSlot(slot)))
+                 .count();
     }
 
     /**
