@@ -55,6 +55,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     private static final int DEPTH_LEVEL_1 = 30;
 
     /**
+     * Max depth difference.
+     */
+    private static final int MAX_DEPTH_DIFFERENCE = 3;
+
+    /**
      * At this y level the builder will be way slower..
      */
     private static final int DEPTH_LEVEL_2 = 15;
@@ -88,6 +93,21 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
      * Min slots the builder should never fill.
      */
     private static final long MIN_OPEN_SLOTS = 3;
+
+    /**
+     * Min distance from placing block.
+     */
+    private static final int MIN_DISTANCE    = 3;
+
+    /**
+     * Max distance to placing block.
+     */
+    private static final int MAX_DISTANCE        = 5;
+
+    /**
+     * After which distance the builder has to recalculate his position.
+     */
+    private static final double ACCEPTANCE_DISTANCE = 10;
 
     /**
      * The id in the list of the last picked up item.
@@ -185,8 +205,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
                 return getState();
             }
 
-            final boolean transfered = tryTransferFromPosToWorker(walkTo, needsCurrently);
-            if (!transfered)
+            final boolean transferred = tryTransferFromPosToWorker(walkTo, needsCurrently);
+            if (!transferred)
             {
                 walkTo = null;
                 return PICK_UP;
@@ -271,12 +291,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     @Override
     public boolean walkToConstructionSite(final BlockPos targetPos)
     {
-        if (workFrom == null || MathUtils.twoDimDistance(targetPos, workFrom) < 3 || MathUtils.twoDimDistance(targetPos, workFrom) > 10)
+        if (workFrom == null || MathUtils.twoDimDistance(targetPos, workFrom) < MIN_DISTANCE || MathUtils.twoDimDistance(targetPos, workFrom) > ACCEPTANCE_DISTANCE)
         {
             workFrom = getWorkingPosition(targetPos);
         }
 
-        return worker.isWorkerAtSiteWithMove(workFrom, 5) || MathUtils.twoDimDistance(worker.getPosition(), workFrom) < 10;
+        return worker.isWorkerAtSiteWithMove(workFrom, MAX_DISTANCE) || MathUtils.twoDimDistance(worker.getPosition(), workFrom) < ACCEPTANCE_DISTANCE;
     }
 
     /**
@@ -297,9 +317,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             final BlockPos schemPos = job.getWorkOrder().getBuildingLocation();
             final int yStart = targetPosition.getY() > schemPos.getY() ? targetPosition.getY() : schemPos.getY();
             final EnumFacing direction = BlockPosUtil.getXZFacing(worker.getPosition(), targetPosition).getOpposite();
-            for (int i = 3; i < 5; i++)
+            for (int i = MIN_DISTANCE; i < MAX_DISTANCE; i++)
             {
-                for (int y = yStart; y >= schemPos.getY()-3; y--)
+                for (int y = yStart; y >= schemPos.getY() - MAX_DEPTH_DIFFERENCE; y--)
                 {
                     final BlockPos pos = targetPosition.offset(direction, i);
                     final BlockPos basePos = new BlockPos(pos.getX(), y, pos.getZ());
