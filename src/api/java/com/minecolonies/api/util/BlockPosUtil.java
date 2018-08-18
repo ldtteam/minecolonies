@@ -482,6 +482,19 @@ public final class BlockPosUtil
     }
 
     /**
+     * Calculate in which direction a pos is facing. Ignoring y.
+     *
+     * @param pos      the pos.
+     * @param neighbor the block its facing.
+     * @return the directions its facing.
+     */
+    public static EnumFacing getXZFacing(final BlockPos pos, final BlockPos neighbor)
+    {
+        final BlockPos vector = neighbor.subtract(pos);
+        return EnumFacing.getFacingFromVector(vector.getX(), 0, vector.getZ());
+    }
+
+    /**
      * Calculates the direction a position is from the building.
      *
      * @param building the building.

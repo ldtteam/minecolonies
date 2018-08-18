@@ -500,7 +500,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         if (!this.getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(), r -> !worker.getCitizenData().isRequestAsync(r.getToken()))
               && !getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
-            return IDLE;
+            return afterRequestPickUp();
         }
         if (!walkToBuilding() && getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
@@ -559,6 +559,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
 
         return NEEDS_ITEM;
+    }
+
+    /**
+     * What to do after picking up a request.
+     * @return the next state to go to.
+     */
+    public AIState afterRequestPickUp()
+    {
+        return IDLE;
     }
 
     /**
@@ -970,6 +979,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         this.itemsNiceToHave().forEach(this::isInHut);
         // we dumped the inventory, reset actions done
         this.clearActionsDone();
+        return afterDump();
+    }
+
+    /**
+     * State to go to after dumping.
+     * @return the next state.
+     */
+    public AIState afterDump()
+    {
         return IDLE;
     }
 
