@@ -118,9 +118,9 @@ public class WindowCitizen extends AbstractWindowSkeleton
     {
         findPaneOfTypeByID(WINDOW_ID_NAME, Label.class).setLabelText(citizen.getName());
 
-        findPaneOfTypeByID(WindowConstants.BUTTON_PREV_PAGE, Button.class).setEnabled(false);
-        buttonPrevPage = findPaneOfTypeByID(WindowConstants.BUTTON_PREV_PAGE, Button.class);
-        buttonNextPage = findPaneOfTypeByID(WindowConstants.BUTTON_NEXT_PAGE, Button.class);
+        findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class).setEnabled(false);
+        buttonPrevPage = findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class);
+        buttonNextPage = findPaneOfTypeByID(BUTTON_NEXT_PAGE, Button.class);
 
         createHealthBar(citizen, findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class));
         createSaturationBar();
@@ -513,12 +513,12 @@ public class WindowCitizen extends AbstractWindowSkeleton
             case REQUEST_FULLFIL:
                 fulfill(button);
                 break;
-            case WindowConstants.BUTTON_NEXT_PAGE:
+            case BUTTON_NEXT_PAGE:
                 findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView("foodModifierPane");
                 buttonPrevPage.setEnabled(true);
                 buttonNextPage.setEnabled(false);
                 break;
-            case WindowConstants.BUTTON_PREV_PAGE:
+            case BUTTON_PREV_PAGE:
                 findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
                 buttonPrevPage.setEnabled(false);
                 buttonNextPage.setEnabled(true);
