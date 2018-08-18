@@ -1004,7 +1004,7 @@ public final class WindowConstants
     /**
      * ID for happiness modifier view
      */
-    public static final String FOOD_MODIFIER_PANE = "happinessModifierView";
+    public static final String HAPPINESS_MODIFIER_PANE = "happinessModifierView";
     
     /**
      * public constructor to hide implicit public one.

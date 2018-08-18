@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.WindowConstants;
 import com.minecolonies.blockout.Alignment;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.*;
@@ -514,7 +513,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
                 fulfill(button);
                 break;
             case BUTTON_NEXT_PAGE:
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView("foodModifierPane");
+                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(HAPPINESS_MODIFIER_PANE);
                 buttonPrevPage.setEnabled(true);
                 buttonNextPage.setEnabled(false);
                 break;
@@ -606,8 +605,8 @@ public class WindowCitizen extends AbstractWindowSkeleton
         final String[] imagesIds = new String[] {FOOD_MODIFIER, HOUSE_MODIFIER, DAMAGE_MODIFIER, JOB_MODIFIER, FIELDS_MODIFIER, TOOLS_MODIFIER};
         final double[] levels = new double[] {citizen.getFoodModifier(), citizen.getHouseModifier(), citizen.getDamageModifier(), citizen.getJobModifier(), citizen.getFieldsModifier(), citizen.getToolsModifiers()};
 
-        findPaneOfTypeByID(FOOD_MODIFIER_PANE, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
-        if (findPaneByID(FOOD_MODIFIER_PANE) != null)
+        findPaneOfTypeByID(HAPPINESS_MODIFIER_PANE, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
+        if (findPaneByID(HAPPINESS_MODIFIER_PANE) != null)
         {
             findPaneOfTypeByID("happinessModifier", Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.happinessModifier"));
             findPaneOfTypeByID("food", Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.food"));
