@@ -13,6 +13,29 @@
         <view id="requestsView" size="100% 100%" pos="0 7">
             <layout source="minecolonies:gui/citizen/layouts/requests.xml"/>
         </view>
+        <view id="happinessModifierView" size="100% 100%" pos="0 7">
+			<label id="happinessModifier" pos="25 32" size="136 11" textalign="MIDDLE" color="black"/>
 
+			<label id="food" pos="45 52" size="136 11" textalign="MIDDLE_LEFT" color="black"/>
+			<image id="foodLevel" size="11 11" pos="20 52" source="minecolonies:textures/gui/red_icon.png"/>
+			
+			<label id="damage"  pos="45 74" size="136 11" textalign="MIDDLE_LEFT" color="black"/>
+			<image id="damageLevel" size="11 11" pos="20 72" source="minecolonies:textures/gui/red_icon.png"/>
+			
+			<label id="house" pos="45 94" size="136 11" textalign="MIDDLE_LEFT" color="black"/>
+			<image id="houseLevel" size="11 11" pos="20 92" source="minecolonies:textures/gui/red_icon.png"/>
+			
+			<label id="job" pos="45 114" size="136 11" textalign="MIDDLE_LEFT" color="black"/>
+			<image id="jobLevel" size="11 11" pos="20 112" source="minecolonies:textures/gui/red_icon.png"/>
+			
+			<label id="farms" pos="45 134" size="136 11" textalign="MIDDLE_LEFT" color="black"/>
+			<image id="farmsLevel" size="11 11" pos="20 132" source="minecolonies:textures/gui/red_icon.png"/>
+			
+			<label id="tools" pos="45 154" size="136 11" textalign="MIDDLE_LEFT" color="black"/>
+			<image id="toolsLevel" size="11 11" pos="20 152" source="minecolonies:textures/gui/red_icon.png"/>
+		</view>
     </switch>
+
+    <buttonimage id="prevPage" align="TOP_LEFT" size="26 8" pos="10 25" source="minecolonies:textures/gui/builderhut/builder_sketch_arrow_left_c.png"/>
+   	<buttonimage id="nextPage" align="TOP_RIGHT" size="26 8" pos="70 25" source="minecolonies:textures/gui/builderhut/builder_sketch_arrow_right_c.png"/>
 </window>
