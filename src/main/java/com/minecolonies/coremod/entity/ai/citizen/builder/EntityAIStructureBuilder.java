@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -84,6 +85,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     private static final int ACTIONS_UNTIL_DUMP = 1024;
 
     /**
+     * Min slots the builder should never fill.
+     */
+    private static final long MIN_OPEN_SLOTS = 3;
+
+    /**
      * The id in the list of the last picked up item.
      */
     private int pickUpCount = 0;
@@ -126,7 +132,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         final BuildingBuilder building = getOwnBuilding();
         final List<Predicate<ItemStack>> neededItemsList = new ArrayList<>(building.getRequiredItemsAndAmount().keySet());
-        if (neededItemsList.size() <= pickUpCount)
+        if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(new InvWrapper(worker.getInventoryCitizen())) < MIN_OPEN_SLOTS)
         {
             pickUpCount = 0;
             return START_WORKING;
