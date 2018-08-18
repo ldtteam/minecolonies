@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.managers;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.managers.interfaces.IBarbarianManager;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;

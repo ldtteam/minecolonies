@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.managers;
+package com.minecolonies.coremod.colony.managers.interfaces;
 
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;

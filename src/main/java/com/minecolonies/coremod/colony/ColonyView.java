@@ -125,6 +125,11 @@ public final class ColonyView implements IColony
     private World world;
 
     /**
+     * Print progress.
+     */
+    private boolean printProgress;
+
+    /**
      * Base constructor for a colony.
      *
      * @param id The current id for the colony.
@@ -200,6 +205,8 @@ public final class ColonyView implements IColony
         }
 
         buf.writeInt(colony.getTeamColonyColor().ordinal());
+
+        buf.writeBoolean(colony.getProgressManager().isPrintingProgress());
     }
 
     /**
@@ -510,6 +517,8 @@ public final class ColonyView implements IColony
         Collections.reverse(lastSpawnPoints);
 
         this.teamColonyColor = TextFormatting.values()[buf.readInt()];
+
+        this.printProgress = buf.readBoolean();
         return null;
     }
 
@@ -858,5 +867,14 @@ public final class ColonyView implements IColony
     public List<BlockPos> getLastSpawnPoints()
     {
         return new ArrayList<>(lastSpawnPoints);
+    }
+
+    /**
+     * Get if progress should be printed.
+     * @return true if so.
+     */
+    public boolean isPrintingProgress()
+    {
+        return printProgress;
     }
 }
