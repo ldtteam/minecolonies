@@ -20,6 +20,8 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
@@ -51,6 +53,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
@@ -172,8 +175,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                 return;
             }
         }
+        final WorkOrderBuildBuilding workOrderBuildBuilding = new WorkOrderBuildBuilding(this, level);
+        colony.getWorkManager().addWorkOrder(workOrderBuildBuilding, false);
+        colony.getProgressManager().progressWorkOrderPlacement(workOrderBuildBuilding);
 
-        colony.getWorkManager().addWorkOrder(new WorkOrderBuildBuilding(this, level), false);
         LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
         markDirty();
     }
@@ -342,6 +347,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @SuppressWarnings("squid:S1172")
     public void onUpgradeComplete(final int newLevel)
     {
+        colony.getProgressManager().progressBuildBuilding(this,
+          colony.getBuildingManager().getBuildings().values().stream()
+            .filter(building -> building instanceof AbstractBuildingWorker).mapToInt(AbstractSchematicProvider::getBuildingLevel).sum(),
+          colony.getBuildingManager().getBuildings().values().stream()
+            .filter(building -> building instanceof BuildingHome).mapToInt(AbstractSchematicProvider::getBuildingLevel).sum()
+          );
         final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, newLevel);
         final StructureWrapper wrapper = new StructureWrapper(colony.getWorld(), workOrder.getStructureName());
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners

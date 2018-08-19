@@ -321,8 +321,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         }
 
         BlockPosUtil.writeToByteBuf(buf, guardPos);
-    }
 
+        buf.writeInt(this.getAssignedCitizen().size());
+        for (final CitizenData citizen : this.getAssignedCitizen())
+        {
+            buf.writeInt(citizen.getId());
+        }
+    }
+    
     @NotNull
     @Override
     public AbstractJob createJob(final CitizenData citizen)
@@ -917,6 +923,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
          */
         private List<MobEntryView> mobsToAttack = new ArrayList<>();
 
+        @NotNull
+        private final List<Integer> guards = new ArrayList<>();
+
         /**
          * The client view constructor for the AbstractGuardBuilding.
          *
@@ -938,6 +947,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         public Window getWindow()
         {
             return new WindowHutGuardTower(this);
+        }
+
+        /**
+         * Getter for the list of residents.
+         *
+         * @return an unmodifiable list.
+         */
+        @NotNull
+        public List<Integer> getGuards()
+        {
+            return Collections.unmodifiableList(guards);
         }
 
         @Override
@@ -968,6 +988,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             }
 
             guardPos = BlockPosUtil.readFromByteBuf(buf);
+
+            final int numResidents = buf.readInt();
+            for (int i = 0; i < numResidents; ++i)
+            {
+                guards.add(buf.readInt());
+            }
         }
 
         @NotNull

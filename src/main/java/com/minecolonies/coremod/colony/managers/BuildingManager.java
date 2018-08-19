@@ -11,6 +11,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
+import com.minecolonies.coremod.colony.managers.interfaces.IBuildingManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.network.messages.ColonyViewBuildingViewMessage;

@@ -12,7 +12,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.managers.ICitizenManager;
+import com.minecolonies.coremod.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler; 
@@ -881,6 +881,8 @@ public class CitizenData
         buf.writeDouble(getSaturation());
         buf.writeDouble(citizenHappinessHandler.getHappiness());
 
+        citizenHappinessHandler.serializeViewNetworkData(buf);
+
         ByteBufUtils.writeUTF8String(buf, (job != null) ? job.getName() : "");
 
         writeStatusToBuffer(buf);
@@ -890,6 +892,8 @@ public class CitizenData
         final NBTTagCompound compound = new NBTTagCompound();
         compound.setTag("inventory", inventory.writeToNBT(new NBTTagList()));
         ByteBufUtils.writeTag(buf, compound);
+
+        BlockPosUtil.writeToByteBuf(buf, lastPosition);
     }
 
     /**

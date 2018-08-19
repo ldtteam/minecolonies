@@ -7,10 +7,12 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IntegerCache;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -180,6 +182,28 @@ public class InventoryUtils
     }
 
     /**
+     * Returns the indexes of all occurrences of an ItemStack that matches
+     * the given predicate in the {@link IItemHandler}.
+     *
+     * @param itemHandler                 ItemHandler to check
+     * @param itemStackSelectionPredicate The predicate to match.
+     * @return list of Indexes of the occurrences
+     */
+    public static List<Integer> findAllSlotsInItemHandlerWith(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    {
+        final List<Integer> returnList = new ArrayList<>();
+        for (int slot = 0; slot < itemHandler.getSlots(); slot++)
+        {
+            if (itemStackSelectionPredicate.test(itemHandler.getStackInSlot(slot)))
+            {
+                returnList.add(slot);
+            }
+        }
+
+        return returnList;
+    }
+
+    /**
      * Returns the amount of occurrences in the {@link IItemHandler}.
      *
      * @param itemHandler {@link IItemHandler} to scan.
@@ -287,6 +311,18 @@ public class InventoryUtils
                  .filter(slot -> ItemStackUtils.isEmpty(itemHandler.getStackInSlot(slot)))
                  .findFirst()
                  .orElse(-1);
+    }
+
+    /**
+     * Count all open slots in inventory.
+     * @param itemHandler the inventory.
+     * @return the amount of open slots.
+     */
+    public static long openSlotCount(final IItemHandler itemHandler)
+    {
+        return IntStream.range(0, itemHandler.getSlots())
+                 .filter(slot -> ItemStackUtils.isEmpty(itemHandler.getStackInSlot(slot)))
+                 .count();
     }
 
     /**
@@ -487,7 +523,7 @@ public class InventoryUtils
      */
     public static int findFirstSlotInProviderWith(@NotNull final ICapabilityProvider provider, final Item targetItem, final int itemDamage)
     {
-        return findFirstSlotInProviderWith(provider, (ItemStack stack) -> compareItems(stack, targetItem, itemDamage));
+        return findFirstSlotInProviderNotEmptyWith(provider, (ItemStack stack) -> compareItems(stack, targetItem, itemDamage));
     }
 
     /**
@@ -498,21 +534,19 @@ public class InventoryUtils
      * @param itemStackSelectionPredicate The predicate to match.
      * @return Index of the first occurrence
      */
-    public static int findFirstSlotInProviderWith(@NotNull final ICapabilityProvider provider, final Predicate<ItemStack> itemStackSelectionPredicate)
+    public static Map<IItemHandler, List<Integer>> findAllSlotsInProviderWith(@NotNull final ICapabilityProvider provider, final Predicate<ItemStack> itemStackSelectionPredicate)
     {
+        final Map<IItemHandler, List<Integer>> map = new HashMap<>();
         for (final IItemHandler handler : getItemHandlersFromProvider(provider))
         {
-            final int foundSlot = findFirstSlotInItemHandlerWith(handler, itemStackSelectionPredicate);
-            //TODO: When contract is hardened later: Replace this -1 check with a try-catch block.
-            if (foundSlot > -1)
+            final List<Integer> tempList = findAllSlotsInItemHandlerWith(handler, itemStackSelectionPredicate);
+            if (!tempList.isEmpty())
             {
-                return foundSlot;
+                map.put(handler, tempList);
             }
         }
 
-        return -1;
-        //TODO: Later harden contract to remove compare on slot := -1
-        //throw new IllegalStateException("Item "+targetItem.getUnlocalizedName() + " not found in ItemHandler!");
+        return map;
     }
 
     /**
@@ -531,6 +565,53 @@ public class InventoryUtils
             if (foundSlot > -1)
             {
                 return foundSlot;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * Returns the index of the first occurrence of an ItemStack that matches
+     * the given predicate in the {@link ICapabilityProvider}.
+     *
+     * @param provider                    Provider to check
+     * @param itemStackSelectionPredicate The list of predicates to match.
+     * @return Index of the first occurrence
+     */
+    public static int findFirstSlotInProviderNotEmptyWith(@NotNull final ICapabilityProvider provider, final List<Predicate<ItemStack>> itemStackSelectionPredicate)
+    {
+        for (final IItemHandler handler : getItemHandlersFromProvider(provider))
+        {
+            final int foundSlot = findFirstSlotInItemHandlerNotEmptyWith(handler, itemStackSelectionPredicate);
+            if (foundSlot > -1)
+            {
+                return foundSlot;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * Returns the index of the first occurrence of an ItemStack that matches
+     * the given predicate in the {@link IItemHandler}.
+     * Also applies the not empty check.
+     *
+     * @param itemHandler                 ItemHandler to check
+     * @param itemStackSelectionPredicate The list of predicates to match.
+     * @return Index of the first occurrence
+     */
+    private static int findFirstSlotInItemHandlerNotEmptyWith(final IItemHandler itemHandler, final List<Predicate<ItemStack>> itemStackSelectionPredicate)
+    {
+        for (final Predicate<ItemStack> predicate : itemStackSelectionPredicate)
+        {
+            for (int slot = 0; slot < itemHandler.getSlots(); slot++)
+            {
+                if (ItemStackUtils.NOT_EMPTY_PREDICATE.and(predicate).test(itemHandler.getStackInSlot(slot)))
+                {
+                    return slot;
+                }
             }
         }
 

@@ -1,8 +1,9 @@
-package com.minecolonies.coremod.colony.managers;
+package com.minecolonies.coremod.colony.managers.interfaces;
 
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.WorldServer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -76,13 +77,15 @@ public interface IBarbarianManager
 
     /**
      * Unregister a barbarian from the colony.
+     * @param world the serverWorld.
      * @param abstractEntityBarbarian the barbarian to unregister.
      */
-    void unregisterBarbarian(@NotNull final AbstractEntityBarbarian abstractEntityBarbarian);
+    void unregisterBarbarian(@NotNull final AbstractEntityBarbarian abstractEntityBarbarian, final WorldServer world);
 
     /**
      * Gets the horde of barbarians approaching the colony.
+     * @param world the serverWorld.
      * @return the list of entities.
      */
-    List<AbstractEntityBarbarian> getHorde();
+    List<AbstractEntityBarbarian> getHorde(final WorldServer world);
 }

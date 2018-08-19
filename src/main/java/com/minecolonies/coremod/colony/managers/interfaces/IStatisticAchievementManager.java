@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.managers;
+package com.minecolonies.coremod.colony.managers.interfaces;
 
 import com.minecolonies.coremod.achievements.MineColoniesAchievement;
 import net.minecraft.advancements.Advancement;

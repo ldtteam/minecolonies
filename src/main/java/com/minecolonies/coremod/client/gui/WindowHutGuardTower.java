@@ -102,6 +102,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         registerButton(GUI_BUTTON_RETRIEVAL_MODE, this::switchRetrievalMode);
         registerButton(GUI_BUTTON_SET_TARGET, this::setTarget);
         registerButton(GUI_BUTTON_RECALCULATE, this::recalculate);
+        registerButton(BUTTON_GET_TOOL, this::getTool);
 
         registerButton(GUI_SWITCH_TASK_PATROL, this::switchTask);
         registerButton(GUI_SWITCH_TASK_FOLLOW, this::switchTask);
@@ -115,6 +116,14 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         buttonTaskFollow = this.findPaneOfTypeByID(GUI_SWITCH_TASK_FOLLOW, Button.class);
         buttonTaskGuard = this.findPaneOfTypeByID(GUI_SWITCH_TASK_GUARD, Button.class);
         buttonSetTarget = this.findPaneOfTypeByID(GUI_BUTTON_SET_TARGET, Button.class);
+    }
+
+    /**
+     * Give the player directly the tool.
+     */
+    private void getTool()
+    {
+        givePlayerScepter(building.getTask());
     }
 
     @Override
@@ -483,7 +492,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
      */
     private void givePlayerScepter(final GuardTask localTask)
     {
-        MineColonies.getNetwork().sendToServer(new GuardScepterMessage(localTask.ordinal(), building.getID()));
+        MineColonies.getNetwork().sendToServer(new GuardScepterMessage(localTask.ordinal(), building.getID(), building.getColony().getID()));
     }
 
     /**

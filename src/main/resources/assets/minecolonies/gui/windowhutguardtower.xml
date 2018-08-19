@@ -64,6 +64,9 @@
                     <button id="switch" size="100 12" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOn)"/>
                 </box>
             </list>
+            <buttonimage id="getTool" size="129 17" pos="35 210"
+                         source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                         label="$(com.minecolonies.coremod.gui.workerHuts.getTool)" textcolor="black"/>
         </view>
     </switch>
     <buttonimage id="prevPage" size="18 10" pos="12 12" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
