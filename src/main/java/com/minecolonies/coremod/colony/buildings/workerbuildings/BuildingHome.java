@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.client.gui.WindowHomeBuilding;
+import com.minecolonies.coremod.client.gui.WindowHutCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -349,7 +349,7 @@ public class BuildingHome extends AbstractBuilding
         @Override
         public Window getWindow()
         {
-            return new WindowHomeBuilding(this);
+            return new WindowHutCitizen(this);
         }
 
         @Override

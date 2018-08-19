@@ -170,21 +170,4 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
         super.onOpened();
         setPage("");
     }
-
-    @Override
-    public void onButtonClicked(@NotNull final Button button)
-    {
-        switch (button.getID())
-        {
-            case BUTTON_PREVPAGE:
-                setPage(BUTTON_PREVPAGE);
-                break;
-            case BUTTON_NEXTPAGE:
-                setPage(BUTTON_NEXTPAGE);
-                break;
-            default:
-                super.onButtonClicked(button);
-                break;
-        }
-    }
 }

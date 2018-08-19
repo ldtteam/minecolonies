@@ -143,7 +143,7 @@
             <switch id="switchpagePermissions" size="100% 100%">
                 <view id="pageAddPlayer">
                     <list id="users" size="148 171" pos="201 36">
-                        <box size="148 30" linewidth="2">
+                        <box size="100% 30" linewidth="2">
                             <label id="name" size="100 11" pos="5 2" color="black"/>
                             <button id="removePlayer" size="11 11" pos="7 2" align="TOP_RIGHT" label="X"/>
                             <button id="demote" size="11 11" pos="5 16" label="-"/>

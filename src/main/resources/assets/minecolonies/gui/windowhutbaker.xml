@@ -21,7 +21,7 @@
             </list>
         </view>
     </switch>
-    <buttonimage id="prevPage" size="18 10" pos="12 12" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
-    <buttonimage id="nextPage" size="18 10" pos="160 12" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
-    <label id="pageNum" size="20 11" pos="158 221" textalign="MIDDLE" label="" color="black"/>
+    <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
+    <buttonimage id="nextPage" size="18 10" pos="159 13" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
+    <label id="pageNum" size="20 11" pos="158 222" textalign="MIDDLE" label="" color="black"/>
 </window>

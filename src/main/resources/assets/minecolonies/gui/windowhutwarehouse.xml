@@ -9,7 +9,7 @@
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
             <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
                    label="$(com.minecolonies.coremod.gui.warehouse.upgrade)"/>
-            <box size="166 30" linewidth="2" pos="13 29">
+            <box size="165 30" linewidth="2" pos="13 29">
                 <itemicon id="resourceIcon" size="16 16" pos="1 1"/>
                 <label id="resourceName" size="100 12" pos="20 3" textalign="MIDDLE_LEFT" color="black"/>
                 <label id="resourceMissing" size="50 12" pos="2 18" textalign="MIDDLE_LEFT" color="black"/>
@@ -20,7 +20,7 @@
             </box>
         </view>
     </switch>
-    <buttonimage id="prevPage" size="18 10" pos="12 12" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
-    <buttonimage id="nextPage" size="18 10" pos="160 12" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
-    <label id="pageNum" size="20 11" pos="158 221" textalign="MIDDLE" label="" color="black"/>
+    <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
+    <buttonimage id="nextPage" size="18 10" pos="159 13" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
+    <label id="pageNum" size="20 11" pos="158 222" textalign="MIDDLE" label="" color="black"/>
 </window>

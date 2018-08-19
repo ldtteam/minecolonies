@@ -79,6 +79,18 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
+        switch (button.getID())
+        {
+            case BUTTON_PREVPAGE:
+                setPage(BUTTON_PREVPAGE);
+                return;
+            case BUTTON_NEXTPAGE:
+                setPage(BUTTON_NEXTPAGE);
+                return;
+            default:
+                break;
+        }
+
         if (buttons.containsKey(button.getID()))
         {
             buttons.get(button.getID()).accept(button);

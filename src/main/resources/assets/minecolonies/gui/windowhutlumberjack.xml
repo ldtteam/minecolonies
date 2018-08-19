@@ -9,18 +9,18 @@
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
             <label size="130 11" pos="30 14" color="black" textalign="MIDDLE"
                    label="$(com.minecolonies.coremod.gui.workerHuts.saplingList)"/>
-            <list id="trees" size="166 149" pos="13 29">
+            <list id="trees" size="166 151" pos="13 29">
                 <box size="100% 30" linewidth="2">
                     <itemicon id="symbol" size="16 16" pos="5 2"/>
                     <label id="name" size="50 12" pos="35 16" textalign="MIDDLE_LEFT" color="black"/>
                     <button id="switch" size="100 12" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOn)"/>
                 </box>
             </list>
-            <button id="toggleAll" size="100 15" pos="45 180" label="$(com.minecolonies.coremod.gui.workerHuts.toggleAllOn)"/>
-            <button id="saplingReplant" size="100 15" pos="45 198" label=""/>
+            <button id="toggleAll" size="100 15" pos="45 185" label="$(com.minecolonies.coremod.gui.workerHuts.toggleAllOn)"/>
+            <button id="saplingReplant" size="100 15" pos="45 203" label=""/>
         </view>
     </switch>
-    <buttonimage id="prevPage" size="18 10" pos="12 12" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
-    <buttonimage id="nextPage" size="18 10" pos="160 12" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
-    <label id="pageNum" size="20 11" pos="158 221" textalign="MIDDLE" label="" color="black"/>
+    <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
+    <buttonimage id="nextPage" size="18 10" pos="159 13" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
+    <label id="pageNum" size="20 11" pos="158 222" textalign="MIDDLE" label="" color="black"/>
 </window>

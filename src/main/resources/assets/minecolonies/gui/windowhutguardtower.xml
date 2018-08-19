@@ -53,10 +53,10 @@
         <view id="mobActions" size="100% 100%">
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
             <label size="130 11" pos="30 14" color="black" textalign="MIDDLE"
-                   label="$(com.minecolonies.coremod.gui.workerHuts.mobsList)"/>
-            <button id="recalculate" size="50% 14" pos="42 29"
+                    label="$(com.minecolonies.coremod.gui.workerHuts.mobsList)"/>
+            <button id="recalculate" size="100 14" pos="45 29"
                     label="$(com.minecolonies.coremod.gui.workerHuts.calculate)"/>
-            <list id="mobs" size="166 169" pos="13 45">
+            <list id="mobs" size="166 152" pos="13 48">
                 <box size="100% 30" linewidth="2">
                     <button id="prioUp" size="15 15" label="↥" pos="0 0"/>
                     <button id="prioDown" size="15 15" label="↧" pos="0 15"/>
@@ -64,12 +64,12 @@
                     <button id="switch" size="100 12" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOn)"/>
                 </box>
             </list>
-            <buttonimage id="getTool" size="129 17" pos="35 210"
-                         source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                         label="$(com.minecolonies.coremod.gui.workerHuts.getTool)" textcolor="black"/>
+            <buttonimage id="getTool" size="129 17" pos="30 205" textcolor="black"
+                        source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                        label="$(com.minecolonies.coremod.gui.workerHuts.getTool)"/>
         </view>
     </switch>
-    <buttonimage id="prevPage" size="18 10" pos="12 12" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
-    <buttonimage id="nextPage" size="18 10" pos="160 12" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
-    <label id="pageNum" size="20 11" pos="158 221" textalign="MIDDLE" label="" color="black"/>
+    <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
+    <buttonimage id="nextPage" size="18 10" pos="159 13" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
+    <label id="pageNum" size="20 11" pos="158 222" textalign="MIDDLE" label="" color="black"/>
 </window>

@@ -1,20 +1,18 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="250 244" pause="false"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
         lightbox="false"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
 
-    <image source="minecolonies:textures/gui/citizen/colonist_papper_sketch.png" size="190 244"/>
+	<image source="minecolonies:textures/gui/citizen/colonist_papper.png" size="190 244"/>
 
-    <switch id="pages" size="100% 100%" pos="0 7">
-
-        <view id="pageActions" size="100% 100%" pos="0 7">
+    <switch id="pages" size="100% 100%" pos="0 0">
+        <view id="pageActions" size="100% 100%">
             <layout source="minecolonies:gui/citizen/layouts/main.xml"/>
         </view>
-
-        <view id="requestsView" size="100% 100%" pos="0 7">
+        <view id="requestsView" size="100% 100%">
             <layout source="minecolonies:gui/citizen/layouts/requests.xml"/>
         </view>
-        <view id="happinessModifierView" size="100% 100%" pos="0 -7">
-		    <image source="minecolonies:textures/gui/citizen/colonist_papper.png" size="190 244"/>
+		
+        <view id="happinessModifierView" size="100% 100%">
 			<label id="happinessModifier" pos="25 32" size="136 11" textalign="MIDDLE" color="black"/>
 
 			<label id="modifier1" pos="45 52" size="136 11" textalign="MIDDLE_LEFT" color="black"/>
@@ -37,6 +35,7 @@
 		</view>
     </switch>
 
-    <buttonimage id="prevPage" align="TOP_LEFT" size="26 8" pos="10 25" source="minecolonies:textures/gui/builderhut/builder_sketch_arrow_left_c.png"/>
-   	<buttonimage id="nextPage" align="TOP_RIGHT" size="26 8" pos="70 25" source="minecolonies:textures/gui/builderhut/builder_sketch_arrow_right_c.png"/>
+    <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
+    <buttonimage id="nextPage" size="18 10" pos="159 13" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
+    <label id="pageNum" size="20 11" pos="158 222" textalign="MIDDLE" label="" color="black"/>
 </window>

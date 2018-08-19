@@ -76,16 +76,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
     private       int             lifeCount  = 0;
 
     /**
-     * Button leading to the previous page.
-     */
-    private Button buttonPrevPage;
-
-    /**
-     * Button leading to the next page.
-     */
-    private Button buttonNextPage;
-
-    /**
      * Constructor to initiate the citizen windows.
      *
      * @param citizen citizen to bind the window to.
@@ -116,10 +106,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
     public void onOpened()
     {
         findPaneOfTypeByID(WINDOW_ID_NAME, Label.class).setLabelText(citizen.getName());
-
-        findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class).setEnabled(false);
-        buttonPrevPage = findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class);
-        buttonNextPage = findPaneOfTypeByID(BUTTON_NEXT_PAGE, Button.class);
 
         createHealthBar(citizen, findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class));
         createSaturationBar();
@@ -512,17 +498,8 @@ public class WindowCitizen extends AbstractWindowSkeleton
             case REQUEST_FULLFIL:
                 fulfill(button);
                 break;
-            case BUTTON_NEXT_PAGE:
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(HAPPINESS_MODIFIER_PANE);
-                buttonPrevPage.setEnabled(true);
-                buttonNextPage.setEnabled(false);
-                break;
-            case BUTTON_PREV_PAGE:
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
-                buttonPrevPage.setEnabled(false);
-                buttonNextPage.setEnabled(true);
-                break;
             default:
+                super.onButtonClicked(button);
                 break;
         }
     }
