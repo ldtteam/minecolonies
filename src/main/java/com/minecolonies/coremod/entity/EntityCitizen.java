@@ -868,6 +868,10 @@ public class EntityCitizen extends AbstractEntityCitizen
             return DesiredActivity.SLEEP;
         }
 
+        if (citizenSleepHandler.isAsleep())
+        {
+            citizenSleepHandler.onWakeUp();
+        }
         isDay = true;
 
         if (CompatibilityUtils.getWorld(this).isRaining() && !shouldWorkWhileRaining())
