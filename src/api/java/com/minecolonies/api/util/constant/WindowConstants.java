@@ -697,6 +697,16 @@ public final class WindowConstants
     public static final String LABEL_CONSTRUCTION_POS =  "constructionPos";
 
     /**
+     * The fields used into the happiness
+     */
+    public static final String FOOD_MODIFIER    = "foodLevel";
+    public static final String HOUSE_MODIFIER   = "houseLevel";
+    public static final String DAMAGE_MODIFIER  = "damageLevel";
+    public static final String JOB_MODIFIER     = "jobLevel";
+    public static final String FIELDS_MODIFIER  = "farmsLevel";
+    public static final String TOOLS_MODIFIER   = "toolsLevel";
+
+    /**
      * Citizen view constants.
      */
 
@@ -981,6 +991,21 @@ public final class WindowConstants
      */
     public static final int LIFE_COUNT_DIVIDER = 30;
 
+    /**
+     * Button leading the player to the next page.
+     */
+    public static final String BUTTON_PREV_PAGE = "prevPage";
+
+    /**
+     * Button leading the player to the previous page.
+     */
+    public static final String BUTTON_NEXT_PAGE = "nextPage";
+
+    /**
+     * ID for happiness modifier view
+     */
+    public static final String HAPPINESS_MODIFIER_PANE = "happinessModifierView";
+    
     /**
      * public constructor to hide implicit public one.
      */

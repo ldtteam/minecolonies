@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.WindowConstants;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.ItemIcon;
@@ -24,15 +25,6 @@ import java.util.List;
  */
 public class WindowHutBaker extends AbstractWindowWorkerBuilding<BuildingBaker.View>
 {
-    /**
-     * Button leading the player to the next page.
-     */
-    private static final String BUTTON_PREV_PAGE = "prevPage";
-
-    /**
-     * Button leading the player to the previous page.
-     */
-    private static final String BUTTON_NEXT_PAGE = "nextPage";
 
     /**
      * Id of the the assign button inside the GUI.
@@ -93,8 +85,8 @@ public class WindowHutBaker extends AbstractWindowWorkerBuilding<BuildingBaker.V
     public WindowHutBaker(final BuildingBaker.View building)
     {
         super(building, Constants.MOD_ID + ":gui/windowHutBaker.xml");
-        registerButton(BUTTON_PREV_PAGE, this::prevClicked);
-        registerButton(BUTTON_NEXT_PAGE, this::nextClicked);
+        registerButton(WindowConstants.BUTTON_PREV_PAGE, this::prevClicked);
+        registerButton(WindowConstants.BUTTON_NEXT_PAGE, this::nextClicked);
         registerButton(TAG_BUTTON_ASSIGN, this::assignClicked);
     }
 
@@ -130,9 +122,9 @@ public class WindowHutBaker extends AbstractWindowWorkerBuilding<BuildingBaker.V
 
         final List<IRecipeStorage> recipes = BakerRecipes.getRecipes();
 
-        findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class).setEnabled(false);
-        buttonPrevPage = findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class);
-        buttonNextPage = findPaneOfTypeByID(BUTTON_NEXT_PAGE, Button.class);
+        findPaneOfTypeByID(WindowConstants.BUTTON_PREV_PAGE, Button.class).setEnabled(false);
+        buttonPrevPage = findPaneOfTypeByID(WindowConstants.BUTTON_PREV_PAGE, Button.class);
+        buttonNextPage = findPaneOfTypeByID(WindowConstants.BUTTON_NEXT_PAGE, Button.class);
 
         recipeList = findPaneOfTypeByID(LIST_RECIPES, ScrollingList.class);
         recipeList.setDataProvider(new ScrollingList.DataProvider()
