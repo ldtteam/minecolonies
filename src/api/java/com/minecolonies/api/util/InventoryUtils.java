@@ -7,12 +7,10 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IntegerCache;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1410,7 +1408,7 @@ public class InventoryUtils
     {
         for (final IItemHandler handler : getItemHandlersFromProvider(targetProvider))
         {
-            if (transferItemStackIntoNextFreeSlotInItemHandlers(sourceHandler, sourceIndex, handler))
+            if (transferItemStackIntoNextFreeSlotInItemHandler(sourceHandler, sourceIndex, handler))
             {
                 return true;
             }
@@ -1428,9 +1426,9 @@ public class InventoryUtils
      * @param targetHandler The {@link IItemHandler} that works as Target.
      * @return True when the swap was successful, false when not.
      */
-    public static boolean transferItemStackIntoNextFreeSlotInItemHandlers(
+    public static boolean transferItemStackIntoNextFreeSlotInItemHandler(
                                                                            @NotNull final IItemHandler sourceHandler,
-                                                                           @NotNull final int sourceIndex,
+                                                                           final int sourceIndex,
                                                                            @NotNull final IItemHandler targetHandler)
     {
         ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
@@ -1459,6 +1457,91 @@ public class InventoryUtils
         }
 
         return false;
+    }
+
+    /**
+     * Method to swap the ItemStacks from the given source {@link IItemHandler}
+     * to the given target {@link IItemHandler}. Trying to merge existing itemStacks if possible.
+     *
+     * @param sourceHandler The {@link IItemHandler} that works as Source.
+     * @param sourceIndex   The index of the slot that is being extracted from.
+     * @param targetHandler The {@link IItemHandler} that works as Target.
+     * @return True when the swap was successful, false when not.
+     */
+    public static boolean transferItemStackIntoNextBestSlotInItemHandler(
+      @NotNull final IItemHandler sourceHandler,
+      final int sourceIndex,
+      @NotNull final IItemHandler targetHandler)
+    {
+        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
+
+        if(ItemStackUtils.isEmpty(sourceStack))
+        {
+            return true;
+        }
+
+        sourceStack = mergeItemStackIntoNextBestSlotInItemHandlers(sourceHandler, sourceIndex, targetHandler);
+
+        if(ItemStackUtils.isEmpty(sourceStack))
+        {
+            return true;
+        }
+
+        for (int i = 0; i < targetHandler.getSlots(); i++)
+        {
+            sourceStack = targetHandler.insertItem(i, sourceStack, false);
+            if (ItemStackUtils.isEmpty(sourceStack))
+            {
+                sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
+                return true;
+            }
+        }
+
+        final ItemStack originalStack = sourceStack.copy();
+        if (!ItemStack.areItemStacksEqual(sourceStack, originalStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(sourceStack, originalStack))
+        {
+            final int usedAmount = ItemStackUtils.getSize(sourceStack) - ItemStackUtils.getSize(originalStack);
+            sourceHandler.extractItem(sourceIndex, usedAmount, false);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Method to merge the ItemStacks from the given source {@link IItemHandler}
+     * to the given target {@link IItemHandler}. Trying to merge itemStacks or returning stack if not possible.
+     *
+     * @param sourceHandler The {@link IItemHandler} that works as Source.
+     * @param sourceIndex   The index of the slot that is being extracted from.
+     * @param targetHandler The {@link IItemHandler} that works as Target.
+     * @return True when the swap was successful, false when not.
+     */
+    public static ItemStack mergeItemStackIntoNextBestSlotInItemHandlers(
+      @NotNull final IItemHandler sourceHandler,
+      final int sourceIndex,
+      @NotNull final IItemHandler targetHandler)
+    {
+        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
+
+        if(ItemStackUtils.isEmpty(sourceStack))
+        {
+            return sourceStack;
+        }
+
+        for (int i = 0; i < targetHandler.getSlots(); i++)
+        {
+            if (!ItemStackUtils.isEmpty(targetHandler.getStackInSlot(i)) && targetHandler.getStackInSlot(i).isItemEqual(sourceStack))
+            {
+                sourceStack = targetHandler.insertItem(i, sourceStack, false);
+                if (ItemStackUtils.isEmpty(sourceStack))
+                {
+                    sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
+                    return sourceStack;
+                }
+            }
+        }
+        return sourceStack;
     }
 
     public static boolean transferXOfFirstSlotInProviderWithIntoNextFreeSlotInProvider(
@@ -1612,7 +1695,42 @@ public class InventoryUtils
     {
         for (final IItemHandler handler : getItemHandlersFromProvider(sourceProvider))
         {
-            if (transferItemStackIntoNextFreeSlotInItemHandlers(handler, sourceIndex, targetHandler))
+            if (transferItemStackIntoNextFreeSlotInItemHandler(handler, sourceIndex, targetHandler))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Method to swap the ItemStacks from the given source {@link
+     * ICapabilityProvider} to the given target {@link IItemHandler}.
+     *
+     * @param sourceProvider The {@link ICapabilityProvider} that works as
+     *                       Source.
+     * @param sourceIndex    The index of the slot that is being extracted
+     *                       from.
+     * @param targetHandler  The {@link IItemHandler} that works as Target.
+     * @return True when the swap was successful, false when not.
+     */
+    public static boolean transferItemStackIntoNextBestSlotFromProvider(
+      @NotNull final ICapabilityProvider sourceProvider,
+      final int sourceIndex,
+      @NotNull final IItemHandler targetHandler)
+    {
+        for (final IItemHandler handler : getItemHandlersFromProvider(sourceProvider))
+        {
+            if(ItemStackUtils.isEmpty(mergeItemStackIntoNextBestSlotInItemHandlers(handler, sourceIndex, targetHandler)))
+            {
+                return true;
+            }
+        }
+
+        for (final IItemHandler handler : getItemHandlersFromProvider(sourceProvider))
+        {
+            if (transferItemStackIntoNextFreeSlotInItemHandler(handler, sourceIndex, targetHandler))
             {
                 return true;
             }
