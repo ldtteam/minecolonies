@@ -458,7 +458,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             }
         }
 
-        Log.getLogger().warn("Couldn't handle block: " + blockState.getBlock().getUnlocalizedName());
+        Log.getLogger().warn("Couldn't handle block: " + blockState.getBlock().getTranslationKey());
         return true;
     }
 

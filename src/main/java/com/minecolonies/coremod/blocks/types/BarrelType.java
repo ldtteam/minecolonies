@@ -113,7 +113,7 @@ public enum BarrelType implements IStringSerializable
      * Returns the unlocalized name
      * @return the unlocalized name of the type
      */
-    public String getUnlocalizedName()
+    public String getTranslationKey()
     {
         return this.unlocalizedName;
     }

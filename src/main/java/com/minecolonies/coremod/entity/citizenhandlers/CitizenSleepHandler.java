@@ -204,7 +204,7 @@ public class CitizenSleepHandler
             return 0;
         }
 
-        return SLEEPING_RENDER_OFFSET * (float) enumfacing.getFrontOffsetX();
+        return SLEEPING_RENDER_OFFSET * (float) enumfacing.getXOffset();
     }
 
     /**
@@ -227,6 +227,6 @@ public class CitizenSleepHandler
             return 0;
         }
 
-        return SLEEPING_RENDER_OFFSET * (float) enumfacing.getFrontOffsetZ();
+        return SLEEPING_RENDER_OFFSET * (float) enumfacing.getZOffset();
     }
 }

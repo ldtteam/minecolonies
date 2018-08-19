@@ -155,14 +155,14 @@ public class EventHandler
         if (entity instanceof EntityPlayerMP && entity.dimension == 0)
         {
             final World world = entity.getEntityWorld();
-            final Chunk newChunk = world.getChunkFromChunkCoords(event.getNewChunkX(), event.getNewChunkZ());
+            final Chunk newChunk = world.getChunk(event.getNewChunkX(), event.getNewChunkZ());
             ColonyManager.loadChunk(newChunk, entity.world);
 
             final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null);
 
             MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(newCloseColonies, newChunk.x, newChunk.z));
             @NotNull final EntityPlayerMP player = (EntityPlayerMP) entity;
-            final Chunk oldChunk = world.getChunkFromChunkCoords(event.getOldChunkX(), event.getOldChunkZ());
+            final Chunk oldChunk = world.getChunk(event.getOldChunkX(), event.getOldChunkZ());
             final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null);
 
             // Add new subscribers to colony.
@@ -228,7 +228,7 @@ public class EventHandler
             if (entityCitizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && entityCitizen.getEntityWorld().isBlockLoaded(entityCitizen.getPosition()))
             {
                 final World world = entityCitizen.getEntityWorld();
-                final Chunk chunk = world.getChunkFromChunkCoords(event.getNewChunkX(), event.getNewChunkZ());
+                final Chunk chunk = world.getChunk(event.getNewChunkX(), event.getNewChunkZ());
                 final IColonyTagCapability chunkCapability = chunk.getCapability(CLOSE_COLONY_CAP, null);
                 if (chunkCapability != null && chunkCapability.getOwningColony() != 0
                       && entityCitizen.getCitizenColonyHandler().getColonyId() != chunkCapability.getOwningColony())

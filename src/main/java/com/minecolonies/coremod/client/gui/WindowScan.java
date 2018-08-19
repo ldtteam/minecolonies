@@ -177,7 +177,7 @@ public class WindowScan extends AbstractWindowSkeleton
         final ItemStack stack = tempRes.get(row).getItemStack();
         MineColonies.getNetwork().sendToServer(new RemoveBlockMessage(new BlockPos(x1, y1, z1), new BlockPos(x2, y2, z2), stack));
         final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
-        resources.remove(stack.getUnlocalizedName() + ":" + stack.getItemDamage() + "-" + hashCode);
+        resources.remove(stack.getTranslationKey() + ":" + stack.getItemDamage() + "-" + hashCode);
         updateResourceList();
     }
 
@@ -365,7 +365,7 @@ public class WindowScan extends AbstractWindowSkeleton
         }
 
         final int hashCode = res.hasTagCompound() ? res.getTagCompound().hashCode() : 0;
-        ItemStorage resource = resources.get(res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + hashCode);
+        ItemStorage resource = resources.get(res.getTranslationKey() + ":" + res.getItemDamage() + "-" + hashCode);
         if (resource == null)
         {
             resource = new ItemStorage(res);
@@ -377,10 +377,10 @@ public class WindowScan extends AbstractWindowSkeleton
         }
 
         if (filter.isEmpty()
-                || res.getUnlocalizedName().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+                || res.getTranslationKey().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
                 || res.getDisplayName().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US)))
         {
-            resources.put(res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + hashCode, resource);
+            resources.put(res.getTranslationKey() + ":" + res.getItemDamage() + "-" + hashCode, resource);
         }
     }
 

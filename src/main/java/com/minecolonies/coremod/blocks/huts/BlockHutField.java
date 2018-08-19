@@ -94,7 +94,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
     private void initBlock()
     {
         setRegistryName(REGISTRY_NAME);
-        setUnlocalizedName(Constants.MOD_ID.toLowerCase(Locale.ENGLISH) + "." + REGISTRY_NAME);
+        setTranslationKey(Constants.MOD_ID.toLowerCase(Locale.ENGLISH) + "." + REGISTRY_NAME);
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         //Blast resistance for creepers etc. makes them explosion proof.
         setResistance(RESISTANCE);
@@ -155,7 +155,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
     @NotNull
     @Override
     @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getBlockLayer()
+    public BlockRenderLayer getRenderLayer()
     {
         return BlockRenderLayer.SOLID;
     }
@@ -231,10 +231,10 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
     }
 
     @Override
-    public void onBlockDestroyedByExplosion(final World worldIn, final BlockPos pos, final Explosion explosionIn)
+    public void onExplosionDestroy(final World worldIn, final BlockPos pos, final Explosion explosionIn)
     {
         notifyColonyAboutDestruction(worldIn, pos);
-        super.onBlockDestroyedByExplosion(worldIn, pos, explosionIn);
+        super.onExplosionDestroy(worldIn, pos, explosionIn);
     }
 
     @Override
@@ -245,10 +245,10 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
     }
 
     @Override
-    public void onBlockDestroyedByPlayer(final World worldIn, final BlockPos pos, final IBlockState state)
+    public void onPlayerDestroy(final World worldIn, final BlockPos pos, final IBlockState state)
     {
         notifyColonyAboutDestruction(worldIn, pos);
-        super.onBlockDestroyedByPlayer(worldIn, pos, state);
+        super.onPlayerDestroy(worldIn, pos, state);
     }
 
     /**

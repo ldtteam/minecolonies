@@ -31,7 +31,7 @@ public class ItemChiefSword extends ItemSword
     public ItemChiefSword()
     {
         super(ToolMaterial.DIAMOND);
-        super.setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + ITEM_NAME);
+        super.setTranslationKey(Constants.MOD_ID.toLowerCase() + "." + ITEM_NAME);
         setRegistryName(ITEM_NAME);
         super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
     }

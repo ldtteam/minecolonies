@@ -146,7 +146,7 @@ public final class ConstructionTapeHelper
     public static int checkIfPlaceable(@NotNull final int x, @NotNull final int y, @NotNull final int z, @NotNull final World world)
     {
         BlockPos target = new BlockPos(x,y,z);
-        final Chunk chunk = world.getChunkFromBlockCoords(target);
+        final Chunk chunk = world.getChunk(target);
 
         target = new BlockPos(x, chunk.getTopFilledSegment() + 16, z);
         while(world.getBlockState(target).getMaterial().isReplaceable())

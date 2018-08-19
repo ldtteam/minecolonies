@@ -49,7 +49,7 @@ public class BlockTimberFrame extends AbstractBlockMinecoloniesPillar<BlockTimbe
     private void initBlock(final String name)
     {
         setRegistryName(name);
-        setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.US), name));
+        setTranslationKey(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.US), name));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
@@ -85,7 +85,7 @@ public class BlockTimberFrame extends AbstractBlockMinecoloniesPillar<BlockTimbe
         final boolean straight = isConnectable(straightState);
         final boolean back = isConnectable(backState);
 
-        if(!isConnectable(state) || state.getBlock().getUnlocalizedName().contains(TimberFrameType.HORIZONTALNOCAP.getName())
+        if(!isConnectable(state) || state.getBlock().getTranslationKey().contains(TimberFrameType.HORIZONTALNOCAP.getName())
                 || (state.getValue(AXIS) == EnumFacing.Axis.Y && !up && !down)
                 || (state.getValue(AXIS) == EnumFacing.Axis.X && !left && !right)
                 || (state.getValue(AXIS) == EnumFacing.Axis.Z && !straight && !back))
@@ -153,10 +153,10 @@ public class BlockTimberFrame extends AbstractBlockMinecoloniesPillar<BlockTimbe
 
     private static boolean isConnectable(final IBlockState state)
     {
-        return state.getBlock() instanceof BlockTimberFrame && (state.getBlock().getUnlocalizedName().contains(TimberFrameType.SIDEFRAMED.getName())
-                || state.getBlock().getUnlocalizedName().contains(TimberFrameType.GATEFRAMED.getName())
-                || state.getBlock().getUnlocalizedName().contains(TimberFrameType.DOWNGATED.getName())
-                || state.getBlock().getUnlocalizedName().contains(TimberFrameType.HORIZONTALNOCAP.getName()));
+        return state.getBlock() instanceof BlockTimberFrame && (state.getBlock().getTranslationKey().contains(TimberFrameType.SIDEFRAMED.getName())
+                || state.getBlock().getTranslationKey().contains(TimberFrameType.GATEFRAMED.getName())
+                || state.getBlock().getTranslationKey().contains(TimberFrameType.DOWNGATED.getName())
+                || state.getBlock().getTranslationKey().contains(TimberFrameType.HORIZONTALNOCAP.getName()));
     }
 
     @SuppressWarnings(DEPRECATION)

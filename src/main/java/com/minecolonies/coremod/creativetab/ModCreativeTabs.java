@@ -14,7 +14,7 @@ public final class ModCreativeTabs
     {
 
         @Override
-        public ItemStack getTabIconItem()
+        public ItemStack createIcon()
         {
             this.setBackgroundImageName("minecolonies_background.png");
             return new ItemStack(ModBlocks.blockHutTownHall);

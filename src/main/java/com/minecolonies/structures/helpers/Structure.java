@@ -283,7 +283,7 @@ public class Structure
         {
             if (ColonyManager.getServerUUID() != null)
             {
-                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID());
+                return new File(Minecraft.getMinecraft().gameDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID());
             }
             else
             {
@@ -302,7 +302,7 @@ public class Structure
      */
     public static File getClientSchematicsFolder()
     {
-        return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID);
+        return new File(Minecraft.getMinecraft().gameDir, Constants.MOD_ID);
     }
 
     /**
