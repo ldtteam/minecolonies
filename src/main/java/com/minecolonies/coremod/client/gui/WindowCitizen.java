@@ -44,7 +44,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Window for the citizen.
  */
@@ -602,36 +602,36 @@ public class WindowCitizen extends AbstractWindowSkeleton
      */
     private void updateHappiness()
     {
-        final String[] imagesIds = new String[] {FOOD_MODIFIER, HOUSE_MODIFIER, DAMAGE_MODIFIER, JOB_MODIFIER, FIELDS_MODIFIER, TOOLS_MODIFIER};
+        int row = 1;
         final double[] levels = new double[] {citizen.getFoodModifier(), citizen.getHouseModifier(), citizen.getDamageModifier(), citizen.getJobModifier(), citizen.getFieldsModifier(), citizen.getToolsModifiers()};
+        final String[] labelIds = new String[] {CMCG_HAPPINESS_FOOD, CMCG_HAPPINESS_DAMAGE, CMCG_HAPPINESS_HOUSE, CMCG_HAPPINESS_JOB, CMCG_HAPPINESS_FARMS, CMCG_HAPPINESS_TOOLS};
 
         findPaneOfTypeByID(HAPPINESS_MODIFIER_PANE, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
         if (findPaneByID(HAPPINESS_MODIFIER_PANE) != null)
         {
             findPaneOfTypeByID("happinessModifier", Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.happinessModifier"));
-            findPaneOfTypeByID("food", Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.food"));
-            findPaneOfTypeByID("damage", Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.damage"));
-            findPaneOfTypeByID("house", Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.house"));
-            findPaneOfTypeByID("job", Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.job"));
-            findPaneOfTypeByID("farms", Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.farms"));
-            findPaneOfTypeByID("tools", Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.tools"));
-    
-            
-            for (int i = 0; i < imagesIds.length; i++)
+
+            for (int i = 0; i < levels.length; i++)
             {
-                final Image image = findPaneOfTypeByID(imagesIds[i], Image.class);
+                final Image image = findPaneOfTypeByID("modifierImage"+row, Image.class);
                 if (levels[i] < 0)
                 {
+                    findPaneOfTypeByID("modifier"+row, Label.class).setLabelText(LanguageHandler.format(labelIds[i]));
                     image.setImage(RED_ICON);
-                }
-                else if (levels[i] == 0)
-                {
-                    image.setImage(YELLOW_ICON);
+                    row++;
                 }
                 else if (levels[i] > 0)
                 {
+                    findPaneOfTypeByID("modifier"+row, Label.class).setLabelText(LanguageHandler.format(labelIds[i]));
                     image.setImage(GREEN_ICON);
+                    row++;
                 }
+            }
+            
+            for (int i = row; i<= levels.length; i++)
+            {
+                final Image image = findPaneOfTypeByID("modifierImage"+i, Image.class);
+                image.hide();
             }
         }
     }
