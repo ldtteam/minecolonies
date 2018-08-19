@@ -881,6 +881,8 @@ public class CitizenData
         buf.writeDouble(getSaturation());
         buf.writeDouble(citizenHappinessHandler.getHappiness());
 
+        citizenHappinessHandler.serializeViewNetworkData(buf);
+
         ByteBufUtils.writeUTF8String(buf, (job != null) ? job.getName() : "");
 
         writeStatusToBuffer(buf);
