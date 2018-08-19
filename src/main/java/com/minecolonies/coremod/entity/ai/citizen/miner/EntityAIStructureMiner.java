@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
+import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.coremod.colony.Colony;
@@ -20,6 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -115,15 +117,15 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
           /**
            * If IDLE - switch to start working.
            */
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepareForMining),
-          new AITarget(MINER_SEARCHING_LADDER, this::lookForLadder),
-          new AITarget(MINER_WALKING_TO_LADDER, this::goToLadder),
-          new AITarget(MINER_CHECK_MINESHAFT, this::checkMineShaft),
-          new AITarget(MINER_MINING_SHAFT, this::doShaftMining),
-          new AITarget(MINER_BUILDING_SHAFT, this::doShaftBuilding),
-          new AITarget(MINER_MINING_NODE, this::executeNodeMining)
+          new AITarget(IDLE, START_WORKING, true),
+          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, true, this::prepareForMining),
+          new AITarget(MINER_SEARCHING_LADDER, true, this::lookForLadder),
+          new AITarget(MINER_WALKING_TO_LADDER, true, this::goToLadder),
+          new AITarget(MINER_CHECK_MINESHAFT, true, this::checkMineShaft),
+          new AITarget(MINER_MINING_SHAFT, true, this::doShaftMining),
+          new AITarget(MINER_BUILDING_SHAFT, true, this::doShaftBuilding),
+          new AITarget(MINER_MINING_NODE, true, this::executeNodeMining)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(
           2 * worker.getCitizenData().getStrength()

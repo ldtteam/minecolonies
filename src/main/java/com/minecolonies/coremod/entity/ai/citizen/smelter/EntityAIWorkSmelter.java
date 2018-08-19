@@ -106,7 +106,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     {
         super(job);
         super.registerTargets(
-          new AITarget(SMELTER_SMELTING_ITEMS, this::smeltStuff)
+          new AITarget(SMELTER_SMELTING_ITEMS, false, this::smeltStuff)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
                                   + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());

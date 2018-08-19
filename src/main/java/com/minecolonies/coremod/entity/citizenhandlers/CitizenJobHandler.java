@@ -4,12 +4,21 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.entity.ai.util.AITarget;
+
 import net.minecraft.entity.ai.EntityAITasks;
+import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.coremod.entity.AbstractEntityCitizen.DATA_MODEL;
+
+import java.util.function.Predicate;
 
 /**
  * Handles the citizen job methods.
@@ -147,5 +156,28 @@ public class CitizenJobHandler
     public AbstractJob getColonyJob()
     {
         return citizen.getCitizenData() == null ? null : citizen.getCitizenData().getJob();
+    }
+
+    public boolean isInHut(@Nullable final Predicate<ItemStack> is)
+    {
+        AbstractEntityAIBasic job = getEntityAI();
+        if (job != null)
+        {
+            return job.isInHut(is);
+        }
+        
+        return false;
+    }
+
+    private AbstractEntityAIBasic getEntityAI()
+    {
+        EntityAITaskEntry task = citizen.tasks.taskEntries
+                .stream()
+                .filter(t -> t.action instanceof AbstractEntityAIBasic)
+                .findAny() 
+                .orElse(null);
+        if (task != null)
+            return (AbstractEntityAIBasic) task.action;
+        return null;
     }
 }

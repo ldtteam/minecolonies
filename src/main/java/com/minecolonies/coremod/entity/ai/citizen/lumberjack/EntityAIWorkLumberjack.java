@@ -169,13 +169,13 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepareForWoodcutting),
-          new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees),
-          new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood),
-          new AITarget(LUMBERJACK_GATHERING, this::gathering),
-          new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain)
+          new AITarget(IDLE, START_WORKING, true),
+          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, true, this::prepareForWoodcutting),
+          new AITarget(LUMBERJACK_SEARCHING_TREE, true, this::findTrees),
+          new AITarget(LUMBERJACK_CHOP_TREE, false, this::chopWood),
+          new AITarget(LUMBERJACK_GATHERING, true, this::gathering),
+          new AITarget(LUMBERJACK_NO_TREES_FOUND, true, this::waitBeforeCheckingAgain)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
                                   + CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma());

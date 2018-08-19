@@ -235,4 +235,18 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     {
         return 10;
     }
+
+    public boolean isOkayToEat()
+    {
+        AITarget target = targetList
+                .stream()
+                .filter(t -> t.getState() == state)
+                .findAny()
+                .orElse(null);
+        if (target == null)
+            return false;
+                    
+        return target.isOkayToEat();
+    }
+
 }

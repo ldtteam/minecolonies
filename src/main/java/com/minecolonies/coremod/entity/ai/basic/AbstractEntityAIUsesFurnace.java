@@ -64,11 +64,11 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
     {
         super(job);
         super.registerTargets(
-                new AITarget(IDLE, START_WORKING),
-                new AITarget(START_WORKING, this::startWorking),
-                new AITarget(GATHERING_REQUIRED_MATERIALS, this::getNeededItem),
-                new AITarget(START_USING_FURNACE, this::fillUpFurnace),
-                new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace));
+                new AITarget(IDLE, START_WORKING, true),
+                new AITarget(START_WORKING, true, this::startWorking),
+                new AITarget(GATHERING_REQUIRED_MATERIALS, true, this::getNeededItem),
+                new AITarget(START_USING_FURNACE, false, this::fillUpFurnace),
+                new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, false, this::retrieveSmeltableFromFurnace));
     }
 
     @Override

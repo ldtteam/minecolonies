@@ -79,11 +79,11 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(GATHERING_REQUIRED_MATERIALS, this::getMaterials),
-          new AITarget(START_WORKING, this::decideWhatToDo),
-          new AITarget(COMPOSTER_FILL, this::fillBarrels),
-          new AITarget(COMPOSTER_HARVEST, this::harvestBarrels)
+          new AITarget(IDLE, START_WORKING, true),
+          new AITarget(GATHERING_REQUIRED_MATERIALS, true, this::getMaterials),
+          new AITarget(START_WORKING, true, this::decideWhatToDo),
+          new AITarget(COMPOSTER_FILL, false, this::fillBarrels),
+          new AITarget(COMPOSTER_HARVEST, false, this::harvestBarrels)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(DESTERITY_MULTIPLIER * worker.getCitizenData().getDexterity()
                                                                 + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());

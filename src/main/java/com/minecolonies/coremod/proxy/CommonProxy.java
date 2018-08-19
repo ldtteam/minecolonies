@@ -7,6 +7,7 @@ import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
+import com.minecolonies.coremod.entity.EntityCushion;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityArcherBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
@@ -147,6 +148,7 @@ public class CommonProxy implements IProxy
     {
         final ResourceLocation locationCitizen = new ResourceLocation(Constants.MOD_ID, "Citizen");
         final ResourceLocation locationFishHook = new ResourceLocation(Constants.MOD_ID, "Fishhook");
+        final ResourceLocation locationCushion = new ResourceLocation(Constants.MOD_ID, "cushionblock");
 
         // Half as much tracking range and same update frequency as a player
         // See EntityTracker.addEntityToTracker for more default values
@@ -166,6 +168,14 @@ public class CommonProxy implements IProxy
           Constants.ENTITY_TRACKING_RANGE,
           Constants.ENTITY_UPDATE_FREQUENCY_FISHHOOK,
           true);
+        EntityRegistry.registerModEntity(locationCushion,
+                EntityCushion.class,
+                "cushionblock",
+                getNextEntityId(),
+                MineColonies.instance,
+                Constants.ENTITY_TRACKING_RANGE,
+                Constants.ENTITY_UPDATE_FREQUENCY_FISHHOOK,
+                true);
         EntityRegistry.registerModEntity(BARBARIAN,
           EntityBarbarian.class,
           "Barbarian",

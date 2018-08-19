@@ -9,6 +9,8 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -417,5 +419,23 @@ public abstract class AbstractJob
     public void onWakeUp()
     {
         searchedForFoodToday = false;
+    }
+
+    public boolean isOkayToEat()
+    {
+        boolean value = true;
+        @NotNull final Object[] currentTasks = citizen.getCitizenEntity().get().tasks.taskEntries.toArray();
+        for (@NotNull final Object object : currentTasks)
+        {
+            if (object instanceof AbstractAISkeleton)
+            {
+                AbstractAISkeleton task = (AbstractAISkeleton)object;
+                if (!task.isOkayToEat())
+                {
+                    value = false;
+                }
+            }
+        }
+        return value;
     }
 }

@@ -126,13 +126,13 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
           /*
            * Check if tasks should be executed.
            */
-          new AITarget(this::checkIfExecute, IDLE),
-          new AITarget(IDLE, () -> START_WORKING),
-          new AITarget(START_WORKING, this::checkWareHouse),
-          new AITarget(PREPARE_DELIVERY, this::prepareDelivery),
-          new AITarget(DELIVERY, this::deliver),
-          new AITarget(GATHERING, this::gather),
-          new AITarget(DUMPING, this::dump)
+          new AITarget(this::checkIfExecute, IDLE, true),
+          new AITarget(IDLE, true, () -> START_WORKING),
+          new AITarget(START_WORKING, true, this::checkWareHouse),
+          new AITarget(PREPARE_DELIVERY, true, this::prepareDelivery),
+          new AITarget(DELIVERY, true, this::deliver),
+          new AITarget(GATHERING, true, this::gather),
+          new AITarget(DUMPING, false, this::dump)
 
         );
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());

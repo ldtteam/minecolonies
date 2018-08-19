@@ -1,7 +1,14 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.coremod.blocks.decorative.BlockCushion;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
 /**
@@ -25,6 +32,7 @@ public final class ModItems
     public static Item itemCactusDoor;
     public static Item compost;
     public static Item resourceScroll;
+    public static Item cushion;
 
     public static Item itemAchievementProxySettlement;
     public static Item itemAchievementProxyTown;
@@ -58,6 +66,7 @@ public final class ModItems
         clipboard = new ItemClipBoard();
         compost = new ItemCompost();
         resourceScroll = new ItemResourceScroll();
+//        cushion = new ItemCushions(ModBlocks.blockCushion);
 
         itemCactusDoor = new ItemCactusDoor(ModBlocks.blockCactusDoor, "cactusdoor");
         itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement");
@@ -82,5 +91,10 @@ public final class ModItems
         registry.register(itemCactusDoor);
         registry.register(compost);
         registry.register(resourceScroll);
+        
+//        ForgeRegistries.ITEMS.register(cushion.setRegistryName(ModBlocks.blockCushion.getRegistryName()));
+        
+
+    
     }
 }

@@ -4,6 +4,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.blocks.cactus.BlockCactusDoor;
+import com.minecolonies.coremod.blocks.decorative.BlockCushion;
 import com.minecolonies.coremod.blocks.decorative.BlockPaperwall;
 import com.minecolonies.coremod.blocks.decorative.BlockShingle;
 import com.minecolonies.coremod.blocks.decorative.BlockTimberFrame;
@@ -18,6 +19,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
+import com.minecolonies.coremod.entity.EntityCushion;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityArcherBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
@@ -33,10 +35,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.ResourceLocation;
@@ -244,6 +248,41 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModItems.itemCactusDoor);
         createCustomModel(ModItems.compost);
         createCustomModel(ModItems.resourceScroll);
+
+        
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionWhite), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.WHITE.getUnlocalizedName()), INVENTORY));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionGreen), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.GREEN.getUnlocalizedName()), INVENTORY));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionBlue), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.BLUE.getUnlocalizedName()), INVENTORY));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionOrange), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.ORANGE.getUnlocalizedName()), INVENTORY));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionMagenta), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.MAGENTA.getUnlocalizedName()), INVENTORY));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionLight_blue), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.LIGHT_BLUE.getUnlocalizedName()), INVENTORY));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionYellow), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.YELLOW.getUnlocalizedName()), INVENTORY));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionLime), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.LIME.getUnlocalizedName()), INVENTORY));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionPink), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.PINK.getUnlocalizedName()), INVENTORY));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionGray), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.GRAY.getUnlocalizedName()), INVENTORY));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionSilver), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.SILVER.getUnlocalizedName()), INVENTORY));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionCyan), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.CYAN.getUnlocalizedName()), INVENTORY));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionPurple), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.PURPLE.getUnlocalizedName()), INVENTORY));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionBrown), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.BROWN.getUnlocalizedName()), INVENTORY));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionRed), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.RED.getUnlocalizedName()), INVENTORY));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionBlack), 0,
+                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.BLACK.getUnlocalizedName()), INVENTORY));
+        
 
         ModelLoader.setCustomStateMapper(ModBlocks.blockCactusDoor, new StateMap.Builder().ignore(BlockCactusDoor.POWERED).build());
         ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());

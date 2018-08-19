@@ -1,0 +1,21 @@
+{
+    "variants": {
+        "normal": { "model": "minecolonies:blockcushion_white" },
+    	"color=blue": { "model": "minecolonies:blockcushion_blue" },
+    	"color=pink": { "model": "minecolonies:blockcushion_pink" },
+    	"color=white": { "model": "minecolonies:blockcushion_white" },
+    	"color=orange": { "model": "minecolonies:blockcushion_orange" },
+    	"color=magenta": { "model": "minecolonies:blockcushion_magenta" },
+    	"color=brown": { "model": "minecolonies:blockcushion_brown" },
+    	"color=red": { "model": "minecolonies:blockcushion_red" },
+    	"color=gray": { "model": "minecolonies:blockcushion_gray" },
+    	"color=cyan": { "model": "minecolonies:blockcushion_cyan" },
+    	"color=purple": { "model": "minecolonies:blockcushion_purple" },
+    	"color=light_blue": { "model": "minecolonies:blockcushion_lightblue" },
+    	"color=silver": { "model": "minecolonies:blockcushion_silver" },
+    	"color=black": { "model": "minecolonies:blockcushion_black" },
+    	"color=green": { "model": "minecolonies:blockcushion_green" },
+    	"color=yellow": { "model": "minecolonies:blockcushion_yellow" },
+    	"color=lime": { "model": "minecolonies:blockcushion_lime" }
+    }
+}

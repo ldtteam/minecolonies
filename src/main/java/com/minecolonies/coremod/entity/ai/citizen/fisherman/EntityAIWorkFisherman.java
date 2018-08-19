@@ -158,13 +158,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepareForFishing),
-          new AITarget(FISHERMAN_CHECK_WATER, this::tryDifferentAngles),
-          new AITarget(FISHERMAN_SEARCHING_WATER, this::findWater),
-          new AITarget(FISHERMAN_WALKING_TO_WATER, this::getToWater),
-          new AITarget(FISHERMAN_START_FISHING, this::doFishing)
+          new AITarget(IDLE, START_WORKING, true),
+          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, true, this::prepareForFishing),
+          new AITarget(FISHERMAN_CHECK_WATER, true, this::tryDifferentAngles),
+          new AITarget(FISHERMAN_SEARCHING_WATER, true, this::findWater),
+          new AITarget(FISHERMAN_WALKING_TO_WATER, true, this::getToWater),
+          new AITarget(FISHERMAN_START_FISHING, false, this::doFishing)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(
           INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
