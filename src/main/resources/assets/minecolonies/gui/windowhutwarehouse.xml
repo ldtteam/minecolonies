@@ -5,7 +5,6 @@
         <view id="pageActions" size="100% 100%">
             <layout source="minecolonies:gui/layouthutpageactionsmin.xml"/>
         </view>
-
         <view id="resourceActions" size="100% 100%">
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
             <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"

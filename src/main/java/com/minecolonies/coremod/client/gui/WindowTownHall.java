@@ -1183,7 +1183,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     {
         final String curSwitch = (lastTabButton == null) ? findPaneOfTypeByID(BUTTON_ACTIONS, Button.class).getID() : lastTabButton.getID();
         super.switchView = findPaneOfTypeByID(GUI_LIST_BUTTON_SWITCH + tabsToPages.get(curSwitch), SwitchView.class);
-        super.switchPagesSize = switchView.getChildrenSize();
         super.pageNum.on();
         super.setPage(button);
 
