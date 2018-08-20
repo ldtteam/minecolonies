@@ -69,6 +69,12 @@ public final class ToolLevelConstants
     public static final int ARMOR_LEVEL_DIAMOND = 4;
 
     /**
+     * Armor level for diamond.
+     */
+    @NonNls
+    public static final int ARMOR_LEVEL_MAX = 100;
+
+    /**
      * Tool level for maximum.
      */
     @NonNls
