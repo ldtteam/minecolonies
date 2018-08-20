@@ -754,7 +754,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public void takeItemStackFromProvider(@NotNull final ICapabilityProvider provider, final int slotIndex)
     {
-        InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(provider, slotIndex, new InvWrapper(worker.getInventoryCitizen()));
+        InventoryUtils.transferItemStackIntoNextBestSlotFromProvider(provider, slotIndex, new InvWrapper(worker.getInventoryCitizen()));
     }
 
     /**
@@ -954,7 +954,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  && (walkToBuilding() || InventoryFunctions.matchFirstInHandlerWithAction(new InvWrapper(worker.getInventoryCitizen()),
           itemStack -> !ItemStackUtils.isEmpty(itemStack) && !buildingWorker.buildingRequiresCertainAmountOfItem(itemStack, alreadyKept),
           (handler, slot) ->
-            InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(
+            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(
               new InvWrapper(worker.getInventoryCitizen()), slot, buildingWorker.getCapability(ITEM_HANDLER_CAPABILITY, null))
         ));
     }

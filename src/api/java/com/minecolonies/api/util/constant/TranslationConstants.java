@@ -275,6 +275,20 @@ public final class TranslationConstants
     public static final String ON_STRING                                                           = "com.minecolonies.coremod.gui.townHall.on";
     @NonNls
     public static final String OFF_STRING                                                          = "com.minecolonies.coremod.gui.townHall.off";
+    @NonNls
+    public static final String CMCG_HAPPINESS_HAPPINESSMODIFIER                                    = "com.minecolonies.coremod.gui.happiness.happinessModifier";
+    @NonNls
+    public static final String CMCG_HAPPINESS_FOOD                                                 = "com.minecolonies.coremod.gui.happiness.food";
+    @NonNls
+    public static final String CMCG_HAPPINESS_DAMAGE                                               = "com.minecolonies.coremod.gui.happiness.damage";
+    @NonNls
+    public static final String CMCG_HAPPINESS_HOUSE                                                = "com.minecolonies.coremod.gui.happiness.house";
+    @NonNls
+    public static final String CMCG_HAPPINESS_JOB                                                  = "com.minecolonies.coremod.gui.happiness.job";
+    @NonNls
+    public static final String CMCG_HAPPINESS_FARMS                                                = "com.minecolonies.coremod.gui.happiness.farms";
+    @NonNls
+    public static final String CMCG_HAPPINESS_TOOLS                                                = "com.minecolonies.coremod.gui.happiness.tools";
 
     private TranslationConstants()
     {
