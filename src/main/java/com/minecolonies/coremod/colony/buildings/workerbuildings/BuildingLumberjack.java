@@ -233,8 +233,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         {
             replant = true;
         }
-        checkTreesToFell();
-
     }
 
     @Override
@@ -269,6 +267,8 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
+        checkTreesToFell();
+
         buf.writeBoolean(replant);
         buf.writeInt(treesToFell.size());
         for (final Map.Entry<ItemStorage, Boolean> entry : treesToFell.entrySet())
