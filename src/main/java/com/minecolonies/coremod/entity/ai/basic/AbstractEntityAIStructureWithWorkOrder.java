@@ -231,6 +231,20 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     }
 
     @Override
+    public void registerBlockAsNeeded(final ItemStack stack)
+    {
+        final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
+        if (getOwnBuilding(AbstractBuildingStructureBuilder.class)
+              .getNeededResources()
+              .get(stack.getTranslationKey()
+                     + ":" + stack.getItemDamage()
+                     + "-" + hashCode) == null)
+        {
+            getOwnBuilding(AbstractBuildingStructureBuilder.class).addNeededResource(stack, 1);
+        }
+    }
+
+    @Override
     public int getTotalRequiredAmount(final ItemStack deliveredItemStack)
     {
         if (ItemStackUtils.isEmpty(deliveredItemStack))

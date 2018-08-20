@@ -74,7 +74,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Integer> toKeep = new HashMap<>(keepX);
-        toKeep.putAll(keepX);
+        toKeep.putAll(super.getRequiredItemsAndAmount());
 
         for (final BuildingBuilderResource stack : neededResources.values())
         {
