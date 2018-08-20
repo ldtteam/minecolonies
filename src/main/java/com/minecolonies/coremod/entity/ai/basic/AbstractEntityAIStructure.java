@@ -494,11 +494,22 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             {
                 final Stack stackRequest = new Stack(placer.getTotalAmount(placedStack));
                 placer.getWorker().getCitizenData().createRequest(stackRequest);
-
+                placer.registerBlockAsNeeded(placedStack);
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Register the block as needed at the building if possible.
+     * @param stack the stack.
+     */
+    public void registerBlockAsNeeded(final ItemStack stack)
+    {
+        /*
+         * Override in child if possible.
+         */
     }
 
     /**
