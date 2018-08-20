@@ -236,7 +236,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
         if (getOwnBuilding(AbstractBuildingStructureBuilder.class)
               .getNeededResources()
-              .get(stack.getTranslationKey()
+              .get(stack.getUnlocalizedName()
                      + ":" + stack.getItemDamage()
                      + "-" + hashCode) == null)
         {
