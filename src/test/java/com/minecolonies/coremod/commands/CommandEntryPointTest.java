@@ -461,7 +461,7 @@ public class CommandEntryPointTest
         final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
-        assertThat(results).containsExactlyInAnyOrder("kill", "info", "list", "respawn");
+        assertThat(results).containsExactlyInAnyOrder("kill", "spawn", "info", "list", "respawn");
     }
 
     @Test
@@ -1041,7 +1041,7 @@ public class CommandEntryPointTest
         final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
-        assertThat(results).containsExactlyInAnyOrder("addofficer", "barbarians", "delete", "deletable", "info", "ownerchange", "raid", "raid-tonight", "refresh", "teleport",
+        assertThat(results).containsExactlyInAnyOrder("addofficer", "barbarians", "shl", "delete", "deletable", "info", "ownerchange", "raid", "raid-tonight", "refresh", "teleport",
                 "claim");
     }
 
@@ -1296,7 +1296,7 @@ public class CommandEntryPointTest
         }
         catch (final CommandException e)
         {
-            assertThat(e).hasMessage("/mineColonies citizens <list|kill|respawn|info>");
+            assertThat(e).hasMessage("/mineColonies citizens <spawn|list|kill|respawn|info>");
         }
     }
 
