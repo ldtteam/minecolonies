@@ -77,7 +77,7 @@ public final class ColonyView implements IColony
     //  Buildings
     @Nullable
     private BuildingTownHall.View townHall;
-    private int maxCitizens = 0;
+    private int citizenCount = 0;
 
     /**
      * Check if the colony has a warehouse.
@@ -166,7 +166,7 @@ public final class ColonyView implements IColony
         BlockPosUtil.writeToByteBuf(buf, colony.getCenter());
         buf.writeBoolean(colony.isManualHiring());
         //  Citizenry
-        buf.writeInt(colony.getCitizenManager().getMaxCitizens());
+        buf.writeInt(colony.getCitizenManager().getCurrentCitizenCount());
 
         final Set<Block> freeBlocks = colony.getFreeBlocks();
         final Set<BlockPos> freePos = colony.getFreePositions();
@@ -417,9 +417,9 @@ public final class ColonyView implements IColony
      *
      * @return maximum amount of citizens.
      */
-    public int getMaxCitizens()
+    public int getCitizenCount()
     {
-        return maxCitizens;
+        return citizenCount;
     }
 
     /**
@@ -470,7 +470,7 @@ public final class ColonyView implements IColony
         center = BlockPosUtil.readFromByteBuf(buf);
         manualHiring = buf.readBoolean();
         //  Citizenry
-        maxCitizens = buf.readInt();
+        citizenCount = buf.readInt();
 
         if (isNewSubscription)
         {

@@ -188,6 +188,25 @@ public class ActionMenuState
         return null;
     }
 
+    public Double getDoubleForArgument(@NotNull final String argumentName)
+    {
+        for(final ActionArgument actionArgument : getAllArgumentsList())
+        {
+            if (argumentName.equals(actionArgument.getName()))
+            {
+                switch (actionArgument.getType())
+                {
+                    case DOUBLE:
+                        return (Double) getValue(actionArgument);
+                    default:
+                        break;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public String getStringForArgument(@NotNull final String argumentName)
     {
         for (final ActionArgument actionArgument : getAllArgumentsList())

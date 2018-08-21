@@ -10,6 +10,7 @@ public enum NavigationMenuType implements IMenuType
     )),
 
     CITIZENS(new NavigationMenu("citizens",
+        ActionMenuType.SPAWN_CITIZENS,
         ActionMenuType.LIST_CITIZENS,
         ActionMenuType.KILL_CITIZEN,
         ActionMenuType.RESPAWN_CITIZEN,
@@ -19,6 +20,7 @@ public enum NavigationMenuType implements IMenuType
     COLONY(new NavigationMenu("colony",
         ActionMenuType.SHOW_COLONY_INFO,
         ActionMenuType.DELETE_COLONY,
+        ActionMenuType.SET_HAPPINESS_LEVEL_COLONY,
         ActionMenuType.DISABLE_BARBARIAN_SPAWNS,
         ActionMenuType.ADD_OFFICER,
         ActionMenuType.REFRESH_COLONY,

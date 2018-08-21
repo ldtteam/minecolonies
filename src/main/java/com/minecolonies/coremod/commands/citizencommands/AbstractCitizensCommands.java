@@ -47,13 +47,13 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
         }
 
         final CitizenData citizenData = actionMenuState.getCitizenForArgument("citizen");
-        if (null == citizenData)
+        if (null == citizenData && requiresCitizen())
         {
             sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
             return;
         }
 
-        final int citizenId = citizenData.getId();
+        final int citizenId = citizenData == null ? -1 : citizenData.getId();
         executeSpecializedCode(server, sender, colony, citizenId);
     }
 
@@ -124,12 +124,16 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
             }
         }
 
-        final int citizenId = getValidCitizenId(colony, firstArgumentColonyId, args);
-
-        if (citizenId == -1 || colony.getCitizenManager().getCitizen(citizenId) == null)
+        int citizenId = -1;
+        if (requiresCitizen())
         {
-            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
-            return;
+            citizenId = getValidCitizenId(colony, firstArgumentColonyId, args);
+
+            if ((citizenId == -1 || colony.getCitizenManager().getCitizen(citizenId) == null) && requiresCitizen())
+            {
+                sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+                return;
+            }
         }
 
         executeSpecializedCode(server, sender, colony, citizenId);
@@ -193,6 +197,15 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
             return citizenId;
         }
         return citizenId;
+    }
+
+    /**
+     * Indicates if this command requires a citizen.
+     * @return True for yes, false for optional or no.
+     */
+    protected boolean requiresCitizen()
+    {
+        return true;
     }
 
     /**

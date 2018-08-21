@@ -219,6 +219,9 @@ public class CitizenHappinessHandler
      */
     public void processDailyHappiness(final boolean hasHouse, final boolean hasJob)
     {
+        if (citizen.getColony().getColonyHappinessManager().getLockedHappinessModifier().isPresent())
+            return;
+
         if (!hasHouse)
         {
             numberOfDaysWithoutHouse++;
@@ -429,6 +432,9 @@ public class CitizenHappinessHandler
      */
     public double getHappiness()
     {
+        if (citizen.getColony().getColonyHappinessManager().getLockedHappinessModifier().isPresent())
+            return citizen.getColony().getColonyHappinessManager().getLockedHappinessModifier().get();
+
         double value = baseHappiness + foodModifier + damageModifier + houseModifier + jobModifier + farmerModifier + noToolModifier;
         if (value > MAX_HAPPINESS)
         {
