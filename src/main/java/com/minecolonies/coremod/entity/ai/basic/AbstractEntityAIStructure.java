@@ -771,7 +771,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             job.setStructure(null);
             Log.getLogger().warn("Structure couldn't be found which caused an NPE, removed workOrder, more details in log", ex);
         }
-        this.currentStructure.setStage(getProgressPos().getSecond());
+        if (getProgressPos() != null)
+        {
+            this.currentStructure.setStage(getProgressPos().getSecond());
+        }
     }
 
     /**
