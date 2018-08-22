@@ -16,12 +16,14 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
+import com.minecolonies.coremod.entity.ai.util.Structure;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
@@ -57,6 +59,18 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     public Class getExpectedBuildingClass()
     {
         return AbstractBuildingStructureBuilder.class;
+    }
+
+    @Override
+    public void storeProgressPos(final BlockPos blockPos, final Structure.Stage stage)
+    {
+        getOwnBuilding(AbstractBuildingStructureBuilder.class).setProgressPos(blockPos, stage);
+    }
+
+    @Override
+    public Tuple<BlockPos, Structure.Stage> getProgressPos()
+    {
+        return getOwnBuilding(AbstractBuildingStructureBuilder.class).getProgress();
     }
 
     /**
@@ -130,8 +144,16 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         workOrder.setCleared(false);
         workOrder.setRequested(false);
 
+        if (getProgressPos() != null)
+        {
+            job.getStructure().setLocalPosition(getProgressPos().getFirst());
+        }
         //We need to deal with materials
         requestMaterials();
+        if (getProgressPos() != null)
+        {
+            job.getStructure().setLocalPosition(getProgressPos().getFirst());
+        }
     }
 
     /**
@@ -344,6 +366,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             job.setStructure(null);
             job.setWorkOrder(null);
             resetCurrentStructure();
+            getOwnBuilding(AbstractBuildingStructureBuilder.class).setProgressPos(null, Structure.Stage.CLEAR);
             return true;
         }
         return false;

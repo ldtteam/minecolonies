@@ -340,6 +340,16 @@ public class Structure
     }
 
     /**
+     * Calculates the local of the block we are working on.
+     *
+     * @return a BlockPos of that position.
+     */
+    public BlockPos getLocalBlockPosition()
+    {
+        return this.theStructure.getLocalPosition();
+    }
+
+    /**
      * Advance one block in the StructureProxy.
      * <p>
      * Will skip blocks not relevant.
@@ -458,6 +468,18 @@ public class Structure
     public BlockPos getCenter()
     {
         return this.theStructure.getPosition();
+    }
+
+    /**
+     * Set the current block.
+     * @param progressPos the progress pos.
+     */
+    public void setCurrentBlock(@Nullable final BlockPos progressPos)
+    {
+        if (progressPos != null)
+        {
+            this.theStructure.setLocalPosition(progressPos);
+        }
     }
 
     /**
