@@ -396,8 +396,13 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * Getter for the progress position.
      * @return the current progress and stage.
      */
+    @Nullable
     public Tuple<BlockPos, Structure.Stage> getProgress()
     {
+        if (this.progressPos == null)
+        {
+            return null;
+        }
         return new Tuple<>(this.progressPos, this.progressStage);
     }
 }

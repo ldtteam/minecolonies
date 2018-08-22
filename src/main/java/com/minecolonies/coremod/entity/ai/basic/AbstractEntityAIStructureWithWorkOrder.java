@@ -140,14 +140,10 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         final int tempRotation = workOrder.getRotation(world);
         final boolean removal = workOrder instanceof WorkOrderBuildRemoval;
 
-        loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored(), removal);
+        super.loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored(), removal);
         workOrder.setCleared(false);
         workOrder.setRequested(false);
 
-        if (getProgressPos() != null)
-        {
-            job.getStructure().setLocalPosition(getProgressPos().getFirst());
-        }
         //We need to deal with materials
         requestMaterials();
         if (getProgressPos() != null)
