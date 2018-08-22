@@ -29,6 +29,7 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -215,6 +216,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                   || evaluationFunction.apply(currentBlock))
             {
                 final Structure.Result result = advanceBlock.get();
+                storeProgressPos(currentStructure.getLocalBlockPosition(), currentStructure.getStage());
                 if (result == Structure.Result.AT_END)
                 {
                     return switchStage(nextState);
@@ -226,6 +228,27 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             }
             return getState();
         };
+    }
+
+    /**
+     * Store the progressPos in the building if possible for the worker.
+     * @param blockPos the progressResult.
+     */
+    public void storeProgressPos(final BlockPos blockPos, final Structure.Stage stage)
+    {
+        /*
+         * Override if needed.
+         */
+    }
+
+    /**
+     * Get the last progress.
+     * @return the blockPos or null.
+     */
+    @Nullable
+    public Tuple<BlockPos, Structure.Stage> getProgressPos()
+    {
+        return null;
     }
 
     /**
@@ -299,6 +322,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
     private AIState completeBuild()
     {
+        storeProgressPos(null, Structure.Stage.CLEAR);
         incrementActionsDoneAndDecSaturation();
         if (job instanceof AbstractJobStructure)
         {
@@ -477,7 +501,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         itemList.removeIf(itemStack -> ItemStackUtils.isEmpty(itemStack) || foundStacks.stream()
                                                                               .anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack,
                                                                                 targetStack, true, true)));
-
         for (final ItemStack placedStack : itemList)
         {
             if (ItemStackUtils.isEmpty(placedStack))
@@ -602,7 +625,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      */
     public void connectBlockToBuildingIfNecessary(@NotNull final IBlockState blockState, @NotNull final BlockPos pos)
     {
-        /**
+        /*
          * Classes can overwrite this if necessary.
          */
     }
@@ -640,7 +663,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      */
     public void reduceNeededResources(final ItemStack stack)
     {
-        /**
+        /*
          * Nothing to be done here. Workers overwrite this if necessary.
          */
     }
@@ -724,34 +747,31 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      */
     public void loadStructure(@NotNull final String name, final int rotateTimes, final BlockPos position, final boolean isMirrored, final boolean removal)
     {
-        if (job instanceof AbstractJobStructure)
+        rotation = rotateTimes;
+        try
         {
-            rotation = rotateTimes;
-            try
-            {
-                final StructureWrapper wrapper = new StructureWrapper(world, name);
-
-                ((AbstractJobStructure) job).setStructure(wrapper);
-                currentStructure = new Structure(world, wrapper, removal ? Structure.Stage.REMOVE : Structure.Stage.CLEAR);
-            }
-            catch (final IllegalStateException e)
-            {
-                Log.getLogger().warn(String.format("StructureProxy: (%s) does not exist - removing build request", name), e);
-                ((AbstractJobStructure) job).setStructure(null);
-            }
-
-            try
-            {
-                ((AbstractJobStructure) job).getStructure().rotate(rotateTimes, world, position, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
-                ((AbstractJobStructure) job).getStructure().setPosition(position);
-            }
-            catch (final NullPointerException ex)
-            {
-                handleSpecificCancelActions();
-                ((AbstractJobStructure) job).setStructure(null);
-                Log.getLogger().warn("Structure couldn't be found which caused an NPE, removed workOrder, more details in log", ex);
-            }
+            final StructureWrapper wrapper = new StructureWrapper(world, name);
+            job.setStructure(wrapper);
+            currentStructure = new Structure(world, wrapper, removal ? Structure.Stage.REMOVE : Structure.Stage.CLEAR);
         }
+        catch (final IllegalStateException e)
+        {
+            Log.getLogger().warn(String.format("StructureProxy: (%s) does not exist - removing build request", name), e);
+            job.setStructure(null);
+        }
+
+        try
+        {
+            job.getStructure().rotate(rotateTimes, world, position, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
+            job.getStructure().setPosition(position);
+        }
+        catch (final NullPointerException ex)
+        {
+            handleSpecificCancelActions();
+            job.setStructure(null);
+            Log.getLogger().warn("Structure couldn't be found which caused an NPE, removed workOrder, more details in log", ex);
+        }
+        this.currentStructure.setStage(getProgressPos().getSecond());
     }
 
     /**
@@ -759,7 +779,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      */
     public void handleSpecificCancelActions()
     {
-        /**
+        /*
          * Child classes have to override this.
          */
     }
