@@ -1,10 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.util.BlockUtils;
-import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
@@ -15,20 +12,26 @@ import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.event.EventHandler;
+import com.minecolonies.coremod.util.StructureWrapper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OTHER_LEVEL;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PASTEABLE;
 
 /**
  * Send build tool data to the server. Verify the data on the server side and then place the building.
@@ -174,8 +177,30 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
                 world.setBlockState(buildPos, block.getDefaultState().withRotation(BlockUtils.getRotation(rotation)));
                 ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
 
-                player.inventory.clearMatchingItems(Item.getItemFromBlock(block), -1, 1, null);
-                setupBuilding(world, player, sn, rotation, buildPos, mirror);
+                int level = 0;
+                final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), itemStack -> itemStack.isItemEqual(new ItemStack(Item.getItemFromBlock(block), 1)));
+                if (slot != -1)
+                {
+                    final ItemStack stack = player.inventory.getStackInSlot(slot);
+                    final NBTTagCompound compound = stack.getTagCompound();
+                    if (compound != null)
+                    {
+                        if (compound.hasKey(TAG_OTHER_LEVEL))
+                        {
+                            level = compound.getInteger(TAG_OTHER_LEVEL);
+                        }
+                        if (compound.hasKey(TAG_PASTEABLE))
+                        {
+                            String schematic = sn.toString();
+                            schematic = schematic.substring(0, schematic.length()-1);
+                            schematic += level;
+                            StructureWrapper.loadAndPlaceStructureWithRotation(player.world, schematic,
+                              buildPos, rotation,mirror ? Mirror.FRONT_BACK : Mirror.NONE, false);
+                        }
+                    }
+                    player.inventory.clearMatchingItems(Item.getItemFromBlock(block), -1, 1, null);
+                }
+                setupBuilding(world, player, sn, rotation, buildPos, mirror, level);
             }
         }
         else
@@ -213,18 +238,18 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
 
     /**
      * setup the building once it has been placed.
-     *
-     * @param world         World the hut is being placed into.
+     *  @param world         World the hut is being placed into.
      * @param player        Who placed the hut.
      * @param sn            The name of the structure.
      * @param rotation      The number of times the structure should be rotated.
      * @param buildPos      The location the hut is being placed.
-     * @param mirror        Whether or not the strcture is mirrored.
+     * @param mirror        Whether or not the structure is mirrored.
+     * @param level         the future initial building level.
      */
     private static void setupBuilding(
-                                       @NotNull final World world, @NotNull final EntityPlayer player,
-                                       final StructureName sn,
-                                       final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+      @NotNull final World world, @NotNull final EntityPlayer player,
+      final StructureName sn,
+      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final int level)
     {
         @Nullable final AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
 
@@ -248,6 +273,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
             }
             building.setStyle(sn.getStyle());
             building.setRotation(rotation);
+            building.setBuildingLevel(level);
             if (mirror)
             {
                 building.invertMirror();
