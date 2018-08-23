@@ -262,7 +262,11 @@ public class CompatibilityManager implements ICompatibilityManager
                         //Just put it in if not in there already, don't mind the leave yet.
                         if(!ItemStackUtils.isEmpty(stack) && !leavesToSaplingMap.containsValue(new ItemStorage(stack, false, true)) && !saplings.contains(new ItemStorage(stack, false, true)))
                         {
-                            saplings.add(new ItemStorage(stack, false, true));
+                            //Just put it in if not in there already, don't mind the leave yet.
+                            if (!saplings.contains(new ItemStorage(stack, false, true)))
+                            {
+                                saplings.add(new ItemStorage(stack, false, true));
+                            }
                         }
                     }
                 }
