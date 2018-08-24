@@ -669,7 +669,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
         final String numberOfCitizens =
             LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens",
-                citizensSize, townHall.getColony().getMaxCitizens());
+                citizensSize, townHall.getColony().getCitizenCount());
         findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
 
         final Integer unemployed = jobCountMap.get("") == null ? 0 : jobCountMap.get("");

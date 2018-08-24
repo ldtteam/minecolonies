@@ -151,7 +151,7 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void spawnCitizen(@Nullable final CitizenData data, @Nullable final World world)
+    public void spawnCitizen(@Nullable final CitizenData data, @Nullable final World world, final boolean force)
     {
         if (!colony.getBuildingManager().hasTownHall())
         {
@@ -176,7 +176,7 @@ public class CitizenManager implements ICitizenManager
             {
                 //This ensures that citizen IDs are getting reused.
                 //That's needed to prevent bugs when calling IDs that are not used.
-                for (int i = 1; i <= this.getMaxCitizens(); i++)
+                for (int i = 1; i <= this.getCurrentCitizenCount() + 1; i++)
                 {
                     if (this.getCitizen(i) == null)
                     {
@@ -190,7 +190,7 @@ public class CitizenManager implements ICitizenManager
 
                 citizens.put(citizenData.getId(), citizenData);
 
-                if (getMaxCitizens() == getCitizens().size())
+                if (getMaxCitizens() == getCitizens().size() && !force)
                 {
                     LanguageHandler.sendPlayersMessage(
                       colony.getMessageEntityPlayers(),
@@ -333,6 +333,17 @@ public class CitizenManager implements ICitizenManager
     public int getMaxCitizens()
     {
         return maxCitizens;
+    }
+
+    /**
+     * Get the current amount of citizens, might be bigger then {@link #getMaxCitizens()}
+     *
+     * @return The current amount of citizens in the colony.
+     */
+    @Override
+    public int getCurrentCitizenCount()
+    {
+        return citizens.size();
     }
 
     @Override

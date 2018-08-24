@@ -167,6 +167,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
         COLONYTP,
         RTP,
         DELETECOLONY,
+        SPAWNCITZENS,
         KILLCITIZENS,
         LISTCITIZENS,
         RESPAWNCITIZENS,

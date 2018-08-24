@@ -521,16 +521,15 @@ public class CitizenData
         }
 
         // Check whether there's already a citizen with this name
-        final ICitizenManager manager = this.getColony().getCitizenManager();
-        for (int i = 1; i <= this.getColony().getCitizenManager().getMaxCitizens(); i++)
+        for(final CitizenData citizen : this.getColony().getCitizenManager().getCitizens())
         {
-            final CitizenData citizen = manager.getCitizen(i);
             if (citizen != null && citizen.getName().equals(citizenName))
             {
                 // Oops - recurse this function and try again
                 citizenName = generateName(rand);
             }
         }
+
         return citizenName;
     }
 

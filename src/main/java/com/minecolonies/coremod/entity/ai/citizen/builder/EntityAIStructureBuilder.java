@@ -57,7 +57,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     /**
      * Max depth difference.
      */
-    private static final int MAX_DEPTH_DIFFERENCE = 3;
+    private static final int MAX_DEPTH_DIFFERENCE = 5;
 
     /**
      * At this y level the builder will be way slower..
@@ -97,17 +97,17 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     /**
      * Min distance from placing block.
      */
-    private static final int MIN_DISTANCE    = 3;
+    private static final int MIN_DISTANCE = 3;
 
     /**
      * Max distance to placing block.
      */
-    private static final int MAX_DISTANCE        = 5;
+    private static final int MAX_DISTANCE = 5;
 
     /**
      * After which distance the builder has to recalculate his position.
      */
-    private static final double ACCEPTANCE_DISTANCE = 10;
+    private static final double ACCEPTANCE_DISTANCE = 12;
 
     /**
      * The id in the list of the last picked up item.
@@ -296,7 +296,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             workFrom = getWorkingPosition(targetPos);
         }
 
-        return worker.isWorkerAtSiteWithMove(workFrom, MAX_DISTANCE) || MathUtils.twoDimDistance(worker.getPosition(), workFrom) < ACCEPTANCE_DISTANCE;
+        return worker.isWorkerAtSiteWithMove(workFrom, MAX_DISTANCE) || MathUtils.twoDimDistance(worker.getPosition(), workFrom) <= ACCEPTANCE_DISTANCE;
     }
 
     /**
@@ -316,10 +316,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         {
             final BlockPos schemPos = job.getWorkOrder().getBuildingLocation();
             final int yStart = targetPosition.getY() > schemPos.getY() ? targetPosition.getY() : schemPos.getY();
+            final int yEnd = targetPosition.getY() < schemPos.getY() ? Math.max(targetPosition.getY(), schemPos.getY() - MAX_DEPTH_DIFFERENCE) : schemPos.getY();
             final EnumFacing direction = BlockPosUtil.getXZFacing(worker.getPosition(), targetPosition).getOpposite();
-            for (int i = MIN_DISTANCE; i < MAX_DISTANCE; i++)
+            for (int i = MIN_DISTANCE + 1; i < MAX_DISTANCE; i++)
             {
-                for (int y = yStart; y >= schemPos.getY() - MAX_DEPTH_DIFFERENCE; y--)
+                for (int y = yStart; y >= yEnd; y--)
                 {
                     final BlockPos pos = targetPosition.offset(direction, i);
                     final BlockPos basePos = new BlockPos(pos.getX(), y, pos.getZ());
@@ -329,6 +330,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
                     }
                 }
             }
+            return schemPos.up();
         }
         return targetPosition;
     }
