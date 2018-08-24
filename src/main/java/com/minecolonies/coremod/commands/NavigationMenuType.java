@@ -61,7 +61,8 @@ public enum NavigationMenuType implements IMenuType
             ActionMenuType.CHECK_FOR_AUTO_DELETES,
             ActionMenuType.WHO_AM_I,
             ActionMenuType.WHERE_AM_I,
-            ActionMenuType.SCAN
+            ActionMenuType.SCAN,
+            ActionMenuType.LOOT_GEN
     ))
 
     ;

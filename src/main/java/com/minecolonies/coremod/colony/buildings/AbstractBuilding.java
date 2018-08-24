@@ -21,7 +21,6 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
@@ -53,7 +52,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
@@ -86,6 +84,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     private boolean beingGathered = false;
 
     /**
+     * If the building has been built already.
+     */
+    private boolean isBuilt = false;
+
+    /**
      * Constructor for a AbstractBuilding.
      *
      * @param colony Colony the building belongs to.
@@ -104,6 +107,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         super.readFromNBT(compound);
         loadRequestSystemFromNBT(compound);
+        if (compound.hasKey(TAG_IS_BUILT))
+        {
+            isBuilt = compound.getBoolean(TAG_IS_BUILT);
+        }
+        else if (getBuildingLevel() > 0)
+        {
+            isBuilt = true;
+        }
     }
 
     /**
@@ -133,6 +144,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         super.writeToNBT(compound);
         writeRequestSystemToNBT(compound);
+        compound.setBoolean(TAG_IS_BUILT, isBuilt);
     }
 
     /**
@@ -321,6 +333,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
+     * Check if the building was built already.
+     * @return true if so.
+     */
+    public boolean isBuilt()
+    {
+        return isBuilt;
+    }
+
+    /**
      * Deconstruct the building on destroyed.
      */
     public void deconstruct()
@@ -363,6 +384,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                 workOrder.isMirrored());
         this.setHeight(wrapper.getHeight());
         this.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
+        this.isBuilt = true;
     }
     //------------------------- Starting Required Tools/Item handling -------------------------//
 

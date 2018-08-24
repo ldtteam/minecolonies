@@ -20,6 +20,8 @@ import com.minecolonies.coremod.entity.ai.util.Structure;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDoor;
+import net.minecraft.block.BlockFalling;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -207,6 +209,14 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
 
             final Block worldBlock = BlockPosUtil.getBlock(world, job.getStructure().getBlockPosition());
+            if (block instanceof BlockFalling )
+            {
+                final IBlockState downState = BlockPosUtil.getBlockState(world, job.getStructure().getBlockPosition().down());
+                if (!downState.getMaterial().isSolid())
+                {
+                    requestBlockToBuildingIfRequired(buildingWorker, getSolidSubstitution(job.getStructure().getBlockPosition()));
+                }
+            }
 
             if (block != null
                   && block != Blocks.AIR

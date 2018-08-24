@@ -9,7 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * Find and return a path to the nearest tree.
@@ -30,7 +30,7 @@ public class PathJobFindTree extends AbstractPathJob
     /**
      * The list of trees the Lumberjack is supposed to cut.
      */
-    private final Map<ItemStorage, Boolean> treesToCut;
+    private final List<ItemStorage> treesToNotCut;
 
     /**
      * The Colony the tree is in.
@@ -51,11 +51,11 @@ public class PathJobFindTree extends AbstractPathJob
                             @NotNull final BlockPos start,
                             final BlockPos home,
                             final int range,
-                            final Map<ItemStorage, Boolean> treesToCut,
+                            final List<ItemStorage> treesToCut,
                             final Colony colony)
     {
         super(world, start, start, range, new TreePathResult());
-        this.treesToCut = treesToCut;
+        this.treesToNotCut = treesToCut;
         this.hutLocation = home;
         this.colony = colony;
     }
@@ -111,7 +111,7 @@ public class PathJobFindTree extends AbstractPathJob
 
     private boolean isTree(final BlockPos pos)
     {
-        if (Tree.checkTree(world, pos, treesToCut) && Tree.checkIfInColonyAndNotInBuilding(pos, colony))
+        if (Tree.checkTree(world, pos, treesToNotCut) && Tree.checkIfInColonyAndNotInBuilding(pos, colony))
         {
             getResult().treeLocation = pos;
             return true;
