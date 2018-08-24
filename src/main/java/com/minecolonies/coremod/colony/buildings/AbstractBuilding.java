@@ -384,6 +384,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                 workOrder.isMirrored());
         this.setHeight(wrapper.getHeight());
         this.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
+        this.isBuilt = true;
     }
     //------------------------- Starting Required Tools/Item handling -------------------------//
 

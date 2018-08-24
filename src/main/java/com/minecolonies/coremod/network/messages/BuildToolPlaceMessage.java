@@ -177,6 +177,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
                 world.setBlockState(buildPos, block.getDefaultState().withRotation(BlockUtils.getRotation(rotation)));
                 ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
 
+                boolean complete = false;
                 int level = 0;
                 final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), itemStack -> itemStack.isItemEqual(new ItemStack(Item.getItemFromBlock(block), 1)));
                 if (slot != -1)
@@ -196,11 +197,12 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
                             schematic += level;
                             StructureWrapper.loadAndPlaceStructureWithRotation(player.world, schematic,
                               buildPos, rotation,mirror ? Mirror.FRONT_BACK : Mirror.NONE, false);
+                            complete = true;
                         }
                     }
                     player.inventory.clearMatchingItems(Item.getItemFromBlock(block), -1, 1, null);
                 }
-                setupBuilding(world, player, sn, rotation, buildPos, mirror, level);
+                setupBuilding(world, player, sn, rotation, buildPos, mirror, level, complete);
             }
         }
         else
@@ -238,18 +240,19 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
 
     /**
      * setup the building once it has been placed.
-     *  @param world         World the hut is being placed into.
+     * @param world         World the hut is being placed into.
      * @param player        Who placed the hut.
      * @param sn            The name of the structure.
      * @param rotation      The number of times the structure should be rotated.
      * @param buildPos      The location the hut is being placed.
      * @param mirror        Whether or not the structure is mirrored.
      * @param level         the future initial building level.
+     * @param complete      if pasted.
      */
     private static void setupBuilding(
       @NotNull final World world, @NotNull final EntityPlayer player,
       final StructureName sn,
-      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final int level)
+      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final int level, final boolean complete)
     {
         @Nullable final AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
 
@@ -277,6 +280,10 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
             if (mirror)
             {
                 building.invertMirror();
+            }
+            if (complete)
+            {
+                building.onUpgradeComplete(building.getBuildingLevel());
             }
         }
     }
