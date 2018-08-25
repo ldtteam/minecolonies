@@ -192,6 +192,9 @@ public class Configurations
         @Config.Comment("Should citizen name tags be rendered?")
         public boolean alwaysRenderNameTag = true;
 
+        @Config.Comment("Should Guard Rangers benefit from Power/Smite/Bane of Arthropods enchants?")
+        public boolean RangerEnchants = true;
+
         @Config.Comment("Amount of blocks the builder checks (to decrease lag by builder)")
         public int maxBlocksCheckedByBuilder = 1000;
 
