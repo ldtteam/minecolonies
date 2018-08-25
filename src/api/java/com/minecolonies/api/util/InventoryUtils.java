@@ -1509,6 +1509,41 @@ public class InventoryUtils
     }
 
     /**
+     * Method to put a given Itemstack in a given target {@link IItemHandler}. Trying to merge existing itemStacks if possible.
+     *
+     * @param stack   the itemStack to transfer.
+     * @param targetHandler The {@link IItemHandler} that works as Target.
+     * @return True when the swap was successful, false when not.
+     */
+    public static boolean transferItemStackIntoNextBestSlotInItemHandler(final ItemStack stack, @NotNull final IItemHandler targetHandler)
+    {
+        ItemStack sourceStack = stack.copy();
+
+        if(ItemStackUtils.isEmpty(sourceStack))
+        {
+            return true;
+        }
+
+        sourceStack = mergeItemStackIntoNextBestSlotInItemHandlers(sourceStack, targetHandler);
+
+        if(ItemStackUtils.isEmpty(sourceStack))
+        {
+            return true;
+        }
+
+        for (int i = 0; i < targetHandler.getSlots(); i++)
+        {
+            sourceStack = targetHandler.insertItem(i, sourceStack, false);
+            if (ItemStackUtils.isEmpty(sourceStack))
+            {
+                return true;
+            }
+        }
+
+        return !ItemStack.areItemStacksEqual(sourceStack, stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(sourceStack, stack);
+    }
+
+    /**
      * Method to merge the ItemStacks from the given source {@link IItemHandler}
      * to the given target {@link IItemHandler}. Trying to merge itemStacks or returning stack if not possible.
      *
@@ -1537,6 +1572,39 @@ public class InventoryUtils
                 if (ItemStackUtils.isEmpty(sourceStack))
                 {
                     sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
+                    return sourceStack;
+                }
+            }
+        }
+        return sourceStack;
+    }
+
+    /**
+     * Method to merge the ItemStacks from the given source {@link IItemHandler}
+     * to the given target {@link IItemHandler}. Trying to merge itemStacks or returning stack if not possible.
+     *
+     * @param stack the stack to add.
+     * @param targetHandler The {@link IItemHandler} that works as Target.
+     * @return True when the swap was successful, false when not.
+     */
+    public static ItemStack mergeItemStackIntoNextBestSlotInItemHandlers(
+      final ItemStack stack,
+      @NotNull final IItemHandler targetHandler)
+    {
+        ItemStack sourceStack = stack.copy();
+
+        if(ItemStackUtils.isEmpty(sourceStack))
+        {
+            return sourceStack;
+        }
+
+        for (int i = 0; i < targetHandler.getSlots(); i++)
+        {
+            if (!ItemStackUtils.isEmpty(targetHandler.getStackInSlot(i)) && targetHandler.getStackInSlot(i).isItemEqual(sourceStack))
+            {
+                sourceStack = targetHandler.insertItem(i, sourceStack, false);
+                if (ItemStackUtils.isEmpty(sourceStack))
+                {
                     return sourceStack;
                 }
             }
