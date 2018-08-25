@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
@@ -289,7 +288,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                         final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
                         double damage = getRangedAttackDamage();
 
-                        if (Configurations.gameplay.RangerEnchants)
+                        if (Configurations.gameplay.rangerEnchants)
                         {
                             final ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
                             damage += EnchantmentHelper.getModifierForCreature(heldItem, target.getCreatureAttribute());
