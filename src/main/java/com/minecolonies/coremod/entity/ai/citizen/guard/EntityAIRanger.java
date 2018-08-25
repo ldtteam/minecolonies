@@ -1,17 +1,22 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.util.SoundUtils;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.projectile.EntityTippedArrow;
+import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -283,6 +288,14 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                         final double zVector = target.posZ - worker.posZ;
                         final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
                         double damage = getRangedAttackDamage();
+
+                        if (Configurations.gameplay.RangerEnchants)
+                        {
+                            final ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
+                            damage += EnchantmentHelper.getModifierForCreature(heldItem, target.getCreatureAttribute());
+                            damage += EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, heldItem);
+                        }
+
                         final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getLevel() + 1);
 
                         arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
