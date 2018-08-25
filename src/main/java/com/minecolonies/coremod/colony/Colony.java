@@ -369,9 +369,9 @@ public class Colony implements IColony
             progressManager.readFromNBT(compound);
         }
 
-        if (compound.hasKey(TAG_HAPPINESS))
+        if (compound.hasKey(TAG_HAPPINESS_MODIFIER))
         {
-            colonyHappinessManager.setLockedHappinessModifier(Optional.of(compound.getDouble(TAG_HAPPINESS)));
+            colonyHappinessManager.setLockedHappinessModifier(Optional.of(compound.getDouble(TAG_HAPPINESS_MODIFIER)));
         }
         else
         {
@@ -485,7 +485,7 @@ public class Colony implements IColony
         citizenManager.writeToNBT(citizenCompound);
         compound.setTag(TAG_CITIZEN_MANAGER, citizenCompound);
 
-        colonyHappinessManager.getLockedHappinessModifier().ifPresent(d -> compound.setDouble(TAG_HAPPINESS, d));
+        colonyHappinessManager.getLockedHappinessModifier().ifPresent(d -> compound.setDouble(TAG_HAPPINESS_MODIFIER, d));
 
         final NBTTagCompound statsCompound = new NBTTagCompound();
         statsManager.writeToNBT(statsCompound);
