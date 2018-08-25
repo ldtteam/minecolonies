@@ -1517,18 +1517,30 @@ public class InventoryUtils
      */
     public static boolean transferItemStackIntoNextBestSlotInItemHandler(final ItemStack stack, @NotNull final IItemHandler targetHandler)
     {
+        return transferItemStackIntoNextBestSlotInItemHandlerWithResult(stack, targetHandler).isEmpty();
+    }
+
+    /**
+     * Method to put a given Itemstack in a given target {@link IItemHandler}. Trying to merge existing itemStacks if possible.
+     *
+     * @param stack   the itemStack to transfer.
+     * @param targetHandler The {@link IItemHandler} that works as Target.
+     * @return the rest of the stack.
+     */
+    public static ItemStack transferItemStackIntoNextBestSlotInItemHandlerWithResult(final ItemStack stack, @NotNull final IItemHandler targetHandler)
+    {
         ItemStack sourceStack = stack.copy();
 
         if(ItemStackUtils.isEmpty(sourceStack))
         {
-            return true;
+            return sourceStack;
         }
 
         sourceStack = mergeItemStackIntoNextBestSlotInItemHandlers(sourceStack, targetHandler);
 
         if(ItemStackUtils.isEmpty(sourceStack))
         {
-            return true;
+            return sourceStack;
         }
 
         for (int i = 0; i < targetHandler.getSlots(); i++)
@@ -1536,11 +1548,11 @@ public class InventoryUtils
             sourceStack = targetHandler.insertItem(i, sourceStack, false);
             if (ItemStackUtils.isEmpty(sourceStack))
             {
-                return true;
+                return sourceStack;
             }
         }
 
-        return !ItemStack.areItemStacksEqual(sourceStack, stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(sourceStack, stack);
+        return sourceStack;
     }
 
     /**
