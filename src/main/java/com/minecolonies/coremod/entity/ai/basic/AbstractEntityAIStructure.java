@@ -406,7 +406,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
         for (final ItemStack item : items)
         {
-            InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), item);
+            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, new InvWrapper(worker.getInventoryCitizen()));
         }
     }
 
