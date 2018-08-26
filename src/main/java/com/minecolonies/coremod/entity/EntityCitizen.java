@@ -450,7 +450,8 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenColonyHandler.getColony().getHappinessData().setDeathModifier(penalty,citizenJobHandler.getColonyJob() instanceof AbstractJobGuard); 
             triggerDeathAchievement(damageSource, citizenJobHandler.getColonyJob());
             citizenChatHandler.notifyDeath(damageSource);
-            if (!(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
+            if (!(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard)
+                && (damageSource != DamageSource.IN_WALL))
             {
                 citizenColonyHandler.getColony().setNeedToMourn(true, citizenData.getName());
             }
