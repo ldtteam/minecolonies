@@ -169,7 +169,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         //add the drops to the citizen
         for (final ItemStack item : localItems)
         {
-            InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), item);
+            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, new InvWrapper(worker.getInventoryCitizen()));
         }
 
         if (tool != null)

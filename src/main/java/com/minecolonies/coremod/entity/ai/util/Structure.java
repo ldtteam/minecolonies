@@ -367,8 +367,8 @@ public class Structure
                                       || structureBlock.worldBlock == Blocks.AIR);
             case BUILD:
                 return advanceBlocks(this.theStructure::incrementBlock, structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
-                                                                                         && structureBlock.block == Blocks.AIR
-                                                                                         && !structureBlock.metadata.getMaterial().isSolid());
+                                                                                         || structureBlock.block == Blocks.AIR
+                                                                                         || !structureBlock.metadata.getMaterial().isSolid());
             case SPAWN:
                 return advanceBlocks(this.theStructure::decrementBlock, structureBlock ->
                                                                        structureBlock.entity == null);

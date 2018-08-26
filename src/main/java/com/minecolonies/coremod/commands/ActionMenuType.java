@@ -279,8 +279,16 @@ public enum ActionMenuType implements IMenuType
             new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.OPTIONAL),
             new ActionArgument("range", ActionArgumentType.INTEGER, ActionArgumentType.Is.OPTIONAL),
             new ActionArgument("add", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.OPTIONAL)
-            ))
-    ;
+            )),
+    LOOT_GEN(new ActionMenu(
+      "lootGen",
+      "lootGen",
+      ForgePermissionNodes.LOOT_GEN,
+      LootGenCommand.class,
+      new ActionArgument("building", ActionArgumentType.STRING, ActionArgumentType.Is.REQUIRED),
+      new ActionArgument("paste", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.OPTIONAL),
+      new ActionArgument("level", ActionArgumentType.INTEGER, ActionArgumentType.Is.OPTIONAL)
+    )),;
 
     @NotNull private final ActionMenu menu;
 
