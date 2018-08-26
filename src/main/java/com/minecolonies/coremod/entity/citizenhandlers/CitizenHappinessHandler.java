@@ -208,6 +208,7 @@ public class CitizenHappinessHandler
         {
             foodModifier = 0;
         }
+        citizen.markDirty();
     }
 
     /**
@@ -340,6 +341,7 @@ public class CitizenHappinessHandler
             }
             citizen.markDirty();
         }
+        citizen.markDirty();
     }
 
     /**
@@ -360,6 +362,7 @@ public class CitizenHappinessHandler
         }
 
         field.isCanFarm(canFarm);
+        citizen.markDirty();
     }
 
     /**
@@ -390,6 +393,7 @@ public class CitizenHappinessHandler
         {
             needsTool.remove(toolType);
         }
+        citizen.markDirty();
     }
 
     /**
@@ -405,8 +409,8 @@ public class CitizenHappinessHandler
         else
         {
             houseModifier = (MAX_HOUSE_PENALTY * ((double) numberOfDaysWithoutHouse / MAX_DAYS_WITHOUT_HOUSE)) * -1;
-            citizen.markDirty();
         }
+        citizen.markDirty();
     }
 
     /**
@@ -425,6 +429,7 @@ public class CitizenHappinessHandler
         {
             jobModifier = (MAX_JOB_PENALTY * ((double) numberOfDaysWithoutHouse / MAX_DAYS_WITHOUT_JOB)) * -1;
         }
+        citizen.markDirty();
     }
 
     /**

@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.cook;
 
 import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.CitizenConstants;
@@ -96,6 +97,9 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
                 new InvWrapper(furnace), RESULT_SLOT,
                 new InvWrapper(worker.getInventoryCitizen()));
+        worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
+        this.incrementActionsDoneAndDecSaturation();
+
     }
 
     @Override
@@ -133,7 +137,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             return START_WORKING;
         }
 
-        if (!walkToBlock(citizenToServe.get(0).getPosition()))
+        if (walkToBlock(citizenToServe.get(0).getPosition()))
         {
             setDelay(2);
             return getState();
@@ -154,7 +158,9 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 
         citizenToServe.remove(0);
         setDelay(SERVE_DELAY);
-        return getState();
+        worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
+        this.incrementActionsDoneAndDecSaturation();
+        return START_WORKING;
     }
 
     /**
@@ -176,7 +182,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 
         citizenToServe.clear();
         final List<EntityCitizen> citizenList = world.getEntitiesWithinAABB(EntityCitizen.class,
-                range, cit ->  cit.getCitizenData() != null && cit.getCitizenData().getSaturation() <= CitizenConstants.LOW_SATURATION);
+                range, cit ->  cit.getCitizenData() != null && ((Configurations.gameplay.restaurantSittingRequired && cit.isRiding()) 
+                || (! Configurations.gameplay.restaurantSittingRequired && !cit.isRiding()) && cit.getCitizenData().getSaturation() <= CitizenConstants.LOW_SATURATION));
         if (!citizenList.isEmpty())
         {
             citizenToServe.addAll(citizenList);

@@ -42,3 +42,7 @@ tools/export_lang/.api_key
 tools/fix_model_angle/*.class
 
 run2/
+
+mc1\.12\.org_Client\.launch
+
+mc1\.12\.org_Server\.launch

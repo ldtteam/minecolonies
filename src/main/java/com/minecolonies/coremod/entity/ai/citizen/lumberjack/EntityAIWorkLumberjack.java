@@ -365,6 +365,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                 job.tree = null;
                 checkedInHut = false;
             }
+            incrementActionsDoneAndDecSaturation();
             building.getColony().getStatsManager().incrementStatistic("trees");
             workFrom = null;
             return LUMBERJACK_GATHERING;

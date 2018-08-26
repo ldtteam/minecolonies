@@ -1,0 +1,18 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "minecraft:planks",
+    		"data": 2
+        },
+        {
+            "item": "minecraft:wooden_slab",
+            "data": 2
+        }
+    ],
+    "result": {
+        "item": "minecolonies:blockchair_birch",
+        "data": 0,
+        "count": 1
+    }
+}

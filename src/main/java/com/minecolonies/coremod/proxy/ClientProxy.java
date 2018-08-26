@@ -4,6 +4,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.blocks.cactus.BlockCactusDoor;
+import com.minecolonies.coremod.blocks.decorative.BlockChair;
 import com.minecolonies.coremod.blocks.decorative.BlockCushion;
 import com.minecolonies.coremod.blocks.decorative.BlockPaperwall;
 import com.minecolonies.coremod.blocks.decorative.BlockShingle;
@@ -250,39 +251,6 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModItems.resourceScroll);
 
         
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionWhite), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.WHITE.getUnlocalizedName()), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionGreen), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.GREEN.getUnlocalizedName()), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionBlue), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.BLUE.getUnlocalizedName()), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionOrange), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.ORANGE.getUnlocalizedName()), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionMagenta), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.MAGENTA.getUnlocalizedName()), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionLight_blue), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.LIGHT_BLUE.getUnlocalizedName()), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionYellow), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.YELLOW.getUnlocalizedName()), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionLime), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.LIME.getUnlocalizedName()), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionPink), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.PINK.getUnlocalizedName()), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionGray), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.GRAY.getUnlocalizedName()), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionSilver), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.SILVER.getUnlocalizedName()), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionCyan), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.CYAN.getUnlocalizedName()), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionPurple), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.PURPLE.getUnlocalizedName()), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionBrown), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.BROWN.getUnlocalizedName()), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionRed), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.RED.getUnlocalizedName()), INVENTORY));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockCushionBlack), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.BLACK.getUnlocalizedName()), INVENTORY));
-        
 
         ModelLoader.setCustomStateMapper(ModBlocks.blockCactusDoor, new StateMap.Builder().ignore(BlockCactusDoor.POWERED).build());
         ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());
@@ -318,6 +286,18 @@ public class ClientProxy extends CommonProxy
         }
 
         for (final BlockTimberFrame frame : ModBlocks.getTimberFrames())
+        {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(frame), 0,
+                        new ModelResourceLocation(frame.getRegistryName(), INVENTORY));
+        }
+
+        for (final BlockChair frame : ModBlocks.getBlockChairs())
+        {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(frame), 0,
+                        new ModelResourceLocation(frame.getRegistryName(), INVENTORY));
+        }
+
+        for (final BlockCushion frame : ModBlocks.getBlockCushions())
         {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(frame), 0,
                         new ModelResourceLocation(frame.getRegistryName(), INVENTORY));

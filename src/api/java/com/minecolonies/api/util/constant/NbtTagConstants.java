@@ -80,6 +80,9 @@ public final class NbtTagConstants
     public static final String TAG_NO_TOOLS               = "noTools";
     public static final String TAG_NO_TOOLS_NUMBER_DAYS   = "numberOfDaysNoTools";
     public static final String TAG_NO_TOOLS_TOOL_TYPE     = "toolType";
+    public static final String TAG_CHAIRS                 = "chairs";
+
+
     public static final String TAG_IS_BUILT               = "isBuilt";
     public static final String TAG_OTHER_LEVEL            = "otherLevel";
     public static final String TAG_PASTEABLE              = "isPasteable";

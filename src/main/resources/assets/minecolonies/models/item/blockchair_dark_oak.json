@@ -1,0 +1,24 @@
+{
+  "parent": "minecolonies:block/blockchair_dark_oak",
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [53, -6, 0],
+			"scale": [0.675, 0.65, 0.65]
+		},
+		"thirdperson_lefthand": {
+			"scale": [0.7, 0.7, 0.7],
+			"rotation": [59, -6, 0]
+		},
+		"ground": {
+			"translation": [0, 0, 0.5]
+		},
+		"fixed": {
+			"rotation": [-1, 0, 0]
+		},
+		"gui": {
+			"scale": [0.725, 0.775, 0.7],
+			"translation": [-0.5, 0.5, 0.5],
+			"rotation": [18, -18, 0]
+		}
+	}
+}

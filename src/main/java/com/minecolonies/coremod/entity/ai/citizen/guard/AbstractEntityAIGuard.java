@@ -109,7 +109,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
           new AITarget(IDLE, START_WORKING, true),
           new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
           new AITarget(PREPARING, true , this::prepare),
-          new AITarget(DECIDE, true, this::decide),
+          new AITarget(DECIDE, true, this::decide)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getStrength() + worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);

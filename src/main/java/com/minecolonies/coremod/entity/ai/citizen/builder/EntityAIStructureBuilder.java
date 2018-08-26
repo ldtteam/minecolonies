@@ -135,9 +135,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         super.registerTargets(
           new AITarget(IDLE, START_WORKING, true),
           new AITarget(this::checkIfExecute, true, this::getState),
-          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding)
-          new AITarget(GATHERING_REQUIRED_MATERIALS, this::getNeededItem)
-          new AITarget(PICK_UP, this::pickUpMaterial),
+          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
+          new AITarget(GATHERING_REQUIRED_MATERIALS, true, this::getNeededItem),
+          new AITarget(PICK_UP, false, this::pickUpMaterial)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
                                   + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());

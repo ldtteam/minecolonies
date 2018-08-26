@@ -50,8 +50,8 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     {
         super(job);
         super.registerTargets(
-          new AITarget(GUARD_ATTACK_PROTECT, this::attackProtect),
-          new AITarget(GUARD_ATTACK_PHYSICAL, this::attackPhysical)
+          new AITarget(GUARD_ATTACK_PROTECT, false, this::attackProtect),
+          new AITarget(GUARD_ATTACK_PHYSICAL, false, this::attackPhysical)
         );
         toolsNeeded.add(ToolType.SWORD);
 
@@ -216,6 +216,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
                 target.attackEntityFrom(source, (float) damageToBeDealt);
                 target.setRevengeTarget(worker);
 
+                this.incrementActionsDoneAndDecSaturation();
                 worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
             }
         }

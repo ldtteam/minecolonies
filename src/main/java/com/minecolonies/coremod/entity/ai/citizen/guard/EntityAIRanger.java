@@ -87,7 +87,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     {
         super(job);
         super.registerTargets(
-          new AITarget(GUARD_ATTACK_RANGED, this::attackRanged)
+          new AITarget(GUARD_ATTACK_RANGED, false, this::attackRanged)
         );
         toolsNeeded.add(ToolType.BOW);
     }
@@ -305,6 +305,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                         target.setRevengeTarget(worker);
                         attackTime = getAttackDelay();
                         worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
+                        this.incrementActionsDoneAndDecSaturation();
                         worker.resetActiveHand();
                     }
                     else

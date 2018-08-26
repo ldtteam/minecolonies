@@ -1055,13 +1055,15 @@ public class EntityCitizen extends AbstractEntityCitizen
         return citizenStuckHandler;
     }
     
+    /**
+     * function indicates if it is okay or not to eat at this
+     * moment.
+     * @return indicates if it is okay to eat at this moment
+     */
     public boolean isOkayToEat()
     {
         boolean value = true;
         
-        if (getCitizenSleepHandler().isAsleep())
-            value = false;
-
         if (citizenJobHandler.getColonyJob() != null && !citizenJobHandler.getColonyJob().isOkayToEat())
         {
             value = false;

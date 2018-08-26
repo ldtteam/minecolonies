@@ -517,6 +517,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
 
         worker.swingArm(worker.getActiveHand());
+        this.incrementActionsDoneAndDecSaturation();
     }
 
     /**
