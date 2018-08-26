@@ -22,6 +22,7 @@ public enum ForgePermissionNodes
     LIST_COLONIES("com.minecolonies.coremod.ListColonies", DefaultPermissionLevel.OP, "Can ListColonies...."),
     REQUEST_SYSTEM_RESET_ALL("com.minecolonies.coremod.RequestSystemResetAll", DefaultPermissionLevel.OP, "Can RequestSystemResetAll...."),
     BACKUP("com.minecolonies.coremod.Backup", DefaultPermissionLevel.OP, "Can back up colony data."),
+    SPAWN_CITIZEN("com.minecolonies.coremod.SpawnCitizen", DefaultPermissionLevel.OP, "Can SpawnCitizen...."),
     LIST_CITIZENS("com.minecolonies.coremod.ListCitizens", DefaultPermissionLevel.ALL, "Can ListCitizens...."),
     KILL_CITIZEN("com.minecolonies.coremod.KillCitizen", DefaultPermissionLevel.ALL, "Can KillCitizen...."),
     RESPAWN_CITIZEN("com.minecolonies.coremod.RespawnCitizen", DefaultPermissionLevel.ALL, "Can RespawnCitizen...."),
@@ -29,6 +30,7 @@ public enum ForgePermissionNodes
     CHANGE_COLONY_OWNER("com.minecolonies.coremod.ChangeColonyOwner", DefaultPermissionLevel.OP, "Can change owner of a colony."),
     SHOW_COLONY_INFO("com.minecolonies.coremod.ShowColonyInfo", DefaultPermissionLevel.OP, "Can ShowColonyInfo...."),
     DELETE_COLONY("com.minecolonies.coremod.DeleteColony", DefaultPermissionLevel.OP, "Can DeleteColony...."),
+    SET_HAPPINESS_LEVEL_COLONY("com.minecolonies.coremod.SetHappinessLevelColony", DefaultPermissionLevel.OP, "Can SetHappinessLevel...."),
     DISABLE_BARBARIAN_SPAWNS("com.minecolonies.coremod.DisableBarbarianSpawns", DefaultPermissionLevel.OP, "Can DisableBarbarianSpawns...."),
     ADD_OFFICER("com.minecolonies.coremod.AddOfficer", DefaultPermissionLevel.OP, "Can AddOfficer...."),
     REFRESH_COLONY("com.minecolonies.coremod.RefreshColony", DefaultPermissionLevel.OP, "Can RefreshColony...."),
@@ -45,7 +47,8 @@ public enum ForgePermissionNodes
     PIG_KILL("com.minecolonies.coremod.PigKill", DefaultPermissionLevel.OP, "Can PigKill...."),
     SHEEP_KILL("com.minecolonies.coremod.SheepKill", DefaultPermissionLevel.OP, "Can SheepKill...."),
     SCAN("com.minecolonies.coremod.Scan", DefaultPermissionLevel.OP, "Can scan structures."),
-    CLAIM("com.minecolonies.coremod.Claim", DefaultPermissionLevel.OP, "Can claim structures.")
+    CLAIM("com.minecolonies.coremod.Claim", DefaultPermissionLevel.OP, "Can claim structures."),
+    LOOT_GEN("com.minecolonies.coremod.lootGen", DefaultPermissionLevel.OP, "Can lootGen minecolonies building blocks.")
     ;
 
     @NotNull private final String nodeName;

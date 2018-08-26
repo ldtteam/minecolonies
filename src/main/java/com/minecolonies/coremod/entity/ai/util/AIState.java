@@ -172,6 +172,10 @@ public enum AIState
      * Completes the building.
      */
     BUILDER_COMPLETE_BUILD,
+    /**
+     * Pick up all materials he might need.
+     */
+    PICK_UP,
 
     /*
 ###FARMER###

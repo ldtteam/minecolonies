@@ -26,9 +26,14 @@ public class GuardGear implements Predicate<ItemStack>
     private final int maxLevelRequired;
 
     /**
-     * The armor level.
+     * The min armor level.
      */
-    private final int armorLevel;
+    private final int minArmorLevel;
+
+    /**
+     * The max armor level.
+     */
+    private final int maxArmorLevel;
 
     /**
      * Minimal building level.
@@ -39,7 +44,6 @@ public class GuardGear implements Predicate<ItemStack>
      * Maximum building level.
      */
     private final int maxBuildingLevelRequired;
-
 
     /**
      * Item type that is required.
@@ -56,20 +60,23 @@ public class GuardGear implements Predicate<ItemStack>
      *
      * @param item               item that is being required.
      * @param type               item type for the required item.
+     * @param minArmorLevel      the min armor level.
+     * @param maxArmorLevel      the max armor level.
      * @param citizenLevelRange  level range required to demand item.
      * @param buildingLevelRange level range that the item will be required.
      */
     public GuardGear(
       final IToolType item, final EntityEquipmentSlot type,
-      final int armorLevel,
-      final Tuple<Integer, Integer> citizenLevelRange,
+      final int minArmorLevel,
+      final int maxArmorLevel, final Tuple<Integer, Integer> citizenLevelRange,
       final Tuple<Integer, Integer> buildingLevelRange)
     {
         this.type = type;
         this.itemNeeded = item;
         this.minLevelRequired = citizenLevelRange.getFirst();
         this.maxLevelRequired = citizenLevelRange.getSecond();
-        this.armorLevel = armorLevel;
+        this.minArmorLevel = minArmorLevel;
+        this.maxArmorLevel = maxArmorLevel;
         this.minBuildingLevelRequired = buildingLevelRange.getFirst();
         this.maxBuildingLevelRequired = buildingLevelRange.getSecond();
     }
@@ -101,9 +108,17 @@ public class GuardGear implements Predicate<ItemStack>
     /**
      * @return minimal level required for this tool.
      */
-    public int getArmorLevel()
+    public int getMinArmorLevel()
     {
-        return armorLevel;
+        return minArmorLevel;
+    }
+
+    /**
+     * @return maximal level required for this tool.
+     */
+    public int getMaxArmorLevel()
+    {
+        return maxArmorLevel;
     }
 
     /**
@@ -133,6 +148,8 @@ public class GuardGear implements Predicate<ItemStack>
     @Override
     public boolean test(final ItemStack stack)
     {
-        return (ItemStackUtils.hasToolLevel(stack, itemNeeded, armorLevel, armorLevel) && stack.getItem() instanceof ItemArmor && ((ItemArmor) stack.getItem()).armorType == getType()) || (stack.getItem() instanceof ItemShield && getType() == EntityEquipmentSlot.MAINHAND);
+        return
+          (ItemStackUtils.hasToolLevel(stack, itemNeeded, minArmorLevel, maxArmorLevel) && stack.getItem() instanceof ItemArmor && ((ItemArmor) stack.getItem()).armorType == getType())
+            || (stack.getItem() instanceof ItemShield && getType() == EntityEquipmentSlot.MAINHAND);
     }
 }

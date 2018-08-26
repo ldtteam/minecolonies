@@ -66,7 +66,18 @@ public interface ICitizenManager
      * @param data Data to use to spawn citizen.
      * @param world the world to spawn it in.
      */
-    void spawnCitizen(final CitizenData data, @NotNull final World world);
+    default void spawnCitizen(final CitizenData data, @NotNull final World world)
+    {
+        this.spawnCitizen(data, world, false);
+    }
+
+    /**
+     * Spawns a citizen with the specific citizen data.
+     * @param data Data to use when spawn, null when new generation.
+     * @param world THe world.
+     * @param force True to skip max citizen test, false when not.
+     */
+    void spawnCitizen(final CitizenData data, @NotNull final World world, final boolean force);
 
     /**
      * Removes a citizen from the colony.
@@ -109,6 +120,12 @@ public interface ICitizenManager
      * @return the amount.
      */
     int getMaxCitizens();
+
+    /**
+     * Get the current amount of citizens, might be bigger then {@link #getMaxCitizens()}
+     * @return The current amount of citizens in the colony.
+     */
+    int getCurrentCitizenCount();
 
     /**
      * Set the new max citizens.

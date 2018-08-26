@@ -97,6 +97,11 @@ public class Colony implements IColony
     private final ICitizenManager citizenManager = new CitizenManager(this);
 
     /**
+     * Colony happiness manager.
+     */
+    private final IColonyHappinessManager colonyHappinessManager = new ColonyHappinessManager();
+
+    /**
      * Statistic and achievement manager manager of the colony.
      */
     private final IStatisticAchievementManager statsManager = new StatisticAchievementManager(this);
@@ -376,6 +381,15 @@ public class Colony implements IColony
             progressManager.readFromNBT(compound);
         }
 
+        if (compound.hasKey(TAG_HAPPINESS_MODIFIER))
+        {
+            colonyHappinessManager.setLockedHappinessModifier(Optional.of(compound.getDouble(TAG_HAPPINESS_MODIFIER)));
+        }
+        else
+        {
+            colonyHappinessManager.setLockedHappinessModifier(Optional.empty());
+        }
+
         //  Workload
         workManager.readFromNBT(compound.getCompoundTag(TAG_WORK));
 
@@ -484,6 +498,8 @@ public class Colony implements IColony
         final NBTTagCompound citizenCompound = new NBTTagCompound();
         citizenManager.writeToNBT(citizenCompound);
         compound.setTag(TAG_CITIZEN_MANAGER, citizenCompound);
+
+        colonyHappinessManager.getLockedHappinessModifier().ifPresent(d -> compound.setDouble(TAG_HAPPINESS_MODIFIER, d));
 
         final NBTTagCompound statsCompound = new NBTTagCompound();
         statsManager.writeToNBT(statsCompound);
@@ -1177,6 +1193,16 @@ public class Colony implements IColony
     public ICitizenManager getCitizenManager()
     {
         return citizenManager;
+    }
+
+    /**
+     * Get the colony happiness manager.
+     *
+     * @return the colony happiness manager.
+     */
+    public IColonyHappinessManager getColonyHappinessManager()
+    {
+        return colonyHappinessManager;
     }
 
     /**

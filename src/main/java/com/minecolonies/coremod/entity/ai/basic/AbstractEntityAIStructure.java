@@ -29,6 +29,7 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -69,47 +70,58 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * String which shows if something is a waypoint.
      */
     public static final String WAYPOINT_STRING = "infrastructure";
+
     /**
      * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally).
      */
-    private static final double XP_EACH_BUILDING              = 10.0D;
+    private static final double XP_EACH_BUILDING = 10.0D;
+
     /**
      * Amount of xp the builder gains for placing a block.
      */
-    private static final double XP_EACH_BLOCK                 = 0.1D;
+    private static final double XP_EACH_BLOCK = 0.1D;
+
     /**
      * Increase this value to make the building speed slower.
      * Used to balance worker level speed increase.
      */
-    private static final int    PROGRESS_MULTIPLIER           = 10;
+    private static final int PROGRESS_MULTIPLIER = 10;
+
     /**
      * Speed the builder should run away when he castles himself in.
      */
-    private static final double RUN_AWAY_SPEED                = 4.1D;
+    private static final double RUN_AWAY_SPEED = 4.1D;
+
     /**
      * The minimum range to keep from the current building place.
      */
-    private static final int    MIN_ADDITIONAL_RANGE_TO_BUILD = 3;
+    private static final int MIN_ADDITIONAL_RANGE_TO_BUILD = 3;
+
     /**
      * The amount of ticks to wait when not needing any tools to break blocks.
      */
-    private static final int    UNLIMITED_RESOURCES_TIMEOUT   = 5;
+    private static final int UNLIMITED_RESOURCES_TIMEOUT = 5;
+
     /**
      * The standard range the builder should reach until his target.
      */
     private static final int STANDARD_WORKING_RANGE = 5;
+
     /**
      * The minimum range the builder has to reach in order to construct or clear.
      */
-    private static final int MIN_WORKING_RANGE      = 12;
+    private static final int MIN_WORKING_RANGE = 12;
+
     /**
      * The current structure task to be build.
      */
     private Structure currentStructure;
+
     /**
      * Position where the Builders constructs from.
      */
-    private BlockPos  workFrom;
+    protected BlockPos workFrom;
+
     /**
      * The rotation of the current build.
      */
@@ -204,6 +216,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                   || evaluationFunction.apply(currentBlock))
             {
                 final Structure.Result result = advanceBlock.get();
+                storeProgressPos(currentStructure.getLocalBlockPosition(), currentStructure.getStage());
                 if (result == Structure.Result.AT_END)
                 {
                     return switchStage(nextState);
@@ -218,11 +231,32 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     }
 
     /**
+     * Store the progressPos in the building if possible for the worker.
+     * @param blockPos the progressResult.
+     */
+    public void storeProgressPos(final BlockPos blockPos, final Structure.Stage stage)
+    {
+        /*
+         * Override if needed.
+         */
+    }
+
+    /**
+     * Get the last progress.
+     * @return the blockPos or null.
+     */
+    @Nullable
+    public Tuple<BlockPos, Structure.Stage> getProgressPos()
+    {
+        return null;
+    }
+
+    /**
      * Switches the structures stage after the current one has been completed.
      */
     public AIState switchStage(final AIState state)
     {
-        if(state.equals(REMOVE_STEP))
+        if (state.equals(REMOVE_STEP))
         {
             currentStructure.setStage(Structure.Stage.REMOVE);
         }
@@ -288,6 +322,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
     private AIState completeBuild()
     {
+        storeProgressPos(null, Structure.Stage.CLEAR);
         incrementActionsDoneAndDecSaturation();
         if (job instanceof AbstractJobStructure)
         {
@@ -311,7 +346,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
             //Fill workFrom with the position from where the builder should build.
             //also ensure we are at that position.
-            if (!walkToConstructionSite())
+            if (!walkToConstructionSite(currentStructure.getCurrentBlockPosition()))
             {
                 return false;
             }
@@ -350,11 +385,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      *
      * @return true while walking to the site.
      */
-    public boolean walkToConstructionSite()
+    public boolean walkToConstructionSite(final BlockPos currentBlock)
     {
         if (workFrom == null)
         {
-            workFrom = getWorkingPosition(currentStructure.getCurrentBlockPosition());
+            workFrom = getWorkingPosition(currentBlock);
         }
 
         //The miner shouldn't search for a save position. Just let him build from where he currently is.
@@ -371,7 +406,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
         for (final ItemStack item : items)
         {
-            InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), item);
+            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, new InvWrapper(worker.getInventoryCitizen()));
         }
     }
 
@@ -466,7 +501,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         itemList.removeIf(itemStack -> ItemStackUtils.isEmpty(itemStack) || foundStacks.stream()
                                                                               .anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack,
                                                                                 targetStack, true, true)));
-
         for (final ItemStack placedStack : itemList)
         {
             if (ItemStackUtils.isEmpty(placedStack))
@@ -483,11 +517,22 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             {
                 final Stack stackRequest = new Stack(placer.getTotalAmount(placedStack));
                 placer.getWorker().getCitizenData().createRequest(stackRequest);
-
+                placer.registerBlockAsNeeded(placedStack);
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Register the block as needed at the building if possible.
+     * @param stack the stack.
+     */
+    public void registerBlockAsNeeded(final ItemStack stack)
+    {
+        /*
+         * Override in child if possible.
+         */
     }
 
     /**
@@ -540,7 +585,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         }
 
         final List<ItemStack> itemList = new ArrayList<>();
-        if(!ChiselAndBitsCheck.isChiselAndBitsBlock(stateToPlace))
+        if (!ChiselAndBitsCheck.isChiselAndBitsBlock(stateToPlace))
         {
             itemList.add(stack);
         }
@@ -551,7 +596,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             if (!ItemStackUtils.isEmpty(tempStack))
             {
                 final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(tempStack.getItem(), tempStack.getItemDamage());
-                if (slot != -1 )
+                if (slot != -1)
                 {
                     final ItemStack container = tempStack.getItem().getContainerItem(tempStack);
                     new InvWrapper(getInventory()).extractItem(slot, 1, false);
@@ -576,11 +621,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * On placement of a Block execute this to store the location in the regarding building when needed.
      *
      * @param blockState itself
-     * @param pos   the position of the block.
+     * @param pos        the position of the block.
      */
     public void connectBlockToBuildingIfNecessary(@NotNull final IBlockState blockState, @NotNull final BlockPos pos)
     {
-        /**
+        /*
          * Classes can overwrite this if necessary.
          */
     }
@@ -618,7 +663,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      */
     public void reduceNeededResources(final ItemStack stack)
     {
-        /**
+        /*
          * Nothing to be done here. Workers overwrite this if necessary.
          */
     }
@@ -631,7 +676,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
             //Fill workFrom with the position from where the builder should build.
             //also ensure we are at that position.
-            if (!walkToConstructionSite())
+            if (!walkToConstructionSite(currentStructure.getCurrentBlockPosition()))
             {
                 return false;
             }
@@ -702,33 +747,33 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      */
     public void loadStructure(@NotNull final String name, final int rotateTimes, final BlockPos position, final boolean isMirrored, final boolean removal)
     {
-        if (job instanceof AbstractJobStructure)
+        rotation = rotateTimes;
+        try
         {
-            rotation = rotateTimes;
-            try
-            {
-                final StructureWrapper wrapper = new StructureWrapper(world, name);
+            final StructureWrapper wrapper = new StructureWrapper(world, name);
+            job.setStructure(wrapper);
+            currentStructure = new Structure(world, wrapper, removal ? Structure.Stage.REMOVE : Structure.Stage.CLEAR);
+        }
+        catch (final IllegalStateException e)
+        {
+            Log.getLogger().warn(String.format("StructureProxy: (%s) does not exist - removing build request", name), e);
+            job.setStructure(null);
+        }
 
-                ((AbstractJobStructure) job).setStructure(wrapper);
-                currentStructure = new Structure(world, wrapper, removal ? Structure.Stage.REMOVE : Structure.Stage.CLEAR);
-            }
-            catch (final IllegalStateException e)
-            {
-                Log.getLogger().warn(String.format("StructureProxy: (%s) does not exist - removing build request", name), e);
-                ((AbstractJobStructure) job).setStructure(null);
-            }
-
-            try
-            {
-                ((AbstractJobStructure) job).getStructure().rotate(rotateTimes, world, position, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
-                ((AbstractJobStructure) job).getStructure().setPosition(position);
-            }
-            catch(final NullPointerException ex)
-            {
-                handleSpecificCancelActions();
-                ((AbstractJobStructure) job).setStructure(null);
-                Log.getLogger().warn("Structure couldn't be found which caused an NPE, removed workOrder, more details in log", ex);
-            }
+        try
+        {
+            job.getStructure().rotate(rotateTimes, world, position, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
+            job.getStructure().setPosition(position);
+        }
+        catch (final NullPointerException ex)
+        {
+            handleSpecificCancelActions();
+            job.setStructure(null);
+            Log.getLogger().warn("Structure couldn't be found which caused an NPE, removed workOrder, more details in log", ex);
+        }
+        if (getProgressPos() != null)
+        {
+            this.currentStructure.setStage(getProgressPos().getSecond());
         }
     }
 
@@ -737,7 +782,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      */
     public void handleSpecificCancelActions()
     {
-        /**
+        /*
          * Child classes have to override this.
          */
     }
@@ -768,7 +813,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         {
             //Fill workFrom with the position from where the builder should build.
             //also ensure we are at that position.
-            if (!walkToConstructionSite())
+            if (!walkToConstructionSite(currentStructure.getCurrentBlockPosition()))
             {
                 return false;
             }
@@ -863,10 +908,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     protected abstract void onStartWithoutStructure();
 
     /*
-    * Get specific data of an entity.
-    * Workers should implement this correctly if they require this behavior.
-    * @return the entityInfo or null.
-    */
+     * Get specific data of an entity.
+     * Workers should implement this correctly if they require this behavior.
+     * @return the entityInfo or null.
+     */
     public Template.EntityInfo getEntityInfo()
     {
         return null;
@@ -938,7 +983,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
             if (!Configurations.gameplay.builderInfiniteResources)
             {
-                if(checkForListInInvAndRequest(this, new ArrayList<>(request)))
+                if (checkForListInInvAndRequest(this, new ArrayList<>(request)))
                 {
                     return false;
                 }

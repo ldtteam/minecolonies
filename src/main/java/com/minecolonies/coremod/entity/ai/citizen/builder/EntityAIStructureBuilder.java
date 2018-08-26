@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
-import com.minecolonies.api.util.BlockUtils;
-import com.minecolonies.api.util.EntityUtils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
@@ -13,13 +12,20 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.function.Predicate;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_GATHERING;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -49,6 +55,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     private static final int DEPTH_LEVEL_1 = 30;
 
     /**
+     * Max depth difference.
+     */
+    private static final int MAX_DEPTH_DIFFERENCE = 5;
+
+    /**
      * At this y level the builder will be way slower..
      */
     private static final int DEPTH_LEVEL_2 = 15;
@@ -69,19 +80,49 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     private static final int SPEED_BUFF_2 = 4;
 
     /**
-     * Offset from the building to stand.
+     * The standard delay after each terminated action.
      */
-    private static final int STAND_OFFSET = 3;
-
-    /**
-     * Base y height to start searching a suitable position.
-     */
-    private static final int BASE_Y_HEIGHT = 70;
+    private static final int STANDARD_DELAY = 5;
 
     /**
      * After how many actions should the builder dump his inventory.
      */
     private static final int ACTIONS_UNTIL_DUMP = 1024;
+
+    /**
+     * Min slots the builder should never fill.
+     */
+    private static final long MIN_OPEN_SLOTS = 3;
+
+    /**
+     * Min distance from placing block.
+     */
+    private static final int MIN_DISTANCE = 3;
+
+    /**
+     * Max distance to placing block.
+     */
+    private static final int MAX_DISTANCE = 5;
+
+    /**
+     * After which distance the builder has to recalculate his position.
+     */
+    private static final double ACCEPTANCE_DISTANCE = 12;
+
+    /**
+     * The id in the list of the last picked up item.
+     */
+    private int pickUpCount = 0;
+
+    /**
+     * The currently needed item to pickUp.
+     */
+    private Predicate<ItemStack> needsCurrently;
+
+    /**
+     * The position to walk to at the moment to gather something.
+     */
+    private BlockPos walkTo;
 
     /**
      * Initialize the builder and add all his tasks.
@@ -94,11 +135,86 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         super.registerTargets(
           new AITarget(IDLE, START_WORKING),
           new AITarget(this::checkIfExecute, this::getState),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding)
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+          new AITarget(PICK_UP, this::pickUpMaterial),
+          new AITarget(GATHERING_REQUIRED_MATERIALS, this::getNeededItem)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
                                   + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
         worker.setCanPickUpLoot(true);
+    }
+
+    /**
+     * State to pick up material before going back to work.
+     * @return the next state to go to.
+     */
+    public AIState pickUpMaterial()
+    {
+        final BuildingBuilder building = getOwnBuilding();
+        final List<Predicate<ItemStack>> neededItemsList = new ArrayList<>(building.getRequiredItemsAndAmount().keySet());
+        if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(new InvWrapper(worker.getInventoryCitizen())) < MIN_OPEN_SLOTS)
+        {
+            pickUpCount = 0;
+            return START_WORKING;
+        }
+
+        needsCurrently = neededItemsList.get(pickUpCount);
+        pickUpCount++;
+        return GATHERING_REQUIRED_MATERIALS;
+    }
+
+    /**
+     * Retrieve burnable material from the building to get to start smelting.
+     * For this go to the building if no position has been set.
+     * Then check for the chest with the required material and set the position and return.
+     *
+     * If the position has been set navigate to it.
+     * On arrival transfer to inventory and return to StartWorking.
+     *
+     * @return the next state to transfer to.
+     */
+    private AIState getNeededItem()
+    {
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_GATHERING));
+        setDelay(STANDARD_DELAY);
+
+        if (walkTo == null && walkToBuilding())
+        {
+            return getState();
+        }
+
+        if (needsCurrently == null || !InventoryUtils.hasItemInProvider(getOwnBuilding(), needsCurrently))
+        {
+            return PICK_UP;
+        }
+        else
+        {
+            if (walkTo == null)
+            {
+                final BlockPos pos = getOwnBuilding().getTileEntity().getPositionOfChestWithItemStack(needsCurrently);
+                if (pos == null)
+                {
+                    return PICK_UP;
+                }
+                walkTo = pos;
+            }
+
+            if (walkToBlock(walkTo))
+            {
+                setDelay(2);
+                return getState();
+            }
+
+            final boolean transferred = tryTransferFromPosToWorker(walkTo, needsCurrently);
+            if (!transferred)
+            {
+                walkTo = null;
+                return PICK_UP;
+            }
+            walkTo = null;
+        }
+
+        return PICK_UP;
     }
 
     @Override
@@ -160,6 +276,29 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         return START_BUILDING;
     }
 
+    @Override
+    public AIState afterRequestPickUp()
+    {
+        return INVENTORY_FULL;
+    }
+
+    @Override
+    public AIState afterDump()
+    {
+        return PICK_UP;
+    }
+
+    @Override
+    public boolean walkToConstructionSite(final BlockPos targetPos)
+    {
+        if (workFrom == null || MathUtils.twoDimDistance(targetPos, workFrom) < MIN_DISTANCE || MathUtils.twoDimDistance(targetPos, workFrom) > ACCEPTANCE_DISTANCE)
+        {
+            workFrom = getWorkingPosition(targetPos);
+        }
+
+        return worker.isWorkerAtSiteWithMove(workFrom, MAX_DISTANCE) || MathUtils.twoDimDistance(worker.getPosition(), workFrom) <= ACCEPTANCE_DISTANCE;
+    }
+
     /**
      * Calculates the working position.
      * <p>
@@ -173,27 +312,25 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     @Override
     public BlockPos getWorkingPosition(final BlockPos targetPosition)
     {
-        final StructureWrapper wrapper = job.getStructure();
-        final int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - STAND_OFFSET;
-        final int z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - STAND_OFFSET;
-        final int x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX()) + STAND_OFFSET;
-        final int z3 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ() + STAND_OFFSET);
-
-        final BlockPos[] edges = new BlockPos[] {
-          new BlockPos(x1, BASE_Y_HEIGHT, z1),
-          new BlockPos(x3, 70, z1),
-          new BlockPos(x1, BASE_Y_HEIGHT, z3),
-          new BlockPos(x3, BASE_Y_HEIGHT, z3)};
-
-        for (final BlockPos pos : edges)
+        if (job.getWorkOrder() != null)
         {
-            final BlockPos basePos = world.getTopSolidOrLiquidBlock(pos);
-            if (EntityUtils.checkForFreeSpace(world, basePos.down())
-                  && world.getBlockState(basePos).getBlock() != Blocks.SAPLING
-                  && world.getBlockState(basePos.down()).getMaterial().isSolid())
+            final BlockPos schemPos = job.getWorkOrder().getBuildingLocation();
+            final int yStart = targetPosition.getY() > schemPos.getY() ? targetPosition.getY() : schemPos.getY();
+            final int yEnd = targetPosition.getY() < schemPos.getY() ? Math.max(targetPosition.getY(), schemPos.getY() - MAX_DEPTH_DIFFERENCE) : schemPos.getY();
+            final EnumFacing direction = BlockPosUtil.getXZFacing(worker.getPosition(), targetPosition).getOpposite();
+            for (int i = MIN_DISTANCE + 1; i < MAX_DISTANCE; i++)
             {
-                return basePos;
+                for (int y = yStart; y >= yEnd; y--)
+                {
+                    final BlockPos pos = targetPosition.offset(direction, i);
+                    final BlockPos basePos = new BlockPos(pos.getX(), y, pos.getZ());
+                    if (EntityUtils.checkForFreeSpace(world, basePos))
+                    {
+                        return basePos;
+                    }
+                }
             }
+            return schemPos.up();
         }
         return targetPosition;
     }

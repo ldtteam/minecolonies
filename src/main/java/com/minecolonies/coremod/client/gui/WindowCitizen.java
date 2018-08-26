@@ -44,7 +44,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Window for the citizen.
  */
@@ -58,7 +58,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
     /**
      * Scrollinglist of the resources.
      */
-    private final ScrollingList   resourceList;
+    private ScrollingList   resourceList;
 
     /**
      * Inventory of the player.
@@ -74,6 +74,16 @@ public class WindowCitizen extends AbstractWindowSkeleton
      * Life count.
      */
     private       int             lifeCount  = 0;
+
+    /**
+     * Button leading to the previous page.
+     */
+    private Button buttonPrevPage;
+
+    /**
+     * Button leading to the next page.
+     */
+    private Button buttonNextPage;
 
     /**
      * Constructor to initiate the citizen windows.
@@ -107,12 +117,18 @@ public class WindowCitizen extends AbstractWindowSkeleton
     {
         findPaneOfTypeByID(WINDOW_ID_NAME, Label.class).setLabelText(citizen.getName());
 
+        findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class).setEnabled(false);
+        buttonPrevPage = findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class);
+        buttonNextPage = findPaneOfTypeByID(BUTTON_NEXT_PAGE, Button.class);
+
         createHealthBar(citizen, findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class));
         createSaturationBar();
         createHappinessBar(); 
         createXpBar(citizen, this);
         createSkillContent(citizen, this);
-
+        updateHappiness();
+        
+        resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
         resourceList.setDataProvider(new ScrollingList.DataProvider()
         {
 
@@ -496,6 +512,16 @@ public class WindowCitizen extends AbstractWindowSkeleton
             case REQUEST_FULLFIL:
                 fulfill(button);
                 break;
+            case BUTTON_NEXT_PAGE:
+                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(HAPPINESS_MODIFIER_PANE);
+                buttonPrevPage.setEnabled(true);
+                buttonNextPage.setEnabled(false);
+                break;
+            case BUTTON_PREV_PAGE:
+                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
+                buttonPrevPage.setEnabled(false);
+                buttonNextPage.setEnabled(true);
+                break;
             default:
                 break;
         }
@@ -571,6 +597,46 @@ public class WindowCitizen extends AbstractWindowSkeleton
         button.disable();
     }
 
+    /**
+     * Update the display for the happiness
+     */
+    private void updateHappiness()
+    {
+        int row = 1;
+        final double[] levels = new double[] {citizen.getFoodModifier(), citizen.getHouseModifier(), citizen.getDamageModifier(), citizen.getJobModifier(), citizen.getFieldsModifier(), citizen.getToolsModifiers()};
+        final String[] labelIds = new String[] {CMCG_HAPPINESS_FOOD, CMCG_HAPPINESS_DAMAGE, CMCG_HAPPINESS_HOUSE, CMCG_HAPPINESS_JOB, CMCG_HAPPINESS_FARMS, CMCG_HAPPINESS_TOOLS};
+
+        findPaneOfTypeByID(HAPPINESS_MODIFIER_PANE, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
+        if (findPaneByID(HAPPINESS_MODIFIER_PANE) != null)
+        {
+            findPaneOfTypeByID("happinessModifier", Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.happinessModifier"));
+
+            for (int i = 0; i < levels.length; i++)
+            {
+                final Image image = findPaneOfTypeByID("modifierImage"+row, Image.class);
+                if (levels[i] < 0)
+                {
+                    findPaneOfTypeByID("modifier"+row, Label.class).setLabelText(LanguageHandler.format(labelIds[i]));
+                    image.setImage(RED_ICON);
+                    row++;
+                }
+                else if (levels[i] > 0)
+                {
+                    findPaneOfTypeByID("modifier"+row, Label.class).setLabelText(LanguageHandler.format(labelIds[i]));
+                    image.setImage(GREEN_ICON);
+                    row++;
+                }
+            }
+            
+            for (int i = row; i<= levels.length; i++)
+            {
+                final Image image = findPaneOfTypeByID("modifierImage"+i, Image.class);
+                image.hide();
+            }
+        }
+    }
+
+    
     private final class RequestWrapper
     {
         private final IRequest request;

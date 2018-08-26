@@ -189,6 +189,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
                 @Nullable final AbstractBuilding building = ColonyManager.getBuilding(CompatibilityUtils.getWorld(player), message.pos);
                 if (building != null)
                 {
+                    building.onUpgradeComplete(building.getBuildingLevel());
                     final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
                     ConstructionTapeHelper.removeConstructionTape(workOrder, CompatibilityUtils.getWorld(player));
                 }
