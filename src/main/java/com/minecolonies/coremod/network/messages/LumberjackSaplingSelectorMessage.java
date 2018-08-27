@@ -101,7 +101,14 @@ public class LumberjackSaplingSelectorMessage extends AbstractMessage<Lumberjack
             @Nullable final AbstractBuildingWorker building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingWorker.class);
             if (building instanceof BuildingLumberjack)
             {
-                ((BuildingLumberjack) building).setTreeToCut(message.stack, message.shouldCut);
+                if (message.shouldCut)
+                {
+                    ((BuildingLumberjack) building).continueCuttingTree(message.stack);
+                }
+                else
+                {
+                    ((BuildingLumberjack) building).stopCuttingTree(message.stack);
+                }
             }
         }
     }

@@ -33,7 +33,8 @@ public enum ActionArgumentType
     COORDINATE_Z("z-coordinate", 0),
     BOOLEAN("boolean", 0),
     INTEGER("integer", 0),
-    STRING("string", 0)
+    STRING("string", 0),
+    DOUBLE("double", 0)
     ;
 
     private static final String ABANDONED_FAKE_PLAYER_NAME = "[abandoned]";
@@ -338,6 +339,8 @@ public enum ActionArgumentType
                 return parseCitizenDataValue(mineColonyDataProvider, actionMenuState, potentialArgumentValue);
             case STRING:
                 return potentialArgumentValue.isEmpty() ? null : potentialArgumentValue;
+            case DOUBLE:
+                return potentialArgumentValue.isEmpty() ? 0D : Double.parseDouble(potentialArgumentValue);
             default:
                 throw new IllegalStateException("Unimplemented ActionArgumentType parsing");
         }

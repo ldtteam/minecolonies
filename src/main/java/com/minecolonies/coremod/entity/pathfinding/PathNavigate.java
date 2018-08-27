@@ -411,7 +411,7 @@ public class PathNavigate extends PathNavigateGround
      * @param treesToCut the trees which should be cut.
      * @return the result of the search.
      */
-    public PathJobFindTree.TreePathResult moveToTree(final int range, final double speed, final Map<ItemStorage, Boolean> treesToCut, final Colony colony)
+    public PathJobFindTree.TreePathResult moveToTree(final int range, final double speed, final List<ItemStorage> treesToCut, final Colony colony)
     {
         @NotNull BlockPos start = AbstractPathJob.prepareStart(ourEntity);
         final BlockPos buildingPos = ((EntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding().getLocation();

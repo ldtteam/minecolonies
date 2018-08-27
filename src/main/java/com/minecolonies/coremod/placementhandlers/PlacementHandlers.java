@@ -50,6 +50,7 @@ public final class PlacementHandlers
         handlers.add(new BlockGrassPathPlacementHandler());
         handlers.add(new StairBlockPlacementHandler());
         handlers.add(new ChestPlacementHandler());
+        handlers.add(new FallingBlockPlacementHandler());
         handlers.add(new GeneralBlockPlacementHandler());
     }
 
@@ -90,6 +91,55 @@ public final class PlacementHandlers
         {
             world.setBlockState(pos, blockState, UPDATE_FLAG);
             return ActionProcessingResult.ACCEPT;
+        }
+    }
+
+    public static class FallingBlockPlacementHandler implements IPlacementHandler
+    {
+        @Override
+        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState)
+        {
+            return blockState.getBlock() instanceof BlockFalling;
+        }
+
+        @Override
+        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
+        {
+            final List<ItemStack> itemList = new ArrayList<>(getItemsFromTileEntity(tileEntityData, world));
+            itemList.removeIf(ItemStackUtils::isEmpty);
+            if (!world.getBlockState(pos.down()).getMaterial().isSolid())
+            {
+                itemList.add(BlockUtils.getItemStackFromBlockState(BlockUtils.getSubstitutionBlockAtWorld(world, pos)));
+            }
+            return itemList;
+        }
+
+        @Override
+        public Object handle(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final IBlockState blockState,
+          @Nullable final NBTTagCompound tileEntityData,
+          final boolean complete,
+          final BlockPos centerPos)
+        {
+            if (world.getBlockState(pos).equals(blockState))
+            {
+                return ActionProcessingResult.ACCEPT;
+            }
+
+            world.setBlockState(pos.down(), BlockUtils.getSubstitutionBlockAtWorld(world, pos), UPDATE_FLAG);
+            if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
+            {
+                return ActionProcessingResult.DENY;
+            }
+
+            if (tileEntityData != null)
+            {
+                handleTileEntityPlacement(tileEntityData, world, pos);
+            }
+
+            return blockState;
         }
     }
 

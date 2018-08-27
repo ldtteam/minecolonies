@@ -1,10 +1,7 @@
 package com.minecolonies.coremod.commands;
 
 import com.minecolonies.coremod.colony.permissions.ForgePermissionNodes;
-import com.minecolonies.coremod.commands.citizencommands.CitizenInfoCommand;
-import com.minecolonies.coremod.commands.citizencommands.KillCitizenCommand;
-import com.minecolonies.coremod.commands.citizencommands.ListCitizensCommand;
-import com.minecolonies.coremod.commands.citizencommands.RespawnCitizenCommand;
+import com.minecolonies.coremod.commands.citizencommands.*;
 import com.minecolonies.coremod.commands.colonycommands.*;
 import com.minecolonies.coremod.commands.colonycommands.requestsystem.RSResetAllCommand;
 import com.minecolonies.coremod.commands.colonycommands.requestsystem.RSResetCommand;
@@ -84,6 +81,12 @@ public enum ActionMenuType implements IMenuType
             RSResetAllCommand.class
             )),
 
+    SPAWN_CITIZENS(new ActionMenu(
+      "SpawnCitizen",
+      "spawn",
+      ForgePermissionNodes.SPAWN_CITIZEN,
+      SpawnCitizenCommand.class,
+      new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.REQUIRED))),
     LIST_CITIZENS(new ActionMenu(
             "ListCitizens",
             "list",
@@ -127,14 +130,22 @@ public enum ActionMenuType implements IMenuType
             new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.OPTIONAL)
             )),
     DELETE_COLONY(new ActionMenu(
-            "DeleteColony",
-            "delete",
-            ForgePermissionNodes.DELETE_COLONY,
-            DeleteColonyCommand.class,
-            new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.REQUIRED),
-            new ActionArgument("canDestroy", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.OPTIONAL),
-            new ActionArgument("confirmDelete", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.OPTIONAL)
-            )),
+      "DeleteColony",
+      "delete",
+      ForgePermissionNodes.DELETE_COLONY,
+      DeleteColonyCommand.class,
+      new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.REQUIRED),
+      new ActionArgument("canDestroy", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.OPTIONAL),
+      new ActionArgument("confirmDelete", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.OPTIONAL)
+    )),
+    SET_HAPPINESS_LEVEL_COLONY(new ActionMenu(
+      "Set Happiness Level",
+      "shl",
+      ForgePermissionNodes.DELETE_COLONY,
+      SetHappinessLevelColonyCommand.class,
+      new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.REQUIRED),
+      new ActionArgument("level", ActionArgumentType.DOUBLE, ActionArgumentType.Is.OPTIONAL)
+    )),
     DISABLE_BARBARIAN_SPAWNS(new ActionMenu(
             "DisableBarbarianSpawns",
             "barbarians",
@@ -268,8 +279,16 @@ public enum ActionMenuType implements IMenuType
             new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.OPTIONAL),
             new ActionArgument("range", ActionArgumentType.INTEGER, ActionArgumentType.Is.OPTIONAL),
             new ActionArgument("add", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.OPTIONAL)
-            ))
-    ;
+            )),
+    LOOT_GEN(new ActionMenu(
+      "lootGen",
+      "lootGen",
+      ForgePermissionNodes.LOOT_GEN,
+      LootGenCommand.class,
+      new ActionArgument("building", ActionArgumentType.STRING, ActionArgumentType.Is.REQUIRED),
+      new ActionArgument("paste", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.OPTIONAL),
+      new ActionArgument("level", ActionArgumentType.INTEGER, ActionArgumentType.Is.OPTIONAL)
+    )),;
 
     @NotNull private final ActionMenu menu;
 
