@@ -213,6 +213,8 @@ public class Colony implements IColony
      */
     private final HappinessData happinessData = new HappinessData();
 
+    private boolean needToMourn = false;
+    private boolean mourning = false;
     /**
      * The colony team color.
      */
@@ -331,6 +333,16 @@ public class Colony implements IColony
     {
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
 
+        if(compound.hasKey(TAG_NEED_TO_MOURN))
+        {
+            needToMourn = compound.getBoolean(TAG_NEED_TO_MOURN);
+            mourning = compound.getBoolean(TAG_MOURNING);
+        }
+        else
+        {
+            needToMourn = false;
+            mourning = false;
+        }
         // Permissions
         permissions.loadPermissions(compound);
 
@@ -473,6 +485,8 @@ public class Colony implements IColony
         BlockPosUtil.writeToNBT(compound, TAG_CENTER, center);
 
         compound.setBoolean(TAG_MANUAL_HIRING, manualHiring);
+        compound.setBoolean(TAG_NEED_TO_MOURN, needToMourn);
+        compound.setBoolean(TAG_MOURNING, mourning);
 
         // Permissions
         permissions.savePermissions(compound);
@@ -755,10 +769,21 @@ public class Colony implements IColony
                 citizenManager.checkCitizensForHappiness();
             }
             happinessData.processDeathModifiers(); 
+            if (mourning)
+            {
+                mourning = false;
+                citizenManager.updateCitizenMourn(false);
+            }
         }
         else if (!isDay && world.isDaytime())
         {
             isDay = true;
+            if (needToMourn)
+            {
+                needToMourn = false;
+                mourning = true;
+                citizenManager.updateCitizenMourn(true);
+            }
         }
 
         updateWayPoints();
@@ -1277,6 +1302,41 @@ public class Colony implements IColony
     public void setNightsSinceLastRaid(final int nights)
     {
         this.nightsSinceLastRaid = nights;
+    }
+
+    /**
+     * call to figure out if the colony needs to mourn.
+     * 
+     * @return a boolean indicating the colony needs to mourn
+     */
+    public boolean isNeedToMourn()
+    {
+        return needToMourn;
+    }
+
+    /**
+     * Call to set if the colony needs to mourn or not.
+     * 
+     * @param needToMourn indicate if the colony needs to mourn
+     * @param name  Name of citizen that died
+     */
+    public void setNeedToMourn(final boolean needToMourn, final String name)
+    {
+        this.needToMourn = needToMourn;
+        if (needToMourn)
+        {
+            LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_MOURN,name);
+        }
+    }
+
+    /**
+     * Call to check if the colony is mourning.
+     * 
+     * @return indicates if the colony is mourning
+     */
+    public boolean isMourning()
+    {
+        return mourning;
     }
 
     /**

@@ -289,6 +289,8 @@ public final class TranslationConstants
     public static final String CMCG_HAPPINESS_FARMS                                                = "com.minecolonies.coremod.gui.happiness.farms";
     @NonNls
     public static final String CMCG_HAPPINESS_TOOLS                                                = "com.minecolonies.coremod.gui.happiness.tools";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_MOURN                                      = "com.minecolonies.coremod.mourning";
 
     private TranslationConstants()
     {
