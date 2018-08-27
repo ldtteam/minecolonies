@@ -58,7 +58,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
     /**
      * Scrollinglist of the resources.
      */
-    private ScrollingList   resourceList;
+    private       ScrollingList   resourceList;
 
     /**
      * Inventory of the player.
@@ -84,8 +84,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
     {
         super(Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX);
         this.citizen = citizen;
-
-        resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
     }
 
     @Override
@@ -483,10 +481,14 @@ public class WindowCitizen extends AbstractWindowSkeleton
         switch (button.getID())
         {
             case BUTTON_REQUESTS:
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
+                findPaneOfTypeByID(VIEW_HEAD, SwitchView.class).nextView();
+                buttonPrevPage.off();
+                buttonNextPage.off();
+                pageNum.off();
                 break;
             case BUTTON_BACK:
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
+                findPaneOfTypeByID(VIEW_HEAD, SwitchView.class).previousView();
+                setPage("");
                 break;
             case INVENTORY_BUTTON_ID:
                 MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(citizen.getName(), citizen.getEntityId()));

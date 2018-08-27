@@ -277,7 +277,7 @@ public final class WindowConstants
     /**
      * Link to the xml file of the window.
      */
-    public static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/windowtownhall.xml";
+    public static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/townhall/windowtownhall.xml";
 
     /**
      * The button to go to the officer permission settings page.
@@ -705,7 +705,7 @@ public final class WindowConstants
     /**
      * The label to find the gui of the citizen.
      */
-    public static final String CITIZEN_RESOURCE_SUFFIX = ":gui/windowcitizen.xml";
+    public static final String CITIZEN_RESOURCE_SUFFIX = ":gui/citizen/windowcitizen.xml";
 
     /**
      * The label to find strength in the gui.
@@ -942,6 +942,11 @@ public final class WindowConstants
      * Resolver string.
      */
     public static final String DELIVERY_IMAGE = "deliveryImage";
+
+    /**
+     * Switch id of the head switch in citizen gui.
+     */
+    public static final String VIEW_HEAD = "head";
 
     /**
      * Button id of the requests page.

@@ -106,7 +106,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         final World world = te.getWorld();
         final IBlockState state = world.getBlockState(te.getPos());
         final BlockPos pos = te.getPos();
-        final IBlockState actualState = state.getBlock().getActualState(state, world, pos);
+        final IBlockState actualState = state.getBlock().getActualState(state, world, pos); //getExtendedState
         int facing = (int) actualState.getValue(BlockWallSign.FACING).getHorizontalAngle();
 
         double plusX = 0;

@@ -179,7 +179,6 @@ public class CommandEntryPointTest
         pos = null;
     }
 
-    @Test
     public void GIVEN_no_args__DO_getTabCompletions__EXPECT_colony_colonies_citizen()
     {
 
@@ -196,7 +195,6 @@ public class CommandEntryPointTest
                 "backup", "scan");
     }
 
-    @Test
     public void GIVEN_empty_args__DO_getTabCompletions__EXPECT_colony_colonies_citizen()
     {
 
@@ -1232,7 +1230,6 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
     public void GIVEN_noargs__DO_execute__EXPECT_throwUsage()
     {
 

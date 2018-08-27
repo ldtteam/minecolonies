@@ -3,14 +3,14 @@
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
     <switch id="pages" size="100% 100%">
 	    <view id="pageActions" size="100% 100%">
-        	<layout source="minecolonies:gui/layouthutpageactions.xml"/>
+        	<layout source="minecolonies:gui/layouthuts/layouthutpageactions.xml"/>
     	</view>
         <view id="pageItems" size="100% 100%">
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
             <label size="130 11" pos="30 14" color="black" textalign="MIDDLE"
                 label="$(com.minecolonies.gui.workerHuts.composter.compostables):"/>
 
-            <list id="items" size="166 185" pos="13 29">
+            <list id="items" size="164 185" pos="13 29">
                 <view size="100% 30">
                     <box size="100% 30" linewidth="2">
                         <button id="addItem" pos="95 10" size="40 15"/>
