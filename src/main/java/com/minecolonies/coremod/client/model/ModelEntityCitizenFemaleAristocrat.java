@@ -47,7 +47,7 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
         setRotation(bipedBody, 0F, 0F, 0F);
 
         bipedRightArm = new ModelRenderer(this, 34, 17);
-        bipedRightArm.addBox(-3F, 0F, -1F, 3, 12, 3);
+        bipedRightArm.addBox(-2F, 0F, -1F, 3, 12, 3);
         bipedRightArm.setRotationPoint(-4F, 0F, 0F);
         bipedRightArm.setTextureSize(64, 64);
         setRotation(bipedRightArm, 0F, 0F, 0F);
@@ -60,13 +60,12 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
 
         leftArm1 = new ModelRenderer(this, 34, 17);
         leftArm1.addBox(0F, 0F, -1F, 3, 6, 3);
-        leftArm1.mirror = true;
         leftArm1.setRotationPoint(4F, 0F, 0F);
         leftArm1.setTextureSize(64, 64);
         setRotation(leftArm1, 0F, 0F, 0F);
 
         bipedRightLeg = new ModelRenderer(this, 0, 17);
-        bipedRightLeg.addBox(-2F, 0F, -2F, 3, 12, 3);
+        bipedRightLeg.addBox(-1F, 0F, -2F, 3, 12, 3);
         bipedRightLeg.setRotationPoint(-1F, 12F, 1F);
         bipedRightLeg.setTextureSize(64, 64);
         setRotation(bipedRightLeg, 0F, 0F, 0F);
@@ -79,7 +78,7 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
         setRotation(bipedLeftLeg, 0F, 0F, 0F);
 
         breast = new ModelRenderer(this, 0, 33);
-        breast.addBox(-3F, 0F, -2F, 8, 4, 3);
+        breast.addBox(-3F, 1F, -2.5F, 8, 4, 3);
         breast.setRotationPoint(-1F, 3F, 1F);
         breast.setTextureSize(64, 64);
         setRotation(breast, -0.5235988F, 0F, 0F);
@@ -115,25 +114,25 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
         setRotation(umbrella, -0.4712389F, 0F, 0F);
 
         dressPart1 = new ModelRenderer(this, 18, 33);
-        dressPart1.addBox(-6F, 0F, -6F, 12, 6, 11, 0.01F);
+        dressPart1.addBox(-6F, 0F, -8F, 12, 6, 11, 0.01F);
         dressPart1.setRotationPoint(0F, 16F, 1F);
         dressPart1.setTextureSize(64, 64);
         setRotation(dressPart1, 0F, 0.418879F, 0F);
 
         dressPart2 = new ModelRenderer(this, 18, 33);
-        dressPart2.addBox(-6F, 0F, -5F, 12, 6, 11);
+        dressPart2.addBox(-6F, 0F, -7F, 12, 6, 11);
         dressPart2.setRotationPoint(0F, 16F, 0F);
         dressPart2.setTextureSize(64, 64);
         setRotation(dressPart2, 0F, -0.3839724F, 0F);
 
         dressPart3 = new ModelRenderer(this, 30, 50);
-        dressPart3.addBox(-5F, 0F, -3F, 10, 4, 7, 0.01F);
+        dressPart3.addBox(-5F, 0F, -5F, 10, 4, 7, 0.01F);
         dressPart3.setRotationPoint(0F, 9F, 0F);
         dressPart3.setTextureSize(64, 64);
         setRotation(dressPart3, 0F, -0.3316126F, 0F);
 
         dressPart5 = new ModelRenderer(this, 30, 50);
-        dressPart5.addBox(-6F, 0F, -3F, 10, 4, 7);
+        dressPart5.addBox(-6F, 0F, -5F, 10, 4, 7);
         dressPart5.setRotationPoint(0F, 9F, 0F);
         dressPart5.setTextureSize(64, 64);
         setRotation(dressPart5, 0F, 0.4363323F, 0F);
@@ -143,48 +142,78 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
         dressPart6.setRotationPoint(2F, 18F, -4F);
         dressPart6.setTextureSize(64, 64);
         setRotation(dressPart6, 2.503836F, 0.3210144F, -0.3592861F);
+        dressPart6.offsetZ -= 0.1F;
 
         dressPart7 = new ModelRenderer(this, 0, 40);
         dressPart7.addBox(-2F, 0F, -2F, 4, 7, 4);
         dressPart7.setRotationPoint(-2F, 18F, -4F);
         dressPart7.setTextureSize(64, 64);
         setRotation(dressPart7, 2.070064F, 0.797036F, -0.6991393F);
+        dressPart7.offsetZ -= 0.1F;
 
         dressPart8 = new ModelRenderer(this, 0, 40);
         dressPart8.addBox(-2F, 0F, -2F, 4, 7, 4);
         dressPart8.setRotationPoint(-5F, 18F, -1F);
         dressPart8.setTextureSize(64, 64);
         setRotation(dressPart8, 2.740167F, 0.6363323F, 0.4537856F);
+        dressPart8.offsetZ -= 0.1F;
 
         dressPart9 = new ModelRenderer(this, 0, 40);
         dressPart9.addBox(-2F, 0F, -2F, 4, 7, 4);
         dressPart9.setRotationPoint(-5F, 18F, 2F);
         dressPart9.setTextureSize(64, 64);
         setRotation(dressPart9, 3.010485F, 1.313108F, 0.2890419F);
+        dressPart9.offsetZ -= 0.1F;
 
         dressPart10 = new ModelRenderer(this, 0, 40);
         dressPart10.addBox(-2F, 0F, -2F, 4, 7, 4);
         dressPart10.setRotationPoint(-2F, 18F, 5F);
         dressPart10.setTextureSize(64, 64);
         setRotation(dressPart10, -2.563121F, 0.3303337F, 0.4129171F);
+        dressPart10.offsetZ -= 0.1F;
 
         dressPart11 = new ModelRenderer(this, 0, 40);
         dressPart11.addBox(-2F, 0F, -2F, 4, 7, 4);
         dressPart11.setRotationPoint(2F, 18F, 5F);
         dressPart11.setTextureSize(64, 64);
         setRotation(dressPart11, -2.458432F, -0.2216398F, -0.3303337F);
+        dressPart11.offsetZ -= 0.1F;
 
         dressPart12 = new ModelRenderer(this, 0, 40);
         dressPart12.addBox(-2F, 0F, -2F, 4, 7, 4);
         dressPart12.setRotationPoint(4F, 18F, 2F);
         dressPart12.setTextureSize(64, 64);
         setRotation(dressPart12, -2.852551F, 0.5367922F, -0.2064585F);
+        dressPart12.offsetZ -= 0.1F;
 
         dressPart13 = new ModelRenderer(this, 0, 40);
         dressPart13.addBox(-2F, 0F, -2F, 4, 7, 4);
         dressPart13.setRotationPoint(4F, 18F, -1F);
         dressPart13.setTextureSize(64, 64);
         setRotation(dressPart13, 2.778193F, -0.5512723F, -0.2477502F);
+        dressPart13.offsetZ -= 0.1F;
+
+        bipedHead.addChild(hair1);
+        bipedHead.addChild(hair2);
+        bipedHead.addChild(hair3);
+
+        bipedBody.addChild(breast);
+
+        bipedBody.addChild(dressPart1);
+        bipedBody.addChild(dressPart2);
+        bipedBody.addChild(dressPart3);
+        bipedBody.addChild(dressPart5);
+        bipedBody.addChild(dressPart6);
+        bipedBody.addChild(dressPart7);
+        bipedBody.addChild(dressPart8);
+        bipedBody.addChild(dressPart9);
+        bipedBody.addChild(dressPart10);
+        bipedBody.addChild(dressPart11);
+        bipedBody.addChild(dressPart12);
+        bipedBody.addChild(dressPart13);
+
+        bipedBody.addChild(umbrella);
+        bipedBody.addChild(umbrellaHand);
     }
 
     private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
@@ -204,7 +233,6 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
                         final float headPitch,
                         final float scaleFactor)
     {
-        setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);
         bipedHead.render(scaleFactor);
         bipedBody.render(scaleFactor);
         bipedRightArm.render(scaleFactor);
@@ -212,69 +240,6 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
         leftArm1.render(scaleFactor);
         bipedRightLeg.render(scaleFactor);
         bipedLeftLeg.render(scaleFactor);
-        breast.render(scaleFactor);
-        hair1.render(scaleFactor);
-        hair2.render(scaleFactor);
-        hair3.render(scaleFactor);
-        umbrellaHand.render(scaleFactor);
-        umbrella.render(scaleFactor);
-        dressPart1.render(scaleFactor);
-        dressPart2.render(scaleFactor);
-        dressPart3.render(scaleFactor);
-        dressPart5.render(scaleFactor);
-        dressPart6.render(scaleFactor);
-        dressPart7.render(scaleFactor);
-        dressPart8.render(scaleFactor);
-        dressPart9.render(scaleFactor);
-        dressPart10.render(scaleFactor);
-        dressPart11.render(scaleFactor);
-        dressPart12.render(scaleFactor);
-        dressPart13.render(scaleFactor);
-    }
-
-    @Override
-    public void setRotationAngles(
-                                   final float limbSwing,
-                                   final float limbSwingAmount,
-                                   final float ageInTicks,
-                                   final float netHeadYaw,
-                                   final float headPitch,
-                                   final float scaleFactor,
-                                   final Entity entityIn)
-    {
-        bipedHead.rotateAngleY = netHeadYaw / 57.29578F;
-        bipedHead.rotateAngleX = headPitch / 57.29578F;
-        hair1.rotateAngleY = bipedHead.rotateAngleY;
-        hair1.rotateAngleX = bipedHead.rotateAngleX;
-        hair2.rotateAngleY = bipedHead.rotateAngleY;
-        hair2.rotateAngleX = bipedHead.rotateAngleX;
-        hair3.rotateAngleY = bipedHead.rotateAngleY;
-        hair3.rotateAngleX = bipedHead.rotateAngleX;
-
-        bipedRightArm.rotateAngleX = MathHelper.cos((float) (limbSwing * 0.6662F + Math.PI)) * 2.0F * limbSwingAmount * 0.5F;
-
-        bipedRightLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.1F * limbSwingAmount;
-        bipedLeftLeg.rotateAngleX = MathHelper.cos((float) (limbSwing * 0.6662F + Math.PI)) * 1.1F * limbSwingAmount;
-        bipedRightLeg.rotateAngleY = 0.0F;
-        bipedLeftLeg.rotateAngleY = 0.0F;
-
-        bipedRightArm.rotateAngleZ += MathHelper.cos(ageInTicks * 0.09F) * 0.05F + 0.05F;
-        bipedRightArm.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
-
-        if (swingProgress > -9990F)
-        {
-            bipedRightArm.rotationPointZ = MathHelper.sin(bipedBody.rotateAngleY) * 5F;
-            bipedRightArm.rotateAngleY += bipedBody.rotateAngleY;
-
-            float f6 = 1.0F - swingProgress;
-            f6 *= f6;
-            f6 *= f6;
-            f6 = 1.0F - f6;
-            final float f7 = MathHelper.sin((float) (f6 * Math.PI));
-            final float f8 = MathHelper.sin((float) (swingProgress * Math.PI)) * -(bipedHead.rotateAngleX - 0.7F) * 0.75F;
-            bipedRightArm.rotateAngleX -= f7 * 1.2D + f8;
-            bipedRightArm.rotateAngleY += bipedBody.rotateAngleY * 2.0F;
-            bipedRightArm.rotateAngleZ = MathHelper.sin((float) (swingProgress * Math.PI)) * -0.4F;
-        }
+        setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);
     }
 }
