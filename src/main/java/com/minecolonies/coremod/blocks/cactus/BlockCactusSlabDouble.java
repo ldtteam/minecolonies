@@ -30,7 +30,7 @@ public class BlockCactusSlabDouble extends AbstractBlockSlab<BlockCactusSlabDoub
     {
         super(Material.WOOD);
         setRegistryName(NAME);
-        setUnlocalizedName(Constants.MOD_ID.toLowerCase(Locale.US) + "." + NAME);
+        setTranslationKey(Constants.MOD_ID.toLowerCase(Locale.US) + "." + NAME);
         setSoundType(SoundType.WOOD);
     }
 

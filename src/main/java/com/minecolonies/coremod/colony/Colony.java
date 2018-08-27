@@ -891,7 +891,7 @@ public class Colony implements IColony
     @Override
     public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        final Chunk chunk = w.getChunkFromBlockCoords(pos);
+        final Chunk chunk = w.getChunk(pos);
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
         return cap.getOwningColony() == this.getID();
     }

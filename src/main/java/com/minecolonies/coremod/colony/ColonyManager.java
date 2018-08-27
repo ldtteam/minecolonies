@@ -225,7 +225,7 @@ public final class ColonyManager
      */
     private static void claimColonyChunks(final World world, final boolean add, final int id, final BlockPos center, final int dimension)
     {
-        final Chunk centralChunk = world.getChunkFromBlockCoords(center);
+        final Chunk centralChunk = world.getChunk(center);
         loadChunkAndAddData(world, center, add, id);
 
         final int chunkX = centralChunk.x;
@@ -294,7 +294,7 @@ public final class ColonyManager
             return false;
         }
 
-        final Chunk chunk = world.getChunkFromBlockCoords(pos);
+        final Chunk chunk = world.getChunk(pos);
         if(chunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() == id && add)
         {
             return false;
@@ -504,7 +504,7 @@ public final class ColonyManager
      */
     public static Colony getColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        final Chunk centralChunk = w.getChunkFromBlockCoords(pos);
+        final Chunk centralChunk = w.getChunk(pos);
         final int id = centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony();
         if(id == 0)
         {
@@ -527,7 +527,7 @@ public final class ColonyManager
         {
             return true;
         }
-        final Chunk centralChunk = w.getChunkFromBlockCoords(pos);
+        final Chunk centralChunk = w.getChunk(pos);
         final IColonyTagCapability colonyCap = centralChunk.getCapability(CLOSE_COLONY_CAP, null);
         if (colonyCap == null)
         {
@@ -635,7 +635,7 @@ public final class ColonyManager
      */
     private static ColonyView getColonyView(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        final Chunk centralChunk = w.getChunkFromBlockCoords(pos);
+        final Chunk centralChunk = w.getChunk(pos);
         final int id = centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony();
         if(id == 0)
         {
@@ -676,7 +676,7 @@ public final class ColonyManager
             return null;
         }
 
-        final Chunk chunk = w.getChunkFromBlockCoords(pos);
+        final Chunk chunk = w.getChunk(pos);
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
         if(cap.getOwningColony() != 0)
         {
@@ -731,7 +731,7 @@ public final class ColonyManager
      */
     public static Colony getClosestColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        final Chunk chunk = w.getChunkFromBlockCoords(pos);
+        final Chunk chunk = w.getChunk(pos);
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
         if(cap.getOwningColony() != 0)
         {
@@ -1519,7 +1519,7 @@ public final class ColonyManager
      */
     public static boolean isCoordinateInAnyColony(@NotNull final World world, final BlockPos pos)
     {
-        final Chunk centralChunk = world.getChunkFromBlockCoords(pos);
+        final Chunk centralChunk = world.getChunk(pos);
         return centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() != 0;
     }
 

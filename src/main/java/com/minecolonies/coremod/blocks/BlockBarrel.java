@@ -77,7 +77,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     private void initBlock()
     {
         setRegistryName(BLOCK_NAME);
-        setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
+        setTranslationKey(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
@@ -164,7 +164,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     public IBlockState getStateFromMeta(final int meta)
     {
         return this.getDefaultState().withProperty(FACING,
-                EnumFacing.getHorizontal(meta));
+                EnumFacing.byHorizontalIndex(meta));
     }
 
     /**
@@ -186,7 +186,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     @NotNull
     @Override
     @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getBlockLayer()
+    public BlockRenderLayer getRenderLayer()
     {
         return BlockRenderLayer.CUTOUT_MIPPED;
     }

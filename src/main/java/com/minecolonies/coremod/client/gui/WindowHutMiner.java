@@ -106,18 +106,19 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        if (button.getID().equals(BUTTON_CURRENTLEVEL))
+        switch (button.getID())
         {
-            final int row = levelList.getListElementIndexByPane(button);
-            if (row != miner.current && row >= 0 && row < levels.length)
-            {
-                miner.current = row;
-                MineColonies.getNetwork().sendToServer(new MinerSetLevelMessage(miner, row));
-            }
-        }
-        else
-        {
-            super.onButtonClicked(button);
+            case BUTTON_CURRENTLEVEL:
+                final int row = levelList.getListElementIndexByPane(button);
+                if (row != miner.current && row >= 0 && row < levels.length)
+                {
+                    miner.current = row;
+                    MineColonies.getNetwork().sendToServer(new MinerSetLevelMessage(miner, row));
+                }
+                break; 
+            default:
+                super.onButtonClicked(button);
+                break;
         }
     }
 }

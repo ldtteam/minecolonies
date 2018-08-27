@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -276,16 +275,16 @@ public class PathNavigate extends PathNavigateGround
                     {
                         //  Any of these values is climbing, so adjust our direction of travel towards the ladder
                         case NORTH:
-                            vec3.addVector(0, 0, 1);
+                            vec3.add(0, 0, 1);
                             break;
                         case SOUTH:
-                            vec3.addVector(0, 0, -1);
+                            vec3.add(0, 0, -1);
                             break;
                         case WEST:
-                            vec3.addVector(1, 0, 0);
+                            vec3.add(1, 0, 0);
                             break;
                         case EAST:
-                            vec3.addVector(-1, 0, 0);
+                            vec3.add(-1, 0, 0);
                             break;
                         //  Any other value is going down, so lets not move at all
                         default:

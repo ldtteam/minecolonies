@@ -242,7 +242,7 @@ public final class Loader
             }
             else
             {
-                return Loader.class.getResourceAsStream(String.format("/assets/%s/%s", res.getResourceDomain(), res.getResourcePath()));
+                return Loader.class.getResourceAsStream(String.format("/assets/%s/%s", res.getNamespace(), res.getPath()));
             }
         }
         catch (final IOException e)

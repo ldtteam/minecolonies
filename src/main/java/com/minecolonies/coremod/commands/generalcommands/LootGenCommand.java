@@ -1,13 +1,9 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
-import net.minecraft.block.Block;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;

@@ -26,7 +26,6 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
      */
     private static final String BUTTON_HIRE = "hire";
 
-    
     /**
      * Id of the scroll view
      */
@@ -134,8 +133,6 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     {
         super.onOpened();
 
-        findPaneOfTypeByID(BUTTON_HIRE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.hire"));
-
         if (findPaneByID(LIST_WORKERS) != null)
         {
             ScrollingList workerList = findPaneOfTypeByID(LIST_WORKERS, ScrollingList.class);
@@ -163,7 +160,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
                 }
             });
         }
-        
+
         findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabelText(building.getBuildingDmPrio() + "/10");
     }
 }
