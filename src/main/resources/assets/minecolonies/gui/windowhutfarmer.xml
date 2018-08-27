@@ -3,32 +3,31 @@
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
     <switch id="pages" size="100% 100%">
         <view id="pageActions" size="100% 100%">
-            <layout source="minecolonies:gui/windowworkerbuildingdefault.xml"/>
+        	<layout source="minecolonies:gui/layouthuts/layouthutpageactions.xml"/>
         </view>
+        <view id="pageFields" size="100% 100%">
+            <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+            <label size="130 11" pos="30 14" color="black" textalign="MIDDLE"
+                label="$(com.minecolonies.coremod.gui.workerHuts.farmerHut.fields):"/>
+            <label id="AssignmentModeLabel" size="164 11" pos="13 29" color="black" textalign="MIDDLE"
+                label="$(com.minecolonies.coremod.gui.workerHuts.farmerHut.AssignmentMode)"/>
+            <button id="assignmentMode" size="60 15" pos="65 42"
+                label="$(com.minecolonies.coremod.gui.hiring.off)"/>
 
-        <view id="pageFields" size="100% 100%" pos="0 1">
-            <layout source="minecolonies:gui/windowbase.xml"/>
-            <label id="AssignmentModeLabel" label="$(com.minecolonies.coremod.gui.workerHuts.farmerHut.AssignmentMode)"
-                   pos="20 30"/>
-            <button id="assignmentMode" size="60 15" label="$(com.minecolonies.coremod.gui.hiring.off)" pos="50 40"/>
-
-            <label size="100% 11" pos="0 0" label="Fields:" color="black" textalign="BOTTOM_MIDDLE"/>
-
-            <list id="fields" size="85% 120" pos="5 60" align="TOP_MIDDLE">
+            <list id="fields" size="164 154" pos="13 60">
                 <view size="100% 30">
                     <box size="100% 30" linewidth="2">
-
                         <button id="assignFarm" pos="95 10" size="40 15"/>
                         <itemicon id="icon" size="16 16" pos="0 0"/>
                         <label id="worker" color="black" pos="20 5"/>
                         <label id="dist" color="black" pos="15 15"/>
                         <label id="dir" color="black" pos="35 15"/>
-
                     </box>
                 </view>
             </list>
         </view>
     </switch>
-    <buttonimage id="prevPage" align="TOP_LEFT" size="26 8" pos="12 15" source="minecolonies:textures/gui/builderhut/builder_sketch_arrow_left_c.png"/>
-    <buttonimage id="nextPage" align="TOP_RIGHT" size="26 8" pos="12 15" source="minecolonies:textures/gui/builderhut/builder_sketch_arrow_right_c.png"/>
+    <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
+    <buttonimage id="nextPage" size="18 10" pos="159 13" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
+    <label id="pageNum" size="20 11" pos="158 222" textalign="MIDDLE" label="" color="black"/>
 </window>

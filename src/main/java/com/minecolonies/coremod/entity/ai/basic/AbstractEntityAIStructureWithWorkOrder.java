@@ -264,7 +264,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
         if (getOwnBuilding(AbstractBuildingStructureBuilder.class)
               .getNeededResources()
-              .get(stack.getUnlocalizedName()
+              .get(stack.getTranslationKey()
                      + ":" + stack.getItemDamage()
                      + "-" + hashCode) == null)
         {
@@ -283,7 +283,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         final BuildingBuilderResource resource
                 = getOwnBuilding(AbstractBuildingStructureBuilder.class)
                 .getNeededResources()
-                .get(deliveredItemStack.getUnlocalizedName()
+                .get(deliveredItemStack.getTranslationKey()
                         + ":" + deliveredItemStack.getItemDamage()
                         + "-" + hashCode);
         if (resource != null)
@@ -419,7 +419,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
         final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
         final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding(AbstractBuildingStructureBuilder.class);
-        final BuildingBuilderResource resource = buildingWorker.getNeededResources().get(stack.getUnlocalizedName() + ":" + stack.getItemDamage() + "-" + hashCode);
+        final BuildingBuilderResource resource = buildingWorker.getNeededResources().get(stack.getTranslationKey() + ":" + stack.getItemDamage() + "-" + hashCode);
 
         if(resource == null)
         {

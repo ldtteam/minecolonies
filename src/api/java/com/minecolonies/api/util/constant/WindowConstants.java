@@ -275,24 +275,9 @@ public final class WindowConstants
     public static final int HIDDEN_ID_POSITION = 5;
 
     /**
-     * The distance to move the ribbon.
-     */
-    public static final int RIBBON_OFFSET = 5;
-
-    /**
      * Link to the xml file of the window.
      */
-    public static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/windowtownhall.xml";
-
-    /**
-     * The button to go to the previous permission settings page.
-     */
-    public static final String BUTTON_PREV_PAGE_PERM = "prevPagePerm";
-
-    /**
-     * The button to go to the next permission settings page.
-     */
-    public static final String BUTTON_NEXT_PAGE_PERM = "nextPagePerm";
+    public static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/townhall/windowtownhall.xml";
 
     /**
      * The button to go to the officer permission settings page.
@@ -696,6 +681,8 @@ public final class WindowConstants
     public static final String LABEL_CONSTRUCTION_NAME =  "constructionName";
     public static final String LABEL_CONSTRUCTION_POS =  "constructionPos";
 
+    public static final String LABEL_PAGE_NUMBER = "pageNum";
+
     /**
      * The fields used into the happiness
      */
@@ -718,7 +705,7 @@ public final class WindowConstants
     /**
      * The label to find the gui of the citizen.
      */
-    public static final String CITIZEN_RESOURCE_SUFFIX = ":gui/windowcitizen.xml";
+    public static final String CITIZEN_RESOURCE_SUFFIX = ":gui/citizen/windowcitizen.xml";
 
     /**
      * The label to find strength in the gui.
@@ -955,6 +942,11 @@ public final class WindowConstants
      * Resolver string.
      */
     public static final String DELIVERY_IMAGE = "deliveryImage";
+
+    /**
+     * Switch id of the head switch in citizen gui.
+     */
+    public static final String VIEW_HEAD = "head";
 
     /**
      * Button id of the requests page.

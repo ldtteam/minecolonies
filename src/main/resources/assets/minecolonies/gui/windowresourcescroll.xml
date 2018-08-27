@@ -5,15 +5,12 @@
     <image source="minecolonies:textures/gui/builderhut/builder_papper_sketch.png" size="100% 100%"/>
     <image source="minecolonies:textures/gui/builderhut/builder_charcoal_chalk.png" size="19 59" pos="175 180"/>
 
-    <label size="100% 11" pos="0 10"
-           label="$(com.minecolonies.coremod.gui.workerHuts.resourceList)" color="black"
-           textalign="BOTTOM_MIDDLE"/>
+    <label size="164 11" pos="0 13" color="black" textalign="MIDDLE"
+           label="$(com.minecolonies.coremod.gui.workerHuts.resourceList)"/>
 
-    <label size="100% 11" pos="0 22" id="constructionName"
-           label="" color="black"
-           textalign="BOTTOM_MIDDLE"/>
+    <label size="164 11" pos="0 24" id="constructionName" label="" color="black" textalign="MIDDLE"/>
 
-    <list id="resources" size="78% 75%" pos="30 40">
+    <list id="resources" size="164 75%" pos="13 40">
         <box size="100% 30" linewidth="2">
             <itemicon id="resourceIcon" size="16 16" pos="1 1"/>
             <label id="resourceName" size="100 12" pos="20 3" textalign="MIDDLE_LEFT" color="black"/>

@@ -176,7 +176,7 @@ public class InventoryUtils
 
         return -1;
         //TODO: Later harden contract to remove compare on slot := -1
-        //throw new IllegalStateException("Item "+targetItem.getUnlocalizedName() + " not found in ItemHandler!");
+        //throw new IllegalStateException("Item "+targetItem.getTranslationKey() + " not found in ItemHandler!");
     }
 
     /**
@@ -639,7 +639,7 @@ public class InventoryUtils
 
         return -1;
         //TODO: Later harden contract to remove compare on slot := -1
-        //throw new IllegalStateException("Item "+targetItem.getUnlocalizedName() + " not found in ItemHandler!");
+        //throw new IllegalStateException("Item "+targetItem.getTranslationKey() + " not found in ItemHandler!");
     }
 
     /**
@@ -1144,7 +1144,7 @@ public class InventoryUtils
         {
             return -1;
             //TODO: Later harden contract to remove compare on slot := -1
-            //throw new IllegalStateException("Item "+targetItem.getUnlocalizedName() + " not found in ItemHandler!");
+            //throw new IllegalStateException("Item "+targetItem.getTranslationKey() + " not found in ItemHandler!");
         }
 
         return findFirstSlotInItemHandlerWith(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), itemStackSelectionPredicate);

@@ -51,7 +51,7 @@ public class ClaimChunksCommand implements IActionCommand
             final int range = actionMenuState.getIntValueForArgument("range", Configurations.gameplay.workingRangeTownHallChunks);
             final Boolean add = actionMenuState.getBooleanForArgument("add");
 
-            final Chunk chunk = ((EntityPlayerMP) sender).getServerWorld().getChunkFromBlockCoords(sender.getPosition());
+            final Chunk chunk = ((EntityPlayerMP) sender).getServerWorld().getChunk(sender.getPosition());
             ColonyManager.claimChunksInRange(colony.getID(), colony.getDimension(), add == null ? true : add, chunk.x, chunk.z, range, 0, sender.getEntityWorld());
             sender.sendMessage(new TextComponentString(SUCCESFULLY_CLAIMED_CHUNKS));
         }

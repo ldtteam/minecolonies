@@ -1,23 +1,19 @@
 package com.minecolonies.coremod.commands.citizencommands;
 
 import com.minecolonies.api.colony.permissions.Rank;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.KILLCITIZENS;
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.SPAWNCITZENS;
 
 /**

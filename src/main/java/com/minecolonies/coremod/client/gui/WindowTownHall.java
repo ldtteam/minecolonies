@@ -181,9 +181,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(NAME_LABEL, this::fillCitizenInfo);
         registerButton(RECALL_ONE, this::recallOneClicked);
 
-        registerButton(BUTTON_PREV_PAGE_PERM, this::switchPage);
-        registerButton(BUTTON_NEXT_PAGE_PERM, this::switchPage);
-
         registerButton(BUTTON_MANAGE_OFFICER, this::editOfficer);
         registerButton(BUTTON_MANAGE_FRIEND, this::editFriend);
         registerButton(BUTTON_MANAGE_NEUTRAL, this::editNeutral);
@@ -197,11 +194,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_TRIGGER, this::trigger);
         registerButton(BUTTON_ADD_BLOCK, this::addBlock);
         registerButton(BUTTON_REMOVE_BLOCK, this::removeBlock);
-        if (findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class) == null)
-        {
-            return;
-        }
-        findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setVisible(false);
         findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(false);
         colorDropDownList.setSelectedIndex(townHall.getColony().getTeamColonyColor().ordinal());
     }
@@ -357,10 +349,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
 
         lastTabButton = findPaneOfTypeByID(BUTTON_ACTIONS, Button.class);
-        lastTabButton.setEnabled(false);
-        findPaneOfTypeByID(lastTabButton.getID() + "0", Image.class).setVisible(false);
-        findPaneOfTypeByID(lastTabButton.getID() + "1", ButtonImage.class).setVisible(true);
-        lastTabButton.setPosition(lastTabButton.getX() + RIBBON_OFFSET, findPaneOfTypeByID(lastTabButton.getID() + "1", ButtonImage.class).getY());
+        lastTabButton.off();
+        findPaneOfTypeByID(lastTabButton.getID() + "0", Image.class).hide();
+        findPaneOfTypeByID(lastTabButton.getID() + "1", ButtonImage.class).show();
 
         fillUserList();
         fillCitizensList();
@@ -527,35 +518,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         else
         {
             button.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON));
-        }
-    }
-
-    /**
-     * Switch between previous and next page.
-     */
-    private void switchPage(@NotNull final Button button)
-    {
-        if (button.getID().equals(BUTTON_PREV_PAGE_PERM))
-        {
-            findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).previousView();
-
-            findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setVisible(false);
-            findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setVisible(true);
-        }
-        else
-        {
-            findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).nextView();
-
-            findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setVisible(true);
-            findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setVisible(false);
-        }
-
-        if (findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).getCurrentView().getID().equals(PERMISSION_VIEW))
-        {
-            findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setVisible(true);
-            findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setVisible(true);
-
-            fillPermissionList(VIEW_OFFICER);
         }
     }
 
@@ -1102,19 +1064,16 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     {
         final String oldId = lastTabButton.getID();
         final String newId = button.getID();
-        final String page = tabsToPages.get(newId);
-        final Image image = findPaneOfTypeByID(oldId + "0", Image.class);
-        lastTabButton.setPosition(lastTabButton.getX() - RIBBON_OFFSET, image.getY() + image.getParent().getY() - 2);
-        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(page);
-        findPaneOfTypeByID(oldId + "0", Image.class).setVisible(true);
-        findPaneOfTypeByID(oldId + "1", ButtonImage.class).setVisible(false);
-        findPaneOfTypeByID(newId + "0", Image.class).setVisible(false);
-        findPaneOfTypeByID(newId + "1", ButtonImage.class).setVisible(true);
+        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(tabsToPages.get(newId));
+        findPaneOfTypeByID(oldId + "0", Image.class).show();
+        findPaneOfTypeByID(oldId + "1", ButtonImage.class).hide();
+        findPaneOfTypeByID(newId + "0", Image.class).hide();
+        findPaneOfTypeByID(newId + "1", ButtonImage.class).show();
 
-        lastTabButton.setEnabled(true);
-        button.setEnabled(false);
+        lastTabButton.on();
+        button.off();
         lastTabButton = button;
-        lastTabButton.setPosition(lastTabButton.getX() + RIBBON_OFFSET, findPaneOfTypeByID(lastTabButton.getID() + "1", ButtonImage.class).getY());
+        setPage("");
     }
 
     /**
@@ -1237,5 +1196,23 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private void recallClicked()
     {
         MineColonies.getNetwork().sendToServer(new RecallTownhallMessage(townHall));
+    }
+
+    /**
+     * For switches inside of tabs
+     */
+    @Override
+    public void setPage(@NotNull final String button)
+    {
+        final String curSwitch = (lastTabButton == null) ? findPaneOfTypeByID(BUTTON_ACTIONS, Button.class).getID() : lastTabButton.getID();
+        super.switchView = findPaneOfTypeByID(GUI_LIST_BUTTON_SWITCH + tabsToPages.get(curSwitch), SwitchView.class);
+        super.pageNum.on();
+        super.setPage(button);
+
+        // Additional handlers
+        if (switchView.getCurrentView().getID().equals(PERMISSION_VIEW))
+        {
+            editOfficer();
+        }
     }
 }

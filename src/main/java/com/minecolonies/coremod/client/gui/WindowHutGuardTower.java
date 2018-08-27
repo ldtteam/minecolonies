@@ -204,45 +204,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        final Pane currentPane = findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).getCurrentView();
-        if (currentPane != null)
-        {
-            final Button buttonNextPage = findPaneOfTypeByID(GUI_BUTTON_NEXT_PAGE, Button.class);
-            final Button buttonPrevPage = findPaneOfTypeByID(GUI_BUTTON_PREV_PAGE, Button.class);
-            switch (button.getID())
-            {
-                case GUI_BUTTON_NEXT_PAGE:
-                    findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).nextView();
-                    buttonPrevPage.setEnabled(true);
-                    buttonPrevPage.show();
-                    final Pane newCurrentPane = findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).getCurrentView();
-
-                    //System.out.println("Current Page:" + )
-                    if (newCurrentPane != null
-                          && newCurrentPane.getID().equals(GUI_PAGE_MOB_ACTIONS))
-                    {
-                        buttonNextPage.setEnabled(false);
-                        buttonNextPage.hide();
-                    }
-                    break;
-                case GUI_BUTTON_PREV_PAGE:
-                    findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).previousView();
-                    buttonNextPage.setEnabled(true);
-                    buttonNextPage.show();
-                    final Pane otherCurrentPane = findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).getCurrentView();
-
-                    if (otherCurrentPane != null
-                          && otherCurrentPane.getID().equals(GUI_PAGE_PAGE_ACTIONS))
-                    {
-                        buttonPrevPage.setEnabled(false);
-                        buttonPrevPage.hide();
-                    }
-                    break;
-                default:
-                    super.onButtonClicked(button);
-                    break;
-            }
-        }
+        super.onButtonClicked(button);
         handleButtons();
     }
 

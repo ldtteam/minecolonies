@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.client.gui.WindowHomeBuilding;
+import com.minecolonies.coremod.client.gui.WindowHutCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -99,7 +99,7 @@ public class BuildingHome extends AbstractBuilding
         for (final BlockPos pos : bedList)
         {
             IBlockState state = world.getBlockState(pos);
-            state = state.getBlock().getActualState(state, world, pos);
+            state = state.getBlock().getExtendedState(state, world, pos);
             if (state.getBlock() instanceof BlockBed
                     && state.getValue(BlockBed.OCCUPIED)
                     && state.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
@@ -349,7 +349,7 @@ public class BuildingHome extends AbstractBuilding
         @Override
         public Window getWindow()
         {
-            return new WindowHomeBuilding(this);
+            return new WindowHutCitizen(this);
         }
 
         @Override
