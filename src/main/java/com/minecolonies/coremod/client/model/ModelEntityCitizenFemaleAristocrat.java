@@ -84,19 +84,19 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
         setRotation(breast, -0.5235988F, 0F, 0F);
 
         hair1 = new ModelRenderer(this, 32, 0);
-        hair1.addBox(-3F, -3F, -3F, 6, 3, 6);
+        hair1.addBox(-3F, -3F, -4F, 6, 3, 6);
         hair1.setRotationPoint(0F, -8F, 1F);
         hair1.setTextureSize(64, 64);
         setRotation(hair1, 0F, 0F, 0F);
 
         hair2 = new ModelRenderer(this, 56, 0);
-        hair2.addBox(-1F, -1F, -1F, 2, 1, 2);
+        hair2.addBox(-1F, -1F, -2F, 2, 1, 2);
         hair2.setRotationPoint(0F, -11F, 1F);
         hair2.setTextureSize(64, 64);
         setRotation(hair2, 0F, 0F, 0F);
 
         hair3 = new ModelRenderer(this, 32, 10);
-        hair3.addBox(-2F, -1F, -2F, 4, 2, 4);
+        hair3.addBox(-2F, -1F, -3F, 4, 2, 4);
         hair3.setRotationPoint(0F, -13F, 1F);
         hair3.setTextureSize(64, 64);
         setRotation(hair3, 0F, 0F, 0F);
