@@ -85,6 +85,10 @@ public final class NbtTagConstants
     public static final String TAG_PASTEABLE              = "isPasteable";
     public static final String TAG_STRING_NAME            = "Name";
     public static final String TAG_DISPLAY                = "display";
+    public static final String TAG_NEED_TO_MOURN          = "needToMourn";
+    public static final String TAG_MOURNING               = "mourning";
+
+
     /**
      * Tag used to store the containers to NBT.
      */
