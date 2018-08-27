@@ -106,7 +106,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         final World world = te.getWorld();
         final IBlockState state = world.getBlockState(te.getPos());
         final BlockPos pos = te.getPos();
-        final IBlockState actualState = state.getBlock().getActualState(state, world, pos); //getExtendedState
+        final IBlockState actualState = state.getBlock().getExtendedState(state, world, pos);
         int facing = (int) actualState.getValue(BlockWallSign.FACING).getHorizontalAngle();
 
         double plusX = 0;
@@ -176,7 +176,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
     private static void renderModel(final World world, final IBakedModel model, final BlockPos pos, final int alpha)
     {
         final IBlockState state = world.getBlockState(pos);
-        final IBlockState actualState = state.getBlock().getActualState(state, world, pos);
+        final IBlockState actualState = state.getBlock().getExtendedState(state, world, pos);
         final IBlockState iBlockExtendedState = state.getBlock().getExtendedState(state, world, pos);
 
         for (final EnumFacing facing : EnumFacing.values())
