@@ -8,18 +8,12 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
-import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -28,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.CommandConstants.*;
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.DELETECOLONY;
 
 /**
  * List all colonies.

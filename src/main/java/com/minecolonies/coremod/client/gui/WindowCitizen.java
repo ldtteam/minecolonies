@@ -198,6 +198,8 @@ public class WindowCitizen extends AbstractWindowSkeleton
         {
             findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(FEMALE_SOURCE);
         }
+
+        setPage("");
     }
 
     /**
