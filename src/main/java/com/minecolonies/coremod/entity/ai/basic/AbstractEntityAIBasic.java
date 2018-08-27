@@ -664,7 +664,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             proxy = new EntityCitizenWalkToProxy(worker);
         }
-        if (proxy.walkToBlock(stand, range))
+        if (!proxy.walkToBlock(stand, range))
         {
             workOnBlock(null, stand, DELAY_RECHECK);
             return true;

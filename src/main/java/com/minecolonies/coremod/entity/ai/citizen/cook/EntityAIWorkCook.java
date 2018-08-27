@@ -13,6 +13,10 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -57,7 +61,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     /**
      * The citizen the worker is currently trying to serve.
      */
-    private final List<EntityCitizen> citizenToServe = new ArrayList<>();
+    private final List<EntityLivingBase> citizenToServe = new ArrayList<>();
 
     /**
      * The building range the cook should search for clients.
@@ -143,18 +147,42 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             return getState();
         }
 
-        if (InventoryUtils.isItemHandlerFull(new InvWrapper(citizenToServe.get(0).getInventoryCitizen())))
+        if (citizenToServe.get(0) instanceof EntityCitizen)
         {
-            chatSpamFilter.talkWithoutSpam(HUNGRY_INV_FULL);
-            citizenToServe.remove(0);
-            setDelay(SERVE_DELAY);
-            return getState();
+            EntityCitizen citizen = (EntityCitizen) citizenToServe.get(0);
+            if (InventoryUtils.isItemHandlerFull(new InvWrapper((citizen.getInventoryCitizen()))))
+            {
+                chatSpamFilter.talkWithoutSpam(HUNGRY_INV_FULL);
+                citizenToServe.remove(0);
+                setDelay(SERVE_DELAY);
+                return getState();
+            }
+            
+            InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
+                    new InvWrapper(worker.getInventoryCitizen()),
+                    ItemStackUtils.ISFOOD,
+                    AMOUNT_OF_FOOD_TO_SERVE, new InvWrapper(citizen.getInventoryCitizen())
+                    );
         }
-        InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
-                new InvWrapper(worker.getInventoryCitizen()),
-                ItemStackUtils.ISFOOD,
-                AMOUNT_OF_FOOD_TO_SERVE, new InvWrapper(citizenToServe.get(0).getInventoryCitizen())
-                );
+        else
+        {
+            EntityPlayer player = (EntityPlayer) citizenToServe.get(0);
+            if (InventoryUtils.isItemHandlerFull(new InvWrapper((player.inventory))))
+            {
+                chatSpamFilter.talkWithoutSpam(HUNGRY_INV_FULL);
+                citizenToServe.remove(0);
+                setDelay(SERVE_DELAY);
+                return getState();
+            }
+            
+            InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
+                    new InvWrapper(worker.getInventoryCitizen()),
+                    ItemStackUtils.ISFOOD,
+                    AMOUNT_OF_FOOD_TO_SERVE, new InvWrapper(player.inventory)
+                    );
+        }
+        
+        
 
         citizenToServe.remove(0);
         setDelay(SERVE_DELAY);
@@ -181,12 +209,17 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
         }
 
         citizenToServe.clear();
-        final List<EntityCitizen> citizenList = world.getEntitiesWithinAABB(EntityCitizen.class,
+        
+        List<EntityPlayer> playerList = world.getEntitiesWithinAABB(EntityPlayer.class,
+                range, player ->  (Configurations.gameplay.restaurantSittingRequired && player.isRiding()
+                        && player.getFoodStats().getFoodLevel() <= 12));
+        List<EntityCitizen> citizenList = world.getEntitiesWithinAABB(EntityCitizen.class,
                 range, cit ->  cit.getCitizenData() != null && ((Configurations.gameplay.restaurantSittingRequired && cit.isRiding()) 
                 || (! Configurations.gameplay.restaurantSittingRequired && !cit.isRiding()) && cit.getCitizenData().getSaturation() <= CitizenConstants.LOW_SATURATION));
-        if (!citizenList.isEmpty())
+        if (!citizenList.isEmpty() || !playerList.isEmpty())
         {
             citizenToServe.addAll(citizenList);
+            citizenToServe.addAll(playerList);
             if (InventoryUtils.hasItemInItemHandler(
                     new InvWrapper(worker.getInventoryCitizen()), ItemStackUtils.ISFOOD))
             {

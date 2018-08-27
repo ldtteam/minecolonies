@@ -48,7 +48,7 @@ public class EntityAIEatTask extends EntityAIBase
     }
 
     
-    private final static int RELAXING_TICKS = 300;
+    private final static int RELAXING_TICKS = 100;
     private final EntityCitizen citizen;
     private int eatingTicks;
     private ItemStack stack;
