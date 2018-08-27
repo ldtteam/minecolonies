@@ -143,4 +143,11 @@ public interface ICitizenManager
      * @param event the event.
      */
     void onWorldTick(final TickEvent.WorldTickEvent event);
+
+    /**
+     * Call this to set all the citizens in the colony to mourn or not.
+     * 
+     * @param mourn boolean to indicate if citizen should mourn or not
+     */
+    void updateCitizenMourn(final boolean mourn);
 }

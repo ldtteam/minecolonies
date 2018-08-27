@@ -193,7 +193,7 @@ public class CommandEntryPointTest
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("colonies", "colony", "citizens", "kill", "check", "whoami", "whereami", "home", "raid-tonight", "raid-now", "rs", "rtp",
-                "backup", "scan");
+                "backup", "scan", "lootgen");
     }
 
     @Test
@@ -211,7 +211,7 @@ public class CommandEntryPointTest
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("colonies", "colony", "citizens", "kill", "check", "whoami", "whereami", "home", "raid-tonight", "raid-now", "rs", "rtp",
-                "backup", "scan");
+                "backup", "scan", "lootgen");
     }
 
     @Test
@@ -1262,7 +1262,7 @@ public class CommandEntryPointTest
         }
         catch (final CommandException e)
         {
-            assertThat(e).hasMessage("/mineColonies <colonies|kill|colony|citizens|rs|rtp|backup|home|raid-tonight|raid-now|check|whoami|whereami|scan>");
+            assertThat(e).hasMessage("/mineColonies <colonies|kill|colony|citizens|rs|rtp|backup|home|raid-tonight|raid-now|check|whoami|whereami|scan|lootGen>");
         }
     }
 
