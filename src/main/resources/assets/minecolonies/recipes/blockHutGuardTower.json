@@ -18,6 +18,7 @@
     }
   },
   "result": {
-    "item": "minecolonies:BlockHutGuardTower"
+    "item": "minecolonies:BlockHutGuardTower",
+    "count": 2
   }
 }

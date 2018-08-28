@@ -4,7 +4,7 @@
 
     <image source="minecolonies:textures/gui/citizen/colonist_papper_sketch.png" size="100% 100%"/>
 
-    <label size="100% 11" pos="0 15" textalign="TOP_MIDDLE" color="black" label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
+    <label size="164 11" pos="0 13" textalign="MIDDLE" color="black" label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
 
     <itemicon id="requestStack" size="24 24" pos="14 34"/>
     <image id="deliveryImage" source="minecraft:textures/misc/shadow.png" size="24 24" pos="14 34" visible="false"/>

@@ -5,6 +5,7 @@ import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
@@ -26,6 +27,7 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -37,6 +39,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -51,11 +55,13 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     private static final String NBT_ASSIGN         = "assign";
     private static final String NBT_RETRIEVE       = "retrieve";
     private static final String NBT_PATROL         = "patrol";
+    private static final String NBT_TIGHT_GROUPING = "tightGrouping";
     private static final String NBT_PATROL_TARGETS = "patrol targets";
     private static final String NBT_TARGET         = "target";
     private static final String NBT_GUARD          = "guard";
     private static final String NBT_MOBS           = "mobs";
     private static final String NBT_MOB_VIEW       = "mobview";
+
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     ////// --------------------------- GuardJob Enum --------------------------- \\\\\\
@@ -174,6 +180,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     private EntityPlayer followPlayer;
 
     /**
+     * Indicates if in Follow mode what type of follow is use.
+     * True - tight grouping, false - lose grouping.
+     */
+    private boolean tightGrouping;
+
+    /**
      * The abstract constructor of the building.
      *
      * @param c the colony
@@ -212,6 +224,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         assignManually = compound.getBoolean(NBT_ASSIGN);
         retrieveOnLowHealth = compound.getBoolean(NBT_RETRIEVE);
         patrolManually = compound.getBoolean(NBT_PATROL);
+        if (compound.hasKey(NBT_TIGHT_GROUPING))
+        {
+            tightGrouping = compound.getBoolean(NBT_TIGHT_GROUPING);
+        }
+        else
+        {
+            tightGrouping = true;
+        }
 
         final NBTTagList wayPointTagList = compound.getTagList(NBT_PATROL_TARGETS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < wayPointTagList.tagCount(); ++i)
@@ -244,6 +264,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         compound.setBoolean(NBT_ASSIGN, assignManually);
         compound.setBoolean(NBT_RETRIEVE, retrieveOnLowHealth);
         compound.setBoolean(NBT_PATROL, patrolManually);
+        compound.setBoolean(NBT_TIGHT_GROUPING, tightGrouping);
 
         @NotNull final NBTTagList wayPointTagList = new NBTTagList();
         for (@NotNull final BlockPos pos : patrolTargets)
@@ -278,6 +299,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         buf.writeBoolean(assignManually);
         buf.writeBoolean(retrieveOnLowHealth);
         buf.writeBoolean(patrolManually);
+        buf.writeBoolean(tightGrouping);
         buf.writeInt(task.ordinal());
         buf.writeInt(job == GuardJob.KNIGHT ? -1 : job.ordinal());
         buf.writeInt(patrolTargets.size());
@@ -299,8 +321,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         }
 
         BlockPosUtil.writeToByteBuf(buf, guardPos);
-    }
 
+        buf.writeInt(this.getAssignedCitizen().size());
+        for (final CitizenData citizen : this.getAssignedCitizen())
+        {
+            buf.writeInt(citizen.getId());
+        }
+    }
+    
     @NotNull
     @Override
     public AbstractJob createJob(final CitizenData citizen)
@@ -625,6 +653,26 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     /**
+     * Returns whether tight grouping in Follow mode is being used.
+     *
+     * @return whether tight grouping is being used.
+     */
+    public boolean isTightGrouping()
+    {
+        return tightGrouping;
+    }
+
+    /**
+     * Set whether to use tight grouping or lose grouping.
+     *
+     * @param tightGrouping - indicates if you are using tight grouping
+     */
+    public void setTightGrouping(final boolean tightGrouping)
+    {
+        this.tightGrouping = tightGrouping;
+    }
+
+    /**
      * Get the position the guard should guard.
      *
      * @return the {@link BlockPos} of the guard position.
@@ -667,6 +715,15 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     /**
+     * Entity of player to follow.
+     * @return the entityPlayer reference.
+     */
+    public EntityPlayer getFollowPlayer()
+    {
+        return followPlayer;
+    }
+
+    /**
      * Gets the player to follow.
      *
      * @return the entity player.
@@ -678,6 +735,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             return followPlayer.getPosition();
         }
         task = GuardTask.GUARD;
+        markDirty();
         return this.getLocation();
     }
 
@@ -688,6 +746,28 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      */
     public void setPlayerToFollow(final EntityPlayer player)
     {
+        if (this.getColony().getWorld() != null)
+        {
+            this.getColony().getWorld().getScoreboard().addPlayerToTeam(player.getName(), TEAM_COLONY_NAME + getColony().getID());
+            player.addPotionEffect(new PotionEffect(GLOW_EFFECT, GLOW_EFFECT_DURATION_TEAM, GLOW_EFFECT_MULTIPLIER));
+
+            if (followPlayer != null)
+            {
+                try
+                {
+                    this.getColony()
+                      .getWorld()
+                      .getScoreboard()
+                      .removePlayerFromTeam(followPlayer.getName(), this.getColony().getWorld().getScoreboard().getTeam(TEAM_COLONY_NAME + getColony().getID()));
+                    player.removePotionEffect(GLOW_EFFECT);
+
+                }
+                catch (final Exception e)
+                {
+                    Log.getLogger().warn("Unable to remove player " + followPlayer.getName() + " from team " + TEAM_COLONY_NAME + getColony().getID());
+                }
+            }
+        }
         this.followPlayer = player;
     }
 
@@ -780,6 +860,18 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     /**
+     * Check if a guard should take damage by a player..
+     * @param citizen the citizen.
+     * @param player the player.
+     * @return false if in follow mode and following the player.
+     */
+    public static boolean checkIfGuardShouldTakeDamage(final EntityCitizen citizen, final EntityPlayer player)
+    {
+        final AbstractBuildingWorker buildingWorker =  citizen.getCitizenColonyHandler().getWorkBuilding();
+        return !(buildingWorker instanceof AbstractBuildingGuards) || ((AbstractBuildingGuards) buildingWorker).task != GuardTask.FOLLOW || !player.equals(((AbstractBuildingGuards) buildingWorker).followPlayer);
+    }
+
+    /**
      * The client view for the Guard building.
      */
     public static class View extends AbstractBuildingWorker.View
@@ -816,6 +908,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         private GuardJob job = null;
 
         /**
+         * Indicates whether tight grouping is use or
+         * lose grouping.
+         */
+        private boolean tightGrouping = true;
+
+        /**
          * The list of manual patrol targets.
          */
         private List<BlockPos> patrolTargets = new ArrayList<>();
@@ -824,6 +922,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
          * Hashmap of mobs we may or may not attack.
          */
         private List<MobEntryView> mobsToAttack = new ArrayList<>();
+
+        @NotNull
+        private final List<Integer> guards = new ArrayList<>();
 
         /**
          * The client view constructor for the AbstractGuardBuilding.
@@ -848,6 +949,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             return new WindowHutGuardTower(this);
         }
 
+        /**
+         * Getter for the list of residents.
+         *
+         * @return an unmodifiable list.
+         */
+        @NotNull
+        public List<Integer> getGuards()
+        {
+            return Collections.unmodifiableList(guards);
+        }
+
         @Override
         public void deserialize(@NotNull final ByteBuf buf)
         {
@@ -855,6 +967,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             assignManually = buf.readBoolean();
             retrieveOnLowHealth = buf.readBoolean();
             patrolManually = buf.readBoolean();
+            tightGrouping = buf.readBoolean();
             task = GuardTask.values()[buf.readInt()];
             final int jobId = buf.readInt();
             job = jobId == -1 ? null : GuardJob.values()[jobId];
@@ -875,6 +988,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             }
 
             guardPos = BlockPosUtil.readFromByteBuf(buf);
+
+            final int numResidents = buf.readInt();
+            for (int i = 0; i < numResidents; ++i)
+            {
+                guards.add(buf.readInt());
+            }
         }
 
         @NotNull
@@ -925,6 +1044,26 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             return retrieveOnLowHealth;
         }
 
+        /**
+         * Set whether to use tight grouping or lose grouping.
+         * 
+         * @param tightGrouping - indicates if you are using tight grouping
+         */
+        public void setTightGrouping(final boolean tightGrouping)
+        {
+            this.tightGrouping = tightGrouping;
+        }
+        
+        /**
+         * Returns whether tight grouping in Follow mode is being used.
+         * 
+         * @return whether tight grouping is being used.
+         */
+        public boolean isTightGrouping()
+        {
+            return tightGrouping;
+        }
+        
         public void setPatrolManually(final boolean patrolManually)
         {
             this.patrolManually = patrolManually;
@@ -943,6 +1082,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         public void setTask(final GuardTask task)
         {
             this.task = task;
+            this.getColony().markDirty();
         }
 
         public GuardTask getTask()

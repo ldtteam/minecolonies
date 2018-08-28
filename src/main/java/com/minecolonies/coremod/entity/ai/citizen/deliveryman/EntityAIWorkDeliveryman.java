@@ -315,7 +315,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         hasGathered = true;
-        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(handler, currentSlot, new InvWrapper(worker.getInventoryCitizen()));
+        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(handler, currentSlot, new InvWrapper(worker.getInventoryCitizen()));
         building.markDirty();
         setDelay(DUMP_AND_GATHER_DELAY);
         worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, SLOT_HAND);
@@ -334,7 +334,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             return false;
         }
-        return InventoryUtils.getAmountOfStacksInItemHandler(new InvWrapper(worker.getInventoryCitizen())) >= Math.pow(2, getOwnBuilding().getBuildingLevel() - 1.0D);
+        return InventoryUtils.getAmountOfStacksInItemHandler(new InvWrapper(worker.getInventoryCitizen())) >= Math.pow(2, getOwnBuilding().getBuildingLevel() - 1.0D) + 1;
     }
 
     private BlockPos getWeightedRandom()
@@ -350,23 +350,22 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final double r = Math.random() * completeWeight;
         double countWeight = 0.0;
 
-        final List<AbstractBuilding> buildings = new ArrayList<>(worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values());
+        final List<AbstractBuilding> buildings = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values().stream()
+                                                   .filter(building -> !(building instanceof BuildingWareHouse || building instanceof BuildingTownHall || building.isBeingGathered()))
+                                                   .collect(Collectors.toList());
         Collections.shuffle(buildings);
         for (final AbstractBuilding building : buildings)
         {
-            if (!building.isBeingGathered())
+            countWeight += building.getPickUpPriority();
+            if (countWeight >= r)
             {
-                countWeight += building.getPickUpPriority();
-                if (countWeight >= r)
-                {
-                    //Don't let any other dman pick up for now.
-                    building.setBeingGathered(true);
-                    return building.getID();
-                }
-                else
-                {
-                    building.alterPickUpPriority(1);
-                }
+                //Don't let any other dman pick up for now.
+                building.setBeingGathered(true);
+                return building.getID();
+            }
+            else
+            {
+                building.alterPickUpPriority(1);
             }
         }
         return null;

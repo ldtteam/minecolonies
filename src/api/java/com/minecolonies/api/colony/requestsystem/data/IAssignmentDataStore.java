@@ -1,6 +1,5 @@
 package com.minecolonies.api.colony.requestsystem.data;
 
-import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

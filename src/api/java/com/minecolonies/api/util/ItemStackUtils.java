@@ -11,7 +11,9 @@ import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.*;
+import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -282,6 +284,17 @@ public final class ItemStackUtils
                 return getToolLevel(itemSword.getToolMaterialName());
             }
         }
+        else if (ToolType.HELMET.equals(toolType)
+                || ToolType.BOOTS.equals(toolType)
+                || ToolType.CHESTPLATE.equals(toolType)
+                || ToolType.LEGGINGS.equals(toolType))
+        {
+            if (stack.getItem() instanceof ItemArmor)
+            {
+                final ItemArmor itemArmor = (ItemArmor) stack.getItem();
+                return getArmorLevel(itemArmor.getArmorMaterial());
+            }
+        }
         else if (!toolType.hasVariableMaterials())
         {
             //We need a hut level 1 minimum
@@ -333,6 +346,22 @@ public final class ItemStackUtils
         {
             isATool = itemStack.getItem() instanceof ItemShears;
         }
+        else if (ToolType.HELMET.equals(toolType))
+        {
+            isATool = itemStack.getItem() instanceof ItemArmor;
+        }
+        else if (ToolType.LEGGINGS.equals(toolType))
+        {
+            isATool = itemStack.getItem() instanceof ItemArmor;
+        }
+        else if (ToolType.CHESTPLATE.equals(toolType))
+        {
+            isATool = itemStack.getItem() instanceof ItemArmor;
+        }
+        else if (ToolType.BOOTS.equals(toolType))
+        {
+            isATool = itemStack.getItem() instanceof ItemArmor;
+        }
         return isATool;
     }
 
@@ -374,6 +403,40 @@ public final class ItemStackUtils
             return 3;
         }
         return -1;
+    }
+
+    /**
+     * This routine converts the material type of armor
+     * into a numerical value for the request system.
+     *
+     * @param material type of material of the armor
+     * @return armor level
+     */
+    private static int getArmorLevel(final ArmorMaterial material)
+    {
+        final int damageReductionAmount = material.getDamageReductionAmount(EntityEquipmentSlot.CHEST);
+        if (damageReductionAmount <= ArmorMaterial.LEATHER.getDamageReductionAmount(EntityEquipmentSlot.CHEST))
+        {
+            return 0;
+        }
+        else if (damageReductionAmount <= ArmorMaterial.GOLD.getDamageReductionAmount(EntityEquipmentSlot.CHEST))
+        {
+            return 1;
+        }
+        else if (damageReductionAmount <= ArmorMaterial.CHAIN.getDamageReductionAmount(EntityEquipmentSlot.CHEST))
+        {
+            return 2;
+        }
+        else if (damageReductionAmount <= ArmorMaterial.IRON.getDamageReductionAmount(EntityEquipmentSlot.CHEST))
+        {
+            return 3;
+        }
+        else if (damageReductionAmount <= ArmorMaterial.DIAMOND.getDamageReductionAmount(EntityEquipmentSlot.CHEST))
+        {
+            return 4;
+        }
+
+        return 5;
     }
 
     /**

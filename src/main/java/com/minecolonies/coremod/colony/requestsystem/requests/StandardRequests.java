@@ -407,4 +407,5 @@ public final class StandardRequests
             return burnableExamples;
         }
     }
+
 }

@@ -46,6 +46,21 @@ public final class SoundUtils
     public static final double VOLUME = 0.5D;
 
     /**
+     * The base pitch, add more to this to change the sound.
+     */
+    private static final double BASE_PITCH = 0.8D;
+
+    /**
+     * The pitch will be divided by this to calculate it for the arrow sound.
+     */
+    private static final double PITCH_DIVIDER = 1.0D;
+
+    /**
+     * Random is multiplied by this to get a random sound.
+     */
+    private static final double PITCH_MULTIPLIER = 0.4D;
+
+    /**
      * in average 1 minute to the next sound which are 20 ticks the second * 60
      * seconds * 1 minute.
      */
@@ -186,4 +201,15 @@ public final class SoundUtils
             }
         }
     }
+
+    /**
+     * Get a random pitch for a sound.
+     * @param random the random method.
+     * @return a random double for the pitch.
+     */
+    public static double getRandomPitch(final Random random)
+    {
+        return PITCH_DIVIDER / (random.nextDouble() * PITCH_MULTIPLIER + BASE_PITCH);
+    }
+
 }

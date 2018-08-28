@@ -172,6 +172,10 @@ public enum AIState
      * Completes the building.
      */
     BUILDER_COMPLETE_BUILD,
+    /**
+     * Pick up all materials he might need.
+     */
+    PICK_UP,
 
     /*
 ###FARMER###
@@ -375,5 +379,25 @@ public enum AIState
     /**
      * Shear a sheep!
      */
-    SHEPHERD_SHEAR
+    SHEPHERD_SHEAR,
+
+    /*
+### Composter ###
+     */
+
+    /**
+     * Fill up the barrels
+     */
+    COMPOSTER_FILL,
+
+    /**
+     * Take the compost from the barrels
+     */
+    COMPOSTER_HARVEST,
+
+    /*
+### Student ###
+     */
+
+    STUDY,
 }

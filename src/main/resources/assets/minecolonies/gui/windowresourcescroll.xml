@@ -1,0 +1,24 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
+        lightbox="false"
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+
+    <image source="minecolonies:textures/gui/builderhut/builder_papper_sketch.png" size="100% 100%"/>
+    <image source="minecolonies:textures/gui/builderhut/builder_charcoal_chalk.png" size="19 59" pos="175 180"/>
+
+    <label size="164 11" pos="0 13" color="black" textalign="MIDDLE"
+           label="$(com.minecolonies.coremod.gui.workerHuts.resourceList)"/>
+
+    <label size="164 11" pos="0 24" id="constructionName" label="" color="black" textalign="MIDDLE"/>
+
+    <list id="resources" size="164 75%" pos="13 40">
+        <box size="100% 30" linewidth="2">
+            <itemicon id="resourceIcon" size="16 16" pos="1 1"/>
+            <label id="resourceName" size="100 12" pos="20 3" textalign="MIDDLE_LEFT" color="black"/>
+            <label id="resourceMissing" size="50 12" pos="2 18" textalign="MIDDLE_LEFT" color="black"/>
+            <label id="resourceAvailableNeeded" size="100% 12" pos="0 18" textalign="MIDDLE" color="black"/>
+
+            <label id="resourceId" size="1 1" pos="100 100"/>
+            <label id="resourceQuantity" size="1 1" pos="100 100"/>
+        </box>
+    </list>
+</window>

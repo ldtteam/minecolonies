@@ -122,6 +122,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_TOOL_PREMAXLEVEL                          = "com.minecolonies.coremod.request.tool.premaxlevel";
     @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_COMPOSTABLE                               = "com.minecolonies.coremod.request.compostable";
+    @NonNls
     public static final String COM_MINECOLONIES_GENERAL_AND                                        = "com.minecolonies.coremod.general.and";
     @NonNls
     public static final String COM_MINECOLONIES_TOOLTYPE_NONE                                      = "com.minecolonies.coremod.tooltype.none";
@@ -143,6 +145,14 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_TOOLTYPE_SHEARS                                    = "com.minecolonies.coremod.tooltype.shears";
     @NonNls
     public static final String COM_MINECOLONIES_TOOLTYPE_SHIELD                                    = "com.minecolonies.coremod.tooltype.shield";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_HELMET                                    = "com.minecolonies.coremod.tooltype.helmet";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_LEGGINGS                                  = "com.minecolonies.coremod.tooltype.leggings";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_CHESTPLATE                                = "com.minecolonies.coremod.tooltype.chestplate";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_BOOTS                                     = "com.minecolonies.coremod.tooltype.boots";
     @NonNls
     public static final String COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME                            = "com.minecolonies.coremod.buildings.warehouse.name";
     @NonNls
@@ -253,6 +263,34 @@ public final class TranslationConstants
     public static final String GUI_TOWNHALL_CITIZEN_JOB_UNEMPLOYED                                 = "com.minecolonies.coremod.gui.townHall.citizens.unemployed";
     @NonNls
     public static final String LIST_REQUEST_DISPLAY_STRING                                         = "com.minecolonies.coremod.request.stacklist";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_FILLING                   = "com.minecolonies.coremod.status.fillingBarrels";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_HARVESTING                = "com.minecolonies.coremod.status.harvestingBarrels";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST                 = "entity.composter.noItems";
+    @NonNls
+    public static final String TOWNHALL_BREAKING_MESSAGE                                           = "com.minecolonies.coremod.pvp.townhall.broke";
+    @NonNls
+    public static final String ON_STRING                                                           = "com.minecolonies.coremod.gui.townHall.on";
+    @NonNls
+    public static final String OFF_STRING                                                          = "com.minecolonies.coremod.gui.townHall.off";
+    @NonNls
+    public static final String CMCG_HAPPINESS_HAPPINESSMODIFIER                                    = "com.minecolonies.coremod.gui.happiness.happinessModifier";
+    @NonNls
+    public static final String CMCG_HAPPINESS_FOOD                                                 = "com.minecolonies.coremod.gui.happiness.food";
+    @NonNls
+    public static final String CMCG_HAPPINESS_DAMAGE                                               = "com.minecolonies.coremod.gui.happiness.damage";
+    @NonNls
+    public static final String CMCG_HAPPINESS_HOUSE                                                = "com.minecolonies.coremod.gui.happiness.house";
+    @NonNls
+    public static final String CMCG_HAPPINESS_JOB                                                  = "com.minecolonies.coremod.gui.happiness.job";
+    @NonNls
+    public static final String CMCG_HAPPINESS_FARMS                                                = "com.minecolonies.coremod.gui.happiness.farms";
+    @NonNls
+    public static final String CMCG_HAPPINESS_TOOLS                                                = "com.minecolonies.coremod.gui.happiness.tools";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_MOURN                                      = "com.minecolonies.coremod.mourning";
 
     private TranslationConstants()
     {

@@ -11,7 +11,6 @@ import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.ReplaceBlockMessage;
-import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -27,7 +26,6 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_REPLACE_BLOCK;
 
 /**
  * Window for the replace block GUI.
@@ -93,7 +91,7 @@ public class WindowReplaceBlock extends Window implements ButtonHandler
     public void onOpened()
     {
         findPaneOfTypeByID("resourceIconFrom", ItemIcon.class).setItem(from);
-        findPaneOfTypeByID("resourceNameFrom", Label.class).setLabelText(from.getUnlocalizedName());
+        findPaneOfTypeByID("resourceNameFrom", Label.class).setLabelText(from.getTranslationKey());
         updateResources();
     }
 
@@ -112,7 +110,7 @@ public class WindowReplaceBlock extends Window implements ButtonHandler
             }
 
             return stacks.stream().filter(stack -> (stack.getItem() instanceof ItemBlock || stack.getItem() instanceof ItemDoor)
-                    && (filter.isEmpty() || stack.getUnlocalizedName().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))));
+                    && (filter.isEmpty() || stack.getTranslationKey().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))));
         }).collect(Collectors.toList())));
 
         final List<ItemStack> specialBlockList = new ArrayList<>();
@@ -122,7 +120,7 @@ public class WindowReplaceBlock extends Window implements ButtonHandler
 
         allItems.addAll(specialBlockList.stream().filter(
                 stack -> filter.isEmpty()
-                        || stack.getUnlocalizedName().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+                        || stack.getTranslationKey().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
                         || stack.getDisplayName().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US)))
                 .collect(Collectors.toList()));
         updateResourceList();
@@ -162,7 +160,7 @@ public class WindowReplaceBlock extends Window implements ButtonHandler
             final int row = resourceList.getListElementIndexByPane(button);
             final ItemStack to = allItems.get(row);
             findPaneOfTypeByID("resourceIconTo", ItemIcon.class).setItem(to);
-            findPaneOfTypeByID("resourceNameTo", Label.class).setLabelText(to.getUnlocalizedName());
+            findPaneOfTypeByID("resourceNameTo", Label.class).setLabelText(to.getTranslationKey());
         }
     }
 

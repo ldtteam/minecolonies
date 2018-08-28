@@ -12,9 +12,9 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.managers.ICitizenManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler; 
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+
 /**
  * Extra data for Citizens.
  */
@@ -43,38 +45,31 @@ public class CitizenData
      * Maximum saturation of a citizen.
      */
     public static final  int    MAX_SATURATION          = 10;
+
+    /**
+     * The max health.
+     */
     private static final float  MAX_HEALTH              = 20.0F;
+
     /**
      * Max level of an attribute a citizen may initially have.
      */
-
     private static final int    LETTERS_IN_THE_ALPHABET = 26;
-    /**
-     * Tags.
-     */
-    private static final String TAG_ID                     = "id";
-    private static final String TAG_NAME                   = "name";
-    private static final String TAG_FEMALE                 = "female";
-    private static final String TAG_TEXTURE                = "texture";
-    private static final String TAG_LEVEL                  = "level";
-    private static final String TAG_EXPERIENCE             = "experience";
-    private static final String TAG_HEALTH                 = "health";
-    private static final String TAG_MAX_HEALTH             = "maxHealth";
-    private static final String TAG_SKILLS                 = "skills";
-    private static final String TAG_SKILL_STRENGTH         = "strength";
-    private static final String TAG_SKILL_STAMINA          = "endurance";
-    private static final String TAG_SKILL_SPEED            = "charisma";
-    private static final String TAG_SKILL_INTELLIGENCE     = "intelligence";
-    private static final String TAG_SKILL_DEXTERITY        = "dexterity";
-    private static final String TAG_SATURATION             = "saturation";
-    private static final String TAG_HELD_ITEM_SLOT         = "HeldItemSlot";
-    private static final String TAG_OFFHAND_HELD_ITEM_SLOT = "OffhandHeldItemSlot";
-    private static final String TAG_INVENTORY              = "inventory";
 
     /**
      * Minimum saturation of a citizen.
      */
-    private static final int MIN_SATURATION = 0;
+    private static final int MIN_SATURATION  = 0;
+
+    /**
+     * The chance the citizen has to level. is 1 in this number.
+     */
+    private static final int CHANCE_TO_LEVEL = 100;
+
+    /**
+     * The number of skills the citizen has.
+     */
+    private static final int AMOUNT_OF_SKILLS = 5;
 
     /**
      * The unique citizen id.
@@ -106,6 +101,16 @@ public class CitizenData
      * The id of the citizens texture.
      */
     private       int                          textureId;
+
+    /**
+     * If the citizen is asleep right now.
+     */
+    private boolean isAsleep;
+
+    /**
+     * The citizens current bedBos.
+     */
+    private BlockPos bedPos = BlockPos.ORIGIN;
 
     /**
      * The home building of the citizen.
@@ -168,6 +173,12 @@ public class CitizenData
      */
     private BlockPos lastPosition = new BlockPos(0, 0, 0);
 
+    /** 
+     * The citizen happiness handler. 
++
+     */ 
+    private final CitizenHappinessHandler citizenHappinessHandler; 
+ 
     /**
      * Create a CitizenData given an ID.
      * Used as a super-constructor or during loading.
@@ -180,6 +191,7 @@ public class CitizenData
         this.id = id;
         this.colony = colony;
         inventory = new InventoryCitizen("Minecolonies Inventory", true, this);
+        this.citizenHappinessHandler = new CitizenHappinessHandler(this); 
     }
 
     /**
@@ -234,6 +246,18 @@ public class CitizenData
             this.inventory.readFromNBT(nbttaglist);
             this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInteger(TAG_HELD_ITEM_SLOT));
             this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInteger(TAG_OFFHAND_HELD_ITEM_SLOT));
+        }
+        citizenHappinessHandler.readFromNBT(compound);
+
+        if (name.isEmpty())
+        {
+            name = generateName(new Random());
+        }
+
+        if (compound.hasKey(TAG_ASLEEP))
+        {
+            bedPos = BlockPosUtil.readFromNBT(compound, TAG_POS);
+            isAsleep = compound.getBoolean(TAG_ASLEEP);
         }
     }
 
@@ -496,16 +520,15 @@ public class CitizenData
         }
 
         // Check whether there's already a citizen with this name
-        final ICitizenManager manager = this.getColony().getCitizenManager();
-        for (int i = 1; i <= this.getColony().getCitizenManager().getMaxCitizens(); i++)
+        for(final CitizenData citizen : this.getColony().getCitizenManager().getCitizens())
         {
-            final CitizenData citizen = manager.getCitizen(i);
             if (citizen != null && citizen.getName().equals(citizenName))
             {
                 // Oops - recurse this function and try again
                 citizenName = generateName(rand);
             }
         }
+
         return citizenName;
     }
 
@@ -772,8 +795,8 @@ public class CitizenData
 
     /**
      * Writes the citizen data to an NBT-compound.
-     *
      * @param compound NBT-Tag compound.
+     * @return return the data in NBT format
      */
     public NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound)
     {
@@ -808,6 +831,11 @@ public class CitizenData
         compound.setTag(TAG_INVENTORY, inventory.writeToNBT(new NBTTagList()));
         compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.MAIN_HAND));
         compound.setInteger(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.OFF_HAND));
+
+        BlockPosUtil.writeToNBT(compound, TAG_POS, bedPos);
+        compound.setBoolean(TAG_ASLEEP, isAsleep);
+
+        citizenHappinessHandler.writeToNBT(compound);
         return compound;
     }
 
@@ -849,6 +877,9 @@ public class CitizenData
         buf.writeInt(getIntelligence());
         buf.writeInt(getDexterity());
         buf.writeDouble(getSaturation());
+        buf.writeDouble(citizenHappinessHandler.getHappiness());
+
+        citizenHappinessHandler.serializeViewNetworkData(buf);
 
         ByteBufUtils.writeUTF8String(buf, (job != null) ? job.getName() : "");
 
@@ -859,6 +890,8 @@ public class CitizenData
         final NBTTagCompound compound = new NBTTagCompound();
         compound.setTag("inventory", inventory.writeToNBT(new NBTTagList()));
         ByteBufUtils.writeTag(buf, compound);
+
+        BlockPosUtil.writeToByteBuf(buf, lastPosition);
     }
 
     /**
@@ -1037,6 +1070,42 @@ public class CitizenData
     }
 
     /**
+     * Check if citizen is asleep.
+     * @return true if so.
+     */
+    public boolean isAsleep()
+    {
+        return isAsleep;
+    }
+
+    /**
+     * Getter for the bedPos.
+     * @return the bedPos.
+     */
+    public BlockPos getBedPos()
+    {
+        return bedPos;
+    }
+
+    /**
+     * Set asleep.
+     * @param asleep true if asleep.
+     */
+    public void setAsleep(final boolean asleep)
+    {
+        isAsleep = asleep;
+    }
+
+    /**
+     * Set the bed pos.
+     * @param bedPos the pos to set.
+     */
+    public void setBedPos(final BlockPos bedPos)
+    {
+        this.bedPos = bedPos;
+    }
+
+    /**
      * Create a blocking request.
      * @param requested the request to create.
      * @param <R> the Type
@@ -1077,6 +1146,51 @@ public class CitizenData
      */
     public boolean isRequestAsync(@NotNull final IToken token)
     {
-        return job.getAsyncRequests().contains(token);
+        if (job != null)
+        {
+            return job.getAsyncRequests().contains(token);
+        }
+        return false;
+    }
+
+    /**
+     * The Handler for the citizens happiness.
+     * @return the instance of the handler
+     */
+    public CitizenHappinessHandler getCitizenHappinessHandler()
+    {
+        return citizenHappinessHandler;
+    }
+
+    /**
+     * Try a random level up.
+     */
+    public void tryRandomLevelUp(final Random random)
+    {
+        if (random.nextInt(CHANCE_TO_LEVEL) > 0)
+        {
+            return;
+        }
+
+        final int levelCap = (int) getCitizenHappinessHandler().getHappiness();
+        switch (random.nextInt(AMOUNT_OF_SKILLS))
+        {
+            case 0:
+                intelligence = Math.min(intelligence + 1, levelCap);
+                break;
+            case 1:
+                charisma = Math.min(charisma + 1, levelCap);
+                break;
+            case 2:
+                strength = Math.min(strength + 1, levelCap);
+                break;
+            case 3:
+                endurance = Math.min(endurance + 1, levelCap);
+                break;
+            default:
+                dexterity = Math.min(dexterity + 1, levelCap);
+                break;
+        }
+        markDirty();
     }
 }

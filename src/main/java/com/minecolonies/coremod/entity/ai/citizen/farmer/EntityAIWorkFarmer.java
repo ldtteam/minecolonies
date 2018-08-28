@@ -4,6 +4,7 @@ import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.IToolType; 
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.blocks.huts.BlockHutField;
 import com.minecolonies.coremod.colony.Colony;
@@ -24,6 +25,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.IPlantable;
@@ -152,6 +154,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         if (building.hasNoFields())
         {
             chatSpamFilter.talkWithoutSpam("entity.farmer.noFreeFields");
+            worker.getCitizenData().getCitizenHappinessHandler().setNoFieldsToFarm(); 
             return PREPARING;
         }
 
@@ -258,8 +261,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             chatSpamFilter.talkWithoutSpam("entity.farmer.noSeedSet");
             buildingFarmer.setCurrentField(null);
+            worker.getCitizenData().getCitizenHappinessHandler().setNoFieldForFarmerModifier(currentField.getPos(), false); 
             return PREPARING;
         }
+        worker.getCitizenData().getCitizenHappinessHandler().setNoFieldForFarmerModifier(currentField.getPos(), true); 
 
         final ItemStack seeds = currentField.getSeed();
         final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(seeds.getItem(), seeds.getItemDamage());
@@ -568,7 +573,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         final int fortune = ItemStackUtils.getFortuneOf(tool);
         final IBlockState state = world.getBlockState(pos);
-        final List<ItemStack> drops = state.getBlock().getDrops(world, pos, state, fortune);
+        NonNullList<ItemStack> drops = NonNullList.create();
+        state.getBlock().getDrops(drops, world, pos, state, fortune);
         for (final ItemStack item : drops)
         {
             InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), item);
@@ -603,4 +609,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         return worker;
     }
+
+    @Override 
+    protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType) 
+    { 
+        final boolean needTool = super.checkForToolOrWeapon(toolType); 
+        worker.getCitizenData().getCitizenHappinessHandler().setNeedsATool(toolType, needTool); 
+        return needTool; 
+    } 
 }

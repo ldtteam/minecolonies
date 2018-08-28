@@ -22,6 +22,7 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler; 
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsToCitizenRequestMessage;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
@@ -42,292 +43,33 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
-
+import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Window for the citizen.
  */
 public class WindowCitizen extends AbstractWindowSkeleton
 {
     /**
-     * The label to find the inventory button.
-     */
-    private static final String INVENTORY_BUTTON_ID = "inventory";
-
-    /**
-     * The label to find the gui of the citizen.
-     */
-    private static final String CITIZEN_RESOURCE_SUFFIX = ":gui/windowcitizen.xml";
-
-    /**
-     * The label to find strength in the gui.
-     */
-    private static final String STRENGTH = "strength";
-
-    /**
-     * The label to find endurance in the gui.
-     */
-    private static final String ENDURANCE = "endurance";
-
-    /**
-     * The label to find charisma in the gui.
-     */
-    private static final String CHARISMA = "charisma";
-
-    /**
-     * The label to find intelligence in the gui.
-     */
-    private static final String INTELLIGENCE = "intelligence";
-
-    /**
-     * The label to find dexterity in the gui.
-     */
-    private static final String DEXTERITY = "dexterity";
-
-    /**
-     * Id of the resource add button.
-     */
-    private static final String REQUEST_FULLFIL = "fulfill";
-
-    /**
-     * Id of the resource add button.
-     */
-    private static final String REQUEST_CANCEL = "cancel";
-
-    /**
-     * Xp-bar height.
-     */
-    private static final int XP_HEIGHT = 5;
-
-    /**
-     * The x-distance to the left border of the gui of the xpBar.
-     */
-    private static final int LEFT_BORDER_X = 10;
-
-    /**
-     * The y-distance to the top-left border of the gui of the xpBar.
-     */
-    private static final int LEFT_BORDER_Y = 10;
-
-    /**
-     * The column in which the icon starts.
-     */
-    private static final int XP_BAR_ICON_COLUMN = 0;
-
-    /**
-     * The column where the icon ends.
-     */
-    private static final int XP_BAR_ICON_COLUMN_END = 172;
-
-    /**
-     * The width of the end piece of the xpBar.
-     */
-    private static final int XP_BAR_ICON_COLUMN_END_WIDTH = 10;
-
-    /**
-     * The offset where the end should be placed in the GUI.
-     */
-    private static final int XP_BAR_ICON_END_OFFSET = 90;
-
-    /**
-     * The width of the xpBar (Original width is halved to fit in the gui).
-     */
-    private static final int XP_BAR_WIDTH = 182 / 2;
-
-    /**
-     * The row where the empty xpBar starts.
-     */
-    private static final int XP_BAR_EMPTY_ROW = 64;
-
-    /**
-     * The row where the full xpBar starts.
-     */
-    private static final int XP_BAR_FULL_ROW = 69;
-
-    /**
-     * Row position of the empty heart icon.
-     */
-    private static final int EMPTY_HEART_ICON_ROW_POS = 16;
-
-    /**
-     * Row position of the full heart icon.
-     */
-    private static final int FULL_HEART_ICON_ROW_POS = 53;
-
-    /**
-     * Row position of the half/full heart icon.
-     */
-    private static final int HALF_HEART_ICON_ROW_POS = 62;
-
-    /**
-     * Column position of the heart icons.
-     */
-    private static final int HEART_ICON_COLUMN = 0;
-
-    /**
-     * Dimension of the hearts.
-     */
-    private static final int HEART_ICON_HEIGHT_WIDTH = 9;
-
-    /**
-     * The position x where the heart is placed.
-     */
-    private static final int HEART_ICON_POS_X = 10;
-
-    /**
-     * The offset x where the next heart should be placed.
-     */
-    private static final int HEART_ICON_OFFSET_X = 10;
-
-    /**
-     * The position y where the heart is placed.
-     */
-    private static final int HEART_ICON_POS_Y = 10;
-
-    /**
-     * The position y where the saturation is placed.
-     */
-    private static final int SATURATION_ICON_POS_Y = 10;
-
-    /**
-     * Column of the saturation icon.
-     */
-    private static final int SATURATION_ICON_COLUMN = 27;
-
-    /**
-     * Dimension of the hearts.
-     */
-    private static final int SATURATION_ICON_HEIGHT_WIDTH = 9;
-
-    /**
-     * Saturation icon x position.
-     */
-    private static final int SATURATION_ICON_POS_X = 10;
-
-    /**
-     * Saturation item x offset.
-     */
-    private static final int SATURATION_ICON_OFFSET_X = 10;
-
-    /**
-     * The label to find name in the gui.
-     */
-    private static final String WINDOW_ID_NAME = "name";
-
-    /**
-     * The label to find xpLabel in the gui.
-     */
-    private static final String WINDOW_ID_XP = "xpLabel";
-
-    /**
-     * The label to find xpBar in the gui.
-     */
-    private static final String WINDOW_ID_XPBAR = "xpBar";
-
-    /**
-     * The label to find healthBar in the gui.
-     */
-    private static final String WINDOW_ID_HEALTHBAR = "healthBar";
-
-    /**
-     * The position of the empty saturation icon.
-     */
-    private static final int EMPTY_SATURATION_ITEM_ROW_POS = 16;
-
-    /**
-     * The position of the full saturation icon.
-     */
-    private static final int FULL_SATURATION_ITEM_ROW_POS = 16 + 36;
-
-    /**
-     * The position of the half saturation icon.
-     */
-    private static final int HALF_SATURATION_ITEM_ROW_POS = 16 + 45;
-
-    /**
-     * The saturation bar of the citizen.
-     */
-    private static final String WINDOW_ID_SATURATION_BAR = "saturationBar";
-
-    /**
-     * Id of the gender button.
-     */
-    private static final String WINDOW_ID_GENDER = "gender";
-
-    /**
-     * Requests list id.
-     */
-    private static final String WINDOW_ID_LIST_REQUESTS = "requests";
-
-    /**
-     * Requests box id.
-     */
-    private static final String WINDOW_ID_REQUEST_BOX = "requestx";
-
-    /**
-     * Requestst stack id.
-     */
-    private static final String LIST_ELEMENT_ID_REQUEST_STACK = "requestStack";
-
-    /**
-     * Resolver string.
-     */
-    private static final String DELIVERY_IMAGE = "deliveryImage";
-
-    /**
-     * Button id of the requests page.
-     */
-    private static final String BUTTON_REQUESTS = "requestsTitle";
-
-    /**
-     * Button id to get back from the requests page.
-     */
-    private static final String BUTTON_BACK = "back";
-
-    /**
-     * Id of the pages view.
-     */
-    private static final String VIEW_PAGES = "pages";
-
-    /**
-     * Source of the female wax location.
-     */
-    private static final String FEMALE_SOURCE = "minecolonies:textures/gui/citizen/colonist_wax_female_smaller.png";
-
-    /**
-     * Id of the detail button
-     */
-    private static final String REQUEST_DETAIL = "detail";
-
-    /**
-     * Id of the short detail label.
-     */
-    private static final String REQUEST_SHORT_DETAIL = "shortDetail";
-
-    /**
-     * Id of the requester label.
-     */
-    private static final String REQUESTER = "requester";
-
-    /**
-     * The divider for the life count.
-     */
-    private static final int LIFE_COUNT_DIVIDER = 30;
-    /**
      * The citizenData.View object.
      */
     private final CitizenDataView citizen;
+
     /**
      * Scrollinglist of the resources.
      */
-    private final ScrollingList   resourceList;
+    private       ScrollingList   resourceList;
+
     /**
      * Inventory of the player.
      */
     private final InventoryPlayer inventory  = this.mc.player.inventory;
+
     /**
      * Is the player in creative or not.
      */
     private final boolean         isCreative = this.mc.player.capabilities.isCreativeMode;
+
     /**
      * Life count.
      */
@@ -342,8 +84,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
     {
         super(Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX);
         this.citizen = citizen;
-
-        resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
     }
 
     @Override
@@ -365,11 +105,14 @@ public class WindowCitizen extends AbstractWindowSkeleton
     {
         findPaneOfTypeByID(WINDOW_ID_NAME, Label.class).setLabelText(citizen.getName());
 
-        createHealthBar();
+        createHealthBar(citizen, findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class));
         createSaturationBar();
+        createHappinessBar(); 
         createXpBar(citizen, this);
         createSkillContent(citizen, this);
-
+        updateHappiness();
+        
+        resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
         resourceList.setDataProvider(new ScrollingList.DataProvider()
         {
 
@@ -453,14 +196,16 @@ public class WindowCitizen extends AbstractWindowSkeleton
         {
             findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(FEMALE_SOURCE);
         }
+
+        setPage("");
     }
 
     /**
      * Creates an health bar according to the citizen maxHealth and currentHealth.
      */
-    private void createHealthBar()
+    public static void createHealthBar(final CitizenDataView citizen, final View healthBarView)
     {
-        findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
+        healthBarView.setAlignment(Alignment.MIDDLE_RIGHT);
 
         //MaxHealth (Black hearts).
         for (int i = 0; i < citizen.getMaxHealth() / 2; i++)
@@ -468,7 +213,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
             @NotNull final Image heart = new Image();
             heart.setImage(Gui.ICONS, EMPTY_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH, false);
             heart.setPosition(i * HEART_ICON_POS_X + HEART_ICON_OFFSET_X, HEART_ICON_POS_Y);
-            findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class).addChild(heart);
+            healthBarView.addChild(heart);
         }
 
         //Current health (Red hearts).
@@ -478,7 +223,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
             @NotNull final Image heart = new Image();
             heart.setImage(Gui.ICONS, FULL_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH, false);
             heart.setPosition(heartPos * HEART_ICON_POS_X + HEART_ICON_OFFSET_X, HEART_ICON_POS_Y);
-            findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class).addChild(heart);
+            healthBarView.addChild(heart);
         }
 
         //Half hearts.
@@ -487,7 +232,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
             @NotNull final Image heart = new Image();
             heart.setImage(Gui.ICONS, HALF_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH, false);
             heart.setPosition(heartPos * HEART_ICON_POS_X + HEART_ICON_OFFSET_X, HEART_ICON_POS_Y);
-            findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class).addChild(heart);
+            healthBarView.addChild(heart);
         }
     }
 
@@ -528,6 +273,39 @@ public class WindowCitizen extends AbstractWindowSkeleton
         }
     }
 
+    
+   /** 
++
+    * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness. 
+    */ 
+   private void createHappinessBar() 
+   { 
+       final double experienceRatio = (citizen.getHappiness() / CitizenHappinessHandler.MAX_HAPPINESS) * XP_BAR_WIDTH; 
+       findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT); 
+       window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Label.class).setLabelText(Integer.toString((int)citizen.getHappiness())); 
+
+        
+       @NotNull final Image xpBar = new Image(); 
+       xpBar.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false); 
+       xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y); 
+
+       @NotNull final Image xpBar2 = new Image(); 
+       xpBar2.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false); 
+       xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y); 
+
+       window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar); 
+       window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar2); 
+
+       if (experienceRatio > 0) 
+       { 
+           @NotNull final Image xpBarFull = new Image(); 
+           xpBarFull.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false); 
+           xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y); 
+           window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull); 
+       } 
+   } 
+
+
     /**
      * Creates the xp bar for each citizen.
      * Calculates an xpBarCap which is the maximum of xp to fit into the bar.
@@ -561,6 +339,39 @@ public class WindowCitizen extends AbstractWindowSkeleton
         }
     }
 
+    /** 
+     * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness. 
+     *  
+     * @param citizen  pointer to the citizen data view 
+     * @param window  pointer to the current window 
+     */ 
+    public static void createHappinessBar(final CitizenDataView citizen, final AbstractWindowSkeleton window) 
+    { 
+        //Calculates how much percent of the next level has been completed. 
+        final double experienceRatio = (citizen.getHappiness() / CitizenHappinessHandler.MAX_HAPPINESS) * XP_BAR_WIDTH; 
+        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT); 
+        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Label.class).setLabelText(Integer.toString((int)citizen.getHappiness())); 
+ 
+        @NotNull final Image xpBar = new Image(); 
+        xpBar.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false); 
+        xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y); 
+ 
+        @NotNull final Image xpBar2 = new Image(); 
+        xpBar2.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false); 
+        xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y); 
+ 
+        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar); 
+        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar2); 
+ 
+        if (experienceRatio > 0) 
+        { 
+            @NotNull final Image xpBarFull = new Image(); 
+            xpBarFull.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false); 
+            xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y); 
+            window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull); 
+        } 
+    } 
+ 
     /**
      * Fills the citizen gui with it's skill values.
      * @param citizen the citizen to use.
@@ -670,10 +481,14 @@ public class WindowCitizen extends AbstractWindowSkeleton
         switch (button.getID())
         {
             case BUTTON_REQUESTS:
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
+                findPaneOfTypeByID(VIEW_HEAD, SwitchView.class).nextView();
+                buttonPrevPage.off();
+                buttonNextPage.off();
+                pageNum.off();
                 break;
             case BUTTON_BACK:
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
+                findPaneOfTypeByID(VIEW_HEAD, SwitchView.class).previousView();
+                setPage("");
                 break;
             case INVENTORY_BUTTON_ID:
                 MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(citizen.getName(), citizen.getEntityId()));
@@ -688,6 +503,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
                 fulfill(button);
                 break;
             default:
+                super.onButtonClicked(button);
                 break;
         }
     }
@@ -762,6 +578,46 @@ public class WindowCitizen extends AbstractWindowSkeleton
         button.disable();
     }
 
+    /**
+     * Update the display for the happiness
+     */
+    private void updateHappiness()
+    {
+        int row = 1;
+        final double[] levels = new double[] {citizen.getFoodModifier(), citizen.getHouseModifier(), citizen.getDamageModifier(), citizen.getJobModifier(), citizen.getFieldsModifier(), citizen.getToolsModifiers()};
+        final String[] labelIds = new String[] {CMCG_HAPPINESS_FOOD, CMCG_HAPPINESS_DAMAGE, CMCG_HAPPINESS_HOUSE, CMCG_HAPPINESS_JOB, CMCG_HAPPINESS_FARMS, CMCG_HAPPINESS_TOOLS};
+
+        findPaneOfTypeByID(HAPPINESS_MODIFIER_PANE, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
+        if (findPaneByID(HAPPINESS_MODIFIER_PANE) != null)
+        {
+            findPaneOfTypeByID("happinessModifier", Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.happinessModifier"));
+
+            for (int i = 0; i < levels.length; i++)
+            {
+                final Image image = findPaneOfTypeByID("modifierImage"+row, Image.class);
+                if (levels[i] < 0)
+                {
+                    findPaneOfTypeByID("modifier"+row, Label.class).setLabelText(LanguageHandler.format(labelIds[i]));
+                    image.setImage(RED_ICON);
+                    row++;
+                }
+                else if (levels[i] > 0)
+                {
+                    findPaneOfTypeByID("modifier"+row, Label.class).setLabelText(LanguageHandler.format(labelIds[i]));
+                    image.setImage(GREEN_ICON);
+                    row++;
+                }
+            }
+            
+            for (int i = row; i<= levels.length; i++)
+            {
+                final Image image = findPaneOfTypeByID("modifierImage"+i, Image.class);
+                image.hide();
+            }
+        }
+    }
+
+    
     private final class RequestWrapper
     {
         private final IRequest request;

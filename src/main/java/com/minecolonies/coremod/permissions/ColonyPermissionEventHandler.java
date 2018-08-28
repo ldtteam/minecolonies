@@ -6,7 +6,10 @@ import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.permissions.PermissionEvent;
 import com.minecolonies.coremod.colony.permissions.Permissions;
@@ -24,6 +27,7 @@ import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.*;
@@ -38,6 +42,8 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.TOWNHALL_BREAKING_MESSAGE;
+
 /**
  * This class handles all permission checks on events and cancels them if needed.
  */
@@ -48,6 +54,21 @@ public class ColonyPermissionEventHandler
      * The colony involved in this permission-check event
      */
     private final Colony colony;
+
+    /**
+     * Progress in % of breaking the townHall.
+     */
+    private int breakProgressOnTownHall = 0;
+
+    /**
+     * Ticks at which townhall breaking started.
+     */
+    private long lastTownHallBreakingTick = 0;
+
+    /**
+     * Detect if the town-hall break was valid.
+     */
+    private boolean validTownHallBreak = false;
 
     /**
      * Create this EventHandler.
@@ -103,12 +124,7 @@ public class ColonyPermissionEventHandler
                 return false;
             }
 
-            if (colony.getPermissions().hasPermission(player, action))
-            {
-                return false;
-            }
-
-            return true;
+            return !colony.getPermissions().hasPermission(player, action);
         }
 
         /*
@@ -163,11 +179,44 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final BlockEvent.BreakEvent event)
     {
-        final Action action = event.getWorld().getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut ? Action.BREAK_HUTS : Action.BREAK_BLOCKS;
-        if (Configurations.gameplay.enableColonyProtection
-                && checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(), event.getWorld().getBlockState(event.getPos()), action))
+        final World world = event.getWorld();
+        if (!Configurations.gameplay.enableColonyProtection || world.isRemote)
         {
-            cancelEvent(event, event.getPlayer(), colony, action, event.getPos());
+            return;
+        }
+
+        if (event.getState().getBlock() instanceof AbstractBlockHut)
+        {
+            @Nullable final AbstractBuilding building = ColonyManager.getBuilding(world, event.getPos());
+            if (building == null)
+            {
+                return;
+            }
+
+            if (event.getState().getBlock() == ModBlocks.blockHutTownHall && !validTownHallBreak && !event.getPlayer().capabilities.isCreativeMode)
+            {
+                cancelEvent(event, event.getPlayer(), colony, Action.BREAK_HUTS, event.getPos());
+                return;
+            }
+
+            if (!building.getColony().getPermissions().hasPermission(event.getPlayer(), Action.BREAK_HUTS))
+            {
+                if (checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(), event.getWorld().getBlockState(event.getPos()), Action.BREAK_HUTS))
+                {
+                    return;
+                }
+            }
+
+            building.destroy();
+
+            if (Configurations.gameplay.pvp_mode && event.getState().getBlock() == ModBlocks.blockHutTownHall)
+            {
+                ColonyManager.deleteColony(building.getColony().getID(), false);
+            }
+        }
+        else
+        {
+            checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(), event.getWorld().getBlockState(event.getPos()), Action.BREAK_BLOCKS);
         }
     }
 
@@ -234,8 +283,9 @@ public class ColonyPermissionEventHandler
               && !(event instanceof PlayerInteractEvent.EntityInteract || event instanceof PlayerInteractEvent.EntityInteractSpecific))
         {
             final Block block = event.getWorld().getBlockState(event.getPos()).getBlock();
+
             // Huts
-            if (block instanceof AbstractBlockHut
+            if (event instanceof PlayerInteractEvent.RightClickBlock && block instanceof AbstractBlockHut
                   && !colony.getPermissions().hasPermission(event.getEntityPlayer(), Action.ACCESS_HUTS))
             {
                 cancelEvent(event, event.getEntityPlayer(), colony, Action.ACCESS_HUTS, event.getPos());
@@ -252,9 +302,9 @@ public class ColonyPermissionEventHandler
 
             if (Configurations.gameplay.enableColonyProtection)
             {
-                if (!perms.hasPermission(event.getEntityPlayer(), Action.RIGHTCLICK_BLOCK) && block != null && block != Blocks.AIR)
+                if (!perms.hasPermission(event.getEntityPlayer(), Action.RIGHTCLICK_BLOCK) && block != Blocks.AIR)
                 {
-                    cancelEvent(event, event.getEntityPlayer(), colony, Action.RIGHTCLICK_BLOCK, event.getPos());
+                    checkEventCancelation(Action.RIGHTCLICK_BLOCK, event.getEntityPlayer(), event.getWorld(), event, event.getPos());
                     return;
                 }
 
@@ -267,7 +317,7 @@ public class ColonyPermissionEventHandler
 
                 if (event.getWorld().getTileEntity(event.getPos()) != null && !perms.hasPermission(event.getEntityPlayer(), Action.RIGHTCLICK_ENTITY))
                 {
-                    cancelEvent(event, event.getEntityPlayer(), colony, Action.RIGHTCLICK_ENTITY, event.getPos());
+                    checkEventCancelation(Action.RIGHTCLICK_ENTITY, event.getEntityPlayer(), event.getWorld(), event, event.getPos());
                     return;
                 }
 
@@ -277,10 +327,10 @@ public class ColonyPermissionEventHandler
                     return;
                 }
 
-                if (stack.getItem() instanceof ItemPotion && !perms.hasPermission(event.getEntityPlayer(),
-                  Action.THROW_POTION))
+
+                if (stack.getItem() instanceof ItemPotion)
                 {
-                    cancelEvent(event, event.getEntityPlayer(), colony, Action.THROW_POTION, event.getPos());
+                    checkEventCancelation(Action.THROW_POTION, event.getEntityPlayer(), event.getWorld(), event, event.getPos());
                     return;
                 }
 
@@ -288,7 +338,6 @@ public class ColonyPermissionEventHandler
                       && !perms.hasPermission(event.getEntityPlayer(), Action.USE_SCAN_TOOL))
                 {
                     cancelEvent(event, event.getEntityPlayer(), colony, Action.USE_SCAN_TOOL, event.getPos());
-                    return;
                 }
             }
         }
@@ -329,6 +378,66 @@ public class ColonyPermissionEventHandler
     }
 
     /**
+     * PlayerInteractEvent.EntityInteract handler.
+     * <p>
+     * Check, if a player right clicked an entity.
+     * Deny if:
+     * - If the entity is in colony
+     * - player has not permission
+     *
+     * @param event PlayerInteractEvent
+     */
+    @SubscribeEvent
+    public void on(final PlayerEvent.BreakSpeed event)
+    {
+        if (colony.isCoordInColony(event.getEntity().world, event.getPos()) && Configurations.gameplay.pvp_mode && event.getState().getBlock() == ModBlocks.blockHutTownHall
+              && event.getEntityPlayer().world instanceof WorldServer)
+        {
+            final World world = event.getEntityPlayer().world;
+            final double localProgress = breakProgressOnTownHall;
+            final double hardness = event.getState().getBlockHardness(world, event.getPos()) * 20.0 * 1.5 / event.getNewSpeed();
+
+            if (localProgress >= hardness / 10.0 * 9.0 && localProgress <= hardness / 10.0 * 9.0 + 1)
+            {
+                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), TOWNHALL_BREAKING_MESSAGE, event.getEntityPlayer().getName(), 90);
+            }
+            if (localProgress >= hardness / 4.0 * 3.0 && localProgress <= hardness / 4.0 * 3.0 + 1)
+            {
+                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), TOWNHALL_BREAKING_MESSAGE, event.getEntityPlayer().getName(), 75);
+            }
+            else if (localProgress >= hardness / 2.0 && localProgress <= hardness / 2.0 + 1)
+            {
+                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), TOWNHALL_BREAKING_MESSAGE, event.getEntityPlayer().getName(), 50);
+            }
+            else if (localProgress >= hardness / 4.0 && localProgress <= hardness / 4.0 + 1)
+            {
+                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), TOWNHALL_BREAKING_MESSAGE, event.getEntityPlayer().getName(), 25);
+            }
+
+            if (localProgress >= hardness - 1)
+            {
+                validTownHallBreak = true;
+            }
+
+            if (world.getTotalWorldTime() - lastTownHallBreakingTick == 1)
+            {
+                breakProgressOnTownHall++;
+            }
+            else
+            {
+                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.pvp.townhall.break.start", event.getEntityPlayer().getName());
+                breakProgressOnTownHall = 0;
+                validTownHallBreak = false;
+            }
+            lastTownHallBreakingTick = world.getTotalWorldTime();
+        }
+        else if (!Configurations.gameplay.pvp_mode)
+        {
+            validTownHallBreak = true;
+        }
+    }
+
+    /**
      * Check if the event should be canceled for a given player and minimum rank.
      *
      * @param action   the action that was performed on the position
@@ -352,8 +461,18 @@ public class ColonyPermissionEventHandler
               && colony.isCoordInColony(player.getEntityWorld(), positionToCheck)
               && !colony.getPermissions().hasPermission(player, action))
         {
-            cancelEvent(event, player, colony, action, positionToCheck);
-            return true;
+            if (Configurations.gameplay.pvp_mode)
+            {
+                if (!world.isRemote && colony.isValidAttackingPlayer(playerIn))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                cancelEvent(event, player, colony, action, positionToCheck);
+                return true;
+            }
         }
         return false;
     }

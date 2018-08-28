@@ -94,7 +94,7 @@ public class UpdateChunkCapabilityMessage implements IMessage, IMessageHandler<U
     {
         if(ctx.getClientHandler().world != null)
         {
-            final Chunk chunk = ctx.getClientHandler().world.getChunkFromChunkCoords(message.x, message.z);
+            final Chunk chunk = ctx.getClientHandler().world.getChunk(message.x, message.z);
             final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
             cap.reset();
             cap.setOwningColony(message.owningColonyId);

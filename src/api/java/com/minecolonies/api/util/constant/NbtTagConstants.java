@@ -21,7 +21,7 @@ public final class NbtTagConstants
     public static final String TAG_WAYPOINT               = "waypoints";
     public static final String TAG_FREE_BLOCKS            = "freeBlocks";
     public static final String TAG_FREE_POSITIONS         = "freePositions";
-    public static final String TAG_HAPPINESS              = "happiness";
+    public static final String TAG_HAPPINESS_MODIFIER     = "happinessModifier";
     public static final String TAG_ABANDONED              = "abandoned";
     public static final String TAG_BUILDING_PRIO          = "buildingPrio";
     public static final String TAG_PRIO                   = "prio";
@@ -53,6 +53,7 @@ public final class NbtTagConstants
     public static final String TAG_ORES                   = "tagOres";
     public static final String TAG_BLOCK                  = "block";
     public static final String TAG_POS                    = "pos";
+    public static final String TAG_BOOKCASES              = "bookcase";
     public static final String TAG_BUILDING_MANAGER       = "buildingManager";
     public static final String TAG_CITIZEN_MANAGER        = "citizenManager";
     public static final String TAG_STATS_MANAGER          = "statsManager";
@@ -65,11 +66,33 @@ public final class NbtTagConstants
     public static final String TAG_DAY                    = "day";
     public static final String OWNED_CHUNKS_TO_LOAD_TAG   = "ownedChunks";
     public static final String CLOSE_CHUNKS_TO_LOAD_TAG   = "closeChunks";
+    public static final String TAG_HAPPINESS_NAME         = "happiness";
+    public static final String TAG_BASE                   = "base";
+    public static final String TAG_FOOD                   = "foodModifier";
+    public static final String TAG_DAMAGE                 = "damageModifier";
+    public static final String TAG_HOUSE                  = "houseModifier";
+    public static final String TAG_NUMBER_OF_DAYS_HOUSE   = "numberOfDaysWithoutHouse";
+    public static final String TAG_JOB                    = "jobModifier";
+    public static final String TAG_NUMBER_OF_DAYS_JOB     = "numberOfDaysWithoutJob";
+    public static final String TAG_HAS_NO_FIELDS          = "hasNoFields";
+    public static final String TAG_FIELD_DAYS_INACTIVE    = "daysinactive";
+    public static final String TAG_FIELD_CAN_FARM         = "canfarm";
+    public static final String TAG_NO_TOOLS               = "noTools";
+    public static final String TAG_NO_TOOLS_NUMBER_DAYS   = "numberOfDaysNoTools";
+    public static final String TAG_NO_TOOLS_TOOL_TYPE     = "toolType";
+    public static final String TAG_IS_BUILT               = "isBuilt";
+    public static final String TAG_OTHER_LEVEL            = "otherLevel";
+    public static final String TAG_PASTEABLE              = "isPasteable";
+    public static final String TAG_STRING_NAME            = "Name";
+    public static final String TAG_DISPLAY                = "display";
+    public static final String TAG_NEED_TO_MOURN          = "needToMourn";
+    public static final String TAG_MOURNING               = "mourning";
+
 
     /**
      * Tag used to store the containers to NBT.
      */
-    public static final String TAG_CONTAINERS = "Containers";
+    public static final String TAG_CONTAINERS             = "Containers";
 
     /**
      * The tag to store the building type.
@@ -291,6 +314,42 @@ public final class NbtTagConstants
      * Tag used to store if the entity is the main.
      */
     public static final String TAG_MAIN = "main";
+
+    /**
+     * Tag used to store the team color of the colony.
+     */
+    public static final String TAG_TEAM_COLOR = "teamcolor";
+
+    /**
+     * Citizen data Tags.
+     */
+    public static final String TAG_FEMALE             = "female";
+    public static final String TAG_TEXTURE            = "texture";
+    public static final String TAG_LEVEL              = "level";
+    public static final String TAG_EXPERIENCE         = "experience";
+    public static final String TAG_HEALTH             = "health";
+    public static final String TAG_MAX_HEALTH         = "maxHealth";
+    public static final String TAG_SKILLS             = "skills";
+    public static final String TAG_SKILL_STRENGTH     = "strength";
+    public static final String TAG_SKILL_STAMINA      = "endurance";
+    public static final String TAG_SKILL_SPEED        = "charisma";
+    public static final String TAG_SKILL_INTELLIGENCE = "intelligence";
+    public static final String TAG_SKILL_DEXTERITY    = "dexterity";
+    public static final String TAG_SATURATION         = "saturation";
+    public static final String TAG_ASLEEP             = "asleep";
+
+    /**
+     * Tag of the colony.
+     */
+    public static final String TAG_BUILDER = "builder";
+
+    /**
+     * Progress manager tags.
+     */
+    public static final String TAG_PROGRESS_MANAGER = "progressManager";
+    public static final String TAG_PROGRESS_TYPE    = "progressType";
+    public static final String TAG_PROGRESS_LIST    = "progressList";
+    public static final String TAG_PRINT_PROGRESS   = "printProgrss";
 
     /**
      * Private constructor to hide the implicit one.

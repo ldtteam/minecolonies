@@ -63,6 +63,11 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     private boolean patrolManually = false;
 
     /**
+     * Whether tight grouping is used on type of Follow.
+     */
+    private boolean tightGrouping = true;
+
+    /**
      * The GuardTask of the guard.
      */
     private GuardTask task = GuardTask.GUARD;
@@ -97,6 +102,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         registerButton(GUI_BUTTON_RETRIEVAL_MODE, this::switchRetrievalMode);
         registerButton(GUI_BUTTON_SET_TARGET, this::setTarget);
         registerButton(GUI_BUTTON_RECALCULATE, this::recalculate);
+        registerButton(BUTTON_GET_TOOL, this::getTool);
 
         registerButton(GUI_SWITCH_TASK_PATROL, this::switchTask);
         registerButton(GUI_SWITCH_TASK_FOLLOW, this::switchTask);
@@ -110,6 +116,14 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         buttonTaskFollow = this.findPaneOfTypeByID(GUI_SWITCH_TASK_FOLLOW, Button.class);
         buttonTaskGuard = this.findPaneOfTypeByID(GUI_SWITCH_TASK_GUARD, Button.class);
         buttonSetTarget = this.findPaneOfTypeByID(GUI_BUTTON_SET_TARGET, Button.class);
+    }
+
+    /**
+     * Give the player directly the tool.
+     */
+    private void getTool()
+    {
+        givePlayerScepter(building.getTask());
     }
 
     @Override
@@ -190,45 +204,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        final Pane currentPane = findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).getCurrentView();
-        if (currentPane != null)
-        {
-            final Button buttonNextPage = findPaneOfTypeByID(GUI_BUTTON_NEXT_PAGE, Button.class);
-            final Button buttonPrevPage = findPaneOfTypeByID(GUI_BUTTON_PREV_PAGE, Button.class);
-            switch (button.getID())
-            {
-                case GUI_BUTTON_NEXT_PAGE:
-                    findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).nextView();
-                    buttonPrevPage.setEnabled(true);
-                    buttonPrevPage.show();
-                    final Pane newCurrentPane = findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).getCurrentView();
-
-                    //System.out.println("Current Page:" + )
-                    if (newCurrentPane != null
-                          && newCurrentPane.getID().equals(GUI_PAGE_MOB_ACTIONS))
-                    {
-                        buttonNextPage.setEnabled(false);
-                        buttonNextPage.hide();
-                    }
-                    break;
-                case GUI_BUTTON_PREV_PAGE:
-                    findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).previousView();
-                    buttonNextPage.setEnabled(true);
-                    buttonNextPage.show();
-                    final Pane otherCurrentPane = findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).getCurrentView();
-
-                    if (otherCurrentPane != null
-                          && otherCurrentPane.getID().equals(GUI_PAGE_PAGE_ACTIONS))
-                    {
-                        buttonPrevPage.setEnabled(false);
-                        buttonPrevPage.hide();
-                    }
-                    break;
-                default:
-                    super.onButtonClicked(button);
-                    break;
-            }
-        }
+        super.onButtonClicked(button);
         handleButtons();
     }
 
@@ -284,6 +260,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         this.assignManually = building.isAssignManually();
         this.patrolManually = building.isPatrolManually();
         this.retrieveOnLowHealth = building.isRetrieveOnLowHealth();
+        this.tightGrouping = building.isTightGrouping();
         this.task = building.getTask();
         this.job = building.getJob();
         this.patrolTargets = building.getPatrolTargets();
@@ -296,7 +273,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     private void sendChangesToServer()
     {
         final int ordinal = building.getJob() == null ? -1 : job.ordinal();
-        MineColonies.getNetwork().sendToServer(new GuardTaskMessage(building, ordinal, assignManually, patrolManually, retrieveOnLowHealth, task.ordinal()));
+        MineColonies.getNetwork().sendToServer(new GuardTaskMessage(building, ordinal, assignManually, patrolManually, retrieveOnLowHealth, task.ordinal(), tightGrouping));
     }
 
     /**
@@ -398,11 +375,23 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             {
                 buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.targetPatrol"));
             }
+            else
+            {
+                buttonSetTarget.setLabel("");
+            }
             buttonTaskPatrol.setEnabled(false);
         }
         else if (task.equals(GuardTask.FOLLOW))
         {
             buttonTaskFollow.setEnabled(false);
+            if (tightGrouping)
+            {
+                buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.followTight"));
+            }
+            else
+            {
+                buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.followLoose"));
+            }
         }
         else if (task.equals(GuardTask.GUARD))
         {
@@ -435,8 +424,8 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             buttonTaskPatrol.setEnabled(true);
             buttonTaskFollow.setEnabled(false);
             buttonTaskGuard.setEnabled(true);
-
-            buttonSetTarget.hide();
+            buttonSetTarget.setEnabled(true);
+            buttonSetTarget.show();
         }
         else
         {
@@ -471,6 +460,14 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             givePlayerScepter(GuardTask.PATROL);
             LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.job.guard.tool.taskPatrol");
         }
+        else if (task.equals(GuardTask.FOLLOW))
+        {
+            tightGrouping = !tightGrouping;
+            building.setTightGrouping(tightGrouping);
+            pullInfoFromHut();
+            sendChangesToServer();
+            return;
+        }
         else if (task.equals(GuardTask.GUARD))
         {
             givePlayerScepter(GuardTask.GUARD);
@@ -495,7 +492,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
      */
     private void givePlayerScepter(final GuardTask localTask)
     {
-        MineColonies.getNetwork().sendToServer(new GuardScepterMessage(localTask.ordinal(), building.getID()));
+        MineColonies.getNetwork().sendToServer(new GuardScepterMessage(localTask.ordinal(), building.getID(), building.getColony().getID()));
     }
 
     /**

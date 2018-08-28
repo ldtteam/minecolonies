@@ -2,29 +2,21 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.blocks.BlockBarracksTowerSubstitution;
-import com.minecolonies.coremod.blocks.huts.BlockHutBarracks;
 import com.minecolonies.coremod.blocks.huts.BlockHutBarracksTower;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowBarracksBuilding;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.StructureName;
-import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -214,6 +206,7 @@ public class BuildingBarracks extends AbstractBuilding
      *
      * @return a tuple with position and facing.
      */
+    /*
     private List<Tuple<BlockPos, EnumFacing>> getBarracksTowers()
     {
         final StructureName sn =
@@ -264,6 +257,7 @@ public class BuildingBarracks extends AbstractBuilding
 
         return towers;
     }
+    */
 
     /**
      * BuildingDeliveryman View.

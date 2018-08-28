@@ -1,14 +1,10 @@
 package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.blocks.types.BarrelType;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockAir;
-import net.minecraft.block.BlockHorizontal;
-import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
@@ -16,7 +12,6 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -26,7 +21,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -83,7 +77,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     private void initBlock()
     {
         setRegistryName(BLOCK_NAME);
-        setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
+        setTranslationKey(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
@@ -170,7 +164,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     public IBlockState getStateFromMeta(final int meta)
     {
         return this.getDefaultState().withProperty(FACING,
-                EnumFacing.getHorizontal(meta));
+                EnumFacing.byHorizontalIndex(meta));
     }
 
     /**
@@ -192,7 +186,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     @NotNull
     @Override
     @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getBlockLayer()
+    public BlockRenderLayer getRenderLayer()
     {
         return BlockRenderLayer.CUTOUT_MIPPED;
     }
@@ -209,6 +203,13 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     @NotNull
     @Override
     public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos)
+    {
+        return BOUNDING_BOX;
+    }
+
+    @Nullable
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(final IBlockState blockState, final IBlockAccess worldIn, final BlockPos pos)
     {
         return BOUNDING_BOX;
     }
@@ -321,5 +322,17 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
             dropBlockAsItem(worldIn, pos, getDefaultState(), 0);
             worldIn.setBlockToAir(pos);
         }
+    }
+
+    @Override
+    public boolean isPassable(final IBlockAccess worldIn, final BlockPos pos)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isFullCube(final IBlockState state)
+    {
+        return false;
     }
 }

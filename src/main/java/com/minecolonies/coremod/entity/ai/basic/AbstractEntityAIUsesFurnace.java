@@ -170,7 +170,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
             worker.getCitizenData().createRequestAsync(new Burnable(STACKSIZE));
         }
 
-        if(amountOfSmeltableInBuilding > 0 && amountOfFuelInInv == 0)
+        if(amountOfSmeltableInBuilding > 0 && amountOfSmeltableInInv == 0)
         {
             needsCurrently = this::isSmeltable;
             return GATHERING_REQUIRED_MATERIALS;

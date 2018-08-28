@@ -1,57 +1,50 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
+import com.minecolonies.api.entity.ai.citizen.guards.GuardGear;
+import com.minecolonies.api.entity.ai.citizen.guards.GuardGearBuilder;
+import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityTippedArrow;
-import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumHand;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static com.minecolonies.coremod.entity.ai.citizen.guard.GuardConstants.*;
+import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
+import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
- *
- * @param <J>
+ * Class taking of the abstract guard methods for both archer and knights.
+ * @param <J> the generic job.
  */
 public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends AbstractEntityAIInteract<J>
 {
@@ -60,17 +53,28 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      * Tools and Items needed by the worker.
      */
     public final List<ToolType>  toolsNeeded = new ArrayList<>();
+
     /**
      * List of items that are required by the guard based on building level
      * and guard level.  This array holds a pointer to the building level
-     * and then pointer to GuardItemsNeeded
+     * and then pointer to GuardGear
      */
-    public final Map<Integer,List<GuardItemsNeeded>> itemsNeeded = new HashMap<>();
+    public final List<List<GuardGear>> itemsNeeded = new ArrayList<>();
 
     /**
      * Holds a list of required armor for this guard
      */
-    private final Map<EntityEquipmentSlot, Item> requiredArmor = new LinkedHashMap<>();
+    private final Map<IToolType, List<GuardGear>> requiredArmor = new LinkedHashMap<IToolType, List<GuardGear>>();
+
+    /**
+     * Holds a list of required armor for this guard
+     */
+    private final Map<IToolType, ItemStack> armorToWear = new HashMap<>();
+
+    /**
+     * Entities to kill before dumping into chest.
+     */
+    private static final int ACTIONS_UNTIL_DUMPING = 10;
 
     /**
      * How many more ticks we have until next attack.
@@ -88,6 +92,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     private BlockPos currentPatrolPoint = null;
 
     /**
+     * The value of the speed which the guard will move.
+     */
+    private static final double ATTACK_SPEED = 0.8;
+
+    /**
      * Creates the abstract part of the AI.
      * Always use this constructor!
      *
@@ -100,68 +109,18 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
           new AITarget(IDLE, START_WORKING),
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
           new AITarget(PREPARING, this::prepare),
-          new AITarget(DECIDE, this::decide),
-          new AITarget(GUARD_ATTACK_PROTECT, this::attackProtect),
-          new AITarget(GUARD_ATTACK_PHYSICAL, this::attackPhysical),
-          new AITarget(GUARD_ATTACK_RANGED, this::attackRanged)
+          new AITarget(DECIDE, this::decide)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getStrength() + worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);
 
-        final List<GuardItemsNeeded> itemlvl1Needed = new ArrayList<>();
-        itemlvl1Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.LEATHER_BOOTS, 1, 2, 4));
-        itemlvl1Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.LEATHER_CHESTPLATE, 1, 2, 4));
-        itemlvl1Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.LEATHER_HELMET, 1, 2, 4));
-        itemlvl1Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.LEATHER_LEGGINGS, 1, 2, 4));
-        itemlvl1Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.GOLDEN_BOOTS, 1, 5, 99));
-        itemlvl1Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.GOLDEN_CHESTPLATE, 1, 5, 99));
-        itemlvl1Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.GOLDEN_HELMET, 1, 5, 99));
-        itemlvl1Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.GOLDEN_LEGGINGS, 1, 5, 99));
-        itemsNeeded.put(Integer.valueOf(1), itemlvl1Needed);
-
-
-        final List<GuardItemsNeeded> itemlvl2Needed = new ArrayList<>();
-        itemlvl2Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.GOLDEN_BOOTS, 1, 1, 4));
-        itemlvl2Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.GOLDEN_CHESTPLATE, 1, 1, 4));
-        itemlvl2Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.GOLDEN_HELMET, 1, 1, 4));
-        itemlvl2Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.GOLDEN_LEGGINGS, 1, 1, 4));
-        itemlvl2Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.CHAINMAIL_BOOTS, 1, 5, 99));
-        itemlvl2Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.CHAINMAIL_CHESTPLATE, 1, 5, 99));
-        itemlvl2Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.CHAINMAIL_HELMET, 1, 5, 99));
-        itemlvl2Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.CHAINMAIL_LEGGINGS, 1, 5, 99));
-        itemsNeeded.put(Integer.valueOf(2), itemlvl2Needed);
-
-         
-        final List<GuardItemsNeeded> itemlvl3Needed = new ArrayList<>();
-        itemlvl3Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.CHAINMAIL_BOOTS, 1, 1, 8));
-        itemlvl3Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.CHAINMAIL_CHESTPLATE, 1, 1, 8));
-        itemlvl3Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.CHAINMAIL_HELMET, 1, 1, 8));
-        itemlvl3Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.CHAINMAIL_LEGGINGS, 1, 1, 8));
-        itemlvl3Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.IRON_BOOTS, 1, 8, 99));
-        itemlvl3Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.IRON_CHESTPLATE, 1, 8, 99));
-        itemlvl3Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.IRON_HELMET, 1, 8, 99));
-        itemlvl3Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.IRON_LEGGINGS, 1, 8, 99));
-        itemsNeeded.put(Integer.valueOf(3), itemlvl3Needed);
-
-
-        final List<GuardItemsNeeded> itemlvl4Needed = new ArrayList<>();
-        itemlvl4Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.IRON_BOOTS, 1, 1, 16));
-        itemlvl4Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.IRON_CHESTPLATE, 1, 1, 16));
-        itemlvl4Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.IRON_HELMET, 1, 1, 16));
-        itemlvl4Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.IRON_LEGGINGS, 1, 1, 16));
-        itemlvl4Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.DIAMOND_BOOTS, 1, 17, 99));
-        itemlvl4Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.DIAMOND_CHESTPLATE, 1, 17, 99));
-        itemlvl4Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.DIAMOND_HELMET, 1, 17, 99));
-        itemlvl4Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.DIAMOND_LEGGINGS, 1, 17, 99));
-        itemsNeeded.put(Integer.valueOf(4), itemlvl4Needed);
-
-        final List<GuardItemsNeeded> itemlvl5Needed = new ArrayList<>();
-        itemlvl5Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.FEET,  Items.DIAMOND_BOOTS, 1, 1, 99));
-        itemlvl5Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.CHEST, Items.DIAMOND_CHESTPLATE, 1, 1, 99));
-        itemlvl5Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.HEAD,  Items.DIAMOND_HELMET, 1, 1, 99));
-        itemlvl5Needed.add(new GuardItemsNeeded(EntityEquipmentSlot.LEGS,  Items.DIAMOND_LEGGINGS, 1, 1, 99));
-        itemsNeeded.put(Integer.valueOf(5), itemlvl5Needed);
-}
+        itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_LEATHER, LEATHER_LEVEL_RANGE, LEATHER_BUILDING_LEVEL_RANGE));
+        itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_GOLD, ARMOR_LEVEL_GOLD, GOLD_LEVEL_RANGE, GOLD_BUILDING_LEVEL_RANGE));
+        itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_CHAIN, CHAIN_LEVEL_RANGE, CHAIN_BUILDING_LEVEL_RANGE));
+        itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_IRON, ARMOR_LEVEL_IRON, IRON_LEVEL_RANGE, IRON_BUILDING_LEVEL_RANGE));
+        itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_DIAMOND, ARMOR_LEVEL_DIAMOND, DIA_LEVEL_RANGE, DIA_BUILDING_LEVEL_RANGE));
+        itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_DIAMOND, ARMOR_LEVEL_MAX, DIA_LEVEL_RANGE, DIA_BUILDING_LEVEL_RANGE));
+    }
 
     @Override
     public Class getExpectedBuildingClass()
@@ -177,7 +136,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     @Override
     protected void updateRenderMetaData()
     {
-        updateArmor();
+        if (getState() != NEEDS_ITEM)
+        {
+            updateArmor();
+        }
     }
 
     protected abstract int getAttackRange();
@@ -197,14 +159,28 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         return PREPARING;
     }
 
+    @Override
+    protected int getActionsDoneUntilDumping()
+    {
+        return getOwnBuilding(AbstractBuildingGuards.class).getTask() == GuardTask.FOLLOW ?  Integer.MAX_VALUE  : ACTIONS_UNTIL_DUMPING * getOwnBuilding().getBuildingLevel();
+    }
+
     /**
-     * Prepares the herder for herding
+     * Prepares the guard.
+     * Fills his required armor and tool lists and transfer from building chest if required.
      *
      * @return The next {@link AIState}.
      */
     private AIState prepare()
     {
         setDelay(Constants.TICKS_SECOND * PREPARE_DELAY_SECONDS);
+
+        @Nullable
+        final AbstractBuildingGuards building = getOwnBuilding();
+        if (building == null || worker.getCitizenData() == null)
+        {
+            return PREPARING;
+        }
 
         for (final ToolType tool : toolsNeeded)
         {
@@ -222,43 +198,112 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             }
         }
 
-        
-        @Nullable final AbstractBuildingWorker building = getOwnBuilding();
-        if (building != null)
+        requiredArmor.clear();
+        armorToWear.clear();
+        final Map<IToolType, List<GuardGear>> correctArmor = new LinkedHashMap<>();
+        for (final List<GuardGear> itemList : itemsNeeded)
         {
-            final List<GuardItemsNeeded> itemList = itemsNeeded.get(Integer.valueOf(building.getBuildingLevel()));
-            if (itemList != null)
+            final int level = worker.getCitizenData().getLevel();
+            for (final GuardGear item : itemList)
             {
-                final int level = worker.getCitizenData().getLevel();
-                for (final GuardItemsNeeded item : itemList)
+                /*
+                 * Make sure that we only take the item for the right building and guard level.
+                 */
+                if (level >= item.getMinLevelRequired() && level <= item.getMaxLevelRequired()
+                      && building.getBuildingLevel() >= item.getMinBuildingLevelRequired() && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired())
                 {
-                	//Could have multiple armor request,  make sure the require armor falls into the guard
-                	//level.
-                	if (level >= item.getMinLevelRequired() && level <= item.getMaxLevelRequired())
-                	{
-                		//Save the requested armor item,  so when the guard goes to put it on
-                		//they will put on the correct armor.
-                		requiredArmor.put(item.getType(), item.getItemNeeded());
-                		checkIfRequestForItemExistOrCreateAsynch(item.getItemStackNeeded());
-                	}
+                    final List<GuardGear> listOfItems = new ArrayList<>();
+                    listOfItems.add(item);
+
+                    if (correctArmor.containsKey(item.getItemNeeded()))
+                    {
+                        listOfItems.addAll(correctArmor.get(item.getItemNeeded()));
+                    }
+                    correctArmor.put(item.getItemNeeded(), listOfItems);
                 }
             }
         }
 
-        if (getOwnBuilding() != null)
+        for (final Map.Entry<IToolType, List<GuardGear>> entry : correctArmor.entrySet())
         {
-            final TileEntityColonyBuilding chest = getOwnBuilding().getTileEntity();
-            for (int i = 0; i < getOwnBuilding().getTileEntity().getSizeInventory(); i++)
+            final List<Integer> slotsWorker = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),
+              itemStack -> entry.getValue().stream().anyMatch(guardGear -> guardGear.test(itemStack)));
+            int bestLevel = -1;
+            final List<Integer> nonOptimalSlots = new ArrayList<>();
+            int bestSlot = -1;
+            for (final int slot : slotsWorker)
             {
-                final ItemStack stack = chest.getStackInSlot(i);
-
-                if (InventoryUtils.findFirstSlotInProviderWith(chest,
-                  itemStack -> itemStack.getItem() instanceof ItemArmor) != -1)
+                final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
+                if (!ItemStackUtils.isEmpty(stack))
                 {
-                    InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
-                      getOwnBuilding(), itemStack -> itemStack.getItem() instanceof ItemArmor,
-                      stack.getCount(),
-                      new InvWrapper(worker.getInventoryCitizen()));
+                    final int level = ItemStackUtils.getMiningLevel(stack, entry.getKey());
+                    if (level > bestLevel)
+                    {
+                        if (bestSlot != -1)
+                        {
+                            nonOptimalSlots.add(bestLevel);
+                        }
+                        bestLevel = level;
+                        bestSlot = slot;
+                    }
+                }
+            }
+
+            int bestLevelChest = -1;
+            int bestSlotChest = -1;
+            IItemHandler bestHandler = null;
+            final Map<IItemHandler, List<Integer>> slotsChest =
+              InventoryUtils.findAllSlotsInProviderWith(building, itemStack -> entry.getValue().stream().anyMatch(guardGear -> guardGear.test(itemStack)));
+            for (final Map.Entry<IItemHandler, List<Integer>> handlers : slotsChest.entrySet())
+            {
+                for (final int slot : handlers.getValue())
+                {
+                    final ItemStack stack = handlers.getKey().getStackInSlot(slot);
+                    if (!ItemStackUtils.isEmpty(stack))
+                    {
+                        final int level = ItemStackUtils.getMiningLevel(stack, entry.getKey());
+                        if (level > bestLevel && level > bestLevelChest)
+                        {
+                            bestLevelChest = level;
+                            bestSlotChest = slot;
+                            bestHandler = handlers.getKey();
+                        }
+                    }
+                }
+            }
+
+            if (!entry.getValue().isEmpty())
+            {
+                if (bestLevelChest > bestLevel)
+                {
+                    final ItemStack armorStack = bestHandler.getStackInSlot(bestSlotChest).copy();
+                    if (armorStack.getItem() instanceof ItemArmor)
+                    {
+                        armorToWear.put(entry.getKey(), armorStack);
+                    }
+
+                    InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(bestHandler, bestSlotChest, new InvWrapper(worker.getInventoryCitizen()));
+                    if (bestSlot != -1)
+                    {
+                        nonOptimalSlots.add(bestSlot);
+                    }
+                }
+                else if (bestSlot == -1)
+                {
+                    requiredArmor.put(entry.getKey(), entry.getValue());
+                }
+                else
+                {
+                    final ItemStack armorStack = new InvWrapper(worker.getInventoryCitizen()).getStackInSlot(bestSlot).copy();
+                    if (armorStack.getItem() instanceof ItemArmor)
+                    {
+                        armorToWear.put(entry.getKey(), armorStack);
+                    }
+                }
+
+                for (final int slot : nonOptimalSlots)
+                {
+                    InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(new InvWrapper(worker.getInventoryCitizen()), slot, building);
                 }
             }
         }
@@ -285,12 +330,29 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             }
         }
 
+        if (worker.getHealth() < ((int) worker.getMaxHealth() * 0.2f) && ((AbstractBuildingGuards) getOwnBuilding()).shallRetrieveOnLowHealth())
+        {
+            target = null;
+            return START_WORKING;
+        }
+
         if (!(worker.getLastAttackedEntity() != null
               && !worker.getLastAttackedEntity().isDead)
               && getOwnBuilding(AbstractBuildingGuards.class) != null
               && target == null)
         {
-            final AbstractBuildingGuards guardBuilding = (AbstractBuildingGuards) getOwnBuilding();
+            final AbstractBuildingGuards guardBuilding = getOwnBuilding();
+            if (worker.getLastAttackedEntity() != null && !worker.getLastAttackedEntity().isDead)
+            {
+                if ((worker.getDistance(worker.getLastAttackedEntity()) > getAttackRange() * 5 && !worker.canEntityBeSeen(worker.getLastAttackedEntity())))
+                {
+                    worker.setLastAttackedEntity(null);
+                    return DECIDE;
+                }
+                target = worker.getLastAttackedEntity();
+                return DECIDE;
+            }
+
 
             switch (guardBuilding.getTask())
             {
@@ -309,7 +371,24 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     worker.isWorkerAtSiteWithMove(guardBuilding.getGuardPos(), GUARD_POS_RANGE);
                     break;
                 case FOLLOW:
-                    worker.isWorkerAtSiteWithMove(guardBuilding.getPlayerToFollow(), GUARD_POS_RANGE);
+                    worker.addPotionEffect(new PotionEffect(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER));
+                    this.world.getScoreboard().addPlayerToTeam(worker.getName(), TEAM_COLONY_NAME + worker.getCitizenColonyHandler().getColonyId());
+                    final double distance = worker.getDistanceSq(guardBuilding.getPlayerToFollow());
+                    if (guardBuilding.isTightGrouping())
+                    {
+                        worker.isWorkerAtSiteWithMove(guardBuilding.getPlayerToFollow(), GUARD_FOLLOW_TIGHT_RANGE);
+                    }
+                    else
+                    {
+                        if (distance < getAttackDistance())
+                        {
+                            worker.getNavigator().clearPath();
+                        }
+                        else
+                        {
+                            worker.isWorkerAtSiteWithMove(guardBuilding.getPlayerToFollow(), GUARD_FOLLOW_LOSE_RANGE);
+                        }
+                    }
                     break;
                 default:
                     worker.isWorkerAtSiteWithMove(worker.getCitizenColonyHandler().getWorkBuilding().getLocation(), GUARD_POS_RANGE);
@@ -324,11 +403,42 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         if (target != null && target.isDead)
         {
+            incrementActionsDone();
             worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
             target = null;
         }
+        else if (target != null && (worker.getDistance(target) > getAttackRange() * 5 && !worker.canEntityBeSeen(target)))
+        {
+            target = null;
+        }
+
 
         return DECIDE;
+    }
+    /**
+     * This gets the attack speed for the guard
+     * with adjustment for guards level.
+     *
+     * @return attack speed for guard
+     */
+    public float getAttackSpeed()
+    {
+        final float speed = (float) ATTACK_SPEED;
+        final float levelAdjustment = ((float) worker.getCitizenData().getLevel() / 50);
+
+        return speed + levelAdjustment;
+    }
+
+    /**
+     * Returns the attack distance for guard with current weapon
+     * plus adjustment for guards level.
+     *
+     * @return attack distance
+     */
+    public double getAttackDistance()
+    {
+        final float levelAdjustment = ((float) worker.getCitizenData().getLevel() / 50);
+        return getAttackRange() + ((double) 120 * levelAdjustment);
     }
 
     /**
@@ -339,7 +449,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     protected EntityLivingBase getTarget()
     {
         final AbstractBuildingGuards building = getOwnBuilding();
-
         if (building != null && target == null && worker.getCitizenColonyHandler().getColony() != null)
         {
             for (final CitizenData citizen : worker.getCitizenColonyHandler().getColony().getCitizenManager().getCitizens())
@@ -347,6 +456,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 if (citizen.getCitizenEntity().isPresent())
                 {
                     final EntityLivingBase entity = citizen.getCitizenEntity().get().getRevengeTarget();
+                    
                     if (entity instanceof AbstractEntityBarbarian
                           && worker.canEntityBeSeen(entity))
                     {
@@ -364,11 +474,15 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     final EntityPlayer player = (EntityPlayer) entity;
 
                     if (worker.getCitizenColonyHandler().getColony() != null
-                          && worker.getCitizenColonyHandler().getColony().getPermissions().hasPermission(player, Action.GUARDS_ATTACK)
+                          && worker.getCitizenColonyHandler().getColony().getPermissions().hasPermission(player, Action.GUARDS_ATTACK) || worker.getCitizenColonyHandler().getColony().isValidAttackingPlayer(player)
                           && worker.canEntityBeSeen(player))
                     {
                         return entity;
                     }
+                }
+                else if (entity instanceof EntityCitizen && worker.getCitizenColonyHandler().getColony().isValidAttackingGuard((EntityCitizen) entity) && worker.canEntityBeSeen(entity))
+                {
+                    return entity;
                 }
             }
 
@@ -408,200 +522,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     }
 
     /**
-     * Check if the guard can protect himself with a shield
-     * And if so, do it.
-     *
-     * @return The next AIState.
-     */
-    protected AIState attackProtect()
-    {
-        setDelay(2);
-        final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventory()),
-          Items.SHIELD,
-          -1);
-
-        if (shieldSlot != -1
-              && target != null
-              && !target.isDead)
-        {
-            worker.getCitizenItemHandler().setHeldItem(EnumHand.OFF_HAND, shieldSlot);
-            worker.setActiveHand(EnumHand.OFF_HAND);
-
-            worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
-            worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
-
-            if (worker.getDistance(target) > getAttackRange())
-            {
-                worker.isWorkerAtSiteWithMove(target.getPosition(), getAttackRange());
-            }
-        }
-
-        return GUARD_ATTACK_PHYSICAL;
-    }
-
-    protected AIState attackPhysical()
-    {
-
-        if (worker.getRevengeTarget() != null
-              && !worker.getRevengeTarget().isDead
-              && worker.getDistance(worker.getRevengeTarget()) < getAttackRange())
-        {
-            target = worker.getRevengeTarget();
-        }
-
-        if (target == null || target.isDead)
-        {
-            worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
-            return DECIDE;
-        }
-
-        if (currentAttackDelay != 0)
-        {
-            currentAttackDelay--;
-            return GUARD_ATTACK_PROTECT;
-        }
-        else
-        {
-            currentAttackDelay = getAttackDelay();
-        }
-
-        if (getOwnBuilding() != null)
-        {
-
-            if (worker.getDistance(target) > getAttackRange())
-            {
-                worker.isWorkerAtSiteWithMove(target.getPosition(), getAttackRange());
-                return GUARD_ATTACK_PHYSICAL;
-            }
-
-            final int swordSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()),
-              ToolType.SWORD,
-              0,
-              getOwnBuilding().getMaxToolLevel());
-
-            if (swordSlot != -1)
-            {
-                worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, swordSlot);
-
-                worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
-                worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
-
-                worker.swingArm(EnumHand.MAIN_HAND);
-                worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) getRandomPitch());
-
-                double damageToBeDealt = BASE_PHYSICAL_DAMAGE;
-
-                if (worker.getHealth() <= DOUBLE_DAMAGE_THRESHOLD)
-                {
-                    damageToBeDealt *= 2;
-                }
-
-                final ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
-
-                if (ItemStackUtils.doesItemServeAsWeapon(heldItem))
-                {
-                    if (heldItem.getItem() instanceof ItemSword)
-                    {
-                        damageToBeDealt += ((ItemSword) heldItem.getItem()).getAttackDamage();
-                    }
-                    else
-                    {
-                        damageToBeDealt += TinkersWeaponHelper.getDamage(heldItem);
-                    }
-                    damageToBeDealt += EnchantmentHelper.getModifierForCreature(heldItem, target.getCreatureAttribute());
-                }
-
-                target.attackEntityFrom(new DamageSource(worker.getName()), (float) damageToBeDealt);
-                target.setRevengeTarget(worker);
-
-                worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
-            }
-        }
-        return GUARD_ATTACK_PHYSICAL;
-    }
-
-    protected AIState attackRanged()
-    {
-        if (worker.getLastAttackedEntity() != null
-              && !worker.getLastAttackedEntity().isDead
-              && worker.getDistance(worker.getLastAttackedEntity()) < getAttackRange())
-        {
-            target = worker.getLastAttackedEntity();
-        }
-
-        if (target == null || target.isDead)
-        {
-            worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
-            return DECIDE;
-        }
-
-        if (currentAttackDelay != 0)
-        {
-            currentAttackDelay--;
-            return GUARD_ATTACK_RANGED;
-        }
-        else
-        {
-            currentAttackDelay = getAttackDelay();
-        }
-
-        if (getOwnBuilding() != null && worker.getCitizenData() != null)
-        {
-
-            if (worker.getDistance(target) > getAttackRange())
-            {
-                worker.isWorkerAtSiteWithMove(target.getPosition(), getAttackRange());
-                return GUARD_ATTACK_RANGED;
-            }
-
-            final int bowslot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()),
-              ToolType.BOW,
-              0,
-              getOwnBuilding().getMaxToolLevel());
-
-            if (bowslot != -1)
-            {
-                worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, bowslot);
-
-                worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
-                worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
-
-                worker.swingArm(EnumHand.MAIN_HAND);
-
-                final EntityTippedArrow arrow = new GuardArrow(world, worker);
-                final double xVector = target.posX - worker.posX;
-                final double yVector = target.getEntityBoundingBox().minY + target.height / getAimHeight() - arrow.posY;
-                final double zVector = target.posZ - worker.posZ;
-                final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
-                double damage = getRangedAttackDamage();
-                final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getLevel() + 1);
-
-                arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
-
-                if (worker.getHealth() <= DOUBLE_DAMAGE_THRESHOLD)
-                {
-                    damage *= 2;
-                }
-
-                arrow.setDamage(damage);
-                final double xDiff = target.posX - worker.posX;
-                final double zDiff = target.posZ - worker.posZ;
-                final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
-                final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
-
-                worker.move(MoverType.SELF, goToX, 0, goToZ);
-                worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) getRandomPitch());
-                worker.world.spawnEntity(arrow);
-
-                target.setRevengeTarget(worker);
-
-                worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
-            }
-        }
-        return GUARD_ATTACK_RANGED;
-    }
-
-    /**
      * Gets the reload time for a Range guard attack.
      *
      * @return the reload time
@@ -616,37 +536,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     }
 
     /**
-     * Gets the aim height for ranged guards.
-     *
-     * @return the aim height.
-     * Suppression because the method already explains the value.
-     */
-    @SuppressWarnings({"squid:S3400", "squid:S109"})
-    protected double getAimHeight()
-    {
-        return 3.0D;
-    }
-
-    /**
-     * Damage per ranged attack.
-     *
-     * @return the attack damage
-     * Suppression because the method already explains the value.
-     */
-    @SuppressWarnings({"squid:S3400", "squid:S109"})
-    protected float getRangedAttackDamage()
-    {
-        return 2;
-    }
-
-    /**
      * Get the {@link AxisAlignedBB} we're searching for targets in.
      *
      * @return the {@link AxisAlignedBB}
      */
     protected AxisAlignedBB getSearchArea()
     {
-        final AbstractBuildingGuards building = (AbstractBuildingGuards) getOwnBuilding();
+        final AbstractBuildingGuards building = getOwnBuilding();
 
         if (building != null)
         {
@@ -670,129 +566,52 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     protected void updateArmor()
     {
-        worker.setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStackUtils.EMPTY);
-        worker.setItemStackToSlot(EntityEquipmentSlot.FEET, ItemStackUtils.EMPTY);
-        worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStackUtils.EMPTY);
-        worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStackUtils.EMPTY);
-
-        for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
+        if (worker.getRandom().nextInt(60) <= 0)
         {
-            final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
+            worker.setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStackUtils.EMPTY);
+            worker.setItemStackToSlot(EntityEquipmentSlot.FEET, ItemStackUtils.EMPTY);
+            worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStackUtils.EMPTY);
+            worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStackUtils.EMPTY);
 
-            if (ItemStackUtils.isEmpty(stack))
+            for (final Map.Entry<IToolType, ItemStack> armorStack : armorToWear.entrySet())
             {
-                new InvWrapper(worker.getInventoryCitizen()).extractItem(i, Integer.MAX_VALUE, false);
-                continue;
+                if (ItemStackUtils.isEmpty(armorStack.getValue()))
+                {
+                    continue;
+                }
+                final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),
+                  itemStack -> itemStack.isItemEqualIgnoreDurability(armorStack.getValue()));
+                if (slot == -1)
+                {
+                    continue;
+                }
+                final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
+                if (ItemStackUtils.isEmpty(stack))
+                {
+                    worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, ItemStackUtils.EMPTY);
+                    continue;
+                }
+
+                if (stack.getItem() instanceof ItemArmor)
+                {
+                    worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
+                    requiredArmor.remove(armorStack.getKey());
+                    cancelAsynchRequestForArmor(armorStack.getKey());
+                }
             }
 
-            if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == ItemStackUtils.EMPTY &&
-            		requiredArmor.get(((ItemArmor) stack.getItem()).armorType) == stack.getItem()
-            	)
+            for (final Map.Entry<IToolType, List<GuardGear>> entry : requiredArmor.entrySet())
             {
-                worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
+                int minLevel = Integer.MAX_VALUE;
+                for (final GuardGear item : entry.getValue())
+                {
+                    if (item.getMinArmorLevel() < minLevel)
+                    {
+                        minLevel = item.getMinArmorLevel();
+                    }
+                }
+                checkForToolorWeaponASync(entry.getKey(), minLevel);
             }
         }
-    }
-
-    private double getRandomPitch()
-    {
-        return PITCH_DIVIDER / (worker.getRNG().nextDouble() * PITCH_MULTIPLIER + BASE_PITCH);
-    }
-
-
-
-    /**
-     * Class to hold information about required item for the guard.
-     *
-     */
-    public class GuardItemsNeeded
-    {
-    	/**
-    	 * Quantity required on the required
-    	 */
-    	private final int quantity;
-
-    	/**
-    	 * Min level the citizen has to be to required the item
-    	 */
-    	private final int minLevelRequired;
-
-    	/**
-    	 *Max level the citizen can be to required the item
-    	 */
-    	private final int maxLevelRequired;
-    	/**
-    	 * Item that is being required
-    	 */
-    	private final Item itemNeeded;
-    	/**
-    	 * Item type that is required
-    	 */
-    	private final EntityEquipmentSlot type;
-
-    	/**
-    	 * @param type		item type for the required item
-    	 * @param item		item that is being required
-    	 * @param quantity	quantity required for the item
-    	 * @param min		min level required to demand item
-    	 * @param max		max level that the item will be required
-    	 */
-    	public GuardItemsNeeded(final EntityEquipmentSlot type, final Item item, final int quantity, final int min, final int max)
-    	{
-    		this.type = type;
-    		this.minLevelRequired = min;
-    		this.maxLevelRequired = max;
-    		this.itemNeeded = item;
-    		this.quantity = quantity;
-    	}
-
-    	/**
-    	 * @return  item that is required in stack format
-    	 */
-    	public ItemStack getItemStackNeeded()
-    	{
-    		return new ItemStack(itemNeeded, quantity);
-    	}
-
-    	/**
-    	 * @return item that is required
-    	 */
-    	public Item getItemNeeded()
-    	{
-    		return itemNeeded;
-    	}
-
-    	/**
-    	 * @return min level for this item to be required
-    	 */
-    	public int getMinLevelRequired()
-    	{
-    		return minLevelRequired;
-    	}
-
-    	/**
-    	 * @return max level for this item to be require
-    	 */
-    	public int getMaxLevelRequired()
-    	{
-    		return maxLevelRequired;
-    	}
-
-    	/**
-    	 * @return type of the item
-    	 */
-    	public EntityEquipmentSlot getType()
-    	{
-    		return type;
-    	}
-
-    	/**
-    	 * @return number of items required
-    	 */
-    	public int getQuantity()
-    	{
-    		return quantity;
-    	}
-
     }
 }

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
@@ -188,6 +189,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
                 @Nullable final AbstractBuilding building = ColonyManager.getBuilding(CompatibilityUtils.getWorld(player), message.pos);
                 if (building != null)
                 {
+                    building.onUpgradeComplete(building.getBuildingLevel());
                     final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
                     ConstructionTapeHelper.removeConstructionTape(workOrder, CompatibilityUtils.getWorld(player));
                 }
@@ -195,7 +197,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         }
         else if(message.freeMode !=  null )
         {
-            if(player.getStatFile().readStat(StatList.getObjectUseStats(ModItems.supplyChest)) > 0)
+            if(player.getStatFile().readStat(StatList.getObjectUseStats(ModItems.supplyChest)) > 0 && !Configurations.gameplay.allowInfiniteSupplyChests)
             {
                 LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.error.supplyChestAlreadyPlaced");
                 return;
@@ -217,6 +219,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
                 chestHeight = 0;
             }
 
+            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.progress.supplies_placed");
             player.addStat(StatList.getObjectUseStats(ModItems.supplyChest));
             if(InventoryUtils.removeStacksFromItemHandler(new InvWrapper(player.inventory), stacks))
             {

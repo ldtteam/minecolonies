@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Colony;
@@ -39,8 +40,24 @@ import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
  */
 public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractBlockMinecolonies<B> implements ITileEntityProvider, IBuilderUndestroyable
 {
+    /**
+     * Hardness factor of the pvp mode.
+     */
+    private static final int HARDNESS_PVP_FACTOR = 4;
+
+    /**
+     * The direction the block is facing.
+     */
     public static final  PropertyDirection FACING     = BlockHorizontal.FACING;
+
+    /**
+     * The default hardness.
+     */
     private static final float             HARDNESS   = 10F;
+
+    /**
+     * The default resistance (against explosions).
+     */
     private static final float             RESISTANCE = Float.POSITIVE_INFINITY;
 
     /**
@@ -61,12 +78,12 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     private void initBlock()
     {
         setRegistryName(getName());
-        setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + getName());
+        setTranslationKey(Constants.MOD_ID.toLowerCase() + "." + getName());
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         //Blast resistance for creepers etc. makes them explosion proof
         setResistance(RESISTANCE);
         //Hardness of 10 takes a long time to mine to not loose progress
-        setHardness(HARDNESS);
+        setHardness(Configurations.gameplay.pvp_mode ? HARDNESS * HARDNESS_PVP_FACTOR : HARDNESS);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
     }
 
@@ -107,7 +124,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @Deprecated
     public IBlockState getStateFromMeta(final int meta)
     {
-        EnumFacing enumfacing = EnumFacing.getFront(meta);
+        EnumFacing enumfacing = EnumFacing.byIndex(meta);
 
         if (enumfacing.getAxis() == EnumFacing.Axis.Y)
         {
@@ -181,7 +198,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @NotNull
     @Override
     @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getBlockLayer()
+    public BlockRenderLayer getRenderLayer()
     {
         return BlockRenderLayer.SOLID;
     }
@@ -267,6 +284,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
             if (colony != null)
             {
                 colony.getBuildingManager().addNewBuilding(hut, worldIn);
+                colony.getProgressManager().progressBuildingPlacement(this);
             }
         }
     }

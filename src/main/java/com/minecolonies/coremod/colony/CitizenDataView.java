@@ -23,7 +23,7 @@ public class CitizenDataView
 {
 
     private static final String TAG_HELD_ITEM_SLOT = "HeldItemSlot";
-    public static final String TAG_OFFHAND_HELD_ITEM_SLOT        = "OffhandHeldItemSlot";
+    public static final String TAG_OFFHAND_HELD_ITEM_SLOT = "OffhandHeldItemSlot";
 
     /**
      * The max amount of lines the latest log allows.
@@ -33,10 +33,10 @@ public class CitizenDataView
     /**
      * Attributes.
      */
-    private final int     id;
-    private       int     entityId;
-    private       String  name;
-    private       boolean female;
+    private final int id;
+    private int entityId;
+    private String name;
+    private boolean female;
 
     /**
      * colony id of the citizen.
@@ -46,16 +46,37 @@ public class CitizenDataView
     /**
      * Placeholder skills.
      */
-    private int    level;
+    private int level;
     private double experience;
     private double health;
     private double maxHealth;
-    private int    strength;
-    private int    endurance;
-    private int    charisma;
-    private int    intelligence;
-    private int    dexterity;
+    private int strength;
+    private int endurance;
+    private int charisma;
+    private int intelligence;
+    private int dexterity;
     private double saturation;
+
+    /**
+     * holds the current citizen happiness value
+     */
+    private double happiness;
+
+    /**
+     * holds the current citizen happiness modifiers for
+     * each type of modifier.
+     */
+    private double foodModifier;
+    private double damageModifier;
+    private double houseModifier;
+    private double jobModifier;
+    private double fieldsModifier;
+    private double toolsModifiers;
+
+    /**
+     * The position of the guard.
+     */
+    private BlockPos position;
 
     /**
      * Job identifier.
@@ -80,7 +101,8 @@ public class CitizenDataView
     /**
      * Set View id.
      *
-     * @param id the id to set.
+     * @param id
+     *            the id to set.
      */
     protected CitizenDataView(final int id)
     {
@@ -220,6 +242,16 @@ public class CitizenDataView
     }
 
     /**
+     * Gets the current Happiness value for the citizen
+     * 
+     * @return citizens current Happiness value
+     */
+    public double getHappiness()
+    {
+        return happiness;
+    }
+
+    /**
      * Get the saturation of the citizen.
      *
      * @return the saturation a double.
@@ -270,9 +302,20 @@ public class CitizenDataView
     }
 
     /**
+     * Get the last registered position of the citizen.
+     * 
+     * @return the BlockPos.
+     */
+    public BlockPos getPosition()
+    {
+        return position;
+    }
+
+    /**
      * Deserialize the attributes and variables from transition.
      *
-     * @param buf Byte buffer to deserialize.
+     * @param buf
+     *            Byte buffer to deserialize.
      */
     public void deserialize(@NotNull final ByteBuf buf)
     {
@@ -283,7 +326,7 @@ public class CitizenDataView
         homeBuilding = buf.readBoolean() ? BlockPosUtil.readFromByteBuf(buf) : null;
         workBuilding = buf.readBoolean() ? BlockPosUtil.readFromByteBuf(buf) : null;
 
-        //  Attributes
+        // Attributes
         level = buf.readInt();
         experience = buf.readDouble();
         health = buf.readFloat();
@@ -295,6 +338,14 @@ public class CitizenDataView
         intelligence = buf.readInt();
         dexterity = buf.readInt();
         saturation = buf.readDouble();
+        happiness = buf.readDouble();
+
+        foodModifier = buf.readDouble();
+        damageModifier = buf.readDouble();
+        houseModifier = buf.readDouble();
+        jobModifier = buf.readDouble();
+        fieldsModifier = buf.readDouble();
+        toolsModifiers = buf.readDouble();
 
         job = ByteBufUtils.readUTF8String(buf);
 
@@ -314,6 +365,8 @@ public class CitizenDataView
         this.inventory.readFromNBT(nbttaglist);
         this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInteger(TAG_HELD_ITEM_SLOT));
         this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInteger(TAG_OFFHAND_HELD_ITEM_SLOT));
+
+        position = BlockPosUtil.readFromByteBuf(buf);
     }
 
     /**
@@ -329,5 +382,53 @@ public class CitizenDataView
     public InventoryCitizen getInventory()
     {
         return inventory;
+    }
+
+    /**
+     * @return returns the current modifier related to food.
+     */
+    public double getFoodModifier()
+    {
+        return foodModifier;
+    }
+
+    /**
+     * @return returns the current modifier related to damage.
+     */
+    public double getDamageModifier()
+    {
+        return damageModifier;
+    }
+
+    /**
+     * @return returns the current modifier related to house.
+     */
+    public double getHouseModifier()
+    {
+        return houseModifier;
+    }
+
+    /**
+     * @return returns the current modifier related to job.
+     */
+    public double getJobModifier()
+    {
+        return jobModifier;
+    }
+
+    /**
+     * @return returns the current modifier related to fields.
+     */
+    public double getFieldsModifier()
+    {
+        return fieldsModifier;
+    }
+
+    /**
+     * @return returns the current modifier related to tools.
+     */
+    public double getToolsModifiers()
+    {
+        return toolsModifiers;
     }
 }

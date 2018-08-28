@@ -66,6 +66,16 @@ public class EntityAISleep extends EntityAIBase
     @Override
     public boolean shouldContinueExecuting()
     {
+        if (usedBed == null && citizen.getCitizenData() != null)
+        {
+            this.wokeUp = !citizen.getCitizenData().isAsleep();
+            this.usedBed = citizen.getCitizenData().getBedPos();
+            if (citizen.getCitizenData().getBedPos().equals(BlockPos.ORIGIN))
+            {
+                this.usedBed = null;
+            }
+        }
+
         if (citizen.getDesiredActivity() == DesiredActivity.SLEEP)
         {
             wokeUp = false;
@@ -84,7 +94,7 @@ public class EntityAISleep extends EntityAIBase
                     {
                         final World world = citizen.world;
                         IBlockState state = world.getBlockState(pos);
-                        state = state.getBlock().getActualState(state, world, pos);
+                        state = state.getBlock().getExtendedState(state, world, pos);
                         if (state.getBlock() instanceof BlockBed
                               && !state.getValue(BlockBed.OCCUPIED)
                               && state.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))

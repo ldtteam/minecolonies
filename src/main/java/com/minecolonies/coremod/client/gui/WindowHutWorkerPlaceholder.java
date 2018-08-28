@@ -17,7 +17,7 @@ public class WindowHutWorkerPlaceholder<B extends AbstractBuildingWorker.View> e
 
     /**
      * Window for worker placeholder.
-     * Used by Baker, Blacksmith, Lumberjack ans Stonemason.
+     * Used by buildings not listed above this file.
      *
      * @param building AbstractBuilding extending {@link AbstractBuildingWorker.View}.
      * @param name     Name of the the view (resource).

@@ -13,9 +13,12 @@ import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.managers.*;
+import com.minecolonies.coremod.colony.managers.interfaces.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.colony.pvp.AttackingPlayer;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.WorkManager;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
@@ -29,6 +32,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -93,6 +97,11 @@ public class Colony implements IColony
     private final ICitizenManager citizenManager = new CitizenManager(this);
 
     /**
+     * Colony happiness manager.
+     */
+    private final IColonyHappinessManager colonyHappinessManager = new ColonyHappinessManager();
+
+    /**
      * Statistic and achievement manager manager of the colony.
      */
     private final IStatisticAchievementManager statsManager = new StatisticAchievementManager(this);
@@ -106,6 +115,11 @@ public class Colony implements IColony
      * The colony package manager.
      */
     private final IColonyPackageManager packageManager = new ColonyPackageManager(this);
+
+    /**
+     * The progress manager of the colony.
+     */
+    private final IProgressManager progressManager = new ProgressManager(this);
 
     /**
      * The Positions which players can freely interact.
@@ -170,11 +184,6 @@ public class Colony implements IColony
     private Permissions permissions;
 
     /**
-     * Overall happyness of the colony.
-     */
-    private double overallHappiness = DEFAULT_OVERALL_HAPPYNESS;
-
-    /**
      * The request manager assigned to the colony.
      */
     private IRequestManager requestManager;
@@ -195,9 +204,21 @@ public class Colony implements IColony
     private final List<EntityPlayer> visitingPlayers = new ArrayList<>();
 
     /**
+     * List of players attacking the colony.
+     */
+    private final List<AttackingPlayer> attackingPlayers = new ArrayList<>();
+
+    /**
      * Datas about the happiness of a colony
      */
     private final HappinessData happinessData = new HappinessData();
+
+    private boolean needToMourn = false;
+    private boolean mourning = false;
+    /**
+     * The colony team color.
+     */
+    private TextFormatting colonyTeamColor = TextFormatting.WHITE;
 
     /**
      * Constructor for a newly created Colony.
@@ -229,6 +250,12 @@ public class Colony implements IColony
         this.world = world;
         this.permissions = new Permissions(this);
 
+        if (this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id) == null)
+        {
+            this.world.getScoreboard().createTeam(TEAM_COLONY_NAME + id);
+            this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id).setAllowFriendlyFire(false);
+        }
+
         // Register a new event handler
         eventHandler = new ColonyPermissionEventHandler(this);
         MinecraftForge.EVENT_BUS.register(eventHandler);
@@ -252,6 +279,21 @@ public class Colony implements IColony
     }
 
     /**
+     * Set up the colony color for team handling for pvp.
+     * @param colonyColor the colony color.
+     */
+    public void setColonyColor(final TextFormatting colonyColor)
+    {
+        if (this.world != null)
+        {
+            this.colonyTeamColor = colonyColor;
+            this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id).setColor(colonyColor);
+            this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id).setPrefix(colonyColor.toString());
+            this.markDirty();
+        }
+    }
+
+    /**
      * Load a saved colony.
      *
      * @param compound The NBT compound containing the colony's data.
@@ -266,6 +308,11 @@ public class Colony implements IColony
         c.center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
         c.setRequestManager();
         c.readFromNBT(compound);
+
+        if (c.getProgressManager().isPrintingProgress() && (c.getBuildingManager().getBuildings().size() > BUILDING_LIMIT_FOR_HELP || c.getCitizenManager().getCitizens().size() > CITIZEN_LIMIT_FOR_HELP))
+        {
+            c.getProgressManager().togglePrintProgress();
+        }
         return c;
     }
 
@@ -286,6 +333,16 @@ public class Colony implements IColony
     {
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
 
+        if(compound.hasKey(TAG_NEED_TO_MOURN))
+        {
+            needToMourn = compound.getBoolean(TAG_NEED_TO_MOURN);
+            mourning = compound.getBoolean(TAG_MOURNING);
+        }
+        else
+        {
+            needToMourn = false;
+            mourning = false;
+        }
         // Permissions
         permissions.loadPermissions(compound);
 
@@ -319,6 +376,20 @@ public class Colony implements IColony
             statsManager.readFromNBT(compound);
         }
 
+        if(compound.hasKey(TAG_PROGRESS_MANAGER))
+        {
+            progressManager.readFromNBT(compound);
+        }
+
+        if (compound.hasKey(TAG_HAPPINESS_MODIFIER))
+        {
+            colonyHappinessManager.setLockedHappinessModifier(Optional.of(compound.getDouble(TAG_HAPPINESS_MODIFIER)));
+        }
+        else
+        {
+            colonyHappinessManager.setLockedHappinessModifier(Optional.empty());
+        }
+
         //  Workload
         workManager.readFromNBT(compound.getCompoundTag(TAG_WORK));
 
@@ -348,7 +419,7 @@ public class Colony implements IColony
             freePositions.add(block);
         }
 
-        this.overallHappiness = compound.getDouble(TAG_HAPPINESS);
+        happinessData.readFromNBT(compound); 
         packageManager.setLastContactInHours(compound.getInteger(TAG_ABANDONED));
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
 
@@ -380,6 +451,11 @@ public class Colony implements IColony
             this.canColonyBeAutoDeleted = true;
         }
 
+        if (compound.hasKey(TAG_TEAM_COLOR))
+        {
+            this.setColonyColor(TextFormatting.values()[compound.getInteger(TAG_TEAM_COLOR)]);
+        }
+
         this.colonyTag = compound;
     }
 
@@ -409,6 +485,8 @@ public class Colony implements IColony
         BlockPosUtil.writeToNBT(compound, TAG_CENTER, center);
 
         compound.setBoolean(TAG_MANUAL_HIRING, manualHiring);
+        compound.setBoolean(TAG_NEED_TO_MOURN, needToMourn);
+        compound.setBoolean(TAG_MOURNING, mourning);
 
         // Permissions
         permissions.savePermissions(compound);
@@ -421,6 +499,8 @@ public class Colony implements IColony
         citizenManager.writeToNBT(citizenCompound);
         compound.setTag(TAG_CITIZEN_MANAGER, citizenCompound);
 
+        colonyHappinessManager.getLockedHappinessModifier().ifPresent(d -> compound.setDouble(TAG_HAPPINESS_MODIFIER, d));
+
         final NBTTagCompound statsCompound = new NBTTagCompound();
         statsManager.writeToNBT(statsCompound);
         compound.setTag(TAG_STATS_MANAGER, statsCompound);
@@ -429,6 +509,8 @@ public class Colony implements IColony
         @NotNull final NBTTagCompound workManagerCompound = new NBTTagCompound();
         workManager.writeToNBT(workManagerCompound);
         compound.setTag(TAG_WORK, workManagerCompound);
+
+        progressManager.writeToNBT(compound);
 
         // Waypoints
         @NotNull final NBTTagList wayPointTagList = new NBTTagList();
@@ -460,14 +542,14 @@ public class Colony implements IColony
         }
         compound.setTag(TAG_FREE_POSITIONS, freePositionsTagList);
 
-        compound.setDouble(TAG_HAPPINESS, overallHappiness);
+        happinessData.writeToNBT(compound); 
         compound.setInteger(TAG_ABANDONED, packageManager.getLastContactInHours());
         compound.setBoolean(TAG_MANUAL_HOUSING, manualHousing);
         compound.setTag(TAG_REQUESTMANAGER, getRequestManager().serializeNBT());
         compound.setString(TAG_STYLE, style);
         compound.setBoolean(TAG_RAIDABLE, barbarianManager.canHaveBarbEvents());
         compound.setBoolean(TAG_AUTO_DELETE, canColonyBeAutoDeleted);
-
+        compound.setInteger(TAG_TEAM_COLOR, colonyTeamColor.ordinal());
         this.colonyTag = compound;
     }
 
@@ -526,12 +608,14 @@ public class Colony implements IColony
         packageManager.updateSubscribers();
 
         final List<EntityPlayer> visitors = new ArrayList<>(visitingPlayers);
+
         //Clean up visiting player.
         for(final EntityPlayer player: visitors)
         {
             if(!packageManager.getSubscribers().contains(player))
             {
                 visitingPlayers.remove(player);
+                attackingPlayers.remove(new AttackingPlayer(player));
             }
         }
     }
@@ -659,6 +743,21 @@ public class Colony implements IColony
             MobEventsUtils.barbarianEvent(event.world, this);
         }
 
+        if (shallUpdate(world, TICKS_SECOND))
+        {
+            for (final AttackingPlayer player : attackingPlayers)
+            {
+                if (!player.getGuards().isEmpty())
+                {
+                    player.refreshList(this);
+                    if (player.getGuards().isEmpty())
+                    {
+                        LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), "You successfully defended your colony against, " + player.getPlayer().getName());
+                    }
+                }
+            }
+        }
+
         buildingManager.onWorldTick(event);
 
         if (isDay && !world.isDaytime())
@@ -669,10 +768,22 @@ public class Colony implements IColony
             {
                 citizenManager.checkCitizensForHappiness();
             }
+            happinessData.processDeathModifiers(); 
+            if (mourning)
+            {
+                mourning = false;
+                citizenManager.updateCitizenMourn(false);
+            }
         }
         else if (!isDay && world.isDaytime())
         {
             isDay = true;
+            if (needToMourn)
+            {
+                needToMourn = false;
+                mourning = true;
+                citizenManager.updateCitizenMourn(true);
+            }
         }
 
         updateWayPoints();
@@ -780,7 +891,7 @@ public class Colony implements IColony
     @Override
     public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        final Chunk chunk = w.getChunkFromBlockCoords(pos);
+        final Chunk chunk = w.getChunk(pos);
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
         return cap.getOwningColony() == this.getID();
     }
@@ -879,28 +990,6 @@ public class Colony implements IColony
         return buildingManager.getBuilding(pos);
     }
 
-    /**
-     * Increase the overall happiness by an amount, cap at max.
-     *
-     * @param amount the amount.
-     */
-    public void increaseOverallHappiness(final double amount)
-    {
-        this.overallHappiness = Math.min(this.overallHappiness + Math.abs(amount), MAX_OVERALL_HAPPINESS);
-        this.markDirty();
-    }
-
-    /**
-     * Decrease the overall happiness by an amount, cap at min.
-     *
-     * @param amount the amount.
-     */
-    public void decreaseOverallHappiness(final double amount)
-    {
-        this.overallHappiness = Math.max(this.overallHappiness - Math.abs(amount), MIN_OVERALL_HAPPINESS);
-        this.markDirty();
-    }
-
     @NotNull
     public List<EntityPlayer> getMessageEntityPlayers()
     {
@@ -925,6 +1014,7 @@ public class Colony implements IColony
     public void setManualHiring(final boolean manualHiring)
     {
         this.manualHiring = manualHiring;
+        progressManager.progressEmploymentModeChange();
         markDirty();
     }
 
@@ -1033,7 +1123,19 @@ public class Colony implements IColony
      */
     public double getOverallHappiness()
     {
-        return this.overallHappiness;
+        double happinessTotal = 0; 
+        for (final CitizenData citizen : citizenManager.getCitizens()) 
+        { 
+            happinessTotal += citizen.getCitizenHappinessHandler().getHappiness(); 
+        } 
+        final double happinessAverage = happinessTotal /  citizenManager.getCitizens().size(); 
+         
+        happinessTotal = happinessAverage + happinessData.getTotalHappinessModifier();  
+        if (happinessTotal > HappinessData.MAX_HAPPINESS) 
+        { 
+            happinessTotal = HappinessData.MIN_HAPPINESS; 
+        } 
+        return happinessTotal; 
     }
 
     /**
@@ -1094,6 +1196,16 @@ public class Colony implements IColony
     }
 
     /**
+     * Get the colony happiness manager.
+     *
+     * @return the colony happiness manager.
+     */
+    public IColonyHappinessManager getColonyHappinessManager()
+    {
+        return colonyHappinessManager;
+    }
+
+    /**
      * Get the statsManager of the colony.
      * @return the statsManager.
      */
@@ -1118,6 +1230,15 @@ public class Colony implements IColony
     public IColonyPackageManager getPackageManager()
     {
         return packageManager;
+    }
+
+    /**
+     * Get the progress manager of the colony.
+     * @return the manager.
+     */
+    public IProgressManager getProgressManager()
+    {
+        return progressManager;
     }
 
     /**
@@ -1181,5 +1302,122 @@ public class Colony implements IColony
     public void setNightsSinceLastRaid(final int nights)
     {
         this.nightsSinceLastRaid = nights;
+    }
+
+    /**
+     * call to figure out if the colony needs to mourn.
+     * 
+     * @return a boolean indicating the colony needs to mourn
+     */
+    public boolean isNeedToMourn()
+    {
+        return needToMourn;
+    }
+
+    /**
+     * Call to set if the colony needs to mourn or not.
+     * 
+     * @param needToMourn indicate if the colony needs to mourn
+     * @param name  Name of citizen that died
+     */
+    public void setNeedToMourn(final boolean needToMourn, final String name)
+    {
+        this.needToMourn = needToMourn;
+        if (needToMourn)
+        {
+            LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_MOURN,name);
+        }
+    }
+
+    /**
+     * Call to check if the colony is mourning.
+     * 
+     * @return indicates if the colony is mourning
+     */
+    public boolean isMourning()
+    {
+        return mourning;
+    }
+
+    /**
+     * Add a guard to the list of attacking guards.
+     * @param entityCitizen the citizen to add.
+     */
+    public void addGuardToAttackers(final EntityCitizen entityCitizen, final EntityPlayer player)
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        for (final AttackingPlayer attackingPlayer : attackingPlayers)
+        {
+            if (attackingPlayer.getPlayer().equals(player))
+            {
+                if (attackingPlayer.addGuard(entityCitizen))
+                {
+                    LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(),
+                      "Beware, " + attackingPlayer.getPlayer().getName() + " has now: " + attackingPlayer.getGuards().size() + " guards!");
+                }
+                return;
+            }
+        }
+
+        for (final EntityPlayer visitingPlayer : visitingPlayers)
+        {
+            if (visitingPlayer.equals(player))
+            {
+                final AttackingPlayer attackingPlayer = new AttackingPlayer(visitingPlayer);
+                attackingPlayer.addGuard(entityCitizen);
+                attackingPlayers.add(attackingPlayer);
+                LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), "Beware, " + visitingPlayer.getName() + " is attacking you and he brought guards.");
+            }
+        }
+    }
+
+    /**
+     * Is player part of a wave trying to invade the colony?
+     * @param player the player to check..
+     * @return true if so.
+     */
+    public boolean isValidAttackingPlayer(final EntityPlayer player)
+    {
+        if (packageManager.getLastContactInHours() > 1)
+        {
+            return false;
+        }
+
+        for (final AttackingPlayer attackingPlayer : attackingPlayers)
+        {
+            if (attackingPlayer.getPlayer().equals(player))
+            {
+                return attackingPlayer.isValidAttack(this);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if attack of guard is valid.
+     * @param entity the guard entity.
+     * @return true if so.
+     */
+    public boolean isValidAttackingGuard(final EntityCitizen entity)
+    {
+        if (packageManager.getLastContactInHours() > 1)
+        {
+            return false;
+        }
+
+        return AttackingPlayer.isValidAttack(entity, this);
+    }
+
+    /**
+     * Getter for the colony team color.
+     * @return the TextFormatting enum color.
+     */
+    public TextFormatting getTeamColonyColor()
+    {
+        return colonyTeamColor;
     }
 }

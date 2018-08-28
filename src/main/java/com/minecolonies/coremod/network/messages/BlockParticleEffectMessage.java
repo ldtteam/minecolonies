@@ -79,7 +79,7 @@ public class BlockParticleEffectMessage extends AbstractMessage<BlockParticleEff
         }
         else
         {
-            FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(message.pos, EnumFacing.getFront(message.side));
+            FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(message.pos, EnumFacing.byIndex(message.side));
         }
     }
 }

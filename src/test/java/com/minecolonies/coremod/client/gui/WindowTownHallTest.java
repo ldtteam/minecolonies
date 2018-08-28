@@ -69,7 +69,7 @@ public class WindowTownHallTest {
         final WindowTownHall windowTownHall = mock(WindowTownHall.class);
 
         when(colony.getCitizens()).thenReturn(Collections.unmodifiableMap(citizensMap));
-        when(colony.getMaxCitizens()).thenReturn(4);
+        when(colony.getCitizenCount()).thenReturn(4);
         when(townHall.getColony()).thenReturn(colony);
         when(building.getColony()).thenReturn(colony);
         when(windowTownHall.findPaneOfTypeByID(HAPPINESS_LABEL, Label.class)).thenReturn(new Label());

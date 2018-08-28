@@ -22,6 +22,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -54,6 +55,11 @@ public final class ColonyView implements IColony
     private BlockPos center = BlockPos.ORIGIN;
 
     /**
+     * Colony team color.
+     */
+    private TextFormatting teamColonyColor = TextFormatting.WHITE;
+
+    /**
      * Datas about the happiness of a colony
      */
     private final HappinessData                       happinessData      = new HappinessData();
@@ -71,7 +77,7 @@ public final class ColonyView implements IColony
     //  Buildings
     @Nullable
     private BuildingTownHall.View townHall;
-    private int maxCitizens = 0;
+    private int citizenCount = 0;
 
     /**
      * Check if the colony has a warehouse.
@@ -119,6 +125,11 @@ public final class ColonyView implements IColony
     private World world;
 
     /**
+     * Print progress.
+     */
+    private boolean printProgress;
+
+    /**
      * Base constructor for a colony.
      *
      * @param id The current id for the colony.
@@ -155,7 +166,7 @@ public final class ColonyView implements IColony
         BlockPosUtil.writeToByteBuf(buf, colony.getCenter());
         buf.writeBoolean(colony.isManualHiring());
         //  Citizenry
-        buf.writeInt(colony.getCitizenManager().getMaxCitizens());
+        buf.writeInt(colony.getCitizenManager().getCurrentCitizenCount());
 
         final Set<Block> freeBlocks = colony.getFreeBlocks();
         final Set<BlockPos> freePos = colony.getFreePositions();
@@ -192,6 +203,10 @@ public final class ColonyView implements IColony
         {
             BlockPosUtil.writeToByteBuf(buf, block);
         }
+
+        buf.writeInt(colony.getTeamColonyColor().ordinal());
+
+        buf.writeBoolean(colony.getProgressManager().isPrintingProgress());
     }
 
     /**
@@ -402,9 +417,9 @@ public final class ColonyView implements IColony
      *
      * @return maximum amount of citizens.
      */
-    public int getMaxCitizens()
+    public int getCitizenCount()
     {
-        return maxCitizens;
+        return citizenCount;
     }
 
     /**
@@ -455,7 +470,7 @@ public final class ColonyView implements IColony
         center = BlockPosUtil.readFromByteBuf(buf);
         manualHiring = buf.readBoolean();
         //  Citizenry
-        maxCitizens = buf.readInt();
+        citizenCount = buf.readInt();
 
         if (isNewSubscription)
         {
@@ -500,6 +515,10 @@ public final class ColonyView implements IColony
             lastSpawnPoints.add(BlockPosUtil.readFromByteBuf(buf));
         }
         Collections.reverse(lastSpawnPoints);
+
+        this.teamColonyColor = TextFormatting.values()[buf.readInt()];
+
+        this.printProgress = buf.readBoolean();
         return null;
     }
 
@@ -681,6 +700,15 @@ public final class ColonyView implements IColony
     }
 
     /**
+     * Getter for the team colony color.
+     * @return the color.
+     */
+    public TextFormatting getTeamColonyColor()
+    {
+        return teamColonyColor;
+    }
+
+    /**
      * Sets the name of the view.
      *
      * @param name Name of the view.
@@ -701,7 +729,7 @@ public final class ColonyView implements IColony
     @Override
     public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        final Chunk chunk = w.getChunkFromBlockCoords(pos);
+        final Chunk chunk = w.getChunk(pos);
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
         return cap.getOwningColony() == this.getID();
     }
@@ -839,5 +867,14 @@ public final class ColonyView implements IColony
     public List<BlockPos> getLastSpawnPoints()
     {
         return new ArrayList<>(lastSpawnPoints);
+    }
+
+    /**
+     * Get if progress should be printed.
+     * @return true if so.
+     */
+    public boolean isPrintingProgress()
+    {
+        return printProgress;
     }
 }

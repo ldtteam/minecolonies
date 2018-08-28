@@ -16,13 +16,16 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
+import com.minecolonies.coremod.entity.ai.util.Structure;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDoor;
+import net.minecraft.block.BlockFalling;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
@@ -58,6 +61,18 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     public Class getExpectedBuildingClass()
     {
         return AbstractBuildingStructureBuilder.class;
+    }
+
+    @Override
+    public void storeProgressPos(final BlockPos blockPos, final Structure.Stage stage)
+    {
+        getOwnBuilding(AbstractBuildingStructureBuilder.class).setProgressPos(blockPos, stage);
+    }
+
+    @Override
+    public Tuple<BlockPos, Structure.Stage> getProgressPos()
+    {
+        return getOwnBuilding(AbstractBuildingStructureBuilder.class).getProgress();
     }
 
     /**
@@ -127,12 +142,16 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         final int tempRotation = workOrder.getRotation(world);
         final boolean removal = workOrder instanceof WorkOrderBuildRemoval;
 
-        loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored(), removal);
+        super.loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored(), removal);
         workOrder.setCleared(false);
         workOrder.setRequested(false);
 
         //We need to deal with materials
         requestMaterials();
+        if (getProgressPos() != null)
+        {
+            job.getStructure().setLocalPosition(getProgressPos().getFirst());
+        }
     }
 
     /**
@@ -190,6 +209,14 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
 
             final Block worldBlock = BlockPosUtil.getBlock(world, job.getStructure().getBlockPosition());
+            if (block instanceof BlockFalling )
+            {
+                final IBlockState downState = BlockPosUtil.getBlockState(world, job.getStructure().getBlockPosition().down());
+                if (!downState.getMaterial().isSolid())
+                {
+                    requestBlockToBuildingIfRequired(buildingWorker, getSolidSubstitution(job.getStructure().getBlockPosition()));
+                }
+            }
 
             if (block != null
                   && block != Blocks.AIR
@@ -232,6 +259,20 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     }
 
     @Override
+    public void registerBlockAsNeeded(final ItemStack stack)
+    {
+        final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
+        if (getOwnBuilding(AbstractBuildingStructureBuilder.class)
+              .getNeededResources()
+              .get(stack.getTranslationKey()
+                     + ":" + stack.getItemDamage()
+                     + "-" + hashCode) == null)
+        {
+            getOwnBuilding(AbstractBuildingStructureBuilder.class).addNeededResource(stack, 1);
+        }
+    }
+
+    @Override
     public int getTotalRequiredAmount(final ItemStack deliveredItemStack)
     {
         if (ItemStackUtils.isEmpty(deliveredItemStack))
@@ -242,7 +283,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         final BuildingBuilderResource resource
                 = getOwnBuilding(AbstractBuildingStructureBuilder.class)
                 .getNeededResources()
-                .get(deliveredItemStack.getUnlocalizedName()
+                .get(deliveredItemStack.getTranslationKey()
                         + ":" + deliveredItemStack.getItemDamage()
                         + "-" + hashCode);
         if (resource != null)
@@ -331,6 +372,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             job.setStructure(null);
             job.setWorkOrder(null);
             resetCurrentStructure();
+            getOwnBuilding(AbstractBuildingStructureBuilder.class).setProgressPos(null, Structure.Stage.CLEAR);
             return true;
         }
         return false;
@@ -377,7 +419,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
         final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
         final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding(AbstractBuildingStructureBuilder.class);
-        final BuildingBuilderResource resource = buildingWorker.getNeededResources().get(stack.getUnlocalizedName() + ":" + stack.getItemDamage() + "-" + hashCode);
+        final BuildingBuilderResource resource = buildingWorker.getNeededResources().get(stack.getTranslationKey() + ":" + stack.getItemDamage() + "-" + hashCode);
 
         if(resource == null)
         {

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -9,6 +10,7 @@ import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
+import com.minecolonies.coremod.entity.ai.util.Structure;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -17,6 +19,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -44,9 +47,39 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     private static final String TAG_RESOURCE_LIST = "resourcesItem";
 
     /**
+     * Tags to store the needed resourced to nbt.
+     */
+    private static final String TAG_PROGRESS_POS = "progressPos";
+
+    /**
+     * Tags to store the needed resourced to nbt.
+     */
+    private static final String TAG_PROGRESS_STAGE = "progressStage";
+
+    /**
+     * Progress amount to mark building dirty.
+     */
+    private static final int COUNT_TO_STORE_POS  = 50;
+
+    /**
+     * Progress position of the builder.
+     */
+    private BlockPos progressPos;
+
+    /**
+     * Progress stage of the builder.
+     */
+    private Structure.Stage progressStage;
+
+    /**
      * Contains all resources needed for a certain build.
      */
     private HashMap<String, BuildingBuilderResource> neededResources = new HashMap<>();
+
+    /**
+     * The progress counter of the builder.
+     */
+    private int progressCounter = 0;
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -74,7 +107,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Integer> toKeep = new HashMap<>(keepX);
-        toKeep.putAll(keepX);
+        toKeep.putAll(super.getRequiredItemsAndAmount());
 
         for (final BuildingBuilderResource stack : neededResources.values())
         {
@@ -107,7 +140,13 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             final ItemStack stack = new ItemStack(neededRes);
             final BuildingBuilderResource resource = new BuildingBuilderResource(stack, ItemStackUtils.getSize(stack));
             final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
-            neededResources.put(stack.getUnlocalizedName() + ":" + stack.getItemDamage() + "-" + hashCode, resource);
+            neededResources.put(stack.getTranslationKey() + ":" + stack.getItemDamage() + "-" + hashCode, resource);
+        }
+
+        if (compound.hasKey(TAG_PROGRESS_POS))
+        {
+            progressPos = BlockPosUtil.readFromNBT(compound, TAG_PROGRESS_POS);
+            progressStage = Structure.Stage.values()[compound.getInteger(TAG_PROGRESS_STAGE)];
         }
     }
 
@@ -125,7 +164,13 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
             neededResTagList.appendTag(neededRes);
         }
+
         compound.setTag(TAG_RESOURCE_LIST, neededResTagList);
+        if (progressPos != null)
+        {
+            BlockPosUtil.writeToNBT(compound, TAG_PROGRESS_POS, progressPos);
+            compound.setInteger(TAG_PROGRESS_STAGE, progressStage.ordinal());
+        }
     }
 
     /**
@@ -261,7 +306,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             return;
         }
         final int hashCode = res.hasTagCompound() ? res.getTagCompound().hashCode() : 0;
-        BuildingBuilderResource resource = this.neededResources.get(res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + hashCode);
+        BuildingBuilderResource resource = this.neededResources.get(res.getTranslationKey() + ":" + res.getItemDamage() + "-" + hashCode);
         if (resource == null)
         {
             resource = new BuildingBuilderResource(res, amount);
@@ -270,7 +315,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         {
             resource.setAmount(resource.getAmount() + amount);
         }
-        this.neededResources.put(res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + hashCode, resource);
+        this.neededResources.put(res.getTranslationKey() + ":" + res.getItemDamage() + "-" + hashCode, resource);
         this.markDirty();
     }
 
@@ -284,7 +329,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     {
         final int hashCode = res.hasTagCompound() ? res.getTagCompound().hashCode() : 0;
         int preAmount = 0;
-        final String name = res.getUnlocalizedName() + ":" + res.getItemDamage() + "-" + hashCode;
+        final String name = res.getTranslationKey() + ":" + res.getItemDamage() + "-" + hashCode;
         if (this.neededResources.containsKey(name))
         {
             preAmount = this.neededResources.get(name).getAmount();
@@ -325,11 +370,45 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     public boolean requiresResourceForBuilding(final ItemStack stack)
     {
         final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
-        return neededResources.containsKey(stack.getUnlocalizedName() + ":" + stack.getItemDamage() + "-" + hashCode);
+        return neededResources.containsKey(stack.getTranslationKey() + ":" + stack.getItemDamage() + "-" + hashCode);
     }
 
     /**
      * Search a workOrder for the worker.
      */
     public abstract void searchWorkOrder();
+
+    /**
+     * Set the progress position of the builder.
+     * @param blockPos the last blockPos.
+     * @param stage the stage to set.
+     */
+    public void setProgressPos(final BlockPos blockPos, final Structure.Stage stage)
+    {
+        this.progressPos = blockPos;
+        this.progressStage = stage;
+        if (this.progressCounter > COUNT_TO_STORE_POS || blockPos == null)
+        {
+            this.markDirty();
+            this.progressCounter = 0;
+        }
+        else
+        {
+            this.progressCounter++;
+        }
+    }
+
+    /**
+     * Getter for the progress position.
+     * @return the current progress and stage.
+     */
+    @Nullable
+    public Tuple<BlockPos, Structure.Stage> getProgress()
+    {
+        if (this.progressPos == null)
+        {
+            return null;
+        }
+        return new Tuple<>(this.progressPos, this.progressStage);
+    }
 }

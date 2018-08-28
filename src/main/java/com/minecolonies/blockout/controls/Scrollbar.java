@@ -187,4 +187,9 @@ public class Scrollbar extends Pane
     {
         return container.getScrollY() * (getHeight() - getBarHeight()) / getContentHeightDiff();
     }
+
+    public int getScrollOffsetX()
+    {
+        return offsetX;
+    }
 }

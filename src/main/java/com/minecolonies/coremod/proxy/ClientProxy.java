@@ -214,6 +214,8 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockCactusStair);
         createCustomModel(ModBlocks.blockCactusSlabHalf);
         createCustomModel(ModBlocks.blockCactusSlabDouble);
+        createCustomModel(ModBlocks.blockHutComposter);
+        createCustomModel(ModBlocks.blockHutLibrary);
 
         createCustomModel(ModBlocks.blockSolidSubstitution);
         createCustomModel(ModBlocks.blockConstructionTape);
@@ -241,6 +243,7 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockBarrel);
         createCustomModel(ModItems.itemCactusDoor);
         createCustomModel(ModItems.compost);
+        createCustomModel(ModItems.resourceScroll);
 
         ModelLoader.setCustomStateMapper(ModBlocks.blockCactusDoor, new StateMap.Builder().ignore(BlockCactusDoor.POWERED).build());
         ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());
@@ -296,13 +299,20 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
+    public void openResourceScrollWindow(final int colonyId, final BlockPos buildingPos)
+    {
+        @Nullable final WindowResourceList window = new WindowResourceList(colonyId, buildingPos);
+        window.open();
+    }
+
+    @Override
     public File getSchematicsFolder()
     {
         if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
             if (ColonyManager.getServerUUID() != null)
             {
-                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID());
+                return new File(Minecraft.getMinecraft().gameDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID());
             }
             else
             {
@@ -318,7 +328,7 @@ public class ClientProxy extends CommonProxy
 
         if (!worldSchematicFolder.exists())
         {
-            return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID);
+            return new File(Minecraft.getMinecraft().gameDir, Constants.MOD_ID);
         }
 
         return worldSchematicFolder.getParentFile();

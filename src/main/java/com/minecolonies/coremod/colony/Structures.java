@@ -57,7 +57,7 @@ public final class Structures
     /**
      * Maximum size for a compressed schematic.
      */
-    private static final int MAX_TOTAL_SIZE = 32_767;
+    //private static final int MAX_TOTAL_SIZE = 32_767;
 
     /**
      * Hashmap of schematic pieces by UUID.
@@ -284,7 +284,7 @@ public final class Structures
      */
     private static boolean isSchematicSizeValid(@NotNull final String structureName)
     {
-        final int maxSize = MAX_TOTAL_SIZE - Integer.SIZE / Byte.SIZE;
+        //final int maxSize = MAX_TOTAL_SIZE - Integer.SIZE / Byte.SIZE;
         final byte[] data = Structure.getStreamAsByteArray(Structure.getStream(structureName));
         final byte[] compressed = Structure.compress(data);
 

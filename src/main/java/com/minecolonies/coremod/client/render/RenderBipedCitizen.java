@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.EnumMap;
 import java.util.Map;
 
+import static com.minecolonies.api.util.constant.Constants.BED_HEIGHT;
+
 /**
  * Renderer for the citizens.
  */
@@ -32,6 +34,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         idToMaleModelMap.put(Model.FARMER, new ModelEntityFarmerMale());
         idToMaleModelMap.put(Model.FISHERMAN, new ModelEntityFishermanMale());
         idToMaleModelMap.put(Model.BAKER, new ModelEntityBakerMale());
+        idToMaleModelMap.put(Model.COMPOSTER, new ModelEntityComposterMale());
 
         idToFemaleModelMap.put(Model.NOBLE, new ModelEntityCitizenFemaleNoble());
         idToFemaleModelMap.put(Model.ARISTOCRAT, new ModelEntityCitizenFemaleAristocrat());
@@ -44,6 +47,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         idToFemaleModelMap.put(Model.ARCHER_GUARD, new ModelBiped());
         idToFemaleModelMap.put(Model.KNIGHT_GUARD, new ModelBiped());
         idToFemaleModelMap.put(Model.BAKER, new ModelEntityBakerFemale());
+        idToFemaleModelMap.put(Model.COMPOSTER, new ModelEntityComposterFemale());
     }
     /**
      * Renders model, see {@link RenderBiped}.
@@ -77,7 +81,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     {
         if (entityLivingBaseIn.isEntityAlive() && entityLivingBaseIn.getCitizenSleepHandler().isAsleep())
         {
-            super.renderLivingAt(entityLivingBaseIn, x + (double)entityLivingBaseIn.getCitizenSleepHandler().getRenderOffsetX(), y, z + (double)entityLivingBaseIn.getCitizenSleepHandler().getRenderOffsetZ());
+            super.renderLivingAt(entityLivingBaseIn, x + (double)entityLivingBaseIn.getCitizenSleepHandler().getRenderOffsetX(), y + BED_HEIGHT, z + (double)entityLivingBaseIn.getCitizenSleepHandler().getRenderOffsetZ());
         }
         else
         {
@@ -128,7 +132,8 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         SHEEP_FARMER("sheepfarmer", 1),
         COW_FARMER("cowfarmer", 1),
         PIG_FARMER("pigfarmer", 1),
-        CHICKEN_FARMER("chickenfarmer", 1);
+        CHICKEN_FARMER("chickenfarmer", 1),
+        COMPOSTER("composter", 1);
         /**
          * String describing the citizen.
          * Used by the renderer.
