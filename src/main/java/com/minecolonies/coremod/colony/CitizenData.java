@@ -399,10 +399,6 @@ public class CitizenData
         {
             return false;
         }
-        if (paused != data.paused)
-        {
-            return false;
-        }
         if (strength != data.strength)
         {
             return false;
