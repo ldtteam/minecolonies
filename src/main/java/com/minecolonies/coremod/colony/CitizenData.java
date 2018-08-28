@@ -98,6 +98,11 @@ public class CitizenData
     private       boolean                      female;
 
     /**
+     * Boolean paused, true = paused, false = working.
+     */
+    private       boolean                      paused;
+
+    /**
      * The id of the citizens texture.
      */
     private       int                          textureId;
@@ -219,6 +224,7 @@ public class CitizenData
     {
         name = compound.getString(TAG_NAME);
         female = compound.getBoolean(TAG_FEMALE);
+        paused = compound.getBoolean(TAG_PAUSED);
         textureId = compound.getInteger(TAG_TEXTURE);
 
         //  Attributes
@@ -393,6 +399,10 @@ public class CitizenData
         {
             return false;
         }
+        if (paused != data.paused)
+        {
+            return false;
+        }
         if (strength != data.strength)
         {
             return false;
@@ -453,6 +463,7 @@ public class CitizenData
 
         //Assign the gender before name
         female = rand.nextBoolean();
+        paused = false;
         name = generateName(rand);
 
         textureId = CompatibilityUtils.getWorld(entity).rand.nextInt(Integer.MAX_VALUE);
@@ -550,6 +561,27 @@ public class CitizenData
     public boolean isFemale()
     {
         return female;
+    }
+
+    /**
+     * Check if the citizen is paused.
+     *
+     * @return true for paused, false for working.
+     */
+    public void setPaused(final boolean p)
+    {
+        this.paused = p;
+        markDirty();
+    }
+
+    /**
+     * Check if the citizen is paused.
+     *
+     * @return true for paused, false for working.
+     */
+    public boolean isPaused()
+    {
+        return paused;
     }
 
     /**
@@ -803,6 +835,7 @@ public class CitizenData
         compound.setInteger(TAG_ID, id);
         compound.setString(TAG_NAME, name);
         compound.setBoolean(TAG_FEMALE, female);
+        compound.setBoolean(TAG_PAUSED, paused);
         compound.setInteger(TAG_TEXTURE, textureId);
 
         //  Attributes
@@ -850,6 +883,8 @@ public class CitizenData
         buf.writeBoolean(female);
 
         buf.writeInt(getCitizenEntity().map(Entity::getEntityId).orElse(-1));
+
+        buf.writeBoolean(paused);
 
         buf.writeBoolean(homeBuilding != null);
         if (homeBuilding != null)

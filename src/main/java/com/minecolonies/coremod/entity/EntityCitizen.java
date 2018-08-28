@@ -167,6 +167,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      * Indicate if the citizen is mourning or not.
      */
     private boolean mourning = false;
+
     /**
      * Citizen constructor.
      *
@@ -575,10 +576,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         if (compound.hasKey(TAG_MOURNING))
         {
             mourning = compound.getBoolean(TAG_MOURNING);
-        }
-        else
-        {
-            mourning = false;
         }
 
         if (compound.hasKey(TAG_HELD_ITEM_SLOT) || compound.hasKey(TAG_OFFHAND_HELD_ITEM_SLOT))
