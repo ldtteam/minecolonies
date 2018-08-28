@@ -3,14 +3,14 @@
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
 
     <label size="100% 11" pos="0 45" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.hiring.description)"/>
-    <list id="unemployed" size="70% 120" pos="60 70" align="TOP_MIDDLE">
-        <view size="70% 30">
-            <label id="citizen" size="60 12" pos="5 4" textalign="MIDDLE_LEFT" color="yellow"/>
-            <button id="done" size="45 15" pos="125 3" label="$(com.minecolonies.coremod.gui.hiring.buttonHire)"/>
-            <button id="fire" size="45 15" pos="125 3" label="$(com.minecolonies.coremod.gui.hiring.buttonFire)"/>
-            <button id="pause" size="65 15" pos="175 3" label=""/>
+    <list id="unemployed" size="100% 120" pos="60 70" align="TOP_MIDDLE">
+        <view size="100% 30">
+            <label id="citizen" size="60 12" pos="0 4" textalign="MIDDLE_LEFT" color="yellow"/>
+            <button id="done" size="45 15" pos="125 2" label="$(com.minecolonies.coremod.gui.hiring.buttonHire)"/>
+            <button id="fire" size="45 15" pos="125 2" label="$(com.minecolonies.coremod.gui.hiring.buttonFire)"/>
+            <button id="pause" size="65 15" pos="175 2" label=""/>
 
-            <label id="attributes" size="140 12" pos="5 16" textalign="MIDDLE_LEFT" color="white" textscale="0.8"/>
+            <label id="attributes" size="100% 12" pos="0 16" textalign="MIDDLE_LEFT" color="white" textscale="0.8"/>
         </view>
     </list>
     <button id="cancel" size="200 20" pos="110 194" label="$(gui.cancel)"/>

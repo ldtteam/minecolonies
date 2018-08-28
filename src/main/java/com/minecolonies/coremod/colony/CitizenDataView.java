@@ -161,6 +161,14 @@ public class CitizenDataView
     }
 
     /**
+     * DEPRECATED
+     */
+    public void setPaused(final boolean p)
+    {
+        this.paused = p;
+    }
+
+    /**
      * Entity level getter.
      *
      * @return the citizens level.
@@ -210,6 +218,15 @@ public class CitizenDataView
     public BlockPos getWorkBuilding()
     {
         return workBuilding;
+    }
+
+    /**
+     * DEPRECATED
+     */
+    @Nullable
+    public void setWorkBuilding(final BlockPos bp)
+    {
+        this.workBuilding = bp;
     }
 
     /**
