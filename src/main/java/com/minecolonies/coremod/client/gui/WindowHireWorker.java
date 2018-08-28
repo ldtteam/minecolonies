@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.gui;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.ColorConstants;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.ButtonHandler;
@@ -47,11 +48,6 @@ public class WindowHireWorker extends Window implements ButtonHandler
     private static final String CITIZEN_LABEL = "citizen";
 
     /**
-     * Id of the id label in the GUI.
-     */
-    private static final String ID_LABEL = "id";
-
-    /**
      * Id of the citizen list in the GUI.
      */
     private static final String CITIZEN_LIST = "unemployed";
@@ -67,11 +63,6 @@ public class WindowHireWorker extends Window implements ButtonHandler
     private static final String BUILDING_NAME_RESOURCE_SUFFIX = ":gui/windowhireworker.xml";
 
     /**
-     * Position of the id label of each citizen in the list.
-     */
-    private static final int CITIZEN_ID_LABEL_POSITION = 4;
-
-    /**
      * Id of the fire button
      */
     private static final String BUTTON_FIRE = "fire";
@@ -85,14 +76,21 @@ public class WindowHireWorker extends Window implements ButtonHandler
      * The view of the current building.
      */
     private final AbstractBuildingWorker.View building;
+
     /**
      * The colony.
      */
     private final ColonyView colony;
+
     /**
      * Contains all the citizens.
      */
     private List<CitizenDataView> citizens = new ArrayList<>();
+
+    /**
+     * Holder of a list element
+     */
+    private final ScrollingList citizenList;
 
     /**
      * Constructor for the window when the player wants to hire a worker for a certain job.
@@ -105,6 +103,8 @@ public class WindowHireWorker extends Window implements ButtonHandler
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.colony = c;
         building = (AbstractBuildingWorker.View) colony.getBuilding(buildingId);
+
+        citizenList = findPaneOfTypeByID(CITIZEN_LIST, ScrollingList.class);
     }
 
     /**
@@ -130,9 +130,6 @@ public class WindowHireWorker extends Window implements ButtonHandler
     public void onOpened()
     {
         updateCitizens();
-        final ScrollingList citizenList = findPaneOfTypeByID(CITIZEN_LIST, ScrollingList.class);
-        citizenList.on();
-        //Creates a dataProvider for the unemployed citizenList.
         citizenList.setDataProvider(new ScrollingList.DataProvider()
         {
             /**
@@ -170,7 +167,7 @@ public class WindowHireWorker extends Window implements ButtonHandler
                     rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).hide();
                     rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).show();
                     isPaused.show();
-                    isPaused.setLabel(LanguageHandler.format(citizen.isPaused() ? COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE : COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE));
+                    isPaused.setLabel(LanguageHandler.format(citizen.isPaused() ? COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE : COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE));
                 }
 
                 @NotNull final String strength = createAttributeText(createColor(primary, secondary, AbstractBuildingWorker.Skill.STRENGTH),
@@ -189,8 +186,6 @@ public class WindowHireWorker extends Window implements ButtonHandler
 
                 rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText(citizen.getName());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabelText(attributes);
-                //Invisible id textContent.
-                rowPane.findPaneOfTypeByID(ID_LABEL, Label.class).setLabelText(Integer.toString(citizen.getId()));
             }
         });
     }
@@ -228,8 +223,17 @@ public class WindowHireWorker extends Window implements ButtonHandler
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        @NotNull final Label idLabel = (Label) button.getParent().getChildren().get(CITIZEN_ID_LABEL_POSITION);
-        final int id = Integer.parseInt(idLabel.getLabelText());
+        if (button.getID().equals(BUTTON_CANCEL))
+        {
+            if (colony.getTownHall() != null)
+            {
+                building.openGui(false);
+            }
+            return;
+        }
+
+        final int row = citizenList.getListElementIndexByPane(button);
+        final int id = citizens.toArray(new CitizenDataView[0])[row].getId();
 
         switch (button.getID())
         {
@@ -243,12 +247,6 @@ public class WindowHireWorker extends Window implements ButtonHandler
                 return;
             case BUTTON_PAUSE:
                 MineColonies.getNetwork().sendToServer(new PauseMessage(this.building, id));
-                return;
-            case BUTTON_CANCEL:
-                if (colony.getTownHall() != null)
-                {
-                    building.openGui(false);
-                }
                 return;
             default:
                 return;

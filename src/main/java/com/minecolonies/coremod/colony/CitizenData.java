@@ -571,6 +571,7 @@ public class CitizenData
     public void setPaused(final boolean p)
     {
         this.paused = p;
+        Log.getLogger().info(paused);
         markDirty();
     }
 
