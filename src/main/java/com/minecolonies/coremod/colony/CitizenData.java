@@ -561,8 +561,6 @@ public class CitizenData
 
     /**
      * Check if the citizen is paused.
-     *
-     * @return true for paused, false for working.
      */
     public void setPaused(final boolean p)
     {
