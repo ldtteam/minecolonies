@@ -14,11 +14,11 @@ import net.minecraft.util.math.Vec3d;
  */
 public class EntityAICitizenWander extends EntityAIBase
 {
-    private final EntityCitizen citizen;
-    private final double        speed;
-    private       double        xPosition;
-    private       double        yPosition;
-    private       double        zPosition;
+    protected final EntityCitizen citizen;
+    protected final double        speed;
+    private         double        xPosition;
+    private         double        yPosition;
+    private         double        zPosition;
 
     /**
      * Instantiates this task.

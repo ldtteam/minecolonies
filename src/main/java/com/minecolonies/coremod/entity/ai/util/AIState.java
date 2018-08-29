@@ -86,6 +86,10 @@ public enum AIState
      * Decide what AIstate to go to next.
      */
     DECIDE,
+    /**
+     * Do not work, can be used for freetime activities.
+     */
+    PAUSED,
     /*
 ###FISHERMAN###
      */

@@ -908,10 +908,6 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"), new TextComponentTranslation("com.minecolonies.coremod.status.rainStop"));
             return DesiredActivity.IDLE;
         }
-        else if (citizenData.isPaused())
-        {
-            return DesiredActivity.IDLE;
-        }
         else
         {
             if (this.getNavigator().getPath() != null && this.getNavigator().getPath().getCurrentPathLength() == 0)

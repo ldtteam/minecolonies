@@ -18,6 +18,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
+import com.minecolonies.coremod.entity.ai.minimal.EntityAIStatePausedHandler;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
@@ -194,7 +195,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
            * Called when the citizen saturation falls too low.
            */
-          new AITarget(this::shouldGetFood, this::searchForFood)
+          new AITarget(this::shouldGetFood, this::searchForFood),
+          /*
+           * Do not work if worker is paused and reset if not paused.
+           */
+          new AITarget(() ->
+          {
+              return getState() == PAUSED && !this.isPaused();
+          }, IDLE),
+          new AITarget(PAUSED, EntityAIStatePausedHandler.doPause(worker, getOwnBuilding())),
+          /*
+           * Start paused with inventory dump
+           */
+          new AITarget(this::isPaused, INVENTORY_FULL)
         );
     }
 
@@ -988,7 +1001,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public AIState afterDump()
     {
-        return IDLE;
+        return isPaused() ? PAUSED : IDLE;
     }
 
     /**
@@ -1372,5 +1385,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           predicate,
           Constants.STACKSIZE,
           new InvWrapper(worker.getInventoryCitizen()));
+    }
+
+    /**
+     * Is worker paused but not walking.
+     * 
+     * @return true if paused
+     */
+    private boolean isPaused()
+    {
+        return worker.getCitizenData().isPaused();
     }
 }

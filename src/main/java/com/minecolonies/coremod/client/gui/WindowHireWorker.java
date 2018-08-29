@@ -234,7 +234,7 @@ public class WindowHireWorker extends Window implements ButtonHandler
         }
 
         final int row = citizenList.getListElementIndexByPane(button);
-        final int id = citizens.toArray(new CitizenDataView[0])[row].getId();
+        final int id = citizens.toArray(new CitizenDataView[citizens.size()])[row].getId();
         @NotNull final CitizenDataView citizen = citizens.get(row); // TODO: NEW BLOCKOUT -> delete this and also all setters under this
 
         switch (button.getID())
