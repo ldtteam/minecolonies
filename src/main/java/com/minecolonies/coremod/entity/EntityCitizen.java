@@ -256,7 +256,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.tasks.addTask(priority, new EntityAIOpenFenceGate(this, true));
         this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, EntityPlayer.class, WATCH_CLOSEST2, 1.0F));
         this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
-        this.tasks.addTask(++priority, new EntityAICitizenWander(this, DEFAULT_SPEED));
+        this.tasks.addTask(++priority, new EntityAICitizenWander(this, DEFAULT_SPEED, 1.0D));
         this.tasks.addTask(++priority, new EntityAIWatchClosest(this, EntityLiving.class, WATCH_CLOSEST));
         this.tasks.addTask(++priority, new EntityAIMournCitizen(this, DEFAULT_SPEED));
 

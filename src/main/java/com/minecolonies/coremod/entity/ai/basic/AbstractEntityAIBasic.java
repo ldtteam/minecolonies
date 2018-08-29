@@ -132,6 +132,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private BlockPos restaurant = null;
 
     /**
+     * Delay for walking.
+     */
+    protected static final int WALK_DELAY = 20;
+
+    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class
@@ -199,11 +204,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
            * Do not work if worker is paused and reset if not paused.
            */
-          new AITarget(() ->
-          {
-              return getState() == PAUSED && !this.isPaused();
-          }, IDLE),
-          new AITarget(PAUSED, EntityAIStatePausedHandler.doPause(worker, getOwnBuilding())),
+          new AITarget(PAUSED, () -> !this.isPaused(), () -> IDLE),
+          new AITarget(PAUSED, this::bePaused),
           /*
            * Start paused with inventory dump
            */
@@ -1395,5 +1397,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private boolean isPaused()
     {
         return worker.getCitizenData().isPaused();
+    }
+
+    /**
+     * Is worker paused but not walking.
+     * 
+     * @return true if paused
+     */
+    private AIState bePaused()
+    {
+        EntityAIStatePausedHandler.doPause(worker, getOwnBuilding());
+        setDelay(WALK_DELAY);
+        return PAUSED;
     }
 }

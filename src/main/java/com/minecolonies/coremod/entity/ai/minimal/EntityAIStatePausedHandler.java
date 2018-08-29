@@ -1,32 +1,30 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.util.AIState;
 
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
-import static com.minecolonies.coremod.entity.ai.util.AIState.PAUSED;
 
 /**
  * Static class for handling AI in paused state
  */
 public final class EntityAIStatePausedHandler
 {
-    private static Random random = new Random();
+    private static Random                 random = new Random();
 
     /**
      * The worker which is paused
      */
-    private static EntityCitizen worker;
+    private static EntityCitizen          worker;
     private static AbstractBuildingWorker building;
 
     /**
      * Wander AI task if worker paused
      */
-    private static EntityAICitizenWander wander;
+    private static EntityAICitizenWander  wander;
+    private static final double           RANDOM_MODIFIER = 1.0D / 30.0D;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -40,30 +38,36 @@ public final class EntityAIStatePausedHandler
 
     /**
      * Class constructor
+     * 
+     * @param w paused worker
+     * @param b his building
      */
-    public static AIState doPause(final EntityCitizen w, final AbstractBuildingWorker b)
+    public static void doPause(final EntityCitizen w, final AbstractBuildingWorker b)
     {
         worker = w;
         building = b;
-        wander = new EntityAICitizenWander(worker, DEFAULT_SPEED);
+        wander = new EntityAICitizenWander(worker, DEFAULT_SPEED, RANDOM_MODIFIER);
 
-        // Pick random activity
+        // Jump out if walking.
+        if (wander.shouldContinueExecuting())
+        {
+            return;
+        }
+
+        // Pick random activity.
         int percent = random.nextInt(100);
-        if(percent < 15)
+        if(percent < 8)
         {
             goCheckOwnWorkerBuilding();
         }
-        else if (percent < 35)
+        else if (percent < 40)
         {
             wanderAround();
         }
         else
         {
-            // Stand and stare
+            // Stand and stare.
         }
-        Log.getLogger().info(percent);
-
-        return PAUSED;
     }
 
     /**
@@ -73,7 +77,7 @@ public final class EntityAIStatePausedHandler
     {
         if (!wander.shouldContinueExecuting())
         {
-            wander = new EntityAICitizenWander(worker, DEFAULT_SPEED);
+            wander = new EntityAICitizenWander(worker, DEFAULT_SPEED, RANDOM_MODIFIER);
             if (wander.shouldExecute())
             {
                 wander.startExecuting();
@@ -88,7 +92,7 @@ public final class EntityAIStatePausedHandler
     {
         if (!wander.shouldContinueExecuting())
         {
-            wander = new EntityAICitizenCheckWorkerBuilding(worker, (random.nextBoolean()) ? DEFAULT_SPEED * 2.0D : DEFAULT_SPEED * 3.0D, building);
+            wander = new EntityAICitizenCheckWorkerBuilding(worker, (random.nextBoolean()) ? DEFAULT_SPEED * 1.5D : DEFAULT_SPEED * 2.2D, building, RANDOM_MODIFIER);
             if (wander.shouldExecute())
             {
                 wander.startExecuting();
@@ -100,10 +104,10 @@ public final class EntityAIStatePausedHandler
     {
         private static AbstractBuildingWorker building;
 
-        private EntityAICitizenCheckWorkerBuilding(final EntityCitizen citizen, final double speed, final AbstractBuildingWorker b)
+        private EntityAICitizenCheckWorkerBuilding(final EntityCitizen citizen, final double speed, final AbstractBuildingWorker building, final double randomModifier)
         {
-            super(citizen, speed);
-            building = b;
+            super(citizen, speed, randomModifier);
+            EntityAICitizenCheckWorkerBuilding.building = building;
         }
         
         @Override
