@@ -113,6 +113,23 @@ public class WindowCitizen extends AbstractWindowSkeleton
         updateHappiness();
         
         resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
+        updateRequests();
+
+        //Tool of class:§rwith minimal level:§rWood or Gold§r and§rwith maximal level:§rWood or Gold§r
+
+        if (citizen.isFemale())
+        {
+            findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(FEMALE_SOURCE);
+        }
+
+        setPage("");
+    }
+
+    /**
+     * Updates request list.
+     */
+    private void updateRequests()
+    {
         resourceList.setDataProvider(new ScrollingList.DataProvider()
         {
 
@@ -137,7 +154,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
                 final Box wrapperBox = rowPane.findPaneOfTypeByID(WINDOW_ID_REQUEST_BOX, Box.class);
                 wrapperBox.setPosition(wrapperBox.getX() + 10*wrapper.getDepth(), wrapperBox.getY());
                 wrapperBox.setSize(wrapperBox.getParent().getWidth() - 10*wrapper.getDepth(), wrapperBox.getHeight());
-
+                rowPane.findPaneByID(REQUEST_FULLFIL).enable();
                 final IRequest<?> request = wrapper.getRequest();
                 final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
                 final List<ItemStack> displayStacks = request.getDisplayStacks();
@@ -158,7 +175,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
                 final ColonyView view = ColonyManager.getColonyView(citizen.getColonyId());
                 rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
-                        .setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
+                  .setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
                 rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
                   .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
 
@@ -189,15 +206,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
                 }
             }
         });
-
-        //Tool of class:§rwith minimal level:§rWood or Gold§r and§rwith maximal level:§rWood or Gold§r
-
-        if (citizen.isFemale())
-        {
-            findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(FEMALE_SOURCE);
-        }
-
-        setPage("");
     }
 
     /**
@@ -528,6 +536,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
             @NotNull final IRequest<?> request = getOpenRequestTreeOfCitizen().get(row).getRequest();
             MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.CANCELLED, null));
         }
+        updateRequests();
     }
 
     /**
@@ -576,6 +585,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
             MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.OVERRULED, itemStack));
         }
         button.disable();
+        updateRequests();
     }
 
     /**
