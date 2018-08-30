@@ -168,7 +168,7 @@ public final class ModBlocks
 
         for (final EnumDyeColor type : EnumDyeColor.values())
         {
-            cushionBlocks.add(new BlockCushion(BlockCushion.BLOCK_PREFIX + "_" + type.getUnlocalizedName()).registerBlock(registry));
+            cushionBlocks.add(new BlockCushion(BlockCushion.BLOCK_PREFIX + "_" + type.getName()).registerBlock(registry));
         }
 
         for (final BlockPlanks.EnumType type : BlockPlanks.EnumType.values())

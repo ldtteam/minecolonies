@@ -27,8 +27,8 @@ public class ItemCushions extends ItemBlock {
     }
 
     @Override
-    public String getUnlocalizedName(ItemStack stack) {
-        return super.getUnlocalizedName() + "." + EnumDyeColor.byMetadata(stack.getMetadata()).toString();
+    public String getTranslationKey(ItemStack stack) {
+        return super.getTranslationKey(stack) + "." + EnumDyeColor.byMetadata(stack.getMetadata()).toString();
     }
 
     @SideOnly(Side.CLIENT)
