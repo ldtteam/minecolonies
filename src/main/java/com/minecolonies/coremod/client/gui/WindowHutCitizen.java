@@ -19,7 +19,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 /**
  * Window for the home building.
  */
-public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View>
+public class WindowHutCitizen extends AbstractWindowBuilding<BuildingHome.View>
 {
     /**
      * Id of the hire/fire button in the GUI.
@@ -54,7 +54,7 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
      *
      * @param building View of the home building.
      */
-    public WindowHomeBuilding(final BuildingHome.View building)
+    public WindowHutCitizen(final BuildingHome.View building)
     {
         super(building, Constants.MOD_ID + HOME_BUILDING_RESOURCE_SUFFIX);
 

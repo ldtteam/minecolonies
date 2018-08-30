@@ -286,7 +286,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         {
             return;
         }
-        ItemStorage resource = resources.get(res.getUnlocalizedName());
+        ItemStorage resource = resources.get(res.getTranslationKey());
         if (resource == null)
         {
             resource = new ItemStorage(res);
@@ -296,7 +296,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         {
             resource.setAmount(resource.getAmount() + amount);
         }
-        resources.put(res.getUnlocalizedName(), resource);
+        resources.put(res.getTranslationKey(), resource);
     }
 
     /**

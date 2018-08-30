@@ -86,9 +86,9 @@ public abstract class AbstractBlockSlab<B extends AbstractBlockSlab<B>> extends 
      * @return the name.
      */
     @NotNull
-    public String getUnlocalizedName(final int i)
+    public String getTranslationKey(final int i)
     {
-        return getUnlocalizedName();
+        return getTranslationKey();
     }
 
     @NotNull

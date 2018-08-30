@@ -1,0 +1,33 @@
+<window inherit="minecolonies:gui/layouthuts/layouthutpageactionsmin.xml">
+    <layout source="minecolonies:gui/layouthuts/layouthutpageactionsmin.xml"/>    
+
+    <label size="164 11" pos="13 32" textalign="MIDDLE" color="black"
+           label="$(com.minecolonies.coremod.gui.workerHuts.workerAssigned)"/>
+
+    <list id="workers" size="164 30" pos="13 43">
+        <view size="100% 22">
+            <box size="100% 22" linewidth="0">
+                <label id="workerName" size="100% 11" pos="0 0"  textalign="MIDDLE" color="black"/>
+                <label id="workerLevel" size="100% 11" pos="0 11" textalign="MIDDLE" color="black"/>
+            </box>
+        </view>
+    </list>
+
+    <buttonimage id="hire" size="129 17" pos="30 74" textcolor="black"
+                source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                label="$(com.minecolonies.coremod.gui.workerHuts.hire)"/>
+    <buttonimage id="recall" size="129 17" pos="30 92" textcolor="black"
+                source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                label="$(com.minecolonies.coremod.gui.workerHuts.recall)"/>
+
+    <label size="164 11" pos="13 148" textalign="MIDDLE" color="black"
+                label="$(com.minecolonies.coremod.gui.workerHuts.buildPrio)"/>
+    <label id="type" size="164 11" pos="13 160" textalign="MIDDLE" color="black"/>
+
+    <buttonimage id="recipelist" size="129 17" pos="30 174" textcolor="black"
+                source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                label="$(com.minecolonies.coremod.gui.workerHuts.listRecipes)"/>
+    <buttonimage id="crafting" size="129 17" pos="30 192" textcolor="black"
+                source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                label="$(com.minecolonies.coremod.gui.workerHuts.crafting)"/>
+</window>

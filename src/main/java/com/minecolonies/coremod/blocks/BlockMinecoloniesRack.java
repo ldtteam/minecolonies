@@ -85,7 +85,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
     private void initBlock()
     {
         setRegistryName(BLOCK_NAME);
-        setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
+        setTranslationKey(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(VARIANT, RackType.DEFAULT));
         setHardness(BLOCK_HARDNESS);
@@ -121,7 +121,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
     @Override
     public IBlockState getStateFromMeta(final int meta)
     {
-        final EnumFacing enumFacing = EnumFacing.getHorizontal(meta);
+        final EnumFacing enumFacing = EnumFacing.byHorizontalIndex(meta);
         return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 
@@ -265,7 +265,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
     @NotNull
     @Override
     @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getBlockLayer()
+    public BlockRenderLayer getRenderLayer()
     {
         return BlockRenderLayer.SOLID;
     }

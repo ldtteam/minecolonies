@@ -25,7 +25,7 @@ public class ItemCactusDoor extends Item
         super();
         this.block = block;
         setRegistryName(name);
-        super.setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + name);
+        super.setTranslationKey(Constants.MOD_ID.toLowerCase() + "." + name);
         this.setCreativeTab(ModCreativeTabs.MINECOLONIES);
 
     }
@@ -50,8 +50,8 @@ public class ItemCactusDoor extends Item
             if (player.canPlayerEdit(pos, facing, itemstack) && this.block.canPlaceBlockAt(worldIn, pos))
             {
                 EnumFacing enumfacing = EnumFacing.fromAngle((double)player.rotationYaw);
-                final int i = enumfacing.getFrontOffsetX();
-                final int j = enumfacing.getFrontOffsetZ();
+                final int i = enumfacing.getXOffset();
+                final int j = enumfacing.getZOffset();
                 final boolean flag = ((i < 0) && (hitZ < 0.5F) || (i > 0) && (hitZ > 0.5F) || (j < 0) && (hitX > 0.5F) || (j > 0) && (hitX < 0.5F));
                 placeDoor(worldIn, pos, enumfacing, this.block, flag);
                 SoundType soundtype = worldIn.getBlockState(pos).getBlock().getSoundType(worldIn.getBlockState(pos), worldIn, pos, player);

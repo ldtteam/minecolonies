@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Window for the home building.
  */
-public class WindowWareHouseBuilding extends AbstractWindowBuilding<BuildingWareHouse.View>
+public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse.View>
 {
     /**
      * The builders gui file.
@@ -47,7 +47,7 @@ public class WindowWareHouseBuilding extends AbstractWindowBuilding<BuildingWare
      *
      * @param building {@link BuildingWareHouse.View}.
      */
-    public WindowWareHouseBuilding(final BuildingWareHouse.View building)
+    public WindowHutWareHouse(final BuildingWareHouse.View building)
     {
         super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
         registerButton(RESOURCE_ADD, this::transferItems);

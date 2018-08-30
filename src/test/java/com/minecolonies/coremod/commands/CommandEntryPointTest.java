@@ -179,7 +179,6 @@ public class CommandEntryPointTest
         pos = null;
     }
 
-    
     public void GIVEN_no_args__DO_getTabCompletions__EXPECT_colony_colonies_citizen()
     {
 
@@ -193,10 +192,9 @@ public class CommandEntryPointTest
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("colonies", "colony", "citizens", "kill", "check", "whoami", "whereami", "home", "raid-tonight", "raid-now", "rs", "rtp",
-                "backup", "scan");
+                "backup", "scan", "lootgen");
     }
 
-    
     public void GIVEN_empty_args__DO_getTabCompletions__EXPECT_colony_colonies_citizen()
     {
 
@@ -211,7 +209,7 @@ public class CommandEntryPointTest
 
         // EXPECT:
         assertThat(results).containsExactlyInAnyOrder("colonies", "colony", "citizens", "kill", "check", "whoami", "whereami", "home", "raid-tonight", "raid-now", "rs", "rtp",
-                "backup", "scan");
+                "backup", "scan", "lootgen");
     }
 
     
@@ -1232,7 +1230,6 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    
     public void GIVEN_noargs__DO_execute__EXPECT_throwUsage()
     {
 
@@ -1262,7 +1259,7 @@ public class CommandEntryPointTest
         }
         catch (final CommandException e)
         {
-            assertThat(e).hasMessage("/mineColonies <colonies|kill|colony|citizens|rs|rtp|backup|home|raid-tonight|raid-now|check|whoami|whereami|scan>");
+            assertThat(e).hasMessage("/mineColonies <colonies|kill|colony|citizens|rs|rtp|backup|home|raid-tonight|raid-now|check|whoami|whereami|scan|lootGen>");
         }
     }
 

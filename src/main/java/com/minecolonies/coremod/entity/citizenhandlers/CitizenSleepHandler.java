@@ -6,7 +6,6 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -14,8 +13,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.Constants.BED_HEIGHT;
-import static com.minecolonies.api.util.constant.Constants.HALF_BLOCK;
 import static com.minecolonies.coremod.entity.AbstractEntityCitizen.DATA_BED_POS;
 import static com.minecolonies.coremod.entity.AbstractEntityCitizen.DATA_IS_ASLEEP;
 
@@ -206,7 +203,7 @@ public class CitizenSleepHandler
             return 0;
         }
 
-        return SLEEPING_RENDER_OFFSET * (float) enumfacing.getFrontOffsetX();
+        return SLEEPING_RENDER_OFFSET * (float) enumfacing.getXOffset();
     }
 
     /**
@@ -229,6 +226,6 @@ public class CitizenSleepHandler
             return 0;
         }
 
-        return SLEEPING_RENDER_OFFSET * (float) enumfacing.getFrontOffsetZ();
+        return SLEEPING_RENDER_OFFSET * (float) enumfacing.getZOffset();
     }
 }

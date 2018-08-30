@@ -70,6 +70,7 @@ import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECRE
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_NOT_ALLOWED;
 import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_SAME;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_MOURN;
 
 /**
  * The Class used to represent the citizen entities.
@@ -163,6 +164,10 @@ public class EntityCitizen extends AbstractEntityCitizen
     private final CitizenStuckHandler citizenStuckHandler;
 
     /**
+     * Indicate if the citizen is mourning or not.
+     */
+    private boolean mourning = false;
+    /**
      * Citizen constructor.
      *
      * @param world the world the citizen lives in.
@@ -253,6 +258,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
         this.tasks.addTask(++priority, new EntityAICitizenWander(this, DEFAULT_SPEED));
         this.tasks.addTask(++priority, new EntityAIWatchClosest(this, EntityLiving.class, WATCH_CLOSEST));
+        this.tasks.addTask(++priority, new EntityAIMournCitizen(this, DEFAULT_SPEED));
 
         citizenJobHandler.onJobChanged(citizenJobHandler.getColonyJob());
     }
@@ -445,6 +451,11 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenColonyHandler.getColony().getHappinessData().setDeathModifier(penalty,citizenJobHandler.getColonyJob() instanceof AbstractJobGuard); 
             triggerDeathAchievement(damageSource, citizenJobHandler.getColonyJob());
             citizenChatHandler.notifyDeath(damageSource);
+            if (!(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard)
+                && (damageSource != DamageSource.IN_WALL))
+            {
+                citizenColonyHandler.getColony().setNeedToMourn(true, citizenData.getName());
+            }
             citizenColonyHandler.getColony().getCitizenManager().removeCitizen(getCitizenData());
         }
         super.onDeath(damageSource);
@@ -543,6 +554,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         compound.setString(TAG_LAST_JOB, citizenJobHandler.getLastJob());
         compound.setBoolean(TAG_DAY, isDay);
+        compound.setBoolean(TAG_MOURNING, mourning);
     }
 
     @Override
@@ -561,6 +573,14 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         citizenJobHandler.setLastJob(compound.getString(TAG_LAST_JOB));
         isDay = compound.getBoolean(TAG_DAY);
+        if (compound.hasKey(TAG_MOURNING))
+        {
+            mourning = compound.getBoolean(TAG_MOURNING);
+        }
+        else
+        {
+            mourning = false;
+        }
 
         if (compound.hasKey(TAG_HELD_ITEM_SLOT) || compound.hasKey(TAG_OFFHAND_HELD_ITEM_SLOT))
         {
@@ -607,7 +627,14 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
             else
             {
-                citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waitingForWork"));
+                if (isMourning())
+                {
+                    citizenStatusHandler.setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_MOURN));
+                }
+                else
+                {
+                    citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waitingForWork"));
+                }
             }
 
             if (CompatibilityUtils.getWorld(this).isDaytime() && !CompatibilityUtils.getWorld(this).isRaining() && citizenData != null)
@@ -815,7 +842,12 @@ public class EntityCitizen extends AbstractEntityCitizen
     @NotNull
     public DesiredActivity getDesiredActivity()
     {
-        if (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard)
+        if (getCitizenColonyHandler().getColony() != null && (getCitizenColonyHandler().getColony().isMourning() && mourning))
+        {
+            return DesiredActivity.MOURN;
+        }
+
+        if (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard & (getCitizenColonyHandler().getColony() != null && !getCitizenColonyHandler().getColony().isMourning()))
         {
             return DesiredActivity.WORK;
         }
@@ -1054,20 +1086,24 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         return citizenStuckHandler;
     }
-    
+
     /**
-     * function indicates if it is okay or not to eat at this
-     * moment.
-     * @return indicates if it is okay to eat at this moment
+     * Call this to set if the citizen should mourn or not.
+     *
+     * @param mourning indicate if the citizen should mourn
      */
-    public boolean isOkayToEat()
+    public void setMourning(final boolean mourning)
     {
-        boolean value = true;
-        
-        if (citizenJobHandler.getColonyJob() != null && !citizenJobHandler.getColonyJob().isOkayToEat())
-        {
-            value = false;
-        }
-        return value;
+        this.mourning = mourning;
+    }
+
+    /**
+     * Returns a value that indicate if the citizen is in mourning.
+     *
+     * @return indicate if the citizen is mouring
+     */
+    public boolean isMourning()
+    {
+        return mourning;
     }
 }

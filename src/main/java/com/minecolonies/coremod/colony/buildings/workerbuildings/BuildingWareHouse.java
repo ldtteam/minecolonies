@@ -11,7 +11,7 @@ import com.minecolonies.coremod.blocks.huts.BlockHutDeliveryman;
 import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.client.gui.WindowWareHouseBuilding;
+import com.minecolonies.coremod.client.gui.WindowHutWareHouse;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -347,7 +347,7 @@ public class BuildingWareHouse extends AbstractBuilding
         @Override
         public Window getWindow()
         {
-            return new WindowWareHouseBuilding(this);
+            return new WindowHutWareHouse(this);
         }
 
         @Override

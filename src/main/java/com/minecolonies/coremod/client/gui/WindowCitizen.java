@@ -58,7 +58,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
     /**
      * Scrollinglist of the resources.
      */
-    private ScrollingList   resourceList;
+    private       ScrollingList   resourceList;
 
     /**
      * Inventory of the player.
@@ -76,16 +76,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
     private       int             lifeCount  = 0;
 
     /**
-     * Button leading to the previous page.
-     */
-    private Button buttonPrevPage;
-
-    /**
-     * Button leading to the next page.
-     */
-    private Button buttonNextPage;
-
-    /**
      * Constructor to initiate the citizen windows.
      *
      * @param citizen citizen to bind the window to.
@@ -94,8 +84,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
     {
         super(Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX);
         this.citizen = citizen;
-
-        resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
     }
 
     @Override
@@ -117,10 +105,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
     {
         findPaneOfTypeByID(WINDOW_ID_NAME, Label.class).setLabelText(citizen.getName());
 
-        findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class).setEnabled(false);
-        buttonPrevPage = findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class);
-        buttonNextPage = findPaneOfTypeByID(BUTTON_NEXT_PAGE, Button.class);
-
         createHealthBar(citizen, findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class));
         createSaturationBar();
         createHappinessBar(); 
@@ -129,6 +113,23 @@ public class WindowCitizen extends AbstractWindowSkeleton
         updateHappiness();
         
         resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
+        updateRequests();
+
+        //Tool of class:§rwith minimal level:§rWood or Gold§r and§rwith maximal level:§rWood or Gold§r
+
+        if (citizen.isFemale())
+        {
+            findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(FEMALE_SOURCE);
+        }
+
+        setPage("");
+    }
+
+    /**
+     * Updates request list.
+     */
+    private void updateRequests()
+    {
         resourceList.setDataProvider(new ScrollingList.DataProvider()
         {
 
@@ -153,7 +154,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
                 final Box wrapperBox = rowPane.findPaneOfTypeByID(WINDOW_ID_REQUEST_BOX, Box.class);
                 wrapperBox.setPosition(wrapperBox.getX() + 10*wrapper.getDepth(), wrapperBox.getY());
                 wrapperBox.setSize(wrapperBox.getParent().getWidth() - 10*wrapper.getDepth(), wrapperBox.getHeight());
-
+                rowPane.findPaneByID(REQUEST_FULLFIL).enable();
                 final IRequest<?> request = wrapper.getRequest();
                 final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
                 final List<ItemStack> displayStacks = request.getDisplayStacks();
@@ -174,7 +175,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
                 final ColonyView view = ColonyManager.getColonyView(citizen.getColonyId());
                 rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
-                        .setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
+                  .setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
                 rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
                   .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
 
@@ -205,13 +206,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
                 }
             }
         });
-
-        //Tool of class:§rwith minimal level:§rWood or Gold§r and§rwith maximal level:§rWood or Gold§r
-
-        if (citizen.isFemale())
-        {
-            findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(FEMALE_SOURCE);
-        }
     }
 
     /**
@@ -495,10 +489,14 @@ public class WindowCitizen extends AbstractWindowSkeleton
         switch (button.getID())
         {
             case BUTTON_REQUESTS:
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
+                findPaneOfTypeByID(VIEW_HEAD, SwitchView.class).nextView();
+                buttonPrevPage.off();
+                buttonNextPage.off();
+                pageNum.off();
                 break;
             case BUTTON_BACK:
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
+                findPaneOfTypeByID(VIEW_HEAD, SwitchView.class).previousView();
+                setPage("");
                 break;
             case INVENTORY_BUTTON_ID:
                 MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(citizen.getName(), citizen.getEntityId()));
@@ -512,17 +510,8 @@ public class WindowCitizen extends AbstractWindowSkeleton
             case REQUEST_FULLFIL:
                 fulfill(button);
                 break;
-            case BUTTON_NEXT_PAGE:
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(HAPPINESS_MODIFIER_PANE);
-                buttonPrevPage.setEnabled(true);
-                buttonNextPage.setEnabled(false);
-                break;
-            case BUTTON_PREV_PAGE:
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
-                buttonPrevPage.setEnabled(false);
-                buttonNextPage.setEnabled(true);
-                break;
             default:
+                super.onButtonClicked(button);
                 break;
         }
     }
@@ -547,6 +536,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
             @NotNull final IRequest<?> request = getOpenRequestTreeOfCitizen().get(row).getRequest();
             MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.CANCELLED, null));
         }
+        updateRequests();
     }
 
     /**
@@ -595,6 +585,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
             MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.OVERRULED, itemStack));
         }
         button.disable();
+        updateRequests();
     }
 
     /**

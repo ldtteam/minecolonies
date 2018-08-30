@@ -1,0 +1,39 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="374 243" pause="false" lightbox="false"
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+
+    <switch id="switchpageCitizens" size="100% 100%">
+        <view>
+            <box id="citizenInfoBox" size="148 148" pos="25 63" linewidth="0" visible="false">
+                <label id="hiddenCitizenId" visible="false"/>
+                <label id="job" size="100% 11" color="black" pos="0 5" textalign="MIDDLE"/>
+                <view id="xpBar" size="100% 11" pos="12 10"/>
+                <label id="xpLabel" size="100% 11" color="black" pos="128 18"/> 
+                <view id="happinessBar" size="100% 11" pos="12 20"/> 
+                <label id="happinessLabel" size="100% 11" color="black" pos="128 28"/> 
+                
+                <image id="deco2" size="73 16" source="minecolonies:textures/gui/citizen/colonist_decor_down.png" pos="36 40"/>
+                <label id="title" size="100% 11" pos="0 48" color="black" textalign="MIDDLE"
+                    label="§l$(com.minecolonies.coremod.gui.citizen.skills)"/>
+                <group size="80 55" pos="41 58">
+                    <label id="strength" size="100% 11" color="black"/>
+                    <label id="endurance" size="100% 11" color="black"/>
+                    <label id="charisma" size="100% 11" color="black"/>
+                    <label id="intelligence" size="100% 11" color="black"/>
+                    <label id="dexterity" size="100% 11" color="black"/>
+                </group>
+                <image id="deco3" size="73 16" source="minecolonies:textures/gui/citizen/colonist_decor_up.png" pos="36 112"/>
+                <buttonimage label="$(com.minecolonies.coremod.gui.townHall.recallOne)" id="recallone" pos="30 132" size="86 17"
+                            source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+            </box>
+
+            <label size="148 11" pos="201 28" textalign="MIDDLE" color="black"
+                label="§n§4$(com.minecolonies.coremod.gui.townHall.citizens):"/>
+            <list id="citizenList" size="148 166" pos="201 50">
+                <view size="100% 17">
+                    <buttonimage id="name" pos="9 0" size="129 17" textcolor="black"
+                                source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"/>
+                </view>
+            </list>
+        </view>
+    </switch>
+</window>
