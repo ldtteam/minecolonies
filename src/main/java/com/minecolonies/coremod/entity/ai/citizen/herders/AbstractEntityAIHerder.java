@@ -132,7 +132,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
 
-        final int numOfBreedableAnimals = (int) animals.stream().filter(animal -> !animal.isChild()).count();
+        final int numOfBreedableAnimals = (int) animals.stream().filter(animal -> animal.getGrowingAge() == 0).count();
 
         final boolean hasBreedingItem =
           InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
