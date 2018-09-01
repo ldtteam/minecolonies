@@ -21,6 +21,7 @@ import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
@@ -506,8 +508,12 @@ public final class ColonyView implements IColony
         this.lastContactInHours = buf.readInt();
         this.manualHousing = buf.readBoolean();
 
-        this.requestManager = new StandardRequestManager(this);
-        this.requestManager.deserializeNBT(ByteBufUtils.readTag(buf));
+        final NBTTagCompound compound = ByteBufUtils.readTag(buf);
+        if (new Random().nextInt(TICKS_SECOND) == 0)
+        {
+            this.requestManager = new StandardRequestManager(this);
+            this.requestManager.deserializeNBT(compound);
+        }
 
         final int barbSpawnListSize = buf.readInt();
         for (int i = 0; i < barbSpawnListSize; i++)
