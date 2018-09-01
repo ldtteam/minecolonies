@@ -19,7 +19,7 @@ public class EntityAICitizenWander extends EntityAIBase
     private         double        xPosition;
     private         double        yPosition;
     private         double        zPosition;
-    private         double        randomModifier;
+    private   final double        randomModifier;
 
     /**
      * Instantiates this task.

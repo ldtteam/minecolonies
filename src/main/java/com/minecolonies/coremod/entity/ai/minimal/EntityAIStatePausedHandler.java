@@ -42,6 +42,7 @@ public final class EntityAIStatePausedHandler
      * @param w paused worker
      * @param b his building
      */
+    @SuppressWarnings({"PMD.AvoidLiteralsInIfCondition","PMD.EmptyIfStmt"})
     public static void doPause(final EntityCitizen w, final AbstractBuildingWorker b)
     {
         worker = w;
@@ -54,8 +55,8 @@ public final class EntityAIStatePausedHandler
             return;
         }
 
-        // Pick random activity.
-        int percent = random.nextInt(100);
+        // Pick random activity. TODO: add also random near building picker
+        final int percent = random.nextInt(100);
         if(percent < 8)
         {
             goCheckOwnWorkerBuilding();
@@ -71,17 +72,14 @@ public final class EntityAIStatePausedHandler
     }
 
     /**
-     * I should look at the work of others. TODO: add also random near building picker
+     * I should look at the work of others.
      */
     private static void wanderAround()
     {
-        if (!wander.shouldContinueExecuting())
+        wander = new EntityAICitizenWander(worker, DEFAULT_SPEED, RANDOM_MODIFIER);
+        if (wander.shouldExecute())
         {
-            wander = new EntityAICitizenWander(worker, DEFAULT_SPEED, RANDOM_MODIFIER);
-            if (wander.shouldExecute())
-            {
-                wander.startExecuting();
-            }
+            wander.startExecuting();
         }
     }
 
@@ -90,30 +88,10 @@ public final class EntityAIStatePausedHandler
      */
     private static void goCheckOwnWorkerBuilding()
     {
-        if (!wander.shouldContinueExecuting())
+        wander = new EntityAICitizenCheckWorkerBuilding(worker, (random.nextBoolean()) ? DEFAULT_SPEED * 1.5D : DEFAULT_SPEED * 2.2D, building, RANDOM_MODIFIER);
+        if (wander.shouldExecute())
         {
-            wander = new EntityAICitizenCheckWorkerBuilding(worker, (random.nextBoolean()) ? DEFAULT_SPEED * 1.5D : DEFAULT_SPEED * 2.2D, building, RANDOM_MODIFIER);
-            if (wander.shouldExecute())
-            {
-                wander.startExecuting();
-            }
-        }
-    }
-
-    private static class EntityAICitizenCheckWorkerBuilding extends EntityAICitizenWander
-    {
-        private static AbstractBuildingWorker building;
-
-        private EntityAICitizenCheckWorkerBuilding(final EntityCitizen citizen, final double speed, final AbstractBuildingWorker building, final double randomModifier)
-        {
-            super(citizen, speed, randomModifier);
-            EntityAICitizenCheckWorkerBuilding.building = building;
-        }
-        
-        @Override
-        public void startExecuting()
-        {
-            super.citizen.getNavigator().tryMoveToBlockPos(building.getLocation(), super.speed);
+            wander.startExecuting();
         }
     }
 }
