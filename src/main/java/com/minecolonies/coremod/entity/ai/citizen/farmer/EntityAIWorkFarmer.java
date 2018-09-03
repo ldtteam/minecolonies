@@ -1,11 +1,14 @@
 package com.minecolonies.coremod.entity.ai.citizen.farmer;
 
+import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType; 
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.huts.BlockHutField;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
@@ -14,6 +17,8 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.items.ModItems;
+import com.minecolonies.coremod.network.messages.CompostParticleMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
@@ -22,6 +27,7 @@ import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
@@ -29,13 +35,16 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.BLOCK_BREAK_SOUND_RANGE;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -151,6 +160,25 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             searchAndAddFields();
         }
 
+        final int amountOfCompostInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), this::isCompost);
+        final int amountOfCompostInInv = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), this::isCompost);
+
+        if (amountOfCompostInBuilding + amountOfCompostInInv <= 0)
+        {
+            if (!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(StackList.class)))
+            {
+                final List<ItemStack> compostAbleItems = new ArrayList<>();
+                compostAbleItems.add(new ItemStack(ModItems.compost));
+                compostAbleItems.add(new ItemStack(Items.DYE, 1, 15));
+                worker.getCitizenData().createRequestAsync(new StackList(compostAbleItems));
+            }
+        }
+        else if (amountOfCompostInInv <= 0 && amountOfCompostInBuilding > 0)
+        {
+            needsCurrently = this::isCompost;
+            return GATHERING_REQUIRED_MATERIALS;
+        }
+
         if (building.hasNoFields())
         {
             chatSpamFilter.talkWithoutSpam("entity.farmer.noFreeFields");
@@ -188,6 +216,25 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             getWorkBuilding().setCurrentField(null);
         }
         return PREPARING;
+    }
+
+    /**
+     * Check if itemStack can be used as compost.
+     * @param itemStack the stack to check.
+     * @return true if so.
+     */
+    private boolean isCompost(final ItemStack itemStack)
+    {
+        if (itemStack.getItem() == ModItems.compost)
+        {
+            return true;
+        }
+        if (itemStack.getItem() == Items.DYE)
+        {
+            final EnumDyeColor enumdyecolor = EnumDyeColor.byDyeDamage(itemStack.getMetadata());
+            return enumdyecolor == EnumDyeColor.WHITE;
+        }
+        return false;
     }
 
     /**
@@ -545,21 +592,53 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean shouldHarvest(@NotNull final BlockPos position)
     {
-        final IBlockState state = world.getBlockState(position.up());
-        final Block block = state.getBlock();
+        IBlockState state = world.getBlockState(position.up());
+        Block block = state.getBlock();
 
         if (block == Blocks.PUMPKIN || block == Blocks.MELON_BLOCK)
         {
             return true;
         }
 
-        if (block instanceof IGrowable && block instanceof BlockCrops && !(block instanceof BlockStem))
+        if (isCrop(block))
         {
-            @NotNull final BlockCrops crop = (BlockCrops) block;
+            @NotNull BlockCrops crop = (BlockCrops) block;
+            if (crop.isMaxAge(state))
+            {
+                return true;
+            }
+            final int amountOfCompostInInv = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), this::isCompost);
+            if (amountOfCompostInInv == 0)
+            {
+                return false;
+            }
+
+            if (InventoryUtils.shrinkItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), this::isCompost))
+            {
+                MineColonies.getNetwork().sendToAllAround(new CompostParticleMessage(position.up()),
+                  new NetworkRegistry.TargetPoint(world.provider.getDimension(), position.getX(), position.getY(), position.getZ(), BLOCK_BREAK_SOUND_RANGE));
+                crop.grow(world, position.up(), state);
+                state = world.getBlockState(position.up());
+                block = state.getBlock();
+                if (isCrop(block))
+                {
+                    crop = (BlockCrops) block;
+                }
+            }
             return crop.isMaxAge(state);
         }
 
         return false;
+    }
+
+    /**
+     * Check if a block is a crop.
+     * @param block the block.
+     * @return true if so.
+     */
+    public boolean isCrop(final Block block)
+    {
+        return block instanceof IGrowable && block instanceof BlockCrops;
     }
 
     /**
