@@ -198,7 +198,15 @@ public final class ColonyView implements IColony
         buf.writeBoolean(colony.isManualHousing());
         //  Citizens are sent as a separate packet
 
-        ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
+        if (colony.getRequestManager() != null && colony.getRequestManager().isDirty())
+        {
+            buf.writeBoolean(true);
+            ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
+        }
+        else
+        {
+            buf.writeBoolean(false);
+        }
 
         buf.writeInt(colony.getBarbManager().getLastSpawnPoints().size());
         for (final BlockPos block : colony.getBarbManager().getLastSpawnPoints())
@@ -508,9 +516,9 @@ public final class ColonyView implements IColony
         this.lastContactInHours = buf.readInt();
         this.manualHousing = buf.readBoolean();
 
-        final NBTTagCompound compound = ByteBufUtils.readTag(buf);
-        if (new Random().nextInt(TICKS_SECOND) == 0)
+        if (buf.readBoolean())
         {
+            final NBTTagCompound compound = ByteBufUtils.readTag(buf);
             this.requestManager = new StandardRequestManager(this);
             this.requestManager.deserializeNBT(compound);
         }
