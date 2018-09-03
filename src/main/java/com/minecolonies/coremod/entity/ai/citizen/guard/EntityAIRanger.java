@@ -145,6 +145,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
 
         if (target == null || target.isDead)
         {
+            incrementActionsDone();
             worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
             target = null;
             return DECIDE;

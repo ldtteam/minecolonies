@@ -142,6 +142,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
         if (target == null || target.isDead)
         {
+            incrementActionsDone();
             worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
             return DECIDE;
         }
