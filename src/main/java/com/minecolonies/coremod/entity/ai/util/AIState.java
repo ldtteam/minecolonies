@@ -395,6 +395,11 @@ public enum AIState
      */
     COMPOSTER_HARVEST,
 
+    /**
+     * Gather materials from the building
+     */
+    GET_MATERIALS,
+
     /*
 ### Student ###
      */
