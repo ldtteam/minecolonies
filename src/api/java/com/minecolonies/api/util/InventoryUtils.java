@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -177,6 +178,26 @@ public class InventoryUtils
         return -1;
         //TODO: Later harden contract to remove compare on slot := -1
         //throw new IllegalStateException("Item "+targetItem.getTranslationKey() + " not found in ItemHandler!");
+    }
+
+    /**
+     * Shrinks a specific stack in an item handler.
+     * @param itemHandler the handler..
+     * @param itemStackSelectionPredicate the predicate..
+     * @return true if successful.
+     */
+    public static boolean shrinkItemCountInItemHandler(final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    {
+        final Predicate<ItemStack> predicate = ItemStackUtils.NOT_EMPTY_PREDICATE.and(itemStackSelectionPredicate);
+        for (int slot = 0; slot < itemHandler.getSlots(); slot++)
+        {
+            if (predicate.test(itemHandler.getStackInSlot(slot)))
+            {
+                itemHandler.getStackInSlot(slot).shrink(1);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

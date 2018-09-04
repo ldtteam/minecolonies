@@ -17,7 +17,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +24,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_GATHERING;
+import static com.minecolonies.api.util.constant.CitizenConstants.MIN_OPEN_SLOTS;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -80,19 +79,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     private static final int SPEED_BUFF_2 = 4;
 
     /**
-     * The standard delay after each terminated action.
-     */
-    private static final int STANDARD_DELAY = 5;
-
-    /**
      * After how many actions should the builder dump his inventory.
      */
     private static final int ACTIONS_UNTIL_DUMP = 1024;
-
-    /**
-     * Min slots the builder should never fill.
-     */
-    private static final long MIN_OPEN_SLOTS = 3;
 
     /**
      * Min distance from placing block.
@@ -115,16 +104,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     private int pickUpCount = 0;
 
     /**
-     * The currently needed item to pickUp.
-     */
-    private Predicate<ItemStack> needsCurrently;
-
-    /**
-     * The position to walk to at the moment to gather something.
-     */
-    private BlockPos walkTo;
-
-    /**
      * Initialize the builder and add all his tasks.
      *
      * @param job the job he has.
@@ -136,12 +115,17 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
           new AITarget(IDLE, START_WORKING),
           new AITarget(this::checkIfExecute, this::getState),
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PICK_UP, this::pickUpMaterial),
-          new AITarget(GATHERING_REQUIRED_MATERIALS, this::getNeededItem)
+          new AITarget(PICK_UP, this::pickUpMaterial)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
                                   + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
         worker.setCanPickUpLoot(true);
+    }
+
+    @Override
+    public AIState getStateAfterPickUp()
+    {
+        return PICK_UP;
     }
 
     /**
@@ -161,60 +145,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         needsCurrently = neededItemsList.get(pickUpCount);
         pickUpCount++;
         return GATHERING_REQUIRED_MATERIALS;
-    }
-
-    /**
-     * Retrieve burnable material from the building to get to start smelting.
-     * For this go to the building if no position has been set.
-     * Then check for the chest with the required material and set the position and return.
-     *
-     * If the position has been set navigate to it.
-     * On arrival transfer to inventory and return to StartWorking.
-     *
-     * @return the next state to transfer to.
-     */
-    private AIState getNeededItem()
-    {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_GATHERING));
-        setDelay(STANDARD_DELAY);
-
-        if (walkTo == null && walkToBuilding())
-        {
-            return getState();
-        }
-
-        if (needsCurrently == null || !InventoryUtils.hasItemInProvider(getOwnBuilding(), needsCurrently))
-        {
-            return PICK_UP;
-        }
-        else
-        {
-            if (walkTo == null)
-            {
-                final BlockPos pos = getOwnBuilding().getTileEntity().getPositionOfChestWithItemStack(needsCurrently);
-                if (pos == null)
-                {
-                    return PICK_UP;
-                }
-                walkTo = pos;
-            }
-
-            if (walkToBlock(walkTo))
-            {
-                setDelay(2);
-                return getState();
-            }
-
-            final boolean transferred = tryTransferFromPosToWorker(walkTo, needsCurrently);
-            if (!transferred)
-            {
-                walkTo = null;
-                return PICK_UP;
-            }
-            walkTo = null;
-        }
-
-        return PICK_UP;
     }
 
     @Override
