@@ -43,6 +43,7 @@ public class CompostParticleMessage extends AbstractMessage<CompostParticleMessa
      */
     public CompostParticleMessage(final BlockPos pos)
     {
+        super();
         this.pos = pos;
     }
 
