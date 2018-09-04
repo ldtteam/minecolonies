@@ -829,7 +829,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
          if (colony != null)
          {
              final List<WorkOrderBuildMiner> workOrders = colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildMiner.class);
-             if (workOrders.size() > 5)
+             if (workOrders.size() > 2)
              {
                  for (WorkOrderBuildMiner order : workOrders)
                  {

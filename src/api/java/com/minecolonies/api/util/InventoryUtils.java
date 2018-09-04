@@ -188,9 +188,10 @@ public class InventoryUtils
      */
     public static boolean shrinkItemCountInItemHandler(final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
+        final Predicate<ItemStack> predicate = ItemStackUtils.NOT_EMPTY_PREDICATE.and(itemStackSelectionPredicate);
         for (int slot = 0; slot < itemHandler.getSlots(); slot++)
         {
-            if (itemStackSelectionPredicate.test(itemHandler.getStackInSlot(slot)))
+            if (predicate.test(itemHandler.getStackInSlot(slot)))
             {
                 itemHandler.getStackInSlot(slot).shrink(1);
                 return true;
