@@ -4,9 +4,9 @@ import com.minecolonies.api.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
@@ -62,7 +62,7 @@ public class CompostParticleMessage extends AbstractMessage<CompostParticleMessa
     @Override
     protected void messageOnClientThread(final CompostParticleMessage message, final MessageContext ctx)
     {
-        final World world = ctx.getClientHandler().world;
+        final WorldClient world = ctx.getClientHandler().world;
         final int amount = random.nextInt(15) + 1;
         final BlockPos pos = message.pos;
         final IBlockState iblockstate = world.getBlockState(pos);
