@@ -198,7 +198,7 @@ public final class ColonyView implements IColony
         buf.writeBoolean(colony.isManualHousing());
         //  Citizens are sent as a separate packet
 
-        if (colony.getRequestManager() != null && colony.getRequestManager().isDirty())
+        if (colony.getRequestManager() != null && (colony.getRequestManager().isDirty() || isNewSubScription))
         {
             buf.writeBoolean(true);
             ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
