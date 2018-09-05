@@ -871,7 +871,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         {
             return blockToMine;
         }
-        final Vec2i parentPos = buildingMiner.getCurrentLevel().getRandomNode(null).getParent();
+        final Vec2i parentPos = buildingMiner.getActiveNode().getParent();
         if (parentPos != null && buildingMiner.getCurrentLevel().getNode(parentPos) != null
               && buildingMiner.getCurrentLevel().getNode(parentPos).getStyle() == Node.NodeType.SHAFT)
         {
