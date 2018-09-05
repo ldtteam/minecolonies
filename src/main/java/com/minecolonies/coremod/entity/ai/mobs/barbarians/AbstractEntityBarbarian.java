@@ -2,19 +2,20 @@ package com.minecolonies.coremod.entity.ai.mobs.barbarians;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianSpawnUtils;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
+import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.items.ItemChiefSword;
 import com.minecolonies.coremod.sounds.BarbarianSounds;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -22,9 +23,14 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
 import java.util.Random;
+
+import static com.minecolonies.api.util.constant.BarbarianConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Abstract for all Barbarian entities.
@@ -32,43 +38,14 @@ import java.util.Random;
 public abstract class AbstractEntityBarbarian extends EntityMob
 {
     /**
-     * String to store the existing time to NBT.
+     * The navigator field of the barb.
      */
-    private static final String TAG_TIME = "time";
+    private static Field navigatorField;
 
     /**
-     * The amount of EXP to drop on entity death.
+     * The New PathNavigate navigator.
      */
-    private static final int BARBARIAN_EXP_DROP = 1;
-
-    private static final int BARBARIAN_HORDE_DIFFICULTY_FIVE = 5;
-
-    /**
-     * Values used to choose whether or not to play sound
-     */
-    private static final int OUT_OF_ONE_HUNDRED = 100;
-
-    private static final int ONE = 1;
-
-    /**
-     * Values used for sword effect.
-     */
-    private static final Potion SPEED_EFFECT                = Potion.getPotionById(1);
-    private static final int    TIME_TO_COUNTDOWN           = 240;
-    private static final int    COUNTDOWN_SECOND_MULTIPLIER = 4;
-    private static final int    SPEED_EFFECT_DISTANCE       = 7;
-    private static final int    SPEED_EFFECT_DURATION       = 240;
-    private static final int    SPEED_EFFECT_MULTIPLIER     = 2;
-
-    /**
-     * Amount of ticks to despawn the barbarian.
-     */
-    private static final int TICKS_TO_DESPAWN = Constants.TICKS_SECOND * Constants.SECONDS_A_MINUTE * 5;
-
-    /**
-     * Randomly execute it every this ticks.
-     */
-    private static final int EVERY_X_TICKS = 20;
+    private PathNavigate newNavigator;
 
     /**
      * Sets the barbarians target colony on spawn Thus it never changes.
@@ -79,18 +56,31 @@ public abstract class AbstractEntityBarbarian extends EntityMob
      * Random object.
      */
     private final Random random = new Random();
+
     /**
      * Current count of ticks.
      */
     private int currentCount = 0;
+
     /**
      * The world time when the barbarian spawns.
      */
     private long worldTimeAtSpawn = 0;
+
     /**
      * The current tick since creation.
      */
     private int currentTick = 1;
+
+    /**
+     * Amount of time the barb got stuck.
+     */
+    private int stuckCounter = 0;
+
+    /**
+     * Amount of time the barb got stuck.
+     */
+    private int ladderCounter = 0;
 
     /**
      * Constructor method for Abstract Barbarians.
@@ -235,6 +225,42 @@ public abstract class AbstractEntityBarbarian extends EntityMob
         super.onLivingUpdate();
     }
 
+    /**
+     * Get the stack counter.
+     * @return the amount it got stuck already.
+     */
+    public int getStuckCounter()
+    {
+        return stuckCounter;
+    }
+
+    /**
+     * Set the stack counter.
+     * @param stuckCounter the amount.
+     */
+    public void setStuckCounter(final int stuckCounter)
+    {
+        this.stuckCounter = stuckCounter;
+    }
+
+    /**
+     * Get the ladder counter.
+     * @return the amount it got stuck and placed a ladder already.
+     */
+    public int getLadderCounter()
+    {
+        return ladderCounter;
+    }
+
+    /**
+     * Set the ladder counter.
+     * @param ladderCounter the amount.
+     */
+    public void setLadderCounter(final int ladderCounter)
+    {
+        this.ladderCounter = ladderCounter;
+    }
+
     @Override
     protected SoundEvent getHurtSound(final DamageSource damageSourceIn)
     {
@@ -251,6 +277,8 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     public NBTTagCompound writeToNBT(final NBTTagCompound compound)
     {
         compound.setLong(TAG_TIME, worldTimeAtSpawn);
+        compound.setInteger(TAG_STUCK_COUNTER, stuckCounter);
+        compound.setInteger(TAG_LADDER_COUNTER, ladderCounter);
         return super.writeToNBT(compound);
     }
 
@@ -258,6 +286,9 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     public void readFromNBT(final NBTTagCompound compound)
     {
         worldTimeAtSpawn = compound.getLong(TAG_TIME);
+        stuckCounter = compound.getInteger(TAG_STUCK_COUNTER);
+        ladderCounter = compound.getInteger(TAG_LADDER_COUNTER);
+
         super.readFromNBT(compound);
     }
 
@@ -268,6 +299,55 @@ public abstract class AbstractEntityBarbarian extends EntityMob
         if (!world.isRemote && getColony() != null)
         {
             getColony().getBarbManager().unregisterBarbarian(this, (WorldServer) world);
+        }
+    }
+
+    @NotNull
+    @Override
+    public PathNavigate getNavigator()
+    {
+        if (this.newNavigator == null)
+        {
+            this.newNavigator = new PathNavigate(this, world);
+            updateNavigatorField();
+            this.newNavigator.setCanSwim(true);
+            this.newNavigator.setEnterDoors(false);
+        }
+        return newNavigator;
+    }
+
+    /**
+     * Method used to update the navigator field.
+     * Gets the minecraft path navigate through reflection.
+     */
+    private synchronized void updateNavigatorField()
+    {
+        if (navigatorField == null)
+        {
+            final Field[] fields = EntityLiving.class.getDeclaredFields();
+            for (@NotNull final Field field : fields)
+            {
+                if (field.getType().equals(net.minecraft.pathfinding.PathNavigate.class))
+                {
+                    field.setAccessible(true);
+                    navigatorField = field;
+                    break;
+                }
+            }
+        }
+
+        if (navigatorField == null)
+        {
+            throw new IllegalStateException("Navigator field should not be null, contact developers.");
+        }
+
+        try
+        {
+            navigatorField.set(this, this.newNavigator);
+        }
+        catch (final IllegalAccessException e)
+        {
+            Log.getLogger().error("Navigator error", e);
         }
     }
 
