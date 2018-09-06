@@ -5,8 +5,10 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.BlockLadder;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
@@ -146,7 +148,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
             proxy = new GeneralEntityWalkToProxy(entity);
         }
 
-        if (new AxisAlignedBB(entity.getPosition()).expand(1, 1, 1)
+        if (new AxisAlignedBB(entity.getPosition()).expand(1, 2, 1)
               .intersects(new AxisAlignedBB(lastPos)))
         {
             stuckTime++;
@@ -161,6 +163,12 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
             entity.getNavigator().clearPath();
             stuckTime = 0;
             entity.setStuckCounter(entity.getStuckCounter() + 1);
+            final BlockPos front = entity.getPosition().down().offset(entity.getHorizontalFacing());
+
+            if (!world.getBlockState(front).getMaterial().isSolid())
+            {
+                world.setBlockState(front, Blocks.COBBLESTONE.getDefaultState());
+            }
 
             if (entity.getStuckCounter() > 1)
             {
@@ -169,21 +177,34 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
                 entity.setStuckCounter(0);
                 entity.setLadderCounter(entity.getLadderCounter() + 1);
 
-                if (entity.getLadderCounter() <= LADDERS_TO_PLACE)
+                final IBlockState ladderHere = world.getBlockState(entity.getPosition());
+                final IBlockState ladderUp = world.getBlockState(entity.getPosition().up());
+                if (entity.getLadderCounter() <= LADDERS_TO_PLACE || random.nextBoolean())
                 {
-                    for (final EnumFacing dir : directions)
+                    if (ladderHere.getBlock() == Blocks.LADDER && ladderUp.getBlock() != Blocks.LADDER)
                     {
-                        if (world.getBlockState(entity.getPosition().offset(dir)).getMaterial().isSolid())
+                        world.setBlockState(entity.getPosition().up(), ladderHere);
+                    }
+                    else if(ladderUp.getBlock() == Blocks.LADDER && ladderHere.getBlock() != Blocks.LADDER)
+                    {
+                        world.setBlockState(entity.getPosition(), ladderUp);
+                    }
+                    else if (ladderUp.getBlock() != Blocks.LADDER && ladderHere.getBlock() != Blocks.LADDER)
+                    {
+                        for (final EnumFacing dir : directions)
                         {
-                            if (random.nextBoolean())
+                            if (world.getBlockState(entity.getPosition().offset(dir)).getMaterial().isSolid())
                             {
-                                world.setBlockState(entity.getPosition().up(), Blocks.LADDER.getDefaultState().withProperty(BlockLadder.FACING, dir.getOpposite()));
+                                if (random.nextBoolean())
+                                {
+                                    world.setBlockState(entity.getPosition().up(), Blocks.LADDER.getDefaultState().withProperty(BlockLadder.FACING, dir.getOpposite()));
+                                }
+                                else
+                                {
+                                    world.setBlockState(entity.getPosition(), Blocks.LADDER.getDefaultState().withProperty(BlockLadder.FACING, dir.getOpposite()));
+                                }
+                                break;
                             }
-                            else
-                            {
-                                world.setBlockState(entity.getPosition(), Blocks.LADDER.getDefaultState().withProperty(BlockLadder.FACING, dir.getOpposite()));
-                            }
-                            break;
                         }
                     }
                 }
@@ -191,7 +212,8 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
                 {
                     for (final EnumFacing dir : directions)
                     {
-                        if (world.getBlockState(entity.getPosition().offset(dir)).getMaterial().isSolid())
+                        final IBlockState state = world.getBlockState(entity.getPosition().offset(dir));
+                        if (state.getMaterial().isSolid() && state.getBlock() != Blocks.LADDER)
                         {
                             final BlockPos posToDestroy;
                             switch (random.nextInt(4))
@@ -203,7 +225,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
                                     posToDestroy = entity.getPosition().offset(dir);
                                     break;
                                 default:
-                                    posToDestroy = entity.getPosition().up();
+                                    posToDestroy = entity.getPosition().up(2);
                                     break;
                             }
                             world.destroyBlock(posToDestroy, true);

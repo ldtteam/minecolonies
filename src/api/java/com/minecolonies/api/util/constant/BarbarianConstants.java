@@ -44,7 +44,7 @@ public final class BarbarianConstants
     /**
      * Amount of ticks to despawn the barbarian.
      */
-    public static final int TICKS_TO_DESPAWN = Constants.TICKS_SECOND * Constants.SECONDS_A_MINUTE * 5;
+    public static final int TICKS_TO_DESPAWN = Constants.TICKS_SECOND * Constants.SECONDS_A_MINUTE * 10;
 
     /**
      * Randomly execute it every this ticks.
