@@ -39,7 +39,7 @@ public final class BarbarianConstants
     /**
      * Amount of ladders to place before destroying blocks.
      */
-    public static final int LADDERS_TO_PLACE = 6;
+    public static final int LADDERS_TO_PLACE = 10;
 
     /**
      * Amount of ticks to despawn the barbarian.

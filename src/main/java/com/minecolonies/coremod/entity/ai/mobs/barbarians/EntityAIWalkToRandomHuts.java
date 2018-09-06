@@ -5,16 +5,17 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
+import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Random;
+import java.util.*;
 
 import static com.minecolonies.api.util.constant.BarbarianConstants.*;
 
@@ -28,6 +29,11 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
      * The moving entity.
      */
     protected final AbstractEntityBarbarian entity;
+
+    /**
+     * All directions.
+     */
+    private final List<EnumFacing> directions = Arrays.asList(EnumFacing.HORIZONTALS);
 
     /**
      * The world.
@@ -81,6 +87,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         this.entity = creatureIn;
         this.speed = speedIn;
         this.world = creatureIn.getEntityWorld();
+        lastPos = entity.getPosition();
         this.setMutexBits(1);
     }
 
@@ -154,48 +161,60 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
             entity.getNavigator().clearPath();
             stuckTime = 0;
             entity.setStuckCounter(entity.getStuckCounter() + 1);
-            Log.getLogger().warn("runnin");
-            if (entity.getStuckCounter() > 2)
-            {
-                entity.setStuckCounter(0);
-                entity.setLadderCounter(entity.getLadderCounter()+1);
-                Log.getLogger().warn("ladders");
 
-                if (world.getBlockState(entity.getPosition().offset(entity.getHorizontalFacing())).getMaterial().isSolid())
+            if (entity.getStuckCounter() > 1)
+            {
+                Collections.shuffle(directions);
+
+                entity.setStuckCounter(0);
+                entity.setLadderCounter(entity.getLadderCounter() + 1);
+
+                if (entity.getLadderCounter() <= LADDERS_TO_PLACE)
                 {
-                    if (random.nextBoolean())
+                    for (final EnumFacing dir : directions)
                     {
-                        world.setBlockState(entity.getPosition().up(), Blocks.LADDER.getDefaultState().withProperty(BlockLadder.FACING, entity.getHorizontalFacing().getOpposite()));
-                    }
-                    else
-                    {
-                        world.setBlockState(entity.getPosition(), Blocks.LADDER.getDefaultState().withProperty(BlockLadder.FACING, entity.getHorizontalFacing().getOpposite()));
+                        if (world.getBlockState(entity.getPosition().offset(dir)).getMaterial().isSolid())
+                        {
+                            if (random.nextBoolean())
+                            {
+                                world.setBlockState(entity.getPosition().up(), Blocks.LADDER.getDefaultState().withProperty(BlockLadder.FACING, dir.getOpposite()));
+                            }
+                            else
+                            {
+                                world.setBlockState(entity.getPosition(), Blocks.LADDER.getDefaultState().withProperty(BlockLadder.FACING, dir.getOpposite()));
+                            }
+                            break;
+                        }
                     }
                 }
-
-                if (entity.getLadderCounter() >= LADDERS_TO_PLACE)
+                else
                 {
-                    final BlockPos posToDestroy;
-                    Log.getLogger().warn("destroy!");
-                    switch (random.nextInt(4))
+                    for (final EnumFacing dir : directions)
                     {
-                        case 1:
-                            posToDestroy = entity.getPosition().offset(entity.getHorizontalFacing());
+                        if (world.getBlockState(entity.getPosition().offset(dir)).getMaterial().isSolid())
+                        {
+                            final BlockPos posToDestroy;
+                            switch (random.nextInt(4))
+                            {
+                                case 1:
+                                    posToDestroy = entity.getPosition().offset(dir).up();
+                                    break;
+                                case 2:
+                                    posToDestroy = entity.getPosition().offset(dir);
+                                    break;
+                                default:
+                                    posToDestroy = entity.getPosition().up();
+                                    break;
+                            }
+                            world.destroyBlock(posToDestroy, true);
                             break;
-                        case 2:
-                            posToDestroy = entity.getPosition().offset(entity.getHorizontalFacing());
-                            break;
-                        default:
-                            posToDestroy = entity.getPosition().up();
-                            break;
-
+                        }
                     }
-                    world.destroyBlock(posToDestroy, true);
                 }
             }
             else
             {
-                entity.getNavigator().moveAwayFromXYZ(entity.getPosition(), random.nextInt(MOVE_AWAY_RANGE), 2);
+                entity.getNavigator().moveAwayFromXYZ(entity.getPosition(), random.nextInt(4), 2);
             }
             return false;
         }
