@@ -118,9 +118,34 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
-     * executed when a new day start.
+     * Executed when a new day start.
      */
     public void onWakeUp()
+    {
+        /*
+         * Buildings override this if required.
+         */
+    }
+
+    /**
+     * Executed every time when RestartCitizenMessage is called.
+     * Use for cleaning a state only.
+     */
+    public void onCleanUp(final CitizenData citizen)
+    {
+        // Cancel all open requests
+        getOpenRequests(citizen).forEach(r -> colony.getRequestManager().updateRequestState(r.getToken(), RequestState.CANCELLED));
+
+        /*
+         * Buildings override this if required.
+         */
+    }
+
+    /**
+     * Executed when RestartCitizenMessage is called and worker is paused.
+     * Use for reseting, onCleanUp is called before this
+     */
+    public void onRestart(final CitizenData citizen)
     {
         /*
          * Buildings override this if required.

@@ -14,9 +14,11 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.HireFireMessage;
-import com.minecolonies.coremod.network.messages.PauseMessage;
+import com.minecolonies.coremod.network.messages.PauseCitizenMessage;
+import com.minecolonies.coremod.network.messages.RestartCitizenMessage;
 
 import net.minecraft.util.math.BlockPos;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -70,6 +72,11 @@ public class WindowHireWorker extends Window implements ButtonHandler
      * Id of the pause button
      */
     private static final String BUTTON_PAUSE = "pause";
+
+    /**
+     * Id of the pause button
+     */
+    private static final String BUTTON_RESTART = "restart";
 
     /**
      * The view of the current building.
@@ -157,16 +164,25 @@ public class WindowHireWorker extends Window implements ButtonHandler
 
                 if (citizen.getWorkBuilding() == null)
                 {
-                    rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).show();
-                    rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).hide();
-                    isPaused.hide();
+                    rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).off();
+                    rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).on();
+                    isPaused.off();
                 }
                 else
                 {
-                    rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).hide();
-                    rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).show();
-                    isPaused.show();
+                    rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).off();
+                    rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).on();
+                    isPaused.on();
                     isPaused.setLabel(LanguageHandler.format(citizen.isPaused() ? COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE : COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE));
+                }
+
+                if (citizen.isPaused())
+                {
+                    rowPane.findPaneOfTypeByID(BUTTON_RESTART, Button.class).on();
+                }
+                else
+                {
+                    rowPane.findPaneOfTypeByID(BUTTON_RESTART, Button.class).off();
                 }
 
                 @NotNull final String strength = createAttributeText(createColor(primary, secondary, AbstractBuildingWorker.Skill.STRENGTH),
@@ -235,7 +251,7 @@ public class WindowHireWorker extends Window implements ButtonHandler
 
         final int row = citizenList.getListElementIndexByPane(button);
         final int id = citizens.toArray(new CitizenDataView[citizens.size()])[row].getId();
-        @NotNull final CitizenDataView citizen = citizens.get(row); // TODO: NEW BLOCKOUT -> delete this and also all setters under this
+        @NotNull final CitizenDataView citizen = citizens.get(row); // TODO: NEW BLOCKOUT -> delete this and also all setters of <code>citizen</code> under this + views
 
         switch (button.getID())
         {
@@ -250,8 +266,16 @@ public class WindowHireWorker extends Window implements ButtonHandler
                 citizen.setWorkBuilding(null);
                 break;
             case BUTTON_PAUSE:
-                MineColonies.getNetwork().sendToServer(new PauseMessage(this.building, id));
+                MineColonies.getNetwork().sendToServer(new PauseCitizenMessage(this.building, id));
                 citizen.setPaused(!citizen.isPaused());
+                if (citizen.isPaused())
+                {
+                    MineColonies.getNetwork().sendToServer(new RestartCitizenMessage(this.building, id, false));
+                }
+                break;
+            case BUTTON_RESTART:
+                MineColonies.getNetwork().sendToServer(new RestartCitizenMessage(this.building, id, true));
+                this.close();
                 break;
             default:
                 break;

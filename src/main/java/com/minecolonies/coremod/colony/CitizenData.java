@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -19,6 +20,7 @@ import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumHand;
@@ -101,6 +103,16 @@ public class CitizenData
      * Boolean paused, true = paused, false = working.
      */
     private       boolean                      paused;
+
+    /**
+     * If restart is scheduled.
+     */
+    private       boolean                      restartScheduled;
+
+    /**
+     * Report end message to:
+     */
+    private       EntityPlayerMP               originPlayerRestart;
 
     /**
      * The id of the citizens texture.
@@ -1221,5 +1233,32 @@ public class CitizenData
                 break;
         }
         markDirty();
+    }
+
+    /**
+     * Schedule restart and cleanup
+     * {@link com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic#restart}
+     */
+    public void scheduleRestart(final EntityPlayerMP player)
+    {
+        originPlayerRestart = player;
+        restartScheduled = true;
+    }
+
+    /**
+     * AI will be restarted, also restart building etc
+     */
+    public boolean shouldRestart()
+    {
+        return restartScheduled;
+    }
+
+    /**
+     * Restart done successfully
+     */
+    public void restartDone()
+    {
+        restartScheduled = false;
+        LanguageHandler.sendPlayerMessage(originPlayerRestart, "com.minecolonies.coremod.gui.hiring.restartMessageDone", getName());
     }
 }

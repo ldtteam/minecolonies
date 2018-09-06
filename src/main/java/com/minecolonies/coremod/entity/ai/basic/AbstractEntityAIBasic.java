@@ -150,6 +150,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
            */
           new AITarget(this::initSafetyChecks),
           /*
+           * Restart AI, building etc. 
+           */
+          new AITarget(this::shouldRestart, this::restart),
+          /*
             Update chestbelt and nametag
             Will be executed every time
             and does not stop execution
@@ -1390,7 +1394,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Is worker paused but not walking.
+     * Is worker paused?
      * 
      * @return true if paused
      */
@@ -1400,14 +1404,38 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Is worker paused but not walking.
+     * Worker executes {@link EntityAIStatePausedHandler}.
      * 
-     * @return true if paused
+     * @return <code>State.PAUSED</code>
      */
     private AIState bePaused()
     {
         EntityAIStatePausedHandler.doPause(worker, getOwnBuilding());
         setDelay(WALK_DELAY);
         return PAUSED;
+    }
+
+    /**
+     * Is worker paused but not walking.
+     * 
+     * @return true if restart is scheduled
+     */
+    private boolean shouldRestart()
+    {
+        return worker.getCitizenData().shouldRestart();
+    }
+
+    /**
+     * Restart AI, building etc.
+     * 
+     * @return <code>State.INIT</code>
+     */
+    private AIState restart()
+    {
+        this.getOwnBuilding().onCleanUp(worker.getCitizenData());
+        this.getOwnBuilding().onRestart(worker.getCitizenData());
+        setDelay(WALK_DELAY);
+        worker.getCitizenData().restartDone();
+        return INIT;
     }
 }

@@ -1,0 +1,110 @@
+package com.minecolonies.coremod.network.messages;
+
+import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * Message class which manages the messages hiring or firing of citizens.
+ */
+public class RestartCitizenMessage extends AbstractMessage<RestartCitizenMessage, IMessage>
+{
+    /**
+     * The Colony ID.
+     */
+    private int colonyId;
+
+    /**
+     * The citizen to restart.
+     */
+    private int citizenID;
+
+    /**
+     * Whether set AI state to Status.IDLE
+     */
+    private boolean resetAI;
+
+    /**
+     * Empty public constructor.
+     */
+    public RestartCitizenMessage()
+    {
+        super();
+    }
+
+    /**
+     * Creates object for the player to restart a citizen (instead of the fire/hire solution).
+     *
+     * @param building  view of the building to read data from
+     * @param citizenID the id of the citizen to fill the job.
+     * @param resetAI false = cleanUp only, true = full restart
+     */
+    public RestartCitizenMessage(@NotNull final AbstractBuildingView building, final int citizenID, final boolean resetAI)
+    {
+        super();
+        this.colonyId = building.getColony().getID();
+        this.citizenID = citizenID;
+        this.resetAI = resetAI;
+    }
+
+    /**
+     * Transformation from a byteStream to the variables.
+     *
+     * @param buf the used byteBuffer.
+     */
+    @Override
+    public void fromBytes(@NotNull final ByteBuf buf)
+    {
+        colonyId = buf.readInt();
+        citizenID = buf.readInt();
+        resetAI = buf.readBoolean();
+    }
+
+    /**
+     * Transformation to a byteStream.
+     *
+     * @param buf the used byteBuffer.
+     */
+    @Override
+    public void toBytes(@NotNull final ByteBuf buf)
+    {
+        buf.writeInt(colonyId);
+        buf.writeInt(citizenID);
+        buf.writeBoolean(resetAI);
+    }
+
+    @Override
+    public void messageOnServerThread(final RestartCitizenMessage message, final EntityPlayerMP player)
+    {
+        final Colony colony = ColonyManager.getColony(message.colonyId);
+        if (colony != null)
+        {
+            //Verify player has permission to change this huts settings
+            if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
+            {
+                return;
+            }
+
+            final CitizenData citizen = colony.getCitizenManager().getCitizen(message.citizenID);
+
+            // Restart also worker building and AI if needed
+
+            if (message.resetAI)
+            {
+                citizen.scheduleRestart(player);
+                LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.gui.hiring.restartMessage", citizen.getName());
+            }
+            else
+            {
+                citizen.getWorkBuilding().onCleanUp(citizen);
+            }
+        }
+    }
+}
