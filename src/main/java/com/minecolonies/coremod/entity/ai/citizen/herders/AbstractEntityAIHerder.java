@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -46,7 +47,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Amount of animals needed to bread.
      */
-    public static final int NUM_OF_ANIMALS_TO_BREED = 2;
+    private static final int NUM_OF_ANIMALS_TO_BREED = 2;
 
     /**
      * Butchering attack damage.
@@ -61,10 +62,10 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Delays used to setDelay()
      */
-    public static final int BUTCHER_DELAY    = 20;
-    public static final int DECIDING_DELAY   = 40;
-    public static final int BREEDING_DELAY   = 40;
-    public static final int NO_ANIMALS_DELAY = 100;
+    private static final int BUTCHER_DELAY    = 20;
+    private static final int DECIDING_DELAY   = 40;
+    private static final int BREEDING_DELAY   = 40;
+    private static final int NO_ANIMALS_DELAY = 100;
 
     /**
      * Number of actions needed to dump inventory.
@@ -141,7 +142,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         {
             return HERDER_PICKUP;
         }
-        else if (maxAnimals())
+        else if (maxAnimals(animals))
         {
             return HERDER_BUTCHER;
         }
@@ -201,8 +202,9 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     private AIState butcherAnimals()
     {
         setDelay(BUTCHER_DELAY);
+        final List<T> animals = new ArrayList<>(searchForAnimals());
 
-        if (!maxAnimals())
+        if (!maxAnimals(animals))
         {
             return DECIDE;
         }
@@ -212,7 +214,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             return START_WORKING;
         }
 
-        EntityAnimal animal = searchForAnimals()
+        final EntityAnimal animal = animals
                                 .stream()
                                 .filter(animalToButcher -> !animalToButcher.isChild())
                                 .findFirst()
@@ -220,12 +222,12 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         if (animal == null)
         {
-            animal = searchForAnimals().stream().findFirst().orElse(null);
+            return DECIDE;
         }
 
         butcherAnimal(animal);
 
-        if (animal != null && !animal.isEntityAlive())
+        if (!animal.isEntityAlive())
         {
             worker.getCitizenExperienceHandler().addExperience(1.0);
             incrementActionsDoneAndDecSaturation();
@@ -415,15 +417,14 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      *
      * @return if amount of animals is over max.
      */
-    public boolean maxAnimals()
+    public boolean maxAnimals(final List<T> allAnimals)
     {
         if (getOwnBuilding() != null)
         {
-            final Stream<T> animal = searchForAnimals()
-                    .stream()
-                    .filter(animalToButcher -> animalToButcher.getGrowingAge() == 0);
+            final List<T> animal = allAnimals.stream()
+                    .filter(animalToButcher -> !animalToButcher.isChild()).collect(Collectors.toList());
 
-            final int numOfAnimals = (int) animal.count();
+            final int numOfAnimals = animal.size();
             final int maxAnimals = getOwnBuilding().getBuildingLevel() * getMaxAnimalMultiplier();
 
             return numOfAnimals > maxAnimals;

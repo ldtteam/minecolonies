@@ -80,7 +80,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         super(job);
         super.registerTargets(
           new AITarget(IDLE, START_WORKING),
-          new AITarget(GATHERING_REQUIRED_MATERIALS, this::getMaterials),
+          new AITarget(GET_MATERIALS, this::getMaterials),
           new AITarget(START_WORKING, this::decideWhatToDo),
           new AITarget(COMPOSTER_FILL, this::fillBarrels),
           new AITarget(COMPOSTER_HARVEST, this::harvestBarrels)
@@ -212,7 +212,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             }
             else
             {
-                return GATHERING_REQUIRED_MATERIALS;
+                return GET_MATERIALS;
             }
         }
         if (walkToBlock(currentTarget))

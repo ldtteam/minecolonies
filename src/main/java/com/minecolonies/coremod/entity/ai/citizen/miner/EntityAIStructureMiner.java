@@ -829,7 +829,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
          if (colony != null)
          {
              final List<WorkOrderBuildMiner> workOrders = colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildMiner.class);
-             if (workOrders.size() > 5)
+             if (workOrders.size() > 2)
              {
                  for (WorkOrderBuildMiner order : workOrders)
                  {
@@ -871,7 +871,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         {
             return blockToMine;
         }
-        final Vec2i parentPos = buildingMiner.getCurrentLevel().getRandomNode(null).getParent();
+        final Vec2i parentPos = buildingMiner.getActiveNode().getParent();
         if (parentPos != null && buildingMiner.getCurrentLevel().getNode(parentPos) != null
               && buildingMiner.getCurrentLevel().getNode(parentPos).getStyle() == Node.NodeType.SHAFT)
         {

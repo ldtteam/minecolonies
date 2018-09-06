@@ -69,15 +69,19 @@ public class StandardRequestManager implements IStandardRequestManager
     private IDataStoreManager dataStoreManager;
 
     /**
+     * Variable describing if the request manager itself is dirty.
+     */
+    private boolean dirty = true;
+
+    /**
      * Colony of the manager.
      */
     @NotNull
     private final IColony colony;
 
-    @NotNull
     private int version = -1;
 
-    public StandardRequestManager(final IColony colony)
+    public StandardRequestManager(@NotNull final IColony colony)
     {
         this.colony = colony;
         reset();
@@ -147,13 +151,35 @@ public class StandardRequestManager implements IStandardRequestManager
     public <T extends IRequestable> IToken<?> createRequest(@NotNull final IRequester requester, @NotNull final T object)
     {
         final IRequest<T> request = RequestHandler.createRequest(this, requester, object);
+        markDirty();
+        return request.getToken();
+    }
 
+    /**
+     * Mark the request manager and colony as dirty.
+     */
+    private void markDirty()
+    {
+        dirty = true;
         if (colony != null)
         {
             colony.markDirty();
         }
+    }
 
-        return request.getToken();
+    /**
+     * Check if the request manager is dirty.
+     * @return true if so.
+     */
+    @Override
+    public boolean isDirty()
+    {
+        if (dirty)
+        {
+            dirty = false;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -166,11 +192,7 @@ public class StandardRequestManager implements IStandardRequestManager
     public void assignRequest(@NotNull final IToken<?> token)
     {
         RequestHandler.assignRequest(this, RequestHandler.getRequest(this, token));
-
-        if (colony != null)
-        {
-            colony.markDirty();
-        }
+        markDirty();
     }
 
     /**
@@ -196,6 +218,7 @@ public class StandardRequestManager implements IStandardRequestManager
     public IToken<?> reassignRequest(@NotNull final IToken<?> token, @NotNull final Collection<IToken<?>> resolverTokenBlackList)
     {
         final IRequest<?> request = RequestHandler.getRequest(this, token);
+        markDirty();
         return RequestHandler.reassignRequest(this, request, resolverTokenBlackList);
     }
 
@@ -244,11 +267,7 @@ public class StandardRequestManager implements IStandardRequestManager
         LogHandler.log("Updating request state from:" + token + ". With original state: " + request.getState() + " to : " + state);
 
         request.setState(new WrappedStaticStateRequestManager(this), state);
-
-        if (colony != null)
-        {
-            colony.markDirty();
-        }
+        markDirty();
 
         switch (request.getState())
         {

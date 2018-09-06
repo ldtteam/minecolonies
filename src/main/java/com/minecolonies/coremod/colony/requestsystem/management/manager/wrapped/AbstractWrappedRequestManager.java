@@ -82,7 +82,6 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      * @param token The token of the request to assign.
      * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
      */
-    @NotNull
     @Override
     public void assignRequest(@NotNull final IToken token) throws IllegalArgumentException
     {
@@ -163,7 +162,6 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      * @param state The new state of that request.
      * @throws IllegalArgumentException when the token is unknown to this manager.
      */
-    @NotNull
     @Override
     public void updateRequestState(@NotNull final IToken<?> token, @NotNull final RequestState state) throws IllegalArgumentException
     {
@@ -243,5 +241,11 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     public void reset()
     {
         wrappedManager.reset();
+    }
+
+    @Override
+    public boolean isDirty()
+    {
+        return wrappedManager.isDirty();
     }
 }

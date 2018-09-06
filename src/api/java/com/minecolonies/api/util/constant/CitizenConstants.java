@@ -153,6 +153,41 @@ public final class CitizenConstants
     public static final int MIN_STUCK_TIME = 5;
 
     /**
+     * The maximum range to keep from the current building place.
+     */
+    public static final int EXCEPTION_TIMEOUT = 100;
+
+    /**
+     * The maximum range to keep from the current building place.
+     */
+    public static final int MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
+
+    /**
+     * Time in ticks to wait until the next check for items.
+     */
+    public static final int DELAY_RECHECK = 10;
+
+    /**
+     * The default range for any walking to blocks.
+     */
+    public static final int DEFAULT_RANGE_FOR_DELAY = 4;
+
+    /**
+     * The number of actions done before item dump.
+     */
+    public static final int ACTIONS_UNTIL_DUMP = 32;
+
+    /**
+     * Hit a block every x ticks when mining.
+     */
+    public static final int HIT_EVERY_X_TICKS = 5;
+
+    /**
+     * Min slots the builder should never fill.
+     */
+    public static final long MIN_OPEN_SLOTS = 3;
+
+    /**
      * Distance between Barbarian and Citizen to not remove happiness.
      */
     public static final int BARB_DISTANCE_FOR_FREE_DEATH = 21;

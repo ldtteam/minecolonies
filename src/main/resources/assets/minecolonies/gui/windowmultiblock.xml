@@ -12,7 +12,7 @@
         <buttonimage id="confirm" source="minecolonies:textures/gui/buildtool/confirm.png" size="32" pos="-10 96"/>
         <buttonimage id="cancel" source="minecolonies:textures/gui/buildtool/cancel.png" size="32" pos="74 96"/>
         <label size="16 16" pos="19 32" label="range:"/>
-        <label size="16 16" pos="19 49scs" label="speed:"/>
+        <label size="16 16" pos="19 49" label="speed:"/>
         <input id="range" size="20 16" pos="54 32" maxlength="2"/>
         <input id="speed" size="20 16" pos="54 48" maxlength="1"/>
     </view>

@@ -21,6 +21,7 @@ import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
@@ -196,7 +198,15 @@ public final class ColonyView implements IColony
         buf.writeBoolean(colony.isManualHousing());
         //  Citizens are sent as a separate packet
 
-        ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
+        if (colony.getRequestManager() != null && (colony.getRequestManager().isDirty() || isNewSubScription))
+        {
+            buf.writeBoolean(true);
+            ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
+        }
+        else
+        {
+            buf.writeBoolean(false);
+        }
 
         buf.writeInt(colony.getBarbManager().getLastSpawnPoints().size());
         for (final BlockPos block : colony.getBarbManager().getLastSpawnPoints())
@@ -506,8 +516,12 @@ public final class ColonyView implements IColony
         this.lastContactInHours = buf.readInt();
         this.manualHousing = buf.readBoolean();
 
-        this.requestManager = new StandardRequestManager(this);
-        this.requestManager.deserializeNBT(ByteBufUtils.readTag(buf));
+        if (buf.readBoolean())
+        {
+            final NBTTagCompound compound = ByteBufUtils.readTag(buf);
+            this.requestManager = new StandardRequestManager(this);
+            this.requestManager.deserializeNBT(compound);
+        }
 
         final int barbSpawnListSize = buf.readInt();
         for (int i = 0; i < barbSpawnListSize; i++)
