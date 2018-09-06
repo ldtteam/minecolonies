@@ -16,8 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Random;
 
-import static com.minecolonies.api.util.constant.BarbarianConstants.EVERY_X_TICKS;
-import static com.minecolonies.api.util.constant.BarbarianConstants.MOVE_AWAY_RANGE;
+import static com.minecolonies.api.util.constant.BarbarianConstants.*;
 
 /**
  * Barbarian Pathing Class
@@ -154,7 +153,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         {
             entity.getNavigator().clearPath();
             stuckTime = 0;
-            entity.setStuckCounter(entity.getStuckCounter()+1);
+            entity.setStuckCounter(entity.getStuckCounter() + 1);
             Log.getLogger().warn("runnin");
             if (entity.getStuckCounter() > 2)
             {
@@ -174,18 +173,23 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
                     }
                 }
 
-                if (entity.getLadderCounter() > 4)
+                if (entity.getLadderCounter() >= LADDERS_TO_PLACE)
                 {
+                    final BlockPos posToDestroy;
                     Log.getLogger().warn("destroy!");
-                    if (random.nextBoolean())
+                    switch (random.nextInt(4))
                     {
-                        world.destroyBlock(entity.getPosition().offset(entity.getHorizontalFacing()), true);
-                    }
-                    else
-                    {
-                        world.destroyBlock(entity.getPosition().offset(entity.getHorizontalFacing()).up(), true);
-                    }
+                        case 1:
+                            posToDestroy = entity.getPosition().offset(entity.getHorizontalFacing());
+                            break;
+                        case 2:
+                            posToDestroy = entity.getPosition().offset(entity.getHorizontalFacing());
+                            break;
+                        default:
+                            posToDestroy = entity.getPosition().up();
 
+                    }
+                    world.destroyBlock(posToDestroy, true);
                 }
             }
             else

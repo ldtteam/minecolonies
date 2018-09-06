@@ -37,6 +37,11 @@ public final class BarbarianConstants
     public static final int    SPEED_EFFECT_MULTIPLIER     = 2;
 
     /**
+     * Amount of ladders to place before destroying blocks.
+     */
+    public static final int LADDERS_TO_PLACE = 6;
+
+    /**
      * Amount of ticks to despawn the barbarian.
      */
     public static final int TICKS_TO_DESPAWN = Constants.TICKS_SECOND * Constants.SECONDS_A_MINUTE * 5;
