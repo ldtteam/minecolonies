@@ -1,5 +1,4 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
-        lightbox="true"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true" lightbox="true"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
 
     <label size="100% 11" pos="0 45" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.hiring.description)"/>
@@ -9,6 +8,7 @@
             <button id="done" size="45 15" pos="125 2" label="$(com.minecolonies.coremod.gui.hiring.buttonHire)"/>
             <button id="fire" size="45 15" pos="125 2" label="$(com.minecolonies.coremod.gui.hiring.buttonFire)"/>
             <button id="pause" size="65 15" pos="175 2" label=""/>
+            <button id="restart" size="65 15" pos="245 2" label="$(com.minecolonies.coremod.gui.hiring.restart)"/>
 
             <label id="attributes" size="100% 12" pos="0 16" textalign="MIDDLE_LEFT" color="white" textscale="0.8"/>
         </view>

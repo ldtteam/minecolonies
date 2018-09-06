@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message class which manages the messages hiring or firing of citizens.
  */
-public class PauseMessage extends AbstractMessage<PauseMessage, IMessage>
+public class PauseCitizenMessage extends AbstractMessage<PauseCitizenMessage, IMessage>
 {
     /**
      * The Colony ID.
@@ -21,14 +21,14 @@ public class PauseMessage extends AbstractMessage<PauseMessage, IMessage>
     private int colonyId;
 
     /**
-     * The citizen to hire/fire.
+     * The citizen to pause.
      */
     private int citizenID;
 
     /**
      * Empty public constructor.
      */
-    public PauseMessage()
+    public PauseCitizenMessage()
     {
         super();
     }
@@ -39,7 +39,7 @@ public class PauseMessage extends AbstractMessage<PauseMessage, IMessage>
      * @param building  view of the building to read data from
      * @param citizenID the id of the citizen to fill the job.
      */
-    public PauseMessage(@NotNull final AbstractBuildingView building, final int citizenID)
+    public PauseCitizenMessage(@NotNull final AbstractBuildingView building, final int citizenID)
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -71,9 +71,10 @@ public class PauseMessage extends AbstractMessage<PauseMessage, IMessage>
     }
 
     @Override
-    public void messageOnServerThread(final PauseMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final PauseCitizenMessage message, final EntityPlayerMP player)
     {
         final Colony colony = ColonyManager.getColony(message.colonyId);
+        
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
