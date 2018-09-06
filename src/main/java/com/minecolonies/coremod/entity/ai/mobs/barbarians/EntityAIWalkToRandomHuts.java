@@ -140,7 +140,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         }
 
         if (new AxisAlignedBB(entity.getPosition()).expand(1, 1, 1)
-              .intersects(new AxisAlignedBB(entity.getPosition())))
+              .intersects(new AxisAlignedBB(lastPos)))
         {
             stuckTime++;
         }
@@ -187,6 +187,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
                             break;
                         default:
                             posToDestroy = entity.getPosition().up();
+                            break;
 
                     }
                     world.destroyBlock(posToDestroy, true);
