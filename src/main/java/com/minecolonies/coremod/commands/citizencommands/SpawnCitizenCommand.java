@@ -55,7 +55,10 @@ public class SpawnCitizenCommand extends AbstractCitizensCommands implements IAc
     @Override
     public void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
     {
-        colony.getCitizenManager().spawnCitizen(null, colony.getWorld(), true);
+        if (isPlayerOpped(sender))
+        {
+            colony.getCitizenManager().spawnCitizen(null, colony.getWorld(), true);
+        }
     }
 
     @NotNull
