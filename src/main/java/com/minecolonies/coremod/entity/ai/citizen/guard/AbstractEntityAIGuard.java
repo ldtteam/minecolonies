@@ -101,9 +101,26 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
           new AITarget(DECIDE, this::decide),
           new AITarget(GUARD_PATROL, this::patrol),
           new AITarget(GUARD_FOLLOW, this::follow),
-          new AITarget(GUARD_GUARD, this::guard)
+          new AITarget(GUARD_GUARD, this::guard),
+          new AITarget(GUARD_REGEN, this::regen)
+
         );
         buildingGuards = getOwnBuilding();
+    }
+
+    /**
+     * Regen at the building and continue when more than half health.
+     * @return next state to go to.
+     */
+    private AIState regen()
+    {
+        setDelay(STANDARD_DELAY);
+        if (walkToBuilding() || worker.getHealth() < ((int) worker.getMaxHealth() * 0.5D) && buildingGuards.shallRetrieveOnLowHealth())
+        {
+            return getState();
+        }
+
+        return START_WORKING;
     }
 
     /**
@@ -260,11 +277,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             return START_WORKING;
         }
 
-        if (worker.getHealth() < ((int) worker.getMaxHealth() * 0.2f) && buildingGuards.shallRetrieveOnLowHealth())
+        if (worker.getHealth() < ((int) worker.getMaxHealth() * 0.2D) && buildingGuards.shallRetrieveOnLowHealth())
         {
             target = null;
             setDelay(STANDARD_DELAY);
-            return START_WORKING;
+            return GUARD_REGEN;
         }
 
         if (worker.getRevengeTarget() != null && !worker.getRevengeTarget().isDead && isInAttackDistance(worker.getRevengeTarget().getPosition()))

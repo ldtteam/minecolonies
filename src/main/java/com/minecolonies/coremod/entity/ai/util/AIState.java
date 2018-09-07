@@ -256,6 +256,11 @@ public enum AIState
     GUARD_GUARD,
 
     /**
+     * Regen at the building.
+     */
+    GUARD_REGEN,
+
+    /**
      * Go back to the hut to "restock".
      */
     GUARD_RESTOCK,
