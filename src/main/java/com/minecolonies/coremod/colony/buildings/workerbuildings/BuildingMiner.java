@@ -319,13 +319,14 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         for (@NotNull final Level level : levels)
         {
             buf.writeInt(level.getNumberOfNodes());
+            buf.writeInt(level.getDepth());
         }
     }
 
     /**
      * Adds a level to the levels list.
      *
-     * @param currentLevel {@link Level}to add.
+     * @param currentLevel {@link Level} to add.
      */
     public void addLevel(final Level currentLevel)
     {
@@ -617,9 +618,13 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     public static class View extends AbstractBuildingBuilderView
     {
         /**
-         * The different miner levels the miner already has.
+         * The number of nodes per all levels.
          */
-        public int[] levels;
+        public int[] nodesOfLevels;
+        /**
+         * The y depth per all levels.
+         */
+        public int[] yDepthOfLevels;
         /**
          * The level the miner currently works on.
          */
@@ -649,11 +654,13 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             super.deserialize(buf);
             current = buf.readInt();
             final int size = buf.readInt();
-            levels = new int[size];
+            nodesOfLevels = new int[size];
+            yDepthOfLevels = new int[size];
 
             for (int i = 0; i < size; i++)
             {
-                levels[i] = buf.readInt();
+                nodesOfLevels[i] = buf.readInt();
+                yDepthOfLevels[i] = buf.readInt();
             }
         }
 

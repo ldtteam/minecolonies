@@ -24,7 +24,8 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     private static final String VIEW_PAGES                = "pages";
     private static final String HUT_MINER_RESOURCE_SUFFIX = ":gui/windowhutminer.xml";
     private final BuildingMiner.View miner;
-    private       int[]              levels;
+    private       int[]              nodesOfLevels;
+    private       int[]              yDepthOfLevels;
     private       ScrollingList      levelList;
 
     /**
@@ -46,7 +47,8 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     {
         if (miner.getColony().getBuilding(miner.getID()) != null)
         {
-            levels = miner.levels;
+            nodesOfLevels = miner.nodesOfLevels;
+            yDepthOfLevels = miner.yDepthOfLevels;
         }
     }
 
@@ -60,7 +62,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
             @Override
             public int getElementCount()
             {
-                return levels.length;
+                return nodesOfLevels.length;
             }
 
             @Override
@@ -78,7 +80,10 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
 
                 rowPane.findPaneOfTypeByID("lvl", Label.class).setLabelText(Integer.toString(index));
                 rowPane.findPaneOfTypeByID("nONodes", Label.class)
-                  .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.minerNode") + ": " + levels[index]);
+                    .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.minerNode") + ": " + nodesOfLevels[index]);
+                rowPane.findPaneOfTypeByID("yLevel", Label.class)
+                    .setLabelText("Y: " + (yDepthOfLevels[index] + 1));
+                // ^^ 1 is for Y depth fix
             }
         });
     }
@@ -110,7 +115,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
         {
             case BUTTON_CURRENTLEVEL:
                 final int row = levelList.getListElementIndexByPane(button);
-                if (row != miner.current && row >= 0 && row < levels.length)
+                if (row != miner.current && row >= 0 && row < nodesOfLevels.length)
                 {
                     miner.current = row;
                     MineColonies.getNetwork().sendToServer(new MinerSetLevelMessage(miner, row));
