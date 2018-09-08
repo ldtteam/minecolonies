@@ -246,6 +246,21 @@ public enum AIState
     GUARD_PATROL,
 
     /**
+     * Follow a player.
+     */
+    GUARD_FOLLOW,
+
+    /**
+     * Guard a position.
+     */
+    GUARD_GUARD,
+
+    /**
+     * Regen at the building.
+     */
+    GUARD_REGEN,
+
+    /**
      * Go back to the hut to "restock".
      */
     GUARD_RESTOCK,
