@@ -146,8 +146,7 @@ public class Structure
             final Block structureBlock = structureBlockState.getBlock();
 
             //All worldBlocks are equal the substitution block
-            if (structureBlockEqualsWorldBlock(structureBlock, worldBlock, worldMetadata)
-                  || structureBlock == ModBlocks.blockWayPoint)
+            if (structureBlockEqualsWorldBlock(structureBlock, worldBlock, worldMetadata))
             {
                 return true;
             }
