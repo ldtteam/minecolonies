@@ -838,7 +838,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             return DesiredActivity.WORK;
         }
 
-        if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (getCitizenColonyHandler().getColony().getBarbManager().getHorde((WorldServer) world).size() > 0) && !(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
+        if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (!getCitizenColonyHandler().getColony().getBarbManager().getHorde((WorldServer) world).isEmpty()) && !(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
         {
             return DesiredActivity.SLEEP;
         }
