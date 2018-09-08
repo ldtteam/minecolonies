@@ -419,7 +419,7 @@ public final class ItemStackUtils
         {
             return 0;
         }
-        else if (damageReductionAmount <= ArmorMaterial.GOLD.getDamageReductionAmount(EntityEquipmentSlot.CHEST))
+        else if (damageReductionAmount <= ArmorMaterial.GOLD.getDamageReductionAmount(EntityEquipmentSlot.CHEST) && material != ArmorMaterial.CHAIN)
         {
             return 1;
         }
@@ -514,6 +514,31 @@ public final class ItemStackUtils
      *
      * @param toolGrade the number of the grade of a tool
      * @return a string corresponding to the tool
+     */
+    public static String swapArmorGrade(final int toolGrade)
+    {
+        switch (toolGrade)
+        {
+            case 0:
+                return "Leather";
+            case 1:
+                return "Gold";
+            case 2:
+                return "Chain";
+            case 3:
+                return "Iron";
+            case 4:
+                return "Diamond";
+            default:
+                return "Better than Diamond";
+        }
+    }
+
+    /**
+     * Assigns a string containing the grade of the armor grade.
+     *
+     * @param toolGrade the number of the grade of an armor
+     * @return a string corresponding to the armor
      */
     public static String swapToolGrade(final int toolGrade)
     {
