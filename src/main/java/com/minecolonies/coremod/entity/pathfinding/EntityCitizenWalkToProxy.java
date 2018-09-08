@@ -9,8 +9,10 @@ import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
+import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -102,7 +104,17 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
 
                     while (new Vec2i(currentNode.getX(), currentNode.getZ()).equals(currentNode.getParent()) && currentNode.getParent() != null)
                     {
-                        addToProxyList(new BlockPos(currentNode.getX(), levelDepth, currentNode.getZ()));
+                        if (currentNode.getStyle() == Node.NodeType.SHAFT)
+                        {
+                            final EnumFacing facing = BlockPosUtil.getXZFacing(ladderPos, new BlockPos(currentNode.getX(), 0, currentNode.getZ()));
+                            final BlockPos ladderHeight = new BlockPos(ladderPos.getX(), targetY+1, ladderPos.getZ());
+
+                            return new BlockPos(ladderHeight.offset(facing, 7));
+                        }
+                        else
+                        {
+                            addToProxyList(new BlockPos(currentNode.getX(), levelDepth, currentNode.getZ()));
+                        }
                         currentNode = level.getNode(currentNode.getParent());
                     }
                 }
@@ -155,6 +167,13 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                     }
                 }
 
+                if (lastNode != null && lastNode.getStyle() == Node.NodeType.SHAFT)
+                {
+                    final EnumFacing facing = BlockPosUtil.getXZFacing(ladderPos, new BlockPos(lastNode.getX(), 0, lastNode.getZ()));
+                    final BlockPos ladderHeight = new BlockPos(ladderPos.getX(), targetY+1, ladderPos.getZ());
+                    return new BlockPos(ladderHeight.offset(facing, 7));
+                }
+
                 if (lastNode != null && lastNode.getParent() != null)
                 {
                     com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(lastNode.getParent());
@@ -187,7 +206,17 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
         com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(buildingMiner.getActiveNode().getParent());
         while (currentNode != null && new Vec2i(currentNode.getX(), currentNode.getZ()).equals(currentNode.getParent()) && currentNode.getParent() != null)
         {
-            nodesToTarget.add(new BlockPos(currentNode.getX(), levelDepth, currentNode.getZ()));
+            if (currentNode.getStyle() == Node.NodeType.SHAFT)
+            {
+                final BlockPos ladderPos = buildingMiner.getLadderLocation();
+                final EnumFacing facing = BlockPosUtil.getXZFacing(ladderPos, new BlockPos(currentNode.getX(), 0, currentNode.getZ()));
+                final BlockPos ladderHeight = new BlockPos(ladderPos.getX(), levelDepth + 1, ladderPos.getZ());
+                nodesToTarget.add(new BlockPos(ladderHeight.offset(facing, 7)));
+            }
+            else
+            {
+                nodesToTarget.add(new BlockPos(currentNode.getX(), levelDepth, currentNode.getZ()));
+            }
             currentNode = level.getNode(currentNode.getParent());
         }
 

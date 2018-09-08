@@ -212,7 +212,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             }
             else
             {
-                return GATHERING_REQUIRED_MATERIALS;
+                return GET_MATERIALS;
             }
         }
         if (walkToBlock(currentTarget))
