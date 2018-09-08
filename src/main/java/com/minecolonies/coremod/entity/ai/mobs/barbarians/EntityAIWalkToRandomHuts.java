@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.mobs.barbarians;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -170,7 +171,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
                 world.setBlockState(front, Blocks.COBBLESTONE.getDefaultState());
             }
 
-            if (entity.getStuckCounter() > 1)
+            if (entity.getStuckCounter() > 1 && Configurations.gameplay.doBarbariansBreakThroughWalls)
             {
                 Collections.shuffle(directions);
 
