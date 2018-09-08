@@ -215,7 +215,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
                         && player.getFoodStats().getFoodLevel() <= 12));
         List<EntityCitizen> citizenList = world.getEntitiesWithinAABB(EntityCitizen.class,
                 range, cit ->  cit.getCitizenData() != null && ((Configurations.gameplay.restaurantSittingRequired && cit.isRiding()) 
-                || (! Configurations.gameplay.restaurantSittingRequired && !cit.isRiding()) && cit.getCitizenData().getSaturation() <= CitizenConstants.LOW_SATURATION));
+                || (! Configurations.gameplay.restaurantSittingRequired && !cit.isRiding())) && cit.getCitizenData().getSaturation() <= CitizenConstants.LOW_SATURATION);
         if (!citizenList.isEmpty() || !playerList.isEmpty())
         {
             citizenToServe.addAll(citizenList);

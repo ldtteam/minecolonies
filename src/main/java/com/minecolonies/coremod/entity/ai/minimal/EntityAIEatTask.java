@@ -48,9 +48,10 @@ public class EntityAIEatTask extends EntityAIBase
     }
 
     
-    private final static int RELAXING_TICKS = 100;
+    private final static int RELAXING_TICKS = 500;
     private final EntityCitizen citizen;
     private int eatingTicks;
+    private int relaxingTicks;
     private ItemStack stack;
     private int slot;
     protected ChatSpamFilter      chatSpamFilter;
@@ -89,6 +90,12 @@ public class EntityAIEatTask extends EntityAIBase
             citizen.dismountRidingEntity();
             currentState = STATE.IDLE;
         }
+
+        if (currentState != STATE.IDLE && citizen.getDesiredActivity() != DesiredActivity.SLEEP )
+        {
+            return true;
+        }
+
         
         if ( (citizen.getDesiredActivity() == DesiredActivity.SLEEP || citizen.getCitizenData().getSaturation() >= CitizenConstants.HIGH_SATURATION))
         {
@@ -99,10 +106,6 @@ public class EntityAIEatTask extends EntityAIBase
             return false;
         }
 
-        if (currentState != STATE.IDLE)
-        {
-            return true;
-        }
 
         if (shouldGetFood())
         {
@@ -115,7 +118,7 @@ public class EntityAIEatTask extends EntityAIBase
             return true;
         } 
 
-        cleanTask();
+//        cleanTask();
         return false;
         
     }
@@ -171,13 +174,31 @@ public class EntityAIEatTask extends EntityAIBase
                 tryToEat();
                 break;
             case RELAXING:
-                if (eatingTicks > 0)
+                if (relaxingTicks > 0)
                 {
-                    eatingTicks--;
-                    if(eatingTicks == 0) 
+                    relaxingTicks--;
+                    if (eatingTicks > 0)
+                    {
+                        eatingTicks--;
+                    }
+                    else
+                    {
+                        citizen.stopActiveHand();
+                        citizen.resetActiveHand();
+                    }
+
+                    if(relaxingTicks == 0) 
                     {
                         citizen.dismountRidingEntity();
                         cleanTask();
+                    }
+                    else if (eatingTicks == 0 && checkForRandom())
+                    {
+                        citizen.stopActiveHand();
+                        citizen.resetActiveHand();
+                        citizen.setHeldItem(EnumHand.MAIN_HAND, stack);
+                        citizen.setActiveHand(EnumHand.MAIN_HAND);
+                        eatingTicks = 50;
                     }
                 }
                 break;
@@ -200,22 +221,23 @@ public class EntityAIEatTask extends EntityAIBase
                         }
                         citizen.getCitizenData().getCitizenHappinessHandler().setFoodModifier(true);
                         citizen.getCitizenData().markDirty();
-                        if (restaurant != null)
+                        if (restaurant != null && Configurations.gameplay.restaurantSittingRequired)
                         {
                             currentState = STATE.RELAXING;
+                            relaxingTicks = RELAXING_TICKS;
                         }
                         else
                         {
                             citizen.dismountRidingEntity();
                             cleanTask();
                         }
-                        eatingTicks = RELAXING_TICKS;
                     }
                 }
                 else
                 {
                     citizen.dismountRidingEntity();
-                    cleanTask();                }
+                    cleanTask();                
+                }
                 break;
             default:
                 break;
@@ -230,12 +252,18 @@ public class EntityAIEatTask extends EntityAIBase
             citizen.dismountRidingEntity();
             seatBlock.ifPresent(block -> block.dismountSeat(CompatibilityUtils.getWorld(citizen)));
         }
+        citizen.stopActiveHand();
+        citizen.resetActiveHand();
+        citizen.setHeldItem(EnumHand.MAIN_HAND,ItemStack.EMPTY);
+
         slot = -1;
         stack = null;
         eatingTicks = 0;
+        relaxingTicks = 0;
         isSitting = false;
         currentState = STATE.IDLE;
         chairPosition = null;
+        restaurant = null;
         seatBlock = Optional.ofNullable(null);
     }
 
@@ -290,7 +318,7 @@ public class EntityAIEatTask extends EntityAIBase
         return ((citizen.getCitizenData().getSaturation() < CitizenConstants.LOW_SATURATION
                 && (citizen.getCitizenJobHandler().getColonyJob() != null && !citizen.getCitizenJobHandler().getColonyJob().hasCheckedForFoodToday()))
                 || (citizen.getCitizenData().getSaturation() <= 0)
-                || (citizen.getCitizenData().getSaturation() < CitizenConstants.HIGH_SATURATION
+                || (citizen.getCitizenData().getSaturation() < CitizenConstants.LOW_SATURATION
                         && citizen.getCitizenJobHandler().getColonyJob() == null));
     }
 

@@ -364,6 +364,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     if (currentPatrolPoint != null
                           && (worker.isWorkerAtSiteWithMove(currentPatrolPoint, 2) || worker.getCitizenStuckHandler().isStuck()))
                     {
+                        worker.decreaseSaturationForAction(0.01);
                         currentPatrolPoint = guardBuilding.getNextPatrolTarget(currentPatrolPoint);
                     }
                     break;
@@ -383,6 +384,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                         if (distance < getAttackDistance())
                         {
                             worker.getNavigator().clearPath();
+                            worker.decreaseSaturationForAction(0.01);
                         }
                         else
                         {

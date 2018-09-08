@@ -121,6 +121,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
             worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
             worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+            worker.decreaseSaturationForAction(0.01);
 
             if (worker.getDistance(target) > getAttackRange())
             {
@@ -216,7 +217,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
                 target.attackEntityFrom(source, (float) damageToBeDealt);
                 target.setRevengeTarget(worker);
 
-                this.incrementActionsDoneAndDecSaturation();
+                worker.decreaseSaturationForAction();
                 worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
             }
         }

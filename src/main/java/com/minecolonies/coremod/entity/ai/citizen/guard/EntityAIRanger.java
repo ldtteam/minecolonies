@@ -205,6 +205,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
 
                 if (distanceToEntity <  getAttackDistance() && timeCanSee >= 20 && (!canSee && timeAtSameSpot > 20))
                 {
+                    worker.decreaseSaturationForAction(0.01);
                     worker.getNavigator().clearPath();
                     strafingTime++;
                 }
@@ -317,7 +318,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                         target.setRevengeTarget(worker);
                         attackTime = getAttackDelay();
                         worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
-                        this.incrementActionsDoneAndDecSaturation();
+                        worker.decreaseSaturationForAction(0.01);
                         worker.resetActiveHand();
                     }
                     else

@@ -168,10 +168,10 @@ public class ScarecrowTileEntity extends TileEntityChest
     public final void calculateSize(@NotNull final World world, @NotNull final BlockPos position)
     {
         //Calculate in all 4 directions
-        this.lengthPlusX = searchNextBlock(0, position.east(), EnumFacing.EAST, world);
-        this.lengthMinusX = searchNextBlock(0, position.west(), EnumFacing.WEST, world);
-        this.widthPlusZ = searchNextBlock(0, position.south(), EnumFacing.SOUTH, world);
-        this.widthMinusZ = searchNextBlock(0, position.north(), EnumFacing.NORTH, world);
+        this.lengthPlusX = searchNextBlock(0, position.east(), EnumFacing.EAST, world) + position.getX();
+        this.lengthMinusX = searchNextBlock(0, position.west(), EnumFacing.WEST, world) - position.getX();
+        this.widthPlusZ = searchNextBlock(0, position.south(), EnumFacing.SOUTH, world) + position.getZ();
+        this.widthMinusZ = searchNextBlock(0, position.north(), EnumFacing.NORTH, world) - position.getZ();
         markDirty();
     }
 

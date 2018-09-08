@@ -414,6 +414,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             }
             lastPathResult = pathResult;
             pathResult = null;
+            worker.decreaseSaturationForAction();
             return FISHERMAN_CHECK_WATER;
         }
         if (pathResult.isCancelled())
@@ -442,6 +443,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         {
             return notReadyState;
         }
+
+        worker.decreaseSaturationForAction(0.001);
+        
         if (caughtFish())
         {
             this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("fish");

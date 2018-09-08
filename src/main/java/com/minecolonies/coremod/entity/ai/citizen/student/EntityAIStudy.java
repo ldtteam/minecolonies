@@ -81,6 +81,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
         }
 
         data.tryRandomLevelUp(world.rand);
+        worker.decreaseSaturationForAction();
 
         studyPos = null;
         setDelay(STUDY_DELAY);
