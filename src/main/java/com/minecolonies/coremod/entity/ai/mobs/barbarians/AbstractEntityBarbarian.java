@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.ai.mobs.barbarians;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianSpawnUtils;
@@ -10,7 +9,6 @@ import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.items.ItemChiefSword;
 import com.minecolonies.coremod.sounds.BarbarianSounds;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
@@ -26,7 +24,6 @@ import net.minecraft.world.WorldServer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.BarbarianConstants.*;
@@ -37,11 +34,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
  */
 public abstract class AbstractEntityBarbarian extends EntityMob
 {
-    /**
-     * The navigator field of the barb.
-     */
-    private static Field navigatorField;
-
     /**
      * The New PathNavigate navigator.
      */
@@ -309,46 +301,11 @@ public abstract class AbstractEntityBarbarian extends EntityMob
         if (this.newNavigator == null)
         {
             this.newNavigator = new PathNavigate(this, world);
-            updateNavigatorField();
+            this.navigator = newNavigator;
             this.newNavigator.setCanSwim(true);
             this.newNavigator.setEnterDoors(false);
         }
         return newNavigator;
-    }
-
-    /**
-     * Method used to update the navigator field.
-     * Gets the minecraft path navigate through reflection.
-     */
-    private synchronized void updateNavigatorField()
-    {
-        if (navigatorField == null)
-        {
-            final Field[] fields = EntityLiving.class.getDeclaredFields();
-            for (@NotNull final Field field : fields)
-            {
-                if (field.getType().equals(net.minecraft.pathfinding.PathNavigate.class))
-                {
-                    field.setAccessible(true);
-                    navigatorField = field;
-                    break;
-                }
-            }
-        }
-
-        if (navigatorField == null)
-        {
-            throw new IllegalStateException("Navigator field should not be null, contact developers.");
-        }
-
-        try
-        {
-            navigatorField.set(this, this.newNavigator);
-        }
-        catch (final IllegalAccessException e)
-        {
-            Log.getLogger().error("Navigator error", e);
-        }
     }
 
     @Override
