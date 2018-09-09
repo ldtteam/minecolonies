@@ -187,6 +187,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
            */
           new AITarget(this::shouldGetFood, this::searchForFood),
           /*
+           * Gather a needed item.
+           */
+          new AITarget(GATHERING_REQUIRED_MATERIALS, this::getNeededItem),
+          /*
+           * Place any non-restart regarding AITargets before this one
            * Restart AI, building etc. 
            */
           new AITarget(this::shouldRestart, this::restart),
@@ -201,11 +206,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
            * Start paused with inventory dump
            */
-          new AITarget(this::isPaused, INVENTORY_FULL),
-          /*
-           * Gather a needed item.
-           */
-          new AITarget(GATHERING_REQUIRED_MATERIALS, this::getNeededItem)
+          new AITarget(this::isPaused, INVENTORY_FULL)
         );
     }
 
