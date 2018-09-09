@@ -291,6 +291,8 @@ public final class TranslationConstants
     public static final String CMCG_HAPPINESS_TOOLS                                                = "com.minecolonies.coremod.gui.happiness.tools";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_MOURN                                      = "com.minecolonies.coremod.mourning";
+    @NonNls
+    public static final String CMC_GUI_TOWNHALL_BUILDING_LEVEL                                     = "com.minecolonies.coremod.gui.townHall.buildingLevel";
 
     private TranslationConstants()
     {

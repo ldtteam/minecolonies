@@ -2,10 +2,11 @@
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
 
     <switch id="switchpageActions" size="100% 100%">
-        <view>
+        <view id="pageActions">
             <label size="148 11" color="green" pos="25 24"
                 label="$(com.minecolonies.coremod.gui.townHall.currTownHallName)"/>
             <label size="148 11" id="name" color="black" pos="25 35"/>
+            <label size="135 11" id="level" color="black" pos="38 69"/>
                 
             <button id="build" size="120 19" pos="38 84"
                     label="$(com.minecolonies.coremod.gui.townHall.build)"/>
