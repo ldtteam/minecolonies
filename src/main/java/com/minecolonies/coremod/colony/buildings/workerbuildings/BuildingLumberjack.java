@@ -225,7 +225,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             final NBTTagCompound saplingCompound = saplingTagList.getCompoundTagAt(i);
             final ItemStack stack = new ItemStack(saplingCompound);
             final ItemStorage storage = new ItemStorage(stack);
-            if (treesNotToFell.contains(storage) && !storage.getItemStack().isEmpty())
+            if (!treesNotToFell.contains(storage) && !storage.getItemStack().isEmpty())
             {
                 if (!saplingCompound.hasKey(TAG_CUT) || !saplingCompound.getBoolean(TAG_CUT))
                 {

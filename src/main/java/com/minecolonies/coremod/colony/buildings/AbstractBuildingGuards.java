@@ -162,7 +162,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     /**
      * The job of the guard, Any possible {@link GuardJob}.
      */
-    private GuardJob job = GuardJob.KNIGHT;
+    private GuardJob job = null;
 
     /**
      * The list of manual patrol targets.
@@ -220,7 +220,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         super.readFromNBT(compound);
         task = GuardTask.values()[compound.getInteger(NBT_TASK)];
         final int jobId = compound.getInteger(NBT_JOB);
-        job = jobId == -1 ? GuardJob.KNIGHT : GuardJob.values()[jobId];
+        job = jobId == -1 ? null : GuardJob.values()[jobId];
         assignManually = compound.getBoolean(NBT_ASSIGN);
         retrieveOnLowHealth = compound.getBoolean(NBT_RETRIEVE);
         patrolManually = compound.getBoolean(NBT_PATROL);
@@ -301,7 +301,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         buf.writeBoolean(patrolManually);
         buf.writeBoolean(tightGrouping);
         buf.writeInt(task.ordinal());
-        buf.writeInt(job == GuardJob.KNIGHT ? -1 : job.ordinal());
+        buf.writeInt(job == null ? -1 : job.ordinal());
         buf.writeInt(patrolTargets.size());
 
         for (final BlockPos pos : patrolTargets)
@@ -452,6 +452,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
+        if (job == null)
+        {
+            job = new Random().nextBoolean() ? GuardJob.KNIGHT : GuardJob.RANGER;
+        }
+
         if (getAssignedEntities() != null)
         {
             for (final Optional<EntityCitizen> optCitizen : getAssignedEntities())
