@@ -694,10 +694,6 @@ public final class WindowConstants
     public static final String TOOLS_MODIFIER   = "toolsLevel";
 
     /**
-     * Citizen view constants.
-     */
-
-    /**
      * The label to find the inventory button.
      */
     public static final String INVENTORY_BUTTON_ID = "inventory";
