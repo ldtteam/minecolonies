@@ -39,7 +39,6 @@ public class RestartCitizenMessage extends AbstractMessage<RestartCitizenMessage
      *
      * @param building  view of the building to read data from
      * @param citizenID the id of the citizen to fill the job.
-     * @param resetAI false = cleanUp only, true = full restart
      */
     public RestartCitizenMessage(@NotNull final AbstractBuildingView building, final int citizenID)
     {
