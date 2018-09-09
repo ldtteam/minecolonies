@@ -16,7 +16,6 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIStatePausedHandler;
@@ -136,10 +135,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
            */
           new AITarget(this::initSafetyChecks),
           /*
-           * Restart AI, building etc. 
-           */
-          new AITarget(this::shouldRestart, this::restart),
-          /*
             Update chestbelt and nametag
             Will be executed every time
             and does not stop execution
@@ -192,9 +187,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
            */
           new AITarget(this::shouldGetFood, this::searchForFood),
           /*
-           * Do not work if worker is paused and reset if not paused.
+           * Restart AI, building etc. 
+           */
+          new AITarget(this::shouldRestart, this::restart),
+          /*
+           * Reset if not paused.
            */
           new AITarget(PAUSED, () -> !this.isPaused(), () -> IDLE),
+          /*
+           * Do not work if worker is paused
+           */
           new AITarget(PAUSED, this::bePaused),
           /*
            * Start paused with inventory dump
@@ -1059,7 +1061,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public AIState afterDump()
     {
-        return isPaused() ? PAUSED : IDLE;
+        if (isPaused())
+        {
+            // perform a cleanUp before going to PAUSED
+            this.getOwnBuilding().onCleanUp(worker.getCitizenData());
+            return PAUSED;
+        }
+        return IDLE;
     }
 
     /**

@@ -27,11 +27,6 @@ public class RestartCitizenMessage extends AbstractMessage<RestartCitizenMessage
     private int citizenID;
 
     /**
-     * Whether set AI state to Status.IDLE
-     */
-    private boolean resetAI;
-
-    /**
      * Empty public constructor.
      */
     public RestartCitizenMessage()
@@ -46,12 +41,11 @@ public class RestartCitizenMessage extends AbstractMessage<RestartCitizenMessage
      * @param citizenID the id of the citizen to fill the job.
      * @param resetAI false = cleanUp only, true = full restart
      */
-    public RestartCitizenMessage(@NotNull final AbstractBuildingView building, final int citizenID, final boolean resetAI)
+    public RestartCitizenMessage(@NotNull final AbstractBuildingView building, final int citizenID)
     {
         super();
         this.colonyId = building.getColony().getID();
         this.citizenID = citizenID;
-        this.resetAI = resetAI;
     }
 
     /**
@@ -64,7 +58,6 @@ public class RestartCitizenMessage extends AbstractMessage<RestartCitizenMessage
     {
         colonyId = buf.readInt();
         citizenID = buf.readInt();
-        resetAI = buf.readBoolean();
     }
 
     /**
@@ -77,7 +70,6 @@ public class RestartCitizenMessage extends AbstractMessage<RestartCitizenMessage
     {
         buf.writeInt(colonyId);
         buf.writeInt(citizenID);
-        buf.writeBoolean(resetAI);
     }
 
     @Override
@@ -94,17 +86,9 @@ public class RestartCitizenMessage extends AbstractMessage<RestartCitizenMessage
 
             final CitizenData citizen = colony.getCitizenManager().getCitizen(message.citizenID);
 
-            // Restart also worker building and AI if needed
-
-            if (message.resetAI)
-            {
-                citizen.scheduleRestart(player);
-                LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.gui.hiring.restartMessage", citizen.getName());
-            }
-            else
-            {
-                citizen.getWorkBuilding().onCleanUp(citizen);
-            }
+            // Restart also worker building and AI
+            citizen.scheduleRestart(player);
+            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.gui.hiring.restartMessage", citizen.getName());
         }
     }
 }

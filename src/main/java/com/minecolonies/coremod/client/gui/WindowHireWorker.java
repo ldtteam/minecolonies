@@ -268,13 +268,9 @@ public class WindowHireWorker extends Window implements ButtonHandler
             case BUTTON_PAUSE:
                 MineColonies.getNetwork().sendToServer(new PauseCitizenMessage(this.building, id));
                 citizen.setPaused(!citizen.isPaused());
-                if (citizen.isPaused())
-                {
-                    MineColonies.getNetwork().sendToServer(new RestartCitizenMessage(this.building, id, false));
-                }
                 break;
             case BUTTON_RESTART:
-                MineColonies.getNetwork().sendToServer(new RestartCitizenMessage(this.building, id, true));
+                MineColonies.getNetwork().sendToServer(new RestartCitizenMessage(this.building, id));
                 this.close();
                 break;
             default:
