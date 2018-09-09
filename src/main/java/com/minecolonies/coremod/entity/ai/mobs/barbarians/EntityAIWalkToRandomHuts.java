@@ -149,7 +149,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
             proxy = new GeneralEntityWalkToProxy(entity);
         }
 
-        if (new AxisAlignedBB(entity.getPosition()).expand(1, 2, 1)
+        if (new AxisAlignedBB(entity.getPosition()).expand(1, 1, 1).expand(-1, -1, -1)
               .intersects(new AxisAlignedBB(lastPos)))
         {
             stuckTime++;
@@ -182,11 +182,11 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
                 final IBlockState ladderUp = world.getBlockState(entity.getPosition().up());
                 if (entity.getLadderCounter() <= LADDERS_TO_PLACE || random.nextBoolean())
                 {
-                    if (ladderHere.getBlock() == Blocks.LADDER && ladderUp.getBlock() != Blocks.LADDER)
+                    if (ladderHere.getBlock() == Blocks.LADDER && ladderUp.getBlock() != Blocks.LADDER && !ladderHere.getMaterial().isLiquid())
                     {
                         world.setBlockState(entity.getPosition().up(), ladderHere);
                     }
-                    else if(ladderUp.getBlock() == Blocks.LADDER && ladderHere.getBlock() != Blocks.LADDER)
+                    else if(ladderUp.getBlock() == Blocks.LADDER && ladderHere.getBlock() != Blocks.LADDER && !ladderUp.getMaterial().isLiquid())
                     {
                         world.setBlockState(entity.getPosition(), ladderUp);
                     }
@@ -200,7 +200,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
                                 {
                                     world.setBlockState(entity.getPosition().up(), Blocks.LADDER.getDefaultState().withProperty(BlockLadder.FACING, dir.getOpposite()));
                                 }
-                                else
+                                else if (!ladderHere.getMaterial().isLiquid())
                                 {
                                     world.setBlockState(entity.getPosition(), Blocks.LADDER.getDefaultState().withProperty(BlockLadder.FACING, dir.getOpposite()));
                                 }
