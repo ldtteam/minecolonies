@@ -927,8 +927,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * 
      * @param toolType  Tool type that is requested
      * @param minimalLevel min. level of the tool
+     * @param maximalLevel min. level of the tool
      */
-    protected void checkForToolorWeaponASync(@NotNull final IToolType toolType, final int minimalLevel)
+    protected void checkForToolorWeaponASync(@NotNull final IToolType toolType, final int minimalLevel, final int maximalLevel)
     {
         final ImmutableList<IRequest<? extends Tool>> openToolRequests =
           getOwnBuilding().getOpenRequestsOfTypeFiltered(
@@ -943,7 +944,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (openToolRequests.isEmpty() && completedToolRequests.isEmpty() && !hasOpenToolRequest(toolType))
         {
-            final Tool request = new Tool(toolType, minimalLevel, getOwnBuilding().getMaxToolLevel() < minimalLevel ? minimalLevel : getOwnBuilding().getMaxToolLevel());
+            final Tool request = new Tool(toolType, minimalLevel, maximalLevel);
             worker.getCitizenData().createRequestAsync(request);
         }
     }
