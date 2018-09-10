@@ -62,8 +62,8 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
         this.avoid = new BlockPos(avoid);
         this.avoidDistance = avoidDistance;
 
-        double dx = (double) (start.getX() - avoid.getX());
-        double dz = (double) (start.getZ() - avoid.getZ());
+        double dx = (double) (start.getX() - avoid.getX()) + 1;
+        double dz = (double) (start.getZ() - avoid.getZ()) + 1;
 
         final double scalar = avoidDistance / Math.sqrt(dx * dx + dz * dz);
         dx *= scalar;
@@ -145,7 +145,9 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     protected boolean isAtDestination(@NotNull final Node n)
     {
         final BlockPos vector = n.pos.subtract(avoid);
-        return getNodeResultScore(n) >= (avoidDistance * avoidDistance) && EnumFacing.getFacingFromVector(vector.getX(), 0, vector.getZ()).equals(direction);
+        final double nodeResult = getNodeResultScore(n);
+        final int avoidSq = (avoidDistance * avoidDistance);
+        return nodeResult >= avoidSq && (EnumFacing.getFacingFromVector(vector.getX(), 0, vector.getZ()).equals(direction) || nodeResult > avoidSq * avoidDistance);
     }
 
     /**

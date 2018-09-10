@@ -295,6 +295,9 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE                             = "com.minecolonies.coremod.gui.hiring.buttonPaused";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE                           = "com.minecolonies.coremod.gui.hiring.buttonUnpaused";
+    @NonNls
+    public static final String CMC_GUI_TOWNHALL_BUILDING_LEVEL                                     = "com.minecolonies.coremod.gui.townHall.buildingLevel";
+
 
     private TranslationConstants()
     {
