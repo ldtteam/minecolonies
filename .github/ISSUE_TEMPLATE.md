@@ -16,8 +16,10 @@ Version:
 
 - <!-- Description here -->
 
+<!-- If you have any videos, images or logs relating to this issue, please post them here also. -->
+
 ### Steps to reproduce the problem
-<!-- What do we need to do to make this issue show up in our own game? 
+<!-- What should we do to make this issue show up in our own game? 
      Please also try to give good detail here so it's easier for us to reproduce this issue. -->
 
 1. <!-- Do this -->
