@@ -988,7 +988,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         if (levelSignPos != null)
         {
-            TileEntity te = world.getTileEntity(levelSignPos);
+            final TileEntity te = world.getTileEntity(levelSignPos);
 
             if (te instanceof TileEntitySign)
             {
