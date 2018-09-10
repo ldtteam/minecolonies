@@ -204,7 +204,7 @@ public final class StructureWrapper
                         }
                         catch (final RuntimeException e)
                         {
-                            Log.getLogger().info("Couldn't restore entitiy", e);
+                            Log.getLogger().info("Couldn't restore entity", e);
                         }
                     }
                 }
