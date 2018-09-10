@@ -202,7 +202,7 @@ public final class StandardRequests
             {
                 preType.appendText(" ");
                 preType.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMINLEVEL));
-                preType.appendText(ItemStackUtils.swapToolGrade(getRequest().getMinLevel()));
+                preType.appendText(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMinLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMinLevel()));
             }
 
             if (getRequest().getMaxLevel() < ToolLevelConstants.TOOL_LEVEL_MAXIMUM)
@@ -215,7 +215,7 @@ public final class StandardRequests
 
                 preType.appendText(" ");
                 preType.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMAXLEVEL));
-                preType.appendText(ItemStackUtils.swapToolGrade(getRequest().getMaxLevel()));
+                preType.appendText(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMaxLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMaxLevel()));
             }
 
             return preType;

@@ -1413,6 +1413,15 @@ public class Colony implements IColony
     }
 
     /**
+     * Check if the colony is currently under attack by another player.
+     * @return true if so.
+     */
+    public boolean isColonyUnderAttack()
+    {
+        return !attackingPlayers.isEmpty();
+    }
+
+    /**
      * Getter for the colony team color.
      * @return the TextFormatting enum color.
      */

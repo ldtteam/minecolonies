@@ -58,7 +58,6 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -68,20 +67,13 @@ import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
-import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_NOT_ALLOWED;
-import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_SAME;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_MOURN;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * The Class used to represent the citizen entities.
  */
 public class EntityCitizen extends AbstractEntityCitizen
 {
-    /**
-     * The navigator field of the citizen.
-     */
-    private static Field navigatorField;
-
     /**
      * The New PathNavigate navigator.
      */
@@ -189,7 +181,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.enablePersistence();
         this.setAlwaysRenderNameTag(Configurations.gameplay.alwaysRenderNameTag);
         this.newNavigator = new PathNavigate(this, world);
-        updateNavigatorField();
+        this.navigator = newNavigator;
         if (CompatibilityUtils.getWorld(this).isRemote)
         {
             setRenderDistanceWeight(RENDER_DISTANCE_WEIGHT);
@@ -197,41 +189,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.newNavigator.setCanSwim(true);
         this.newNavigator.setEnterDoors(true);
         initTasks();
-    }
-
-    /**
-     * Method used to update the navigator field.
-     * Gets the minecraft path navigate through reflection.
-     */
-    private synchronized void updateNavigatorField()
-    {
-        if (navigatorField == null)
-        {
-            final Field[] fields = EntityLiving.class.getDeclaredFields();
-            for (@NotNull final Field field : fields)
-            {
-                if (field.getType().equals(net.minecraft.pathfinding.PathNavigate.class))
-                {
-                    field.setAccessible(true);
-                    navigatorField = field;
-                    break;
-                }
-            }
-        }
-
-        if (navigatorField == null)
-        {
-            throw new IllegalStateException("Navigator field should not be null, contact developers.");
-        }
-
-        try
-        {
-            navigatorField.set(this, this.newNavigator);
-        }
-        catch (final IllegalAccessException e)
-        {
-            Log.getLogger().error("Navigator error", e);
-        }
     }
 
     /**
@@ -881,7 +838,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             return DesiredActivity.WORK;
         }
 
-        if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (getCitizenColonyHandler().getColony().getBarbManager().getHorde((WorldServer) world).size() > 0) && !(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
+        if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (!getCitizenColonyHandler().getColony().getBarbManager().getHorde((WorldServer) world).isEmpty()) && !(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
         {
             return DesiredActivity.SLEEP;
         }

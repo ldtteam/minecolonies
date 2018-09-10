@@ -95,6 +95,9 @@ public class Configurations
         @Config.Comment("The max size of a barbarian horde")
         public int maxBarbarianSize = 20;
 
+        @Config.Comment("Whether or not to barbarians can break, scale, bridge obstacles")
+        public boolean doBarbariansBreakThroughWalls = true;
+
         @Config.Comment("The average amount of nights between raids")
         public int averageNumberOfNightsBetweenRaids = 3;
 
