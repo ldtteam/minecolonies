@@ -12,7 +12,7 @@ Version:
 
 ### Actual behaviour
 <!-- What actually happens when this feature is used in it's current state? 
-     Try to give good detail here to help us properly understand the issue. -->
+     Try to give as much detail as possible here to help us properly understand the issue. -->
 
 - <!-- Description here -->
 
@@ -20,7 +20,7 @@ Version:
 
 ### Steps to reproduce the problem
 <!-- What should we do to make this issue show up in our own game? 
-     Please also try to give good detail here so it's easier for us to reproduce this issue. -->
+     Try to give as much detail as possible here too so it's easier for us to reproduce this issue. -->
 
 1. <!-- Do this -->
 2. <!-- And then this -->
