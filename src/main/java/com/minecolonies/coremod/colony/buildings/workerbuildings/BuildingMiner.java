@@ -318,7 +318,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
         for (@NotNull final Level level : levels)
         {
-            buf.writeInt(level.getNumberOfNodes());
+            buf.writeInt(level.getNumberOfBuiltNodes());
             buf.writeInt(level.getDepth());
         }
     }
@@ -356,6 +356,16 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             return levels.get(currentLevel);
         }
         return null;
+    }
+
+    /**
+     * Find given level in the levels array.
+     *
+     * @return position in the levels array.
+     */
+    public int getLevelId(final Level level)
+    {
+        return levels.indexOf(level);
     }
 
     /**
