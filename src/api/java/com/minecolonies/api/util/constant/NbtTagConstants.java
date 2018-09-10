@@ -352,6 +352,21 @@ public final class NbtTagConstants
     public static final String TAG_PRINT_PROGRESS   = "printProgrss";
 
     /**
+     * String to store the existing time to NBT.
+     */
+    public static final String TAG_TIME = "time";
+
+    /**
+     * String to store the stuck counter to NBT.
+     */
+    public static final String TAG_STUCK_COUNTER = "stuck";
+
+    /**
+     * String to store the ladder counter to NBT.
+     */
+    public static final String TAG_LADDER_COUNTER = "ladder";
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private NbtTagConstants()

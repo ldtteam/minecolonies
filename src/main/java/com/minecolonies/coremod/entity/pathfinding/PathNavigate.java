@@ -265,7 +265,7 @@ public class PathNavigate extends PathNavigateGround
 
             if (pEx.isOnLadder())
             {
-                final Vec3d vec3 = this.getPath().getPosition(this.ourEntity);
+                Vec3d vec3 = this.getPath().getPosition(this.ourEntity);
 
                 if (vec3.squareDistanceTo(ourEntity.posX, vec3.y, ourEntity.posZ) < Math.random() * 0.1)
                 {
@@ -275,16 +275,16 @@ public class PathNavigate extends PathNavigateGround
                     {
                         //  Any of these values is climbing, so adjust our direction of travel towards the ladder
                         case NORTH:
-                            vec3.add(0, 0, 1);
+                            vec3 = vec3.add(0, 0, 1);
                             break;
                         case SOUTH:
-                            vec3.add(0, 0, -1);
+                            vec3 = vec3.add(0, 0, -1);
                             break;
                         case WEST:
-                            vec3.add(1, 0, 0);
+                            vec3 = vec3.add(1, 0, 0);
                             break;
                         case EAST:
-                            vec3.add(-1, 0, 0);
+                            vec3 = vec3.add(-1, 0, 0);
                             break;
                         //  Any other value is going down, so lets not move at all
                         default:
