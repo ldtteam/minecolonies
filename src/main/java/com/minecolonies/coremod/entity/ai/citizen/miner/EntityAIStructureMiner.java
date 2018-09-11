@@ -961,15 +961,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                     if (te != null)
                     {
                         final NBTTagCompound teData = te.tileentityData;
-                        if (teData != null)
+                        if (teData != null && teData.getString(LEVEL_SIGN_FIRST_ROW).equals(LEVEL_SIGN_TEXT))
                         {
-                            if (teData.getString(LEVEL_SIGN_FIRST_ROW).equals(LEVEL_SIGN_TEXT))
-                            {
-                                // try to make an anchor in 0,0,0 instead of the middle of the structure
-                                BlockPos zeroAnchor = structure.getPosition();
-                                zeroAnchor = zeroAnchor.add(new BlockPos(-((int) structure.getWidth() / 2), 0, -((int) structure.getLength() / 2)));
-                                return zeroAnchor.add(localPos);
-                            }
+                            // try to make an anchor in 0,0,0 instead of the middle of the structure
+                            BlockPos zeroAnchor = structure.getPosition();
+                            zeroAnchor = zeroAnchor.add(new BlockPos(-((int) structure.getWidth() / 2), 0, -((int) structure.getLength() / 2)));
+                            return zeroAnchor.add(localPos);
                         }
                     }
                 }
