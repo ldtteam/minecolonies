@@ -15,7 +15,7 @@
                     <button id="changeToLevel" size="100 12" pos="35 2"
                             label="$(com.minecolonies.coremod.gui.workerHuts.minerMineNode)"/>
                     <label id="nONodes" size="50 12" pos="35 16" textalign="MIDDLE_LEFT" color="black"/>
-                    <label id="yLevel" size="50 12" pos="85 16" textalign="MIDDLE_LEFT" color="black"/>
+                    <label id="yLevel" size="50 12" pos="100 16" textalign="MIDDLE_LEFT" color="black"/>
                 </box>
             </list>
         </view>

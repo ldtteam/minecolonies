@@ -662,9 +662,10 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             current = buf.readInt();
             final int size = buf.readInt();
 
+            levelsInfo = new ArrayList<Tuple<Integer, Integer>>(size);
             for (int i = 0; i < size; i++)
             {
-                levelsInfo.add(new Tuple<>(buf.readInt(), buf.readInt()));
+                levelsInfo.add(i, new Tuple<>(buf.readInt(), buf.readInt()));
             }
         }
 
