@@ -128,7 +128,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
-     * Executed every time when RestartCitizenMessage is called.
+     * Executed every time when citizen finish inventory cleanup called after citizen got paused.
      * Use for cleaning a state only.
      */
     public void onCleanUp(final CitizenData citizen)
@@ -147,6 +147,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      */
     public void onRestart(final CitizenData citizen)
     {
+        // Unpause citizen
+        citizen.setPaused(false);
         /*
          * Buildings override this if required.
          */

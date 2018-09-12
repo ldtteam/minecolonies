@@ -154,12 +154,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
            */
           new AITarget(() ->
           {
-              return getState() == NEEDS_ITEM
-                       || this.getOwnBuilding()
-                            .hasWorkerOpenRequestsFiltered(
-                              worker.getCitizenData(),
-                              r -> !worker.getCitizenData().isRequestAsync(r.getToken()))
-                       || this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData());
+              return 
+                (    getState() == NEEDS_ITEM
+                  || this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData())
+                  || this.getOwnBuilding()
+                         .hasWorkerOpenRequestsFiltered(worker.getCitizenData(),r -> !worker.getCitizenData().isRequestAsync(r.getToken()))  
+                ) && !this.isPaused();
           }, this::waitForRequests),
           /*
             Dumps inventory as long as needs be.
@@ -177,10 +177,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           new AITarget(() ->
           {
               return getState() == NEEDS_TOOL
-                       && this.getOwnBuilding().getOpenRequestsOfType(
-                worker.getCitizenData(),
-                TypeToken.of(Tool.class)
-              ).isEmpty();
+                  && !this.isPaused()
+                  && this.getOwnBuilding()
+                         .getOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Tool.class))
+                         .isEmpty();
           }, IDLE),
           /*
            * Called when the citizen saturation falls too low.
@@ -1484,7 +1484,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean shouldRestart()
     {
-        return worker.getCitizenData().shouldRestart();
+        return worker.getCitizenData().shouldRestart() && this.isPaused();
     }
 
     /**
