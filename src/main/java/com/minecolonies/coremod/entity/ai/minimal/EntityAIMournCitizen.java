@@ -158,10 +158,6 @@ public class EntityAIMournCitizen extends EntityAIBase
     public void startExecuting()
     {
         citizen.getCitizenItemHandler().removeHeldItem();
-        if (this.xPosition == 0 && this.yPosition == 0 && this.zPosition == 0)
-        {
-            return;
-        }
         citizen.getNavigator().tryMoveToXYZ(this.xPosition, this.yPosition, this.zPosition, this.speed);
     }
 
