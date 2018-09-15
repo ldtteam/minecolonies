@@ -112,7 +112,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     {
         super(job);
         super.registerTargets(
-          /**
+          /*
            * If IDLE - switch to start working.
            */
           new AITarget(IDLE, START_WORKING),
@@ -219,20 +219,21 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @NotNull
     private AIState checkMineShaft()
     {
+        final BuildingMiner buildingMiner = getOwnBuilding();
         //Check if we reached the mineshaft depth limit
-        if (getLastLadder(getOwnBuilding().getLadderLocation()) < getOwnBuilding().getDepthLimit())
+        if (getLastLadder(buildingMiner.getLadderLocation()) < buildingMiner.getDepthLimit())
         {
             //If the miner hut has been placed too deep.
-            if (getOwnBuilding().getNumberOfLevels() == 0)
+            if (buildingMiner.getNumberOfLevels() == 0)
             {
                 chatSpamFilter.talkWithoutSpam("entity.miner.messageRequiresBetterHut");
-                getOwnBuilding().setClearedShaft(false);
+                buildingMiner.setClearedShaft(false);
                 return IDLE;
             }
-            getOwnBuilding().setClearedShaft(true);
+            buildingMiner.setClearedShaft(true);
             return MINER_MINING_NODE;
         }
-        getOwnBuilding().setClearedShaft(false);
+        buildingMiner.setClearedShaft(false);
         return MINER_MINING_SHAFT;
     }
 
@@ -741,6 +742,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         if (job.getStructure() != null)
         {
+            onStartWithoutStructure();
             return CLEAR_STEP;
         }
 
@@ -812,7 +814,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             getOwnBuilding(BuildingMiner.class).setActiveNode(null);
             getOwnBuilding(BuildingMiner.class).setOldNode(workingNode);
         }
-        else
+        else if (job.getStructure() != null)
         {
             @NotNull final Level currentLevel = new Level(minerBuilding, job.getStructure().getPosition().getY());
             minerBuilding.addLevel(currentLevel);
@@ -918,13 +920,5 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             }
         }
         return false;
-    }
-
-    @Override
-    protected void onStartWithoutStructure()
-    {
-        /**
-         * Nothing to do here.
-         */
     }
 }
