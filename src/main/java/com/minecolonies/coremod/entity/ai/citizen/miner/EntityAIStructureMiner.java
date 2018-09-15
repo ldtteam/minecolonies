@@ -125,7 +125,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     {
         super(job);
         super.registerTargets(
-          /**
+          /*
            * If IDLE - switch to start working.
            */
           new AITarget(IDLE, START_WORKING),
@@ -232,20 +232,21 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @NotNull
     private AIState checkMineShaft()
     {
+        final BuildingMiner buildingMiner = getOwnBuilding();
         //Check if we reached the mineshaft depth limit
-        if (getLastLadder(getOwnBuilding().getLadderLocation()) < getOwnBuilding().getDepthLimit())
+        if (getLastLadder(buildingMiner.getLadderLocation()) < buildingMiner.getDepthLimit())
         {
             //If the miner hut has been placed too deep.
-            if (getOwnBuilding().getNumberOfLevels() == 0)
+            if (buildingMiner.getNumberOfLevels() == 0)
             {
                 chatSpamFilter.talkWithoutSpam("entity.miner.messageRequiresBetterHut");
-                getOwnBuilding().setClearedShaft(false);
+                buildingMiner.setClearedShaft(false);
                 return IDLE;
             }
-            getOwnBuilding().setClearedShaft(true);
+            buildingMiner.setClearedShaft(true);
             return MINER_MINING_NODE;
         }
-        getOwnBuilding().setClearedShaft(false);
+        buildingMiner.setClearedShaft(false);
         return MINER_MINING_SHAFT;
     }
 
@@ -754,6 +755,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         if (job.getStructure() != null)
         {
+            onStartWithoutStructure();
             return CLEAR_STEP;
         }
 
@@ -828,7 +830,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             getOwnBuilding(BuildingMiner.class).setOldNode(workingNode);
             updateLevelSign(currentLevel);
         }
-        else
+        else if (job.getStructure() != null)
         {
             @Nullable final BlockPos levelSignPos = findFirstLevelSign(job.getStructure());
             @NotNull final Level currentLevel = new Level(minerBuilding, job.getStructure().getPosition().getY(), levelSignPos);
@@ -937,69 +939,5 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             }
         }
         return false;
-    }
-
-    @Override
-    protected void onStartWithoutStructure()
-    {
-        /**
-         * Nothing to do here.
-         */
-    }
-
-    @Nullable
-    private BlockPos findFirstLevelSign(final StructureWrapper structure)
-    {
-        for (int j = 0; j < structure.getHeight(); j++)
-        {
-            for (int k = 0; k < structure.getLength(); k++)
-            {
-                for (int i = 0; i < structure.getWidth(); i++)
-                {
-                    @NotNull final BlockPos localPos = new BlockPos(i, j, k);
-                    final Template.BlockInfo te = structure.getStructure().getBlockInfo(localPos);
-                    if (te != null)
-                    {
-                        final NBTTagCompound teData = te.tileentityData;
-                        if (teData != null && teData.getString(LEVEL_SIGN_FIRST_ROW).equals(LEVEL_SIGN_TEXT))
-                        {
-                            // try to make an anchor in 0,0,0 instead of the middle of the structure
-                            BlockPos zeroAnchor = structure.getPosition();
-                            zeroAnchor = zeroAnchor.add(new BlockPos(-((int) structure.getWidth() / 2), 0, -((int) structure.getLength() / 2)));
-                            return zeroAnchor.add(localPos);
-                        }
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Update given level's levelSign
-     */
-    private void updateLevelSign(final Level level)
-    {
-        @Nullable final BlockPos levelSignPos = level.getLevelSign();
-
-        if (levelSignPos != null)
-        {
-            final TileEntity te = world.getTileEntity(levelSignPos);
-
-            if (te instanceof TileEntitySign)
-            {
-                final IBlockState iblockstate = world.getBlockState(levelSignPos);
-                final TileEntitySign teLevelSign = (TileEntitySign) te;
-
-                teLevelSign.signText[0] = new TextComponentString(TextFormatting.getTextWithoutFormattingCodes(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.minerMineNode") + ": " + getOwnBuilding().getLevelId(level)));
-                teLevelSign.signText[1] = new TextComponentString(TextFormatting.getTextWithoutFormattingCodes("Y: " + (level.getDepth() + 1)));
-                teLevelSign.signText[2] = new TextComponentString(TextFormatting.getTextWithoutFormattingCodes(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.minerNode") + ": " + level.getNumberOfBuiltNodes()));
-                teLevelSign.signText[3] = new TextComponentString(TextFormatting.getTextWithoutFormattingCodes(""));
-                
-                teLevelSign.markDirty();
-                world.notifyBlockUpdate(levelSignPos, iblockstate, iblockstate, 3);
-            }
-        }
     }
 }

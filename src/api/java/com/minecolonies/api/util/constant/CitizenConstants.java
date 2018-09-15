@@ -185,7 +185,7 @@ public final class CitizenConstants
     /**
      * Min slots the builder should never fill.
      */
-    public static final long MIN_OPEN_SLOTS = 3;
+    public static final long MIN_OPEN_SLOTS = 5;
 
     /**
      * Distance between Barbarian and Citizen to not remove happiness.
