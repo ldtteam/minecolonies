@@ -12,6 +12,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWor
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.util.StructureWrapper;
+import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.state.IBlockState;
@@ -810,38 +811,44 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         //If shaft isn't cleared we're in shaft clearing mode.
         if (minerBuilding.hasClearedShaft())
         {
-            minerBuilding.getCurrentLevel().closeNextNode(getRotation(), getOwnBuilding().getActiveNode());
+            final Level currentLevel = minerBuilding.getCurrentLevel();
+
+            currentLevel.closeNextNode(getRotation(), getOwnBuilding().getActiveNode());
             getOwnBuilding(BuildingMiner.class).setActiveNode(null);
             getOwnBuilding(BuildingMiner.class).setOldNode(workingNode);
+            WorkerUtil.updateLevelSign(world, currentLevel, minerBuilding.getLevelId(currentLevel));
         }
         else if (job.getStructure() != null)
         {
-            @NotNull final Level currentLevel = new Level(minerBuilding, job.getStructure().getPosition().getY());
+            @Nullable final BlockPos levelSignPos = WorkerUtil.findFirstLevelSign(job.getStructure());
+            @NotNull final Level currentLevel = new Level(minerBuilding, job.getStructure().getPosition().getY(), levelSignPos);
+
             minerBuilding.addLevel(currentLevel);
             minerBuilding.setCurrentLevel(minerBuilding.getNumberOfLevels());
             minerBuilding.resetStartingLevelShaft();
+            WorkerUtil.updateLevelSign(world, currentLevel, minerBuilding.getLevelId(currentLevel));
         }
         super.executeSpecificCompleteActions();
 
         //Send out update to client
         getOwnBuilding().markDirty();
-         job.setStructure(null);
+        job.setStructure(null);
 
-         final Colony colony = worker.getCitizenColonyHandler().getColony();
-         if (colony != null)
-         {
-             final List<WorkOrderBuildMiner> workOrders = colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildMiner.class);
-             if (workOrders.size() > 2)
-             {
-                 for (WorkOrderBuildMiner order : workOrders)
-                 {
-                     if (this.getOwnBuilding().getID().equals(order.getMinerBuilding()))
-                     {
-                         colony.getWorkManager().removeWorkOrder(order.getID());
-                     }
-                 }
-             }
-         }
+        final Colony colony = worker.getCitizenColonyHandler().getColony();
+        if (colony != null)
+        {
+            final List<WorkOrderBuildMiner> workOrders = colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildMiner.class);
+            if (workOrders.size() > 2)
+            {
+                for (WorkOrderBuildMiner order : workOrders)
+                {
+                    if (this.getOwnBuilding().getID().equals(order.getMinerBuilding()))
+                    {
+                        colony.getWorkManager().removeWorkOrder(order.getID());
+                    }
+                }
+            }
+        }
     }
 
     /**
