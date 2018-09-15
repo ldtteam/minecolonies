@@ -1,9 +1,11 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +30,7 @@ public class Level
     private static final String TAG_LADDERX    = "LadderX";
     private static final String TAG_LADDERZ    = "LadderZ";
     private static final String TAG_OPEN_NODES = "OpenNodes";
+    private static final String TAG_LEVEL_SIGN = "LevelSign";
 
     /**
      * Possible rotations.
@@ -71,14 +74,26 @@ public class Level
     private final Node ladderNode;
 
     /**
+     * The node of the ladder.
+     */
+    @Nullable
+    private BlockPos levelSign;
+
+    /**
+     * Offset number to make build nodes count proper
+     */
+    private static final int BUILT_NODES_OFFSET = -2;
+
+    /**
      * Create a new level model.
      *
      * @param buildingMiner reference to the miner building.
      * @param depth         the depth of this level.
      */
-    public Level(@NotNull final BuildingMiner buildingMiner, final int depth)
+    public Level(@NotNull final BuildingMiner buildingMiner, final int depth, final BlockPos levelSign)
     {
         this.depth = depth;
+        this.levelSign = levelSign;
 
         final int cobbleX = buildingMiner.getCobbleLocation().getX();
         final int cobbleZ = buildingMiner.getCobbleLocation().getZ();
@@ -127,6 +142,14 @@ public class Level
     {
 
         this.depth = compound.getInteger(TAG_DEPTH);
+        if (compound.hasKey(TAG_LEVEL_SIGN))
+        {
+            this.levelSign = BlockPosUtil.readFromNBT(compound, TAG_LEVEL_SIGN);
+        }
+        else
+        {
+            this.levelSign = null;
+        }
 
         final NBTTagList nodeTagList = compound.getTagList(TAG_NODES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < nodeTagList.tagCount(); i++)
@@ -280,6 +303,10 @@ public class Level
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         compound.setInteger(TAG_DEPTH, depth);
+        if (levelSign != null)
+        {
+            BlockPosUtil.writeToNBT(compound, TAG_LEVEL_SIGN, levelSign);
+        }
 
         @NotNull final NBTTagList nodeTagList = new NBTTagList();
         for (@NotNull final Node node : nodes.values())
@@ -314,6 +341,11 @@ public class Level
         return nodes.size();
     }
 
+    public int getNumberOfBuiltNodes()
+    {
+        return nodes.size() - openNodes.size() + BUILT_NODES_OFFSET;
+    }
+
     public int getDepth()
     {
         return depth;
@@ -330,10 +362,12 @@ public class Level
      *
      * @param newNode the node to add.
      */
+    /* not in use
     public void addNode(final Node newNode)
     {
         nodes.put(new Vec2i(newNode.getX(), newNode.getZ()), newNode);
     }
+    */
 
     /**
      * Returns a node by its key from the map.
@@ -355,5 +389,15 @@ public class Level
     public Node getOpenNode(final Vec2i key)
     {
         return nodes.get(key);
+    }
+
+    /**
+     * Returns position of level's levelSign
+     * 
+     * @return levelSign
+     */
+    public BlockPos getLevelSign()
+    {
+        return levelSign;
     }
 }

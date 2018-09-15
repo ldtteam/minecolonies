@@ -1,10 +1,8 @@
 package com.minecolonies.coremod.client.model;
 
-import com.minecolonies.blockout.Log;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class ModelEntityCitizenFemaleCitizen extends ModelBiped
