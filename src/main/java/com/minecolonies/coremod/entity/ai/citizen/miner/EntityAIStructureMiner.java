@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
-import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.coremod.colony.Colony;
@@ -13,20 +12,15 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWor
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.util.StructureWrapper;
+import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,12 +53,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
      * X2 top shaft location.
      */
     private static final String X2_TOP_SHAFT_NAME = "/miner/minerX2Top";
-
-    /**
-     * Placeholder text in a level sign.
-     */
-    private static final String LEVEL_SIGN_TEXT = "{\"text\":\"level_placeholder\"}";
-    private static final String LEVEL_SIGN_FIRST_ROW = "Text1";
 
     /**
      * Lead the miner to the other side of the shaft.
@@ -828,17 +816,17 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             currentLevel.closeNextNode(getRotation(), getOwnBuilding().getActiveNode());
             getOwnBuilding(BuildingMiner.class).setActiveNode(null);
             getOwnBuilding(BuildingMiner.class).setOldNode(workingNode);
-            updateLevelSign(currentLevel);
+            WorkerUtil.updateLevelSign(world, currentLevel, minerBuilding.getLevelId(currentLevel));
         }
         else if (job.getStructure() != null)
         {
-            @Nullable final BlockPos levelSignPos = findFirstLevelSign(job.getStructure());
+            @Nullable final BlockPos levelSignPos = WorkerUtil.findFirstLevelSign(job.getStructure());
             @NotNull final Level currentLevel = new Level(minerBuilding, job.getStructure().getPosition().getY(), levelSignPos);
 
             minerBuilding.addLevel(currentLevel);
             minerBuilding.setCurrentLevel(minerBuilding.getNumberOfLevels());
             minerBuilding.resetStartingLevelShaft();
-            updateLevelSign(currentLevel);
+            WorkerUtil.updateLevelSign(world, currentLevel, minerBuilding.getLevelId(currentLevel));
         }
         super.executeSpecificCompleteActions();
 
