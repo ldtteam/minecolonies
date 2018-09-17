@@ -8,7 +8,7 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.structures.helpers.Settings;
+import com.structurize.structures.helpers.Settings;
 import org.jetbrains.annotations.NotNull;
 
 /**

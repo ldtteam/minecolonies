@@ -12,9 +12,9 @@ import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.placementhandlers.IPlacementHandler;
-import com.minecolonies.coremod.placementhandlers.PlacementHandlers;
-import com.minecolonies.structures.helpers.StructureProxy;
+import com.structurize.coremod.placementhandlers.IPlacementHandler;
+import com.structurize.coremod.placementhandlers.PlacementHandlers;
+import com.structurize.structures.helpers.StructureProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockStairs;
@@ -53,20 +53,20 @@ public final class StructureWrapper
     /**
      * The minecraft world this struture is displayed in.
      */
-    private final World          world;
+    private final World                    world;
     /**
      * The structure this structure comes from.
      */
-    private final StructureProxy structure;
+    private final StructureProxy           structure;
     /**
      * The name this structure has.
      */
-    private final String         name;
+    private final String                   name;
     /**
      * The anchor position this structure will be
      * placed on in the minecraft world.
      */
-    private       BlockPos       position;
+    private       BlockPos                 position;
 
     /**
      * Load a structure into this world.

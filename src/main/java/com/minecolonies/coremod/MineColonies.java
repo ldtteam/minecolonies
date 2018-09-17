@@ -249,7 +249,6 @@ public class MineColonies
         getNetwork().registerMessage(CowboySetMilkCowsMessage.class, CowboySetMilkCowsMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(BuildingMoveMessage.class, BuildingMoveMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(RecallSingleCitizenMessage.class, RecallSingleCitizenMessage.class, ++id, Side.SERVER);
-        getNetwork().registerMessage(ScanOnServerMessage.class, ScanOnServerMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(RemoveBlockMessage.class, RemoveBlockMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(RemoveEntityMessage.class, RemoveEntityMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(ReplaceBlockMessage.class, ReplaceBlockMessage.class, ++id, Side.SERVER);
@@ -257,14 +256,8 @@ public class MineColonies
         getNetwork().registerMessage(TeamColonyColorChangeMessage.class, TeamColonyColorChangeMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(ToggleHelpMessage.class, ToggleHelpMessage.class, ++id, Side.SERVER);
 
-        // Schematic transfer messages
-        getNetwork().registerMessage(SchematicRequestMessage.class, SchematicRequestMessage.class, ++id, Side.SERVER);
-        getNetwork().registerMessage(SchematicSaveMessage.class, SchematicSaveMessage.class, ++id, Side.CLIENT);
-        getNetwork().registerMessage(SchematicSaveMessage.class, SchematicSaveMessage.class, ++id, Side.SERVER);
-
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class, BlockParticleEffectMessage.class, ++id, Side.CLIENT);
-        getNetwork().registerMessage(SaveScanMessage.class, SaveScanMessage.class, ++id, Side.CLIENT);
         getNetwork().registerMessage(CompostParticleMessage.class, CompostParticleMessage.class, ++id, Side.CLIENT);
 
         //JEI Messages

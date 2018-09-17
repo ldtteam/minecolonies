@@ -106,7 +106,6 @@ dependencies {
     deobfCompile "slimeknights:TConstruct:1.12.2-${config.tinker_version}"
     deobfCompile "gigaherz.guidebook:Guidebook-1.12.2:${config.guidebook_version}"
     deobfCompile "gigaherz.commons:gigaherz.commons-1.12.1:${config.guidebook_core_version}"
-    compile "mod.chiselsandbits:chiselsandbits:${config.c_b_version}"
 
     structuresCompile sourceSets.api.output
     //blockOutCompile sourceSets.api.output

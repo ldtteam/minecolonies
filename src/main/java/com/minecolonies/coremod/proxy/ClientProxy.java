@@ -7,7 +7,6 @@ import com.minecolonies.coremod.blocks.cactus.BlockCactusDoor;
 import com.minecolonies.coremod.blocks.decorative.BlockPaperwall;
 import com.minecolonies.coremod.blocks.decorative.BlockShingle;
 import com.minecolonies.coremod.blocks.decorative.BlockTimberFrame;
-import com.minecolonies.coremod.blocks.schematic.BlockSubstitution;
 import com.minecolonies.coremod.blocks.types.PaperwallType;
 import com.minecolonies.coremod.client.gui.*;
 import com.minecolonies.coremod.client.render.*;
@@ -26,9 +25,7 @@ import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
-import com.minecolonies.structures.client.TemplateBlockAccessTransformHandler;
-import com.minecolonies.structures.event.RenderEventHandler;
-import com.minecolonies.structures.helpers.Settings;
+import com.structurize.structures.helpers.Settings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.client.Minecraft;
@@ -36,13 +33,11 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -80,7 +75,6 @@ public class ClientProxy extends CommonProxy
     {
         super.registerEvents();
 
-        MinecraftForge.EVENT_BUS.register(new RenderEventHandler());
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
     }
 
@@ -122,18 +116,6 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void openScanToolWindow(@Nullable final BlockPos pos1, @Nullable final BlockPos pos2)
-    {
-        if (pos1 == null || pos2 == null)
-        {
-            return;
-        }
-
-        @Nullable final WindowScan window = new WindowScan(pos1, pos2);
-        window.open();
-    }
-
-    @Override
     public void openMultiBlockWindow(@Nullable final BlockPos pos)
     {
         @Nullable final WindowMultiBlock window = new WindowMultiBlock(pos);
@@ -141,7 +123,7 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final WindowBuildTool.FreeMode mode)
+    public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final com.structurize.coremod.client.gui.WindowBuildTool.FreeMode mode)
     {
         if (pos == null && Settings.instance.getActiveStructure() == null)
         {
@@ -225,7 +207,6 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModItems.clipboard);
         createCustomModel(ModItems.buildTool);
         createCustomModel(ModItems.caliper);
-        createCustomModel(ModItems.scanTool);
         createCustomModel(ModItems.scepterGuard);
         createCustomModel(ModItems.supplyChest);
         createCustomModel(ModItems.supplyCamp);
@@ -283,12 +264,6 @@ public class ClientProxy extends CommonProxy
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(frame), 0,
                         new ModelResourceLocation(frame.getRegistryName(), INVENTORY));
         }
-
-        //Additionally we register an exclusion handler here;
-        TemplateBlockAccessTransformHandler.getInstance().AddTransformHandler(
-          (b) -> b.blockState.getBlock() instanceof BlockSubstitution,
-          (b) -> new Template.BlockInfo(b.pos, Blocks.AIR.getDefaultState(), null)
-        );
     }
 
     @Override

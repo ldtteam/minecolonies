@@ -15,12 +15,12 @@ import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
 import com.minecolonies.coremod.items.ItemSupplyChestDeployer;
 import com.minecolonies.coremod.network.messages.BuildToolPasteMessage;
 import com.minecolonies.coremod.network.messages.BuildToolPlaceMessage;
-import com.minecolonies.coremod.network.messages.SchematicRequestMessage;
-import com.minecolonies.coremod.network.messages.SchematicSaveMessage;
 import com.minecolonies.coremod.placementhandlers.PlacementError;
 import com.minecolonies.coremod.placementhandlers.PlacementError.PlacementErrorType;
-import com.minecolonies.structures.helpers.Settings;
-import com.minecolonies.structures.helpers.Structure;
+import com.structurize.coremod.network.messages.SchematicRequestMessage;
+import com.structurize.coremod.network.messages.SchematicSaveMessage;
+import com.structurize.structures.helpers.Settings;
+import com.structurize.structures.helpers.Structure;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -48,15 +48,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
  */
 public class WindowBuildTool extends AbstractWindowSkeleton
 {
-    /**
-     * Enum of possibly free blocks for the normal player.
-     */
-    public enum FreeMode
-    {
-        SUPPLYSHIP,
-        SUPPLYCAMP
-    }
-
     /**
      * All possible rotations.
      */
@@ -158,7 +149,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * @param rotation the rotation.
      * @param mode the mode.
      */
-    public WindowBuildTool(@Nullable final BlockPos pos, final String structureName, final int rotation, final FreeMode mode)
+    public WindowBuildTool(@Nullable final BlockPos pos, final String structureName, final int rotation, final com.structurize.coremod.client.gui.WindowBuildTool.FreeMode mode)
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
         this.init(pos);
@@ -932,7 +923,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     private void checkAndPlace()
     {
-        if (FreeMode.SUPPLYSHIP == Settings.instance.getFreeMode())
+        if (com.structurize.coremod.client.gui.WindowBuildTool.FreeMode.SUPPLYSHIP == Settings.instance.getFreeMode())
         {
             if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
                     Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()))))
@@ -944,7 +935,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                 LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyChestDeployer.invalid");
             }
         }
-        else if (FreeMode.SUPPLYCAMP == Settings.instance.getFreeMode())
+        else if (com.structurize.coremod.client.gui.WindowBuildTool.FreeMode.SUPPLYCAMP == Settings.instance.getFreeMode())
         {
             final List<PlacementError> placementErrorList = new ArrayList<>();
             if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),

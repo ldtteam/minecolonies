@@ -10,6 +10,8 @@ import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
+import com.structurize.coremod.placementhandlers.IPlacementHandler;
+import com.structurize.coremod.placementhandlers.PlacementHandlers;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -26,8 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.UPDATE_FLAG;
-import static com.minecolonies.coremod.placementhandlers.PlacementHandlers.getItemsFromTileEntity;
-import static com.minecolonies.coremod.placementhandlers.PlacementHandlers.handleTileEntityPlacement;
+import static com.structurize.coremod.placementhandlers.PlacementHandlers.getItemsFromTileEntity;
+import static com.structurize.coremod.placementhandlers.PlacementHandlers.handleTileEntityPlacement;
 
 /**
  * Contains all Minecolonies specific placement handlers.

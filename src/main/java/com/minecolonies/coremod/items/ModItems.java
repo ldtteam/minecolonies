@@ -14,7 +14,6 @@ public final class ModItems
 {
     public static Item supplyChest;
     public static Item buildTool;
-    public static Item scanTool;
     public static Item permTool;
     public static Item caliper;
     public static Item scepterGuard;
@@ -48,7 +47,6 @@ public final class ModItems
     {
         supplyChest = new ItemSupplyChestDeployer();
         buildTool = new ItemBuildTool();
-        scanTool = new ItemScanTool();
         permTool = new ItemScepterPermission();
         caliper = new ItemCaliper();
         scepterGuard = new ItemScepterGuard();
@@ -67,7 +65,6 @@ public final class ModItems
 
         registry.register(supplyChest);
         registry.register(buildTool);
-        registry.register(scanTool);
         registry.register(permTool);
         registry.register(caliper);
         registry.register(scepterGuard);

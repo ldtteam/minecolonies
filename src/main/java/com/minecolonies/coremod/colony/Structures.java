@@ -6,7 +6,7 @@ import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.structures.helpers.Structure;
+import com.structurize.structures.helpers.Structure;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;

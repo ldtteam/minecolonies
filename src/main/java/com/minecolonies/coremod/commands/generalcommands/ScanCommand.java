@@ -2,7 +2,7 @@ package com.minecolonies.coremod.commands.generalcommands;
 
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
-import com.minecolonies.coremod.items.ItemScanTool;
+import com.structurize.coremod.items.ItemScanTool;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
