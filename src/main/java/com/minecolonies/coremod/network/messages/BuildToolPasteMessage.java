@@ -223,8 +223,8 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             player.addStat(StatList.getObjectUseStats(ModItems.supplyChest));
             if(InventoryUtils.removeStacksFromItemHandler(new InvWrapper(player.inventory), stacks))
             {
-                StructureWrapper.loadAndPlaceStructureWithRotation(player.world, message.structureName,
-                        message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete);
+                com.structurize.coremod.util.StructureWrapper.loadAndPlaceStructureWithRotation(player.world, message.structureName,
+                  message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete, player);
                 player.getServerWorld().setBlockState(message.pos.up(chestHeight), Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, player.getHorizontalFacing()));
                 fillChest((TileEntityChest) player.getServerWorld().getTileEntity(message.pos.up(chestHeight)));
             }

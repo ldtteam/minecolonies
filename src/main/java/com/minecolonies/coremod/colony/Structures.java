@@ -3,16 +3,20 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MathUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
+import com.structurize.coremod.management.Manager;
 import com.structurize.structures.helpers.Structure;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -133,7 +137,7 @@ public final class Structures
             loadSchematicsForPrefix(schematicsFolder.toPath(), SCHEMATICS_PREFIX);
         }
 
-        final File cacheSchematicFolder = Structure.getCachedSchematicsFolder();
+        final File cacheSchematicFolder = getCachedSchematicsFolder();
         if (cacheSchematicFolder != null)
         {
             checkDirectory(cacheSchematicFolder);
@@ -207,9 +211,47 @@ public final class Structures
 
 
         schematicsMap.remove(SCHEMATICS_SCAN);
-        final File schematicsFolder = Structure.getClientSchematicsFolder();
+        final File schematicsFolder = getClientSchematicsFolder();
         checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_SCAN).toFile());
         loadSchematicsForPrefix(schematicsFolder.toPath(), SCHEMATICS_SCAN);
+
+        final File schematicsFolderStructurize = Structure.getClientSchematicsFolder();
+        checkDirectory(schematicsFolderStructurize.toPath().resolve(SCHEMATICS_SCAN).toFile());
+        loadSchematicsForPrefix(schematicsFolderStructurize.toPath(), SCHEMATICS_SCAN);
+    }
+
+    /**
+     * get the schematic folder for the client.
+     *
+     * @return the client folder.
+     */
+    private static File getClientSchematicsFolder()
+    {
+        return new File(Minecraft.getMinecraft().gameDir, Constants.MOD_ID);
+    }
+
+    /**
+     * Get the file representation of the cached schematics' folder.
+     *
+     * @return the folder for the cached schematics
+     */
+    @Nullable
+    private static File getCachedSchematicsFolder()
+    {
+        if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+        {
+            if (Manager.getServerUUID() != null)
+            {
+                return new File(Minecraft.getMinecraft().gameDir, Constants.MOD_ID + "/" + Manager.getServerUUID());
+            }
+            else
+            {
+                Log.getLogger().error("Manager.getServerUUID() => null this should not happen");
+                return null;
+            }
+        }
+        return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
+                          + "/" + Constants.MOD_ID);
     }
 
     /**
@@ -395,8 +437,8 @@ public final class Structures
             return null;
         }
 
-        final File structureFile = Structure.getClientSchematicsFolder().toPath().resolve(structureName.toString() + SCHEMATIC_EXTENSION).toFile();
-        final File newStructureFile = Structure.getClientSchematicsFolder().toPath().resolve(newStructureName.toString() + SCHEMATIC_EXTENSION).toFile();
+        final File structureFile = getClientSchematicsFolder().toPath().resolve(structureName.toString() + SCHEMATIC_EXTENSION).toFile();
+        final File newStructureFile = getClientSchematicsFolder().toPath().resolve(newStructureName.toString() + SCHEMATIC_EXTENSION).toFile();
         checkDirectory(newStructureFile.getParentFile());
         if (structureFile.renameTo(newStructureFile))
         {
@@ -468,7 +510,7 @@ public final class Structures
             return false;
         }
 
-        final File structureFile = Structure.getClientSchematicsFolder().toPath().resolve(structureName.toString() + SCHEMATIC_EXTENSION).toFile();
+        final File structureFile = getClientSchematicsFolder().toPath().resolve(structureName.toString() + SCHEMATIC_EXTENSION).toFile();
         if (structureFile.delete())
         {
             md5Map.remove(structureName.toString());
@@ -704,7 +746,7 @@ public final class Structures
         if (md5 != null)
         {
             Log.getLogger().info("Structures.handleSaveSchematicMessage: received new schematic md5:" + md5);
-            final File schematicsFolder = Structure.getCachedSchematicsFolder();
+            final File schematicsFolder = getCachedSchematicsFolder();
             final File schematicFile = schematicsFolder.toPath().resolve(SCHEMATICS_CACHE + SCHEMATICS_SEPARATOR + md5 + SCHEMATIC_EXTENSION).toFile();
             checkDirectory(schematicFile.getParentFile());
             try (OutputStream outputstream = new FileOutputStream(schematicFile))
