@@ -61,7 +61,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
           structureName.toString(),
           Settings.instance.getPosition(),
           Settings.instance.getRotation(),
-          false,
+          structureName.isHut(),
           Settings.instance.getMirror()));
     }
 
@@ -78,16 +78,16 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     }
 
     @Override
-    public void paste(final StructureName name)
+    public void paste(final StructureName name, final boolean complete)
     {
-        Structurize.getNetwork().sendToServer(new BuildToolPasteMessage(
+        MineColonies.getNetwork().sendToServer(new BuildToolPasteMessage(
           name.toString(),
           name.toString(),
           Settings.instance.getPosition(),
           Settings.instance.getRotation(),
-          false,
+          name.isHut(),
           Settings.instance.getMirror(),
-          false, Settings.instance.getFreeMode()));
+          complete, Settings.instance.getFreeMode()));
     }
 
     @Override
