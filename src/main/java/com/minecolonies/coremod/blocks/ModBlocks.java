@@ -4,7 +4,8 @@ import com.minecolonies.coremod.blocks.decorative.*;
 import com.minecolonies.coremod.blocks.huts.*;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import net.minecraft.block.Block;
-import net.minecraft.item.Item;import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraft.item.Item;
+import net.minecraftforge.registries.IForgeRegistry;
 
 /**
  * Class to create the modBlocks.

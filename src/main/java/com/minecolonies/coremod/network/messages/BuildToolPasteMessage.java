@@ -14,6 +14,7 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.util.StructureWrapper;
+import com.structurize.coremod.client.gui.WindowBuildTool;
 import com.structurize.coremod.management.StructureName;
 import com.structurize.coremod.management.Structures;
 import io.netty.buffer.ByteBuf;
@@ -50,13 +51,13 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
     private static final int SUPPLY_SHIP_CHEST_HEIGHT = 6;
 
     private boolean                                                     complete;
-    private String                                                      structureName;
-    private String                                                      workOrderName;
-    private int                                                         rotation;
-    private BlockPos                                                    pos;
-    private boolean                                                     isHut;
-    private boolean                                                     mirror;
-    private com.structurize.coremod.client.gui.WindowBuildTool.FreeMode freeMode;
+    private String                   structureName;
+    private String                   workOrderName;
+    private int                      rotation;
+    private BlockPos                 pos;
+    private boolean                  isHut;
+    private boolean                  mirror;
+    private WindowBuildTool.FreeMode freeMode;
 
     /**
      * Our guide Book.
@@ -88,7 +89,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             final String workOrderName, final BlockPos pos,
             final int rotation, final boolean isHut,
             final Mirror mirror, final boolean complete,
-    final com.structurize.coremod.client.gui.WindowBuildTool.FreeMode freeMode)
+    final WindowBuildTool.FreeMode freeMode)
     {
         super();
         this.structureName = structureName;
@@ -125,7 +126,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         final int modeId = buf.readInt();
         if(modeId >= 0)
         {
-            freeMode = com.structurize.coremod.client.gui.WindowBuildTool.FreeMode.values()[modeId];
+            freeMode = WindowBuildTool.FreeMode.values()[modeId];
         }
     }
 
@@ -203,12 +204,12 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             }
             final List<ItemStack> stacks = new ArrayList<>();
             final int chestHeight;
-            if(message.freeMode == com.structurize.coremod.client.gui.WindowBuildTool.FreeMode.SUPPLYSHIP)
+            if(message.freeMode == WindowBuildTool.FreeMode.SUPPLYSHIP)
             {
                 stacks.add(new ItemStack(ModItems.supplyChest));
                 chestHeight = SUPPLY_SHIP_CHEST_HEIGHT;
             }
-            else if(message.freeMode == com.structurize.coremod.client.gui.WindowBuildTool.FreeMode.SUPPLYCAMP)
+            else if(message.freeMode == WindowBuildTool.FreeMode.SUPPLYCAMP)
             {
                 stacks.add(new ItemStack(ModItems.supplyCamp));
                 chestHeight = 1;

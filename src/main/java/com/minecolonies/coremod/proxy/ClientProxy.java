@@ -19,6 +19,7 @@ import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
+import com.structurize.coremod.client.gui.WindowBuildTool;
 import com.structurize.coremod.management.Structures;
 import com.structurize.structures.helpers.Settings;
 import net.minecraft.block.Block;
@@ -115,7 +116,7 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final com.structurize.coremod.client.gui.WindowBuildTool.FreeMode mode)
+    public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final WindowBuildTool.FreeMode mode)
     {
         if (pos == null && Settings.instance.getActiveStructure() == null)
         {
