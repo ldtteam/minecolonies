@@ -1,13 +1,19 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
 import com.minecolonies.coremod.items.ItemSupplyChestDeployer;
+import com.minecolonies.coremod.network.messages.BuildToolPasteMessage;
+import com.minecolonies.coremod.network.messages.BuildToolPlaceMessage;
 import com.structurize.api.util.BlockUtils;
 import com.structurize.api.util.LanguageHandler;
+import com.structurize.coremod.Structurize;
 import com.structurize.coremod.client.gui.WindowBuildTool;
+import com.structurize.coremod.management.StructureName;
 import com.structurize.coremod.placementhandlers.PlacementError;
 import com.structurize.structures.helpers.Settings;
+import com.structurize.structures.helpers.Structure;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.math.BlockPos;
@@ -20,7 +26,7 @@ import java.util.Map;
 /**
  * BuildTool window.
  */
-public class WindowMinecoloniesBuildTool extends com.structurize.coremod.client.gui.WindowBuildTool
+public class WindowMinecoloniesBuildTool extends WindowBuildTool
 {
     /**
      * Creates a window build tool for a specific structure.
@@ -47,9 +53,47 @@ public class WindowMinecoloniesBuildTool extends com.structurize.coremod.client.
         super(pos);
     }
 
-    private void checkAndPlace()
+    @Override
+    public void place(final StructureName structureName)
     {
-        if (com.structurize.coremod.client.gui.WindowBuildTool.FreeMode.SUPPLYSHIP == Settings.instance.getFreeMode())
+        MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
+          structureName.toString(),
+          structureName.toString(),
+          Settings.instance.getPosition(),
+          Settings.instance.getRotation(),
+          false,
+          Settings.instance.getMirror()));
+    }
+
+    @Override
+    public boolean hasPermission()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean pasteDirectly()
+    {
+        return false;
+    }
+
+    @Override
+    public void paste(final StructureName name)
+    {
+        Structurize.getNetwork().sendToServer(new BuildToolPasteMessage(
+          name.toString(),
+          name.toString(),
+          Settings.instance.getPosition(),
+          Settings.instance.getRotation(),
+          false,
+          Settings.instance.getMirror(),
+          false, Settings.instance.getFreeMode()));
+    }
+
+    @Override
+    public void checkAndPlace()
+    {
+        if (WindowBuildTool.FreeMode.SUPPLYSHIP == Settings.instance.getFreeMode())
         {
             if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
               Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()))))
@@ -61,7 +105,7 @@ public class WindowMinecoloniesBuildTool extends com.structurize.coremod.client.
                 LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyChestDeployer.invalid");
             }
         }
-        else if (com.structurize.coremod.client.gui.WindowBuildTool.FreeMode.SUPPLYCAMP == Settings.instance.getFreeMode())
+        else if (WindowBuildTool.FreeMode.SUPPLYCAMP == Settings.instance.getFreeMode())
         {
             final List<PlacementError> placementErrorList = new ArrayList<>();
             if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
@@ -114,5 +158,4 @@ public class WindowMinecoloniesBuildTool extends com.structurize.coremod.client.
             super.cancelClicked();
         }
     }
-
 }

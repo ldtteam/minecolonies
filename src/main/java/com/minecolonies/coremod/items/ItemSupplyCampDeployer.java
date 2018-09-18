@@ -5,10 +5,9 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.minecolonies.coremod.placementhandlers.PlacementError;
-import com.minecolonies.coremod.placementhandlers.PlacementError.PlacementErrorType;
 import com.structurize.coremod.client.gui.WindowBuildTool;
 import com.structurize.coremod.management.Structures;
+import com.structurize.coremod.placementhandlers.PlacementError;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -160,7 +159,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
             {
                 if(!world.isAirBlock(new BlockPos(x, pos.getY()+1, z)))
                 {
-                    final PlacementError placementError = new PlacementError(PlacementErrorType.NEEDS_AIR_ABOVE, pos);
+                    final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, pos);
                     placementErrorList.add(placementError);
                 }
             }
@@ -182,12 +181,12 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         final boolean notInAnyColony = notInAnyColony(world, pos);
         if (!isSolid)
         {
-            final PlacementError placementError = new PlacementError(PlacementErrorType.NOT_SOLID, pos);
+            final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NOT_SOLID, pos);
             placementErrorList.add(placementError);
         }
         if (!notInAnyColony)
         {
-            final PlacementError placementError = new PlacementError(PlacementErrorType.INSIDE_COLONY, pos);
+            final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.INSIDE_COLONY, pos);
             placementErrorList.add(placementError);
         }
         return isSolid && notInAnyColony;

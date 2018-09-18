@@ -13,7 +13,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 public final class ModItems
 {
     public static Item supplyChest;
-    public static Item buildTool;
     public static Item permTool;
     public static Item caliper;
     public static Item scepterGuard;
@@ -21,7 +20,6 @@ public final class ModItems
     public static Item ancientTome;
     public static Item chiefSword;
     public static Item clipboard;
-    public static Item itemCactusDoor;
     public static Item compost;
     public static Item resourceScroll;
 
@@ -46,7 +44,6 @@ public final class ModItems
     public static void init(final IForgeRegistry<Item> registry)
     {
         supplyChest = new ItemSupplyChestDeployer();
-        buildTool = new ItemBuildTool();
         permTool = new ItemScepterPermission();
         caliper = new ItemCaliper();
         scepterGuard = new ItemScepterGuard();
@@ -57,14 +54,12 @@ public final class ModItems
         compost = new ItemCompost();
         resourceScroll = new ItemResourceScroll();
 
-        itemCactusDoor = new ItemCactusDoor(ModBlocks.blockCactusDoor, "cactusdoor");
         itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement");
         itemAchievementProxyTown = new ItemAchievementProxy("sizeTown");
         itemAchievementProxyCity = new ItemAchievementProxy("sizeCity");
         itemAchievementProxyMetropolis = new ItemAchievementProxy("sizeMetropolis");
 
         registry.register(supplyChest);
-        registry.register(buildTool);
         registry.register(permTool);
         registry.register(caliper);
         registry.register(scepterGuard);
@@ -76,7 +71,6 @@ public final class ModItems
         registry.register(itemAchievementProxyCity);
         registry.register(itemAchievementProxyMetropolis);
         registry.register(clipboard);
-        registry.register(itemCactusDoor);
         registry.register(compost);
         registry.register(resourceScroll);
     }

@@ -47,6 +47,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -311,6 +312,33 @@ public class EventHandler
             }
 
             handleEventCancellation(event, player);
+        }
+
+
+        if (event.getHand() == EnumHand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool)
+        {
+            if (event.getWorld().isRemote)
+            {
+                if (event.getUseBlock() == Event.Result.DEFAULT && event.getFace() != null)
+                {
+                    MineColonies.proxy.openBuildToolWindow(event.getPos().offset(event.getFace()));
+                }
+                else
+                {
+                    MineColonies.proxy.openBuildToolWindow(null);
+                }
+            }
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickItem event)
+    {
+        if (event.getHand() == EnumHand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool)
+        {
+            MineColonies.proxy.openBuildToolWindow(null);
+            event.setCanceled(true);
         }
     }
 

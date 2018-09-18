@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.blocks;
 
-import com.minecolonies.coremod.blocks.cactus.*;
 import com.minecolonies.coremod.blocks.decorative.*;
 import com.minecolonies.coremod.blocks.huts.*;
 import com.minecolonies.coremod.blocks.schematic.BlockSolidSubstitution;
@@ -9,9 +8,7 @@ import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.blocks.types.TimberFrameType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPlanks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemSlab;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraft.item.Item;import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,12 +54,6 @@ public final class ModBlocks
     public static        BlockHutBarracksTower          blockHutBarracksTower;
     public static        BlockHutCook                   blockHutCook;
     public static        BlockHutSmeltery               blockHutSmeltery;
-    public static        BlockCactusPlank               blockCactusPlank;
-    public static        BlockCactusDoor                blockCactusDoor;
-    public static        BlockCactusTrapdoor            blockCactusTrapdoor;
-    public static        BlockCactusStair               blockCactusStair;
-    public static        BlockCactusSlabHalf            blockCactusSlabHalf;
-    public static        BlockCactusSlabDouble          blockCactusSlabDouble;
     public static        BlockHutComposter              blockHutComposter;
     public static        BlockHutLibrary                blockHutLibrary;
 
@@ -74,13 +65,6 @@ public final class ModBlocks
     public static BlockWaypoint               blockWayPoint;
     public static BlockInfoPoster             blockInfoPoster;
     public static BlockPaperwall              blockPaperWall;
-    public static BlockShingle                blockShingleOak;
-    public static BlockShingle                blockShingleBirch;
-    public static BlockShingle                blockShingleJungle;
-    public static BlockShingle                blockShingleSpruce;
-    public static BlockShingle                blockShingleDarkOak;
-    public static BlockShingle                blockShingleAcacia;
-    public static BlockShingleSlab            blockShingleSlab;
     public static MultiBlock                  multiBlock;
     public static BlockBarrel                 blockBarrel;
 
@@ -138,27 +122,6 @@ public final class ModBlocks
         blockRack = new BlockMinecoloniesRack().registerBlock(registry);
         blockWayPoint = new BlockWaypoint().registerBlock(registry);
 
-        blockCactusPlank = new BlockCactusPlank().registerBlock(registry);
-        blockCactusDoor = new BlockCactusDoor(blockCactusDoor).registerBlock(registry);
-        blockCactusTrapdoor = new BlockCactusTrapdoor().registerBlock(registry);
-        blockCactusSlabHalf = new BlockCactusSlabHalf().registerBlock(registry);
-        blockCactusSlabDouble = new BlockCactusSlabDouble().registerBlock(registry);
-
-        blockCactusStair = new BlockCactusStair(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK)).registerBlock(registry);
-
-        blockShingleOak = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK),
-          BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.OAK.getName()).registerBlock(registry);
-        blockShingleJungle = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.JUNGLE),
-          BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.JUNGLE.getName()).registerBlock(registry);
-        blockShingleBirch = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.BIRCH),
-          BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.BIRCH.getName()).registerBlock(registry);
-        blockShingleSpruce = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.SPRUCE),
-          BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.SPRUCE.getName()).registerBlock(registry);
-        blockShingleDarkOak = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.DARK_OAK),
-          BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.DARK_OAK.getName()).registerBlock(registry);
-        blockShingleAcacia = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.ACACIA),
-          BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.ACACIA.getName()).registerBlock(registry);
-        blockShingleSlab = new BlockShingleSlab().registerBlock(registry);
         multiBlock = new MultiBlock().registerBlock(registry);
         blockBarrel = new BlockBarrel().registerBlock(registry);
 
@@ -206,18 +169,7 @@ public final class ModBlocks
         blockWayPoint.registerItemBlock(registry);
         blockInfoPoster.registerItemBlock(registry);
         blockPaperWall.registerItemBlock(registry);
-        blockShingleOak.registerItemBlock(registry);
-        blockShingleBirch.registerItemBlock(registry);
-        blockShingleJungle.registerItemBlock(registry);
-        blockShingleSpruce.registerItemBlock(registry);
-        blockShingleDarkOak.registerItemBlock(registry);
-        blockShingleAcacia.registerItemBlock(registry);
-        blockShingleSlab.registerItemBlock(registry);
         multiBlock.registerItemBlock(registry);
-        blockCactusPlank.registerItemBlock(registry);
-        blockCactusTrapdoor.registerItemBlock(registry);
-        blockCactusStair.registerItemBlock(registry);
-        registry.register(new ItemSlab(blockCactusSlabHalf, blockCactusSlabHalf, blockCactusSlabDouble).setRegistryName(blockCactusSlabHalf.getRegistryName()));
         blockBarrel.registerItemBlock(registry);
 
         for (final BlockTimberFrame frame: timberFrames)

@@ -7,6 +7,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.BuildingMoveMessage;
+import com.structurize.coremod.client.gui.WindowBuildTool;
 import com.structurize.coremod.management.StructureName;
 import com.structurize.coremod.management.Structures;
 import com.structurize.coremod.network.messages.SchematicRequestMessage;
@@ -249,7 +250,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
         if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
             //We need to check that the server have it too using the md5
-            WindowMinecoloniesBuildTool.requestScannedSchematic(structureName, false, false);
+            WindowBuildTool.requestScannedSchematic(structureName, false, false);
         }
         else
         {

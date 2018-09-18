@@ -247,7 +247,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             return;
         }
         chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownHall));
-        chest.setInventorySlotContents(1, new ItemStack(ModItems.buildTool));
+        chest.setInventorySlotContents(1, new ItemStack(com.structurize.coremod.items.ModItems.buildTool));
         chest.setInventorySlotContents(2, guideBook);
     }
 
