@@ -131,6 +131,10 @@ public class PathNavigate extends PathNavigateGround
     @Override
     public boolean tryMoveToXYZ(final double x, final double y, final double z, final double speed)
     {
+        if (x == 0 && y == 0 && z == 0)
+        {
+            return false;
+        }
         moveToXYZ(x, y, z, speed);
         return true;
     }

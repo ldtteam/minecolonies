@@ -22,6 +22,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -318,14 +319,15 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
         for (@NotNull final Level level : levels)
         {
-            buf.writeInt(level.getNumberOfNodes());
+            buf.writeInt(level.getNumberOfBuiltNodes());
+            buf.writeInt(level.getDepth());
         }
     }
 
     /**
      * Adds a level to the levels list.
      *
-     * @param currentLevel {@link Level}to add.
+     * @param currentLevel {@link Level} to add.
      */
     public void addLevel(final Level currentLevel)
     {
@@ -355,6 +357,16 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             return levels.get(currentLevel);
         }
         return null;
+    }
+
+    /**
+     * Find given level in the levels array.
+     *
+     * @return position in the levels array.
+     */
+    public int getLevelId(final Level level)
+    {
+        return levels.indexOf(level);
     }
 
     /**
@@ -617,9 +629,9 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     public static class View extends AbstractBuildingBuilderView
     {
         /**
-         * The different miner levels the miner already has.
+         * The tuple of number of nodes and y depth per all levels.
          */
-        public int[] levels;
+        public List<Tuple<Integer, Integer>> levelsInfo;
         /**
          * The level the miner currently works on.
          */
@@ -649,11 +661,11 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             super.deserialize(buf);
             current = buf.readInt();
             final int size = buf.readInt();
-            levels = new int[size];
 
+            levelsInfo = new ArrayList<Tuple<Integer, Integer>>(size);
             for (int i = 0; i < size; i++)
             {
-                levels[i] = buf.readInt();
+                levelsInfo.add(i, new Tuple<>(buf.readInt(), buf.readInt()));
             }
         }
 
