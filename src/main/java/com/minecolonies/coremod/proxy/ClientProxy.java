@@ -14,7 +14,6 @@ import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityArcherBarbarian;
@@ -25,6 +24,7 @@ import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
+import com.structurize.coremod.management.Structures;
 import com.structurize.structures.helpers.Settings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPlanks;
@@ -111,7 +111,7 @@ public class ClientProxy extends CommonProxy
             return;
         }
 
-        @Nullable final WindowBuildTool window = new WindowBuildTool(pos);
+        @Nullable final WindowMinecoloniesBuildTool window = new WindowMinecoloniesBuildTool(pos);
         window.open();
     }
 
@@ -130,7 +130,7 @@ public class ClientProxy extends CommonProxy
             return;
         }
 
-        @Nullable final WindowBuildTool window = new WindowBuildTool(pos, structureName, rotation, mode);
+        @Nullable final WindowMinecoloniesBuildTool window = new WindowMinecoloniesBuildTool(pos, structureName, rotation, mode);
         window.open();
     }
 

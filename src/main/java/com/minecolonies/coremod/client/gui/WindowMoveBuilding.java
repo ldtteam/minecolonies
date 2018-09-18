@@ -5,10 +5,10 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.StructureName;
-import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.BuildingMoveMessage;
+import com.structurize.coremod.management.StructureName;
+import com.structurize.coremod.management.Structures;
 import com.structurize.coremod.network.messages.SchematicRequestMessage;
 import com.structurize.structures.helpers.Settings;
 import com.structurize.structures.helpers.Structure;
@@ -148,7 +148,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
                 }
                 else
                 {
-                    Log.getLogger().error("WindowBuildTool: Need to download schematic on a standalone client/server. This should never happen");
+                    Log.getLogger().error("WindowMinecoloniesBuildTool: Need to download schematic on a standalone client/server. This should never happen");
                 }
             }
             Settings.instance.setStructureName(structureName.toString());
@@ -249,7 +249,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
         if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
             //We need to check that the server have it too using the md5
-            WindowBuildTool.requestScannedSchematic(structureName, false, false);
+            WindowMinecoloniesBuildTool.requestScannedSchematic(structureName, false, false);
         }
         else
         {
