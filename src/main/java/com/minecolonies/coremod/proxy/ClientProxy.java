@@ -212,7 +212,6 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModItems.itemAchievementProxyTown);
         createCustomModel(ModItems.itemAchievementProxyCity);
         createCustomModel(ModItems.itemAchievementProxyMetropolis);
-        createCustomModel(ModBlocks.multiBlock);
         createCustomModel(ModBlocks.blockBarrel);
         createCustomModel(ModItems.compost);
         createCustomModel(ModItems.resourceScroll);

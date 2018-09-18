@@ -1,6 +1,0 @@
-{
-  "parent": "block/pane_noside_alt",
-  "textures": {
-    "pane": "minecolonies:blocks/paperwall/paperwall_cactus_white"
-  }
-}
