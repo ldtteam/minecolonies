@@ -109,13 +109,6 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void openMultiBlockWindow(@Nullable final BlockPos pos)
-    {
-        @Nullable final WindowMultiBlock window = new WindowMultiBlock(pos);
-        window.open();
-    }
-
-    @Override
     public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final WindowBuildTool.FreeMode mode)
     {
         if (pos == null && Settings.instance.getActiveStructure() == null)
