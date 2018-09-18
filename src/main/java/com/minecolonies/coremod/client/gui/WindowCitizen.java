@@ -580,6 +580,11 @@ public class WindowCitizen extends AbstractWindowSkeleton
             {
                 itemStack = inventory.getStackInSlot(InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(inventory), requestPredicate));
             }
+
+            for (int checkInv = 0; checkInv <= 3; checkInv++)
+                if (itemStack.isItemEqual(inventory.armorInventory.get(checkInv))) {
+                    return;
+                }
             MineColonies.getNetwork().sendToServer(
                     new TransferItemsToCitizenRequestMessage(citizen, itemStack, isCreative ? amount : Math.min(amount, count), citizen.getColonyId()));
             MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.OVERRULED, itemStack));
