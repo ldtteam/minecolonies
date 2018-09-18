@@ -250,8 +250,8 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             if (block != null
                     && block != Blocks.AIR
                     && !AbstractEntityAIStructure.isBlockFree(block, 0)
-                    && block != ModBlocks.blockSolidSubstitution
-                    && block != ModBlocks.blockSubstitution)
+                    && block != com.structurize.coremod.blocks.ModBlocks.blockSolidSubstitution
+                    && block != com.structurize.coremod.blocks.ModBlocks.blockSubstitution)
             {
                 if (wrapper.getBlockInfo().tileentityData != null)
                 {

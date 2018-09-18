@@ -2,16 +2,9 @@ package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.coremod.blocks.decorative.*;
 import com.minecolonies.coremod.blocks.huts.*;
-import com.minecolonies.coremod.blocks.schematic.BlockSolidSubstitution;
-import com.minecolonies.coremod.blocks.schematic.BlockSubstitution;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
-import com.minecolonies.coremod.blocks.types.TimberFrameType;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockPlanks;
 import net.minecraft.item.Item;import net.minecraftforge.registries.IForgeRegistry;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Class to create the modBlocks.
@@ -28,7 +21,6 @@ public final class ModBlocks
      * References can be made to here.
      */
 
-    private static final List<BlockTimberFrame>         timberFrames = new ArrayList<>();
     public static        BlockHutTownHall               blockHutTownHall;
     public static        BlockHutCitizen                blockHutCitizen;
     public static        BlockHutMiner                  blockHutMiner;
@@ -40,9 +32,7 @@ public final class ModBlocks
     public static        BlockHutStonemason             blockHutStonemason;
     public static        BlockHutFarmer                 blockHutFarmer;
     public static        BlockHutFisherman              blockHutFisherman;
-    public static        BlockSubstitution              blockSubstitution;
     public static        BlockBarracksTowerSubstitution blockBarracksTowerSubstitution;
-    public static        BlockSolidSubstitution         blockSolidSubstitution;
     public static        BlockHutField                  blockHutField;
     public static        BlockHutGuardTower             blockHutGuardTower;
     public static        BlockHutWareHouse              blockHutWareHouse;
@@ -64,14 +54,7 @@ public final class ModBlocks
     public static BlockMinecoloniesRack       blockRack;
     public static BlockWaypoint               blockWayPoint;
     public static BlockInfoPoster             blockInfoPoster;
-    public static BlockPaperwall              blockPaperWall;
-    public static MultiBlock                  multiBlock;
     public static BlockBarrel                 blockBarrel;
-
-    public static List<BlockTimberFrame> getTimberFrames()
-    {
-        return new ArrayList<>(timberFrames);
-    }
 
     /**
      * Private constructor to hide the implicit public one.
@@ -114,24 +97,12 @@ public final class ModBlocks
         blockHutLibrary =  new BlockHutLibrary().registerBlock(registry);
 
         blockInfoPoster = new BlockInfoPoster().registerBlock(registry);
-        blockPaperWall = new BlockPaperwall().registerBlock(registry);
         blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
-        blockSolidSubstitution = new BlockSolidSubstitution().registerBlock(registry);
         blockBarracksTowerSubstitution = new BlockBarracksTowerSubstitution().registerBlock(registry);
-        blockSubstitution = new BlockSubstitution().registerBlock(registry);
         blockRack = new BlockMinecoloniesRack().registerBlock(registry);
         blockWayPoint = new BlockWaypoint().registerBlock(registry);
 
-        multiBlock = new MultiBlock().registerBlock(registry);
         blockBarrel = new BlockBarrel().registerBlock(registry);
-
-        for (final BlockPlanks.EnumType type : BlockPlanks.EnumType.values())
-        {
-            for (final TimberFrameType frameType : TimberFrameType.values())
-            {
-                timberFrames.add(new BlockTimberFrame(BlockTimberFrame.BLOCK_NAME + "_" + type.getName() + "_" + frameType).registerBlock(registry));
-            }
-        }
     }
 
     public static void registerItemBlock(final IForgeRegistry<Item> registry)
@@ -162,19 +133,10 @@ public final class ModBlocks
         blockHutLibrary.registerItemBlock(registry);
 
         blockConstructionTape.registerItemBlock(registry);
-        blockSolidSubstitution.registerItemBlock(registry);
-        blockSubstitution.registerItemBlock(registry);
         blockBarracksTowerSubstitution.registerItemBlock(registry);
         blockRack.registerItemBlock(registry);
         blockWayPoint.registerItemBlock(registry);
         blockInfoPoster.registerItemBlock(registry);
-        blockPaperWall.registerItemBlock(registry);
-        multiBlock.registerItemBlock(registry);
         blockBarrel.registerItemBlock(registry);
-
-        for (final BlockTimberFrame frame: timberFrames)
-        {
-            frame.registerItemBlock(registry);
-        }
     }
 }

@@ -5,7 +5,7 @@ import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.blocks.schematic.BlockSolidSubstitution;
+import com.structurize.coremod.blocks.schematic.BlockSolidSubstitution;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;

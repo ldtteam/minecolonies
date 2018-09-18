@@ -695,7 +695,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
             @Nullable Block block = structureBlock.block;
             @Nullable IBlockState blockState = structureBlock.metadata;
-            if (block == ModBlocks.blockSolidSubstitution
+            if (block == com.structurize.coremod.blocks.ModBlocks.blockSolidSubstitution
                   || shallReplaceSolidSubstitutionBlock(structureBlock.worldBlock, structureBlock.worldMetadata))
             {
                 blockState = getSolidSubstitution(structureBlock.blockPosition);

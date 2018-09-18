@@ -3,9 +3,6 @@ package com.minecolonies.coremod.proxy;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.*;
-import com.minecolonies.coremod.blocks.decorative.BlockPaperwall;
-import com.minecolonies.coremod.blocks.decorative.BlockTimberFrame;
-import com.minecolonies.coremod.blocks.types.PaperwallType;
 import com.minecolonies.coremod.client.gui.*;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
@@ -22,19 +19,15 @@ import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
-import com.structurize.coremod.items.ItemBuildTool;
 import com.structurize.coremod.management.Structures;
 import com.structurize.structures.helpers.Settings;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockPlanks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.stats.RecipeBook;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -178,7 +171,6 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutTownHall);
         createCustomModel(ModBlocks.blockHutWareHouse);
         createCustomModel(ModBlocks.blockHutDeliveryman);
-        createCustomModel(ModBlocks.blockSubstitution);
         createCustomModel(ModBlocks.blockBarracksTowerSubstitution);
         createCustomModel(ModBlocks.blockHutField);
         createCustomModel(ModBlocks.blockHutGuardTower);
@@ -193,7 +185,6 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutComposter);
         createCustomModel(ModBlocks.blockHutLibrary);
 
-        createCustomModel(ModBlocks.blockSolidSubstitution);
         createCustomModel(ModBlocks.blockConstructionTape);
         createCustomModel(ModBlocks.blockRack);
         createCustomModel(ModBlocks.blockWayPoint);
@@ -215,20 +206,6 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockBarrel);
         createCustomModel(ModItems.compost);
         createCustomModel(ModItems.resourceScroll);
-
-        ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());
-
-        for (final PaperwallType type : PaperwallType.values())
-        {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockPaperWall), type.getMetadata(),
-              new ModelResourceLocation(ModBlocks.blockPaperWall.getRegistryName() + "_" + type.getName(), INVENTORY));
-        }
-
-        for (final BlockTimberFrame frame : ModBlocks.getTimberFrames())
-        {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(frame), 0,
-                        new ModelResourceLocation(frame.getRegistryName(), INVENTORY));
-        }
     }
 
     @Override

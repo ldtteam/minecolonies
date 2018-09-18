@@ -160,7 +160,7 @@ public final class StructureWrapper
 
                     final BlockPos worldPos = pos.add(localPos);
 
-                    if ((localBlock == ModBlocks.blockSubstitution && !complete) || localBlock instanceof AbstractBlockHut)
+                    if ((localBlock == com.structurize.coremod.blocks.ModBlocks.blockSubstitution && !complete) || localBlock instanceof AbstractBlockHut)
                     {
                         continue;
                     }
@@ -393,7 +393,7 @@ public final class StructureWrapper
         final Block structureBlock = structureBlockState.getBlock();
 
         //All worldBlocks are equal the substitution block
-        if (structureBlock == ModBlocks.blockSubstitution)
+        if (structureBlock == com.structurize.coremod.blocks.ModBlocks.blockSubstitution)
         {
             return true;
         }
@@ -402,7 +402,7 @@ public final class StructureWrapper
 
         final IBlockState worldBlockState = world.getBlockState(worldPos);
 
-        if (structureBlock == ModBlocks.blockSolidSubstitution && worldBlockState.getMaterial().isSolid())
+        if (structureBlock == com.structurize.coremod.blocks.ModBlocks.blockSolidSubstitution && worldBlockState.getMaterial().isSolid())
         {
             return true;
         }
