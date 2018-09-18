@@ -605,11 +605,6 @@ public final class WindowConstants
     public static final String INPUT_RANGE_NAME = "range";
 
     /**
-     * Resource suffix of the multiblock GUI.
-     */
-    public static final String MULTI_BLOCK_RESOURCE_SUFFIX = ":gui/windowmultiblock.xml";
-
-    /**
      * Id of the done button in the GUI.
      */
     public static final String BUTTON_REMOVE = "remove";

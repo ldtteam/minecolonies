@@ -230,17 +230,6 @@ public final class NbtTagConstants
     public static final String TAG_MISSING_CHUNKS = "missingChunks";
 
     /**
-     * NBT tag constants for MultiBlock tileEntities.
-     */
-    public static final String TAG_INPUT            = "input";
-    public static final String TAG_RANGE            = "range";
-    public static final String TAG_DIRECTION        = "direction";
-    public static final String TAG_LENGTH           = "length";
-    public static final String TAG_PROGRESS         = "progress";
-    public static final String TAG_OUTPUT_DIRECTION = "outputDirection";
-    public static final String TAG_SPEED            = "speed";
-
-    /**
      * Tag used to store the worker to nbt.
      */
     public static final String TAG_WORKER = "worker";
