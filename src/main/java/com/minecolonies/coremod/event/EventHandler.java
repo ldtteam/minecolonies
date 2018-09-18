@@ -335,7 +335,7 @@ public class EventHandler
     @SubscribeEvent
     public void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickItem event)
     {
-        if (event.getHand() == EnumHand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool)
+        if (event.getHand() == EnumHand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool && event.getWorld().isRemote)
         {
             MineColonies.proxy.openBuildToolWindow(null);
             event.setCanceled(true);
