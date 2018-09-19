@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.colony.IServerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
@@ -52,9 +51,6 @@ public class MineColonies
 
     @CapabilityInject(IColonyManagerCapability.class)
     public static Capability<IColonyManagerCapability> COLONY_MANAGER_CAP;
-
-    @CapabilityInject(IServerCapability.class)
-    public static Capability<IServerCapability> SERVER_CAPABILITY;
 
     private static final Logger logger = LogManager.getLogger(Constants.MOD_ID);
     /**
