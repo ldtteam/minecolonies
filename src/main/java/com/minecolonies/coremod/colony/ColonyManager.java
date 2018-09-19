@@ -28,6 +28,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -668,17 +669,41 @@ public final class ColonyManager
               (int) ((Math.cos(45.0 / HALF_A_CIRCLE * Math.PI) * Configurations.gameplay.workingRangeTownHall) / BLOCKS_PER_CHUNK);
         }
 
-        //todo load this to the capability!
-        if (!compound.hasKey(TAG_NEW_COLONIES))
+        if (!compound.hasKey(TAG_CAP_COLONIES))
         {
-            final NBTTagList colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
-            for (int i = 0; i < colonyTags.tagCount(); ++i)
+            //todo load this to the capability!
+            if (!compound.hasKey(TAG_NEW_COLONIES))
             {
-                @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i), world);
-                colonies.add(colony);
+                final NBTTagList colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
+                for (int i = 0; i < colonyTags.tagCount(); ++i)
+                {
+                    @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i), world);
+                    colonies.add(colony);
+                }
+                missingChunksToLoad = compound.getInteger(TAG_MISSING_CHUNKS);
+                Log.getLogger().info(String.format("Loaded %d colonies", colonies.getSize()));
             }
-            missingChunksToLoad = compound.getInteger(TAG_MISSING_CHUNKS);
-            Log.getLogger().info(String.format("Loaded %d colonies", colonies.getSize()));
+            else
+            {
+                if (data.hasKey(TAG_NEW_COLONIES))
+                {
+                    final int size = data.getInteger(TAG_NEW_COLONIES);
+
+                    @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+                    for (int colonyId = 0; colonyId <= size; colonyId++)
+                    {
+                        @Nullable final NBTTagCompound colonyData = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY, colonyId)));
+                        if (colonyData != null)
+                        {
+                            @NotNull final Colony colony = Colony.loadColony(colonyData, world);
+                            colony.getCitizenManager().checkCitizensForHappiness();
+                            colonies.add(colony);
+                            ColonyManager.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
+                            addColonyByWorld(colony);
+                        }
+                    }
+                }
+            }
         }
 
         if (compound.hasUniqueId(TAG_UUID))
