@@ -18,6 +18,11 @@ public class ColonyManagerConstants
     public static final String TAG_NEW_COLONIES = "amountOfColonies";
 
     /**
+     * TAG to check if the colony cap has been enabled.
+     */
+    public static final String TAG_CAP_COLONIES = "colonycap";
+
+    /**
      * The file name of the minecolonies path.
      */
     public static final String FILENAME_MINECOLONIES_PATH = "minecolonies";

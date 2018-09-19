@@ -651,7 +651,8 @@ public final class ColonyManager
         recipeManager.writeToNBT(recipeCompound);
         compound.setTag(RECIPE_MANAGER_TAG, recipeCompound);
         compound.setBoolean(TAG_ALL_CHUNK_STORAGES, true);
-        compCompound.setBoolean(TAG_NEW_COLONIES, true);
+        compound.setBoolean(TAG_NEW_COLONIES, true);
+        compCompound.setBoolean(TAG_CAP_COLONIES, true);
     }
 
     /**
