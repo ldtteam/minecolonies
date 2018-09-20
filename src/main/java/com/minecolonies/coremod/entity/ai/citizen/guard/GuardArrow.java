@@ -52,7 +52,7 @@ public class GuardArrow extends EntityTippedArrow
     {
         super.readEntityFromNBT(compound);
         final int colonyID = compound.getInteger(TAG_COLONY);
-        colony = ColonyManager.getColony(colonyID);
+        colony = ColonyManager.getColony(colonyID, world);
     }
 
     @Override

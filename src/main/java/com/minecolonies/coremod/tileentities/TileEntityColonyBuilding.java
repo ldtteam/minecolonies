@@ -104,7 +104,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
             }
             else
             {
-                colony = ColonyManager.getColony(colonyId);
+                colony = ColonyManager.getColony(colonyId, getWorld());
             }
 
             // It's most probably previewed building, please don't spam it here.

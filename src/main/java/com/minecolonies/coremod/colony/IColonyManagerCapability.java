@@ -1,18 +1,21 @@
 package com.minecolonies.coremod.colony;
 
-import com.minecolonies.coremod.util.ColonyManagerHelper;
+import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONIES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MISSING_CHUNKS;
 
@@ -29,6 +32,12 @@ public interface IColonyManagerCapability
     Colony getColony(final int id);
 
     List<Colony> getColonies();
+
+    void addColony(Colony colony);
+
+    void setMissingChunksToLoad(int integer);
+
+    int getMissingChunksToLoad();
 
     /**
      * The implementation of the colonyTagCapability.
@@ -69,6 +78,24 @@ public interface IColonyManagerCapability
         {
             return colonies.getCopyAsList();
         }
+
+        @Override
+        public void addColony(final Colony colony)
+        {
+            colonies.add(colony);
+        }
+
+        @Override
+        public void setMissingChunksToLoad(final int chunksToLoad)
+        {
+            missingChunksToLoad = chunksToLoad;
+        }
+
+        @Override
+        public int getMissingChunksToLoad()
+        {
+            return missingChunksToLoad;
+        }
     }
 
     /**
@@ -80,8 +107,8 @@ public interface IColonyManagerCapability
         public NBTBase writeNBT(@NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance, @Nullable final EnumFacing side)
         {
             final NBTTagCompound compound = new NBTTagCompound();
-            compound.setInteger(TAG_MISSING_CHUNKS, missingChunksToLoad);
-
+            compound.setTag(TAG_COLONIES, instance.getColonies().stream().map(colony -> colony.writeToNBT(new NBTTagCompound())).collect(NBTUtils.toNBTTagList()));
+            compound.setInteger(TAG_MISSING_CHUNKS, instance.getMissingChunksToLoad());
             return compound;
         }
 
@@ -91,7 +118,10 @@ public interface IColonyManagerCapability
         {
             if(nbt instanceof NBTTagCompound)
             {
-                missingChunksToLoad = compound.getInteger(TAG_MISSING_CHUNKS);
+                final NBTTagCompound compound = (NBTTagCompound) nbt;
+                NBTUtils.streamCompound(((NBTTagCompound) nbt).getTagList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
+                  .map(colonyCompound -> Colony.loadColony(colonyCompound, null)).forEach(instance::addColony);
+                instance.setMissingChunksToLoad(compound.getInteger(TAG_MISSING_CHUNKS));
             }
         }
 

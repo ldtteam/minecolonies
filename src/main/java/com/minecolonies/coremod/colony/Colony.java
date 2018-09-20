@@ -36,14 +36,12 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,7 +50,6 @@ import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
-import static com.minecolonies.coremod.colony.ColonyManager.*;
 
 /**
  * This class describes a colony and contains all the data and methods for
@@ -74,7 +71,7 @@ public class Colony implements IColony
     /**
      * Dimension of the colony.
      */
-    private final int dimensionId;
+    private int dimensionId;
 
     /**
      * List of waypoints of the colony.
@@ -228,7 +225,7 @@ public class Colony implements IColony
      * @param c  The center of the colony (location of Town Hall).
      */
     @SuppressWarnings("squid:S2637")
-    Colony(final int id, @NotNull final World w, final BlockPos c)
+    Colony(final int id, @Nullable final World w, final BlockPos c)
     {
         this(id, w);
         center = c;
@@ -243,17 +240,20 @@ public class Colony implements IColony
      * @param id    The current id for the colony.
      * @param world The world the colony exists in.
      */
-    protected Colony(final int id, final World world)
+    protected Colony(final int id, @Nullable final World world)
     {
         this.id = id;
-        this.dimensionId = world.provider.getDimension();
-        this.world = world;
-        this.permissions = new Permissions(this);
-
-        if (this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id) == null)
+        if (world != null)
         {
-            this.world.getScoreboard().createTeam(TEAM_COLONY_NAME + id);
-            this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id).setAllowFriendlyFire(false);
+            this.dimensionId = world.provider.getDimension();
+            this.world = world;
+            this.permissions = new Permissions(this);
+
+            if (this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id) == null)
+            {
+                this.world.getScoreboard().createTeam(TEAM_COLONY_NAME + id);
+                this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id).setAllowFriendlyFire(false);
+            }
         }
 
         // Register a new event handler
@@ -300,7 +300,7 @@ public class Colony implements IColony
      * @return loaded colony.
      */
     @NotNull
-    public static Colony loadColony(@NotNull final NBTTagCompound compound, @NotNull final World world)
+    public static Colony loadColony(@NotNull final NBTTagCompound compound, @Nullable final World world)
     {
         final int id = compound.getInteger(TAG_ID);
         @NotNull final Colony c = new Colony(id, world);
@@ -474,7 +474,7 @@ public class Colony implements IColony
      *
      * @param compound compound to write to.
      */
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound)
     {
         //  Core attributes
         compound.setInteger(TAG_ID, id);
@@ -551,6 +551,8 @@ public class Colony implements IColony
         compound.setBoolean(TAG_AUTO_DELETE, canColonyBeAutoDeleted);
         compound.setInteger(TAG_TEAM_COLOR, colonyTeamColor.ordinal());
         this.colonyTag = compound;
+
+        return compound;
     }
 
     /**
@@ -570,10 +572,7 @@ public class Colony implements IColony
      */
     public void onWorldLoad(@NotNull final World w)
     {
-        if (w.provider.getDimension() == dimensionId)
-        {
-            world = w;
-        }
+        this.world = w;
     }
 
     /**
@@ -788,13 +787,6 @@ public class Colony implements IColony
 
         updateWayPoints();
         workManager.onWorldTick(event);
-
-        if(this.isDirty && shallUpdate(world, CLEANUP_TICK_INCREMENT))
-        {
-            this.isDirty = false;
-            @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-            ColonyManager.saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, this.getID())), this.getColonyTag());
-        }
     }
 
     /**

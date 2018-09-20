@@ -143,7 +143,7 @@ public class CitizenColonyHandler
      */
     private void handleNullColony()
     {
-        final Colony c = ColonyManager.getColony(colonyId);
+        final Colony c = ColonyManager.getColony(colonyId, citizen.world);
 
         if (c == null)
         {

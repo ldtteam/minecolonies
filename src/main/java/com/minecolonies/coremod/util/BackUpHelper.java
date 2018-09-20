@@ -29,10 +29,11 @@ public class BackUpHelper
 {
     /**
      * Backup the colony
-     * @return
+     * @return true if succesful.
      */
     public static boolean backupColonyData()
     {
+        //todo get all colonies and save them to file...
         ColonyManager.saveColonies(false);
         try(FileOutputStream fos = new FileOutputStream(getBackupSaveLocation(new Date())))
         {
@@ -162,22 +163,22 @@ public class BackUpHelper
     public static void saveColonies(final boolean isWorldUnload)
     {
         @NotNull final NBTTagCompound compound = new NBTTagCompound();
-        writeToNBT(compound);
+        ColonyManager.writeToNBT(compound);
 
         @NotNull final File file = getSaveLocation();
         saveNBTToPath(file, compound);
         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-        for (final Colony colony : colonies)
+        for (final Colony colony : ColonyManager.getAllColonies())
         {
             if (isWorldUnload)
             {
                 final NBTTagCompound colonyCompound = new NBTTagCompound();
                 colony.writeToNBT(colonyCompound);
-                saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID())), colonyCompound);
+                saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID(), colony.getDimension())), colonyCompound);
             }
             else
             {
-                saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID())), colony.getColonyTag());
+                saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID(), colony.getDimension())), colony.getColonyTag());
             }
         }
     }

@@ -65,7 +65,7 @@ public class ColonyManagerConstants
     /**
      * Colony filename.
      */
-    public static final String FILENAME_COLONY = "colony%d.dat";
+    public static final String FILENAME_COLONY = "colony%d_%d.dat";
 
     /**
      * Distance in chunks to load immediately after creating the colony.

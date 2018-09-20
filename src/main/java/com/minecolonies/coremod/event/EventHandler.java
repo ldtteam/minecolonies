@@ -23,6 +23,7 @@ import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldCapab
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldColonyManagerCapabilityProvider;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
+import com.minecolonies.coremod.util.ChunkDataHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSilverfish;
 import net.minecraft.client.Minecraft;
@@ -141,7 +142,7 @@ public class EventHandler
     {
         if (event.getWorld() instanceof WorldServer)
         {
-            ColonyManager.loadChunk(event.getChunk(), event.getWorld());
+            ChunkDataHelper.loadChunk(event.getChunk(), event.getWorld());
         }
     }
 
@@ -160,7 +161,7 @@ public class EventHandler
         {
             final World world = entity.getEntityWorld();
             final Chunk newChunk = world.getChunk(event.getNewChunkX(), event.getNewChunkZ());
-            ColonyManager.loadChunk(newChunk, entity.world);
+            ChunkDataHelper.loadChunk(newChunk, entity.world);
 
             final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null);
 
@@ -172,7 +173,7 @@ public class EventHandler
             // Add new subscribers to colony.
             for (final int colonyId : newCloseColonies.getAllCloseColonies())
             {
-                final Colony colony = ColonyManager.getColony(colonyId);
+                final Colony colony = ColonyManager.getColony(colonyId, ((EntityPlayerMP) entity).getServerWorld());
                 if (colony != null)
                 {
                     colony.getPackageManager().addSubscribers(player);
@@ -184,7 +185,7 @@ public class EventHandler
             {
                 if (!newCloseColonies.getAllCloseColonies().contains(colonyId))
                 {
-                    final Colony colony = ColonyManager.getColony(colonyId);
+                    final Colony colony = ColonyManager.getColony(colonyId, ((EntityPlayerMP) entity).getServerWorld());
                     if (colony != null)
                     {
                         colony.getPackageManager().removeSubscriber(player);
@@ -196,7 +197,7 @@ public class EventHandler
             {
                 if (newCloseColonies.getOwningColony() == 0)
                 {
-                    final Colony colony = ColonyManager.getColony(oldCloseColonies.getOwningColony());
+                    final Colony colony = ColonyManager.getColony(oldCloseColonies.getOwningColony(), ((EntityPlayerMP) entity).getServerWorld());
                     if (colony != null)
                     {
                         colony.removeVisitingPlayer(player);
@@ -204,7 +205,7 @@ public class EventHandler
                     return;
                 }
 
-                final Colony colony = ColonyManager.getColony(newCloseColonies.getOwningColony());
+                final Colony colony = ColonyManager.getColony(newCloseColonies.getOwningColony(), ((EntityPlayerMP) entity).getServerWorld());
                 if (colony != null)
                 {
                     colony.addVisitingPlayer(player);
@@ -237,7 +238,7 @@ public class EventHandler
                 if (chunkCapability != null && chunkCapability.getOwningColony() != 0
                       && entityCitizen.getCitizenColonyHandler().getColonyId() != chunkCapability.getOwningColony())
                 {
-                    final Colony colony = ColonyManager.getColony(chunkCapability.getOwningColony());
+                    final Colony colony = ColonyManager.getColony(chunkCapability.getOwningColony(), entityCitizen.world);
                     if (colony != null)
                     {
                         colony.addGuardToAttackers(entityCitizen, ((AbstractBuildingGuards) entityCitizen.getCitizenColonyHandler().getWorkBuilding()).getFollowPlayer());

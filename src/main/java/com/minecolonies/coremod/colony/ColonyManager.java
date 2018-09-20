@@ -129,15 +129,43 @@ public final class ColonyManager
     }
 
     /**
-     * Delete a colony and kill all citizens/purge all buildings.
-     *
-     * @param id the colonies id.
+     * Delete the colony in a world.
+     * @param id the id of it.
+     * @param canDestroy if can destroy the buildings.
+     * @param world the world.
      */
-    public static void deleteColony(final int id, final boolean canDestroy, final World world)
+    public static void deleteColonyByWorld(final int id, final boolean canDestroy, final World world)
     {
+        deleteColony(getColonyByWorld(id, world),canDestroy);
+    }
+
+    /**
+     * Delete the colony by dimension.
+     * @param id the id of it.
+     * @param canDestroy if can destroy the buildings.
+     * @param dimension the dimension.
+     */
+    public static void deleteColonyByDimension(final int id, final boolean canDestroy, final int dimension)
+    {
+        deleteColony(getColonyByDimension(id, dimension),canDestroy);
+    }
+
+    /**
+     * Delete a colony and purge all buildings and citizens.
+     * @param colony the colony to destroy.
+     * @param canDestroy if the building outlines should be destroyed as well.
+     */
+    private static void deleteColony(@Nullable final Colony colony, final boolean canDestroy)
+    {
+        if (colony == null)
+        {
+            Log.getLogger().warn("Deleting Colony errored, colony null");
+            return;
+        }
+        final int id = colony.getID();
+        final World world = colony.getWorld();
         try
         {
-            final Colony colony = getColony(id, world);
             ChunkDataHelper.claimColonyChunks(world, false, id, colony.getCenter(), colony.getDimension());
 
             Log.getLogger().info("Removing citizens for " + id);
@@ -192,8 +220,27 @@ public final class ColonyManager
      * @return Colony with given ID.
      */
     @Nullable
-    public static Colony getColony(final int id, final World world)
+    public static Colony getColonyByWorld(final int id, final World world)
     {
+        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
+        if (cap == null)
+        {
+            Log.getLogger().warn("Missing world capability with colony manager!");
+            return null;
+        }
+        return cap.getColony(id);
+    }
+
+    /**
+     * Get Colony by UUID.
+     *
+     * @param id ID of colony.
+     * @return Colony with given ID.
+     */
+    @Nullable
+    public static Colony getColonyByDimension(final int id, final int dimension)
+    {
+        final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension);
         final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
         if (cap == null)
         {
@@ -212,7 +259,7 @@ public final class ColonyManager
      */
     public static AbstractBuilding getBuilding(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        @Nullable final Colony colony = getColony(w, pos);
+        @Nullable final Colony colony = getColonyByPosFromWorld(w, pos);
         if (colony != null)
         {
             final AbstractBuilding building = colony.getBuildingManager().getBuilding(pos);
@@ -236,13 +283,13 @@ public final class ColonyManager
     }
 
     /**
-     * Get colony that contains a given coordinate.
+     * Get colony that contains a given coordinate from world.
      *
      * @param w   World.
      * @param pos coordinates.
      * @return Colony at the given location.
      */
-    public static Colony getColony(@NotNull final World w, @NotNull final BlockPos pos)
+    public static Colony getColonyByPosFromWorld(@NotNull final World w, @NotNull final BlockPos pos)
     {
         final Chunk centralChunk = w.getChunk(pos);
         final int id = centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony();
@@ -250,7 +297,20 @@ public final class ColonyManager
         {
             return null;
         }
-        return getColony(id, w);
+        return getColonyByWorld(id, w);
+    }
+
+    /**
+     * Get colony that contains a given coordinate from dimension.
+     *
+     * @param dim the dimension.
+     * @param pos coordinates.
+     * @return Colony at the given location.
+     */
+    public static Colony getColonyByPosFromDim(final int dim, @NotNull final BlockPos pos)
+    {
+        final World w = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dim);
+        return getColonyByPosFromWorld(w, pos);
     }
 
     /**
@@ -373,7 +433,7 @@ public final class ColonyManager
     @Nullable
     public static IColony getIColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        return w.isRemote ? getColonyView(w, pos) : getColony(w, pos);
+        return w.isRemote ? getColonyView(w, pos) : getColonyByPosFromWorld(w, pos);
     }
 
     /**
@@ -485,7 +545,7 @@ public final class ColonyManager
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
         if (cap.getOwningColony() != 0)
         {
-            return getColony(cap.getOwningColony(), w);
+            return getColonyByWorld(cap.getOwningColony(), w);
         }
         else if (!cap.getAllCloseColonies().isEmpty())
         {
@@ -494,7 +554,7 @@ public final class ColonyManager
 
             for (final int cId : cap.getAllCloseColonies())
             {
-                final Colony c = getColony(cId, w);
+                final Colony c = getColonyByWorld(cId, w);
                 if (c != null && c.getDimension() == w.provider.getDimension())
                 {
                     final long dist = c.getDistanceSquared(pos);
@@ -669,37 +729,37 @@ public final class ColonyManager
               (int) ((Math.cos(45.0 / HALF_A_CIRCLE * Math.PI) * Configurations.gameplay.workingRangeTownHall) / BLOCKS_PER_CHUNK);
         }
 
-        if (!compound.hasKey(TAG_CAP_COLONIES))
+        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
+        if (!compound.hasKey(TAG_CAP_COLONIES) && cap != null)
         {
-            //todo load this to the capability!
             if (!compound.hasKey(TAG_NEW_COLONIES))
             {
                 final NBTTagList colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
                 for (int i = 0; i < colonyTags.tagCount(); ++i)
                 {
                     @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i), world);
-                    colonies.add(colony);
+                    cap.addColony(colony);
                 }
-                missingChunksToLoad = compound.getInteger(TAG_MISSING_CHUNKS);
-                Log.getLogger().info(String.format("Loaded %d colonies", colonies.getSize()));
+
+                cap.setMissingChunksToLoad(compound.getInteger(TAG_MISSING_CHUNKS));
+                Log.getLogger().info(String.format("Loaded %d colonies", cap.getColonies().size()));
             }
             else
             {
-                if (data.hasKey(TAG_NEW_COLONIES))
+                if (compound.hasKey(TAG_NEW_COLONIES))
                 {
-                    final int size = data.getInteger(TAG_NEW_COLONIES);
+                    final int size = compound.getInteger(TAG_NEW_COLONIES);
 
                     @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
                     for (int colonyId = 0; colonyId <= size; colonyId++)
                     {
-                        @Nullable final NBTTagCompound colonyData = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY, colonyId)));
+                        @Nullable final NBTTagCompound colonyData = BackUpHelper.loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY, colonyId)));
                         if (colonyData != null)
                         {
                             @NotNull final Colony colony = Colony.loadColony(colonyData, world);
                             colony.getCitizenManager().checkCitizensForHappiness();
-                            colonies.add(colony);
-                            ColonyManager.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
-                            addColonyByWorld(colony);
+                            cap.addColony(colony);
+                            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
                         }
                     }
                 }
