@@ -45,6 +45,11 @@ public class MultiBlockChangeMessage extends AbstractMessage<MultiBlockChangeMes
     private BlockPos pos;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty public constructor.
      */
     public MultiBlockChangeMessage()
@@ -110,7 +115,7 @@ public class MultiBlockChangeMessage extends AbstractMessage<MultiBlockChangeMes
     @Override
     public void messageOnServerThread(final MultiBlockChangeMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(player.getServerWorld(), player.getPosition());
+        final Colony colony = ColonyManager.getColonyByPosFromWorld(player.getServerWorld(), player.getPosition());
         final TileEntity entity = player.getServerWorld().getTileEntity(message.pos);
         if (entity instanceof TileEntityMultiBlock && (colony == null || colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)))
         {

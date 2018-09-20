@@ -173,7 +173,7 @@ public class EventHandler
             // Add new subscribers to colony.
             for (final int colonyId : newCloseColonies.getAllCloseColonies())
             {
-                final Colony colony = ColonyManager.getColony(colonyId, ((EntityPlayerMP) entity).getServerWorld());
+                final Colony colony = ColonyManager.getColonyByWorld(colonyId, ((EntityPlayerMP) entity).getServerWorld());
                 if (colony != null)
                 {
                     colony.getPackageManager().addSubscribers(player);
@@ -185,7 +185,7 @@ public class EventHandler
             {
                 if (!newCloseColonies.getAllCloseColonies().contains(colonyId))
                 {
-                    final Colony colony = ColonyManager.getColony(colonyId, ((EntityPlayerMP) entity).getServerWorld());
+                    final Colony colony = ColonyManager.getColonyByWorld(colonyId, ((EntityPlayerMP) entity).getServerWorld());
                     if (colony != null)
                     {
                         colony.getPackageManager().removeSubscriber(player);
@@ -197,7 +197,7 @@ public class EventHandler
             {
                 if (newCloseColonies.getOwningColony() == 0)
                 {
-                    final Colony colony = ColonyManager.getColony(oldCloseColonies.getOwningColony(), ((EntityPlayerMP) entity).getServerWorld());
+                    final Colony colony = ColonyManager.getColonyByWorld(oldCloseColonies.getOwningColony(), ((EntityPlayerMP) entity).getServerWorld());
                     if (colony != null)
                     {
                         colony.removeVisitingPlayer(player);
@@ -205,7 +205,7 @@ public class EventHandler
                     return;
                 }
 
-                final Colony colony = ColonyManager.getColony(newCloseColonies.getOwningColony(), ((EntityPlayerMP) entity).getServerWorld());
+                final Colony colony = ColonyManager.getColonyByWorld(newCloseColonies.getOwningColony(), ((EntityPlayerMP) entity).getServerWorld());
                 if (colony != null)
                 {
                     colony.addVisitingPlayer(player);
@@ -238,7 +238,7 @@ public class EventHandler
                 if (chunkCapability != null && chunkCapability.getOwningColony() != 0
                       && entityCitizen.getCitizenColonyHandler().getColonyId() != chunkCapability.getOwningColony())
                 {
-                    final Colony colony = ColonyManager.getColony(chunkCapability.getOwningColony(), entityCitizen.world);
+                    final Colony colony = ColonyManager.getColonyByWorld(chunkCapability.getOwningColony(), entityCitizen.world);
                     if (colony != null)
                     {
                         colony.addGuardToAttackers(entityCitizen, ((AbstractBuildingGuards) entityCitizen.getCitizenColonyHandler().getWorkBuilding()).getFollowPlayer());

@@ -211,7 +211,7 @@ public class ColonyPermissionEventHandler
 
             if (Configurations.gameplay.pvp_mode && event.getState().getBlock() == ModBlocks.blockHutTownHall)
             {
-                ColonyManager.deleteColony(building.getColony().getID(), false, event.getWorld());
+                ColonyManager.deleteColonyByWorld(building.getColony().getID(), false, event.getWorld());
             }
         }
         else

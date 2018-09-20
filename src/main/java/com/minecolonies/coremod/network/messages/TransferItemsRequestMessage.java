@@ -50,11 +50,15 @@ public class TransferItemsRequestMessage extends AbstractMessage<TransferItemsRe
     private boolean   attemptResolve;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty constructor used when registering the message.
      */
     public TransferItemsRequestMessage()
     {
-
         super();
     }
 
@@ -73,6 +77,7 @@ public class TransferItemsRequestMessage extends AbstractMessage<TransferItemsRe
         this.itemStack = itemStack;
         this.quantity = quantity;
         this.attemptResolve = attemptResolve;
+        this.dimension = building.getColony().getDimension();
     }
 
     @Override
@@ -83,6 +88,7 @@ public class TransferItemsRequestMessage extends AbstractMessage<TransferItemsRe
         itemStack = ByteBufUtils.readItemStack(buf);
         quantity = buf.readInt();
         attemptResolve = buf.readBoolean();
+        dimension = buf.readInt();
     }
 
     @Override
@@ -93,13 +99,13 @@ public class TransferItemsRequestMessage extends AbstractMessage<TransferItemsRe
         ByteBufUtils.writeItemStack(buf, itemStack);
         buf.writeInt(quantity);
         buf.writeBoolean(attemptResolve);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final TransferItemsRequestMessage message, final EntityPlayerMP player)
     {
-
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null)
         {
             Log.getLogger().warn("TransferItemsRequestMessage colony is null");

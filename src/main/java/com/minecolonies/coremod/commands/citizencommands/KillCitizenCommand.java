@@ -11,6 +11,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -99,7 +101,8 @@ public class KillCitizenCommand extends AbstractCitizensCommands implements IAct
     @Override
     public boolean canPlayerUseCommand(final EntityPlayer player, final Commands theCommand, final int colonyId)
     {
+        final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0);
         return super.canPlayerUseCommand(player, theCommand, colonyId)
-                 && ColonyManager.getColony(colonyId) != null && ColonyManager.getColony(colonyId).getPermissions().getRank(player).equals(Rank.OWNER);
+                 && ColonyManager.getColonyByWorld(colonyId, world) != null && ColonyManager.getColonyByWorld(colonyId, world).getPermissions().getRank(player).equals(Rank.OWNER);
     }
 }

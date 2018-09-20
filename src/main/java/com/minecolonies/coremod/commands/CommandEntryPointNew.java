@@ -2,6 +2,7 @@ package com.minecolonies.coremod.commands;
 
 import java.util.List;
 
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
 import com.minecolonies.api.colony.IColony;
@@ -26,7 +27,7 @@ public class CommandEntryPointNew extends AbstractCommandParser
     {
         public List<Colony> getColonies()
         {
-            return ColonyManager.getColonies();
+            return ColonyManager.getAllColonies();
         }
 
         public IColony getIColonyByOwner(final World entityWorld, final EntityPlayer sender)
@@ -36,7 +37,7 @@ public class CommandEntryPointNew extends AbstractCommandParser
 
         public Colony getColony(final int colonyNumber)
         {
-            return ColonyManager.getColony(colonyNumber);
+            return ColonyManager.getColonyByWorld(colonyNumber, FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0));
         }
     }
 

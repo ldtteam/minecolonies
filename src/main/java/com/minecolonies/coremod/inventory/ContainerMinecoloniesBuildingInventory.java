@@ -75,7 +75,7 @@ public class ContainerMinecoloniesBuildingInventory extends Container
                               super.putStack(stack);
                               if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !ItemStackUtils.isEmpty(stack))
                               {
-                                  final Colony colony = ColonyManager.getColony(colonyId, world);
+                                  final Colony colony = ColonyManager.getColonyByWorld(colonyId, world);
                                   final AbstractBuilding building = colony.getBuildingManager().getBuilding(buildingId);
                                   if (building != null)
                                   {

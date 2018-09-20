@@ -26,6 +26,11 @@ public class MobEntryChangeMessage extends AbstractMessage<MobEntryChangeMessage
     private List<MobEntryView> mobsToAttack = new ArrayList<>();
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty standard constructor.
      */
     public MobEntryChangeMessage()
@@ -42,6 +47,7 @@ public class MobEntryChangeMessage extends AbstractMessage<MobEntryChangeMessage
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.mobsToAttack = new ArrayList<>(mobsToAttack);
+        this.dimension = building.getColony().getDimension();
     }
 
     @Override
@@ -55,6 +61,7 @@ public class MobEntryChangeMessage extends AbstractMessage<MobEntryChangeMessage
         {
             MobEntryView.writeToByteBuf(buf, entry);
         }
+        buf.writeInt(dimension);
     }
 
     @Override
@@ -69,12 +76,13 @@ public class MobEntryChangeMessage extends AbstractMessage<MobEntryChangeMessage
             final MobEntryView mobEntry = MobEntryView.readFromByteBuf(buf);
             mobsToAttack.add(mobEntry);
         }
+        dimension = buf.readInt();
     }
 
     @Override
     public void messageOnServerThread(final MobEntryChangeMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings

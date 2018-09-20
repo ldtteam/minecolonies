@@ -1,15 +1,13 @@
 package com.minecolonies.coremod.util;
 
 import com.google.common.io.Files;
-import com.minecolonies.api.colony.IChunkmanagerCapability;
-import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +21,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
-import static com.minecolonies.coremod.MineColonies.CHUNK_STORAGE_UPDATE_CAP;
 
 public class BackUpHelper
 {
@@ -33,19 +30,21 @@ public class BackUpHelper
      */
     public static boolean backupColonyData()
     {
-        //todo get all colonies and save them to file...
-        ColonyManager.saveColonies(false);
+        BackUpHelper.saveColonies(true);
         try(FileOutputStream fos = new FileOutputStream(getBackupSaveLocation(new Date())))
         {
             @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
             final ZipOutputStream zos = new ZipOutputStream(fos);
 
-            for (int i = 1; i < colonies.getTopID() + 1; i++)
+            for (int i = 1; i < ColonyManager.getTopColonyId() + 1; i++)
             {
-                @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i));
-                if (file.exists())
+                for (int dim = 0; dim < FMLCommonHandler.instance().getMinecraftServerInstance().worlds.length; dim++)
                 {
-                    addToZipFile(String.format(FILENAME_COLONY, i), zos, saveDir);
+                    @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dim));
+                    if (file.exists())
+                    {
+                        addToZipFile(String.format(FILENAME_COLONY, i, dim), zos, saveDir);
+                    }
                 }
             }
             addToZipFile(getSaveLocation().getName(), zos, saveDir);
@@ -170,16 +169,9 @@ public class BackUpHelper
         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
         for (final Colony colony : ColonyManager.getAllColonies())
         {
-            if (isWorldUnload)
-            {
-                final NBTTagCompound colonyCompound = new NBTTagCompound();
-                colony.writeToNBT(colonyCompound);
-                saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID(), colony.getDimension())), colonyCompound);
-            }
-            else
-            {
-                saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID(), colony.getDimension())), colony.getColonyTag());
-            }
+            final NBTTagCompound colonyCompound = new NBTTagCompound();
+            colony.writeToNBT(colonyCompound);
+            saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID(), colony.getDimension())), colonyCompound);
         }
     }
 }

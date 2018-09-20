@@ -59,7 +59,7 @@ public class GuiHandler implements IGuiHandler
         }
         else if (id == ID.CITIZEN_INVENTORY.ordinal())
         {
-            final Colony colony = ColonyManager.getColony(x, world);
+            final Colony colony = ColonyManager.getColonyByWorld(x, world);
             final CitizenData citizen = colony.getCitizenManager().getCitizen(y);
             final AbstractBuilding building = citizen.getWorkBuilding();
 

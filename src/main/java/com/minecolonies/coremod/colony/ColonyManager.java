@@ -130,29 +130,32 @@ public final class ColonyManager
 
     /**
      * Delete the colony in a world.
-     * @param id the id of it.
+     *
+     * @param id         the id of it.
      * @param canDestroy if can destroy the buildings.
-     * @param world the world.
+     * @param world      the world.
      */
     public static void deleteColonyByWorld(final int id, final boolean canDestroy, final World world)
     {
-        deleteColony(getColonyByWorld(id, world),canDestroy);
+        deleteColony(getColonyByWorld(id, world), canDestroy);
     }
 
     /**
      * Delete the colony by dimension.
-     * @param id the id of it.
+     *
+     * @param id         the id of it.
      * @param canDestroy if can destroy the buildings.
-     * @param dimension the dimension.
+     * @param dimension  the dimension.
      */
     public static void deleteColonyByDimension(final int id, final boolean canDestroy, final int dimension)
     {
-        deleteColony(getColonyByDimension(id, dimension),canDestroy);
+        deleteColony(getColonyByDimension(id, dimension), canDestroy);
     }
 
     /**
      * Delete a colony and purge all buildings and citizens.
-     * @param colony the colony to destroy.
+     *
+     * @param colony     the colony to destroy.
      * @param canDestroy if the building outlines should be destroyed as well.
      */
     private static void deleteColony(@Nullable final Colony colony, final boolean canDestroy)
@@ -386,10 +389,10 @@ public final class ColonyManager
      * @return a list of colonies.
      */
     @NotNull
-    public static List<Colony> getColoniesAbandonedSince(final int abandonedSince, final World world)
+    public static List<Colony> getColoniesAbandonedSince(final int abandonedSince)
     {
         final List<Colony> sortedList = new ArrayList<>();
-        for (final Colony colony : ColonyManager.getColonies(world))
+        for (final Colony colony : ColonyManager.getAllColonies())
         {
             if (colony.getLastContactInHours() >= abandonedSince)
             {
@@ -713,7 +716,7 @@ public final class ColonyManager
         compound.setTag(RECIPE_MANAGER_TAG, recipeCompound);
         compound.setBoolean(TAG_ALL_CHUNK_STORAGES, true);
         compound.setBoolean(TAG_NEW_COLONIES, true);
-        compCompound.setBoolean(TAG_CAP_COLONIES, true);
+        compound.setBoolean(TAG_CAP_COLONIES, true);
     }
 
     /**
@@ -746,24 +749,21 @@ public final class ColonyManager
             }
             else
             {
-                if (compound.hasKey(TAG_NEW_COLONIES))
+                final int size = compound.getInteger(TAG_NEW_COLONIES);
+                @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+                for (int colonyId = 0; colonyId <= size; colonyId++)
                 {
-                    final int size = compound.getInteger(TAG_NEW_COLONIES);
-
-                    @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-                    for (int colonyId = 0; colonyId <= size; colonyId++)
+                    @Nullable final NBTTagCompound colonyData = BackUpHelper.loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY_OLD, colonyId)));
+                    if (colonyData != null)
                     {
-                        @Nullable final NBTTagCompound colonyData = BackUpHelper.loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY, colonyId)));
-                        if (colonyData != null)
-                        {
-                            @NotNull final Colony colony = Colony.loadColony(colonyData, world);
-                            colony.getCitizenManager().checkCitizensForHappiness();
-                            cap.addColony(colony);
-                            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
-                        }
+                        @NotNull final Colony colony = Colony.loadColony(colonyData, world);
+                        colony.getCitizenManager().checkCitizensForHappiness();
+                        cap.addColony(colony);
+                        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
                     }
                 }
             }
+
         }
 
         if (compound.hasUniqueId(TAG_UUID))
@@ -899,6 +899,11 @@ public final class ColonyManager
             for (@NotNull final Colony c : getColonies(world))
             {
                 c.onWorldUnload(world);
+            }
+            if (loaded)
+            {
+                BackUpHelper.backupColonyData();
+                loaded = false;
             }
         }
     }
@@ -1137,5 +1142,28 @@ public final class ColonyManager
     public static IRecipeManager getRecipeManager()
     {
         return recipeManager;
+    }
+
+    /**
+     * Get the top colony id of all colonies.
+     *
+     * @return the top id.
+     */
+    public static int getTopColonyId()
+    {
+        int top = 0;
+        for (final World world : FMLCommonHandler.instance().getMinecraftServerInstance().worlds)
+        {
+            final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
+            if (cap != null)
+            {
+                final int tempTop = cap.getTopID();
+                if (tempTop > top)
+                {
+                    top = tempTop;
+                }
+            }
+        }
+        return 0;
     }
 }

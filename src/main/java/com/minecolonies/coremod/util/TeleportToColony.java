@@ -16,6 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -103,7 +104,7 @@ public final class TeleportToColony
      */
     private static void teleportPlayer(final EntityPlayer playerToTeleport, final int colID, final ICommandSender sender)
     {
-        final Colony colony = ColonyManager.getColony(colID, playerToTeleport.world);
+        final Colony colony = ColonyManager.getColonyByWorld(colID, FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0));
         final BuildingTownHall townHall = colony.getBuildingManager().getTownHall();
 
         if (townHall == null)

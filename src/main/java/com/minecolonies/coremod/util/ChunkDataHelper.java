@@ -6,6 +6,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -23,6 +24,7 @@ import static com.minecolonies.api.util.constant.ColonyManagerConstants.UNABLE_T
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.coremod.MineColonies.CHUNK_STORAGE_UPDATE_CAP;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
+import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 
 public class ChunkDataHelper
 {
@@ -33,8 +35,13 @@ public class ChunkDataHelper
      */
     public static void loadChunk(final Chunk chunk, final World world)
     {
+        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
+        if (cap == null)
+        {
+            return;
+        }
         //todo get world cap to get chunksToLoad and decrease it!
-        if(missingChunksToLoad > 0)
+        if(cap.getMissingChunksToLoad() > 0)
         {
             final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
             if (chunkManager == null)
@@ -48,7 +55,7 @@ public class ChunkDataHelper
             if(existingStorage != null)
             {
                 addStorageToChunk(chunk, existingStorage);
-                missingChunksToLoad--;
+                cap.setMissingChunksToLoad(cap.getMissingChunksToLoad()-1);
             }
         }
     }

@@ -134,7 +134,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         {
             return EnumActionResult.FAIL;
         }
-        final Colony colony = ColonyManager.getColony(compound.getInteger(TAG_ID), worldIn);
+        final Colony colony = ColonyManager.getColonyByWorld(compound.getInteger(TAG_ID), worldIn);
         if (colony == null)
         {
             return EnumActionResult.FAIL;

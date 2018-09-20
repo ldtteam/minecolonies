@@ -9,15 +9,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONIES;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MISSING_CHUNKS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  *
@@ -38,6 +37,8 @@ public interface IColonyManagerCapability
     void setMissingChunksToLoad(int integer);
 
     int getMissingChunksToLoad();
+
+    int getTopID();
 
     /**
      * The implementation of the colonyTagCapability.
@@ -96,6 +97,12 @@ public interface IColonyManagerCapability
         {
             return missingChunksToLoad;
         }
+
+        @Override
+        public int getTopID()
+        {
+            return colonies.getTopID();
+        }
     }
 
     /**
@@ -120,7 +127,7 @@ public interface IColonyManagerCapability
             {
                 final NBTTagCompound compound = (NBTTagCompound) nbt;
                 NBTUtils.streamCompound(((NBTTagCompound) nbt).getTagList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
-                  .map(colonyCompound -> Colony.loadColony(colonyCompound, null)).forEach(instance::addColony);
+                  .map(colonyCompound -> Colony.loadColony(colonyCompound, FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(compound.getInteger(TAG_DIMENSION)))).forEach(instance::addColony);
                 instance.setMissingChunksToLoad(compound.getInteger(TAG_MISSING_CHUNKS));
             }
         }

@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.event.capabilityproviders;
 
-import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
@@ -10,7 +9,6 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static com.minecolonies.coremod.MineColonies.CHUNK_STORAGE_UPDATE_CAP;
 import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 
 /**
