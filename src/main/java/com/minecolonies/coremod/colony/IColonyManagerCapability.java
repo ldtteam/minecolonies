@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony;
 
-import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -130,18 +129,6 @@ public interface IColonyManagerCapability
                   .map(colonyCompound -> Colony.loadColony(colonyCompound, FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(compound.getInteger(TAG_DIMENSION)))).forEach(instance::addColony);
                 instance.setMissingChunksToLoad(compound.getInteger(TAG_MISSING_CHUNKS));
             }
-        }
-
-        /**
-         * Write one colony id to nbt.
-         * @param id the id.
-         * @return the compound of it.
-         */
-        private static NBTTagCompound write(final int id)
-        {
-            final NBTTagCompound compound = new NBTTagCompound();
-            compound.setInteger(TAG_ID, id);
-            return compound;
         }
     }
 }

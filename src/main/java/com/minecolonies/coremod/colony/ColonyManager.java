@@ -740,7 +740,8 @@ public final class ColonyManager
                 final NBTTagList colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
                 for (int i = 0; i < colonyTags.tagCount(); ++i)
                 {
-                    @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i), world);
+                    final NBTTagCompound colonyCompound = colonyTags.getCompoundTagAt(i);
+                    @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i), FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyCompound.getInteger(TAG_DIMENSION)));
                     cap.addColony(colony);
                 }
 
@@ -756,10 +757,11 @@ public final class ColonyManager
                     @Nullable final NBTTagCompound colonyData = BackUpHelper.loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY_OLD, colonyId)));
                     if (colonyData != null)
                     {
-                        @NotNull final Colony colony = Colony.loadColony(colonyData, world);
+                        final World colonyWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyData.getInteger(TAG_DIMENSION));
+                        @NotNull final Colony colony = Colony.loadColony(colonyData, colonyWorld);
                         colony.getCitizenManager().checkCitizensForHappiness();
                         cap.addColony(colony);
-                        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
+                        ChunkDataHelper.claimColonyChunks(colonyWorld, true, colony.getID(), colony.getCenter(), colony.getDimension());
                     }
                 }
             }
