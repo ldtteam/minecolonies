@@ -220,4 +220,14 @@ public class ChunkDataHelper
         MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
         return true;
     }
+
+    /**
+     * Private constructor to hide implicit one.
+     */
+    private ChunkDataHelper()
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
 }

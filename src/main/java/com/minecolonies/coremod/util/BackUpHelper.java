@@ -15,7 +15,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -36,7 +41,7 @@ public class BackUpHelper
             @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
             final ZipOutputStream zos = new ZipOutputStream(fos);
 
-            for (int i = 1; i < ColonyManager.getTopColonyId() + 1; i++)
+            for (int i = 1; i <= ColonyManager.getTopColonyId() + 1; i++)
             {
                 for (int dim = 0; dim < FMLCommonHandler.instance().getMinecraftServerInstance().worlds.length; dim++)
                 {
@@ -173,5 +178,27 @@ public class BackUpHelper
             colony.writeToNBT(colonyCompound);
             saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID(), colony.getDimension())), colonyCompound);
         }
+    }
+
+    /**
+     * Private constructor to hide implicit one.
+     */
+    private BackUpHelper()
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
+    public static void loadColonyBackup(final Colony colony)
+    {
+        @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+        final NBTTagCompound compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID(), colony.getDimension())));
+        if (compound == null)
+        {
+            return;
+        }
+        colony.readFromNBT(compound);
+        Log.getLogger().warn("Successfully restored colony!");
     }
 }

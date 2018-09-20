@@ -329,7 +329,7 @@ public class Colony implements IColony
      *
      * @param compound compound to read from.
      */
-    private void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
 

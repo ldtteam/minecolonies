@@ -732,8 +732,7 @@ public final class ColonyManager
               (int) ((Math.cos(45.0 / HALF_A_CIRCLE * Math.PI) * Configurations.gameplay.workingRangeTownHall) / BLOCKS_PER_CHUNK);
         }
 
-        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
-        if (!compound.hasKey(TAG_CAP_COLONIES) && cap != null)
+        if (!compound.hasKey(TAG_CAP_COLONIES))
         {
             if (!compound.hasKey(TAG_NEW_COLONIES))
             {
@@ -741,10 +740,13 @@ public final class ColonyManager
                 for (int i = 0; i < colonyTags.tagCount(); ++i)
                 {
                     final NBTTagCompound colonyCompound = colonyTags.getCompoundTagAt(i);
+                    final World colonyWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyCompound.getInteger(TAG_DIMENSION));
+                    final IColonyManagerCapability cap = colonyWorld.getCapability(COLONY_MANAGER_CAP, null);
                     @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i), FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyCompound.getInteger(TAG_DIMENSION)));
                     cap.addColony(colony);
                 }
 
+                final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
                 cap.setMissingChunksToLoad(compound.getInteger(TAG_MISSING_CHUNKS));
                 Log.getLogger().info(String.format("Loaded %d colonies", cap.getColonies().size()));
             }
@@ -758,10 +760,10 @@ public final class ColonyManager
                     if (colonyData != null)
                     {
                         final World colonyWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyData.getInteger(TAG_DIMENSION));
+                        final IColonyManagerCapability cap = colonyWorld.getCapability(COLONY_MANAGER_CAP, null);
                         @NotNull final Colony colony = Colony.loadColony(colonyData, colonyWorld);
                         colony.getCitizenManager().checkCitizensForHappiness();
                         cap.addColony(colony);
-                        ChunkDataHelper.claimColonyChunks(colonyWorld, true, colony.getID(), colony.getCenter(), colony.getDimension());
                     }
                 }
             }

@@ -48,12 +48,12 @@ public interface IColonyManagerCapability
          * The list of all colonies.
          */
         @NotNull
-        private static final ColonyList<Colony> colonies = new ColonyList<>();
+        private final ColonyList<Colony> colonies = new ColonyList<>();
 
         /**
          * Removed elements of the list of chunks to load.
          */
-        private static int missingChunksToLoad = 0;
+        private int missingChunksToLoad = 0;
 
         @Override
         public Colony createColony(@NotNull final World w, @NotNull final BlockPos pos)
