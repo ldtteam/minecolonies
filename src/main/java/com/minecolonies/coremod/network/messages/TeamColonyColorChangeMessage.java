@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -90,7 +91,12 @@ public class TeamColonyColorChangeMessage extends AbstractMessage<TeamColonyColo
                 return;
             }
 
-            colony.setColonyColor(TextFormatting.values()[message.colorOrdinal]);
+            final TextFormatting color = TextFormatting.values()[message.colorOrdinal];
+            if (color == null)
+            {
+                Log.getLogger().warn("color null!!! " + message.colorOrdinal);
+            }
+            colony.setColonyColor(color);
         }
     }
 }

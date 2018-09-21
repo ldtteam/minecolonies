@@ -198,8 +198,10 @@ public final class BackUpHelper
         final NBTTagCompound compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension)));
         if (compound == null)
         {
+            Log.getLogger().warn("Can't find NBT of colony: " + colonyId + " at location: " + new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension).toString());
             return;
         }
+
         Colony colony = ColonyManager.getColonyByDimension(colonyId, dimension);
         if (colony != null)
         {
@@ -207,6 +209,7 @@ public final class BackUpHelper
         }
         else
         {
+            Log.getLogger().warn("Colony is null, creating new colony!");
             final World colonyWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension);
             colony = Colony.loadColony(compound, colonyWorld);
             colonyWorld.getCapability(COLONY_MANAGER_CAP, null).addColony(colony);

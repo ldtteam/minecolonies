@@ -10,6 +10,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Suppression;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.managers.*;
@@ -285,6 +286,14 @@ public class Colony implements IColony
     {
         if (this.world != null)
         {
+            if (this.world.getScoreboard() == null)
+            {
+                Log.getLogger().warn("Scoreboard null!!");
+            }
+            else if (this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id) == null)
+            {
+                Log.getLogger().warn("Team null!! " + TEAM_COLONY_NAME + this.id);
+            }
             this.colonyTeamColor = colonyColor;
             this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id).setColor(colonyColor);
             this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id).setPrefix(colonyColor.toString());
