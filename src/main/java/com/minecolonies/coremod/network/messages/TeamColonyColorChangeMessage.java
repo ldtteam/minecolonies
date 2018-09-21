@@ -90,13 +90,7 @@ public class TeamColonyColorChangeMessage extends AbstractMessage<TeamColonyColo
             {
                 return;
             }
-
-            final TextFormatting color = TextFormatting.values()[message.colorOrdinal];
-            if (color == null)
-            {
-                Log.getLogger().warn("color null!!! " + message.colorOrdinal);
-            }
-            colony.setColonyColor(color);
+            colony.setColonyColor(TextFormatting.values()[message.colorOrdinal]);
         }
     }
 }

@@ -247,12 +247,7 @@ public class Colony implements IColony
         {
             this.dimensionId = world.provider.getDimension();
             this.world = world;
-
-            if (this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id) == null)
-            {
-                this.world.getScoreboard().createTeam(TEAM_COLONY_NAME + id);
-                this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id).setAllowFriendlyFire(false);
-            }
+            checkOrCreateTeam();
         }
         this.permissions = new Permissions(this);
 
@@ -279,6 +274,18 @@ public class Colony implements IColony
     }
 
     /**
+     * Check or create the team.
+     */
+    private void checkOrCreateTeam()
+    {
+        if (this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id) == null)
+        {
+            this.world.getScoreboard().createTeam(TEAM_COLONY_NAME + id);
+            this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id).setAllowFriendlyFire(false);
+        }
+    }
+
+    /**
      * Set up the colony color for team handling for pvp.
      * @param colonyColor the colony color.
      */
@@ -286,14 +293,7 @@ public class Colony implements IColony
     {
         if (this.world != null)
         {
-            if (this.world.getScoreboard() == null)
-            {
-                Log.getLogger().warn("Scoreboard null!!");
-            }
-            else if (this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id) == null)
-            {
-                Log.getLogger().warn("Team null!! " + TEAM_COLONY_NAME + this.id);
-            }
+            checkOrCreateTeam();
             this.colonyTeamColor = colonyColor;
             this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id).setColor(colonyColor);
             this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id).setPrefix(colonyColor.toString());
