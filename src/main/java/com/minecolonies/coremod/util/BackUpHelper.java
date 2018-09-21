@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
+import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 
 public final class BackUpHelper
 {
@@ -187,17 +189,29 @@ public final class BackUpHelper
 
     /**
      * Load the colony backup by colony.
-     * @param colony the colony which should be loaded.
+     * @param colonyId of the colony.
+     * @param dimension the colony dimension.
      */
-    public static void loadColonyBackup(final Colony colony)
+    public static void loadColonyBackup(final int colonyId, final int dimension)
     {
         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-        final NBTTagCompound compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID(), colony.getDimension())));
+        final NBTTagCompound compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension)));
         if (compound == null)
         {
             return;
         }
-        colony.readFromNBT(compound);
+        Colony colony = ColonyManager.getColonyByDimension(colonyId, dimension);
+        if (colony != null)
+        {
+            colony.readFromNBT(compound);
+        }
+        else
+        {
+            final World colonyWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension);
+            colony = Colony.loadColony(compound, colonyWorld);
+            colonyWorld.getCapability(COLONY_MANAGER_CAP, null).addColony(colony);
+        }
+
         Log.getLogger().warn("Successfully restored colony!");
     }
 }

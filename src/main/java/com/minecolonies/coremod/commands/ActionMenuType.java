@@ -39,7 +39,9 @@ public enum ActionMenuType implements IMenuType
       "loadBackup",
       ForgePermissionNodes.LOAD_BACKUP,
       LoadColonyBackupCommand.class,
-      new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.REQUIRED)
+      new ActionArgument("colony", ActionArgumentType.INTEGER, ActionArgumentType.Is.REQUIRED),
+      new ActionArgument("dimension", ActionArgumentType.INTEGER, ActionArgumentType.Is.REQUIRED)
+
     )),
     RAID_ALL_TONIGHT(new ActionMenu(
             "RaidAllTonight",

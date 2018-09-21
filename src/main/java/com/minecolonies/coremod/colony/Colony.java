@@ -246,7 +246,6 @@ public class Colony implements IColony
         {
             this.dimensionId = world.provider.getDimension();
             this.world = world;
-            this.permissions = new Permissions(this);
 
             if (this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id) == null)
             {
@@ -254,6 +253,7 @@ public class Colony implements IColony
                 this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id).setAllowFriendlyFire(false);
             }
         }
+        this.permissions = new Permissions(this);
 
         // Register a new event handler
         eventHandler = new ColonyPermissionEventHandler(this);
@@ -305,6 +305,7 @@ public class Colony implements IColony
         @NotNull final Colony c = new Colony(id, world);
         c.name = compound.getString(TAG_NAME);
         c.center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
+        c.setRequestManager();
         c.readFromNBT(compound);
 
         if (c.getProgressManager().isPrintingProgress() && (c.getBuildingManager().getBuildings().size() > BUILDING_LIMIT_FOR_HELP || c.getCitizenManager().getCitizens().size() > CITIZEN_LIMIT_FOR_HELP))
@@ -330,6 +331,7 @@ public class Colony implements IColony
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
+        dimensionId = compound.getInteger(TAG_DIMENSION);
 
         if(compound.hasKey(TAG_NEED_TO_MOURN))
         {
@@ -449,6 +451,11 @@ public class Colony implements IColony
             this.setColonyColor(TextFormatting.values()[compound.getInteger(TAG_TEAM_COLOR)]);
         }
 
+        if (getColonyTag().hasKey(TAG_REQUESTMANAGER))
+        {
+            this.requestManager.deserializeNBT(getColonyTag().getCompoundTag(TAG_REQUESTMANAGER));
+        }
+
         this.colonyTag = compound;
     }
 
@@ -566,11 +573,6 @@ public class Colony implements IColony
     public void onWorldLoad(@NotNull final World w)
     {
         this.world = w;
-        setRequestManager();
-        if (getColonyTag().hasKey(TAG_REQUESTMANAGER))
-        {
-            this.requestManager.deserializeNBT(getColonyTag().getCompoundTag(TAG_REQUESTMANAGER));
-        }
     }
 
     /**

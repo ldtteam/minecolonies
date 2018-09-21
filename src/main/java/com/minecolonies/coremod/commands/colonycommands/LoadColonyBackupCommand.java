@@ -15,12 +15,8 @@ import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
-
-import static com.minecolonies.api.util.constant.CommandConstants.*;
 
 /**
  * List all colonies.
@@ -78,14 +74,9 @@ public class LoadColonyBackupCommand extends AbstractSingleCommand implements IA
             return;
         }
 
-        final Colony colony = actionMenuState.getColonyForArgument("colony");
-
-        if (colony == null)
-        {
-            sender.sendMessage(new TextComponentString(NO_COLONY_MESSAGE));
-            return;
-        }
-        server.addScheduledTask(() -> BackUpHelper.loadColonyBackup(colony));
+        final int colonyId = actionMenuState.getIntegerForArgument("colony");
+        final int dimension = actionMenuState.getIntegerForArgument("dimension");
+        server.addScheduledTask(() -> BackUpHelper.loadColonyBackup(colonyId, dimension));
     }
 
     @NotNull
