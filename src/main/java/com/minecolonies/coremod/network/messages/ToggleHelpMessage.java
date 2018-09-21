@@ -20,17 +20,17 @@ public class ToggleHelpMessage extends AbstractMessage<ToggleHelpMessage, IMessa
     private int colonyId;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty public constructor.
      */
     public ToggleHelpMessage()
     {
         super();
     }
-
-    /**
-     * The dimension of the message.
-     */
-    private int dimension;
 
     /**
      * Creates object for the player to turn help messages or or off.

@@ -5,7 +5,7 @@ import net.minecraft.util.DamageSource;
 /**
  * All colony manager related constants.
  */
-public class ColonyManagerConstants
+public final class ColonyManagerConstants
 {
     /**
      * Distance NBT tag.
@@ -48,19 +48,9 @@ public class ColonyManagerConstants
     public static final String UNABLE_TO_FIND_WORLD_CAP_TEXT = "Unable to find Chunk manager in world capability, please report this to the mod author!";
 
     /**
-     * The tag of the colonies.
-     */
-    public static final String TAG_COLONIES = "colonies";
-
-    /**
      * Compound tag key for the recipe manager.
      */
     public static final String RECIPE_MANAGER_TAG = "recipeManager";
-
-    /**
-     * The tag of the pseudo unique identifier
-     */
-    public static final String TAG_UUID     = "uuid";
 
     /**
      * Colony filename.
@@ -81,6 +71,11 @@ public class ColonyManagerConstants
      * The damage source used to kill citizens.
      */
     public static final DamageSource CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
+
+    /**
+     * Log message for missing world cap.
+     */
+    public static final String MISSING_WORLD_CAP_MESSAGE = "Missing world capability with colony manager!";
 
     /**
      * Private constructor to hide implicit one.

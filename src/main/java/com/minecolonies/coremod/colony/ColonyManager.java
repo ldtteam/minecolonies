@@ -39,8 +39,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.ColonyManagerConstants.TAG_COLONIES;
-import static com.minecolonies.api.util.constant.ColonyManagerConstants.TAG_UUID;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.Constants.HALF_A_CIRCLE;
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
@@ -104,7 +102,7 @@ public final class ColonyManager
         final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null);
         if (cap == null)
         {
-            Log.getLogger().warn("Missing world capability with colony manager!");
+            Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
             return;
         }
 
@@ -203,7 +201,7 @@ public final class ColonyManager
             final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
             if (cap == null)
             {
-                Log.getLogger().warn("Missing world capability with colony manager!");
+                Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
                 return;
             }
 
@@ -228,7 +226,7 @@ public final class ColonyManager
         final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
         if (cap == null)
         {
-            Log.getLogger().warn("Missing world capability with colony manager!");
+            Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
             return null;
         }
         return cap.getColony(id);
@@ -247,7 +245,7 @@ public final class ColonyManager
         final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
         if (cap == null)
         {
-            Log.getLogger().warn("Missing world capability with colony manager!");
+            Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
             return null;
         }
         return cap.getColony(id);
@@ -356,7 +354,7 @@ public final class ColonyManager
         final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null);
         if (cap == null)
         {
-            Log.getLogger().warn("Missing world capability with colony manager!");
+            Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
             return Collections.emptyList();
         }
         return cap.getColonies();

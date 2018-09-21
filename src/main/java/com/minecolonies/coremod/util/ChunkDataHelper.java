@@ -13,6 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,8 +27,21 @@ import static com.minecolonies.coremod.MineColonies.CHUNK_STORAGE_UPDATE_CAP;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 
-public class ChunkDataHelper
+/**
+ * Class to take care of chunk data helper.
+ */
+public final class ChunkDataHelper
 {
+    /**
+     * Private constructor to hide implicit one.
+     */
+    private ChunkDataHelper()
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
     /**
      * Load the colony info for a certain chunk.
      * @param chunk the chunk.
@@ -147,8 +161,6 @@ public class ChunkDataHelper
      */
     public static void claimChunksInRange(final int colonyId, final int dimension, final boolean add, final int chunkX, final int chunkZ, final int range, final int buffer, final World world)
     {
-        int additionalChunksToLoad = 0;
-        final int maxRange = range * 2 + buffer;
         final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
         if (chunkManager == null)
         {
@@ -156,6 +168,8 @@ public class ChunkDataHelper
             return;
         }
 
+        final int maxRange = range * 2 + buffer;
+        int additionalChunksToLoad = 0;
         for(int i = chunkX - maxRange; i <= chunkX + maxRange; i++)
         {
             for (int j = chunkZ - maxRange; j <= chunkZ + maxRange; j++)
@@ -175,8 +189,8 @@ public class ChunkDataHelper
                 }
             }
         }
-
-        //todo get world cap and save additional chunks to load!
+        final IColonyManagerCapability cap = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension).getCapability(COLONY_MANAGER_CAP, null);
+        cap.setMissingChunksToLoad(cap.getMissingChunksToLoad() + additionalChunksToLoad);
     }
 
     /**
@@ -219,15 +233,5 @@ public class ChunkDataHelper
         chunk.markDirty();
         MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
         return true;
-    }
-
-    /**
-     * Private constructor to hide implicit one.
-     */
-    private ChunkDataHelper()
-    {
-        /*
-         * Intentionally left empty.
-         */
     }
 }

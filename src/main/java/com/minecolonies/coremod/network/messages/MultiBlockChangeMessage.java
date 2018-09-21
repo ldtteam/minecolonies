@@ -45,11 +45,6 @@ public class MultiBlockChangeMessage extends AbstractMessage<MultiBlockChangeMes
     private BlockPos pos;
 
     /**
-     * The dimension of the message.
-     */
-    private int dimension;
-
-    /**
      * Empty public constructor.
      */
     public MultiBlockChangeMessage()

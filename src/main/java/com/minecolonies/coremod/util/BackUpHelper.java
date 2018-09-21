@@ -15,20 +15,25 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
 
-public class BackUpHelper
+public final class BackUpHelper
 {
+    /**
+     * Private constructor to hide implicit one.
+     */
+    private BackUpHelper()
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
     /**
      * Backup the colony
      * @return true if succesful.
@@ -181,15 +186,9 @@ public class BackUpHelper
     }
 
     /**
-     * Private constructor to hide implicit one.
+     * Load the colony backup by colony.
+     * @param colony the colony which should be loaded.
      */
-    private BackUpHelper()
-    {
-        /*
-         * Intentionally left empty.
-         */
-    }
-
     public static void loadColonyBackup(final Colony colony)
     {
         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);

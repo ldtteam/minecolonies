@@ -53,7 +53,7 @@ public class ClaimChunksCommand implements IActionCommand
             final Boolean add = actionMenuState.getBooleanForArgument("add");
 
             final Chunk chunk = ((EntityPlayerMP) sender).getServerWorld().getChunk(sender.getPosition());
-            ChunkDataHelper.claimChunksInRange(colony.getID(), colony.getDimension(), add == null ? true : add, chunk.x, chunk.z, range, 0, sender.getEntityWorld());
+            ChunkDataHelper.claimChunksInRange(colony.getID(), colony.getDimension(), add == null || add, chunk.x, chunk.z, range, 0, sender.getEntityWorld());
             sender.sendMessage(new TextComponentString(SUCCESFULLY_CLAIMED_CHUNKS));
         }
         else
