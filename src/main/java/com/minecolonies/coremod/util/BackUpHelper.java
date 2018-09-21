@@ -213,6 +213,7 @@ public final class BackUpHelper
             final World colonyWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension);
             colony = Colony.loadColony(compound, colonyWorld);
             colonyWorld.getCapability(COLONY_MANAGER_CAP, null).addColony(colony);
+            ChunkDataHelper.claimColonyChunks(colonyWorld, true, colony.getID(), colony.getCenter(), colony.getDimension());
         }
 
         Log.getLogger().warn("Successfully restored colony!");
