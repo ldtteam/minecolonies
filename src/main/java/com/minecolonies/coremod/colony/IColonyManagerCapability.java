@@ -162,7 +162,7 @@ public interface IColonyManagerCapability
             {
                 final NBTTagCompound compound = (NBTTagCompound) nbt;
                 NBTUtils.streamCompound(((NBTTagCompound) nbt).getTagList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
-                  .map(colonyCompound -> Colony.loadColony(colonyCompound, FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(compound.getInteger(TAG_DIMENSION)))).forEach(instance::addColony);
+                  .map(colonyCompound -> Colony.loadColony(colonyCompound, null)).forEach(instance::addColony);
                 instance.setMissingChunksToLoad(compound.getInteger(TAG_MISSING_CHUNKS));
             }
         }

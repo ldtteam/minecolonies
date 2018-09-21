@@ -191,11 +191,6 @@ public class Colony implements IColony
     private NBTTagCompound colonyTag;
 
     /**
-     * Field to check if the colony is dirty.
-     */
-    private boolean isDirty = false;
-
-    /**
      * List of players visiting the colony.
      */
     private final List<EntityPlayer> visitingPlayers = new ArrayList<>();
@@ -210,8 +205,12 @@ public class Colony implements IColony
      */
     private final HappinessData happinessData = new HappinessData();
 
+    /**
+     * Mournign parameters.
+     */
     private boolean needToMourn = false;
     private boolean mourning = false;
+
     /**
      * The colony team color.
      */
@@ -306,7 +305,6 @@ public class Colony implements IColony
         @NotNull final Colony c = new Colony(id, world);
         c.name = compound.getString(TAG_NAME);
         c.center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
-        c.setRequestManager();
         c.readFromNBT(compound);
 
         if (c.getProgressManager().isPrintingProgress() && (c.getBuildingManager().getBuildings().size() > BUILDING_LIMIT_FOR_HELP || c.getCitizenManager().getCitizens().size() > CITIZEN_LIMIT_FOR_HELP))
@@ -422,11 +420,6 @@ public class Colony implements IColony
         happinessData.readFromNBT(compound); 
         packageManager.setLastContactInHours(compound.getInteger(TAG_ABANDONED));
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
-
-        if (compound.hasKey(TAG_REQUESTMANAGER))
-        {
-            this.requestManager.deserializeNBT(compound.getCompoundTag(TAG_REQUESTMANAGER));
-        }
 
         if(compound.hasKey(TAG_STYLE))
         {
@@ -573,6 +566,11 @@ public class Colony implements IColony
     public void onWorldLoad(@NotNull final World w)
     {
         this.world = w;
+        setRequestManager();
+        if (getColonyTag().hasKey(TAG_REQUESTMANAGER))
+        {
+            this.requestManager.deserializeNBT(getColonyTag().getCompoundTag(TAG_REQUESTMANAGER));
+        }
     }
 
     /**
@@ -965,8 +963,6 @@ public class Colony implements IColony
     public void markDirty()
     {
         packageManager.setDirty();
-        colonyTag = null;
-        this.isDirty = true;
     }
 
     @Override
