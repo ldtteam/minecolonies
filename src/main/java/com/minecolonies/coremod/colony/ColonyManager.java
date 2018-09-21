@@ -837,9 +837,6 @@ public final class ColonyManager
         {
             if (!loaded)
             {
-                //load the structures when we know where the world is
-                Structures.init();
-
                 @NotNull final File file = BackUpHelper.getSaveLocation();
                 @Nullable final NBTTagCompound data = BackUpHelper.loadNBTFromPath(file);
                 if (data != null)
