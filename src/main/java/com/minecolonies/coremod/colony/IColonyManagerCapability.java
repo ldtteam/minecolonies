@@ -23,20 +23,56 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
  */
 public interface IColonyManagerCapability
 {
+    /**
+     * Create a colony and return it.
+     * @param w the world the colony is in.
+     * @param pos the position of the colony.
+     * @return the created colony.
+     */
     Colony createColony(@NotNull final World w, @NotNull final BlockPos pos);
 
+    /**
+     * Delete a colony with a certain id.
+     * @param id the id of the colony.
+     */
     void deleteColony(final int id);
 
+    /**
+     * Get a colony with a certain id.
+     * @param id the id of the colony.
+     * @return the colony or null.
+     */
+    @Nullable
     Colony getColony(final int id);
 
+    /**
+     * Get a list of all colonies.
+     * @return a complete list.
+     */
     List<Colony> getColonies();
 
+    /**
+     * add a new colony to the capability.
+     * @param colony the colony to add.
+     */
     void addColony(Colony colony);
 
-    void setMissingChunksToLoad(int integer);
+    /**
+     * Set how many chunks are missing to load.
+     * @param amount the amount.
+     */
+    void setMissingChunksToLoad(int amount);
 
+    /**
+     * Get how many chunks are missing to load.
+     * @return the amount of chunks.
+     */
     int getMissingChunksToLoad();
 
+    /**
+     * Get the top most id of all colonies.
+     * @return the top most id.
+     */
     int getTopID();
 
     /**
@@ -86,9 +122,9 @@ public interface IColonyManagerCapability
         }
 
         @Override
-        public void setMissingChunksToLoad(final int chunksToLoad)
+        public void setMissingChunksToLoad(final int amount)
         {
-            missingChunksToLoad = chunksToLoad;
+            missingChunksToLoad = amount;
         }
 
         @Override
