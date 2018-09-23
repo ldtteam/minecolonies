@@ -21,6 +21,7 @@ import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -77,7 +78,7 @@ public final class ColonyView implements IColony
     //  Buildings
     @Nullable
     private BuildingTownHall.View townHall;
-    private int maxCitizens = 0;
+    private int citizenCount = 0;
 
     /**
      * Check if the colony has a warehouse.
@@ -125,6 +126,11 @@ public final class ColonyView implements IColony
     private World world;
 
     /**
+     * Print progress.
+     */
+    private boolean printProgress;
+
+    /**
      * Base constructor for a colony.
      *
      * @param id The current id for the colony.
@@ -161,7 +167,7 @@ public final class ColonyView implements IColony
         BlockPosUtil.writeToByteBuf(buf, colony.getCenter());
         buf.writeBoolean(colony.isManualHiring());
         //  Citizenry
-        buf.writeInt(colony.getCitizenManager().getMaxCitizens());
+        buf.writeInt(colony.getCitizenManager().getCurrentCitizenCount());
 
         final Set<Block> freeBlocks = colony.getFreeBlocks();
         final Set<BlockPos> freePos = colony.getFreePositions();
@@ -191,7 +197,15 @@ public final class ColonyView implements IColony
         buf.writeBoolean(colony.isManualHousing());
         //  Citizens are sent as a separate packet
 
-        ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
+        if (colony.getRequestManager() != null && (colony.getRequestManager().isDirty() || isNewSubScription))
+        {
+            buf.writeBoolean(true);
+            ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
+        }
+        else
+        {
+            buf.writeBoolean(false);
+        }
 
         buf.writeInt(colony.getBarbManager().getLastSpawnPoints().size());
         for (final BlockPos block : colony.getBarbManager().getLastSpawnPoints())
@@ -200,6 +214,8 @@ public final class ColonyView implements IColony
         }
 
         buf.writeInt(colony.getTeamColonyColor().ordinal());
+
+        buf.writeBoolean(colony.getProgressManager().isPrintingProgress());
     }
 
     /**
@@ -410,9 +426,9 @@ public final class ColonyView implements IColony
      *
      * @return maximum amount of citizens.
      */
-    public int getMaxCitizens()
+    public int getCitizenCount()
     {
-        return maxCitizens;
+        return citizenCount;
     }
 
     /**
@@ -463,7 +479,7 @@ public final class ColonyView implements IColony
         center = BlockPosUtil.readFromByteBuf(buf);
         manualHiring = buf.readBoolean();
         //  Citizenry
-        maxCitizens = buf.readInt();
+        citizenCount = buf.readInt();
 
         if (isNewSubscription)
         {
@@ -499,8 +515,12 @@ public final class ColonyView implements IColony
         this.lastContactInHours = buf.readInt();
         this.manualHousing = buf.readBoolean();
 
-        this.requestManager = new StandardRequestManager(this);
-        this.requestManager.deserializeNBT(ByteBufUtils.readTag(buf));
+        if (buf.readBoolean())
+        {
+            final NBTTagCompound compound = ByteBufUtils.readTag(buf);
+            this.requestManager = new StandardRequestManager(this);
+            this.requestManager.deserializeNBT(compound);
+        }
 
         final int barbSpawnListSize = buf.readInt();
         for (int i = 0; i < barbSpawnListSize; i++)
@@ -510,6 +530,8 @@ public final class ColonyView implements IColony
         Collections.reverse(lastSpawnPoints);
 
         this.teamColonyColor = TextFormatting.values()[buf.readInt()];
+
+        this.printProgress = buf.readBoolean();
         return null;
     }
 
@@ -720,7 +742,7 @@ public final class ColonyView implements IColony
     @Override
     public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        final Chunk chunk = w.getChunkFromBlockCoords(pos);
+        final Chunk chunk = w.getChunk(pos);
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
         return cap.getOwningColony() == this.getID();
     }
@@ -858,5 +880,14 @@ public final class ColonyView implements IColony
     public List<BlockPos> getLastSpawnPoints()
     {
         return new ArrayList<>(lastSpawnPoints);
+    }
+
+    /**
+     * Get if progress should be printed.
+     * @return true if so.
+     */
+    public boolean isPrintingProgress()
+    {
+        return printProgress;
     }
 }

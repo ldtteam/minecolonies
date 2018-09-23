@@ -172,6 +172,10 @@ public enum AIState
      * Completes the building.
      */
     BUILDER_COMPLETE_BUILD,
+    /**
+     * Pick up all materials he might need.
+     */
+    PICK_UP,
 
     /*
 ###FARMER###
@@ -240,6 +244,21 @@ public enum AIState
      * Patrol through the village.
      */
     GUARD_PATROL,
+
+    /**
+     * Follow a player.
+     */
+    GUARD_FOLLOW,
+
+    /**
+     * Guard a position.
+     */
+    GUARD_GUARD,
+
+    /**
+     * Regen at the building.
+     */
+    GUARD_REGEN,
 
     /**
      * Go back to the hut to "restock".
@@ -390,6 +409,11 @@ public enum AIState
      * Take the compost from the barrels
      */
     COMPOSTER_HARVEST,
+
+    /**
+     * Gather materials from the building
+     */
+    GET_MATERIALS,
 
     /*
 ### Student ###

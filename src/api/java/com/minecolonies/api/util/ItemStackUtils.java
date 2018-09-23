@@ -11,6 +11,7 @@ import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.*;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -413,27 +414,29 @@ public final class ItemStackUtils
      */
     private static int getArmorLevel(final ArmorMaterial material)
     {
-        if (material == ArmorMaterial.LEATHER)
+        final int damageReductionAmount = material.getDamageReductionAmount(EntityEquipmentSlot.CHEST);
+        if (damageReductionAmount <= ArmorMaterial.LEATHER.getDamageReductionAmount(EntityEquipmentSlot.CHEST))
         {
             return 0;
         }
-        else if (material == ArmorMaterial.GOLD)
+        else if (damageReductionAmount <= ArmorMaterial.GOLD.getDamageReductionAmount(EntityEquipmentSlot.CHEST) && material != ArmorMaterial.CHAIN)
         {
             return 1;
         }
-        else if (material == ArmorMaterial.CHAIN)
+        else if (damageReductionAmount <= ArmorMaterial.CHAIN.getDamageReductionAmount(EntityEquipmentSlot.CHEST))
         {
             return 2;
         }
-        else if (material == ArmorMaterial.IRON)
+        else if (damageReductionAmount <= ArmorMaterial.IRON.getDamageReductionAmount(EntityEquipmentSlot.CHEST))
         {
             return 3;
         }
-        else if (material == ArmorMaterial.DIAMOND)
+        else if (damageReductionAmount <= ArmorMaterial.DIAMOND.getDamageReductionAmount(EntityEquipmentSlot.CHEST))
         {
             return 4;
         }
-        return -1;
+
+        return 5;
     }
 
     /**
@@ -511,6 +514,31 @@ public final class ItemStackUtils
      *
      * @param toolGrade the number of the grade of a tool
      * @return a string corresponding to the tool
+     */
+    public static String swapArmorGrade(final int toolGrade)
+    {
+        switch (toolGrade)
+        {
+            case 0:
+                return "Leather";
+            case 1:
+                return "Gold";
+            case 2:
+                return "Chain";
+            case 3:
+                return "Iron";
+            case 4:
+                return "Diamond";
+            default:
+                return "Better than Diamond";
+        }
+    }
+
+    /**
+     * Assigns a string containing the grade of the armor grade.
+     *
+     * @param toolGrade the number of the grade of an armor
+     * @return a string corresponding to the armor
      */
     public static String swapToolGrade(final int toolGrade)
     {

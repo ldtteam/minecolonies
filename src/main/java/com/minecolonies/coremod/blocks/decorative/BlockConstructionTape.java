@@ -213,7 +213,7 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     private void initBlock()
     {
         setRegistryName(BLOCK_NAME);
-        setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME));
+        setTranslationKey(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, NORTH));
         setHardness(BLOCK_HARDNESS);
@@ -232,7 +232,7 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     @Deprecated
     public IBlockState getStateFromMeta(final int meta)
     {
-        EnumFacing enumfacing = getFront(meta);
+        EnumFacing enumfacing = byIndex(meta);
 
         if (enumfacing.getAxis() == EnumFacing.Axis.Y)
         {
@@ -410,7 +410,7 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
     @NotNull
     @Override
     @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getBlockLayer()
+    public BlockRenderLayer getRenderLayer()
     {
         return BlockRenderLayer.SOLID;
     }
@@ -516,7 +516,7 @@ public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstr
             return this.name;
         }
 
-        public String getUnlocalizedName()
+        public String getTranslationKey()
         {
             return this.unlocalizedName;
         }

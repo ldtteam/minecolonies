@@ -162,7 +162,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     /**
      * The job of the guard, Any possible {@link GuardJob}.
      */
-    private GuardJob job = GuardJob.KNIGHT;
+    private GuardJob job = null;
 
     /**
      * The list of manual patrol targets.
@@ -220,7 +220,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         super.readFromNBT(compound);
         task = GuardTask.values()[compound.getInteger(NBT_TASK)];
         final int jobId = compound.getInteger(NBT_JOB);
-        job = jobId == -1 ? GuardJob.KNIGHT : GuardJob.values()[jobId];
+        job = jobId == -1 ? null : GuardJob.values()[jobId];
         assignManually = compound.getBoolean(NBT_ASSIGN);
         retrieveOnLowHealth = compound.getBoolean(NBT_RETRIEVE);
         patrolManually = compound.getBoolean(NBT_PATROL);
@@ -301,7 +301,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         buf.writeBoolean(patrolManually);
         buf.writeBoolean(tightGrouping);
         buf.writeInt(task.ordinal());
-        buf.writeInt(job == GuardJob.KNIGHT ? -1 : job.ordinal());
+        buf.writeInt(job == null ? -1 : job.ordinal());
         buf.writeInt(patrolTargets.size());
 
         for (final BlockPos pos : patrolTargets)
@@ -321,8 +321,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         }
 
         BlockPosUtil.writeToByteBuf(buf, guardPos);
-    }
 
+        buf.writeInt(this.getAssignedCitizen().size());
+        for (final CitizenData citizen : this.getAssignedCitizen())
+        {
+            buf.writeInt(citizen.getId());
+        }
+    }
+    
     @NotNull
     @Override
     public AbstractJob createJob(final CitizenData citizen)
@@ -446,6 +452,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
+        if (job == null)
+        {
+            job = new Random().nextBoolean() ? GuardJob.KNIGHT : GuardJob.RANGER;
+        }
+
         if (getAssignedEntities() != null)
         {
             for (final Optional<EntityCitizen> optCitizen : getAssignedEntities())
@@ -917,6 +928,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
          */
         private List<MobEntryView> mobsToAttack = new ArrayList<>();
 
+        @NotNull
+        private final List<Integer> guards = new ArrayList<>();
+
         /**
          * The client view constructor for the AbstractGuardBuilding.
          *
@@ -938,6 +952,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         public Window getWindow()
         {
             return new WindowHutGuardTower(this);
+        }
+
+        /**
+         * Getter for the list of residents.
+         *
+         * @return an unmodifiable list.
+         */
+        @NotNull
+        public List<Integer> getGuards()
+        {
+            return Collections.unmodifiableList(guards);
         }
 
         @Override
@@ -968,6 +993,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             }
 
             guardPos = BlockPosUtil.readFromByteBuf(buf);
+
+            final int numResidents = buf.readInt();
+            for (int i = 0; i < numResidents; ++i)
+            {
+                guards.add(buf.readInt());
+            }
         }
 
         @NotNull

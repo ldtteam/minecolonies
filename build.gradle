@@ -1,5 +1,3 @@
-import net.minecraftforge.gradle.user.*
-import net.minecraftforge.gradle.common.*
 
 buildscript {
     repositories {
@@ -139,9 +137,9 @@ minecraft {
 
     version = config.minecraft_version + "-" + config.forge_version
     runDir = "run"
-	
-	mappings = "${config.mappings}"
-	
+    useDepAts=true
+
+    mappings = "${config.mappings}"
     replace "@VERSION@", project.version
     replaceIn "util/constant/Constants.java"
     if (project.hasProperty("signature"))

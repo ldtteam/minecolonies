@@ -12,7 +12,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.managers.ICitizenManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler; 
@@ -521,16 +520,15 @@ public class CitizenData
         }
 
         // Check whether there's already a citizen with this name
-        final ICitizenManager manager = this.getColony().getCitizenManager();
-        for (int i = 1; i <= this.getColony().getCitizenManager().getMaxCitizens(); i++)
+        for(final CitizenData citizen : this.getColony().getCitizenManager().getCitizens())
         {
-            final CitizenData citizen = manager.getCitizen(i);
             if (citizen != null && citizen.getName().equals(citizenName))
             {
                 // Oops - recurse this function and try again
                 citizenName = generateName(rand);
             }
         }
+
         return citizenName;
     }
 
@@ -881,6 +879,8 @@ public class CitizenData
         buf.writeDouble(getSaturation());
         buf.writeDouble(citizenHappinessHandler.getHappiness());
 
+        citizenHappinessHandler.serializeViewNetworkData(buf);
+
         ByteBufUtils.writeUTF8String(buf, (job != null) ? job.getName() : "");
 
         writeStatusToBuffer(buf);
@@ -890,6 +890,8 @@ public class CitizenData
         final NBTTagCompound compound = new NBTTagCompound();
         compound.setTag("inventory", inventory.writeToNBT(new NBTTagList()));
         ByteBufUtils.writeTag(buf, compound);
+
+        BlockPosUtil.writeToByteBuf(buf, lastPosition);
     }
 
     /**

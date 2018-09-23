@@ -1,0 +1,79 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="374 243" pause="false" lightbox="false"
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+
+    <switch id="switchpagePermissions" size="100% 100%">
+        <view id="pageAddPlayer">
+            <list id="users" size="148 171" pos="201 36">
+                <box size="100% 30" linewidth="2">
+                    <label id="name" size="100 11" pos="5 2" color="black"/>
+                    <button id="removePlayer" size="11 11" pos="7 2" align="TOP_RIGHT" label="X"/>
+                    <button id="demote" size="11 11" pos="5 16" label="-"/>
+                    <button id="promote" size="11 11" pos="20 16" label="+"/>
+                    <label id="rank" size="50 11" pos="35 17" color="black"/>
+                </box>
+            </list>
+
+            <label size="148 11" pos="26 65" color="black" label="$(com.minecolonies.coremod.gui.townHall.addPlayer)"/>
+            <input id="addPlayerName" size="100 18" pos="26 76" maxlength="32"/>
+            <button id="addPlayer" size="19 19" pos="130 76" label="+"/>
+        </view>
+        <view id="managePermissions">
+            <switch id="userGroups" size="148 171" pos="201 36">
+                <view id="officer">
+                    <list id="actionsofficer" size="148 171">
+                        <box size="100% 20" linewidth="2">
+                            <label id="name" size="60 12" textscale="0.7" pos="5 2" color="black"/>
+                            <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
+                            <label id="index" pos="100 100"/>
+                        </box>
+                    </list>
+                </view>
+                <view id="friend">
+                    <list id="actionsfriend" size="148 171">
+                        <box size="100% 20" linewidth="2">
+                            <label id="name" size="60 12" textscale="0.7" pos="5 2" color="black"/>
+                            <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
+                            <label id="index" pos="100 100"/>
+                        </box>
+                    </list>
+                </view>
+                <view id="neutral">
+                    <list id="actionsneutral" size="148 171">
+                        <box size="100% 20" linewidth="2">
+                            <label id="name" size="60 12" textscale="0.7" pos="5 2" color="black"/>
+                            <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
+                            <label id="index" pos="100 100"/>
+                        </box>
+                    </list>
+                </view>
+                <view id="hostile">
+                    <list id="actionshostile" size="148 171">
+                        <box size="100% 20" linewidth="2">
+                            <label id="name" size="60 12" textscale="0.7" pos="5 2" color="black"/>
+                            <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
+                            <label id="index" pos="100 100"/>
+                        </box>
+                    </list>
+                </view>
+            </switch>
+
+            <button id="officerPage" size="42 15" pos="50 95" label="Officer"/>
+            <button id="friendPage" size="42 15" pos="50 115" label="Friend"/>
+            <button id="neutralPage" size="42 15" pos="50 135" label="Neutral"/>
+            <button id="hostilePage" size="42 15" pos="50 155" label="Hostile"/>
+        </view>
+        <view id="freeBlockList">
+            <label size="148 11" pos="201 24" color="black" label="$(com.minecolonies.coremod.gui.townHall.freeBlocks)"/>
+            <list id="blocks" size="148 171" pos="201 36">
+                <box size="100% 30" linewidth="2">
+                    <label id="name" size="100 12" pos="5 2" color="black"/>
+                    <button id="removeBlock" size="12 12" pos="5 2" align="TOP_RIGHT" label="X"/>
+                </box>
+            </list>
+
+            <label size="146 11" pos="26 65" color="black" label="$(com.minecolonies.coremod.gui.townHall.addBlock)"/>
+            <input id="addBlockName" size="100 18" pos="26 76" maxlength="32"/>
+            <button id="addBlock" size="19 19" pos="130 76" label="+"/>
+        </view>
+    </switch>
+</window>

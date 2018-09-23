@@ -20,6 +20,7 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
@@ -83,6 +84,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     private boolean beingGathered = false;
 
     /**
+     * If the building has been built already.
+     */
+    private boolean isBuilt = false;
+
+    /**
      * Constructor for a AbstractBuilding.
      *
      * @param colony Colony the building belongs to.
@@ -101,6 +107,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         super.readFromNBT(compound);
         loadRequestSystemFromNBT(compound);
+        if (compound.hasKey(TAG_IS_BUILT))
+        {
+            isBuilt = compound.getBoolean(TAG_IS_BUILT);
+        }
+        else if (getBuildingLevel() > 0)
+        {
+            isBuilt = true;
+        }
     }
 
     /**
@@ -130,6 +144,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         super.writeToNBT(compound);
         writeRequestSystemToNBT(compound);
+        compound.setBoolean(TAG_IS_BUILT, isBuilt);
     }
 
     /**
@@ -172,8 +187,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                 return;
             }
         }
+        final WorkOrderBuildBuilding workOrderBuildBuilding = new WorkOrderBuildBuilding(this, level);
+        colony.getWorkManager().addWorkOrder(workOrderBuildBuilding, false);
+        colony.getProgressManager().progressWorkOrderPlacement(workOrderBuildBuilding);
 
-        colony.getWorkManager().addWorkOrder(new WorkOrderBuildBuilding(this, level), false);
         LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
         markDirty();
     }
@@ -316,6 +333,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
+     * Check if the building was built already.
+     * @return true if so.
+     */
+    public boolean isBuilt()
+    {
+        return isBuilt;
+    }
+
+    /**
      * Deconstruct the building on destroyed.
      */
     public void deconstruct()
@@ -342,6 +368,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @SuppressWarnings("squid:S1172")
     public void onUpgradeComplete(final int newLevel)
     {
+        colony.getProgressManager().progressBuildBuilding(this,
+          colony.getBuildingManager().getBuildings().values().stream()
+            .filter(building -> building instanceof AbstractBuildingWorker).mapToInt(AbstractSchematicProvider::getBuildingLevel).sum(),
+          colony.getBuildingManager().getBuildings().values().stream()
+            .filter(building -> building instanceof BuildingHome).mapToInt(AbstractSchematicProvider::getBuildingLevel).sum()
+          );
         final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, newLevel);
         final StructureWrapper wrapper = new StructureWrapper(colony.getWorld(), workOrder.getStructureName());
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
@@ -352,6 +384,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                 workOrder.isMirrored());
         this.setHeight(wrapper.getHeight());
         this.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
+        this.isBuilt = true;
     }
     //------------------------- Starting Required Tools/Item handling -------------------------//
 

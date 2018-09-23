@@ -1,0 +1,29 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="374 243" pause="false" lightbox="false"
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+
+    <switch id="switchpageInfo" size="100% 100%">
+        <view>
+            <label size="148 11" pos="201 30" color="black" textalign="MIDDLE"
+                label="$(com.minecolonies.coremod.gui.townHall.currentHappiness)"/>
+            <label id="happinessLevel" size="148 11" pos="201 41" color="black" textalign="MIDDLE"/>
+            <label size="148 11" pos="201 59" color="black" textalign="MIDDLE"
+                label="$(com.minecolonies.coremod.gui.townHall.events):"/>
+
+            <list id="permeventslist" size="148 160" pos="201 70">
+                <box size="100% 36" linewidth="2">
+                    <label id="action" size="100 12" pos="1 1" color="black"/>
+                    <label id="name" size="100 12" pos="1 12" color="blue"/>
+                    <label id="pos" size="70 12" pos="1 24" color="black"/>
+                    <button id="addfakeplayer" size="35 12" label="$(com.minecolonies.coremod.gui.townHall.add)" pos="105 12"/>
+                </box>
+            </list>
+
+            <label id="totalCitizens" size="148 11" pos="25 61" color="black"/>
+            <list id="citizen-stats" size="148 136" pos="25 83">
+                <box size="100% 11" linewidth="0">
+                    <label id="citizensAmount" size="100% 11" color="black"/>
+                </box>
+            </list>
+        </view>
+    </switch>
+</window>

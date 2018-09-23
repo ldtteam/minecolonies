@@ -29,8 +29,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.SAPLINGS;
 
@@ -209,10 +207,10 @@ public class Tree
      *
      * @param world      the world.
      * @param pos        The coordinates.
-     * @param treesToCut the trees the lumberjack is supposed to cut.
+     * @param treesToNotCut the trees the lumberjack is not supposed to cut.
      * @return true if the log is part of a tree.
      */
-    public static boolean checkTree(@NotNull final IBlockAccess world, final BlockPos pos, final Map<ItemStorage, Boolean> treesToCut)
+    public static boolean checkTree(@NotNull final IBlockAccess world, final BlockPos pos, final List<ItemStorage> treesToNotCut)
     {
         //Is the first block a log?
         final IBlockState state = world.getBlockState(pos);
@@ -230,7 +228,7 @@ public class Tree
         //Make sure tree is on solid ground and tree is not build above cobblestone.
         return world.getBlockState(basePos.down()).getMaterial().isSolid()
                  && world.getBlockState(basePos.down()).getBlock() != Blocks.COBBLESTONE
-                 && hasEnoughLeavesAndIsSupposedToCut(world, baseAndTOp.getSecond(), treesToCut);
+                 && hasEnoughLeavesAndIsSupposedToCut(world, baseAndTOp.getSecond(), treesToNotCut);
     }
 
     /**
@@ -291,10 +289,10 @@ public class Tree
      *
      * @param world      the world it is in.
      * @param pos        the position.
-     * @param treesToCut the trees the lj is supposed to cut.
+     * @param treesToNotCut the trees the lj is not supposed to cut.
      * @return true if so.
      */
-    private static boolean hasEnoughLeavesAndIsSupposedToCut(@NotNull final IBlockAccess world, final BlockPos pos, final Map<ItemStorage, Boolean> treesToCut)
+    private static boolean hasEnoughLeavesAndIsSupposedToCut(@NotNull final IBlockAccess world, final BlockPos pos, final List<ItemStorage> treesToNotCut)
     {
         boolean checkedLeaves = false;
         int leafCount = 0;
@@ -307,7 +305,7 @@ public class Tree
                     final BlockPos leafPos = pos.add(dx, dy, dz);
                     if (world.getBlockState(leafPos).getMaterial().equals(Material.LEAVES))
                     {
-                        if (!checkedLeaves && !supposedToCut(world, treesToCut, leafPos))
+                        if (!checkedLeaves && !supposedToCut(world, treesToNotCut, leafPos))
                         {
                             return false;
                         }
@@ -329,13 +327,13 @@ public class Tree
      * Check if the Lj is supposed to cut a tree.
      *
      * @param world      the world it is in.
+     * @param treesToNotCut the trees he is supposed to cut.
      * @param leafPos        the position a leaf is at.
-     * @param treesToCut the trees he is supposed to cut.
      * @return false if not.
      */
-    private static boolean supposedToCut(final IBlockAccess world, final Map<ItemStorage, Boolean> treesToCut, final BlockPos leafPos)
+    private static boolean supposedToCut(final IBlockAccess world, final List<ItemStorage> treesToNotCut, final BlockPos leafPos)
     {
-        for (final ItemStorage stack : treesToCut.entrySet().stream().filter(entry -> !entry.getValue()).map(Map.Entry::getKey).collect(Collectors.toList()))
+        for (final ItemStorage stack : treesToNotCut)
         {
             final ItemStack sap = ColonyManager.getCompatibilityManager().getSaplingForLeave(world.getBlockState(leafPos));
             if(sap != null && sap.isItemEqual(stack.getItemStack()))

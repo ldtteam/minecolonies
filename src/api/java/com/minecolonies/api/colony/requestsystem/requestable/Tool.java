@@ -146,7 +146,7 @@ public class Tool implements IDeliverable
 
         if (!toolTypeResult)
         {
-            return stack.getItem() instanceof ItemHoe && toolClass.equals(ToolType.HOE);
+            return stack.getItem() instanceof ItemHoe && toolClass.equals(ToolType.HOE) || stack.getItem() instanceof ItemShield && toolClass.equals(ToolType.SHIELD);
         }
 
         return toolTypeResult;
@@ -183,6 +183,10 @@ public class Tool implements IDeliverable
         {
             set.add("shears");
         }
+        else if(stack.getItem() instanceof  ItemShield)
+        {
+            set.add("shield");
+        }
         else if(stack.getItem() instanceof ItemArmor)
         {
             /*
@@ -210,6 +214,15 @@ public class Tool implements IDeliverable
             }
         }
         return set;
+    }
+
+    /**
+     * Check if the tool is armor.
+     * @return true if so.
+     */
+    public boolean isArmor()
+    {
+        return toolClass == ToolType.HELMET || toolClass == ToolType.LEGGINGS || toolClass == ToolType.CHESTPLATE || toolClass == ToolType.BOOTS;
     }
 
     @Override

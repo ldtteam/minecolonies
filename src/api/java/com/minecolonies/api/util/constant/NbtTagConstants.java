@@ -21,7 +21,7 @@ public final class NbtTagConstants
     public static final String TAG_WAYPOINT               = "waypoints";
     public static final String TAG_FREE_BLOCKS            = "freeBlocks";
     public static final String TAG_FREE_POSITIONS         = "freePositions";
-    public static final String TAG_HAPPINESS              = "happiness";
+    public static final String TAG_HAPPINESS_MODIFIER     = "happinessModifier";
     public static final String TAG_ABANDONED              = "abandoned";
     public static final String TAG_BUILDING_PRIO          = "buildingPrio";
     public static final String TAG_PRIO                   = "prio";
@@ -80,12 +80,19 @@ public final class NbtTagConstants
     public static final String TAG_NO_TOOLS               = "noTools";
     public static final String TAG_NO_TOOLS_NUMBER_DAYS   = "numberOfDaysNoTools";
     public static final String TAG_NO_TOOLS_TOOL_TYPE     = "toolType";
+    public static final String TAG_IS_BUILT               = "isBuilt";
+    public static final String TAG_OTHER_LEVEL            = "otherLevel";
+    public static final String TAG_PASTEABLE              = "isPasteable";
+    public static final String TAG_STRING_NAME            = "Name";
+    public static final String TAG_DISPLAY                = "display";
+    public static final String TAG_NEED_TO_MOURN          = "needToMourn";
+    public static final String TAG_MOURNING               = "mourning";
 
 
     /**
      * Tag used to store the containers to NBT.
      */
-    public static final String TAG_CONTAINERS = "Containers";
+    public static final String TAG_CONTAINERS             = "Containers";
 
     /**
      * The tag to store the building type.
@@ -335,6 +342,29 @@ public final class NbtTagConstants
      * Tag of the colony.
      */
     public static final String TAG_BUILDER = "builder";
+
+    /**
+     * Progress manager tags.
+     */
+    public static final String TAG_PROGRESS_MANAGER = "progressManager";
+    public static final String TAG_PROGRESS_TYPE    = "progressType";
+    public static final String TAG_PROGRESS_LIST    = "progressList";
+    public static final String TAG_PRINT_PROGRESS   = "printProgrss";
+
+    /**
+     * String to store the existing time to NBT.
+     */
+    public static final String TAG_TIME = "time";
+
+    /**
+     * String to store the stuck counter to NBT.
+     */
+    public static final String TAG_STUCK_COUNTER = "stuck";
+
+    /**
+     * String to store the ladder counter to NBT.
+     */
+    public static final String TAG_LADDER_COUNTER = "ladder";
 
     /**
      * Private constructor to hide the implicit one.

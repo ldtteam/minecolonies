@@ -12,7 +12,6 @@
     <itemicon id="resourceIconTo" size="17 17" pos="210 1"/>
     <label id="resourceNameTo" size="140 12" pos="240 4" color="white"/>
 
-
     <list id="resources" size="300 120" pos="60 65">
         <box size="100% 17" linewidth="2">
             <itemicon id="resourceIcon" size="17 17" pos="1 1"/>

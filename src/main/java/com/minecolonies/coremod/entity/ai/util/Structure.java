@@ -146,8 +146,7 @@ public class Structure
             final Block structureBlock = structureBlockState.getBlock();
 
             //All worldBlocks are equal the substitution block
-            if (structureBlockEqualsWorldBlock(structureBlock, worldBlock, worldMetadata)
-                  || structureBlock == ModBlocks.blockWayPoint)
+            if (structureBlockEqualsWorldBlock(structureBlock, worldBlock, worldMetadata))
             {
                 return true;
             }
@@ -340,6 +339,16 @@ public class Structure
     }
 
     /**
+     * Calculates the local of the block we are working on.
+     *
+     * @return a BlockPos of that position.
+     */
+    public BlockPos getLocalBlockPosition()
+    {
+        return this.theStructure.getLocalPosition();
+    }
+
+    /**
      * Advance one block in the StructureProxy.
      * <p>
      * Will skip blocks not relevant.
@@ -357,8 +366,8 @@ public class Structure
                                       || structureBlock.worldBlock == Blocks.AIR);
             case BUILD:
                 return advanceBlocks(this.theStructure::incrementBlock, structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
-                                                                                         && structureBlock.block == Blocks.AIR
-                                                                                         && !structureBlock.metadata.getMaterial().isSolid());
+                                                                                         || structureBlock.block == Blocks.AIR
+                                                                                         || !structureBlock.metadata.getMaterial().isSolid());
             case SPAWN:
                 return advanceBlocks(this.theStructure::decrementBlock, structureBlock ->
                                                                        structureBlock.entity == null);
@@ -458,6 +467,18 @@ public class Structure
     public BlockPos getCenter()
     {
         return this.theStructure.getPosition();
+    }
+
+    /**
+     * Set the current block.
+     * @param progressPos the progress pos.
+     */
+    public void setCurrentBlock(@Nullable final BlockPos progressPos)
+    {
+        if (progressPos != null)
+        {
+            this.theStructure.setLocalPosition(progressPos);
+        }
     }
 
     /**

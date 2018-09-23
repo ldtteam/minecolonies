@@ -9,6 +9,7 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -94,7 +95,7 @@ public class EntityAISleep extends EntityAIBase
                     {
                         final World world = citizen.world;
                         IBlockState state = world.getBlockState(pos);
-                        state = state.getBlock().getActualState(state, world, pos);
+                        state = state.getBlock().getExtendedState(state, world, pos);
                         if (state.getBlock() instanceof BlockBed
                               && !state.getValue(BlockBed.OCCUPIED)
                               && state.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
@@ -104,7 +105,10 @@ public class EntityAISleep extends EntityAIBase
 
                             final BlockPos feetPos = pos.offset(state.getValue(BlockBed.FACING).getOpposite());
                             final IBlockState feetState = citizen.world.getBlockState(feetPos);
-                            citizen.world.setBlockState(feetPos, feetState.withProperty(BlockBed.OCCUPIED, true), 0x03);
+                            if (feetState.getBlock() == Blocks.BED)
+                            {
+                                citizen.world.setBlockState(feetPos, feetState.withProperty(BlockBed.OCCUPIED, true), 0x03);
+                            }
 
                             return true;
                         }

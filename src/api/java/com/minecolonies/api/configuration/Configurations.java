@@ -64,13 +64,20 @@ public class Configurations
         @Config.Comment("Delay modifier to mine a block (Decreasing it, decreases the delay)")
         public int blockMiningDelayModifier = 500;
 
+        @Config.Comment("Ores for the miner to mine that aren't autodetected")
+        public String[] extraOres = new String[]
+                {
+                        "minestuck:ore_cruxite",
+                        "minestuck:ore_uranium",
+                };
+
         @Config.Comment("Should workers work during the rain?")
         public boolean workersAlwaysWorkInRain = false;
 
         @Config.Comment("Should the colony protection be enabled?")
         public boolean enableColonyProtection = true;
 
-        @Config.Comment("Independend from the colony protection, should explosions be turned off?")
+        @Config.Comment("Independent from the colony protection, should explosions be turned off?")
         public boolean turnOffExplosionsInColonies = true;
 
         @Config.Comment("Whether or not to spawn barbarians")
@@ -87,6 +94,9 @@ public class Configurations
         @Config.RangeInt(min = (MIN_BARBARIAN_HORDE_SIZE), max = MAX_BARBARIAN_HORDE_SIZE)
         @Config.Comment("The max size of a barbarian horde")
         public int maxBarbarianSize = 20;
+
+        @Config.Comment("Whether or not to barbarians can break, scale, bridge obstacles")
+        public boolean doBarbariansBreakThroughWalls = true;
 
         @Config.Comment("The average amount of nights between raids")
         public int averageNumberOfNightsBetweenRaids = 3;
@@ -164,7 +174,7 @@ public class Configurations
         public boolean canPlayerUseBackupCommand = false;
 
         /* Colony TP configs */
-        @Config.Comment("Amount of attemps to find a save rtp")
+        @Config.Comment("Amount of attempts to find a save rtp")
         public int numberOfAttemptsForSafeTP = 4;
 
         @Config.Comment("Should the min/max distance from spawn also affect colony placement?")
@@ -184,6 +194,9 @@ public class Configurations
 
         @Config.Comment("Should citizen name tags be rendered?")
         public boolean alwaysRenderNameTag = true;
+
+        @Config.Comment("Should Guard Rangers benefit from Power/Smite/Bane of Arthropods enchants?")
+        public boolean rangerEnchants = true;
 
         @Config.Comment("Amount of blocks the builder checks (to decrease lag by builder)")
         public int maxBlocksCheckedByBuilder = 1000;

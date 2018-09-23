@@ -14,6 +14,8 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
+import com.minecolonies.coremod.colony.managers.interfaces.ICitizenManager;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveCitizenMessage;
@@ -150,7 +152,7 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void spawnCitizen(@Nullable final CitizenData data, @Nullable final World world)
+    public void spawnCitizen(@Nullable final CitizenData data, @Nullable final World world, final boolean force)
     {
         if (!colony.getBuildingManager().hasTownHall())
         {
@@ -175,7 +177,7 @@ public class CitizenManager implements ICitizenManager
             {
                 //This ensures that citizen IDs are getting reused.
                 //That's needed to prevent bugs when calling IDs that are not used.
-                for (int i = 1; i <= this.getMaxCitizens(); i++)
+                for (int i = 1; i <= this.getCurrentCitizenCount() + 1; i++)
                 {
                     if (this.getCitizen(i) == null)
                     {
@@ -189,7 +191,7 @@ public class CitizenManager implements ICitizenManager
 
                 citizens.put(citizenData.getId(), citizenData);
 
-                if (getMaxCitizens() == getCitizens().size())
+                if (getMaxCitizens() == getCitizens().size() && !force)
                 {
                     LanguageHandler.sendPlayersMessage(
                       colony.getMessageEntityPlayers(),
@@ -207,6 +209,7 @@ public class CitizenManager implements ICitizenManager
             entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
             world.spawnEntity(entity);
 
+            colony.getProgressManager().progressCitizenSpawn(citizens.size(), citizens.values().stream().filter(tempDate -> tempDate.getJob() != null).collect(Collectors.toList()).size());
             colony.getStatsManager().checkAchievements();
             markCitizensDirty();
         }
@@ -333,6 +336,17 @@ public class CitizenManager implements ICitizenManager
         return maxCitizens;
     }
 
+    /**
+     * Get the current amount of citizens, might be bigger then {@link #getMaxCitizens()}
+     *
+     * @return The current amount of citizens in the colony.
+     */
+    @Override
+    public int getCurrentCitizenCount()
+    {
+        return citizens.size();
+    }
+
     @Override
     public void setMaxCitizens(final int newMaxCitizens)
     {
@@ -450,5 +464,19 @@ public class CitizenManager implements ICitizenManager
                 spawnCitizen();
             }
         }
+    }
+    
+
+    @Override
+    public void updateCitizenMourn(final boolean mourn)
+    {
+        for (final CitizenData citizen : getCitizens())
+        {
+            if (citizen.getCitizenEntity().isPresent() && !(citizen.getJob() instanceof AbstractJobGuard))
+            {
+                citizen.getCitizenEntity().get().setMourning(mourn);
+            }
+        }
+        
     }
 }

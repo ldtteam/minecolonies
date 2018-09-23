@@ -6,8 +6,11 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.FieldDataModifier;
+import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
+
+import io.netty.buffer.ByteBuf;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -216,6 +219,9 @@ public class CitizenHappinessHandler
      */
     public void processDailyHappiness(final boolean hasHouse, final boolean hasJob)
     {
+        if (citizen.getColony().getColonyHappinessManager().getLockedHappinessModifier().isPresent())
+            return;
+
         if (!hasHouse)
         {
             numberOfDaysWithoutHouse++;
@@ -275,7 +281,7 @@ public class CitizenHappinessHandler
             }
         }
 
-        if (hasNoFields)
+        if (hasNoFields && citizen.getJob() instanceof JobFarmer)
         {
             farmerModifier = NO_FIELD_MODIFIER;
         }
@@ -426,6 +432,9 @@ public class CitizenHappinessHandler
      */
     public double getHappiness()
     {
+        if (citizen.getColony().getColonyHappinessManager().getLockedHappinessModifier().isPresent())
+            return citizen.getColony().getColonyHappinessManager().getLockedHappinessModifier().get();
+
         double value = baseHappiness + foodModifier + damageModifier + houseModifier + jobModifier + farmerModifier + noToolModifier;
         if (value > MAX_HAPPINESS)
         {
@@ -561,4 +570,18 @@ public class CitizenHappinessHandler
         }
     }
 
+    /**
+     * Write to the incoming variable all the related data to modifiers.
+     * 
+     * @param buf  buffer to witch values of the modifiers will be written to.
+     */
+    public void serializeViewNetworkData(@NotNull final ByteBuf buf)
+    {
+        buf.writeDouble(getFoodModifier());
+        buf.writeDouble(getDamageModifier());
+        buf.writeDouble(getHouseModifier());
+        buf.writeDouble(jobModifier);
+        buf.writeDouble(farmerModifier);
+        buf.writeDouble(noToolModifier);
+    }
 }

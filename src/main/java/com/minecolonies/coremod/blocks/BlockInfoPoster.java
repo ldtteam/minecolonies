@@ -54,7 +54,7 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     {
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, NORTH));
         setRegistryName(BLOCK_NAME);
-        setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME));
+        setTranslationKey(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME));
     }
 
     @Override
@@ -66,7 +66,7 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     @Override
     public IBlockState getStateFromMeta(final int meta)
     {
-        EnumFacing enumfacing = EnumFacing.getFront(meta);
+        EnumFacing enumfacing = EnumFacing.byIndex(meta);
 
         if (enumfacing.getAxis() == EnumFacing.Axis.Y)
         {

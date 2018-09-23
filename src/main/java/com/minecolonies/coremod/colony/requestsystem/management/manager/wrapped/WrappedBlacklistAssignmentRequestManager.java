@@ -29,7 +29,6 @@ public final class WrappedBlacklistAssignmentRequestManager extends AbstractWrap
      * @param token The token of the request to assign.
      * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
      */
-    @NotNull
     @Override
     public void assignRequest(@NotNull final IToken token) throws IllegalArgumentException
     {

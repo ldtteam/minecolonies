@@ -92,7 +92,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     @Override
     protected void extractFromFurnace(final TileEntityFurnace furnace)
     {
-        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(
+        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
                 new InvWrapper(furnace), RESULT_SLOT,
                 new InvWrapper(worker.getInventoryCitizen()));
     }

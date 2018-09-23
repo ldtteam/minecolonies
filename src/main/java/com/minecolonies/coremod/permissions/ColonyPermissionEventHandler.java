@@ -431,6 +431,10 @@ public class ColonyPermissionEventHandler
             }
             lastTownHallBreakingTick = world.getTotalWorldTime();
         }
+        else if (!Configurations.gameplay.pvp_mode)
+        {
+            validTownHallBreak = true;
+        }
     }
 
     /**

@@ -12,6 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -331,7 +332,9 @@ public final class BlockPosUtil
      */
     public static List<ItemStack> getBlockDrops(@NotNull final World world, @NotNull final BlockPos coords, final int fortune)
     {
-        return getBlock(world, coords).getDrops(world, new BlockPos(coords.getX(), coords.getY(), coords.getZ()), getBlockState(world, coords), fortune);
+        NonNullList<ItemStack> drops = NonNullList.create();
+        getBlock(world, coords).getDrops(drops, world, new BlockPos(coords.getX(), coords.getY(), coords.getZ()), getBlockState(world, coords), fortune);
+        return drops;
     }
 
     /**
@@ -479,6 +482,19 @@ public final class BlockPosUtil
     {
         final BlockPos vector = neighbor.subtract(pos);
         return EnumFacing.getFacingFromVector(vector.getX(), vector.getY(), -vector.getZ());
+    }
+
+    /**
+     * Calculate in which direction a pos is facing. Ignoring y.
+     *
+     * @param pos      the pos.
+     * @param neighbor the block its facing.
+     * @return the directions its facing.
+     */
+    public static EnumFacing getXZFacing(final BlockPos pos, final BlockPos neighbor)
+    {
+        final BlockPos vector = neighbor.subtract(pos);
+        return EnumFacing.getFacingFromVector(vector.getX(), 0, vector.getZ());
     }
 
     /**

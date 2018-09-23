@@ -51,13 +51,13 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -67,19 +67,13 @@ import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
-import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_NOT_ALLOWED;
-import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_SAME;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * The Class used to represent the citizen entities.
  */
 public class EntityCitizen extends AbstractEntityCitizen
 {
-    /**
-     * The navigator field of the citizen.
-     */
-    private static Field navigatorField;
-
     /**
      * The New PathNavigate navigator.
      */
@@ -162,6 +156,10 @@ public class EntityCitizen extends AbstractEntityCitizen
     private final CitizenStuckHandler citizenStuckHandler;
 
     /**
+     * Indicate if the citizen is mourning or not.
+     */
+    private boolean mourning = false;
+    /**
      * Citizen constructor.
      *
      * @param world the world the citizen lives in.
@@ -183,7 +181,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.enablePersistence();
         this.setAlwaysRenderNameTag(Configurations.gameplay.alwaysRenderNameTag);
         this.newNavigator = new PathNavigate(this, world);
-        updateNavigatorField();
+        this.navigator = newNavigator;
         if (CompatibilityUtils.getWorld(this).isRemote)
         {
             setRenderDistanceWeight(RENDER_DISTANCE_WEIGHT);
@@ -191,41 +189,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.newNavigator.setCanSwim(true);
         this.newNavigator.setEnterDoors(true);
         initTasks();
-    }
-
-    /**
-     * Method used to update the navigator field.
-     * Gets the minecraft path navigate through reflection.
-     */
-    private synchronized void updateNavigatorField()
-    {
-        if (navigatorField == null)
-        {
-            final Field[] fields = EntityLiving.class.getDeclaredFields();
-            for (@NotNull final Field field : fields)
-            {
-                if (field.getType().equals(net.minecraft.pathfinding.PathNavigate.class))
-                {
-                    field.setAccessible(true);
-                    navigatorField = field;
-                    break;
-                }
-            }
-        }
-
-        if (navigatorField == null)
-        {
-            throw new IllegalStateException("Navigator field should not be null, contact developers.");
-        }
-
-        try
-        {
-            navigatorField.set(this, this.newNavigator);
-        }
-        catch (final IllegalAccessException e)
-        {
-            Log.getLogger().error("Navigator error", e);
-        }
     }
 
     /**
@@ -251,6 +214,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
         this.tasks.addTask(++priority, new EntityAICitizenWander(this, DEFAULT_SPEED));
         this.tasks.addTask(++priority, new EntityAIWatchClosest(this, EntityLiving.class, WATCH_CLOSEST));
+        this.tasks.addTask(++priority, new EntityAIMournCitizen(this, DEFAULT_SPEED));
 
         citizenJobHandler.onJobChanged(citizenJobHandler.getColonyJob());
     }
@@ -417,10 +381,10 @@ public class EntityCitizen extends AbstractEntityCitizen
         double penalty = CITIZEN_DEATH_PENALTY;
         if (citizenColonyHandler.getColony() != null && getCitizenData()  != null)
         {
-            if (damageSource.getTrueSource() instanceof EntityPlayer)
+            if (damageSource.getTrueSource() instanceof EntityPlayer && !world.isRemote)
             {
                 boolean isBarbarianClose = false;
-                for(final AbstractEntityBarbarian barbarian : this.getCitizenColonyHandler().getColony().getBarbManager().getHorde())
+                for(final AbstractEntityBarbarian barbarian : this.getCitizenColonyHandler().getColony().getBarbManager().getHorde((WorldServer) world))
                 {
                     if(MathUtils.twoDimDistance(barbarian.getPosition(), this.getPosition()) < BARB_DISTANCE_FOR_FREE_DEATH)
                     {
@@ -443,6 +407,11 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenColonyHandler.getColony().getHappinessData().setDeathModifier(penalty,citizenJobHandler.getColonyJob() instanceof AbstractJobGuard); 
             triggerDeathAchievement(damageSource, citizenJobHandler.getColonyJob());
             citizenChatHandler.notifyDeath(damageSource);
+            if (!(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard)
+                && (damageSource != DamageSource.IN_WALL))
+            {
+                citizenColonyHandler.getColony().setNeedToMourn(true, citizenData.getName());
+            }
             citizenColonyHandler.getColony().getCitizenManager().removeCitizen(getCitizenData());
         }
         super.onDeath(damageSource);
@@ -541,6 +510,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         compound.setString(TAG_LAST_JOB, citizenJobHandler.getLastJob());
         compound.setBoolean(TAG_DAY, isDay);
+        compound.setBoolean(TAG_MOURNING, mourning);
     }
 
     @Override
@@ -559,6 +529,14 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         citizenJobHandler.setLastJob(compound.getString(TAG_LAST_JOB));
         isDay = compound.getBoolean(TAG_DAY);
+        if (compound.hasKey(TAG_MOURNING))
+        {
+            mourning = compound.getBoolean(TAG_MOURNING);
+        }
+        else
+        {
+            mourning = false;
+        }
 
         if (compound.hasKey(TAG_HELD_ITEM_SLOT) || compound.hasKey(TAG_OFFHAND_HELD_ITEM_SLOT))
         {
@@ -605,7 +583,14 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
             else
             {
-                citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waitingForWork"));
+                if (isMourning())
+                {
+                    citizenStatusHandler.setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_MOURN));
+                }
+                else
+                {
+                    citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waitingForWork"));
+                }
             }
 
             if (CompatibilityUtils.getWorld(this).isDaytime() && !CompatibilityUtils.getWorld(this).isRaining() && citizenData != null)
@@ -712,7 +697,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     private boolean tryToEat()
     {
-        final int slot = InventoryUtils.findFirstSlotInProviderWith(this,
+        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(this,
           itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
 
         if (slot == -1)
@@ -843,12 +828,17 @@ public class EntityCitizen extends AbstractEntityCitizen
     @NotNull
     public DesiredActivity getDesiredActivity()
     {
-        if (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard)
+        if (getCitizenColonyHandler().getColony() != null && (getCitizenColonyHandler().getColony().isMourning() && mourning))
+        {
+            return DesiredActivity.MOURN;
+        }
+
+        if (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard & (getCitizenColonyHandler().getColony() != null && !getCitizenColonyHandler().getColony().isMourning()))
         {
             return DesiredActivity.WORK;
         }
 
-        if (getCitizenColonyHandler().getColony() != null && (getCitizenColonyHandler().getColony().getBarbManager().getHorde().size() > 0) && !(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
+        if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (!getCitizenColonyHandler().getColony().getBarbManager().getHorde((WorldServer) world).isEmpty()) && !(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
         {
             return DesiredActivity.SLEEP;
         }
@@ -867,6 +857,10 @@ public class EntityCitizen extends AbstractEntityCitizen
             return DesiredActivity.SLEEP;
         }
 
+        if (citizenSleepHandler.isAsleep())
+        {
+            citizenSleepHandler.onWakeUp();
+        }
         isDay = true;
 
         if (CompatibilityUtils.getWorld(this).isRaining() && !shouldWorkWhileRaining())
@@ -1077,5 +1071,25 @@ public class EntityCitizen extends AbstractEntityCitizen
     public CitizenStuckHandler getCitizenStuckHandler()
     {
         return citizenStuckHandler;
+    }
+
+    /**
+     * Call this to set if the citizen should mourn or not.
+     *
+     * @param mourning indicate if the citizen should mourn
+     */
+    public void setMourning(final boolean mourning)
+    {
+        this.mourning = mourning;
+    }
+
+    /**
+     * Returns a value that indicate if the citizen is in mourning.
+     *
+     * @return indicate if the citizen is mouring
+     */
+    public boolean isMourning()
+    {
+        return mourning;
     }
 }

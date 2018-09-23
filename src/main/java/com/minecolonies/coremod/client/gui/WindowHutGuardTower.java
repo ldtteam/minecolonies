@@ -102,6 +102,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         registerButton(GUI_BUTTON_RETRIEVAL_MODE, this::switchRetrievalMode);
         registerButton(GUI_BUTTON_SET_TARGET, this::setTarget);
         registerButton(GUI_BUTTON_RECALCULATE, this::recalculate);
+        registerButton(BUTTON_GET_TOOL, this::getTool);
 
         registerButton(GUI_SWITCH_TASK_PATROL, this::switchTask);
         registerButton(GUI_SWITCH_TASK_FOLLOW, this::switchTask);
@@ -115,6 +116,14 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         buttonTaskFollow = this.findPaneOfTypeByID(GUI_SWITCH_TASK_FOLLOW, Button.class);
         buttonTaskGuard = this.findPaneOfTypeByID(GUI_SWITCH_TASK_GUARD, Button.class);
         buttonSetTarget = this.findPaneOfTypeByID(GUI_BUTTON_SET_TARGET, Button.class);
+    }
+
+    /**
+     * Give the player directly the tool.
+     */
+    private void getTool()
+    {
+        givePlayerScepter(building.getTask());
     }
 
     @Override
@@ -195,45 +204,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        final Pane currentPane = findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).getCurrentView();
-        if (currentPane != null)
-        {
-            final Button buttonNextPage = findPaneOfTypeByID(GUI_BUTTON_NEXT_PAGE, Button.class);
-            final Button buttonPrevPage = findPaneOfTypeByID(GUI_BUTTON_PREV_PAGE, Button.class);
-            switch (button.getID())
-            {
-                case GUI_BUTTON_NEXT_PAGE:
-                    findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).nextView();
-                    buttonPrevPage.setEnabled(true);
-                    buttonPrevPage.show();
-                    final Pane newCurrentPane = findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).getCurrentView();
-
-                    //System.out.println("Current Page:" + )
-                    if (newCurrentPane != null
-                          && newCurrentPane.getID().equals(GUI_PAGE_MOB_ACTIONS))
-                    {
-                        buttonNextPage.setEnabled(false);
-                        buttonNextPage.hide();
-                    }
-                    break;
-                case GUI_BUTTON_PREV_PAGE:
-                    findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).previousView();
-                    buttonNextPage.setEnabled(true);
-                    buttonNextPage.show();
-                    final Pane otherCurrentPane = findPaneOfTypeByID(GUI_SWITCH_VIEW_PAGES, SwitchView.class).getCurrentView();
-
-                    if (otherCurrentPane != null
-                          && otherCurrentPane.getID().equals(GUI_PAGE_PAGE_ACTIONS))
-                    {
-                        buttonPrevPage.setEnabled(false);
-                        buttonPrevPage.hide();
-                    }
-                    break;
-                default:
-                    super.onButtonClicked(button);
-                    break;
-            }
-        }
+        super.onButtonClicked(button);
         handleButtons();
     }
 
@@ -521,7 +492,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
      */
     private void givePlayerScepter(final GuardTask localTask)
     {
-        MineColonies.getNetwork().sendToServer(new GuardScepterMessage(localTask.ordinal(), building.getID()));
+        MineColonies.getNetwork().sendToServer(new GuardScepterMessage(localTask.ordinal(), building.getID(), building.getColony().getID()));
     }
 
     /**

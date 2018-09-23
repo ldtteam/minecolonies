@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -123,6 +122,10 @@ public class PathNavigate extends PathNavigateGround
     @Override
     public boolean tryMoveToXYZ(final double x, final double y, final double z, final double speed)
     {
+        if (x == 0 && y == 0 && z == 0)
+        {
+            return false;
+        }
         moveToXYZ(x, y, z, speed);
         return true;
     }
@@ -266,7 +269,7 @@ public class PathNavigate extends PathNavigateGround
 
             if (pEx.isOnLadder())
             {
-                final Vec3d vec3 = this.getPath().getPosition(this.ourEntity);
+                Vec3d vec3 = this.getPath().getPosition(this.ourEntity);
 
                 if (vec3.squareDistanceTo(ourEntity.posX, vec3.y, ourEntity.posZ) < Math.random() * 0.1)
                 {
@@ -276,16 +279,16 @@ public class PathNavigate extends PathNavigateGround
                     {
                         //  Any of these values is climbing, so adjust our direction of travel towards the ladder
                         case NORTH:
-                            vec3.addVector(0, 0, 1);
+                            vec3 = vec3.add(0, 0, 1);
                             break;
                         case SOUTH:
-                            vec3.addVector(0, 0, -1);
+                            vec3 = vec3.add(0, 0, -1);
                             break;
                         case WEST:
-                            vec3.addVector(1, 0, 0);
+                            vec3 = vec3.add(1, 0, 0);
                             break;
                         case EAST:
-                            vec3.addVector(-1, 0, 0);
+                            vec3 = vec3.add(-1, 0, 0);
                             break;
                         //  Any other value is going down, so lets not move at all
                         default:
@@ -411,7 +414,7 @@ public class PathNavigate extends PathNavigateGround
      * @param treesToCut the trees which should be cut.
      * @return the result of the search.
      */
-    public PathJobFindTree.TreePathResult moveToTree(final int range, final double speed, final Map<ItemStorage, Boolean> treesToCut, final Colony colony)
+    public PathJobFindTree.TreePathResult moveToTree(final int range, final double speed, final List<ItemStorage> treesToCut, final Colony colony)
     {
         @NotNull BlockPos start = AbstractPathJob.prepareStart(ourEntity);
         final BlockPos buildingPos = ((EntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding().getLocation();

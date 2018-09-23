@@ -189,6 +189,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
                 @Nullable final AbstractBuilding building = ColonyManager.getBuilding(CompatibilityUtils.getWorld(player), message.pos);
                 if (building != null)
                 {
+                    building.onUpgradeComplete(building.getBuildingLevel());
                     final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
                     ConstructionTapeHelper.removeConstructionTape(workOrder, CompatibilityUtils.getWorld(player));
                 }
@@ -218,6 +219,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
                 chestHeight = 0;
             }
 
+            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.progress.supplies_placed");
             player.addStat(StatList.getObjectUseStats(ModItems.supplyChest));
             if(InventoryUtils.removeStacksFromItemHandler(new InvWrapper(player.inventory), stacks))
             {

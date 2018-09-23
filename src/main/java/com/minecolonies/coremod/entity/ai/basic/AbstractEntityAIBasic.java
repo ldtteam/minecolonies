@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
@@ -43,7 +44,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
-import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATION;
+import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -58,34 +59,9 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
 public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends AbstractAISkeleton<J>
 {
     /**
-     * The maximum range to keep from the current building place.
+     * The standard delay after each terminated action.
      */
-    private static final int EXCEPTION_TIMEOUT = 100;
-
-    /**
-     * The maximum range to keep from the current building place.
-     */
-    private static final int MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
-
-    /**
-     * Time in ticks to wait until the next check for items.
-     */
-    private static final int DELAY_RECHECK = 10;
-
-    /**
-     * The default range for any walking to blocks.
-     */
-    private static final int DEFAULT_RANGE_FOR_DELAY = 4;
-
-    /**
-     * The number of actions done before item dump.
-     */
-    private static final int ACTIONS_UNTIL_DUMP = 32;
-
-    /**
-     * Hit a block every x ticks when mining.
-     */
-    private static final int HIT_EVERY_X_TICKS = 5;
+    protected static final int STANDARD_DELAY = 5;
 
     /**
      * The block the ai is currently working at or wants to work.
@@ -128,6 +104,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * The restaurant this AI usually goes to.
      */
     private BlockPos restaurant = null;
+
+    /**
+     * What he currently might be needing.
+     */
+    protected Predicate<ItemStack> needsCurrently = null;
+
+    /**
+     * The current position the worker should walk to.
+     */
+    protected BlockPos walkTo = null;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -193,8 +179,75 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
            * Called when the citizen saturation falls too low.
            */
-          new AITarget(this::shouldGetFood, this::searchForFood)
+          new AITarget(this::shouldGetFood, this::searchForFood),
+          /*
+           * Gather a needed item.
+           */
+          new AITarget(GATHERING_REQUIRED_MATERIALS, this::getNeededItem)
         );
+    }
+
+    /**
+     * Retrieve a material from the building.
+     * For this go to the building if no position has been set.
+     * Then check for the chest with the required material and set the position and return.
+     *
+     * If the position has been set navigate to it.
+     * On arrival transfer to inventory and return to StartWorking.
+     *
+     * @return the next state to transfer to.
+     */
+    private AIState getNeededItem()
+    {
+        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_GATHERING));
+        setDelay(STANDARD_DELAY);
+
+        if (walkTo == null && walkToBuilding())
+        {
+            return getState();
+        }
+
+        if (needsCurrently == null || !InventoryUtils.hasItemInProvider(getOwnBuilding(), needsCurrently))
+        {
+            return getStateAfterPickUp();
+        }
+        else
+        {
+            if (walkTo == null)
+            {
+                final BlockPos pos = getOwnBuilding().getTileEntity().getPositionOfChestWithItemStack(needsCurrently);
+                if (pos == null)
+                {
+                    return getStateAfterPickUp();
+                }
+                walkTo = pos;
+            }
+
+            if (walkToBlock(walkTo))
+            {
+                setDelay(2);
+                return getState();
+            }
+
+            final boolean transferred = tryTransferFromPosToWorker(walkTo, needsCurrently);
+            if (!transferred)
+            {
+                walkTo = null;
+                return getStateAfterPickUp();
+            }
+            walkTo = null;
+        }
+
+        return getStateAfterPickUp();
+    }
+
+    /**
+     * The state to transform to after picking up things.
+     * @return the next state to go to.
+     */
+    public AIState getStateAfterPickUp()
+    {
+        return START_WORKING;
     }
 
     /**
@@ -425,7 +478,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @return true if we have to wait for something
      *
      * @see #currentStandingLocation @see #currentWorkingLocation
-     * @see #DEFAULT_RANGE_FOR_DELAY @see #delay
      */
     private boolean waitingForSomething()
     {
@@ -499,7 +551,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         if (!this.getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(), r -> !worker.getCitizenData().isRequestAsync(r.getToken()))
               && !getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
-            return IDLE;
+            return afterRequestPickUp();
         }
         if (!walkToBuilding() && getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
@@ -558,6 +610,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
 
         return NEEDS_ITEM;
+    }
+
+    /**
+     * What to do after picking up a request.
+     * @return the next state to go to.
+     */
+    public AIState afterRequestPickUp()
+    {
+        return IDLE;
     }
 
     /**
@@ -796,7 +857,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public void takeItemStackFromProvider(@NotNull final ICapabilityProvider provider, final int slotIndex)
     {
-        InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(provider, slotIndex, new InvWrapper(worker.getInventoryCitizen()));
+        InventoryUtils.transferItemStackIntoNextBestSlotFromProvider(provider, slotIndex, new InvWrapper(worker.getInventoryCitizen()));
     }
 
     /**
@@ -843,8 +904,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * 
      * @param toolType  Tool type that is requested
      * @param minimalLevel min. level of the tool
+     * @param maximalLevel min. level of the tool
      */
-    protected void checkForToolorWeaponASync(@NotNull final IToolType toolType, final int minimalLevel)
+    protected void checkForToolorWeaponASync(@NotNull final IToolType toolType, final int minimalLevel, final int maximalLevel)
     {
         final ImmutableList<IRequest<? extends Tool>> openToolRequests =
           getOwnBuilding().getOpenRequestsOfTypeFiltered(
@@ -857,11 +919,34 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             TypeToken.of(Tool.class),
             r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minimalLevel);
 
-        if (openToolRequests.isEmpty() && completedToolRequests.isEmpty())
+        if (openToolRequests.isEmpty() && completedToolRequests.isEmpty() && !hasOpenToolRequest(toolType))
         {
-            final Tool request = new Tool(toolType, minimalLevel, getOwnBuilding().getMaxToolLevel() < minimalLevel ? minimalLevel : getOwnBuilding().getMaxToolLevel());
+            final Tool request = new Tool(toolType, minimalLevel, maximalLevel);
             worker.getCitizenData().createRequestAsync(request);
         }
+    }
+
+    /**
+     * Cancel all requests for a certain armor type for a certain citizen.
+     * @param armorType the armor type.
+     */
+    protected void cancelAsynchRequestForArmor(final IToolType armorType)
+    {
+        final List<IRequest<? extends Tool>> openRequests = getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeToken.of(Tool.class), iRequest -> iRequest.getRequest().getToolClass() == armorType);
+        for (final IRequest token : openRequests)
+        {
+            worker.getCitizenColonyHandler().getColony().getRequestManager().updateRequestState(token.getToken(), RequestState.COMPLETED);
+        }
+    }
+
+    /**
+     * Check if there is an open request for a certain tooltype.
+     * @param key the tooltype.
+     * @return true if so.
+     */
+    private boolean hasOpenToolRequest(final IToolType key)
+    {
+        return getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(), iRequest -> iRequest.getRequest() instanceof Tool && ((Tool) iRequest.getRequest()).getToolClass() == key);
     }
 
     /**
@@ -946,6 +1031,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         this.itemsNiceToHave().forEach(this::isInHut);
         // we dumped the inventory, reset actions done
         this.clearActionsDone();
+        return afterDump();
+    }
+
+    /**
+     * State to go to after dumping.
+     * @return the next state.
+     */
+    public AIState afterDump()
+    {
         return IDLE;
     }
 
@@ -964,7 +1058,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  && (walkToBuilding() || InventoryFunctions.matchFirstInHandlerWithAction(new InvWrapper(worker.getInventoryCitizen()),
           itemStack -> !ItemStackUtils.isEmpty(itemStack) && !buildingWorker.buildingRequiresCertainAmountOfItem(itemStack, alreadyKept),
           (handler, slot) ->
-            InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(
+            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(
               new InvWrapper(worker.getInventoryCitizen()), slot, buildingWorker.getCapability(ITEM_HANDLER_CAPABILITY, null))
         ));
     }

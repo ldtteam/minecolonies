@@ -12,6 +12,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWor
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.util.StructureWrapper;
+import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.state.IBlockState;
@@ -112,7 +113,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     {
         super(job);
         super.registerTargets(
-          /**
+          /*
            * If IDLE - switch to start working.
            */
           new AITarget(IDLE, START_WORKING),
@@ -219,20 +220,21 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @NotNull
     private AIState checkMineShaft()
     {
+        final BuildingMiner buildingMiner = getOwnBuilding();
         //Check if we reached the mineshaft depth limit
-        if (getLastLadder(getOwnBuilding().getLadderLocation()) < getOwnBuilding().getDepthLimit())
+        if (getLastLadder(buildingMiner.getLadderLocation()) < buildingMiner.getDepthLimit())
         {
             //If the miner hut has been placed too deep.
-            if (getOwnBuilding().getNumberOfLevels() == 0)
+            if (buildingMiner.getNumberOfLevels() == 0)
             {
                 chatSpamFilter.talkWithoutSpam("entity.miner.messageRequiresBetterHut");
-                getOwnBuilding().setClearedShaft(false);
+                buildingMiner.setClearedShaft(false);
                 return IDLE;
             }
-            getOwnBuilding().setClearedShaft(true);
+            buildingMiner.setClearedShaft(true);
             return MINER_MINING_NODE;
         }
-        getOwnBuilding().setClearedShaft(false);
+        buildingMiner.setClearedShaft(false);
         return MINER_MINING_SHAFT;
     }
 
@@ -741,6 +743,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         if (job.getStructure() != null)
         {
+            onStartWithoutStructure();
             return CLEAR_STEP;
         }
 
@@ -808,38 +811,44 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         //If shaft isn't cleared we're in shaft clearing mode.
         if (minerBuilding.hasClearedShaft())
         {
-            minerBuilding.getCurrentLevel().closeNextNode(getRotation(), getOwnBuilding().getActiveNode());
+            final Level currentLevel = minerBuilding.getCurrentLevel();
+
+            currentLevel.closeNextNode(getRotation(), getOwnBuilding().getActiveNode());
             getOwnBuilding(BuildingMiner.class).setActiveNode(null);
             getOwnBuilding(BuildingMiner.class).setOldNode(workingNode);
+            WorkerUtil.updateLevelSign(world, currentLevel, minerBuilding.getLevelId(currentLevel));
         }
-        else
+        else if (job.getStructure() != null)
         {
-            @NotNull final Level currentLevel = new Level(minerBuilding, job.getStructure().getPosition().getY());
+            @Nullable final BlockPos levelSignPos = WorkerUtil.findFirstLevelSign(job.getStructure());
+            @NotNull final Level currentLevel = new Level(minerBuilding, job.getStructure().getPosition().getY(), levelSignPos);
+
             minerBuilding.addLevel(currentLevel);
             minerBuilding.setCurrentLevel(minerBuilding.getNumberOfLevels());
             minerBuilding.resetStartingLevelShaft();
+            WorkerUtil.updateLevelSign(world, currentLevel, minerBuilding.getLevelId(currentLevel));
         }
         super.executeSpecificCompleteActions();
 
         //Send out update to client
         getOwnBuilding().markDirty();
-         job.setStructure(null);
+        job.setStructure(null);
 
-         final Colony colony = worker.getCitizenColonyHandler().getColony();
-         if (colony != null)
-         {
-             final List<WorkOrderBuildMiner> workOrders = colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildMiner.class);
-             if (workOrders.size() > 5)
-             {
-                 for (WorkOrderBuildMiner order : workOrders)
-                 {
-                     if (this.getOwnBuilding().getID().equals(order.getMinerBuilding()))
-                     {
-                         colony.getWorkManager().removeWorkOrder(order.getID());
-                     }
-                 }
-             }
-         }
+        final Colony colony = worker.getCitizenColonyHandler().getColony();
+        if (colony != null)
+        {
+            final List<WorkOrderBuildMiner> workOrders = colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildMiner.class);
+            if (workOrders.size() > 2)
+            {
+                for (WorkOrderBuildMiner order : workOrders)
+                {
+                    if (this.getOwnBuilding().getID().equals(order.getMinerBuilding()))
+                    {
+                        colony.getWorkManager().removeWorkOrder(order.getID());
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -871,7 +880,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         {
             return blockToMine;
         }
-        final Vec2i parentPos = buildingMiner.getCurrentLevel().getRandomNode(null).getParent();
+        final Vec2i parentPos = buildingMiner.getActiveNode().getParent();
         if (parentPos != null && buildingMiner.getCurrentLevel().getNode(parentPos) != null
               && buildingMiner.getCurrentLevel().getNode(parentPos).getStyle() == Node.NodeType.SHAFT)
         {
@@ -918,13 +927,5 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             }
         }
         return false;
-    }
-
-    @Override
-    protected void onStartWithoutStructure()
-    {
-        /**
-         * Nothing to do here.
-         */
     }
 }

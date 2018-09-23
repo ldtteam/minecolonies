@@ -13,6 +13,7 @@ import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.managers.*;
+import com.minecolonies.coremod.colony.managers.interfaces.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.pvp.AttackingPlayer;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
@@ -96,6 +97,11 @@ public class Colony implements IColony
     private final ICitizenManager citizenManager = new CitizenManager(this);
 
     /**
+     * Colony happiness manager.
+     */
+    private final IColonyHappinessManager colonyHappinessManager = new ColonyHappinessManager();
+
+    /**
      * Statistic and achievement manager manager of the colony.
      */
     private final IStatisticAchievementManager statsManager = new StatisticAchievementManager(this);
@@ -109,6 +115,11 @@ public class Colony implements IColony
      * The colony package manager.
      */
     private final IColonyPackageManager packageManager = new ColonyPackageManager(this);
+
+    /**
+     * The progress manager of the colony.
+     */
+    private final IProgressManager progressManager = new ProgressManager(this);
 
     /**
      * The Positions which players can freely interact.
@@ -202,6 +213,8 @@ public class Colony implements IColony
      */
     private final HappinessData happinessData = new HappinessData();
 
+    private boolean needToMourn = false;
+    private boolean mourning = false;
     /**
      * The colony team color.
      */
@@ -295,6 +308,11 @@ public class Colony implements IColony
         c.center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
         c.setRequestManager();
         c.readFromNBT(compound);
+
+        if (c.getProgressManager().isPrintingProgress() && (c.getBuildingManager().getBuildings().size() > BUILDING_LIMIT_FOR_HELP || c.getCitizenManager().getCitizens().size() > CITIZEN_LIMIT_FOR_HELP))
+        {
+            c.getProgressManager().togglePrintProgress();
+        }
         return c;
     }
 
@@ -315,6 +333,16 @@ public class Colony implements IColony
     {
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
 
+        if(compound.hasKey(TAG_NEED_TO_MOURN))
+        {
+            needToMourn = compound.getBoolean(TAG_NEED_TO_MOURN);
+            mourning = compound.getBoolean(TAG_MOURNING);
+        }
+        else
+        {
+            needToMourn = false;
+            mourning = false;
+        }
         // Permissions
         permissions.loadPermissions(compound);
 
@@ -346,6 +374,20 @@ public class Colony implements IColony
         {
             //Compatability with old version!
             statsManager.readFromNBT(compound);
+        }
+
+        if(compound.hasKey(TAG_PROGRESS_MANAGER))
+        {
+            progressManager.readFromNBT(compound);
+        }
+
+        if (compound.hasKey(TAG_HAPPINESS_MODIFIER))
+        {
+            colonyHappinessManager.setLockedHappinessModifier(Optional.of(compound.getDouble(TAG_HAPPINESS_MODIFIER)));
+        }
+        else
+        {
+            colonyHappinessManager.setLockedHappinessModifier(Optional.empty());
         }
 
         //  Workload
@@ -443,6 +485,8 @@ public class Colony implements IColony
         BlockPosUtil.writeToNBT(compound, TAG_CENTER, center);
 
         compound.setBoolean(TAG_MANUAL_HIRING, manualHiring);
+        compound.setBoolean(TAG_NEED_TO_MOURN, needToMourn);
+        compound.setBoolean(TAG_MOURNING, mourning);
 
         // Permissions
         permissions.savePermissions(compound);
@@ -455,6 +499,8 @@ public class Colony implements IColony
         citizenManager.writeToNBT(citizenCompound);
         compound.setTag(TAG_CITIZEN_MANAGER, citizenCompound);
 
+        colonyHappinessManager.getLockedHappinessModifier().ifPresent(d -> compound.setDouble(TAG_HAPPINESS_MODIFIER, d));
+
         final NBTTagCompound statsCompound = new NBTTagCompound();
         statsManager.writeToNBT(statsCompound);
         compound.setTag(TAG_STATS_MANAGER, statsCompound);
@@ -463,6 +509,8 @@ public class Colony implements IColony
         @NotNull final NBTTagCompound workManagerCompound = new NBTTagCompound();
         workManager.writeToNBT(workManagerCompound);
         compound.setTag(TAG_WORK, workManagerCompound);
+
+        progressManager.writeToNBT(compound);
 
         // Waypoints
         @NotNull final NBTTagList wayPointTagList = new NBTTagList();
@@ -721,10 +769,21 @@ public class Colony implements IColony
                 citizenManager.checkCitizensForHappiness();
             }
             happinessData.processDeathModifiers(); 
+            if (mourning)
+            {
+                mourning = false;
+                citizenManager.updateCitizenMourn(false);
+            }
         }
         else if (!isDay && world.isDaytime())
         {
             isDay = true;
+            if (needToMourn)
+            {
+                needToMourn = false;
+                mourning = true;
+                citizenManager.updateCitizenMourn(true);
+            }
         }
 
         updateWayPoints();
@@ -832,7 +891,7 @@ public class Colony implements IColony
     @Override
     public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        final Chunk chunk = w.getChunkFromBlockCoords(pos);
+        final Chunk chunk = w.getChunk(pos);
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
         return cap.getOwningColony() == this.getID();
     }
@@ -955,6 +1014,7 @@ public class Colony implements IColony
     public void setManualHiring(final boolean manualHiring)
     {
         this.manualHiring = manualHiring;
+        progressManager.progressEmploymentModeChange();
         markDirty();
     }
 
@@ -1136,6 +1196,16 @@ public class Colony implements IColony
     }
 
     /**
+     * Get the colony happiness manager.
+     *
+     * @return the colony happiness manager.
+     */
+    public IColonyHappinessManager getColonyHappinessManager()
+    {
+        return colonyHappinessManager;
+    }
+
+    /**
      * Get the statsManager of the colony.
      * @return the statsManager.
      */
@@ -1160,6 +1230,15 @@ public class Colony implements IColony
     public IColonyPackageManager getPackageManager()
     {
         return packageManager;
+    }
+
+    /**
+     * Get the progress manager of the colony.
+     * @return the manager.
+     */
+    public IProgressManager getProgressManager()
+    {
+        return progressManager;
     }
 
     /**
@@ -1223,6 +1302,41 @@ public class Colony implements IColony
     public void setNightsSinceLastRaid(final int nights)
     {
         this.nightsSinceLastRaid = nights;
+    }
+
+    /**
+     * call to figure out if the colony needs to mourn.
+     * 
+     * @return a boolean indicating the colony needs to mourn
+     */
+    public boolean isNeedToMourn()
+    {
+        return needToMourn;
+    }
+
+    /**
+     * Call to set if the colony needs to mourn or not.
+     * 
+     * @param needToMourn indicate if the colony needs to mourn
+     * @param name  Name of citizen that died
+     */
+    public void setNeedToMourn(final boolean needToMourn, final String name)
+    {
+        this.needToMourn = needToMourn;
+        if (needToMourn)
+        {
+            LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_MOURN,name);
+        }
+    }
+
+    /**
+     * Call to check if the colony is mourning.
+     * 
+     * @return indicates if the colony is mourning
+     */
+    public boolean isMourning()
+    {
+        return mourning;
     }
 
     /**
@@ -1296,6 +1410,15 @@ public class Colony implements IColony
         }
 
         return AttackingPlayer.isValidAttack(entity, this);
+    }
+
+    /**
+     * Check if the colony is currently under attack by another player.
+     * @return true if so.
+     */
+    public boolean isColonyUnderAttack()
+    {
+        return !attackingPlayers.isEmpty();
     }
 
     /**

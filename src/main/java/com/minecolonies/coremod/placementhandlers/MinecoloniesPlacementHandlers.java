@@ -4,6 +4,7 @@ import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.blocks.schematic.BlockSolidSubstitution;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.colony.Colony;
@@ -60,6 +61,7 @@ public final class MinecoloniesPlacementHandlers
         PlacementHandlers.handlers.add(new ChestPlacementHandler());
         PlacementHandlers.handlers.add(new WayPointBlockPlacementHandler());
         PlacementHandlers.handlers.add(new RackPlacementHandler());
+        PlacementHandlers.handlers.add(new PlacementHandlers.FallingBlockPlacementHandler());
         PlacementHandlers.handlers.add(new GeneralBlockPlacementHandler());
     }
 
@@ -120,6 +122,11 @@ public final class MinecoloniesPlacementHandlers
           final boolean complete,
           final BlockPos centerPos)
         {
+            if (world.getBlockState(pos).getBlock() == ModBlocks.blockRack)
+            {
+                return blockState;
+            }
+            
             if (tileEntityData != null)
             {
                 handleTileEntityPlacement(tileEntityData, world, pos);

@@ -102,6 +102,7 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand impleme
         if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
         {
             sender.sendMessage(new TextComponentString("Must be OP to use this command"));
+            return;
         }
 
         colony.getBarbManager().setCanHaveBarbEvents(canHaveBarbEvents);
