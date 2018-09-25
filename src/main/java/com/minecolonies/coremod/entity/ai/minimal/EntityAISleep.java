@@ -141,7 +141,7 @@ public class EntityAISleep extends EntityAIBase
                 final IBlockState feetState = citizen.world.getBlockState(feetPos);
                 if (feetState.getBlock() == Blocks.BED)
                 {
-                    citizen.world.setBlockState(feetPos, feetState.withProperty(BlockBed.OCCUPIED, true), 0x03);
+                    citizen.world.setBlockState(feetPos, feetState.withProperty(BlockBed.OCCUPIED, false), 0x03);
                 }
             }
             usedBed = null;
