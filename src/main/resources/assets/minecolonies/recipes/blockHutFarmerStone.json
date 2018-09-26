@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XTX",
+    "XHX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "type": "forge:ore_dict",
+      "ore": "plankWood"
+    },
+    "H": {
+      "item": "minecraft:stone_hoe"
+    },
+    "T": {
+      "item": "minecolonies:sceptergold"
+    }
+  },
+  "result": {
+    "item": "minecolonies:blockhutfarmer",
+    "count": 2
+  }
+}
