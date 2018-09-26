@@ -5,6 +5,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -24,6 +25,11 @@ public class GuardRecalculateMessage extends AbstractMessage<GuardRecalculateMes
     private int colonyId;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty standard constructor.
      */
     public GuardRecalculateMessage()
@@ -34,13 +40,14 @@ public class GuardRecalculateMessage extends AbstractMessage<GuardRecalculateMes
     /**
      * Creates a new message of this type to set the guard scepter in the player inventory.
      *
-     * @param buildingId the position of the building.
+     * @param building the building.
      */
-    public GuardRecalculateMessage(final int colonyId, final BlockPos buildingId)
+    public GuardRecalculateMessage(final int colonyId, final AbstractBuildingView building)
     {
         super();
         this.colonyId = colonyId;
-        this.buildingId = buildingId;
+        this.buildingId = building.getID();
+        this.dimension = building.getColony().getDimension();
     }
 
     @Override
@@ -48,6 +55,7 @@ public class GuardRecalculateMessage extends AbstractMessage<GuardRecalculateMes
     {
         this.colonyId = byteBuf.readInt();
         this.buildingId = BlockPosUtil.readFromByteBuf(byteBuf);
+        dimension = byteBuf.readInt();
     }
 
     @Override
@@ -55,12 +63,13 @@ public class GuardRecalculateMessage extends AbstractMessage<GuardRecalculateMes
     {
         byteBuf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(byteBuf, buildingId);
+        byteBuf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final GuardRecalculateMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings

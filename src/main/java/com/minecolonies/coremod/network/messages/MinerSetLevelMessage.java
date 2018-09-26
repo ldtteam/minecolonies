@@ -22,6 +22,11 @@ public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, 
     private int      level;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty constructor used when registering the message.
      */
     public MinerSetLevelMessage()
@@ -41,6 +46,7 @@ public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, 
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.level = level;
+        this.dimension = building.getColony().getDimension();
     }
 
     @Override
@@ -49,6 +55,7 @@ public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, 
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
         level = buf.readInt();
+        dimension = buf.readInt();
     }
 
     @Override
@@ -57,12 +64,13 @@ public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, 
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
         buf.writeInt(level);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final MinerSetLevelMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
 

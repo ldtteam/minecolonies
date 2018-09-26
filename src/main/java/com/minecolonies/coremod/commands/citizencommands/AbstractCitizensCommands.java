@@ -106,7 +106,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
             }
         }
 
-        colony = ColonyManager.getColony(colonyId);
+        colony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(0));
 
         if (colony == null)
         {

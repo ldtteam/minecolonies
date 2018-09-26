@@ -71,7 +71,7 @@ public class RaidAllNowCommand extends AbstractSingleCommand implements IActionC
             return;
         }
 
-        for (final Colony colony : ColonyManager.getColonies())
+        for (final Colony colony : ColonyManager.getAllColonies())
         {
             MobEventsUtils.barbarianEvent(colony.getWorld(), colony);
         }

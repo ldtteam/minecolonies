@@ -1039,7 +1039,7 @@ public class CommandEntryPointTest
         final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
-        assertThat(results).containsExactlyInAnyOrder("addofficer", "barbarians", "shl", "delete", "deletable", "info", "ownerchange", "raid", "raid-tonight", "refresh", "teleport",
+        assertThat(results).containsExactlyInAnyOrder("addofficer", "loadbackup", "barbarians", "shl", "delete", "deletable", "info", "ownerchange", "raid", "raid-tonight", "refresh", "teleport",
                 "claim");
     }
 
