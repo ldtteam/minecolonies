@@ -754,7 +754,7 @@ public final class Structures
 
 
         int countInUseStructures = 0;
-        for (final Colony c : ColonyManager.getColonies())
+        for (final Colony c : ColonyManager.getAllColonies())
         {
             for (final AbstractWorkOrder workOrder : c.getWorkManager().getWorkOrders().values())
             {

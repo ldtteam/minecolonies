@@ -33,6 +33,11 @@ public class OpenCraftingGUIMessage extends AbstractMessage<OpenCraftingGUIMessa
     private int gridSize;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty public constructor.
      */
     public OpenCraftingGUIMessage()
@@ -51,6 +56,7 @@ public class OpenCraftingGUIMessage extends AbstractMessage<OpenCraftingGUIMessa
         this.buildingId = building.getLocation();
         this.gridSize = gridSize;
         this.colonyId = building.getColony().getID();
+        this.dimension = building.getColony().getDimension();
     }
 
     @Override
@@ -59,6 +65,7 @@ public class OpenCraftingGUIMessage extends AbstractMessage<OpenCraftingGUIMessa
         this.gridSize = buf.readInt();
         this.colonyId = buf.readInt();
         this.buildingId = BlockPosUtil.readFromByteBuf(buf);
+        dimension = buf.readInt();
     }
 
     @Override
@@ -67,12 +74,13 @@ public class OpenCraftingGUIMessage extends AbstractMessage<OpenCraftingGUIMessa
         buf.writeInt(this.gridSize);
         buf.writeInt(this.colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final OpenCraftingGUIMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null && checkPermissions(colony, player))
         {
             final BlockPos pos = message.buildingId;

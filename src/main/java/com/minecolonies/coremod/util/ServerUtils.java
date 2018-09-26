@@ -7,10 +7,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Utility for server related stuff.
@@ -57,8 +54,12 @@ public final class ServerUtils
      * @return list of EntityPlayers
      */
     @NotNull
-    public static List<EntityPlayer> getPlayersFromUUID(@NotNull final World world, @NotNull final Collection<UUID> ids)
+    public static List<EntityPlayer> getPlayersFromUUID(@Nullable final World world, @NotNull final Collection<UUID> ids)
     {
+        if (world == null)
+        {
+            return Collections.emptyList();
+        }
         @NotNull final List<EntityPlayer> players = new ArrayList<>();
 
         for (final Object o : world.playerEntities)

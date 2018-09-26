@@ -24,6 +24,11 @@ public class ToggleHousingMessage extends AbstractMessage<ToggleHousingMessage, 
     private boolean toggle;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty public constructor.
      */
     public ToggleHousingMessage()
@@ -42,6 +47,7 @@ public class ToggleHousingMessage extends AbstractMessage<ToggleHousingMessage, 
         super();
         this.colonyId = colony.getID();
         this.toggle = toggle;
+        this.dimension = colony.getDimension();
     }
 
     /**
@@ -54,6 +60,7 @@ public class ToggleHousingMessage extends AbstractMessage<ToggleHousingMessage, 
     {
         colonyId = buf.readInt();
         toggle = buf.readBoolean();
+        dimension = buf.readInt();
     }
 
     /**
@@ -66,6 +73,7 @@ public class ToggleHousingMessage extends AbstractMessage<ToggleHousingMessage, 
     {
         buf.writeInt(colonyId);
         buf.writeBoolean(toggle);
+        buf.writeInt(dimension);
     }
 
     /**
@@ -78,7 +86,7 @@ public class ToggleHousingMessage extends AbstractMessage<ToggleHousingMessage, 
     @Override
     public void messageOnServerThread(final ToggleHousingMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings

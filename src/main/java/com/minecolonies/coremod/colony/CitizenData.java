@@ -674,7 +674,7 @@ public class CitizenData
     {
         if (workBuilding != null && building != null && workBuilding != building)
         {
-            throw new IllegalStateException("CitizenData.setWorkBuilding() - already assigned a work building when setting a new work building");
+            Log.getLogger().warn("CitizenData.setWorkBuilding() - already assigned a work building when setting a new work building");
         }
         else if (workBuilding != building)
         {

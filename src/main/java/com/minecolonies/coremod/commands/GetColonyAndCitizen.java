@@ -2,6 +2,7 @@ package com.minecolonies.coremod.commands;
 
 import com.minecolonies.coremod.colony.ColonyManager;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -75,7 +76,7 @@ public final class GetColonyAndCitizen
         {
             throw new IllegalArgumentException(UNKNOWN_ERROR);
         }
-        if (colonyId >= 0 && ColonyManager.getColony(colonyId) == null)
+        if (colonyId >= 0 && ColonyManager.getColonyByWorld(colonyId, world) == null)
         {
             throw new IllegalArgumentException(String.format(NOT_FOUND, "Colony"));
         }
@@ -93,6 +94,7 @@ public final class GetColonyAndCitizen
      */
     public static int getCitizenId(@NotNull final int colonyId, @NotNull final String... args)
     {
+        final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0);
         int citizenId;
         final String citizenName;
         citizenId = STANDARD_CITIZEN_ID;
@@ -122,10 +124,10 @@ public final class GetColonyAndCitizen
         {
             citizenName = args[ARGUMENT_ZERO] + " " + args[ARGUMENT_ONE] + " " + args[ARGUMENT_TWO];
             for (int i = 1
-                   ; i <= ColonyManager.getColony(colonyId).getCitizenManager().getCitizens().size(); i++)
+                   ; i <= ColonyManager.getColonyByWorld(colonyId, world).getCitizenManager().getCitizens().size(); i++)
             {
-                if (ColonyManager.getColony(colonyId).getCitizenManager().getCitizen(i).getName() != null
-                        && ColonyManager.getColony(colonyId).getCitizenManager().getCitizen(i).getName().equals(citizenName))
+                if (ColonyManager.getColonyByWorld(colonyId, world).getCitizenManager().getCitizen(i).getName() != null
+                        && ColonyManager.getColonyByWorld(colonyId, world).getCitizenManager().getCitizen(i).getName().equals(citizenName))
                 {
                     citizenId = i;
                 }
@@ -134,9 +136,9 @@ public final class GetColonyAndCitizen
         else if (args.length == ID_AND_NAME_ARGUMENT_LENGTH && colonyId >= 0)
         {
             citizenName = args[ARGUMENT_ONE] + " " + args[ARGUMENT_TWO] + " " + args[ARGUMENT_THREE];
-            for (int i = 1; i <= ColonyManager.getColony(colonyId).getCitizenManager().getCitizens().size(); i++)
+            for (int i = 1; i <= ColonyManager.getColonyByWorld(colonyId, world).getCitizenManager().getCitizens().size(); i++)
             {
-                if (ColonyManager.getColony(colonyId).getCitizenManager().getCitizen(i).getName().equals(citizenName))
+                if (ColonyManager.getColonyByWorld(colonyId, world).getCitizenManager().getCitizen(i).getName().equals(citizenName))
                 {
                     citizenId = i;
                 }
@@ -150,7 +152,7 @@ public final class GetColonyAndCitizen
         {
             throw new IllegalArgumentException(UNKNOWN_ERROR);
         }
-        if (citizenId >= 0 && colonyId >= 0 && ColonyManager.getColony(colonyId).getCitizenManager().getCitizen(citizenId) == null)
+        if (citizenId >= 0 && colonyId >= 0 && ColonyManager.getColonyByWorld(colonyId, world).getCitizenManager().getCitizen(citizenId) == null)
         {
             throw new IllegalArgumentException(String.format(NOT_FOUND, "Citizen"));
         }
