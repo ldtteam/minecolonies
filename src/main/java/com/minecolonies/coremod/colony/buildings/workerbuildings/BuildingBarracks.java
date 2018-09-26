@@ -175,8 +175,17 @@ public class BuildingBarracks extends AbstractBuilding
 
         EnumFacing facing = EnumFacing.NORTH;
 
-        final int offset = getStyle().toLowerCase(Locale.ENGLISH).contains("birch") ? (TOWER_OFFSET + 1) : TOWER_OFFSET;
-
+        final String styleName = getStyle().toLowerCase(Locale.ENGLISH);
+        int offset = TOWER_OFFSET;
+        if (styleName.contains("birch"))
+        {
+            offset++;
+        }
+        else if (styleName.contains("sandstone"))
+        {
+            offset--;
+        }
+        
         switch (tempLevel)
         {
             case Constants.ROTATE_ONCE:
