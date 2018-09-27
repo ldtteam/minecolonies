@@ -15,6 +15,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.PotionEffect;
@@ -147,6 +148,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     {
         worker.addPotionEffect(new PotionEffect(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER));
         this.world.getScoreboard().addPlayerToTeam(worker.getName(), TEAM_COLONY_NAME + worker.getCitizenColonyHandler().getColonyId());
+
+        if (BlockPosUtil.getDistance2D(worker.getPosition(), buildingGuards.getPlayerToFollow()) > MAX_FOLLOW_DERIVATION)
+        {
+            TeleportHelper.teleportCitizen(worker, worker.world, buildingGuards.getPlayerToFollow());
+            return DECIDE;
+        }
+
         if (buildingGuards.isTightGrouping())
         {
             worker.isWorkerAtSiteWithMove(buildingGuards.getPlayerToFollow(), GUARD_FOLLOW_TIGHT_RANGE);

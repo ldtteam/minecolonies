@@ -54,7 +54,7 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
         final ILocation location;
         try {
             location =
-            factoryController.getNewInstance(TypeConstants.ILOCATION, iRequestManager.getColony().getCenter(), iRequestManager.getColony().getWorld().provider.getDimension());
+            factoryController.getNewInstance(TypeConstants.ILOCATION, iRequestManager.getColony().getCenter(), iRequestManager.getColony().getDimension());
         } catch (final Exception ex)
         {
             throw ex;

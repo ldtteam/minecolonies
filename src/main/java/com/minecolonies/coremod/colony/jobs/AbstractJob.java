@@ -235,7 +235,7 @@ public abstract class AbstractJob
     }
 
     /**
-     * Get the Colony that this Job is associated with (shortcut for getAssignedCitizen().getColony()).
+     * Get the Colony that this Job is associated with (shortcut for getAssignedCitizen().getColonyByPosFromWorld()).
      *
      * @return {@link Colony} of the citizen.
      */

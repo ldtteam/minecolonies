@@ -86,7 +86,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
                         sender.sendMessage(new TextComponentString(NOT_PERMITTED));
                         return;
                     }
-                    colony = ColonyManager.getColony(iColony.getID());
+                    colony = ColonyManager.getColonyByWorld(iColony.getID(), server.getWorld(0));
                 }
             }
         }
@@ -106,7 +106,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
                         sender.sendMessage(new TextComponentString(NOT_PERMITTED));
                         return;
                     }
-                    colony = ColonyManager.getColony(iColony.getID());
+                    colony = ColonyManager.getColonyByWorld(iColony.getID(), server.getWorld(0));
                 }
             }
         }
@@ -131,7 +131,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         int colonyId = getIthArgument(args, 0, -1);
-        IColony tempColony = ColonyManager.getColony(colonyId);
+        IColony tempColony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(0));
 
         if (colonyId == -1 && args.length >= 1)
         {
@@ -178,7 +178,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
             return;
         }
 
-        final Colony colony = ColonyManager.getColony(tempColony.getID());
+        final Colony colony = ColonyManager.getColonyByWorld(tempColony.getID(), server.getWorld(0));
         if (colony == null)
         {
             if (colonyId == -1 && args.length != 0)

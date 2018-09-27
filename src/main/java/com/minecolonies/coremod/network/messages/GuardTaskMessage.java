@@ -27,6 +27,11 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
     private int      task;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Indicates whether tight grouping is used in mode Follow.
      */
     private boolean  tightGrouping;
@@ -68,6 +73,7 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
         this.retrieval = retrieval;
         this.task = task;
         this.tightGrouping = tightGrouping;
+        this.dimension = building.getColony().getDimension();
     }
 
     @Override
@@ -81,6 +87,7 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
         tightGrouping = buf.readBoolean();
         retrieval = buf.readBoolean();
         task = buf.readInt();
+        dimension = buf.readInt();
     }
 
     @Override
@@ -94,12 +101,13 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
         buf.writeBoolean(tightGrouping);
         buf.writeBoolean(retrieval);
         buf.writeInt(task);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final GuardTaskMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings

@@ -89,7 +89,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand implements
             return;
         }
 
-        final List<Colony> colonies = ColonyManager.getColonies();
+        final List<Colony> colonies = ColonyManager.getAllColonies();
 
         final List<Colony> coloniesToDelete = new ArrayList<>();
 
@@ -109,7 +109,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand implements
             sender.sendMessage(new TextComponentString("Successful"));
             for (final Colony col : coloniesToDelete)
             {
-                server.addScheduledTask(() -> ColonyManager.deleteColony(col.getID(), Configurations.gameplay.autoDestroyColonyBlocks));
+                server.addScheduledTask(() -> ColonyManager.deleteColonyByWorld(col.getID(), Configurations.gameplay.autoDestroyColonyBlocks, col.getWorld()));
             }
         }
         else

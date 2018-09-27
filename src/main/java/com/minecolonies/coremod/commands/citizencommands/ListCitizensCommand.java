@@ -17,6 +17,8 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -95,7 +97,7 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
                 }
             }
         }
-        colony = ColonyManager.getColony(colonyId);
+        colony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(0));
 
         executeShared(server, sender, colony, page);
     }
@@ -179,7 +181,8 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
         final IColony tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), sender.getCommandSenderEntity().getUniqueID());
         if (tempColony != null)
         {
-            final Colony colony = ColonyManager.getColony(sender.getEntityWorld(), tempColony.getCenter());
+            final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0);
+            final Colony colony = ColonyManager.getColonyByPosFromWorld(world, tempColony.getCenter());
             if (colony != null)
             {
                 return colony.getID();
