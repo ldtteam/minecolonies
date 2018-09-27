@@ -38,6 +38,12 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
      */
     private MessageType type;
     private MessageMode mode;
+
+    /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
     /**
      * Empty public constructor.
      */
@@ -61,6 +67,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
         this.block = block;
         this.type = type;
         this.mode = MessageMode.BLOCK;
+        this.dimension = colony.getDimension();
     }
 
     /**
@@ -88,6 +95,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
         pos = BlockPosUtil.readFromByteBuf(buf);
         type = MessageType.values()[buf.readInt()];
         mode = MessageMode.values()[buf.readInt()];
+        dimension = buf.readInt();
     }
 
     @Override
@@ -98,12 +106,13 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
         BlockPosUtil.writeToByteBuf(buf, pos);
         buf.writeInt(type.ordinal());
         buf.writeInt(mode.ordinal());
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final ChangeFreeToInteractBlockMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings

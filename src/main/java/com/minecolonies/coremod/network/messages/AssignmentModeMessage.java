@@ -23,6 +23,11 @@ public class AssignmentModeMessage extends AbstractMessage<AssignmentModeMessage
     private boolean  assignmentMode;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty standard constructor.
      */
     public AssignmentModeMessage()
@@ -42,6 +47,7 @@ public class AssignmentModeMessage extends AbstractMessage<AssignmentModeMessage
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.assignmentMode = assignmentMode;
+        this.dimension = building.getColony().getDimension();
     }
 
     @Override
@@ -50,6 +56,7 @@ public class AssignmentModeMessage extends AbstractMessage<AssignmentModeMessage
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
         assignmentMode = buf.readBoolean();
+        dimension = buf.readInt();
     }
 
     @Override
@@ -58,12 +65,13 @@ public class AssignmentModeMessage extends AbstractMessage<AssignmentModeMessage
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
         buf.writeBoolean(assignmentMode);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final AssignmentModeMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings

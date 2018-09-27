@@ -120,7 +120,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
             }
         }
 
-        final Colony colony = ColonyManager.getColony(colonyId);
+        final Colony colony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(0));
         if (colony == null)
         {
             final String noColonyFoundMessage = String.format(COLONY_X_NULL, colonyId);
@@ -163,7 +163,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
         }
         final boolean shouldDestroy = canDestroy;
         // TODO: pass in sender and notify when the delete task finishes.
-        server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID(), shouldDestroy));
+        server.addScheduledTask(() -> ColonyManager.deleteColonyByWorld(colony.getID(), shouldDestroy, server.getWorld(0)));
         sender.sendMessage(new TextComponentString(DELETE_COLONY_TASK_SCHEDULED));
     }
 

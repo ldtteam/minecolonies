@@ -112,7 +112,7 @@ public class ListColoniesCommand extends AbstractSingleCommand implements IActio
         }
         else
         {
-            colonies = ColonyManager.getColonies();
+            colonies = ColonyManager.getAllColonies();
         }
 
         final int colonyCount = colonies.size();

@@ -35,6 +35,11 @@ public class WorkOrderChangeMessage extends AbstractMessage<WorkOrderChangeMessa
     private boolean removeWorkOrder;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty public constructor.
      */
     public WorkOrderChangeMessage()
@@ -57,6 +62,7 @@ public class WorkOrderChangeMessage extends AbstractMessage<WorkOrderChangeMessa
         this.workOrderId = workOrderId;
         this.removeWorkOrder = removeWorkOrder;
         this.priority = priority;
+        this.dimension = building.getColony().getDimension();
     }
 
     /**
@@ -71,6 +77,7 @@ public class WorkOrderChangeMessage extends AbstractMessage<WorkOrderChangeMessa
         workOrderId = buf.readInt();
         priority = buf.readInt();
         removeWorkOrder = buf.readBoolean();
+        dimension = buf.readInt();
     }
 
     /**
@@ -85,12 +92,13 @@ public class WorkOrderChangeMessage extends AbstractMessage<WorkOrderChangeMessa
         buf.writeInt(workOrderId);
         buf.writeInt(priority);
         buf.writeBoolean(removeWorkOrder);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final WorkOrderChangeMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
             //Verify player has permission to change this huts settings

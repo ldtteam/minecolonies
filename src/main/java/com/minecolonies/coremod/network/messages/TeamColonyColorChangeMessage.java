@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -26,6 +27,11 @@ public class TeamColonyColorChangeMessage extends AbstractMessage<TeamColonyColo
     private int colorOrdinal;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty public constructor.
      */
     public TeamColonyColorChangeMessage()
@@ -44,6 +50,7 @@ public class TeamColonyColorChangeMessage extends AbstractMessage<TeamColonyColo
         super();
         this.colonyId = building.getColony().getID();
         this.colorOrdinal = colorOrdinal;
+        this.dimension = building.getColony().getDimension();
     }
 
     /**
@@ -56,6 +63,7 @@ public class TeamColonyColorChangeMessage extends AbstractMessage<TeamColonyColo
     {
         colonyId = buf.readInt();
         colorOrdinal = buf.readInt();
+        dimension = buf.readInt();
     }
 
     /**
@@ -68,12 +76,13 @@ public class TeamColonyColorChangeMessage extends AbstractMessage<TeamColonyColo
     {
         buf.writeInt(colonyId);
         buf.writeInt(colorOrdinal);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final TeamColonyColorChangeMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
@@ -81,7 +90,6 @@ public class TeamColonyColorChangeMessage extends AbstractMessage<TeamColonyColo
             {
                 return;
             }
-
             colony.setColonyColor(TextFormatting.values()[message.colorOrdinal]);
         }
     }

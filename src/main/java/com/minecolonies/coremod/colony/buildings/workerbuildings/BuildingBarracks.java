@@ -121,11 +121,11 @@ public class BuildingBarracks extends AbstractBuilding
 
                     if (barracksTowerEntity != null)
                     {
-                        getColony().getBuildingManager().addNewBuilding((TileEntityColonyBuilding) barracksTowerEntity, world);
+                        getColonyByPosFromWorld().getBuildingManager().addNewBuilding((TileEntityColonyBuilding) barracksTowerEntity, world);
                     }
                 }
 
-                final AbstractBuilding building = getColony().getBuildingManager().getBuilding(tower.getFirst());
+                final AbstractBuilding building = getColonyByPosFromWorld().getBuildingManager().getBuilding(tower.getFirst());
                 if (building instanceof BuildingBarracksTowerNew)
                 {
                     building.setStyle(this.getStyle());
@@ -175,8 +175,17 @@ public class BuildingBarracks extends AbstractBuilding
 
         EnumFacing facing = EnumFacing.NORTH;
 
-        final int offset = getStyle().toLowerCase(Locale.ENGLISH).contains("birch") ? (TOWER_OFFSET + 1) : TOWER_OFFSET;
-
+        final String styleName = getStyle().toLowerCase(Locale.ENGLISH);
+        int offset = TOWER_OFFSET;
+        if (styleName.contains("birch"))
+        {
+            offset++;
+        }
+        else if (styleName.contains("sandstone"))
+        {
+            offset--;
+        }
+        
         switch (tempLevel)
         {
             case Constants.ROTATE_ONCE:
@@ -216,7 +225,7 @@ public class BuildingBarracks extends AbstractBuilding
             getSchematicName() + getBuildingLevel());
 
         final String structureName = sn.toString();
-        final StructureWrapper wrapper = new StructureWrapper(getColony().getWorld(), structureName);
+        final StructureWrapper wrapper = new StructureWrapper(getColonyByPosFromWorld().getWorld(), structureName);
 
         BlockPos barracksPos = null;
         final List<Template.BlockInfo> barracksTowers = new ArrayList<>();

@@ -333,6 +333,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     @Override
     public AbstractJob createJob(final CitizenData citizen)
     {
+        if (job == null)
+        {
+            job = new Random().nextBoolean() ? GuardJob.KNIGHT : GuardJob.RANGER;
+        }
         return job.getGuardJob(citizen);
     }
 

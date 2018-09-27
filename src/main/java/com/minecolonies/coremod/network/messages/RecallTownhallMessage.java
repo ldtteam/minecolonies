@@ -27,6 +27,11 @@ public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage
     private int colonyId;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty public constructor.
      */
     public RecallTownhallMessage()
@@ -43,24 +48,27 @@ public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage
     {
         super();
         this.colonyId = townhall.getColony().getID();
+        this.dimension = townhall.getColony().getDimension();
     }
 
     @Override
     public void fromBytes(final ByteBuf buf)
     {
         colonyId = buf.readInt();
+        dimension = buf.readInt();
     }
 
     @Override
     public void toBytes(final ByteBuf buf)
     {
         buf.writeInt(colonyId);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final RecallTownhallMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings

@@ -77,7 +77,7 @@ public class MakeNotAutoDeletableCommand extends AbstractSingleCommand implement
 
         final int colonyId;
         colonyId = Integer.parseInt(args[0]);
-        final Colony colony = ColonyManager.getColony(colonyId);
+        final Colony colony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(0));
 
         if (colony == null)
         {

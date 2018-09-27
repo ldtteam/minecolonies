@@ -49,6 +49,11 @@ public class PermissionsMessage
         private ByteBuf data;
 
         /**
+         * The dimension of the message.
+         */
+        private int dimension;
+
+        /**
          * Empty constructor used when registering the message.
          */
         public View()
@@ -67,6 +72,7 @@ public class PermissionsMessage
             this.colonyID = colony.getID();
             this.data = Unpooled.buffer();
             colony.getPermissions().serializeViewNetworkData(this.data, viewerRank);
+            this.dimension = colony.getDimension();
         }
 
         @Override
@@ -74,6 +80,7 @@ public class PermissionsMessage
         {
             final ByteBuf newBuf = buf.retain();
             colonyID = newBuf.readInt();
+            dimension = newBuf.readInt();
             data = newBuf;
         }
 
@@ -87,6 +94,7 @@ public class PermissionsMessage
         public void toBytes(@NotNull final ByteBuf buf)
         {
             buf.writeInt(colonyID);
+            buf.writeInt(dimension);
             buf.writeBytes(data);
         }
     }
@@ -100,6 +108,11 @@ public class PermissionsMessage
         private MessageType type;
         private Rank        rank;
         private Action      action;
+
+        /**
+         * The dimension of the message.
+         */
+        private int dimension;
 
         /**
          * Empty public constructor.
@@ -124,12 +137,13 @@ public class PermissionsMessage
             this.type = type;
             this.rank = rank;
             this.action = action;
+            this.dimension = colony.getDimension();
         }
 
         @Override
         public void messageOnServerThread(final Permission message, final EntityPlayerMP player)
         {
-            final Colony colony = ColonyManager.getColony(message.colonyID);
+            final Colony colony = ColonyManager.getColonyByDimension(message.colonyID, message.dimension);
             if (colony == null)
             {
                 Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
@@ -165,6 +179,7 @@ public class PermissionsMessage
             ByteBufUtils.writeUTF8String(buf, type.name());
             ByteBufUtils.writeUTF8String(buf, rank.name());
             ByteBufUtils.writeUTF8String(buf, action.name());
+            buf.writeInt(dimension);
         }
 
         @Override
@@ -174,6 +189,7 @@ public class PermissionsMessage
             type = MessageType.valueOf(ByteBufUtils.readUTF8String(buf));
             rank = Rank.valueOf(ByteBufUtils.readUTF8String(buf));
             action = Action.valueOf(ByteBufUtils.readUTF8String(buf));
+            dimension = buf.readInt();
         }
     }
 
@@ -184,6 +200,11 @@ public class PermissionsMessage
     {
         private int    colonyID;
         private String playerName;
+
+        /**
+         * The dimension of the message.
+         */
+        private int dimension;
 
         /**
          * Empty public constructor.
@@ -204,6 +225,7 @@ public class PermissionsMessage
             super();
             this.colonyID = colony.getID();
             this.playerName = player;
+            this.dimension = colony.getDimension();
         }
 
         @Override
@@ -211,6 +233,7 @@ public class PermissionsMessage
         {
             buf.writeInt(colonyID);
             ByteBufUtils.writeUTF8String(buf, playerName);
+            buf.writeInt(dimension);
         }
 
         @Override
@@ -218,12 +241,13 @@ public class PermissionsMessage
         {
             colonyID = buf.readInt();
             playerName = ByteBufUtils.readUTF8String(buf);
+            dimension = buf.readInt();
         }
 
         @Override
         public void messageOnServerThread(final AddPlayer message, final EntityPlayerMP player)
         {
-            final Colony colony = ColonyManager.getColony(message.colonyID);
+            final Colony colony = ColonyManager.getColonyByDimension(message.colonyID, message.dimension);
 
             if (colony != null && colony.getPermissions().hasPermission(player, Action.CAN_PROMOTE) && colony.getWorld() != null)
             {
@@ -246,6 +270,11 @@ public class PermissionsMessage
         private UUID   id;
 
         /**
+         * The dimension of the message.
+         */
+        private int dimension;
+
+        /**
          * Empty public constructor.
          */
         public AddPlayerOrFakePlayer()
@@ -266,6 +295,7 @@ public class PermissionsMessage
             this.colonyID = colony.getID();
             this.playerName = playerName;
             this.id = id;
+            this.dimension = colony.getDimension();
         }
 
         @Override
@@ -274,6 +304,7 @@ public class PermissionsMessage
             buf.writeInt(colonyID);
             ByteBufUtils.writeUTF8String(buf, playerName);
             PacketUtils.writeUUID(buf, id);
+            buf.writeInt(dimension);
         }
 
         @Override
@@ -282,12 +313,13 @@ public class PermissionsMessage
             colonyID = buf.readInt();
             playerName = ByteBufUtils.readUTF8String(buf);
             id = PacketUtils.readUUID(buf);
+            dimension = buf.readInt();
         }
 
         @Override
         public void messageOnServerThread(final AddPlayerOrFakePlayer message, final EntityPlayerMP player)
         {
-            final Colony colony = ColonyManager.getColony(message.colonyID);
+            final Colony colony = ColonyManager.getColonyByDimension(message.colonyID, message.dimension);
 
             if (colony != null && colony.getPermissions().hasPermission(player, Action.CAN_PROMOTE) && colony.getWorld() != null)
             {
@@ -310,6 +342,11 @@ public class PermissionsMessage
         private Type type;
 
         /**
+         * The dimension of the message.
+         */
+        private int dimension;
+
+        /**
          * Empty public constructor.
          */
         public ChangePlayerRank()
@@ -330,6 +367,7 @@ public class PermissionsMessage
             this.colonyID = colony.getID();
             this.playerID = player;
             this.type = type;
+            this.dimension = colony.getDimension();
         }
 
         /**
@@ -347,6 +385,7 @@ public class PermissionsMessage
             buf.writeInt(colonyID);
             PacketUtils.writeUUID(buf, playerID);
             ByteBufUtils.writeUTF8String(buf, type.name());
+            buf.writeInt(dimension);
         }
 
         @Override
@@ -355,12 +394,13 @@ public class PermissionsMessage
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
             type = Type.valueOf(ByteBufUtils.readUTF8String(buf));
+            dimension = buf.readInt();
         }
 
         @Override
         public void messageOnServerThread(final ChangePlayerRank message, final EntityPlayerMP player)
         {
-            final Colony colony = ColonyManager.getColony(message.colonyID);
+            final Colony colony = ColonyManager.getColonyByDimension(message.colonyID, message.dimension);
 
             if (colony == null || colony.getWorld() == null)
             {
@@ -393,6 +433,11 @@ public class PermissionsMessage
         private UUID playerID;
 
         /**
+         * The dimension of the message.
+         */
+        private int dimension;
+
+        /**
          * Empty public constructor.
          */
         public RemovePlayer()
@@ -411,6 +456,7 @@ public class PermissionsMessage
             super();
             this.colonyID = colony.getID();
             this.playerID = player;
+            this.dimension = colony.getDimension();
         }
 
         @Override
@@ -418,6 +464,7 @@ public class PermissionsMessage
         {
             buf.writeInt(colonyID);
             PacketUtils.writeUUID(buf, playerID);
+            buf.writeInt(dimension);
         }
 
         @Override
@@ -425,12 +472,13 @@ public class PermissionsMessage
         {
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
+            dimension = buf.readInt();
         }
 
         @Override
         public void messageOnServerThread(final RemovePlayer message, final EntityPlayerMP player)
         {
-            final Colony colony = ColonyManager.getColony(message.colonyID);
+            final Colony colony = ColonyManager.getColonyByDimension(message.colonyID, message.dimension);
 
             if (colony == null)
             {

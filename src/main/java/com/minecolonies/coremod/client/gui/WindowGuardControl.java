@@ -347,7 +347,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
      */
     private void recalculate()
     {
-        MineColonies.getNetwork().sendToServer(new GuardRecalculateMessage(building.getColony().getID(), building.getID()));
+        MineColonies.getNetwork().sendToServer(new GuardRecalculateMessage(building.getColony().getID(), building));
         pullInfoFromHut();
     }
 

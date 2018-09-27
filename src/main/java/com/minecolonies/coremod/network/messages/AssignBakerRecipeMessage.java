@@ -25,6 +25,11 @@ public class AssignBakerRecipeMessage extends AbstractMessage<AssignBakerRecipeM
     private int		 recipePos;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty standard constructor.
      */
     public AssignBakerRecipeMessage()
@@ -47,6 +52,7 @@ public class AssignBakerRecipeMessage extends AbstractMessage<AssignBakerRecipeM
         this.assign = assign;
         this.field = field;
         this.recipePos = pos;
+        this.dimension = building.getColony().getDimension();
     }
 
     @Override
@@ -57,6 +63,7 @@ public class AssignBakerRecipeMessage extends AbstractMessage<AssignBakerRecipeM
         assign = buf.readBoolean();
         field = BlockPosUtil.readFromByteBuf(buf);
         recipePos = buf.readInt();
+        dimension = buf.readInt();
     }
 
     @Override
@@ -67,12 +74,13 @@ public class AssignBakerRecipeMessage extends AbstractMessage<AssignBakerRecipeM
         buf.writeBoolean(assign);
         BlockPosUtil.writeToByteBuf(buf, field);
         buf.writeInt(recipePos);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final AssignBakerRecipeMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
