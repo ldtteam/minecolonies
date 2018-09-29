@@ -2036,7 +2036,7 @@ public class InventoryUtils
             }
             else if (itemStackSelectionPredicate.test(stack))
             {
-                if (ItemStackUtils.getSize(stack) + amount <= Constants.STACKSIZE)
+                if (ItemStackUtils.getSize(stack) + amount <= stack.getMaxStackSize())
                 {
                     foundEmptySlot = true;
                 }
