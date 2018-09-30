@@ -52,8 +52,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
     {
         final IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
 
-        // indexes that do not fit into the player crafting grid
-        final Set<Integer> badIndexes = ImmutableSet.of(2, 5, 6, 7, 8);
+
 
         // compact the crafting grid into a 2x2 area
         final Map<Integer, ItemStack> guiIngredients = new HashMap<>();
@@ -61,6 +60,22 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
         guiIngredients.put(1, ItemStackUtils.EMPTY);
         guiIngredients.put(3, ItemStackUtils.EMPTY);
         guiIngredients.put(4, ItemStackUtils.EMPTY);
+
+        // indexes that do not fit into the player crafting grid
+        final Set<Integer> badIndexes;
+        if(craftingGUIBuilding.isComplete())
+        {
+            guiIngredients.put(2, ItemStackUtils.EMPTY);
+            guiIngredients.put(5, ItemStackUtils.EMPTY);
+            guiIngredients.put(6, ItemStackUtils.EMPTY);
+            guiIngredients.put(7, ItemStackUtils.EMPTY);
+            guiIngredients.put(8, ItemStackUtils.EMPTY);
+            badIndexes = ImmutableSet.of();
+        }
+        else
+        {
+            badIndexes = ImmutableSet.of(2, 5, 6, 7, 8);
+        }
 
         int inputIndex = 0;
         for (final IGuiIngredient<ItemStack> ingredient : itemStackGroup.getGuiIngredients().values())
@@ -79,20 +94,37 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
                 inputIndex++;
             }
         }
-
-        final InventoryCrafting craftMatrix = new InventoryCrafting(new Container() {
+        final int size = craftingGUIBuilding.isComplete() ? 3 : 2;
+        final InventoryCrafting craftMatrix = new InventoryCrafting(new Container()
+        {
             @Override
             public boolean canInteractWith(final EntityPlayer entityPlayer)
             {
                 return false;
             }
-        }, 2, 2);
+        }, size, size);
 
-        craftMatrix.setInventorySlotContents(0, guiIngredients.get(0));
-        craftMatrix.setInventorySlotContents(1, guiIngredients.get(1));
-        craftMatrix.setInventorySlotContents(2, guiIngredients.get(3));
-        craftMatrix.setInventorySlotContents(3, guiIngredients.get(4));
 
+        if(craftingGUIBuilding.isComplete())
+        {
+            craftMatrix.setInventorySlotContents(0, guiIngredients.get(0));
+            craftMatrix.setInventorySlotContents(1, guiIngredients.get(1));
+            craftMatrix.setInventorySlotContents(2, guiIngredients.get(2));
+            craftMatrix.setInventorySlotContents(3, guiIngredients.get(3));
+            craftMatrix.setInventorySlotContents(4, guiIngredients.get(4));
+            craftMatrix.setInventorySlotContents(5, guiIngredients.get(5));
+            craftMatrix.setInventorySlotContents(6, guiIngredients.get(6));
+            craftMatrix.setInventorySlotContents(7, guiIngredients.get(7));
+            craftMatrix.setInventorySlotContents(8, guiIngredients.get(8));
+        }
+        else
+        {
+            craftMatrix.setInventorySlotContents(0, guiIngredients.get(0));
+            craftMatrix.setInventorySlotContents(1, guiIngredients.get(1));
+            craftMatrix.setInventorySlotContents(2, guiIngredients.get(3));
+            craftMatrix.setInventorySlotContents(3, guiIngredients.get(4));
+
+        }
 
         final IRecipe recipe = CraftingManager.findMatchingRecipe(craftMatrix, craftingGUIBuilding.getWorldObj());
         if (recipe == null)
@@ -109,7 +141,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
 
         if (b1)
         {
-            final TransferRecipeCrafingTeachingMessage message = new TransferRecipeCrafingTeachingMessage(guiIngredients);
+            final TransferRecipeCrafingTeachingMessage message = new TransferRecipeCrafingTeachingMessage(guiIngredients, craftingGUIBuilding.isComplete());
             MineColonies.getNetwork().sendToServer(message);
         }
 
