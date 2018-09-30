@@ -503,7 +503,13 @@ public class BuildingBaker extends AbstractBuildingWorker
     		recipesAllowed[pos] = value;
     	}
     }
-    
+
+    @Override
+    public boolean canCraftComplexRecipes()
+    {
+        return true;
+    }
+
     /**
      * Method to serialize data to send it to the view.
      *
@@ -521,8 +527,6 @@ public class BuildingBaker extends AbstractBuildingWorker
         }
     }
 
-    
-    
     /**
      * The client view for the baker building.
      */
@@ -620,6 +624,4 @@ public class BuildingBaker extends AbstractBuildingWorker
         }
 
     }
-
-
 }
