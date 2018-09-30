@@ -19,6 +19,7 @@ public class PauseCitizenMessage extends AbstractMessage<PauseCitizenMessage, IM
      * The Colony ID.
      */
     private int colonyId;
+    private int colonyDim;
 
     /**
      * The citizen to pause.
@@ -43,6 +44,7 @@ public class PauseCitizenMessage extends AbstractMessage<PauseCitizenMessage, IM
     {
         super();
         this.colonyId = building.getColony().getID();
+        this.colonyDim = building.getColony().getDimension();
         this.citizenID = citizenID;
     }
 
@@ -55,6 +57,7 @@ public class PauseCitizenMessage extends AbstractMessage<PauseCitizenMessage, IM
     public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
+        colonyDim = buf.readInt();
         citizenID = buf.readInt();
     }
 
@@ -67,13 +70,14 @@ public class PauseCitizenMessage extends AbstractMessage<PauseCitizenMessage, IM
     public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
+        buf.writeInt(colonyDim);
         buf.writeInt(citizenID);
     }
 
     @Override
     public void messageOnServerThread(final PauseCitizenMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.colonyDim);
         
         if (colony != null)
         {

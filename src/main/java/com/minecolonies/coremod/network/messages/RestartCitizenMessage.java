@@ -20,6 +20,7 @@ public class RestartCitizenMessage extends AbstractMessage<RestartCitizenMessage
      * The Colony ID.
      */
     private int colonyId;
+    private int colonyDim;
 
     /**
      * The citizen to restart.
@@ -44,6 +45,7 @@ public class RestartCitizenMessage extends AbstractMessage<RestartCitizenMessage
     {
         super();
         this.colonyId = building.getColony().getID();
+        this.colonyDim = building.getColony().getDimension();
         this.citizenID = citizenID;
     }
 
@@ -56,6 +58,7 @@ public class RestartCitizenMessage extends AbstractMessage<RestartCitizenMessage
     public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
+        colonyDim = buf.readInt();
         citizenID = buf.readInt();
     }
 
@@ -68,13 +71,14 @@ public class RestartCitizenMessage extends AbstractMessage<RestartCitizenMessage
     public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
+        buf.writeInt(colonyDim);
         buf.writeInt(citizenID);
     }
 
     @Override
     public void messageOnServerThread(final RestartCitizenMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.colonyDim);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
