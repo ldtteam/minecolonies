@@ -123,10 +123,11 @@ public class WindowListRecipes extends Window implements ButtonHandler
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 @NotNull final IRecipeStorage recipe = recipes.get(index);
-                rowPane.findPaneOfTypeByID(OUTPUT_ICON, ItemIcon.class).setItem(recipe.getPrimaryOutput());
+                final ItemIcon icon = rowPane.findPaneOfTypeByID(OUTPUT_ICON, ItemIcon.class);
+                icon.setItem(recipe.getPrimaryOutput());
 
                 final String name;
-                if(recipe.getInput().size() < 4)
+                if(recipe.getInput().size() <= 4)
                 {
                     name = RESOURCE;
                 }
@@ -135,6 +136,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
                     name = RES;
                     rowPane.findPaneOfTypeByID("3x3", Box.class).setVisible(true);
                     rowPane.findPaneOfTypeByID("2x2", Box.class).setVisible(false);
+                    icon.setPosition(80, 17);
                 }
 
                 for(int i = 0; i < recipe.getInput().size(); i++)
