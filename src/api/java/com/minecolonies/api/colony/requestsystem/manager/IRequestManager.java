@@ -185,4 +185,10 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
      * Called to reset the RS.
      */
     void reset();
+
+    /**
+     * Checks if dirty and needs to be updated.
+     * @return true if so.
+     */
+    boolean isDirty();
 }

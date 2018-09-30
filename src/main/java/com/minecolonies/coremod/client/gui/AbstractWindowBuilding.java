@@ -11,6 +11,7 @@ import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.CMC_GUI_TOWNHALL_BUILDING_LEVEL;
 
 /**
  * Manage windows associated with Buildings.
@@ -91,7 +92,16 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
 
             if (title != null)
             {
-                title.setLabelText(LanguageHandler.format(getBuildingName()) + " " + buildingView.getBuildingLevel());
+                if (switchView.getID().equals(GUI_LIST_BUTTON_SWITCH + PAGE_ACTIONS))
+                {
+                    // Townhall does not need level in colony name
+                    title.setLabelText(getBuildingName());
+                    findPaneOfTypeByID(LEVEL_LABEL, Label.class).setLabelText(LanguageHandler.format(CMC_GUI_TOWNHALL_BUILDING_LEVEL) + ": " + buildingView.getBuildingLevel());
+                }
+                else
+                {
+                    title.setLabelText(LanguageHandler.format(getBuildingName()) + " " + buildingView.getBuildingLevel());
+                }
             }
 
             updateButtonBuild(buildingView);

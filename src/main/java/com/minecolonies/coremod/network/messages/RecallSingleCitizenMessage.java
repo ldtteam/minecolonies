@@ -38,6 +38,11 @@ public class RecallSingleCitizenMessage extends AbstractMessage<RecallSingleCiti
     private int citizenId;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty public constructor.
      */
     public RecallSingleCitizenMessage()
@@ -57,6 +62,7 @@ public class RecallSingleCitizenMessage extends AbstractMessage<RecallSingleCiti
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.citizenId = citizenid;
+        this.dimension = building.getColony().getDimension();
     }
 
     @Override
@@ -65,6 +71,7 @@ public class RecallSingleCitizenMessage extends AbstractMessage<RecallSingleCiti
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
         citizenId = buf.readInt();
+        dimension = buf.readInt();
     }
 
     @Override
@@ -73,12 +80,13 @@ public class RecallSingleCitizenMessage extends AbstractMessage<RecallSingleCiti
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
         buf.writeInt(citizenId);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final RecallSingleCitizenMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings

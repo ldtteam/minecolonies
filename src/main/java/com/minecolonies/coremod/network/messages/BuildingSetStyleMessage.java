@@ -35,6 +35,12 @@ public class BuildingSetStyleMessage extends AbstractMessage<BuildingSetStyleMes
     private String style;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+
+    /**
      * Empty constructor used when registering the message.
      */
     public BuildingSetStyleMessage()
@@ -54,6 +60,7 @@ public class BuildingSetStyleMessage extends AbstractMessage<BuildingSetStyleMes
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.style = style;
+        this.dimension = building.getColony().getDimension();
     }
 
     @Override
@@ -62,6 +69,7 @@ public class BuildingSetStyleMessage extends AbstractMessage<BuildingSetStyleMes
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
         style = ByteBufUtils.readUTF8String(buf);
+        dimension = buf.readInt();
     }
 
     @Override
@@ -70,12 +78,13 @@ public class BuildingSetStyleMessage extends AbstractMessage<BuildingSetStyleMes
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
         ByteBufUtils.writeUTF8String(buf, style);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final BuildingSetStyleMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings

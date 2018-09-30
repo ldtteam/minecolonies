@@ -18,8 +18,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Predicate;
-
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -41,21 +39,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
     protected static final int WAIT_AFTER_REQUEST = 50;
 
     /**
-     * The standard delay after each terminated action.
-     */
-    protected static final int STANDARD_DELAY = 5;
-
-    /**
-     * What he currently might be needing.
-     */
-    protected Predicate<ItemStack> needsCurrently = null;
-
-    /**
-     * The current position the worker should walk to.
-     */
-    protected BlockPos walkTo = null;
-
-    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class.
@@ -66,7 +49,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         super.registerTargets(
                 new AITarget(IDLE, START_WORKING),
                 new AITarget(START_WORKING, this::startWorking),
-                new AITarget(GATHERING_REQUIRED_MATERIALS, this::getNeededItem),
                 new AITarget(START_USING_FURNACE, this::fillUpFurnace),
                 new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace));
     }
@@ -242,62 +224,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
     protected int getActionsDoneUntilDumping()
     {
         return 1;
-    }
-
-    /**
-     * Retrieve burnable material from the building to get to start smelting.
-     * For this go to the building if no position has been set.
-     * Then check for the chest with the required material and set the position and return.
-     *
-     * If the position has been set navigate to it.
-     * On arrival transfer to inventory and return to StartWorking.
-     *
-     * @return the next state to transfer to.
-     */
-    private AIState getNeededItem()
-    {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_GATHERING));
-
-        if (walkTo == null && walkToBuilding())
-        {
-            return getState();
-        }
-
-        if (needsCurrently == null || !InventoryUtils.hasItemInProvider(getOwnBuilding(), needsCurrently))
-        {
-            setDelay(STANDARD_DELAY);
-            return START_WORKING;
-        }
-        else
-        {
-            if (walkTo == null)
-            {
-                final BlockPos pos = getOwnBuilding().getTileEntity().getPositionOfChestWithItemStack(needsCurrently);
-                if (pos == null)
-                {
-                    setDelay(STANDARD_DELAY);
-                    return START_WORKING;
-                }
-                walkTo = pos;
-            }
-
-            if (walkToBlock(walkTo))
-            {
-                setDelay(2);
-                return getState();
-            }
-
-            final boolean transfered = tryTransferFromPosToWorker(walkTo, needsCurrently);
-            if (!transfered)
-            {
-                walkTo = null;
-                return START_WORKING;
-            }
-            walkTo = null;
-        }
-
-        setDelay(STANDARD_DELAY);
-        return START_WORKING;
     }
 
     /**

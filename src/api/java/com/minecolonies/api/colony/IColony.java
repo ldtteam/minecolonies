@@ -153,5 +153,9 @@ public interface IColony
      */
     void addVisitingPlayer(final EntityPlayer player);
 
-
+    /**
+     * Get the colony dimension.
+     * @return the dimension id.
+     */
+    int getDimension();
 }

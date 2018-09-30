@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -27,14 +27,14 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
 {
-    private static final int TIME_STRAFING_BEFORE_SWITCHING_DIRECTIONS = 15;
-    private static final double SWITCH_STRAFING_DIRECTION = 0.3d;
-    private static final float STRAFING_SPEED = 0.6f;
+    private static final int    TIME_STRAFING_BEFORE_SWITCHING_DIRECTIONS = 15;
+    private static final double SWITCH_STRAFING_DIRECTION                 = 0.3d;
+    private static final double STRAFING_SPEED                            = 0.6f;
 
     /**
      * This guard's minimum distance for attack.
      */
-    private static final double MAX_DISTANCE_FOR_ATTACK = 200;
+    private static final int MAX_DISTANCE_FOR_ATTACK = 160;
 
     /**
      * The value of the speed which the guard will move.
@@ -97,22 +97,21 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     }
 
     @Override
-    protected int getAttackRange()
+    public AIState getAttackState()
     {
-        return (int) MAX_DISTANCE_FOR_ATTACK;
+        return GUARD_ATTACK_RANGED;
     }
 
     @Override
-    protected AIState decide()
+    protected int getAttackRange()
     {
-        final AIState superState = super.decide();
+        return (MAX_DISTANCE_FOR_ATTACK / ((buildingGuards.getBuildingLevel() / buildingGuards.getMaxBuildingLevel()) + 1)) + 10;
+    }
 
-        if ((superState != DECIDE && superState != PREPARING) || target == null)
-        {
-            return superState;
-        }
-
-        return GUARD_ATTACK_RANGED;
+    @Override
+    public boolean hasMainWeapon()
+    {
+        return !checkForToolOrWeapon(ToolType.BOW);
     }
 
     /**
@@ -130,120 +129,100 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
         return super.getTarget();
     }
 
+    @Override
+    public void wearWeapon()
+    {
+        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.BOW, 0, buildingGuards.getMaxToolLevel());
+        if (bowSlot != -1)
+        {
+            worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, bowSlot);
+        }
+    }
+
     /**
      * The ranged attack modus.
+     *
      * @return the next state to go to.
      */
     protected AIState attackRanged()
     {
-        if (worker.getRevengeTarget() != null
-              && !worker.getRevengeTarget().isDead
-              && worker.getDistance(worker.getRevengeTarget()) < getAttackRange())
+        final AIState state = preAttackChecks();
+        if (state != getState())
         {
-            target = worker.getRevengeTarget();
+            setDelay(STANDARD_DELAY);
+            return state;
         }
 
-        if (target == null || target.isDead)
+        if (worker.getCitizenData() != null)
         {
-            worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
-            target = null;
-            return DECIDE;
-        }
+            final double two_dim_distance = BlockPosUtil.getDistanceSquared2D(worker.getCurrentPosition(), target.getPosition());
+            final double distanceToEntity = worker.getDistanceSq(target.posX, target.getEntityBoundingBox().minY, target.posZ);
+            final boolean canSee = worker.getEntitySenses().canSee(target);
 
-        if (checkForToolOrWeapon(ToolType.BOW))
-        {
-            target = null;
-            return DECIDE;
-        }
-
-        if (getOwnBuilding() != null && worker.getCitizenData() != null)
-        {
-            if (worker.getHealth() < ((int) worker.getMaxHealth() * 0.2f) && getOwnBuilding(AbstractBuildingGuards.class).shallRetrieveOnLowHealth())
+            if (canSee)
             {
-                target = null;
-                return DECIDE;
+                timeAtSameSpot = 0;
+                timeCanSee++;
             }
-
-            if (worker.getDistance(target) > getAttackRange())
+            else
             {
-                worker.isWorkerAtSiteWithMove(target.getPosition(), getAttackRange());
-                return GUARD_ATTACK_RANGED;
-            }
-
-            final int bowslot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()),
-              ToolType.BOW,
-              0,
-              getOwnBuilding().getMaxToolLevel());
-
-            if (bowslot != -1)
-            {
-                final double distance1 =  BlockPosUtil.getDistanceSquared2D(worker.getCurrentPosition(), target.getPosition());
-                final double distanceToEntity = worker.getDistanceSq(target.posX, target.getEntityBoundingBox().minY, target.posZ);
-                final boolean canSee = worker.getEntitySenses().canSee(target);
-
-                if (canSee)
+                if (lastDistance == two_dim_distance)
+                {
+                    timeAtSameSpot++;
+                }
+                else if (timeAtSameSpot > 0)
+                {
+                    timeAtSameSpot++;
+                }
+                else
                 {
                     timeAtSameSpot = 0;
-                    timeCanSee++;
                 }
-                else
+                timeCanSee--;
+            }
+
+            if (distanceToEntity < getAttackDistance() && timeCanSee >= 20 && (!canSee && timeAtSameSpot > 20))
+            {
+                worker.getNavigator().clearPath();
+                strafingTime++;
+            }
+            else if (distanceToEntity < getAttackRange())
+            {
+                worker.getNavigator().tryMoveToEntityLiving(target, ATTACK_SPEED);
+                strafingTime = -1;
+            }
+
+            if (strafingTime >= TIME_STRAFING_BEFORE_SWITCHING_DIRECTIONS)
+            {
+                if ((double) worker.getRNG().nextFloat() < SWITCH_STRAFING_DIRECTION)
                 {
-                    if (lastDistance == distance1)
-                    {
-                        timeAtSameSpot++;
-                    }
-                    else if (timeAtSameSpot > 0 && !canSee)
-                    {
-                        timeAtSameSpot++;
-                    }
-                    else
-                    {
-                        timeAtSameSpot = 0;
-                    }
-                    timeCanSee--;
+                    strafingClockwise = !strafingClockwise;
                 }
 
-                if (distanceToEntity <  getAttackDistance() && timeCanSee >= 20 && (!canSee && timeAtSameSpot > 20))
+                if ((double) worker.getRNG().nextFloat() < SWITCH_STRAFING_DIRECTION)
                 {
-                    worker.getNavigator().clearPath();
-                    strafingTime++;
-                }
-                else
-                {
-                    worker.getNavigator().tryMoveToEntityLiving(target, ATTACK_SPEED);
-                    strafingTime = -1;
+                    strafingBackwards = !strafingBackwards;
                 }
 
+                this.strafingTime = 0;
+            }
 
-                if (strafingTime >= TIME_STRAFING_BEFORE_SWITCHING_DIRECTIONS)
-                {
-                    if ((double)worker.getRNG().nextFloat() < SWITCH_STRAFING_DIRECTION)
-                    {
-                        strafingClockwise = !strafingClockwise;
-                    }
+            if (distanceToEntity < getAttackDistance() && toCloseNumTicks < 10)
+            {
+                toCloseNumTicks++;
+            }
+            else
+            {
+                toCloseNumTicks = 0;
+            }
 
-                    if ((double)worker.getRNG().nextFloat() < SWITCH_STRAFING_DIRECTION)
-                    {
-                        strafingBackwards = !strafingBackwards;
-                    }
-
-                    this.strafingTime = 0;
-                }
-
-                if (distanceToEntity < getAttackDistance() && toCloseNumTicks < 10)
-                {
-                    toCloseNumTicks++;
-                }
-                else
-                {
-                    toCloseNumTicks = 0;
-                }
-
+            if (buildingGuards.getTask() != GuardTask.GUARD)
+            {
                 if (strafingTime > -1 || toCloseNumTicks > 0)
                 {
-                    if (distanceToEntity < getAttackDistance() && toCloseNumTicks > 5  && (timeCanSee > -10))
+                    if (distanceToEntity < getAttackDistance() && toCloseNumTicks > 5 && (timeCanSee > -10))
                     {
-                        worker.getNavigator().moveAwayFromEntityLiving(target, 80, getAttackSpeed());
+                        worker.getNavigator().moveAwayFromEntityLiving(target, 20, getAttackSpeed());
                         worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
                     }
                     else
@@ -256,8 +235,8 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                         {
                             strafingBackwards = true;
                         }
-                        worker.getMoveHelper().strafe(strafingBackwards ? (float) (getAttackDistance() - distanceToEntity) * -1 : getAttackSpeed(),
-                          strafingClockwise ? getAttackSpeed() * STRAFING_SPEED : getAttackSpeed() * STRAFING_SPEED * -1);
+                        worker.getMoveHelper().strafe((float) (strafingBackwards ? (getAttackDistance() - distanceToEntity) * -1 : getAttackSpeed()),
+                          (float) (strafingClockwise ? getAttackSpeed() * STRAFING_SPEED : getAttackSpeed() * STRAFING_SPEED * -1));
                     }
 
                     worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
@@ -266,82 +245,88 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 {
                     worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
                 }
+            }
+            else if (!canSee)
+            {
+                return DECIDE;
+            }
+            else if(distanceToEntity < getAttackDistance())
+            {
+                worker.getNavigator().moveAwayFromEntityLiving(target, 10, getAttackSpeed());
+            }
 
-                worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, bowslot);
-
-                if (worker.isHandActive())
+            if (worker.isHandActive())
+            {
+                if (!canSee && timeCanSee < -60)
                 {
-                    if (!canSee && timeCanSee < -60)
+                    worker.resetActiveHand();
+                }
+                else if (canSee)
+                {
+                    worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+                    worker.swingArm(EnumHand.MAIN_HAND);
+
+                    final EntityTippedArrow arrow = new GuardArrow(world, worker);
+                    final double xVector = target.posX - worker.posX;
+                    final double yVector = target.getEntityBoundingBox().minY + target.height / getAimHeight() - arrow.posY;
+                    final double zVector = target.posZ - worker.posZ;
+                    final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
+                    double damage = getRangedAttackDamage();
+
+                    if (Configurations.gameplay.rangerEnchants)
                     {
-                        worker.resetActiveHand();
+                        final ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
+                        damage += EnchantmentHelper.getModifierForCreature(heldItem, target.getCreatureAttribute());
+                        damage += EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, heldItem);
                     }
-                    else
-                    if (canSee && distanceToEntity < getAttackDistance())
+
+                    final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getLevel() + 1);
+
+                    arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
+
+                    if (worker.getHealth() <= DOUBLE_DAMAGE_THRESHOLD)
                     {
-                        worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
-                        worker.swingArm(EnumHand.MAIN_HAND);
-
-                        final EntityTippedArrow arrow = new GuardArrow(world, worker);
-                        final double xVector = target.posX - worker.posX;
-                        final double yVector = target.getEntityBoundingBox().minY + target.height / getAimHeight() - arrow.posY;
-                        final double zVector = target.posZ - worker.posZ;
-                        final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
-                        double damage = getRangedAttackDamage();
-
-                        if (Configurations.gameplay.rangerEnchants)
-                        {
-                            final ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
-                            damage += EnchantmentHelper.getModifierForCreature(heldItem, target.getCreatureAttribute());
-                            damage += EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, heldItem);
-                        }
-
-                        final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getLevel() + 1);
-
-                        arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
-
-                        if (worker.getHealth() <= DOUBLE_DAMAGE_THRESHOLD)
-                        {
-                            damage *= 2;
-                        }
-
-                        arrow.setDamage(damage);
-                        worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-                        worker.world.spawnEntity(arrow);
-
-                        final double xDiff = target.posX - worker.posX;
-                        final double zDiff = target.posZ - worker.posZ;
-                        final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
-                        final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
-                        worker.move(MoverType.SELF, goToX, 0, goToZ);
-
-                        target.setRevengeTarget(worker);
-                        attackTime = getAttackDelay();
-                        worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
-                        worker.resetActiveHand();
+                        damage *= 2;
                     }
-                    else
-                    {
-                        /*
-                         * It is possible the object is higher than guard and guard can't get there.
-                         * Guard will try to back up to get some distance to be able to shoot target.
-                         */
-                        if (target.posY  > worker.posY + 15)
-                        {
-                            worker.getNavigator().moveAwayFromEntityLiving(target, 10, getAttackSpeed());
-                        }
-                    }
+
+                    arrow.setDamage(damage);
+                    worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+                    worker.world.spawnEntity(arrow);
+
+                    final double xDiff = target.posX - worker.posX;
+                    final double zDiff = target.posZ - worker.posZ;
+                    final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
+                    final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
+                    worker.move(MoverType.SELF, goToX, 0, goToZ);
+
+                    target.setRevengeTarget(worker);
+                    attackTime = getAttackDelay();
+                    worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
+                    worker.resetActiveHand();
                 }
                 else
                 {
-                    attackTime--;
-                    if (attackTime <= 0)
+                    /*
+                     * It is possible the object is higher than guard and guard can't get there.
+                     * Guard will try to back up to get some distance to be able to shoot target.
+                     */
+                    if (target.posY > worker.posY + Y_VISION + Y_VISION)
                     {
-                        worker.setActiveHand(EnumHand.MAIN_HAND);
+                        worker.getNavigator().moveAwayFromEntityLiving(target, 10, getAttackSpeed());
                     }
                 }
-                lastDistance = distance1;
             }
+            else
+            {
+                attackTime--;
+                if (attackTime <= 0)
+                {
+                    worker.setActiveHand(EnumHand.MAIN_HAND);
+                }
+            }
+            lastDistance = two_dim_distance;
         }
+
         return GUARD_ATTACK_RANGED;
     }
 
@@ -366,7 +351,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
      * Suppression because the method already explains the value.
      */
     @SuppressWarnings({"squid:S3400", "squid:S109"})
-    protected float getRangedAttackDamage()
+    private float getRangedAttackDamage()
     {
         return 2;
     }
@@ -378,7 +363,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
      * Suppression because the method already explains the value.
      */
     @SuppressWarnings({"squid:S3400", "squid:S109"})
-    protected double getAimHeight()
+    private double getAimHeight()
     {
         return 3.0D;
     }

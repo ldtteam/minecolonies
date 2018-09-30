@@ -2,6 +2,7 @@ package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.InventoryFunctions;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -99,11 +100,11 @@ public class TileEntityColonyBuilding extends TileEntityChest
         {
             if (colonyId == 0)
             {
-                colony = ColonyManager.getColony(getWorld(), this.getPos());
+                colony = ColonyManager.getColonyByPosFromWorld(getWorld(), this.getPos());
             }
             else
             {
-                colony = ColonyManager.getColony(colonyId);
+                colony = ColonyManager.getColonyByWorld(colonyId, getWorld());
             }
 
             // It's most probably previewed building, please don't spam it here.
@@ -144,11 +145,12 @@ public class TileEntityColonyBuilding extends TileEntityChest
     @Nullable
     public BlockPos getPositionOfChestWithItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
+        final Predicate<ItemStack> notEmptyPredicate = itemStackSelectionPredicate.and(ItemStackUtils.NOT_EMPTY_PREDICATE);
         @Nullable final AbstractBuildingContainer theBuilding = getBuilding();
 
         if (theBuilding != null)
         {
-            if (isInTileEntity(theBuilding.getTileEntity(), itemStackSelectionPredicate))
+            if (isInTileEntity(theBuilding.getTileEntity(), notEmptyPredicate))
             {
                 return theBuilding.getLocation();
             }
@@ -157,9 +159,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
             {
                 final TileEntity entity = getWorld().getTileEntity(pos);
                 if ((entity instanceof TileEntityRack
-                        && ((TileEntityRack) entity).hasItemStack(itemStackSelectionPredicate))
+                        && ((TileEntityRack) entity).hasItemStack(notEmptyPredicate))
                         || (entity instanceof TileEntityChest
-                        && isInTileEntity((TileEntityChest) entity, itemStackSelectionPredicate)))
+                        && isInTileEntity((TileEntityChest) entity, notEmptyPredicate)))
                 {
                     return pos;
                 }
@@ -303,7 +305,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
 
         if (!getWorld().isRemote && colonyId == 0)
         {
-            final Colony tempColony = ColonyManager.getColony(getWorld(), this.getPosition());
+            final Colony tempColony = ColonyManager.getColonyByPosFromWorld(getWorld(), this.getPosition());
             if (tempColony != null)
             {
                 colonyId = tempColony.getID();

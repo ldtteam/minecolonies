@@ -216,6 +216,15 @@ public class Tool implements IDeliverable
         return set;
     }
 
+    /**
+     * Check if the tool is armor.
+     * @return true if so.
+     */
+    public boolean isArmor()
+    {
+        return toolClass == ToolType.HELMET || toolClass == ToolType.LEGGINGS || toolClass == ToolType.CHESTPLATE || toolClass == ToolType.BOOTS;
+    }
+
     @Override
     public int getCount()
     {

@@ -1,85 +1,78 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.entity.ai.citizen.guards.GuardGear;
-import com.minecolonies.api.entity.ai.citizen.guards.GuardGearBuilder;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
-import com.minecolonies.api.util.InventoryFunctions;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.items.IItemHandler;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
-import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
- * Class taking of the abstract guard methods for both archer and knights.
+ * Class taking of the abstract guard methods for all fighting AIs.
+ *
  * @param <J> the generic job.
  */
-public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends AbstractEntityAIInteract<J>
+public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends AbstractEntityAIFight<J>
 {
-
-    /**
-     * Tools and Items needed by the worker.
-     */
-    public final List<ToolType>  toolsNeeded = new ArrayList<>();
-
-    /**
-     * List of items that are required by the guard based on building level
-     * and guard level.  This array holds a pointer to the building level
-     * and then pointer to GuardGear
-     */
-    public final List<List<GuardGear>> itemsNeeded = new ArrayList<>();
-
-    /**
-     * Holds a list of required armor for this guard
-     */
-    private final Map<IToolType, List<GuardGear>> requiredArmor = new LinkedHashMap<IToolType, List<GuardGear>>();
-
-    /**
-     * Holds a list of required armor for this guard
-     */
-    private final Map<IToolType, ItemStack> armorToWear = new HashMap<>();
-
     /**
      * Entities to kill before dumping into chest.
      */
     private static final int ACTIONS_UNTIL_DUMPING = 10;
 
     /**
+     * Max derivation of current position when patrolling.
+     */
+    private static final int MAX_PATROL_DERIVATION = 100;
+
+    /**
+     * Max derivation of current position when following..
+     */
+    private static final int MAX_FOLLOW_DERIVATION = 50;
+
+    /**
+     * Max derivation of current position when guarding.
+     */
+    private static final int MAX_GUARD_DERIVATION = 20;
+
+    /**
+     * After this amount of ticks not seeing an entity stop persecution.
+     */
+    private static final int STOP_PERSECUTION_AFTER = TICKS_SECOND * 10;
+
+    /**
      * How many more ticks we have until next attack.
      */
     protected int currentAttackDelay = 0;
+
+    /**
+     * The last time the target was seen.
+     */
+    private int lastSeen = 0;
 
     /**
      * The current target for our guard.
@@ -92,9 +85,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     private BlockPos currentPatrolPoint = null;
 
     /**
-     * The value of the speed which the guard will move.
+     * The guard building assigned to this job.
      */
-    private static final double ATTACK_SPEED = 0.8;
+    protected final AbstractBuildingGuards buildingGuards;
 
     /**
      * Creates the abstract part of the AI.
@@ -106,20 +99,96 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepare),
-          new AITarget(DECIDE, this::decide)
-        );
-        worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getStrength() + worker.getCitizenData().getIntelligence());
-        worker.setCanPickUpLoot(true);
+          new AITarget(DECIDE, this::decide),
+          new AITarget(GUARD_PATROL, this::patrol),
+          new AITarget(GUARD_FOLLOW, this::follow),
+          new AITarget(GUARD_GUARD, this::guard),
+          new AITarget(GUARD_REGEN, this::regen)
 
-        itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_LEATHER, LEATHER_LEVEL_RANGE, LEATHER_BUILDING_LEVEL_RANGE));
-        itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_GOLD, ARMOR_LEVEL_GOLD, GOLD_LEVEL_RANGE, GOLD_BUILDING_LEVEL_RANGE));
-        itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_CHAIN, CHAIN_LEVEL_RANGE, CHAIN_BUILDING_LEVEL_RANGE));
-        itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_IRON, ARMOR_LEVEL_IRON, IRON_LEVEL_RANGE, IRON_BUILDING_LEVEL_RANGE));
-        itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_DIAMOND, ARMOR_LEVEL_DIAMOND, DIA_LEVEL_RANGE, DIA_BUILDING_LEVEL_RANGE));
-        itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_DIAMOND, ARMOR_LEVEL_MAX, DIA_LEVEL_RANGE, DIA_BUILDING_LEVEL_RANGE));
+        );
+        buildingGuards = getOwnBuilding();
+    }
+
+    /**
+     * Regen at the building and continue when more than half health.
+     * @return next state to go to.
+     */
+    private AIState regen()
+    {
+        setDelay(STANDARD_DELAY);
+        if (walkToBuilding() || worker.getHealth() < ((int) worker.getMaxHealth() * 0.5D) && buildingGuards.shallRetrieveOnLowHealth())
+        {
+            return getState();
+        }
+
+        return START_WORKING;
+    }
+
+    /**
+     * Get the Attack state to go to.
+     * @return the next attack state.
+     */
+    public abstract AIState getAttackState();
+
+    /**
+     * Guard at a specific position.
+     * @return the next state to run into.
+     */
+    private AIState guard()
+    {
+        worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), GUARD_POS_RANGE);
+        return DECIDE;
+    }
+
+    /**
+     * Follow a player.
+     * @return the next state to run into.
+     */
+    private AIState follow()
+    {
+        worker.addPotionEffect(new PotionEffect(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER));
+        this.world.getScoreboard().addPlayerToTeam(worker.getName(), TEAM_COLONY_NAME + worker.getCitizenColonyHandler().getColonyId());
+
+        if (BlockPosUtil.getDistance2D(worker.getPosition(), buildingGuards.getPlayerToFollow()) > MAX_FOLLOW_DERIVATION)
+        {
+            TeleportHelper.teleportCitizen(worker, worker.world, buildingGuards.getPlayerToFollow());
+            return DECIDE;
+        }
+
+        if (buildingGuards.isTightGrouping())
+        {
+            worker.isWorkerAtSiteWithMove(buildingGuards.getPlayerToFollow(), GUARD_FOLLOW_TIGHT_RANGE);
+        }
+        else
+        {
+            if (!isWithinPersecutionDistance(buildingGuards.getPlayerToFollow()))
+            {
+                worker.getNavigator().clearPath();
+            }
+            else
+            {
+                worker.isWorkerAtSiteWithMove(buildingGuards.getPlayerToFollow(), GUARD_FOLLOW_LOSE_RANGE);
+            }
+        }
+        return DECIDE;
+    }
+
+    /**
+     * Patrol between a list of patrol points.
+     * @return the next patrol point to go to.
+     */
+    private AIState patrol()
+    {
+        if (currentPatrolPoint == null)
+        {
+            currentPatrolPoint = buildingGuards.getNextPatrolTarget(null);
+        }
+
+        if (currentPatrolPoint != null && (worker.isWorkerAtSiteWithMove(currentPatrolPoint, 2) || worker.getCitizenStuckHandler().isStuck()))
+        {
+            currentPatrolPoint = buildingGuards.getNextPatrolTarget(currentPatrolPoint);
+        }
+        return DECIDE;
     }
 
     @Override
@@ -129,186 +198,18 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     }
 
     /**
-     * Can be overridden in implementations.
-     * <p>
-     * Here the AI can check if the armour have to be re rendered and do it.
-     */
-    @Override
-    protected void updateRenderMetaData()
-    {
-        if (getState() != NEEDS_ITEM)
-        {
-            updateArmor();
-        }
-    }
-
-    protected abstract int getAttackRange();
-
-    /**
-     * Redirects the herder to their building.
+     * Method which calculates the possible attack range.
      *
-     * @return The next {@link AIState}.
+     * @return the calculated range.
      */
-    private AIState startWorkingAtOwnBuilding()
-    {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT));
-        if (walkToBuilding())
-        {
-            return getState();
-        }
-        return PREPARING;
-    }
+    protected abstract int getAttackRange();
 
     @Override
     protected int getActionsDoneUntilDumping()
     {
-        return getOwnBuilding(AbstractBuildingGuards.class).getTask() == GuardTask.FOLLOW ?  Integer.MAX_VALUE  : ACTIONS_UNTIL_DUMPING * getOwnBuilding().getBuildingLevel();
-    }
-
-    /**
-     * Prepares the guard.
-     * Fills his required armor and tool lists and transfer from building chest if required.
-     *
-     * @return The next {@link AIState}.
-     */
-    private AIState prepare()
-    {
-        setDelay(Constants.TICKS_SECOND * PREPARE_DELAY_SECONDS);
-
-        @Nullable
-        final AbstractBuildingGuards building = getOwnBuilding();
-        if (building == null || worker.getCitizenData() == null)
-        {
-            return PREPARING;
-        }
-
-        for (final ToolType tool : toolsNeeded)
-        {
-            if (checkForToolOrWeapon(tool))
-            {
-                return getState();
-            }
-            else if (getOwnBuilding() != null)
-            {
-                InventoryFunctions.matchFirstInProviderWithSimpleAction(worker,
-                  stack -> !ItemStackUtils.isEmpty(stack)
-                             && ItemStackUtils.doesItemServeAsWeapon(stack)
-                             && ItemStackUtils.hasToolLevel(stack, tool, 0, getOwnBuilding().getMaxToolLevel()),
-                  itemStack -> worker.getCitizenItemHandler().setMainHeldItem(itemStack));
-            }
-        }
-
-        requiredArmor.clear();
-        armorToWear.clear();
-        final Map<IToolType, List<GuardGear>> correctArmor = new LinkedHashMap<>();
-        for (final List<GuardGear> itemList : itemsNeeded)
-        {
-            final int level = worker.getCitizenData().getLevel();
-            for (final GuardGear item : itemList)
-            {
-                /*
-                 * Make sure that we only take the item for the right building and guard level.
-                 */
-                if (level >= item.getMinLevelRequired() && level <= item.getMaxLevelRequired()
-                      && building.getBuildingLevel() >= item.getMinBuildingLevelRequired() && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired())
-                {
-                    final List<GuardGear> listOfItems = new ArrayList<>();
-                    listOfItems.add(item);
-
-                    if (correctArmor.containsKey(item.getItemNeeded()))
-                    {
-                        listOfItems.addAll(correctArmor.get(item.getItemNeeded()));
-                    }
-                    correctArmor.put(item.getItemNeeded(), listOfItems);
-                }
-            }
-        }
-
-        for (final Map.Entry<IToolType, List<GuardGear>> entry : correctArmor.entrySet())
-        {
-            final List<Integer> slotsWorker = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),
-              itemStack -> entry.getValue().stream().anyMatch(guardGear -> guardGear.test(itemStack)));
-            int bestLevel = -1;
-            final List<Integer> nonOptimalSlots = new ArrayList<>();
-            int bestSlot = -1;
-            for (final int slot : slotsWorker)
-            {
-                final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
-                if (!ItemStackUtils.isEmpty(stack))
-                {
-                    final int level = ItemStackUtils.getMiningLevel(stack, entry.getKey());
-                    if (level > bestLevel)
-                    {
-                        if (bestSlot != -1)
-                        {
-                            nonOptimalSlots.add(bestLevel);
-                        }
-                        bestLevel = level;
-                        bestSlot = slot;
-                    }
-                }
-            }
-
-            int bestLevelChest = -1;
-            int bestSlotChest = -1;
-            IItemHandler bestHandler = null;
-            final Map<IItemHandler, List<Integer>> slotsChest =
-              InventoryUtils.findAllSlotsInProviderWith(building, itemStack -> entry.getValue().stream().anyMatch(guardGear -> guardGear.test(itemStack)));
-            for (final Map.Entry<IItemHandler, List<Integer>> handlers : slotsChest.entrySet())
-            {
-                for (final int slot : handlers.getValue())
-                {
-                    final ItemStack stack = handlers.getKey().getStackInSlot(slot);
-                    if (!ItemStackUtils.isEmpty(stack))
-                    {
-                        final int level = ItemStackUtils.getMiningLevel(stack, entry.getKey());
-                        if (level > bestLevel && level > bestLevelChest)
-                        {
-                            bestLevelChest = level;
-                            bestSlotChest = slot;
-                            bestHandler = handlers.getKey();
-                        }
-                    }
-                }
-            }
-
-            if (!entry.getValue().isEmpty())
-            {
-                if (bestLevelChest > bestLevel)
-                {
-                    final ItemStack armorStack = bestHandler.getStackInSlot(bestSlotChest).copy();
-                    if (armorStack.getItem() instanceof ItemArmor)
-                    {
-                        armorToWear.put(entry.getKey(), armorStack);
-                    }
-
-                    InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(bestHandler, bestSlotChest, new InvWrapper(worker.getInventoryCitizen()));
-                    if (bestSlot != -1)
-                    {
-                        nonOptimalSlots.add(bestSlot);
-                    }
-                }
-                else if (bestSlot == -1)
-                {
-                    requiredArmor.put(entry.getKey(), entry.getValue());
-                }
-                else
-                {
-                    final ItemStack armorStack = new InvWrapper(worker.getInventoryCitizen()).getStackInSlot(bestSlot).copy();
-                    if (armorStack.getItem() instanceof ItemArmor)
-                    {
-                        armorToWear.put(entry.getKey(), armorStack);
-                    }
-                }
-
-                for (final int slot : nonOptimalSlots)
-                {
-                    InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(new InvWrapper(worker.getInventoryCitizen()), slot, building);
-                }
-            }
-        }
-
-        return DECIDE;
+        return (getOwnBuilding(AbstractBuildingGuards.class).getTask() == GuardTask.FOLLOW || target != null)
+                 ? Integer.MAX_VALUE
+                 : ACTIONS_UNTIL_DUMPING * getOwnBuilding().getBuildingLevel();
     }
 
     /**
@@ -321,218 +222,242 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         setDelay(Constants.TICKS_SECOND);
         for (final ToolType toolType : toolsNeeded)
         {
-            if (getOwnBuilding() != null && !InventoryUtils.hasItemHandlerToolWithLevel(new InvWrapper(getInventory()),
-              toolType,
-              0,
-              getOwnBuilding().getMaxToolLevel()))
+            if (!InventoryUtils.hasItemHandlerToolWithLevel(new InvWrapper(getInventory()), toolType, 0, buildingGuards.getMaxToolLevel()))
             {
+                setDelay(STANDARD_DELAY);
                 return START_WORKING;
             }
         }
 
-        if (worker.getHealth() < ((int) worker.getMaxHealth() * 0.2f) && ((AbstractBuildingGuards) getOwnBuilding()).shallRetrieveOnLowHealth())
+        checkForTarget();
+        if (target != null)
         {
-            target = null;
-            return START_WORKING;
-        }
-
-        if (!(worker.getLastAttackedEntity() != null
-              && !worker.getLastAttackedEntity().isDead)
-              && getOwnBuilding(AbstractBuildingGuards.class) != null
-              && target == null)
-        {
-            final AbstractBuildingGuards guardBuilding = getOwnBuilding();
-            if (worker.getLastAttackedEntity() != null && !worker.getLastAttackedEntity().isDead)
+            if (BlockPosUtil.getDistance2D(worker.getPosition(), target.getPosition()) > getAttackRange())
             {
-                if ((worker.getDistance(worker.getLastAttackedEntity()) > getAttackRange() * 5 && !worker.canEntityBeSeen(worker.getLastAttackedEntity())))
-                {
-                    worker.setLastAttackedEntity(null);
-                    return DECIDE;
-                }
-                target = worker.getLastAttackedEntity();
+                worker.isWorkerAtSiteWithMove(target.getPosition(), getAttackRange());
+                setDelay(STANDARD_DELAY);
                 return DECIDE;
             }
-
-
-            switch (guardBuilding.getTask())
-            {
-                case PATROL:
-                    if (currentPatrolPoint == null)
-                    {
-                        currentPatrolPoint = guardBuilding.getNextPatrolTarget(null);
-                    }
-                    if (currentPatrolPoint != null
-                          && (worker.isWorkerAtSiteWithMove(currentPatrolPoint, 2) || worker.getCitizenStuckHandler().isStuck()))
-                    {
-                        currentPatrolPoint = guardBuilding.getNextPatrolTarget(currentPatrolPoint);
-                    }
-                    break;
-                case GUARD:
-                    worker.isWorkerAtSiteWithMove(guardBuilding.getGuardPos(), GUARD_POS_RANGE);
-                    break;
-                case FOLLOW:
-                    worker.addPotionEffect(new PotionEffect(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER));
-                    this.world.getScoreboard().addPlayerToTeam(worker.getName(), TEAM_COLONY_NAME + worker.getCitizenColonyHandler().getColonyId());
-                    final double distance = worker.getDistanceSq(guardBuilding.getPlayerToFollow());
-                    if (guardBuilding.isTightGrouping())
-                    {
-                        worker.isWorkerAtSiteWithMove(guardBuilding.getPlayerToFollow(), GUARD_FOLLOW_TIGHT_RANGE);
-                    }
-                    else
-                    {
-                        if (distance < getAttackDistance())
-                        {
-                            worker.getNavigator().clearPath();
-                        }
-                        else
-                        {
-                            worker.isWorkerAtSiteWithMove(guardBuilding.getPlayerToFollow(), GUARD_FOLLOW_LOSE_RANGE);
-                        }
-                    }
-                    break;
-                default:
-                    worker.isWorkerAtSiteWithMove(worker.getCitizenColonyHandler().getWorkBuilding().getLocation(), GUARD_POS_RANGE);
-                    break;
-            }
+            return getAttackState();
         }
 
-        if (target == null)
+        setDelay(STANDARD_DELAY);
+        switch (buildingGuards.getTask())
         {
-            target = getTarget();
+            case PATROL:
+                return patrol();
+            case GUARD:
+                return guard();
+            case FOLLOW:
+                return follow();
+            default:
+                worker.isWorkerAtSiteWithMove(worker.getCitizenColonyHandler().getWorkBuilding().getLocation(), GUARD_POS_RANGE);
+                break;
         }
 
+        return DECIDE;
+    }
+
+    /**
+     * Check if the current target is null or death and assign a new one if necessary.
+     */
+    private void checkForTarget()
+    {
         if (target != null && target.isDead)
         {
             incrementActionsDone();
             worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
             target = null;
         }
-        else if (target != null && (worker.getDistance(target) > getAttackRange() * 5 && !worker.canEntityBeSeen(target)))
+
+        target = getTarget();
+    }
+
+    /**
+     * Execute pre attack checks to check if worker can attack enemy.
+     * @return the next aiState to go to.
+     */
+    public AIState preAttackChecks()
+    {
+        if (!hasMainWeapon())
         {
             target = null;
+            return START_WORKING;
         }
 
+        if (worker.getHealth() < ((int) worker.getMaxHealth() * 0.2D) && buildingGuards.shallRetrieveOnLowHealth())
+        {
+            target = null;
+            setDelay(STANDARD_DELAY);
+            return GUARD_REGEN;
+        }
 
-        return DECIDE;
+        if (worker.getRevengeTarget() != null && !worker.getRevengeTarget().isDead && isInAttackDistance(worker.getRevengeTarget().getPosition()))
+        {
+            target = worker.getRevengeTarget();
+        }
+
+        if(target == null || target.isDead || !isWithinPersecutionDistance(target.getPosition()))
+        {
+            return DECIDE;
+        }
+
+        wearWeapon();
+
+        return getState();
     }
+
     /**
-     * This gets the attack speed for the guard
-     * with adjustment for guards level.
-     *
-     * @return attack speed for guard
+     * Check if the worker has his main weapon.
+     * @return true if so.
      */
-    public float getAttackSpeed()
-    {
-        final float speed = (float) ATTACK_SPEED;
-        final float levelAdjustment = ((float) worker.getCitizenData().getLevel() / 50);
-
-        return speed + levelAdjustment;
-    }
-
-    /**
-     * Returns the attack distance for guard with current weapon
-     * plus adjustment for guards level.
-     *
-     * @return attack distance
-     */
-    public double getAttackDistance()
-    {
-        final float levelAdjustment = ((float) worker.getCitizenData().getLevel() / 50);
-        return getAttackRange() + ((double) 120 * levelAdjustment);
-    }
+    public abstract boolean hasMainWeapon();
 
     /**
      * Get a target for the guard.
+     * First check if we're under attack by anything and switch target if necessary.
      *
      * @return The next AIState to go to.
      */
     protected EntityLivingBase getTarget()
     {
-        final AbstractBuildingGuards building = getOwnBuilding();
-        if (building != null && target == null && worker.getCitizenColonyHandler().getColony() != null)
+        final Colony colony = worker.getCitizenColonyHandler().getColony();
+        if (worker.getLastAttackedEntity() != null && !worker.getLastAttackedEntity().isDead)
         {
-            for (final CitizenData citizen : worker.getCitizenColonyHandler().getColony().getCitizenManager().getCitizens())
+            if (isInAttackDistance(worker.getLastAttackedEntity().getPosition()))
             {
-                if (citizen.getCitizenEntity().isPresent())
-                {
-                    final EntityLivingBase entity = citizen.getCitizenEntity().get().getRevengeTarget();
-                    
-                    if (entity instanceof AbstractEntityBarbarian
-                          && worker.canEntityBeSeen(entity))
-                    {
-                        return entity;
-                    }
-                }
+                worker.setLastAttackedEntity(null);
             }
+            target = worker.getLastAttackedEntity();
+        }
 
-            final List<EntityLivingBase> targets = world.getEntitiesWithinAABB(EntityLivingBase.class, getSearchArea());
-
-            for (final EntityLivingBase entity : targets)
+        if (target != null)
+        {
+            if (!worker.canEntityBeSeen(target) && lastSeen < STOP_PERSECUTION_AFTER)
             {
-                if (entity instanceof EntityPlayer)
-                {
-                    final EntityPlayer player = (EntityPlayer) entity;
-
-                    if (worker.getCitizenColonyHandler().getColony() != null
-                          && worker.getCitizenColonyHandler().getColony().getPermissions().hasPermission(player, Action.GUARDS_ATTACK) || worker.getCitizenColonyHandler().getColony().isValidAttackingPlayer(player)
-                          && worker.canEntityBeSeen(player))
-                    {
-                        return entity;
-                    }
-                }
-                else if (entity instanceof EntityCitizen && worker.getCitizenColonyHandler().getColony().isValidAttackingGuard((EntityCitizen) entity) && worker.canEntityBeSeen(entity))
-                {
-                    return entity;
-                }
+                target = null;
             }
-
-            float closest = -1;
-            EntityLivingBase targetEntity = null;
-
-            for (final MobEntryView mobEntry : building.getMobsToAttack())
+            else
             {
-
-                if (mobEntry.hasAttack())
-                {
-                    for (final EntityLivingBase entity : targets)
-                    {
-                        if (mobEntry.getEntityEntry().getEntityClass().isInstance(entity)
-                              && worker.canEntityBeSeen(entity)
-                              && (worker.getDistance(entity) < closest
-                                    || (int) closest == -1))
-                        {
-                            closest = worker.getDistance(entity);
-                            targetEntity = entity;
-                        }
-                    }
-
-                    if (targetEntity != null)
-                    {
-                        return targetEntity;
-                    }
-                }
+                lastSeen++;
+                return target;
             }
         }
-        else if (target != null)
+
+        if (colony != null)
         {
-            return target;
+            if (!colony.getBarbManager().getHorde((WorldServer) worker.world).isEmpty() || colony.isColonyUnderAttack())
+            {
+                for (final CitizenData citizen : colony.getCitizenManager().getCitizens())
+                {
+                    if (citizen.getCitizenEntity().isPresent())
+                    {
+                        final EntityLivingBase entity = citizen.getCitizenEntity().get().getRevengeTarget();
+                        if (entity instanceof AbstractEntityBarbarian && worker.canEntityBeSeen(entity))
+                        {
+                            return entity;
+                        }
+                        else if (entity instanceof EntityCitizen && worker.canEntityBeSeen(entity) && (((EntityCitizen) entity).getCitizenJobHandler()
+                                                                                                         .getColonyJob() instanceof AbstractJobGuard))
+                        {
+                            return entity;
+                        }
+                        else if (entity instanceof EntityPlayer && worker.canEntityBeSeen(entity))
+                        {
+                            colony.isValidAttackingPlayer((EntityPlayer) entity);
+                        }
+                    }
+                }
+            }
+
+            final List<EntityLivingBase> targets = world.getEntitiesWithinAABB(EntityLivingBase.class, getSearchArea(),
+              entity -> buildingGuards.getMobsToAttack()
+                          .stream()
+                          .anyMatch(mobEntry -> mobEntry.getEntityEntry().getEntityClass().isInstance(entity)));
+
+
+            int closest = Integer.MAX_VALUE;
+            EntityLivingBase targetEntity = null;
+            for (final EntityLivingBase entity : targets)
+            {
+                if (worker.canEntityBeSeen(entity) && isWithinPersecutionDistance(entity.getPosition()))
+                {
+                    if (entity instanceof EntityPlayer && (colony.getPermissions().hasPermission((EntityPlayer) entity, Action.GUARDS_ATTACK) || colony.isValidAttackingPlayer((EntityPlayer) entity)))
+                    {
+                        return entity;
+                    }
+                    else if (entity instanceof EntityCitizen && colony.isValidAttackingGuard((EntityCitizen) entity))
+                    {
+                        return entity;
+                    }
+
+                    final int tempDistance = (int) worker.getPosition().distanceSq(entity.posX, entity.posY, entity.posZ);
+                    if (tempDistance < closest)
+                    {
+                        closest = tempDistance;
+                        targetEntity = entity;
+                    }
+                }
+            }
+            return targetEntity;
         }
 
         return null;
     }
 
     /**
-     * Gets the reload time for a Range guard attack.
-     *
-     * @return the reload time
+     * Wears the weapon of the guard.
      */
-    protected int getAttackDelay()
+    public abstract void wearWeapon();
+
+    /**
+     * Check if a position is within regular attack distance.
+     * @param position the position to check.
+     * @return true if so.
+     */
+    public boolean isInAttackDistance(final BlockPos position)
     {
-        if (worker.getCitizenData() != null)
+        return BlockPosUtil.getDistance2D(worker.getPosition(), position) > getAttackRange() && isWithinPersecutionDistance(position);
+    }
+
+    /**
+     * Check if a position is within the allowed persecution distance.
+     * @param entityPos the position to check.
+     * @return true if so.
+     */
+    private boolean isWithinPersecutionDistance(final BlockPos entityPos)
+    {
+        return BlockPosUtil.getDistance2D(getTaskReferencePoint(), entityPos) <= getPersecutionDistance() + getAttackRange();
+    }
+
+    /**
+     * Get the reference point from which the guard comes.
+     * @return the position depending ont he task.
+     */
+    private BlockPos getTaskReferencePoint()
+    {
+        switch (buildingGuards.getTask())
         {
-            return RANGED_ATTACK_DELAY_BASE / (worker.getCitizenData().getLevel() + 1);
+            case PATROL:
+                return currentPatrolPoint;
+            case FOLLOW:
+                return buildingGuards.getPlayerToFollow();
+            default:
+                return buildingGuards.getGuardPos();
         }
-        return RANGED_ATTACK_DELAY_BASE;
+    }
+
+    private int getPersecutionDistance()
+    {
+        switch (buildingGuards.getTask())
+        {
+            case PATROL:
+                return MAX_PATROL_DERIVATION;
+            case FOLLOW:
+                return MAX_FOLLOW_DERIVATION;
+            default:
+                return MAX_GUARD_DERIVATION;
+        }
     }
 
     /**
@@ -544,74 +469,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     {
         final AbstractBuildingGuards building = getOwnBuilding();
 
-        if (building != null)
-        {
-            final double x1 = worker.posX + (building.getBonusVision() + DEFAULT_VISION);
-            final double x2 = worker.posX - (building.getBonusVision() + DEFAULT_VISION);
-            final double y1 = worker.posY + Y_VISION;
-            final double y2 = worker.posY - Y_VISION;
-            final double z1 = worker.posZ + (building.getBonusVision() + DEFAULT_VISION);
-            final double z2 = worker.posZ - (building.getBonusVision() + DEFAULT_VISION);
+        final double x1 = worker.posX + (building.getBonusVision() + DEFAULT_VISION);
+        final double x2 = worker.posX - (building.getBonusVision() + DEFAULT_VISION);
+        final double y1 = worker.posY + Y_VISION;
+        final double y2 = worker.posY - Y_VISION;
+        final double z1 = worker.posZ + (building.getBonusVision() + DEFAULT_VISION);
+        final double z2 = worker.posZ - (building.getBonusVision() + DEFAULT_VISION);
 
-            return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
-        }
-
-        return getOwnBuilding().getTargetableArea(world);
-    }
-
-    /**
-     * Updates the equipment. Take the first item of the required type only.
-     * Skip over the items not requires. Ex.  Required Iron, skip leather and
-     * everything else.
-     */
-    protected void updateArmor()
-    {
-        if (worker.getRandom().nextInt(60) <= 0)
-        {
-            worker.setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStackUtils.EMPTY);
-            worker.setItemStackToSlot(EntityEquipmentSlot.FEET, ItemStackUtils.EMPTY);
-            worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStackUtils.EMPTY);
-            worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStackUtils.EMPTY);
-
-            for (final Map.Entry<IToolType, ItemStack> armorStack : armorToWear.entrySet())
-            {
-                if (ItemStackUtils.isEmpty(armorStack.getValue()))
-                {
-                    continue;
-                }
-                final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),
-                  itemStack -> itemStack.isItemEqualIgnoreDurability(armorStack.getValue()));
-                if (slot == -1)
-                {
-                    continue;
-                }
-                final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
-                if (ItemStackUtils.isEmpty(stack))
-                {
-                    worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, ItemStackUtils.EMPTY);
-                    continue;
-                }
-
-                if (stack.getItem() instanceof ItemArmor)
-                {
-                    worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
-                    requiredArmor.remove(armorStack.getKey());
-                    cancelAsynchRequestForArmor(armorStack.getKey());
-                }
-            }
-
-            for (final Map.Entry<IToolType, List<GuardGear>> entry : requiredArmor.entrySet())
-            {
-                int minLevel = Integer.MAX_VALUE;
-                for (final GuardGear item : entry.getValue())
-                {
-                    if (item.getMinArmorLevel() < minLevel)
-                    {
-                        minLevel = item.getMinArmorLevel();
-                    }
-                }
-                checkForToolorWeaponASync(entry.getKey(), minLevel);
-            }
-        }
+        return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
     }
 }

@@ -46,6 +46,11 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
     private BlockPos building;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Create a message to add or remove recipes.
      * This constructor creates the recipeStorage on its own.
      * @param input the input.
@@ -69,6 +74,7 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
                 gridSize,
                 primaryOutput);
         this.remove = remove;
+        this.dimension = building.getColony().getDimension();
         this.building = building.getLocation();
         this.colonyId = building.getColony().getID();
     }
@@ -94,6 +100,7 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
         this.remove = remove;
         this.building = building.getLocation();
         this.colonyId = building.getColony().getID();
+        this.dimension = building.getColony().getDimension();
     }
 
     /**
@@ -108,6 +115,7 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
         storage = StandardFactoryController.getInstance().readFromBuffer(buf);
         remove = buf.readBoolean();
         building = BlockPosUtil.readFromByteBuf(buf);
+        dimension = buf.readInt();
     }
 
     /**
@@ -122,6 +130,7 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
         StandardFactoryController.getInstance().writeToBuffer(buf, storage);
         buf.writeBoolean(remove);
         BlockPosUtil.writeToByteBuf(buf, building);
+        buf.writeInt(dimension);
     }
 
     /**
@@ -134,7 +143,7 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
     @Override
     public void messageOnServerThread(final AddRemoveRecipeMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null || !colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
         {
             return;

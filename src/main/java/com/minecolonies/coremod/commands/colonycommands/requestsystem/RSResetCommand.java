@@ -90,7 +90,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
             colonyId = colony.getID();
         }
 
-        final Colony colony = ColonyManager.getColony(colonyId);
+        final Colony colony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(0));
 
         if (colony == null)
         {

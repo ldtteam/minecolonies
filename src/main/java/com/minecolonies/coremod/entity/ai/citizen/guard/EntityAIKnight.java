@@ -55,16 +55,39 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
         );
         toolsNeeded.add(ToolType.SWORD);
 
-        for (final List<GuardGear> list: itemsNeeded)
+        for (final List<GuardGear> list : itemsNeeded)
         {
             list.add(new GuardGear(ToolType.SHIELD, EntityEquipmentSlot.MAINHAND, 0, 0, SHIELD_LEVEL_RANGE, SHIELD_BUILDING_LEVEL_RANGE));
         }
     }
 
     @Override
+    public AIState getAttackState()
+    {
+        return GUARD_ATTACK_PHYSICAL;
+    }
+
+    @Override
     protected int getAttackRange()
     {
         return (int) MAX_DISTANCE_FOR_ATTACK;
+    }
+
+    @Override
+    public boolean hasMainWeapon()
+    {
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.SWORD, 0, buildingGuards.getMaxToolLevel()) != -1;
+    }
+
+    @Override
+    public void wearWeapon()
+    {
+        final int weaponSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.SWORD, 0, buildingGuards.getMaxToolLevel());
+
+        if (weaponSlot != -1)
+        {
+            worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, weaponSlot);
+        }
     }
 
     @Override
@@ -84,19 +107,6 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
         final List<ItemStack> list = super.itemsNiceToHave();
         list.add(new ItemStack(Items.SHIELD, 1));
         return list;
-    }
-
-    @Override
-    protected AIState decide()
-    {
-        final AIState superState = super.decide();
-
-        if ((superState != DECIDE && superState != PREPARING) || target == null)
-        {
-            return superState;
-        }
-
-        return GUARD_ATTACK_PHYSICAL;
     }
 
     /**
@@ -121,11 +131,6 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
             worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
             worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
-
-            if (worker.getDistance(target) > getAttackRange())
-            {
-                worker.isWorkerAtSiteWithMove(target.getPosition(), getAttackRange());
-            }
         }
 
         return GUARD_ATTACK_PHYSICAL;
@@ -133,22 +138,11 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
     protected AIState attackPhysical()
     {
-        if (worker.getRevengeTarget() != null
-              && !worker.getRevengeTarget().isDead
-              && worker.getDistance(worker.getRevengeTarget()) < getAttackRange())
+        final AIState state = preAttackChecks();
+        if (state != getState())
         {
-            target = worker.getRevengeTarget();
-        }
-
-        if (target == null || target.isDead)
-        {
-            worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
-            return DECIDE;
-        }
-        else if (worker.getDistance(target) > getAttackRange() * 5 && !worker.canEntityBeSeen(target))
-        {
-            target = null;
-            return DECIDE;
+            setDelay(STANDARD_DELAY);
+            return state;
         }
 
         if (currentAttackDelay != 0)
@@ -163,63 +157,45 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
         if (getOwnBuilding() != null)
         {
+            worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+            worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
 
-            if (worker.getDistance(target) > getAttackRange())
+            worker.swingArm(EnumHand.MAIN_HAND);
+            worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+
+            double damageToBeDealt = BASE_PHYSICAL_DAMAGE;
+
+            if (worker.getHealth() <= DOUBLE_DAMAGE_THRESHOLD)
             {
-                worker.isWorkerAtSiteWithMove(target.getPosition(), getAttackRange());
-                return GUARD_ATTACK_PHYSICAL;
+                damageToBeDealt *= 2;
             }
 
-            final int swordSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()),
-              ToolType.SWORD,
-              0,
-              getOwnBuilding().getMaxToolLevel());
+            final ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
 
-            if (swordSlot != -1)
+            if (ItemStackUtils.doesItemServeAsWeapon(heldItem))
             {
-                worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, swordSlot);
-
-                worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
-                worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
-
-                worker.swingArm(EnumHand.MAIN_HAND);
-                worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-
-                double damageToBeDealt = BASE_PHYSICAL_DAMAGE;
-
-                if (worker.getHealth() <= DOUBLE_DAMAGE_THRESHOLD)
+                if (heldItem.getItem() instanceof ItemSword)
                 {
-                    damageToBeDealt *= 2;
+                    damageToBeDealt += ((ItemSword) heldItem.getItem()).getAttackDamage();
                 }
-
-                final ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
-
-                if (ItemStackUtils.doesItemServeAsWeapon(heldItem))
+                else
                 {
-                    if (heldItem.getItem() instanceof ItemSword)
-                    {
-                        damageToBeDealt += ((ItemSword) heldItem.getItem()).getAttackDamage();
-                    }
-                    else
-                    {
-                        damageToBeDealt += TinkersWeaponHelper.getDamage(heldItem);
-                    }
-                    damageToBeDealt += EnchantmentHelper.getModifierForCreature(heldItem, target.getCreatureAttribute());
+                    damageToBeDealt += TinkersWeaponHelper.getDamage(heldItem);
                 }
-
-                final DamageSource source = new DamageSource(worker.getName());
-                if (Configurations.gameplay.pvp_mode && target instanceof EntityPlayer)
-                {
-                    source.setDamageBypassesArmor();
-                }
-
-                target.attackEntityFrom(source, (float) damageToBeDealt);
-                target.setRevengeTarget(worker);
-
-                worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
+                damageToBeDealt += EnchantmentHelper.getModifierForCreature(heldItem, target.getCreatureAttribute());
             }
+
+            final DamageSource source = new DamageSource(worker.getName());
+            if (Configurations.gameplay.pvp_mode && target instanceof EntityPlayer)
+            {
+                source.setDamageBypassesArmor();
+            }
+
+            target.attackEntityFrom(source, (float) damageToBeDealt);
+            target.setRevengeTarget(worker);
+
+            worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
         }
         return GUARD_ATTACK_PHYSICAL;
     }
-
 }

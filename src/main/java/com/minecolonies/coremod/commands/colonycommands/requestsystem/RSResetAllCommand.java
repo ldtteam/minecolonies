@@ -71,7 +71,7 @@ public class RSResetAllCommand extends AbstractSingleCommand implements IActionC
             }
         }
 
-        for (final Colony colony: ColonyManager.getColonies())
+        for (final Colony colony: ColonyManager.getAllColonies())
         {
             colony.getRequestManager().reset();
         }

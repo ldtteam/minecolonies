@@ -180,6 +180,26 @@ public class InventoryUtils
     }
 
     /**
+     * Shrinks a specific stack in an item handler.
+     * @param itemHandler the handler..
+     * @param itemStackSelectionPredicate the predicate..
+     * @return true if successful.
+     */
+    public static boolean shrinkItemCountInItemHandler(final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    {
+        final Predicate<ItemStack> predicate = ItemStackUtils.NOT_EMPTY_PREDICATE.and(itemStackSelectionPredicate);
+        for (int slot = 0; slot < itemHandler.getSlots(); slot++)
+        {
+            if (predicate.test(itemHandler.getStackInSlot(slot)))
+            {
+                itemHandler.getStackInSlot(slot).shrink(1);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Returns the indexes of all occurrences of an ItemStack that matches
      * the given predicate in the {@link IItemHandler}.
      *
@@ -2016,7 +2036,7 @@ public class InventoryUtils
             }
             else if (itemStackSelectionPredicate.test(stack))
             {
-                if (ItemStackUtils.getSize(stack) + amount <= Constants.STACKSIZE)
+                if (ItemStackUtils.getSize(stack) + amount <= stack.getMaxStackSize())
                 {
                     foundEmptySlot = true;
                 }

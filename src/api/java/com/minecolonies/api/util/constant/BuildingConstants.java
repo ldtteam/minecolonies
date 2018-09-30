@@ -20,6 +20,11 @@ public final class BuildingConstants
      */
     public static final int MAX_PRIO = 10;
 
+    /**
+     * Min slots required to be recognized as storage.
+     */
+    public static final int  MIN_SLOTS_FOR_RECOGNITION = 5;
+
     // --------------- Miner building constants ---------------//
 
     /**

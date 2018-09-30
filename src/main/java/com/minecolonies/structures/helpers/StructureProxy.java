@@ -133,6 +133,10 @@ public class StructureProxy
      */
     public IBlockState getBlockState(@NotNull final BlockPos pos)
     {
+        if (blocks.length <= pos.getX() || blocks[pos.getX()].length <= pos.getY() || blocks[pos.getX()][pos.getY()].length <= pos.getZ())
+        {
+            return null;
+        }
         return blocks[pos.getX()][pos.getY()][pos.getZ()].blockState;
     }
 
@@ -144,6 +148,10 @@ public class StructureProxy
      */
     public Template.BlockInfo getBlockInfo(@NotNull final BlockPos pos)
     {
+        if (blocks.length <= pos.getX() || blocks[pos.getX()].length <= pos.getY() || blocks[pos.getX()][pos.getY()].length <= pos.getZ())
+        {
+            return null;
+        }
         return blocks[pos.getX()][pos.getY()][pos.getZ()];
     }
 
@@ -166,7 +174,7 @@ public class StructureProxy
     @Nullable
     public Template.EntityInfo getEntityinfo(@NotNull final BlockPos pos)
     {
-        if (entities[pos.getX()][pos.getY()].length == 0)
+        if (entities.length <= pos.getX() || blocks[pos.getX()].length <= pos.getY() || blocks[pos.getX()][pos.getY()].length <= pos.getZ())
         {
             return null;
         }

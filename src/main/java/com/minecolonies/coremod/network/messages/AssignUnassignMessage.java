@@ -40,6 +40,11 @@ public class AssignUnassignMessage extends AbstractMessage<AssignUnassignMessage
     private int citizenID;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty public constructor.
      */
     public AssignUnassignMessage()
@@ -61,6 +66,7 @@ public class AssignUnassignMessage extends AbstractMessage<AssignUnassignMessage
         this.buildingId = building.getID();
         this.assign = assign;
         this.citizenID = citizenID;
+        this.dimension = building.getColony().getDimension();
     }
 
     /**
@@ -75,6 +81,7 @@ public class AssignUnassignMessage extends AbstractMessage<AssignUnassignMessage
         buildingId = BlockPosUtil.readFromByteBuf(buf);
         assign = buf.readBoolean();
         citizenID = buf.readInt();
+        dimension = buf.readInt();
     }
 
     /**
@@ -89,12 +96,13 @@ public class AssignUnassignMessage extends AbstractMessage<AssignUnassignMessage
         BlockPosUtil.writeToByteBuf(buf, buildingId);
         buf.writeBoolean(assign);
         buf.writeInt(citizenID);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final AssignUnassignMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings

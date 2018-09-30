@@ -482,7 +482,7 @@ public class ScarecrowTileEntity extends TileEntityChest
         super.onLoad();
         final World world = getWorld();
 
-        colony = ColonyManager.getColony(world, pos);
+        colony = ColonyManager.getColonyByPosFromWorld(world, pos);
         if (colony != null && !colony.getBuildingManager().getFields().contains(pos))
         {
             @Nullable final Entity entity = EntityUtils.getEntityFromUUID(world, colony.getPermissions().getOwner());

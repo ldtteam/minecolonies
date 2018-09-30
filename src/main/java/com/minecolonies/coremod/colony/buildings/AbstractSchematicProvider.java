@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
@@ -312,7 +311,6 @@ public abstract class AbstractSchematicProvider
 
         buildingLevel = level;
         markDirty();
-        ColonyManager.markDirty();
     }
 
     /**
