@@ -13,6 +13,7 @@ import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.huts.BlockHutField;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
@@ -23,6 +24,7 @@ import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldCapab
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockSilverfish;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -52,6 +54,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.NbtTagConstants.FIRST_POS_STRING;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -80,6 +84,7 @@ public class EventHandler
                 final WorldClient world = mc.world;
                 final EntityPlayerSP player = mc.player;
                 IColony colony = ColonyManager.getIColony(world, player.getPosition());
+
 
                 if (colony == null)
                 {
@@ -308,6 +313,22 @@ public class EventHandler
             if (player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null)
             {
                 return;
+            }
+             //Checks to see if player tries to sleep in a bed belonging to a Citizen, ancels the event, and Notifies Player that bed is occuppied
+            if(world.getBlockState(event.getPos()).getBlock().isBed(world.getBlockState(event.getPos()), world, event.getPos(), player))
+            {
+                BlockPos bd = event.getPos();
+                if(world.getBlockState(event.getPos()).getBlock().isBedFoot(world, event.getPos())) {
+                    bd = bd.offset(world.getBlockState(event.getPos()).getValue(BlockBed.FACING));
+                }
+                //Searches through the nearest Colonie's Citizen and sees if the bed belongs to a Citizen, and if the Citizen is asleep
+                ArrayList<CitizenData> cits = new ArrayList<>(ColonyManager.getClosestColony(world, event.getPos()).getCitizenManager().getCitizens());
+                for(int i = 0; i < cits.size(); i++){
+                    if (cits.get(i).getBedPos().equals(bd) && cits.get(i).isAsleep()){
+                        event.setCanceled(true);
+                        LanguageHandler.sendPlayerMessage(player, "tile.bed.occupied");
+                    }
+                }
             }
 
             handleEventCancellation(event, player);
