@@ -106,6 +106,7 @@ public final class PlacementHandlers
         public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
         {
             final List<ItemStack> itemList = new ArrayList<>(getItemsFromTileEntity(tileEntityData, world));
+            itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
             itemList.removeIf(ItemStackUtils::isEmpty);
             if (!world.getBlockState(pos.down()).getMaterial().isSolid())
             {
@@ -489,6 +490,7 @@ public final class PlacementHandlers
         public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
         {
             final List<ItemStack> itemList = new ArrayList<>(getItemsFromTileEntity(tileEntityData, world));
+            itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
             itemList.removeIf(ItemStackUtils::isEmpty);
             return itemList;
         }
