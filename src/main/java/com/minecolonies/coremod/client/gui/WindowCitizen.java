@@ -402,8 +402,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
     private ImmutableList<RequestWrapper> getOpenRequestTreeOfCitizen()
     {
         final ColonyView colonyView = ColonyManager.getClosestColonyView(FMLClientHandler.instance().getWorldClient(),
-          (citizen.getWorkBuilding() != null) ? citizen.getWorkBuilding() : citizen
-                                                                              .getHomeBuilding());
+          (citizen.getWorkBuilding() != null) ? citizen.getWorkBuilding() : citizen.getHomeBuilding());
         if (colonyView == null)
         {
             return ImmutableList.of();
