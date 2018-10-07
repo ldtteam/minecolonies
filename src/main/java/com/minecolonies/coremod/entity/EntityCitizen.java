@@ -441,7 +441,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Nullable
     public CitizenData getCitizenData()
     {
-        if (citizenData == null && citizenColonyHandler.getColony() != null)
+        if (citizenData == null && citizenColonyHandler != null && citizenColonyHandler.getColony() != null)
         {
             final CitizenData data = citizenColonyHandler.getColony().getCitizenManager().getCitizen(citizenId);
             if (data != null)
