@@ -799,3 +799,4 @@ com.minecolonies.coremod.gui.hiring.restart=Restart
 com.minecolonies.coremod.gui.hiring.restartMessage=Restart for citizen %s scheduled.
 com.minecolonies.coremod.gui.hiring.restartMessageDone=Citizen %s succesfully restarted.
 com.minecolonies.coremod.gui.townHall.buildingLevel=Building level
+com.minecolonies.coremod.job.composter=Composter
