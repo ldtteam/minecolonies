@@ -77,6 +77,9 @@ public class Configurations
         @Config.Comment("Should the colony protection be enabled?")
         public boolean enableColonyProtection = true;
 
+        @Config.Comment("Should Players be sent entering/leaving colony notifications?")
+        public boolean sendEnteringLeavingMessages = true;
+
         @Config.Comment("Independent from the colony protection, should explosions be turned off?")
         public boolean turnOffExplosionsInColonies = true;
 
