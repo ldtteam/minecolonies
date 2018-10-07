@@ -1253,7 +1253,7 @@ public class Colony implements IColony
     public void addVisitingPlayer(final EntityPlayer player)
     {
         final Rank rank = getPermissions().getRank(player);
-        if(rank != Rank.OWNER && rank != Rank.OFFICER && !visitingPlayers.contains(player))
+        if(rank != Rank.OWNER && rank != Rank.OFFICER && !visitingPlayers.contains(player) && Configurations.gameplay.sendEnteringLeavingMessages)
         {
             visitingPlayers.add(player);
             LanguageHandler.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
@@ -1264,7 +1264,7 @@ public class Colony implements IColony
     @Override
     public void removeVisitingPlayer(final EntityPlayer player)
     {
-        if(!getMessageEntityPlayers().contains(player))
+        if(!getMessageEntityPlayers().contains(player) && Configurations.gameplay.sendEnteringLeavingMessages)
         {
             visitingPlayers.remove(player);
             LanguageHandler.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
