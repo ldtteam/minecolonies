@@ -1,71 +1,51 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Message class which manages the messages hiring or firing of citizens.
  */
-public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
+public class PauseCitizenMessage extends AbstractMessage<PauseCitizenMessage, IMessage>
 {
     /**
      * The Colony ID.
      */
     private int colonyId;
+    private int colonyDim;
 
     /**
-     * The buildings position.
-     */
-    private BlockPos buildingId;
-
-    /**
-     * If hiring (true) else firing.
-     */
-    private boolean hire;
-
-    /**
-     * The citizen to hire/fire.
+     * The citizen to pause.
      */
     private int citizenID;
 
     /**
-     * The dimension of the message.
-     */
-    private int dimension;
-
-    /**
      * Empty public constructor.
      */
-    public HireFireMessage()
+    public PauseCitizenMessage()
     {
         super();
     }
 
     /**
-     * Creates object for the player to hire or fire a citizen.
+     * Creates object for the player to switch pause state of a citizen.
      *
      * @param building  view of the building to read data from
-     * @param hire      hire or fire the citizens
      * @param citizenID the id of the citizen to fill the job.
      */
-    public HireFireMessage(@NotNull final AbstractBuildingView building, final boolean hire, final int citizenID)
+    public PauseCitizenMessage(@NotNull final AbstractBuildingView building, final int citizenID)
     {
         super();
         this.colonyId = building.getColony().getID();
-        this.buildingId = building.getID();
-        this.hire = hire;
+        this.colonyDim = building.getColony().getDimension();
         this.citizenID = citizenID;
-        this.dimension = building.getColony().getDimension();
     }
 
     /**
@@ -77,10 +57,8 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
     public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
-        buildingId = BlockPosUtil.readFromByteBuf(buf);
-        hire = buf.readBoolean();
+        colonyDim = buf.readInt();
         citizenID = buf.readInt();
-        dimension = buf.readInt();
     }
 
     /**
@@ -92,16 +70,15 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
     public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
-        buf.writeBoolean(hire);
+        buf.writeInt(colonyDim);
         buf.writeInt(citizenID);
-        buf.writeInt(dimension);
     }
 
     @Override
-    public void messageOnServerThread(final HireFireMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final PauseCitizenMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.colonyDim);
+        
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
@@ -111,16 +88,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
             }
 
             final CitizenData citizen = colony.getCitizenManager().getCitizen(message.citizenID);
-            citizen.setPaused(false);
-            if (message.hire)
-            {
-
-                ((AbstractBuildingWorker) colony.getBuildingManager().getBuilding(message.buildingId)).assignCitizen(citizen);
-            }
-            else
-            {
-                ((AbstractBuildingWorker) colony.getBuildingManager().getBuilding(message.buildingId)).removeCitizen(citizen);
-            }
+            citizen.setPaused(!citizen.isPaused());
         }
     }
 }

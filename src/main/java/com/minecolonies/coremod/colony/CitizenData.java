@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -19,6 +20,7 @@ import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumHand;
@@ -96,6 +98,21 @@ public class CitizenData
      * Boolean gender, true = female, false = male.
      */
     private       boolean                      female;
+
+    /**
+     * Boolean paused, true = paused, false = working.
+     */
+    private       boolean                      paused;
+
+    /**
+     * If restart is scheduled.
+     */
+    private       boolean                      restartScheduled;
+
+    /**
+     * Report end message to:
+     */
+    private       EntityPlayerMP               originPlayerRestart;
 
     /**
      * The id of the citizens texture.
@@ -219,6 +236,7 @@ public class CitizenData
     {
         name = compound.getString(TAG_NAME);
         female = compound.getBoolean(TAG_FEMALE);
+        paused = compound.getBoolean(TAG_PAUSED);
         textureId = compound.getInteger(TAG_TEXTURE);
 
         //  Attributes
@@ -453,6 +471,7 @@ public class CitizenData
 
         //Assign the gender before name
         female = rand.nextBoolean();
+        paused = false;
         name = generateName(rand);
 
         textureId = CompatibilityUtils.getWorld(entity).rand.nextInt(Integer.MAX_VALUE);
@@ -550,6 +569,25 @@ public class CitizenData
     public boolean isFemale()
     {
         return female;
+    }
+
+    /**
+     * Check if the citizen is paused.
+     */
+    public void setPaused(final boolean p)
+    {
+        this.paused = p;
+        markDirty();
+    }
+
+    /**
+     * Check if the citizen is paused.
+     *
+     * @return true for paused, false for working.
+     */
+    public boolean isPaused()
+    {
+        return paused;
     }
 
     /**
@@ -803,6 +841,7 @@ public class CitizenData
         compound.setInteger(TAG_ID, id);
         compound.setString(TAG_NAME, name);
         compound.setBoolean(TAG_FEMALE, female);
+        compound.setBoolean(TAG_PAUSED, paused);
         compound.setInteger(TAG_TEXTURE, textureId);
 
         //  Attributes
@@ -850,6 +889,8 @@ public class CitizenData
         buf.writeBoolean(female);
 
         buf.writeInt(getCitizenEntity().map(Entity::getEntityId).orElse(-1));
+
+        buf.writeBoolean(paused);
 
         buf.writeBoolean(homeBuilding != null);
         if (homeBuilding != null)
@@ -1192,5 +1233,32 @@ public class CitizenData
                 break;
         }
         markDirty();
+    }
+
+    /**
+     * Schedule restart and cleanup
+     * {@link com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic#restart}
+     */
+    public void scheduleRestart(final EntityPlayerMP player)
+    {
+        originPlayerRestart = player;
+        restartScheduled = true;
+    }
+
+    /**
+     * AI will be restarted, also restart building etc
+     */
+    public boolean shouldRestart()
+    {
+        return restartScheduled;
+    }
+
+    /**
+     * Restart done successfully
+     */
+    public void restartDone()
+    {
+        restartScheduled = false;
+        LanguageHandler.sendPlayerMessage(originPlayerRestart, "com.minecolonies.coremod.gui.hiring.restartMessageDone", getName());
     }
 }

@@ -119,6 +119,15 @@ public class PathNavigate extends PathNavigateGround
         walkSpeed = d;
     }
 
+    public boolean tryMoveToBlockPos(final BlockPos pos, final double speed)
+    {
+        moveToXYZ(pos.getX(), pos.getY(), pos.getZ(), speed);
+        return true;
+    }
+
+    /**
+     * Deprecated - try to use BlockPos instead
+     */
     @Override
     public boolean tryMoveToXYZ(final double x, final double y, final double z, final double speed)
     {
@@ -133,7 +142,7 @@ public class PathNavigate extends PathNavigateGround
     @Override
     public boolean tryMoveToEntityLiving(@NotNull final Entity e, final double speed)
     {
-        return tryMoveToXYZ(e.posX, e.posY, e.posZ, speed);
+        return tryMoveToBlockPos(e.getPosition(), speed);
     }
 
     /**

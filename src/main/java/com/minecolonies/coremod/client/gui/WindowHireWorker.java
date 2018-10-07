@@ -14,7 +14,11 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.HireFireMessage;
+import com.minecolonies.coremod.network.messages.PauseCitizenMessage;
+import com.minecolonies.coremod.network.messages.RestartCitizenMessage;
+
 import net.minecraft.util.math.BlockPos;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -45,11 +49,6 @@ public class WindowHireWorker extends Window implements ButtonHandler
     private static final String CITIZEN_LABEL = "citizen";
 
     /**
-     * Id of the id label in the GUI.
-     */
-    private static final String ID_LABEL = "id";
-
-    /**
      * Id of the citizen list in the GUI.
      */
     private static final String CITIZEN_LIST = "unemployed";
@@ -65,26 +64,39 @@ public class WindowHireWorker extends Window implements ButtonHandler
     private static final String BUILDING_NAME_RESOURCE_SUFFIX = ":gui/windowhireworker.xml";
 
     /**
-     * Position of the id label of each citizen in the list.
-     */
-    private static final int CITIZEN_ID_LABEL_POSITION = 4;
-
-    /**
      * Id of the fire button
      */
     private static final String BUTTON_FIRE = "fire";
+
+    /**
+     * Id of the pause button
+     */
+    private static final String BUTTON_PAUSE = "pause";
+
+    /**
+     * Id of the pause button
+     */
+    private static final String BUTTON_RESTART = "restart";
+
     /**
      * The view of the current building.
      */
     private final AbstractBuildingWorker.View building;
+
     /**
      * The colony.
      */
     private final ColonyView colony;
+
     /**
      * Contains all the citizens.
      */
     private List<CitizenDataView> citizens = new ArrayList<>();
+
+    /**
+     * Holder of a list element
+     */
+    private final ScrollingList citizenList;
 
     /**
      * Constructor for the window when the player wants to hire a worker for a certain job.
@@ -97,7 +109,8 @@ public class WindowHireWorker extends Window implements ButtonHandler
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.colony = c;
         building = (AbstractBuildingWorker.View) colony.getBuilding(buildingId);
-        updateCitizens();
+
+        citizenList = findPaneOfTypeByID(CITIZEN_LIST, ScrollingList.class);
     }
 
     /**
@@ -123,10 +136,6 @@ public class WindowHireWorker extends Window implements ButtonHandler
     public void onOpened()
     {
         updateCitizens();
-        final ScrollingList citizenList = findPaneOfTypeByID(CITIZEN_LIST, ScrollingList.class);
-        citizenList.enable();
-        citizenList.show();
-        //Creates a dataProvider for the unemployed citizenList.
         citizenList.setDataProvider(new ScrollingList.DataProvider()
         {
             /**
@@ -151,15 +160,29 @@ public class WindowHireWorker extends Window implements ButtonHandler
                 final AbstractBuildingWorker.Skill primary = building.getPrimarySkill();
                 final AbstractBuildingWorker.Skill secondary = building.getSecondarySkill();
 
+                final Button isPaused = rowPane.findPaneOfTypeByID(BUTTON_PAUSE, Button.class);
+
                 if (citizen.getWorkBuilding() == null)
                 {
-                    rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).show();
-                    rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).hide();
+                    rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).off();
+                    rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).on();
+                    isPaused.off();
                 }
                 else
                 {
-                    rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).hide();
-                    rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).show();
+                    rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).off();
+                    rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).on();
+                    isPaused.on();
+                    isPaused.setLabel(LanguageHandler.format(citizen.isPaused() ? COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE : COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE));
+                }
+
+                if (citizen.isPaused())
+                {
+                    rowPane.findPaneOfTypeByID(BUTTON_RESTART, Button.class).on();
+                }
+                else
+                {
+                    rowPane.findPaneOfTypeByID(BUTTON_RESTART, Button.class).off();
                 }
 
                 @NotNull final String strength = createAttributeText(createColor(primary, secondary, AbstractBuildingWorker.Skill.STRENGTH),
@@ -178,8 +201,6 @@ public class WindowHireWorker extends Window implements ButtonHandler
 
                 rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText(citizen.getName());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabelText(attributes);
-                //Invisible id textContent.
-                rowPane.findPaneOfTypeByID(ID_LABEL, Label.class).setLabelText(Integer.toString(citizen.getId()));
             }
         });
     }
@@ -202,12 +223,14 @@ public class WindowHireWorker extends Window implements ButtonHandler
         return "";
     }
 
+    /* TODO: NEW BLOCKOUT -> make this work
     @Override
     public void onUpdate()
     {
         updateCitizens();
         window.findPaneOfTypeByID(CITIZEN_LIST, ScrollingList.class).refreshElementPanes();
     }
+    */
 
     /**
      * Called when any button has been clicked.
@@ -217,29 +240,43 @@ public class WindowHireWorker extends Window implements ButtonHandler
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        if (button.getID().equals(BUTTON_DONE))
+        if (button.getID().equals(BUTTON_CANCEL))
         {
-            @NotNull final Label idLabel = (Label) button.getParent().getChildren().get(CITIZEN_ID_LABEL_POSITION);
-            final int id = Integer.parseInt(idLabel.getLabelText());
-            building.addWorkerId(id);
-            MineColonies.getNetwork().sendToServer(new HireFireMessage(this.building, true, id));
-        }
-        else if (button.getID().equals(BUTTON_FIRE))
-        {
-            @NotNull final Label idLabel = (Label) button.getParent().getChildren().get(CITIZEN_ID_LABEL_POSITION);
-            final int id = Integer.parseInt(idLabel.getLabelText());
-
-            MineColonies.getNetwork().sendToServer(new HireFireMessage(building, false, id));
-            building.removeWorkerId(id);
-        }
-        else if (!button.getID().equals(BUTTON_CANCEL))
-        {
+            if (colony.getTownHall() != null)
+            {
+                building.openGui(false);
+            }
             return;
         }
 
-        if (colony.getTownHall() != null)
+        final int row = citizenList.getListElementIndexByPane(button);
+        final int id = citizens.toArray(new CitizenDataView[citizens.size()])[row].getId();
+        @NotNull final CitizenDataView citizen = citizens.get(row); // TODO: NEW BLOCKOUT -> delete this and also all setters of <code>citizen</code> under this + views
+
+        switch (button.getID())
         {
-            building.openGui(false);
+            case BUTTON_DONE:
+                building.addWorkerId(id);
+                MineColonies.getNetwork().sendToServer(new HireFireMessage(this.building, true, id));
+                citizen.setWorkBuilding(new BlockPos(0, 0, 0));
+                break;
+            case BUTTON_FIRE:
+                MineColonies.getNetwork().sendToServer(new HireFireMessage(this.building, false, id));
+                building.removeWorkerId(id);
+                citizen.setWorkBuilding(null);
+                break;
+            case BUTTON_PAUSE:
+                MineColonies.getNetwork().sendToServer(new PauseCitizenMessage(this.building, id));
+                citizen.setPaused(!citizen.isPaused());
+                break;
+            case BUTTON_RESTART:
+                MineColonies.getNetwork().sendToServer(new RestartCitizenMessage(this.building, id));
+                this.close();
+                break;
+            default:
+                break;
         }
+
+        citizens.set(row, citizen);
     }
 }
