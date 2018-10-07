@@ -214,7 +214,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                 return;
             }
         }
+
         final WorkOrderBuildBuilding workOrderBuildBuilding = new WorkOrderBuildBuilding(this, level);
+        if (!workOrderBuildBuilding.canBeResolved(colony, level))
+        {
+            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+              "entity.builder.messageBuilderNecessary", Integer.toString(level));
+            return;
+        }
+
         colony.getWorkManager().addWorkOrder(workOrderBuildBuilding, false);
         colony.getProgressManager().progressWorkOrderPlacement(workOrderBuildBuilding);
 
