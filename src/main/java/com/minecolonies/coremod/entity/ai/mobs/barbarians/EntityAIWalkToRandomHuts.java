@@ -33,7 +33,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     /**
      * All directions.
      */
-    private final List<EnumFacing> directions = Arrays.asList(EnumFacing.HORIZONTALS);
+    private final List<EnumFacing> directions = Arrays.asList(Arrays.copyOf(EnumFacing.HORIZONTALS, 4));
 
     /**
      * The world.
