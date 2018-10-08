@@ -216,7 +216,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
 
         final WorkOrderBuildBuilding workOrderBuildBuilding = new WorkOrderBuildBuilding(this, level);
-        if (!workOrderBuildBuilding.canBeResolved(colony, level))
+        if (!canBeBuiltByBuilder() && !workOrderBuildBuilding.canBeResolved(colony, level))
         {
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
               "entity.builder.messageBuilderNecessary", Integer.toString(level));
@@ -228,6 +228,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
         markDirty();
+    }
+
+    /**
+     * Method to define if a builder can build this although the builder is not level 1 yet.
+     * @return true if so.
+     */
+    public boolean canBeBuiltByBuilder()
+    {
+        return false;
     }
 
     @Override
