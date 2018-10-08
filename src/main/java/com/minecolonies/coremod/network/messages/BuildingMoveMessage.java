@@ -258,6 +258,11 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
                 }
             }
 
+            if (building instanceof BuildingTownHall)
+            {
+                colony.getBuildingManager().setTownHall((BuildingTownHall) building);
+            }
+
             colony.getWorkManager().addWorkOrder(new WorkOrderBuildRemoval(oldBuilding, oldBuilding.getBuildingLevel()), false);
             colony.getWorkManager().addWorkOrder(new WorkOrderBuildBuilding(building, building.getBuildingLevel()), false);
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
