@@ -94,7 +94,7 @@ public class BlockTimberFrame extends AbstractBlockMinecoloniesPillar<BlockTimbe
         }
 
         String name = getRegistryName().toString();
-        final int underline = name.lastIndexOf('_', name.lastIndexOf('_') + 1);
+        final int underline = name.lastIndexOf('_');
         name = name.substring(0, underline + 1);
 
         if(state.getValue(AXIS) == EnumFacing.Axis.Y)
