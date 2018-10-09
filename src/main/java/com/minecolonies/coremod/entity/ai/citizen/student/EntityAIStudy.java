@@ -34,7 +34,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
     /**
      * The paper item to use
      */
-    private Item paper = GameRegistry.makeItemStack("Paper", 0, 1, null).getItem();
+    private final Item paper = GameRegistry.makeItemStack("Paper", 0, 1, null).getItem();
 
     /**
      * Constructor for the student.
