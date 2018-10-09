@@ -55,6 +55,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
+
 
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.NbtTagConstants.FIRST_POS_STRING;
@@ -286,7 +288,8 @@ public class EventHandler
     {
         final EntityPlayer player = event.getEntityPlayer();
         final World world = event.getWorld();
-
+        BlockPos bedBlockPos = event.getPos();
+        final List<CitizenData> citizenList;
         //Only execute for the main hand our colony events.
         if (event.getHand() == EnumHand.MAIN_HAND && !(event.getWorld().isRemote))
         {
@@ -314,19 +317,24 @@ public class EventHandler
             {
                 return;
             }
-             //Checks to see if player tries to sleep in a bed belonging to a Citizen, ancels the event, and Notifies Player that bed is occuppied
-            if(world.getBlockState(event.getPos()).getBlock().isBed(world.getBlockState(event.getPos()), world, event.getPos(), player))
-            {
-                BlockPos bd = event.getPos();
-                if(world.getBlockState(event.getPos()).getBlock().isBedFoot(world, event.getPos())) {
-                    bd = bd.offset(world.getBlockState(event.getPos()).getValue(BlockBed.FACING));
-                }
-                //Searches through the nearest Colonie's Citizen and sees if the bed belongs to a Citizen, and if the Citizen is asleep
-                ArrayList<CitizenData> cits = new ArrayList<>(ColonyManager.getClosestColony(world, event.getPos()).getCitizenManager().getCitizens());
-                for(int i = 0; i < cits.size(); i++){
-                    if (cits.get(i).getBedPos().equals(bd) && cits.get(i).isAsleep()){
-                        event.setCanceled(true);
-                        LanguageHandler.sendPlayerMessage(player, "tile.bed.occupied");
+            if (ColonyManager.getClosestColony(world, event.getPos()) != null) {
+                //Checks to see if player tries to sleep in a bed belonging to a Citizen, ancels the event, and Notifies Player that bed is occuppied
+                if (world.getBlockState(event.getPos()).getBlock().isBed(world.getBlockState(event.getPos()), world, event.getPos(), player))
+                {
+                   citizenList = ColonyManager.getClosestColony(world, event.getPos()).getCitizenManager().getCitizens();
+                    if (world.getBlockState(event.getPos()).getBlock().isBedFoot(world, event.getPos()))
+                    {
+                     bedBlockPos = bedBlockPos.offset(world.getBlockState(event.getPos()).getValue(BlockBed.FACING));
+                    }
+                    //Searches through the nearest Colony's Citizen and sees if the bed belongs to a Citizen, and if the Citizen is asleep
+
+                    for (CitizenData citizen: citizenList)
+                    {
+                        if (citizen.getBedPos().equals(bedBlockPos) && citizen.isAsleep())
+                        {
+                            event.setCanceled(true);
+                            LanguageHandler.sendPlayerMessage(player, "tile.bed.occupied");
+                        }
                     }
                 }
             }
