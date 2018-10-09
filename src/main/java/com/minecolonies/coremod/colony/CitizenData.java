@@ -15,7 +15,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler; 
+import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
@@ -1208,7 +1208,17 @@ public class CitizenData
      */
     public void tryRandomLevelUp(final Random random)
     {
-        if (random.nextInt(CHANCE_TO_LEVEL) > 0)
+        tryRandomLevelUp(random, 0);
+    }
+
+    /**
+     * Try a random level up.
+     *
+     * @param customChance set to 0 to not use, chance for levelup is 1/customChance
+     */
+    public void tryRandomLevelUp(final Random random, final int customChance)
+    {
+        if ((customChance > 0 && random.nextInt(customChance) > 0) || (customChance < 1 && random.nextInt(CHANCE_TO_LEVEL) > 0))
         {
             return;
         }
