@@ -9,9 +9,9 @@ import com.minecolonies.coremod.colony.jobs.JobStudent;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import net.minecraft.item.Item;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -30,11 +30,6 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
      * The current pos to study at.
      */
     private BlockPos studyPos = null;
-
-    /**
-     * The paper item to use
-     */
-    private final Item paper = GameRegistry.makeItemStack("Paper", 0, 1, null).getItem();
 
     /**
      * Constructor for the student.
@@ -87,7 +82,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
 
         // Search for paper to use to study
         final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(worker,
-          itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() == paper);
+          itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() == Items.PAPER);
 
         if (slot == -1)
         {
@@ -95,7 +90,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
 
             if (data.getJob().getAsyncRequests().isEmpty())
             {
-                data.createRequestAsync(new Stack(GameRegistry.makeItemStack("Paper", 0, 10, null)));
+                data.createRequestAsync(new Stack(new ItemStack(Items.PAPER,10)));
             }
         }
         else
