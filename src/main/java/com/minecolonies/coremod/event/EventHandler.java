@@ -290,6 +290,8 @@ public class EventHandler
         final World world = event.getWorld();
         BlockPos bedBlockPos = event.getPos();
         final List<CitizenData> citizenList;
+        final IColony colony = ColonyManager.getIColony(world, event.getPos());
+
         //Only execute for the main hand our colony events.
         if (event.getHand() == EnumHand.MAIN_HAND && !(event.getWorld().isRemote))
         {
@@ -297,7 +299,7 @@ public class EventHandler
             // and uses that return value, but I didn't want to call it twice
             if (playerRightClickInteract(player, world, event.getPos()) && world.getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut)
             {
-                final IColony colony = ColonyManager.getIColony(world, event.getPos());
+
                 if (colony != null
                         && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
                 {
@@ -317,9 +319,9 @@ public class EventHandler
             {
                 return;
             }
-            if (ColonyManager.getClosestColony(world, event.getPos()) != null) {
+
                 //Checks to see if player tries to sleep in a bed belonging to a Citizen, ancels the event, and Notifies Player that bed is occuppied
-                if (world.getBlockState(event.getPos()).getBlock().isBed(world.getBlockState(event.getPos()), world, event.getPos(), player))
+                if (colony != null && world.getBlockState(event.getPos()).getBlock().isBed(world.getBlockState(event.getPos()), world, event.getPos(), player))
                 {
                    citizenList = ColonyManager.getClosestColony(world, event.getPos()).getCitizenManager().getCitizens();
                     if (world.getBlockState(event.getPos()).getBlock().isBedFoot(world, event.getPos()))
@@ -328,7 +330,7 @@ public class EventHandler
                     }
                     //Searches through the nearest Colony's Citizen and sees if the bed belongs to a Citizen, and if the Citizen is asleep
 
-                    for (CitizenData citizen: citizenList)
+                    for (final CitizenData citizen: citizenList)
                     {
                         if (citizen.getBedPos().equals(bedBlockPos) && citizen.isAsleep())
                         {
@@ -337,7 +339,7 @@ public class EventHandler
                         }
                     }
                 }
-            }
+
 
             handleEventCancellation(event, player);
         }
