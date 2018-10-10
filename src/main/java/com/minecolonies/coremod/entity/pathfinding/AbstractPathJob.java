@@ -814,7 +814,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         //  Do we have something to stand on in the target space?
         final IBlockState below = world.getBlockState(pos.down());
-        final SurfaceType walkability = isWalkableSurface(below);
+        final SurfaceType walkability = isWalkableSurface(below, pos);
         if (walkability == SurfaceType.WALKABLE)
         {
             //  Level path
@@ -856,7 +856,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         final BlockPos down = pos.down(2);
         final IBlockState below = world.getBlockState(down);
-        if (isWalkableSurface(below) == SurfaceType.WALKABLE)
+        if (isWalkableSurface(below, pos) == SurfaceType.WALKABLE)
         {
             //  Level path
             return pos.getY() - 1;
@@ -887,7 +887,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     {
         final boolean canJump = parent != null && !parent.isLadder() && !parent.isSwimming();
         //  Need to try jumping up one, if we can
-        if (!canJump || isWalkableSurface(target) != SurfaceType.WALKABLE)
+        if (!canJump || isWalkableSurface(target, pos) != SurfaceType.WALKABLE)
         {
             return -1;
         }
@@ -960,17 +960,20 @@ public abstract class AbstractPathJob implements Callable<Path>
      * Is the block solid and can be stood upon.
      *
      * @param blockState Block to check.
+     * @param pos the position.
      * @return true if the block at that location can be walked on.
      */
     @NotNull
-    protected SurfaceType isWalkableSurface(@NotNull final IBlockState blockState)
+    protected SurfaceType isWalkableSurface(@NotNull final IBlockState blockState, final BlockPos pos)
     {
         final Block block = blockState.getBlock();
         if (block instanceof BlockFence
               || block instanceof BlockFenceGate
               || block instanceof BlockWall
               || block instanceof BlockHutField
-              || block instanceof BlockBarrel)
+              || block instanceof BlockBarrel
+              || (blockState.getCollisionBoundingBox(world, pos) != null
+                   && blockState.getCollisionBoundingBox(world, pos).maxY > 1.0))
         {
             return SurfaceType.NOT_PASSABLE;
         }

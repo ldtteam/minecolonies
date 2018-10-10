@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.mobs.barbarians;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianSpawnUtils;
@@ -9,6 +10,7 @@ import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.items.ItemChiefSword;
 import com.minecolonies.coremod.sounds.BarbarianSounds;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
@@ -62,12 +64,12 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     /**
      * The current tick since creation.
      */
-    private int currentTick = 1;
+    private int currentTick = 0;
 
     /**
      * Amount of time the barb got stuck.
      */
-    private int stuckCounter = 0;
+    private int stuckCounter = 1;
 
     /**
      * Amount of time the barb got stuck.
@@ -96,6 +98,17 @@ public abstract class AbstractEntityBarbarian extends EntityMob
         worldTimeAtSpawn = world.getTotalWorldTime();
         this.enablePersistence();
         super.entityInit();
+    }
+
+    @Override
+    public void applyEntityCollision(@NotNull final Entity entityIn)
+    {
+        if (entityIn instanceof AbstractEntityBarbarian
+              && ((stuckCounter > 0 || ladderCounter > 0 || ((AbstractEntityBarbarian) entityIn).stuckCounter > 0 || ((AbstractEntityBarbarian) entityIn).ladderCounter > 0)))
+        {
+            return;
+        }
+        super.applyEntityCollision(entityIn);
     }
 
     @Override
