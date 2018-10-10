@@ -100,11 +100,11 @@ public class TileEntityColonyBuilding extends TileEntityChest
         {
             if (colonyId == 0)
             {
-                colony = ColonyManager.getColony(getWorld(), this.getPos());
+                colony = ColonyManager.getColonyByPosFromWorld(getWorld(), this.getPos());
             }
             else
             {
-                colony = ColonyManager.getColony(colonyId);
+                colony = ColonyManager.getColonyByWorld(colonyId, getWorld());
             }
 
             // It's most probably previewed building, please don't spam it here.
@@ -305,7 +305,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
 
         if (!getWorld().isRemote && colonyId == 0)
         {
-            final Colony tempColony = ColonyManager.getColony(getWorld(), this.getPosition());
+            final Colony tempColony = ColonyManager.getColonyByPosFromWorld(getWorld(), this.getPosition());
             if (tempColony != null)
             {
                 colonyId = tempColony.getID();

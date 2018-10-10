@@ -167,7 +167,7 @@ public final class StructureWrapper
 
                     if (localState.getMaterial().isSolid())
                     {
-                        handleBlockPlacement(worldPos, localState, complete, this.structure.getBlockInfo(localPos).tileentityData);
+                        handleBlockPlacement(worldPos, localState, complete, this.structure.getBlockInfo(localPos).tileentityData, world);
                     }
                     else
                     {
@@ -182,7 +182,7 @@ public final class StructureWrapper
             final IBlockState localState = this.structure.getBlockState(coords);
             final BlockPos newWorldPos = pos.add(coords);
 
-            handleBlockPlacement(newWorldPos, localState, complete, this.structure.getBlockInfo(coords).tileentityData);
+            handleBlockPlacement(newWorldPos, localState, complete, this.structure.getBlockInfo(coords).tileentityData, world);
         }
 
         for (int j = 0; j < structure.getHeight(); j++)
@@ -228,8 +228,9 @@ public final class StructureWrapper
      * @param localState the local state.
      * @param complete if complete with it.
      * @param tileEntityData the tileEntity.
+     * @param world the world it is being placed in.
      */
-    private void handleBlockPlacement(final BlockPos pos, final IBlockState localState, final boolean complete, final NBTTagCompound tileEntityData)
+    private void handleBlockPlacement(final BlockPos pos, final IBlockState localState, final boolean complete, final NBTTagCompound tileEntityData, final World world)
     {
         for (final IPlacementHandler handlers : PlacementHandlers.handlers)
         {
@@ -240,7 +241,7 @@ public final class StructureWrapper
                 {
                     final IBlockState blockState = (IBlockState) result;
 
-                    final Colony colony = ColonyManager.getColony(world, pos);
+                    final Colony colony = ColonyManager.getColonyByPosFromWorld(world, pos);
                     if (colony != null)
                     {
                         final AbstractBuilding building = colony.getBuildingManager().getBuilding(position);

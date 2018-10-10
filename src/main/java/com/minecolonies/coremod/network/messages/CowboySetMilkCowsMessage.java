@@ -19,6 +19,11 @@ public class CowboySetMilkCowsMessage extends AbstractMessage<CowboySetMilkCowsM
     private boolean milkCows;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty standard constructor.
      */
     public CowboySetMilkCowsMessage()
@@ -38,6 +43,7 @@ public class CowboySetMilkCowsMessage extends AbstractMessage<CowboySetMilkCowsM
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.milkCows = milkCows;
+        this.dimension = building.getColony().getDimension();
     }
 
 
@@ -47,6 +53,7 @@ public class CowboySetMilkCowsMessage extends AbstractMessage<CowboySetMilkCowsM
         colonyId = byteBuf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(byteBuf);
         milkCows = byteBuf.readBoolean();
+        dimension = byteBuf.readInt();
     }
 
     @Override
@@ -55,12 +62,13 @@ public class CowboySetMilkCowsMessage extends AbstractMessage<CowboySetMilkCowsM
         byteBuf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(byteBuf, buildingId);
         byteBuf.writeBoolean(milkCows);
+        byteBuf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final CowboySetMilkCowsMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings

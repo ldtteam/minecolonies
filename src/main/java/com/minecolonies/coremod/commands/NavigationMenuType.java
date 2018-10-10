@@ -29,7 +29,8 @@ public enum NavigationMenuType implements IMenuType
         ActionMenuType.MAKE_NOT_AUTO_DELETABLE,
         ActionMenuType.DO_RAID_NOW,
         ActionMenuType.DO_RAID_TONIGHT,
-        ActionMenuType.CLAIM
+        ActionMenuType.CLAIM,
+        ActionMenuType.LOAD_BACKUP
     )),
 
     REQUEST_SYSTEM(new NavigationMenu("rs",

@@ -21,8 +21,10 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesChunkCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldCapabilityProvider;
+import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldColonyManagerCapabilityProvider;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
+import com.minecolonies.coremod.util.ChunkDataHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockSilverfish;
@@ -34,12 +36,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -133,6 +137,7 @@ public class EventHandler
     public void onAttachingCapabilitiesWorld(@NotNull final AttachCapabilitiesEvent<World> event)
     {
         event.addCapability(new ResourceLocation(Constants.MOD_ID, "chunkUpdate"), new MinecoloniesWorldCapabilityProvider());
+        event.addCapability(new ResourceLocation(Constants.MOD_ID, "colonyManager"), new MinecoloniesWorldColonyManagerCapabilityProvider());
     }
 
     /**
@@ -143,7 +148,7 @@ public class EventHandler
     {
         if (event.getWorld() instanceof WorldServer)
         {
-            ColonyManager.loadChunk(event.getChunk(), event.getWorld());
+            ChunkDataHelper.loadChunk(event.getChunk(), event.getWorld());
         }
     }
 
@@ -162,7 +167,7 @@ public class EventHandler
         {
             final World world = entity.getEntityWorld();
             final Chunk newChunk = world.getChunk(event.getNewChunkX(), event.getNewChunkZ());
-            ColonyManager.loadChunk(newChunk, entity.world);
+            ChunkDataHelper.loadChunk(newChunk, entity.world);
 
             final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null);
 
@@ -174,7 +179,7 @@ public class EventHandler
             // Add new subscribers to colony.
             for (final int colonyId : newCloseColonies.getAllCloseColonies())
             {
-                final Colony colony = ColonyManager.getColony(colonyId);
+                final Colony colony = ColonyManager.getColonyByWorld(colonyId, ((EntityPlayerMP) entity).getServerWorld());
                 if (colony != null)
                 {
                     colony.getPackageManager().addSubscribers(player);
@@ -186,7 +191,7 @@ public class EventHandler
             {
                 if (!newCloseColonies.getAllCloseColonies().contains(colonyId))
                 {
-                    final Colony colony = ColonyManager.getColony(colonyId);
+                    final Colony colony = ColonyManager.getColonyByWorld(colonyId, ((EntityPlayerMP) entity).getServerWorld());
                     if (colony != null)
                     {
                         colony.getPackageManager().removeSubscriber(player);
@@ -198,7 +203,7 @@ public class EventHandler
             {
                 if (newCloseColonies.getOwningColony() == 0)
                 {
-                    final Colony colony = ColonyManager.getColony(oldCloseColonies.getOwningColony());
+                    final Colony colony = ColonyManager.getColonyByWorld(oldCloseColonies.getOwningColony(), ((EntityPlayerMP) entity).getServerWorld());
                     if (colony != null)
                     {
                         colony.removeVisitingPlayer(player);
@@ -206,7 +211,7 @@ public class EventHandler
                     return;
                 }
 
-                final Colony colony = ColonyManager.getColony(newCloseColonies.getOwningColony());
+                final Colony colony = ColonyManager.getColonyByWorld(newCloseColonies.getOwningColony(), ((EntityPlayerMP) entity).getServerWorld());
                 if (colony != null)
                 {
                     colony.addVisitingPlayer(player);
@@ -240,7 +245,7 @@ public class EventHandler
                 if (chunkCapability != null && chunkCapability.getOwningColony() != 0
                       && entityCitizen.getCitizenColonyHandler().getColonyId() != chunkCapability.getOwningColony())
                 {
-                    final Colony colony = ColonyManager.getColony(chunkCapability.getOwningColony());
+                    final Colony colony = ColonyManager.getColonyByWorld(chunkCapability.getOwningColony(), entityCitizen.world);
                     if (colony != null)
                     {
                         colony.addGuardToAttackers(entityCitizen, ((AbstractBuildingGuards) entityCitizen.getCitizenColonyHandler().getWorkBuilding()).getFollowPlayer());

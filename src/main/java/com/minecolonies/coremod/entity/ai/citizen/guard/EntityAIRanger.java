@@ -34,7 +34,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     /**
      * This guard's minimum distance for attack.
      */
-    private static final int MAX_DISTANCE_FOR_ATTACK = 160;
+    private static final int MAX_DISTANCE_FOR_ATTACK = 120;
 
     /**
      * The value of the speed which the guard will move.

@@ -39,6 +39,11 @@ public class ChangeRecipePriorityMessage extends AbstractMessage<ChangeRecipePri
     private boolean up;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty public constructor.
      */
     public ChangeRecipePriorityMessage()
@@ -60,6 +65,7 @@ public class ChangeRecipePriorityMessage extends AbstractMessage<ChangeRecipePri
         this.buildingId = building.getLocation();
         this.recipeLocation = location;
         this.up = up;
+        this.dimension = building.getColony().getDimension();
     }
 
     /**
@@ -74,6 +80,7 @@ public class ChangeRecipePriorityMessage extends AbstractMessage<ChangeRecipePri
         this.buildingId = BlockPosUtil.readFromByteBuf(buf);
         this.recipeLocation = buf.readInt();
         this.up = buf.readBoolean();
+        dimension = buf.readInt();
     }
 
     /**
@@ -88,12 +95,13 @@ public class ChangeRecipePriorityMessage extends AbstractMessage<ChangeRecipePri
         BlockPosUtil.writeToByteBuf(buf, this.buildingId);
         buf.writeInt(this.recipeLocation);
         buf.writeBoolean(this.up);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final ChangeRecipePriorityMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
             //Verify player has permission to change this huts settings

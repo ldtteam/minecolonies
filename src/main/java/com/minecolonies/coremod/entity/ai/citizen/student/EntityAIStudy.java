@@ -22,11 +22,6 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
     private static final int STUDY_DELAY = 20*60;
 
     /**
-     * Delay for walking.
-     */
-    private static final int WALK_DELAY = 20;
-
-    /**
      * The current pos to study at.
      */
     private BlockPos studyPos = null;

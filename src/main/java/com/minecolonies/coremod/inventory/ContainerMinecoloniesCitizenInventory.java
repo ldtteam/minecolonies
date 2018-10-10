@@ -11,6 +11,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -43,13 +44,14 @@ public class ContainerMinecoloniesCitizenInventory extends Container
      * @param colonyId the colony id.
      * @param buildingId the building id.
      * @param citizenId the citizen id.
+     * @param world the world.
      */
     public ContainerMinecoloniesCitizenInventory(
             final IInventory playerInventory,
             final IInventory inventory,
             final int colonyId,
             final BlockPos buildingId,
-            final int citizenId)
+            final int citizenId, final World world)
     {
         this.chestInventory = inventory;
         this.inventorySize = inventory.getSizeInventory() / INVENTORY_COLUMNS;
@@ -75,7 +77,7 @@ public class ContainerMinecoloniesCitizenInventory extends Container
                                 {
                                     if (buildingId != null && FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !ItemStackUtils.isEmpty(stack))
                                     {
-                                        final Colony colony = ColonyManager.getColony(colonyId);
+                                        final Colony colony = ColonyManager.getColonyByWorld(colonyId, world);
                                         final AbstractBuilding building = colony.getBuildingManager().getBuilding(buildingId);
                                         final CitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
 

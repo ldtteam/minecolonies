@@ -169,6 +169,12 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         }
     }
 
+    @Override
+    public boolean canBeBuiltByBuilder(final int newLevel)
+    {
+        return getBuildingLevel() + 1 == newLevel;
+    }
+
     /**
      * Provides a view of the miner building class.
      */

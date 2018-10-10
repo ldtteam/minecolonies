@@ -20,6 +20,11 @@ public class ToggleHelpMessage extends AbstractMessage<ToggleHelpMessage, IMessa
     private int colonyId;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty public constructor.
      */
     public ToggleHelpMessage()
@@ -36,6 +41,7 @@ public class ToggleHelpMessage extends AbstractMessage<ToggleHelpMessage, IMessa
     {
         super();
         this.colonyId = colony.getID();
+        this.dimension = colony.getDimension();
     }
 
     /**
@@ -47,6 +53,7 @@ public class ToggleHelpMessage extends AbstractMessage<ToggleHelpMessage, IMessa
     public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
+        dimension = buf.readInt();
     }
 
     /**
@@ -58,6 +65,7 @@ public class ToggleHelpMessage extends AbstractMessage<ToggleHelpMessage, IMessa
     public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
+        buf.writeInt(dimension);
     }
 
     /**
@@ -70,7 +78,7 @@ public class ToggleHelpMessage extends AbstractMessage<ToggleHelpMessage, IMessa
     @Override
     public void messageOnServerThread(final ToggleHelpMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
 

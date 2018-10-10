@@ -400,6 +400,7 @@ public class CommandEntryPointTest
                 "Colony",
                 "Claim",
                 "colony:", "1",
+                "dimension:", "1",
                 "range:", "1",
                 "add:", "true"
         };
@@ -417,9 +418,9 @@ public class CommandEntryPointTest
                 // EXPECT:
                 assertThat(clazz).isEqualTo(ClaimChunksCommand.class);
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
-                assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("colony", "range", "add");
+                assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("colony", "dimension", "range", "add");
 
-                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.COLONY, ActionArgumentType.INTEGER, ActionArgumentType.BOOLEAN);
+                assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.INTEGER, ActionArgumentType.INTEGER, ActionArgumentType.INTEGER, ActionArgumentType.BOOLEAN);
                 assertThat(actionMenuState.getIntegerForArgument("range")).isEqualTo(1);
                 assertThat(actionMenuState.getBooleanForArgument("add")).isEqualTo(true);
             }
@@ -1039,7 +1040,7 @@ public class CommandEntryPointTest
         final List<String> results = instance.getTabCompletions(server, sender, args, pos, moduleContext);
 
         // EXPECT:
-        assertThat(results).containsExactlyInAnyOrder("addofficer", "barbarians", "shl", "delete", "deletable", "info", "ownerchange", "raid", "raid-tonight", "refresh", "teleport",
+        assertThat(results).containsExactlyInAnyOrder("addofficer", "loadbackup", "barbarians", "shl", "delete", "deletable", "info", "ownerchange", "raid", "raid-tonight", "refresh", "teleport",
                 "claim");
     }
 

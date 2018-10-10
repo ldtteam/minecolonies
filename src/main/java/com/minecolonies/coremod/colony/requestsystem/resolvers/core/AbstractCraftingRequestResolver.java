@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -107,11 +108,12 @@ public abstract class AbstractCraftingRequestResolver extends AbstractBuildingDe
     protected int calculateMaxCraftingCount(@NotNull final ItemStack outputStack, @NotNull final IRecipeStorage storage)
     {
         //Calculate the initial crafting count from the request and the storage output.
-        int craftingCount = Math.max(ItemStackUtils.getSize(outputStack), ItemStackUtils.getSize(storage.getPrimaryOutput())) / ItemStackUtils.getSize(storage.getPrimaryOutput());
+        int craftingCount = (int)Math.ceil(Math.max(ItemStackUtils.getSize(outputStack), ItemStackUtils.getSize(storage.getPrimaryOutput())) / (double)ItemStackUtils.getSize(storage.getPrimaryOutput()));
 
         //Now check if we excede an ingredients max stack size.
-        for(final ItemStack ingredient : storage.getInput())
+        for(final ItemStorage ingredientStorage : storage.getCleanedInput())
         {
+            final ItemStack ingredient = ingredientStorage.getItemStack();
             //Calculate the input count for the ingredient.
             final int ingredientInputCount = ItemStackUtils.getSize(ingredient) * craftingCount;
             //Check if we are above the max stacksize.
@@ -133,11 +135,11 @@ public abstract class AbstractCraftingRequestResolver extends AbstractBuildingDe
             @NotNull final IRecipeStorage storage)
     {
         final int craftingCount = calculateMaxCraftingCount(requestStack, storage);
-        return storage.getInput().stream()
-                 .filter(s -> !ItemStackUtils.isEmpty(s))
+        return storage.getCleanedInput().stream()
+                 .filter(s -> !ItemStackUtils.isEmpty(s.getItemStack()))
                  .map(stack -> {
-                    final ItemStack craftingHelperStack = stack.copy();
-                    ItemStackUtils.setSize(craftingHelperStack, ItemStackUtils.getSize(craftingHelperStack) * craftingCount);
+                    final ItemStack craftingHelperStack = stack.getItemStack().copy();
+                    ItemStackUtils.setSize(craftingHelperStack, stack.getAmount() * craftingCount);
 
                     return createNewRequestForStack(manager, craftingHelperStack);
                 }).collect(Collectors.toList());

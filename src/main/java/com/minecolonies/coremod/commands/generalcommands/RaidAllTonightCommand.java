@@ -71,7 +71,7 @@ public class RaidAllTonightCommand extends AbstractSingleCommand implements IAct
             return;
         }
 
-        for (final Colony colony : ColonyManager.getColonies())
+        for (final Colony colony : ColonyManager.getAllColonies())
         {
             colony.getBarbManager().setWillRaidTonight(true);
         }

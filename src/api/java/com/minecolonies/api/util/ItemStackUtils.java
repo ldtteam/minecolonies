@@ -2,6 +2,7 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
+import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.entity.Entity;
@@ -282,6 +283,10 @@ public final class ItemStackUtils
             {
                 final ItemSword itemSword = (ItemSword) stack.getItem();
                 return getToolLevel(itemSword.getToolMaterialName());
+            }
+            else if (Compatibility.isTinkersWeapon(stack))
+            {
+                return Compatibility.getToolLevel(stack);
             }
         }
         else if (ToolType.HELMET.equals(toolType)

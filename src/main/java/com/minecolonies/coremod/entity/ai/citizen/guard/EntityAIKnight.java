@@ -82,11 +82,11 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     @Override
     public void wearWeapon()
     {
-        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.SWORD, 0, buildingGuards.getMaxToolLevel());
+        final int weaponSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.SWORD, 0, buildingGuards.getMaxToolLevel());
 
-        if (bowSlot != -1)
+        if (weaponSlot != -1)
         {
-            worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, bowSlot);
+            worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, weaponSlot);
         }
     }
 

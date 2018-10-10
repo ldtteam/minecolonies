@@ -24,6 +24,11 @@ public class AssignFieldMessage extends AbstractMessage<AssignFieldMessage, IMes
     private BlockPos field;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty standard constructor.
      */
     public AssignFieldMessage()
@@ -45,6 +50,7 @@ public class AssignFieldMessage extends AbstractMessage<AssignFieldMessage, IMes
         this.buildingId = building.getID();
         this.assign = assign;
         this.field = field;
+        this.dimension = building.getColony().getDimension();
     }
 
     @Override
@@ -54,6 +60,7 @@ public class AssignFieldMessage extends AbstractMessage<AssignFieldMessage, IMes
         buildingId = BlockPosUtil.readFromByteBuf(buf);
         assign = buf.readBoolean();
         field = BlockPosUtil.readFromByteBuf(buf);
+        dimension = buf.readInt();
     }
 
     @Override
@@ -63,12 +70,13 @@ public class AssignFieldMessage extends AbstractMessage<AssignFieldMessage, IMes
         BlockPosUtil.writeToByteBuf(buf, buildingId);
         buf.writeBoolean(assign);
         BlockPosUtil.writeToByteBuf(buf, field);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final AssignFieldMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings

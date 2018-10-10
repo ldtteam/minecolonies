@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Updates the request state of a request..
+ * Updates the request state of a request.
  */
 public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStateMessage, IMessage>
 {
@@ -40,6 +40,11 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
     private RequestState state;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty constructor used when registering the message.
      */
     public UpdateRequestStateMessage()
@@ -62,6 +67,7 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
         this.token = requestId;
         this.state = state;
         this.itemStack = itemStack;
+
     }
 
     @Override
@@ -74,6 +80,7 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
         {
             itemStack = ByteBufUtils.readItemStack(buf);
         }
+        dimension = buf.readInt();
     }
 
     @Override
@@ -86,13 +93,13 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
         {
             ByteBufUtils.writeItemStack(buf, itemStack);
         }
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final UpdateRequestStateMessage message, final EntityPlayerMP player)
     {
-        final IColony colony = ColonyManager.getColony(message.colonyId);
-
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony instanceof Colony)
         {
             if (message.state == RequestState.OVERRULED)
