@@ -452,7 +452,7 @@ public final class BlockPosUtil
      * @return returns BlockPos position with air above.
      */
     @Nullable
-    private static BlockPos getFloor(@NotNull final BlockPos position, final int depth, @NotNull final World world)
+    public static BlockPos getFloor(@NotNull final BlockPos position, final int depth, @NotNull final World world)
     {
         if (depth > MAX_DEPTH)
         {

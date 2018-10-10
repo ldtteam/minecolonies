@@ -191,4 +191,9 @@ public final class CitizenConstants
      * Distance between Barbarian and Citizen to not remove happiness.
      */
     public static final int BARB_DISTANCE_FOR_FREE_DEATH = 21;
+
+    /**
+     * The max citizen level.
+     */
+    public static final int MAX_CITIZEN_LEVEL = 99;
 }
