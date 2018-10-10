@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.student;
 
-import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -11,6 +10,7 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -87,16 +87,29 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
         if (slot == -1)
         {
             data.tryRandomLevelUp(world.rand);
+            worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
 
-            if (data.getJob().getAsyncRequests().isEmpty())
+            final int bSlot = InventoryUtils.findFirstSlotInProviderWith(getOwnBuilding(), Items.PAPER, 0);
+            if (bSlot > -1)
             {
-                data.createRequestAsync(new Stack(new ItemStack(Items.PAPER,10)));
+                if (walkToBuilding())
+                {
+                    setDelay(WALK_DELAY);
+                    return getState();
+                }
+                takeItemStackFromProvider(getOwnBuilding(), bSlot);
+                return getState();
+            }
+            else
+            {
+                checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.PAPER, 10));
             }
         }
         else
         {
             data.tryRandomLevelUp(world.rand, 30);
             data.getInventory().decrStackSize(slot, 1);
+            worker.setHeldItem(EnumHand.MAIN_HAND, Items.PAPER.getDefaultInstance());
         }
 
         studyPos = null;

@@ -10,6 +10,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBookshelf;
+import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
@@ -57,12 +58,14 @@ public class BuildingLibrary extends AbstractBuildingWorker
 
     /**
      * Instantiates the building.
+     *
      * @param c the colony.
      * @param l the location.
      */
     public BuildingLibrary(final Colony c, final BlockPos l)
     {
         super(c, l);
+        keepX.put(itemStack -> itemStack.getItem() == Items.PAPER, 200);
     }
 
     @NotNull
@@ -127,7 +130,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
         super.registerBlockPosition(block, pos, world);
-        if(block instanceof BlockBookshelf)
+        if (block instanceof BlockBookshelf)
         {
             bookCases.add(pos);
         }
@@ -135,6 +138,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
 
     /**
      * Returns a random bookshelf from the list.
+     *
      * @return the position of it.
      */
     public BlockPos getRandomBookShelf()
@@ -159,6 +163,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
     {
         /**
          * Instantiates the view of the building.
+         *
          * @param c the colonyView.
          * @param l the location of the block.
          */
