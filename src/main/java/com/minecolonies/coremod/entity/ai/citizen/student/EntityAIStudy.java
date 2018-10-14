@@ -105,7 +105,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
             data.tryRandomLevelUp(world.rand);
             worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
 
-            for (StudyItem studyItem : getOwnBuilding(BuildingLibrary.class).getStudyItems())
+            for (final StudyItem studyItem : getOwnBuilding(BuildingLibrary.class).getStudyItems())
             {
                 final int bSlot = InventoryUtils.findFirstSlotInProviderWith(getOwnBuilding(), studyItem.getItem(), 0);
                 if (bSlot > -1)
