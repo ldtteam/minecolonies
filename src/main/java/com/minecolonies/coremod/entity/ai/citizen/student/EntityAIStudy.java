@@ -8,11 +8,13 @@ import com.minecolonies.coremod.colony.jobs.JobStudent;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import net.minecraft.init.Items;
+import com.minecolonies.coremod.entity.ai.util.StudyItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -80,36 +82,59 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
             return getState();
         }
 
-        // Search for paper to use to study
-        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(worker,
-          itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() == Items.PAPER);
+        // Search for Items to use to study
+        ArrayList<StudyItem> currentItems = new ArrayList<>();
 
-        if (slot == -1)
+        for (StudyItem curItem : getOwnBuilding(BuildingLibrary.class).getStudyItems())
         {
+            final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(worker,
+              itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() == curItem.getItem());
+
+            if (slot != -1)
+            {
+                curItem.setSlot(slot);
+                currentItems.add(curItem);
+            }
+        }
+
+        // Create a new Request for items
+        if (currentItems.isEmpty())
+        {
+            // Default levelup
             data.tryRandomLevelUp(world.rand);
             worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
 
-            final int bSlot = InventoryUtils.findFirstSlotInProviderWith(getOwnBuilding(), Items.PAPER, 0);
-            if (bSlot > -1)
+            for (StudyItem studyItem : getOwnBuilding(BuildingLibrary.class).getStudyItems())
             {
-                if (walkToBuilding())
+                final int bSlot = InventoryUtils.findFirstSlotInProviderWith(getOwnBuilding(), studyItem.getItem(), 0);
+                if (bSlot > -1)
                 {
-                    setDelay(WALK_DELAY);
-                    return getState();
+                    if (walkToBuilding())
+                    {
+                        setDelay(WALK_DELAY);
+                        return getState();
+                    }
+                    takeItemStackFromProvider(getOwnBuilding(), bSlot);
                 }
-                takeItemStackFromProvider(getOwnBuilding(), bSlot);
-                return getState();
-            }
-            else
-            {
-                checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.PAPER, 10));
+                else
+                {
+                    checkIfRequestForItemExistOrCreateAsynch(new ItemStack(studyItem.getItem(), studyItem.getBreakPct() / 10 > 0 ? studyItem.getBreakPct() / 10 : 1));
+                }
             }
         }
+        // Use random item
         else
         {
-            data.tryRandomLevelUp(world.rand, 30);
-            data.getInventory().decrStackSize(slot, 1);
-            worker.setHeldItem(EnumHand.MAIN_HAND, Items.PAPER.getDefaultInstance());
+            StudyItem chosenItem = currentItems.get(world.rand.nextInt(currentItems.size()));
+
+            worker.setHeldItem(EnumHand.MAIN_HAND, chosenItem.getItem().getDefaultInstance());
+            data.tryRandomLevelUp(world.rand, data.getChanceToLevel() * 100 / chosenItem.getSkillIncreasePct());
+
+            // Break item rand
+            if (world.rand.nextInt(100) <= chosenItem.getBreakPct())
+            {
+                data.getInventory().decrStackSize(chosenItem.getSlot(), 1);
+            }
         }
 
         studyPos = null;

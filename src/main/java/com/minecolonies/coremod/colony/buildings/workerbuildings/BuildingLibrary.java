@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -8,12 +10,14 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
+import com.minecolonies.coremod.entity.ai.util.StudyItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBookshelf;
-import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -57,6 +61,11 @@ public class BuildingLibrary extends AbstractBuildingWorker
     private final Random random = new Random();
 
     /**
+     * Study Item list, loaded from config, Typle<int,int> First is the study chance increase,second is the breakchance
+     */
+    private final ArrayList<StudyItem> studyItems;
+
+    /**
      * Instantiates the building.
      *
      * @param c the colony.
@@ -65,7 +74,40 @@ public class BuildingLibrary extends AbstractBuildingWorker
     public BuildingLibrary(final Colony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(itemStack -> itemStack.getItem() == Items.PAPER, 200);
+
+        studyItems = parseFromConfig();
+    }
+
+    /**
+     * Parses Study Items from the Config and adds them on the keepX list
+     */
+    private ArrayList<StudyItem> parseFromConfig()
+    {
+        ArrayList<StudyItem> studyItemList = new ArrayList<>();
+
+        for (String entry : Configurations.gameplay.configListStudyItems)
+        {
+            String[] entries = entry.split(";");
+            if (entries.length < 3)
+            {
+                Log.getLogger().info("Minecolonies: Parsing config for study items for Library failed for entry:" + entry);
+                continue;
+            }
+            Item item = Item.REGISTRY.getObject(new ResourceLocation(entries[0]));
+            int skillChance = Integer.parseInt(entries[1]);
+            int breakChance = Integer.parseInt(entries[2]);
+
+            if (item == null || skillChance < 100 || skillChance > 1000 || breakChance > 100 || breakChance < 0)
+            {
+                Log.getLogger().info("Minecolonies: Parsing config for study items for Library failed for entry:" + entry);
+                continue;
+            }
+
+            studyItemList.add(new StudyItem(item, skillChance, breakChance));
+            // Keep a certain part of the items in the Chest
+            keepX.put(itemStack -> itemStack.getItem() == item, breakChance < 5 ? 5 : breakChance);
+        }
+        return studyItemList;
     }
 
     @NotNull
@@ -154,6 +196,11 @@ public class BuildingLibrary extends AbstractBuildingWorker
         }
         bookCases.remove(returnPos);
         return getLocation();
+    }
+
+    public ArrayList<StudyItem> getStudyItems()
+    {
+        return studyItems;
     }
 
     /**
