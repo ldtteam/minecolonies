@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -16,8 +15,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -30,6 +27,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
+
+import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
  * The structureBuilder building.
@@ -259,26 +258,9 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                             stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 
-                final TileEntity chestInventory = this.getTileEntity();
-                if (chestInventory != null)
-                {
-                    resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory,
-                            stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
-                }
+                resource.addAvailable(InventoryUtils.getItemCountInItemHandler(this.getCapability(ITEM_HANDLER_CAPABILITY, null),
+                  stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
 
-                //Count in the additional chests as well
-                if (structureBuilder != null)
-                {
-                    for (final BlockPos pos : getAdditionalCountainers())
-                    {
-                        final TileEntity entity = CompatibilityUtils.getWorld(structureBuilder).getTileEntity(pos);
-                        if (entity instanceof TileEntityChest)
-                        {
-                            resource.addAvailable(InventoryUtils.getItemCountInProvider(entity,
-                                    stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
-                        }
-                    }
-                }
             }
         });
     }
