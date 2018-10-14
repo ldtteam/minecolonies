@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -70,7 +71,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     /**
      * Vertical range in which the worker picks up items.
      */
-    public static final float RANGE_VERTICAL_PICKUP   = 3.0F;
+    public static final float RANGE_VERTICAL_PICKUP = 3.0F;
 
     /**
      * Number of ticks the worker is standing still.
@@ -157,8 +158,24 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         //calculate fortune enchantment
         final int fortune = ItemStackUtils.getFortuneOf(tool);
 
-        //get all item drops
-        final List<ItemStack> localItems = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
+        //check if tool has Silk Touch
+        final boolean silkTouch = ItemStackUtils.hasSilkTouch(tool);
+
+        //create list for all item drops to be stored in
+        List<ItemStack> localItems = new ArrayList<ItemStack>();
+
+        //Checks to see if the equipped tool has Silk Touch AND if the blocktoMine has a viable Item SilkTouch can get.
+        if (silkTouch && Item.getItemFromBlock(BlockPosUtil.getBlock(world, blockToMine)) != null)
+        {
+            //Stores Silk Touch Block in localItems
+            final ItemStack silkItem = new ItemStack(Item.getItemFromBlock(BlockPosUtil.getBlock(world, blockToMine)), 1);
+            localItems.add(silkItem);
+        }
+        //If Silk Touch doesn't work, get blocks with Fortune value as normal.
+        else
+        {
+            localItems = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
+        }
 
         //if block in statistic then increment that statistic.
         triggerMinedBlock(blockToMine);
@@ -263,8 +280,9 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             return (int) world.getBlockState(pos).getBlockHardness(world, pos);
         }
 
-        return (int) ((Configurations.gameplay.pvp_mode ? Configurations.gameplay.blockMiningDelayModifier/2 : Configurations.gameplay.blockMiningDelayModifier
-                         * Math.pow(LEVEL_MODIFIER, worker.getCitizenExperienceHandler().getLevel()))
+        return (int) ((Configurations.gameplay.pvp_mode ? Configurations.gameplay.blockMiningDelayModifier / 2 : Configurations.gameplay.blockMiningDelayModifier
+                                                                                                                   * Math.pow(LEVEL_MODIFIER,
+          worker.getCitizenExperienceHandler().getLevel()))
                         * (double) world.getBlockState(pos).getBlockHardness(world, pos)
                         / (double) (worker.getHeldItemMainhand().getItem()
                                       .getDestroySpeed(worker.getHeldItemMainhand(),
@@ -277,8 +295,8 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     public void fillItemsList()
     {
         searchForItems(worker.getEntityBoundingBox()
-                .expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
-                .expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
+                         .expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
+                         .expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
     }
 
     /**
@@ -292,7 +310,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         items = world.getEntitiesWithinAABB(EntityItem.class, boundingBox)
                   .stream()
                   .filter(item -> item != null && !item.isDead &&
-                          (!item.getEntityData().hasKey("PreventRemoteMovement") || !item.getEntityData().getBoolean("PreventRemoteMovement")))
+                                    (!item.getEntityData().hasKey("PreventRemoteMovement") || !item.getEntityData().getBoolean("PreventRemoteMovement")))
                   .map(BlockPosUtil::fromEntity)
                   .collect(Collectors.toList());
     }
