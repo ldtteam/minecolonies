@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.MAX_CITIZEN_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -275,6 +276,11 @@ public class CitizenData
         {
             bedPos = BlockPosUtil.readFromNBT(compound, TAG_POS);
             isAsleep = compound.getBoolean(TAG_ASLEEP);
+        }
+
+        if (level > MAX_CITIZEN_LEVEL)
+        {
+            level = MAX_CITIZEN_LEVEL;
         }
     }
 
@@ -614,7 +620,10 @@ public class CitizenData
      */
     public void increaseLevel()
     {
-        this.level += 1;
+        if (this.level < MAX_CITIZEN_LEVEL)
+        {
+            this.level += 1;
+        }
     }
 
     /**
@@ -972,7 +981,10 @@ public class CitizenData
      */
     public void setLevel(final int lvl)
     {
-        this.level = lvl;
+        if (level < MAX_CITIZEN_LEVEL)
+        {
+            this.level = lvl;
+        }
     }
 
     /**
