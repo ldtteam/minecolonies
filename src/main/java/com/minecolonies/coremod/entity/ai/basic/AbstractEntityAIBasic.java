@@ -1055,6 +1055,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             delay += DELAY_RECHECK;
             return INVENTORY_FULL;
         }
+
+        slotAt = 0;
         //collect items that are nice to have if they are available
         this.itemsNiceToHave().forEach(this::isInHut);
         // we dumped the inventory, reset actions done
@@ -1102,13 +1104,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             final long openSlots = InventoryUtils.openSlotCount(new InvWrapper(worker.getInventoryCitizen()));
             if (openSlots < MIN_OPEN_SLOTS * 2)
             {
-                dumpAnyway = true;
+                dumpAnyway = worker.getRandom().nextBoolean();
             }
         }
 
-        return buildingWorker != null && !ItemStackUtils.isEmpty(stackToDump) && (!buildingWorker.buildingRequiresCertainAmountOfItem(stackToDump, alreadyKept) || dumpAnyway) &&
+        if (buildingWorker != null && !ItemStackUtils.isEmpty(stackToDump) && (!buildingWorker.buildingRequiresCertainAmountOfItem(stackToDump, alreadyKept) || dumpAnyway))
+        {
             InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(
               new InvWrapper(worker.getInventoryCitizen()), slotAt, buildingWorker.getCapability(ITEM_HANDLER_CAPABILITY, null));
+        }
+        slotAt++;
+
+        return slotAt < totalSize;
     }
 
     /**

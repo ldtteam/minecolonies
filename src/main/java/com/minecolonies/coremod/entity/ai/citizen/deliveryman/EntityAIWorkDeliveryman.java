@@ -509,11 +509,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             {
                 building.alterPickUpPriority(1);
                 insertionResultStack = InventoryUtils.forceItemStackToItemHandler(
-                  new InvWrapper(tileEntityColonyBuilding), stack, ((AbstractBuildingWorker) building)::isItemStackInRequest);
+                  tileEntityColonyBuilding.getBuilding().getCapability(ITEM_HANDLER_CAPABILITY, null), stack, ((AbstractBuildingWorker) building)::isItemStackInRequest);
             }
             else
             {
-                insertionResultStack = InventoryUtils.forceItemStackToItemHandler(new InvWrapper(tileEntityColonyBuilding), stack, itemStack -> false);
+                insertionResultStack = InventoryUtils.forceItemStackToItemHandler(tileEntityColonyBuilding.getBuilding().getCapability(ITEM_HANDLER_CAPABILITY, null), stack, itemStack -> false);
             }
 
             if (!ItemStackUtils.isEmpty(insertionResultStack))
