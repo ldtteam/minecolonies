@@ -460,6 +460,7 @@ public class Colony implements IColony
             this.setColonyColor(TextFormatting.values()[compound.getInteger(TAG_TEAM_COLOR)]);
         }
 
+        this.requestManager.reset();
         if (getColonyTag().hasKey(TAG_REQUESTMANAGER))
         {
             this.requestManager.deserializeNBT(getColonyTag().getCompoundTag(TAG_REQUESTMANAGER));
@@ -572,6 +573,12 @@ public class Colony implements IColony
     public int getDimension()
     {
         return dimensionId;
+    }
+
+    @Override
+    public boolean isRemote()
+    {
+        return false;
     }
 
     /**
