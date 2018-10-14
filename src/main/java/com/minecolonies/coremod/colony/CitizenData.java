@@ -15,7 +15,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler; 
+import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
@@ -47,22 +47,22 @@ public class CitizenData
     /**
      * Maximum saturation of a citizen.
      */
-    public static final  int    MAX_SATURATION          = 10;
+    public static final int MAX_SATURATION = 10;
 
     /**
      * The max health.
      */
-    private static final float  MAX_HEALTH              = 20.0F;
+    private static final float MAX_HEALTH = 20.0F;
 
     /**
      * Max level of an attribute a citizen may initially have.
      */
-    private static final int    LETTERS_IN_THE_ALPHABET = 26;
+    private static final int LETTERS_IN_THE_ALPHABET = 26;
 
     /**
      * Minimum saturation of a citizen.
      */
-    private static final int MIN_SATURATION  = 0;
+    private static final int MIN_SATURATION = 0;
 
     /**
      * The chance the citizen has to level. is 1 in this number.
@@ -77,48 +77,47 @@ public class CitizenData
     /**
      * The unique citizen id.
      */
-    private final int                          id;
+    private final int id;
 
     /**
      * The colony the citizen belongs to.
      */
-    private final Colony                       colony;
-
+    private final Colony colony;
 
     /**
      * Inventory of the citizen.
      */
-    private final InventoryCitizen             inventory;
+    private final InventoryCitizen inventory;
 
     /**
      * The name of the citizen.
      */
-    private       String                       name;
+    private String name;
 
     /**
      * Boolean gender, true = female, false = male.
      */
-    private       boolean                      female;
+    private boolean female;
 
     /**
      * Boolean paused, true = paused, false = working.
      */
-    private       boolean                      paused;
+    private boolean paused;
 
     /**
      * If restart is scheduled.
      */
-    private       boolean                      restartScheduled;
+    private boolean restartScheduled;
 
     /**
      * Report end message to:
      */
-    private       EntityPlayerMP               originPlayerRestart;
+    private EntityPlayerMP originPlayerRestart;
 
     /**
      * The id of the citizens texture.
      */
-    private       int                          textureId;
+    private int textureId;
 
     /**
      * If the citizen is asleep right now.
@@ -134,41 +133,41 @@ public class CitizenData
      * The home building of the citizen.
      */
     @Nullable
-    private       AbstractBuilding             homeBuilding;
+    private AbstractBuilding homeBuilding;
 
     /**
      * The work building of the citizen.
      */
     @Nullable
-    private       AbstractBuildingWorker       workBuilding;
+    private AbstractBuildingWorker workBuilding;
 
     /**
      * The job of the citizen.
      */
-    private       AbstractJob                  job;
+    private AbstractJob job;
 
     /**
      * If the citizen is dirty (Has to be updated on client side).
      */
-    private       boolean                      dirty;
+    private boolean dirty;
 
     /**
      * Its entitity.
      */
     @NotNull
-    private       WeakReference<EntityCitizen> entity;
+    private WeakReference<EntityCitizen> entity;
 
     /**
      * Attributes, which influence the workers behaviour.
      * May be added more later.
      */
-    private       int                          strength;
-    private       int                          endurance;
-    private       int                          charisma;
-    private       int                          intelligence;
-    private       int                          dexterity;
-    private       double                       health;
-    private       double                       maxHealth;
+    private int    strength;
+    private int    endurance;
+    private int    charisma;
+    private int    intelligence;
+    private int    dexterity;
+    private double health;
+    private double maxHealth;
 
     /**
      * The citizens saturation at the current moment.
@@ -191,12 +190,12 @@ public class CitizenData
      */
     private BlockPos lastPosition = new BlockPos(0, 0, 0);
 
-    /** 
-     * The citizen happiness handler. 
-+
-     */ 
-    private final CitizenHappinessHandler citizenHappinessHandler; 
- 
+    /**
+     * The citizen happiness handler.
+     * +
+     */
+    private final CitizenHappinessHandler citizenHappinessHandler;
+
     /**
      * Create a CitizenData given an ID.
      * Used as a super-constructor or during loading.
@@ -209,7 +208,7 @@ public class CitizenData
         this.id = id;
         this.colony = colony;
         inventory = new InventoryCitizen("Minecolonies Inventory", true, this);
-        this.citizenHappinessHandler = new CitizenHappinessHandler(this); 
+        this.citizenHappinessHandler = new CitizenHappinessHandler(this);
     }
 
     /**
@@ -545,7 +544,7 @@ public class CitizenData
         }
 
         // Check whether there's already a citizen with this name
-        for(final CitizenData citizen : this.getColony().getCitizenManager().getCitizens())
+        for (final CitizenData citizen : this.getColony().getCitizenManager().getCitizens())
         {
             if (citizen != null && citizen.getName().equals(citizenName))
             {
@@ -761,8 +760,9 @@ public class CitizenData
     public void updateCitizenEntityIfNecessary()
     {
         final List<EntityCitizen> list = colony.getWorld()
-                .getEntities(EntityCitizen.class,
-                        entityCitizen -> entityCitizen.getCitizenColonyHandler().getColonyId() == colony.getID() && entityCitizen.getCitizenData().getId() == getId());
+                                           .getEntities(EntityCitizen.class,
+                                             entityCitizen -> entityCitizen.getCitizenColonyHandler().getColonyId() == colony.getID()
+                                                                && entityCitizen.getCitizenData().getId() == getId());
 
         if (!list.isEmpty())
         {
@@ -842,6 +842,7 @@ public class CitizenData
 
     /**
      * Writes the citizen data to an NBT-compound.
+     *
      * @param compound NBT-Tag compound.
      * @return return the data in NBT format
      */
@@ -987,6 +988,11 @@ public class CitizenData
     }
 
     /**
+     * Returns the default chance to levelup
+     */
+    public int getChanceToLevel() {return CHANCE_TO_LEVEL;}
+
+    /**
      * Getter for the saturation.
      *
      * @param extraSaturation the extra saturation
@@ -1087,6 +1093,7 @@ public class CitizenData
 
     /**
      * Set the last position of the citizen.
+     *
      * @param lastPosition the last position.
      */
     public void setLastPosition(final BlockPos lastPosition)
@@ -1096,6 +1103,7 @@ public class CitizenData
 
     /**
      * Get the last position of the citizen.
+     *
      * @return the last position.
      */
     public BlockPos getLastPosition()
@@ -1115,6 +1123,7 @@ public class CitizenData
 
     /**
      * Getter for the inventory.
+     *
      * @return the direct reference to the citizen inventory.
      */
     public InventoryCitizen getInventory()
@@ -1124,6 +1133,7 @@ public class CitizenData
 
     /**
      * Check if citizen is asleep.
+     *
      * @return true if so.
      */
     public boolean isAsleep()
@@ -1133,6 +1143,7 @@ public class CitizenData
 
     /**
      * Getter for the bedPos.
+     *
      * @return the bedPos.
      */
     public BlockPos getBedPos()
@@ -1142,6 +1153,7 @@ public class CitizenData
 
     /**
      * Set asleep.
+     *
      * @param asleep true if asleep.
      */
     public void setAsleep(final boolean asleep)
@@ -1151,6 +1163,7 @@ public class CitizenData
 
     /**
      * Set the bed pos.
+     *
      * @param bedPos the pos to set.
      */
     public void setBedPos(final BlockPos bedPos)
@@ -1160,8 +1173,9 @@ public class CitizenData
 
     /**
      * Create a blocking request.
+     *
      * @param requested the request to create.
-     * @param <R> the Type
+     * @param <R>       the Type
      * @return the token of the request.
      */
     public <R extends IRequestable> IToken createRequest(@NotNull final R requested)
@@ -1171,8 +1185,9 @@ public class CitizenData
 
     /**
      * Create an async request.
+     *
      * @param requested the request to create.
-     * @param <R> the Type
+     * @param <R>       the Type
      * @return the token of the request.
      */
     public <R extends IRequestable> IToken createRequestAsync(@NotNull final R requested)
@@ -1182,6 +1197,7 @@ public class CitizenData
 
     /**
      * Called on request canceled.
+     *
      * @param token the token to be canceled.
      */
     public void onRequestCancelled(@NotNull final IToken token)
@@ -1194,6 +1210,7 @@ public class CitizenData
 
     /**
      * Check if a request is async.
+     *
      * @param token the token to check.
      * @return true if it is.
      */
@@ -1208,6 +1225,7 @@ public class CitizenData
 
     /**
      * The Handler for the citizens happiness.
+     *
      * @return the instance of the handler
      */
     public CitizenHappinessHandler getCitizenHappinessHandler()
@@ -1220,7 +1238,17 @@ public class CitizenData
      */
     public void tryRandomLevelUp(final Random random)
     {
-        if (random.nextInt(CHANCE_TO_LEVEL) > 0)
+        tryRandomLevelUp(random, 0);
+    }
+
+    /**
+     * Try a random level up.
+     *
+     * @param customChance set to 0 to not use, chance for levelup is 1/customChance
+     */
+    public void tryRandomLevelUp(final Random random, final int customChance)
+    {
+        if ((customChance > 0 && random.nextInt(customChance) > 0) || (customChance < 1 && random.nextInt(CHANCE_TO_LEVEL) > 0))
         {
             return;
         }
