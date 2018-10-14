@@ -200,7 +200,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @SideOnly(Side.CLIENT)
     public BlockRenderLayer getRenderLayer()
     {
-        return BlockRenderLayer.SOLID;
+        return BlockRenderLayer.CUTOUT;
     }
 
     @Override
