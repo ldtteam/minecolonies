@@ -582,6 +582,7 @@ public class Colony implements IColony
     public void onWorldLoad(@NotNull final World w)
     {
         this.world = w;
+        this.requestManager.reset();
     }
 
     /**
