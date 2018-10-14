@@ -604,7 +604,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 final ItemStack deliveredItemStack = firstDeliverableRequest.getDelivery();
                 final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
                         stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(deliveredItemStack, stack, true, true));
-                if (count >= deliveredItemStack.getCount() && getTotalRequiredAmount(deliveredItemStack) <= count)
+                if (count >= deliveredItemStack.getCount())
                 {
                     return NEEDS_ITEM;
                 }
