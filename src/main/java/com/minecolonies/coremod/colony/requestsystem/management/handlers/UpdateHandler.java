@@ -21,7 +21,7 @@ public class UpdateHandler
 
     public static void handleUpdate(@NotNull final IStandardRequestManager manager)
     {
-        if (manager.getColony().getWorld() != null && manager.getColony().getWorld().isRemote)
+        if (manager.getColony().isRemote())
         {
             return;
         }
