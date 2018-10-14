@@ -162,7 +162,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         final boolean silkTouch = ItemStackUtils.hasSilkTouch(tool);
 
         //create list for all item drops to be stored in
-        List<ItemStack> localItems = new ArrayList<ItemStack>();
+        final List<ItemStack> localItems = new ArrayList<ItemStack>();
 
         //Checks to see if the equipped tool has Silk Touch AND if the blocktoMine has a viable Item SilkTouch can get.
         if (silkTouch && Item.getItemFromBlock(BlockPosUtil.getBlock(world, blockToMine)) != null)
@@ -174,7 +174,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         //If Silk Touch doesn't work, get blocks with Fortune value as normal.
         else
         {
-            localItems = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
+            localItems.addAll(BlockPosUtil.getBlockDrops(world, blockToMine, fortune));
         }
 
         //if block in statistic then increment that statistic.
@@ -280,13 +280,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             return (int) world.getBlockState(pos).getBlockHardness(world, pos);
         }
 
-        return (int) ((Configurations.gameplay.pvp_mode ? Configurations.gameplay.blockMiningDelayModifier / 2 : Configurations.gameplay.blockMiningDelayModifier
-                                                                                                                   * Math.pow(LEVEL_MODIFIER,
-          worker.getCitizenExperienceHandler().getLevel()))
-                        * (double) world.getBlockState(pos).getBlockHardness(world, pos)
-                        / (double) (worker.getHeldItemMainhand().getItem()
-                                      .getDestroySpeed(worker.getHeldItemMainhand(),
-                                        block.getDefaultState())));
+        return (int) ((Configurations.gameplay.pvp_mode ? Configurations.gameplay.blockMiningDelayModifier / 2 : Configurations.gameplay.blockMiningDelayModifier * Math.pow(LEVEL_MODIFIER, worker.getCitizenExperienceHandler().getLevel())) * (double) world.getBlockState(pos).getBlockHardness(world, pos) / (double) (worker.getHeldItemMainhand().getItem().getDestroySpeed(worker.getHeldItemMainhand(), block.getDefaultState())));
     }
 
     /**
