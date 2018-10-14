@@ -890,4 +890,10 @@ public final class ColonyView implements IColony
     {
         return printProgress;
     }
+
+    @Override
+    public boolean isRemote()
+    {
+        return true;
+    }
 }
