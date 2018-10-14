@@ -200,7 +200,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @SideOnly(Side.CLIENT)
     public BlockRenderLayer getRenderLayer()
     {
-        return BlockRenderLayer.CUTOUT;
+        return BlockRenderLayer.SOLID;
     }
 
     @Override
@@ -294,6 +294,16 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     protected BlockStateContainer createBlockState()
     {
         return new BlockStateContainer(this, FACING);
+    }
+
+    @Override
+    public boolean canRenderInLayer(final IBlockState state, final BlockRenderLayer layer)
+    {
+        if (layer == BlockRenderLayer.CUTOUT || layer == BlockRenderLayer.SOLID)
+        {
+            return true;
+        }
+        return super.canRenderInLayer(state, layer);
     }
 
     @Override
