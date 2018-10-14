@@ -158,4 +158,10 @@ public interface IColony
      * @return the dimension id.
      */
     int getDimension();
+
+    /**
+     * Check if the colony is on the server or client.
+     * @return true if so.
+     */
+    boolean isRemote();
 }
