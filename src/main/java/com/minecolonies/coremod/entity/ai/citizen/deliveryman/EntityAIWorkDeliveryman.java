@@ -204,13 +204,13 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
                 if (hasGathered)
                 {
+                    job.setReturning(true);
                     this.hasGathered = false;
                     building.alterPickUpPriority(1);
                 }
                 else
                 {
                     building.alterPickUpPriority(-1);
-
                     if (job.getCurrentTask() == null)
                     {
                         gatherTarget = null;

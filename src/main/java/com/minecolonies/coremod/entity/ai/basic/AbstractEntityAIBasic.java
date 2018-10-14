@@ -107,6 +107,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private BlockPos restaurant = null;
 
     /**
+     * Slot he is currently trying to dump.
+     */
+    private int slotAt = 0;
+
+    /**
      * Delay for walking.
      */
     protected static final int WALK_DELAY = 20;
@@ -1079,17 +1084,31 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean dumpOneMoreSlot()
     {
+        if (walkToBuilding())
+        {
+            return true;
+        }
+
         //Items already kept in the inventory
         final List<ItemStorage> alreadyKept = new ArrayList<>();
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 
-        return buildingWorker != null
-                 && (walkToBuilding() || InventoryFunctions.matchFirstInHandlerWithAction(new InvWrapper(worker.getInventoryCitizen()),
-          itemStack -> !ItemStackUtils.isEmpty(itemStack) && !buildingWorker.buildingRequiresCertainAmountOfItem(itemStack, alreadyKept),
-          (handler, slot) ->
+        final ItemStack stackToDump = worker.getInventoryCitizen().getStackInSlot(slotAt);
+        final int totalSize = worker.getInventoryCitizen().getSizeInventory();
+
+        boolean dumpAnyway = false;
+        if (slotAt + MIN_OPEN_SLOTS * 2 >= totalSize)
+        {
+            final long openSlots = InventoryUtils.openSlotCount(new InvWrapper(worker.getInventoryCitizen()));
+            if (openSlots < MIN_OPEN_SLOTS * 2)
+            {
+                dumpAnyway = true;
+            }
+        }
+
+        return buildingWorker != null && !ItemStackUtils.isEmpty(stackToDump) && (!buildingWorker.buildingRequiresCertainAmountOfItem(stackToDump, alreadyKept) || dumpAnyway) &&
             InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(
-              new InvWrapper(worker.getInventoryCitizen()), slot, buildingWorker.getCapability(ITEM_HANDLER_CAPABILITY, null))
-        ));
+              new InvWrapper(worker.getInventoryCitizen()), slotAt, buildingWorker.getCapability(ITEM_HANDLER_CAPABILITY, null));
     }
 
     /**

@@ -23,6 +23,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +31,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
+
+import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
  * The structureBuilder building.
@@ -259,26 +262,9 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                             stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 
-                final TileEntity chestInventory = this.getTileEntity();
-                if (chestInventory != null)
-                {
-                    resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory,
-                            stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
-                }
+                resource.addAvailable(InventoryUtils.getItemCountInItemHandler(this.getCapability(ITEM_HANDLER_CAPABILITY, null),
+                  stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
 
-                //Count in the additional chests as well
-                if (structureBuilder != null)
-                {
-                    for (final BlockPos pos : getAdditionalCountainers())
-                    {
-                        final TileEntity entity = CompatibilityUtils.getWorld(structureBuilder).getTileEntity(pos);
-                        if (entity instanceof TileEntityChest)
-                        {
-                            resource.addAvailable(InventoryUtils.getItemCountInProvider(entity,
-                                    stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
-                        }
-                    }
-                }
             }
         });
     }
