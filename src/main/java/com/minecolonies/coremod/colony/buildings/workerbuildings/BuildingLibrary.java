@@ -87,25 +87,33 @@ public class BuildingLibrary extends AbstractBuildingWorker
 
         for (final String entry : Configurations.gameplay.configListStudyItems)
         {
-            final String[] entries = entry.split(";");
-            if (entries.length < 3)
-            {
-                Log.getLogger().info("Minecolonies: Parsing config for study items for Library failed for entry:" + entry);
-                continue;
-            }
-            final Item item = Item.REGISTRY.getObject(new ResourceLocation(entries[0]));
-            final int skillChance = Integer.parseInt(entries[1]);
-            final int breakChance = Integer.parseInt(entries[2]);
 
-            if (item == null || skillChance < 100 || skillChance > 1000 || breakChance > 100 || breakChance < 0)
+            try
             {
-                Log.getLogger().info("Minecolonies: Parsing config for study items for Library failed for entry:" + entry);
-                continue;
-            }
+                final String[] entries = entry.split(";");
+                if (entries.length < 3)
+                {
+                    Log.getLogger().info("Minecolonies: Parsing config for study items for Library failed for entry:" + entry);
+                    continue;
+                }
+                final Item item = Item.REGISTRY.getObject(new ResourceLocation(entries[0]));
+                final int skillChance = Integer.parseInt(entries[1]);
+                final int breakChance = Integer.parseInt(entries[2]);
 
-            studyItemList.add(new StudyItem(item, skillChance, breakChance));
-            // Keep a certain part of the items in the Chest
-            keepX.put(itemStack -> itemStack.getItem() == item, breakChance < 5 ? 5 : breakChance);
+                if (item == null || skillChance < 100 || skillChance > 1000 || breakChance > 100 || breakChance < 0)
+                {
+                    Log.getLogger().info("Minecolonies: Parsing config for study items for Library failed for entry:" + entry);
+                    continue;
+                }
+
+                studyItemList.add(new StudyItem(item, skillChance, breakChance));
+                // Keep a certain part of the items in the Chest
+                keepX.put(itemStack -> itemStack.getItem() == item, breakChance < 5 ? 5 : breakChance);
+            }
+            catch (NumberFormatException | ClassCastException e)
+            {
+                Log.getLogger().info("Minecolonies: Parsing config for study items for Library failed for entry:" + entry + " Exception:" + e.getMessage());
+            }
         }
         return studyItemList;
     }
