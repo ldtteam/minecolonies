@@ -63,7 +63,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
     /**
      * Study Item list, loaded from config, Typle<int,int> First is the study chance increase,second is the breakchance
      */
-    private final ArrayList<StudyItem> studyItems;
+    private final List<StudyItem> studyItems;
 
     /**
      * Instantiates the building.
@@ -81,21 +81,21 @@ public class BuildingLibrary extends AbstractBuildingWorker
     /**
      * Parses Study Items from the Config and adds them on the keepX list
      */
-    private ArrayList<StudyItem> parseFromConfig()
+    private List<StudyItem> parseFromConfig()
     {
-        ArrayList<StudyItem> studyItemList = new ArrayList<>();
+        final List<StudyItem> studyItemList = new ArrayList<>();
 
-        for (String entry : Configurations.gameplay.configListStudyItems)
+        for (final String entry : Configurations.gameplay.configListStudyItems)
         {
-            String[] entries = entry.split(";");
+            final String[] entries = entry.split(";");
             if (entries.length < 3)
             {
                 Log.getLogger().info("Minecolonies: Parsing config for study items for Library failed for entry:" + entry);
                 continue;
             }
-            Item item = Item.REGISTRY.getObject(new ResourceLocation(entries[0]));
-            int skillChance = Integer.parseInt(entries[1]);
-            int breakChance = Integer.parseInt(entries[2]);
+            final Item item = Item.REGISTRY.getObject(new ResourceLocation(entries[0]));
+            final int skillChance = Integer.parseInt(entries[1]);
+            final int breakChance = Integer.parseInt(entries[2]);
 
             if (item == null || skillChance < 100 || skillChance > 1000 || breakChance > 100 || breakChance < 0)
             {
@@ -198,7 +198,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
         return getLocation();
     }
 
-    public ArrayList<StudyItem> getStudyItems()
+    public List<StudyItem> getStudyItems()
     {
         return studyItems;
     }

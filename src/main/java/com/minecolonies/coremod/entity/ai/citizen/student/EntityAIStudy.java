@@ -15,6 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -83,9 +84,9 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
         }
 
         // Search for Items to use to study
-        ArrayList<StudyItem> currentItems = new ArrayList<>();
+        final List<StudyItem> currentItems = new ArrayList<>();
 
-        for (StudyItem curItem : getOwnBuilding(BuildingLibrary.class).getStudyItems())
+        for (final StudyItem curItem : getOwnBuilding(BuildingLibrary.class).getStudyItems())
         {
             final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(worker,
               itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() == curItem.getItem());
@@ -125,7 +126,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
         // Use random item
         else
         {
-            StudyItem chosenItem = currentItems.get(world.rand.nextInt(currentItems.size()));
+            final StudyItem chosenItem = currentItems.get(world.rand.nextInt(currentItems.size()));
 
             worker.setHeldItem(EnumHand.MAIN_HAND, chosenItem.getItem().getDefaultInstance());
             data.tryRandomLevelUp(world.rand, data.getChanceToLevel() * 100 / chosenItem.getSkillIncreasePct());
