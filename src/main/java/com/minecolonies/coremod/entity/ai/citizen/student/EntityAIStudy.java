@@ -128,7 +128,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
         {
             final StudyItem chosenItem = currentItems.get(world.rand.nextInt(currentItems.size()));
 
-            worker.setHeldItem(EnumHand.MAIN_HAND, chosenItem.getItem().getDefaultInstance());
+            worker.setHeldItem(EnumHand.MAIN_HAND, new ItemStack(chosenItem.getItem(), 1));
             data.tryRandomLevelUp(world.rand, data.getChanceToLevel() * 100 / chosenItem.getSkillIncreasePct());
 
             // Break item rand
