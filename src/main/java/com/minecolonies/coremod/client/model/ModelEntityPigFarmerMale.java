@@ -2,22 +2,30 @@ package com.minecolonies.coremod.client.model;
 
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 public class ModelEntityPigFarmerMale extends ModelBiped
 {
-    ModelRenderer strapR;
-    ModelRenderer strapL;
-    ModelRenderer carrotBase;
-    ModelRenderer carrot1;
-    ModelRenderer carrot2;
-    ModelRenderer carrot3;
-    ModelRenderer carrot4;
-
     public ModelEntityPigFarmerMale()
     {
+        ModelRenderer carrot4;
+        ModelRenderer strapR;
+        ModelRenderer strapL;
+        ModelRenderer carrotBase;
+        ModelRenderer carrot1;
+        ModelRenderer carrot2;
+        ModelRenderer carrot3;
+
         textureWidth = 128;
         textureHeight = 64;
+
+        carrot4 = new ModelRenderer(this, 6, 33);
+        carrot4.addBox(0F, 6.5F, -2.5F, 1, 3, 0);
+        carrot4.setRotationPoint(0F, 0F, 0F);
+        carrot4.setTextureSize(128, 64);
+        carrot4.mirror = true;
+        setRotation(carrot4, 0F, -0.1487144F, -0.1858931F);
 
         strapR = new ModelRenderer(this, 0, 36);
         strapR.addBox(-3.8F, 0.01F, -2.5F, 1, 9, 4);
@@ -61,21 +69,6 @@ public class ModelEntityPigFarmerMale extends ModelBiped
         carrot3.mirror = true;
         setRotation(carrot3, 0F, -0.1115358F, 0.1487144F);
 
-        carrot4 = new ModelRenderer(this, 6, 33);
-        carrot4.addBox(0F, 6.5F, -2.5F, 1, 3, 0);
-        carrot4.setRotationPoint(0F, 0F, 0F);
-        carrot4.setTextureSize(128, 64);
-        carrot4.mirror = true;
-        setRotation(carrot4, 0F, -0.1487144F, -0.1858931F);
-
-
-        bipedBody = new ModelRenderer(this, 16, 16);
-        bipedBody.addBox(-4F, 0F, -2F, 8, 12, 4);
-        bipedBody.setRotationPoint(0F, 0F, 0F);
-        bipedBody.setTextureSize(128, 64);
-        bipedBody.mirror = true;
-        setRotation(bipedBody, 0F, 0F, 0F);
-
         bipedRightArm = new ModelRenderer(this, 40, 16);
         bipedRightArm.addBox(-3F, -2F, -2F, 4, 12, 4);
         bipedRightArm.setRotationPoint(-5F, 2F, 0F);
@@ -104,6 +97,13 @@ public class ModelEntityPigFarmerMale extends ModelBiped
         bipedLeftLeg.mirror = true;
         setRotation(bipedLeftLeg, 0F, 0F, 0F);
 
+        bipedBody = new ModelRenderer(this, 16, 16);
+        bipedBody.addBox(-4F, 0F, -2F, 8, 12, 4);
+        bipedBody.setRotationPoint(0F, 0F, 0F);
+        bipedBody.setTextureSize(128, 64);
+        bipedBody.mirror = true;
+        setRotation(bipedBody, 0F, 0F, 0F);
+
         bipedHead = new ModelRenderer(this, 0, 0);
         bipedHead.addBox(-4F, -8F, -4F, 8, 8, 8);
         bipedHead.setRotationPoint(0F, 0F, 0F);
@@ -111,15 +111,27 @@ public class ModelEntityPigFarmerMale extends ModelBiped
         bipedHead.mirror = true;
         setRotation(bipedHead, 0F, 0F, 0F);
 
-        bipedBody.addChild(carrot1);
-        bipedBody.addChild(carrot2);
-        bipedBody.addChild(carrot3);
-        bipedBody.addChild(carrot4);
-        bipedBody.addChild(carrotBase);
-        bipedBody.addChild(strapL);
-        bipedBody.addChild(strapR);
+        this.bipedBody.addChild(carrot1);
+        this.bipedBody.addChild(carrot2);
+        this.bipedBody.addChild(carrot3);
+        this.bipedBody.addChild(carrot4);
+        this.bipedBody.addChild(carrotBase);
+        this.bipedBody.addChild(strapL);
+        this.bipedBody.addChild(strapR);
+    }
 
-        bipedHeadwear.isHidden = true;
+    @Override
+    public void render(
+      @NotNull final Entity entity,
+      final float limbSwing,
+      final float limbSwingAmount,
+      final float ageInTicks,
+      final float netHeadYaw,
+      final float headPitch,
+      final float scaleFactor)
+    {
+        super.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
+        setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);
     }
 
     private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
