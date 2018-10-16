@@ -7,16 +7,15 @@ import org.jetbrains.annotations.NotNull;
 
 public class ModelEntitySheepFarmerMale extends ModelBiped
 {
-    //fields
-    ModelRenderer bagR;
-    ModelRenderer bagL;
-    ModelRenderer bagBack;
-    ModelRenderer bagFront;
-    ModelRenderer bagWheat;
-    ModelRenderer bagBot;
-
     public ModelEntitySheepFarmerMale()
     {
+        ModelRenderer bagR;
+        ModelRenderer bagL;
+        ModelRenderer bagBack;
+        ModelRenderer bagFront;
+        ModelRenderer bagWheat;
+        ModelRenderer bagBot;
+
         textureWidth = 128;
         textureHeight = 64;
 
@@ -27,14 +26,12 @@ public class ModelEntitySheepFarmerMale extends ModelBiped
         bipedRightArm.mirror = true;
         setRotation(bipedRightArm, 0F, 0F, 0F);
 
-        bipedLeftArm.mirror = true;
         bipedLeftArm = new ModelRenderer(this, 40, 16);
         bipedLeftArm.addBox(-1F, -2F, -2F, 4, 12, 4);
         bipedLeftArm.setRotationPoint(5F, 2F, 0F);
         bipedLeftArm.setTextureSize(128, 64);
         bipedLeftArm.mirror = true;
         setRotation(bipedLeftArm, 0F, 0F, 0F);
-        bipedLeftArm.mirror = false;
 
         bipedRightLeg = new ModelRenderer(this, 0, 16);
         bipedRightLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
@@ -43,14 +40,12 @@ public class ModelEntitySheepFarmerMale extends ModelBiped
         bipedRightLeg.mirror = true;
         setRotation(bipedRightLeg, 0F, 0F, 0F);
 
-        bipedLeftLeg.mirror = true;
         bipedLeftLeg = new ModelRenderer(this, 0, 16);
         bipedLeftLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
         bipedLeftLeg.setRotationPoint(2F, 12F, 0F);
         bipedLeftLeg.setTextureSize(128, 64);
         bipedLeftLeg.mirror = true;
         setRotation(bipedLeftLeg, 0F, 0F, 0F);
-        bipedLeftLeg.mirror = false;
 
         bipedBody = new ModelRenderer(this, 16, 16);
         bipedBody.addBox(-4F, 0F, -2F, 8, 12, 4);
@@ -108,12 +103,26 @@ public class ModelEntitySheepFarmerMale extends ModelBiped
         bagBot.mirror = true;
         setRotation(bagBot, 0F, 0F, 0F);
 
-        bipedBody.addChild(bagR);
-        bipedBody.addChild(bagL);
-        bipedBody.addChild(bagBack);
-        bipedBody.addChild(bagFront);
-        bipedBody.addChild(bagWheat);
-        bipedBody.addChild(bagBot);
+        this.bipedBody.addChild(bagR);
+        this.bipedBody.addChild(bagL);
+        this.bipedBody.addChild(bagBack);
+        this.bipedBody.addChild(bagFront);
+        this.bipedBody.addChild(bagWheat);
+        this.bipedBody.addChild(bagBot);
+    }
+
+    @Override
+    public void render(
+      @NotNull final Entity entity,
+      final float limbSwing,
+      final float limbSwingAmount,
+      final float ageInTicks,
+      final float netHeadYaw,
+      final float headPitch,
+      final float scaleFactor)
+    {
+        super.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
+        setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);
     }
 
     private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
@@ -121,18 +130,5 @@ public class ModelEntitySheepFarmerMale extends ModelBiped
         model.rotateAngleX = x;
         model.rotateAngleY = y;
         model.rotateAngleZ = z;
-    }
-
-    @Override
-    public void setRotationAngles(
-                                   final float limbSwing,
-                                   final float limbSwingAmount,
-                                   final float ageInTicks,
-                                   final float netHeadYaw,
-                                   final float headPitch,
-                                   final float scaleFactor,
-                                   final Entity entityIn)
-    {
-        super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
     }
 }
