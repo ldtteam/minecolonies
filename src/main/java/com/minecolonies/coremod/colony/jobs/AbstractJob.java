@@ -2,11 +2,11 @@ package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.jobs.registry.JobRegistry;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import net.minecraft.entity.ai.EntityAITasks;
@@ -16,17 +16,13 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Suppression.CLASSES_SHOULD_NOT_ACCESS_STATIC_MEMBERS_OF_THEIR_OWN_SUBCLASSES_DURING_INITIALIZATION;
+import static com.minecolonies.coremod.colony.jobs.registry.JobRegistry.TAG_TYPE;
 
 /**
  * Basic job information.
@@ -39,61 +35,18 @@ import static com.minecolonies.api.util.constant.Suppression.CLASSES_SHOULD_NOT_
 @SuppressWarnings(CLASSES_SHOULD_NOT_ACCESS_STATIC_MEMBERS_OF_THEIR_OWN_SUBCLASSES_DURING_INITIALIZATION)
 public abstract class AbstractJob
 {
-    private static final String TAG_TYPE           = "type";
     private static final String TAG_ASYNC_REQUESTS = "asyncRequests";
+    private static final String TAG_ACTIONS_DONE   = "actionsDone";
 
-    private static final String MAPPING_PLACEHOLDER    = "Placeholder";
-    private static final String MAPPING_BUILDER        = "Builder";
-    private static final String MAPPING_DELIVERY       = "Deliveryman";
-    private static final String MAPPING_MINER          = "Miner";
-    private static final String MAPPING_LUMBERJACK     = "Lumberjack";
-    private static final String MAPPING_FARMER         = "Farmer";
-    private static final String MAPPING_FISHERMAN      = "Fisherman";
-    //private static final String MAPPING_TOWER_GUARD    = "GuardTower";
-    private static final String MAPPING_BAKER          = "Baker";
-    private static final String MAPPING_COOK           = "Cook";
-    private static final String MAPPING_SHEPHERD       = "Shepherd";
-    private static final String MAPPING_COWBOY         = "Cowboy";
-    private static final String MAPPING_SWINE_HERDER   = "SwineHerder";
-    private static final String MAPPING_CHICKEN_HERDER = "ChickenHerder";
-    private static final String MAPPING_SMELTER        = "Smelter";
-    private static final String MAPPING_RANGER         = "Ranger";
-    private static final String MAPPING_KNIGHT         = "Knight";
-    private static final String MAPPING_COMPOSTER      = "Composter";
-    private static final String MAPPING_STUDENT        = "Student";
+    /**
+     * A counter to dump the inventory after x actions.
+     */
+    private int actionsDone = 0;
 
     /**
      * The priority assigned with every main AI job.
      */
     private static final int TASK_PRIORITY = 3;
-
-    //  Job and View Class Mapping.
-    @NotNull
-    private static final Map<String, Class<? extends AbstractJob>> nameToClassMap = new HashMap<>();
-    @NotNull
-    private static final Map<Class<? extends AbstractJob>, String> classToNameMap = new HashMap<>();
-    //fix for the annotation
-    static
-    {
-        addMapping(MAPPING_PLACEHOLDER, JobPlaceholder.class);
-        addMapping(MAPPING_BUILDER, JobBuilder.class);
-        addMapping(MAPPING_DELIVERY, JobDeliveryman.class);
-        addMapping(MAPPING_MINER, JobMiner.class);
-        addMapping(MAPPING_LUMBERJACK, JobLumberjack.class);
-        addMapping(MAPPING_FARMER, JobFarmer.class);
-        addMapping(MAPPING_FISHERMAN, JobFisherman.class);
-        addMapping(MAPPING_BAKER, JobBaker.class);
-        addMapping(MAPPING_COOK, JobCook.class);
-        addMapping(MAPPING_SHEPHERD, JobShepherd.class);
-        addMapping(MAPPING_COWBOY, JobCowboy.class);
-        addMapping(MAPPING_SWINE_HERDER, JobSwineHerder.class);
-        addMapping(MAPPING_CHICKEN_HERDER, JobChickenHerder.class);
-        addMapping(MAPPING_SMELTER, JobSmelter.class);
-        addMapping(MAPPING_RANGER, JobRanger.class);
-        addMapping(MAPPING_KNIGHT, JobKnight.class);
-        addMapping(MAPPING_COMPOSTER, JobComposter.class);
-        addMapping(MAPPING_STUDENT, JobStudent.class);
-    }
 
     /**
      * Citizen connected with the job.
@@ -123,98 +76,6 @@ public abstract class AbstractJob
     public AbstractJob(final CitizenData entity)
     {
         citizen = entity;
-    }
-
-    /**
-     * Add a given Job mapping.
-     *
-     * @param name     name of job class.
-     * @param jobClass class of job.
-     */
-    private static void addMapping(final String name, @NotNull final Class<? extends AbstractJob> jobClass)
-    {
-        if (nameToClassMap.containsKey(name))
-        {
-            throw new IllegalArgumentException("Duplicate type '" + name + "' when adding Job class mapping");
-        }
-        try
-        {
-            if (jobClass.getDeclaredConstructor(CitizenData.class) != null)
-            {
-                nameToClassMap.put(name, jobClass);
-                classToNameMap.put(jobClass, name);
-            }
-        }
-        catch (final NoSuchMethodException exception)
-        {
-            throw new IllegalArgumentException("Missing constructor for type '" + name + "' when adding Job class mapping", exception);
-        }
-    }
-
-    /**
-     * Create a Job from saved NBTTagCompound data.
-     *
-     * @param citizen  The citizen that owns the Job.
-     * @param compound The NBTTagCompound containing the saved Job data.
-     * @return New Job created from the data, or null.
-     */
-    @Nullable
-    public static AbstractJob createFromNBT(final CitizenData citizen, @NotNull final NBTTagCompound compound)
-    {
-        @Nullable AbstractJob job = null;
-        @Nullable Class<? extends AbstractJob> oclass = null;
-
-        try
-        {
-            oclass = nameToClassMap.get(compound.getString(TAG_TYPE));
-
-            if (oclass != null)
-            {
-                final Constructor<?> constructor = oclass.getDeclaredConstructor(CitizenData.class);
-                job = (AbstractJob) constructor.newInstance(citizen);
-            }
-        }
-        catch (@NotNull NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e)
-        {
-            Log.getLogger().trace(e);
-        }
-
-        if (job != null)
-        {
-            try
-            {
-                job.readFromNBT(compound);
-            }
-            catch (final RuntimeException ex)
-            {
-                Log.getLogger().error(String.format("A Job %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                  compound.getString(TAG_TYPE), oclass.getName()), ex);
-                job = null;
-            }
-        }
-        else
-        {
-            Log.getLogger().warn(String.format("Unknown Job type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
-        }
-
-        return job;
-    }
-
-    /**
-     * Restore the Job from an NBTTagCompound.
-     *
-     * @param compound NBTTagCompound containing saved Job data.
-     */
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
-    {
-        this.asyncRequests.clear();
-        if (compound.hasKey(TAG_ASYNC_REQUESTS))
-        {
-            this.asyncRequests.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_ASYNC_REQUESTS, Constants.NBT.TAG_COMPOUND))
-                                        .map(StandardFactoryController.getInstance()::deserialize)
-                                        .map(o -> (IToken) o)
-                                        .collect(Collectors.toSet()));
-        }
     }
 
     /**
@@ -251,7 +112,7 @@ public abstract class AbstractJob
      */
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        final String s = classToNameMap.get(this.getClass());
+        final String s = JobRegistry.getClassToNameMap().get(this.getClass());
 
         if (s == null)
         {
@@ -260,8 +121,34 @@ public abstract class AbstractJob
 
         compound.setString(TAG_TYPE, s);
         compound.setTag(TAG_ASYNC_REQUESTS, getAsyncRequests().stream().map(StandardFactoryController.getInstance()::serialize).collect(NBTUtils.toNBTTagList()));
+        compound.setInteger(TAG_ACTIONS_DONE, actionsDone);
     }
 
+    /**
+     * Restore the Job from an NBTTagCompound.
+     *
+     * @param compound NBTTagCompound containing saved Job data.
+     */
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        this.asyncRequests.clear();
+        if (compound.hasKey(TAG_ASYNC_REQUESTS))
+        {
+            this.asyncRequests.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_ASYNC_REQUESTS, Constants.NBT.TAG_COMPOUND))
+                                        .map(StandardFactoryController.getInstance()::deserialize)
+                                        .map(o -> (IToken) o)
+                                        .collect(Collectors.toSet()));
+        }
+        if (compound.hasKey(TAG_ACTIONS_DONE))
+        {
+            actionsDone = compound.getInteger(TAG_ACTIONS_DONE);
+        }
+    }
+
+    /**
+     * Get a set of async requests connected to this job.
+     * @return a set of ITokens.
+     */
     public Set<IToken> getAsyncRequests()
     {
         return asyncRequests;
@@ -417,5 +304,33 @@ public abstract class AbstractJob
     public void onWakeUp()
     {
         searchedForFoodToday = false;
+    }
+
+    /**
+     * Getter for the amount of actions done.
+     * @return the quantity.
+     */
+    public int getActionsDone()
+    {
+        return actionsDone;
+    }
+
+    /**
+     * Actions done since the last reset.
+     * Used for example to detect
+     * if and when the inventory has to be dumped.
+     */
+    public void incrementActionsDone()
+    {
+        actionsDone++;
+    }
+
+    /**
+     * Clear the actions done counter.
+     * Call this when dumping into the chest.
+     */
+    public void clearActionsDone()
+    {
+        this.actionsDone = 0;
     }
 }
