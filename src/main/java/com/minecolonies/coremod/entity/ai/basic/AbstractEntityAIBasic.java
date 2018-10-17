@@ -87,11 +87,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private boolean hasDelayed = false;
 
     /**
-     * A counter to dump the inventory after x actions.
-     */
-    private int actionsDone = 0;
-
-    /**
      * Walk to proxy.
      */
     private IWalkToProxy proxy;
@@ -417,7 +412,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private boolean inventoryNeedsDump()
     {
         return (worker.getCitizenInventoryHandler().isInventoryFull()
-                  || actionsDone >= getActionsDoneUntilDumping()
+                  || job.getActionsDone() >= getActionsDoneUntilDumping()
                   || wantInventoryDumped())
                  && !(job instanceof JobDeliveryman);
     }
@@ -1132,12 +1127,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Clear the amount of blocks mined.
+     * Clear the actions done counter.
      * Call this when dumping into the chest.
      */
     private void clearActionsDone()
     {
-        this.actionsDone = 0;
+        job.clearActionsDone();
     }
 
     /**
@@ -1272,7 +1267,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     protected final void incrementActionsDoneAndDecSaturation()
     {
         worker.decreaseSaturationForAction();
-        actionsDone++;
+        job.incrementActionsDone();
     }
 
     /**
@@ -1287,7 +1282,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     protected final void incrementActionsDone()
     {
-        actionsDone++;
+        job.incrementActionsDone();
     }
 
     /**

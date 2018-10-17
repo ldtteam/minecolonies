@@ -42,7 +42,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     /**
      * Entities to kill before dumping into chest.
      */
-    private static final int ACTIONS_UNTIL_DUMPING = 10;
+    private static final int ACTIONS_UNTIL_DUMPING = 5;
 
     /**
      * Max derivation of current position when patrolling.
