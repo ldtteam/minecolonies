@@ -13,6 +13,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.jobs.registry.JobRegistry;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler;
@@ -255,7 +256,7 @@ public class CitizenData
 
         if (compound.hasKey("job"))
         {
-            setJob(AbstractJob.createFromNBT(this, compound.getCompoundTag("job")));
+            setJob(JobRegistry.createFromNBT(this, compound.getCompoundTag("job")));
         }
 
         if (compound.hasKey(TAG_INVENTORY))
