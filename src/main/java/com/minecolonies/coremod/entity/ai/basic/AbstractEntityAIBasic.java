@@ -122,6 +122,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     protected BlockPos walkTo = null;
 
     /**
+     * Already kept items during the dumping cycle.
+     */
+    private final List<ItemStorage> alreadyKept = new ArrayList<>();
+
+    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class
@@ -246,7 +251,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 walkTo = pos;
             }
 
-            if (walkToBlock(walkTo))
+            if (walkToBlock(walkTo) && !worker.getCitizenStuckHandler().isStuck())
             {
                 setDelay(2);
                 return getState();
@@ -1051,6 +1056,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return INVENTORY_FULL;
         }
 
+        alreadyKept.clear();
         slotAt = 0;
         //collect items that are nice to have if they are available
         this.itemsNiceToHave().forEach(this::isInHut);
@@ -1086,8 +1092,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return true;
         }
 
-        //Items already kept in the inventory
-        final List<ItemStorage> alreadyKept = new ArrayList<>();
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 
         final ItemStack stackToDump = worker.getInventoryCitizen().getStackInSlot(slotAt);

@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.colony.Colony;
@@ -261,6 +262,12 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
                     tileEntity.setBuilding(this);
                 }
             }
+            else
+            {
+                Log.getLogger().error("Somehow the wrong TileEntity is at the location where the building should be!");
+                Log.getLogger().error("Trying to restore order!");
+                colony.getWorld().setTileEntity(getLocation(), new TileEntityColonyBuilding());
+            }
         }
 
         return tileEntity;
@@ -282,15 +289,18 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null)
         {
             final Set<ICapabilityProvider> providers = new HashSet<>();
+            final World world = colony.getWorld();
+            if (world != null)
+            {
+                //Add myself
+                providers.add(getTileEntity());
 
-            //Add myself
-            providers.add(getTileEntity());
-
-            //Add additional containers
-            providers.addAll(getAdditionalCountainers().stream()
-                    .map(getTileEntity().getWorld()::getTileEntity)
-                    .collect(Collectors.toSet()));
-            providers.removeIf(Objects::isNull);
+                //Add additional containers
+                providers.addAll(getAdditionalCountainers().stream()
+                                   .map(world::getTileEntity)
+                                   .collect(Collectors.toSet()));
+                providers.removeIf(Objects::isNull);
+            }
 
             //Map all providers to IItemHandlers.
 
