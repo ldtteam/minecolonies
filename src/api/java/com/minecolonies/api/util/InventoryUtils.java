@@ -1,6 +1,5 @@
 package com.minecolonies.api.util;
 
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
@@ -2051,6 +2050,50 @@ public class InventoryUtils
         }
 
         return -1;
+    }
+
+    /**
+     * Check if a similar item is in the handler but without the provider being full.
+     * Return as soon as an empty slot and a matching slot has been found.
+     * Returns the last matching slot it found.
+     *
+     * @param handler the handler to check.
+     * @param inStack the ItemStack
+     * @return true if fitting.
+     */
+    public static boolean findSlotInItemHandlerNotFullWithItem(
+      final IItemHandler handler,
+      final ItemStack inStack)
+    {
+        boolean foundEmptySlot = false;
+        boolean foundItem = false;
+        for (int slot = 0; slot < handler.getSlots(); slot++)
+        {
+            final ItemStack stack = handler.getStackInSlot(slot);
+            if (ItemStackUtils.isEmpty(stack))
+            {
+                foundEmptySlot = true;
+            }
+            else if (compareItems(stack, inStack.getItem(), inStack.getItemDamage()))
+            {
+                if (ItemStackUtils.getSize(stack) + ItemStackUtils.getSize(inStack) <= stack.getMaxStackSize())
+                {
+                    foundEmptySlot = true;
+                }
+                foundItem = true;
+            }
+            else if (compareItems(stack, inStack.getItem(), -1))
+            {
+                foundItem = true;
+            }
+
+            if (foundItem && foundEmptySlot)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

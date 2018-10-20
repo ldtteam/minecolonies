@@ -120,6 +120,12 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
      */
     private AIState startWorking()
     {
+        if (walkToBuilding())
+        {
+            setDelay(2);
+            return getState();
+        }
+
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
 
         final AIState nextState = checkForImportantJobs();
@@ -202,7 +208,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
         setDelay(WAIT_AFTER_REQUEST);
-        walkToBuilding();
         return START_WORKING;
     }
 
