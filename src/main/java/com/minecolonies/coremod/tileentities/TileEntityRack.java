@@ -540,7 +540,10 @@ public class TileEntityRack extends TileEntity
     public void setNeighbor(final BlockPos neighbor)
     {
         this.single = neighbor == null;
-        this.relativeNeighbor = this.pos.subtract(neighbor);
-        markDirty();
+        if (!single && !this.relativeNeighbor.equals(this.pos.subtract(neighbor)))
+        {
+            this.relativeNeighbor = this.pos.subtract(neighbor);
+            markDirty();
+        }
     }
 }
