@@ -161,6 +161,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     private boolean mourning = false;
 
     /**
+     * Indicates if the citizen is hiding from the rain or not.
+     */
+    private boolean hidingFromRain = false;
+
+    /**
      * Citizen constructor.
      *
      * @param world the world the citizen lives in.
@@ -825,14 +830,14 @@ public class EntityCitizen extends AbstractEntityCitizen
     @NotNull
     public DesiredActivity getDesiredActivity()
     {
+        if (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard)
+        {
+            return DesiredActivity.WORK;
+        }
+
         if (getCitizenColonyHandler().getColony() != null && (getCitizenColonyHandler().getColony().isMourning() && mourning))
         {
             return DesiredActivity.MOURN;
-        }
-
-        if (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard & (getCitizenColonyHandler().getColony() != null && !getCitizenColonyHandler().getColony().isMourning()))
-        {
-            return DesiredActivity.WORK;
         }
 
         if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (!getCitizenColonyHandler().getColony().getBarbManager().getHorde((WorldServer) world).isEmpty()) && !(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
@@ -840,39 +845,49 @@ public class EntityCitizen extends AbstractEntityCitizen
             return DesiredActivity.SLEEP;
         }
 
-        if (!CompatibilityUtils.getWorld(this).isDaytime())
+        // Random delay of 60 seconds to detect a new day/night/rain/sun
+        if (Colony.shallUpdate(world, TICKS_SECOND * SECONDS_A_MINUTE))
         {
-            if (isDay && citizenData != null)
+            if (!CompatibilityUtils.getWorld(this).isDaytime())
             {
-                isDay = false;
-                final double decreaseBy = citizenColonyHandler.getPerBuildingFoodCost() * 2;
-                citizenData.decreaseSaturation(decreaseBy);
-                citizenData.markDirty();
+                if (isDay && citizenData != null)
+                {
+                    isDay = false;
+                    final double decreaseBy = citizenColonyHandler.getPerBuildingFoodCost() * 2;
+                    citizenData.decreaseSaturation(decreaseBy);
+                    citizenData.markDirty();
+                }
+
+                citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.sleeping"));
+                return DesiredActivity.SLEEP;
             }
 
-            citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.sleeping"));
-            return DesiredActivity.SLEEP;
-        }
 
-        if (citizenSleepHandler.isAsleep())
-        {
-            citizenSleepHandler.onWakeUp();
-        }
-        isDay = true;
-
-        if (CompatibilityUtils.getWorld(this).isRaining() && !shouldWorkWhileRaining())
-        {
-            citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"), new TextComponentTranslation("com.minecolonies.coremod.status.rainStop"));
-            return DesiredActivity.IDLE;
-        }
-        else
-        {
-            if (this.getNavigator().getPath() != null && this.getNavigator().getPath().getCurrentPathLength() == 0)
+            if (citizenSleepHandler.isAsleep())
             {
-                this.getNavigator().clearPath();
+                citizenSleepHandler.onWakeUp();
             }
-            return DesiredActivity.WORK;
+            isDay = true;
+
+
+            if (CompatibilityUtils.getWorld(this).isRaining() && !shouldWorkWhileRaining())
+            {
+                hidingFromRain = true;
+                citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"),
+                  new TextComponentTranslation("com.minecolonies.coremod.status.rainStop"));
+                return DesiredActivity.IDLE;
+            }
+            else
+            {
+                hidingFromRain = false;
+                if (this.getNavigator().getPath() != null && this.getNavigator().getPath().getCurrentPathLength() == 0)
+                {
+                    this.getNavigator().clearPath();
+                }
+                return DesiredActivity.WORK;
+            }
         }
+        return isDay ? hidingFromRain ? DesiredActivity.IDLE : DesiredActivity.WORK : DesiredActivity.SLEEP;
     }
 
     /**
@@ -882,9 +897,9 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     private boolean shouldWorkWhileRaining()
     {
-        return (citizenColonyHandler.getWorkBuilding() != null && (citizenColonyHandler.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL))
-                 || Configurations.gameplay.workersAlwaysWorkInRain
-                 || (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard);
+        return Configurations.gameplay.workersAlwaysWorkInRain ||
+                 (citizenColonyHandler.getWorkBuilding() != null && citizenColonyHandler.getWorkBuilding().canWorkDuringTheRain());
+
     }
 
     /**
