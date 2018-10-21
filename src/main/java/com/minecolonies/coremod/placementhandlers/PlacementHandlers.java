@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.placementhandlers;
 
-import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.block.*;
