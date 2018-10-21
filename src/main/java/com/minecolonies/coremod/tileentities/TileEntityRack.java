@@ -545,7 +545,7 @@ public class TileEntityRack extends TileEntity
             markDirty();
         }
 
-        if (this.relativeNeighbor != null && neighbor != null && !this.relativeNeighbor.equals(this.pos.subtract(neighbor)))
+        if ((this.relativeNeighbor == null && neighbor != null) || (this.relativeNeighbor != null && neighbor != null && !this.relativeNeighbor.equals(this.pos.subtract(neighbor))))
         {
             this.relativeNeighbor = this.pos.subtract(neighbor);
             markDirty();
