@@ -800,3 +800,5 @@ com.minecolonies.coremod.gui.hiring.restartMessage=Restart for citizen %s schedu
 com.minecolonies.coremod.gui.hiring.restartMessageDone=Citizen %s succesfully restarted.
 com.minecolonies.coremod.gui.townHall.buildingLevel=Building level
 com.minecolonies.coremod.job.composter=Composter
+
+com.minecolonies.coremod.gui.auto.hire.warning=Turn off Automatic Hiring in your Town Hall options to enable Firing!
