@@ -86,6 +86,11 @@ public class TileEntityRack extends TileEntity
     };
 
     /**
+     * The combined inv wrapper for double racks.
+     */
+    private CombinedInvWrapper combinedHandler;
+
+    /**
      * Check if a certain itemstack is present in the inventory.
      * This method checks the content list, it is therefore extremely fast.
      *
@@ -509,13 +514,17 @@ public class TileEntityRack extends TileEntity
             }
             else if (getOtherChest() != null)
             {
-                if (main && getOtherChest() != null)
+                if (main)
                 {
-                    return (T) new CombinedInvWrapper(inventory, getOtherChest().inventory);
+                    if (combinedHandler == null)
+                    {
+                        combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().inventory);
+                    }
+                    return (T) combinedHandler;
                 }
                 else
                 {
-                    return (T) new CombinedInvWrapper(getOtherChest().inventory, inventory);
+                    return (T) getOtherChest().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
                 }
             }
         }
