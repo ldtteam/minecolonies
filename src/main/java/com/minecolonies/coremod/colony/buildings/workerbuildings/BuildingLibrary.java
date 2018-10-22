@@ -118,6 +118,12 @@ public class BuildingLibrary extends AbstractBuildingWorker
         return studyItemList;
     }
 
+    @Override
+    public boolean canWorkDuringTheRain()
+    {
+        return true;
+    }
+
     @NotNull
     @Override
     public String getSchematicName()

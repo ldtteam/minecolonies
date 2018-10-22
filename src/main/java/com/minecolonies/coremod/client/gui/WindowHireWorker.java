@@ -223,15 +223,6 @@ public class WindowHireWorker extends Window implements ButtonHandler
         return "";
     }
 
-    /* TODO: NEW BLOCKOUT -> make this work
-    @Override
-    public void onUpdate()
-    {
-        updateCitizens();
-        window.findPaneOfTypeByID(CITIZEN_LIST, ScrollingList.class).refreshElementPanes();
-    }
-    */
-
     /**
      * Called when any button has been clicked.
      *
@@ -258,12 +249,14 @@ public class WindowHireWorker extends Window implements ButtonHandler
             case BUTTON_DONE:
                 building.addWorkerId(id);
                 MineColonies.getNetwork().sendToServer(new HireFireMessage(this.building, true, id));
-                citizen.setWorkBuilding(new BlockPos(0, 0, 0));
+                citizen.setWorkBuilding(building.getLocation());
+                onOpened();
                 break;
             case BUTTON_FIRE:
                 MineColonies.getNetwork().sendToServer(new HireFireMessage(this.building, false, id));
                 building.removeWorkerId(id);
                 citizen.setWorkBuilding(null);
+                onOpened();
                 break;
             case BUTTON_PAUSE:
                 MineColonies.getNetwork().sendToServer(new PauseCitizenMessage(this.building, id));
@@ -276,7 +269,5 @@ public class WindowHireWorker extends Window implements ButtonHandler
             default:
                 break;
         }
-
-        citizens.set(row, citizen);
     }
 }
