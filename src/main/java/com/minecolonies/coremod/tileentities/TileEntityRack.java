@@ -514,7 +514,7 @@ public class TileEntityRack extends TileEntity
             }
             else if (getOtherChest() != null)
             {
-                if (main && getOtherChest() != null)
+                if (main)
                 {
                     if (combinedHandler == null)
                     {
