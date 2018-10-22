@@ -3,9 +3,11 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.huts.BlockHutDeliveryman;
 import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
@@ -18,6 +20,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
+import com.minecolonies.coremod.inventory.api.CombinedItemHandler;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
@@ -34,11 +37,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Class of the warehouse building.
@@ -250,6 +254,34 @@ public class BuildingWareHouse extends AbstractBuilding
             }
             addContainerPosition(pos);
         }
+    }
+
+    public void sort()
+    {
+        final IItemHandler inv = getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        AtomicInteger runCount = new AtomicInteger(0);
+        Comparator<Map.Entry<ItemStorage, Integer>> sortingRule = TileEntityRack::compare;
+
+        final Map<ItemStorage, Integer> map = new HashMap<>();
+        if (inv != null)
+        {
+            for (int i = 0; i < inv.getSlots(); i++)
+            {
+                final ItemStorage storgage = new ItemStorage(inv.extractItem(i, 64, false));
+
+                int amount = storgage.getAmount();
+                if (map.containsKey(storgage))
+                {
+                    amount += map.remove(storgage);
+                }
+                map.put(storgage, amount);
+
+            }
+
+            map.entrySet().stream().sorted(sortingRule).forEach(entry -> TileEntityRack.pushIntoInv(runCount, entry, inv));
+            Log.getLogger().warn(map.size());
+        }
+
     }
 
     /**

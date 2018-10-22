@@ -4,10 +4,12 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.types.RackType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -18,14 +20,17 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import net.minecraftforge.registries.ForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -473,6 +478,68 @@ public class TileEntityRack extends TileEntity
         final NBTTagCompound compound = new NBTTagCompound();
         return new SPacketUpdateTileEntity(this.pos, 0, this.writeToNBT(compound));
     }
+
+    public void sort()
+    {
+        final IItemHandler inv = getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        AtomicInteger runCount = new AtomicInteger(0);
+        Comparator<Map.Entry<ItemStorage, Integer>> sortingRule = TileEntityRack::compare;
+
+        final Map<ItemStorage, Integer> map = new HashMap<>();
+        if (inv != null)
+        {
+            for (int i = 0; i < inv.getSlots(); i++)
+            {
+                final ItemStorage storgage = new ItemStorage(inv.extractItem(i, 64, false));
+
+                int amount = storgage.getAmount();
+                if (map.containsKey(storgage))
+                {
+                    amount += map.remove(storgage);
+                }
+                map.put(storgage, amount);
+
+            }
+
+            map.entrySet().stream().sorted(sortingRule).forEach(entry -> pushIntoInv(runCount, entry, inv));
+            Log.getLogger().warn(map.size());
+        }
+    }
+
+    public static void pushIntoInv(final AtomicInteger currentSlot, final Map.Entry<ItemStorage, Integer> entry, final IItemHandler inv)
+    {
+        final ItemStack stack = entry.getKey().getItemStack();
+        int tempSize = entry.getValue();
+        while (tempSize > 0)
+        {
+            final ItemStack tempStack = stack.copy();
+            tempStack.setCount(Math.min(tempSize, tempStack.getMaxStackSize()));
+            while (!inv.insertItem(currentSlot.getAndIncrement(), tempStack, false).isEmpty())
+            {
+                Log.getLogger().error("Unable to insert item into slot, trying next!");
+            }
+            tempSize -= tempStack.getCount();
+        }
+    }
+
+    public static int compare(final Map.Entry<ItemStorage, Integer> t1, final Map.Entry<ItemStorage, Integer> t2)
+    {
+        final int id1 = getId(t1.getKey().getItem());
+        final int id2 = getId(t2.getKey().getItem());
+
+        if (id1 == id2)
+        {
+            return t1.getKey().getDamageValue() - t2.getKey().getDamageValue();
+        }
+        return id1 - id2;
+    }
+
+    public static int getId(final Item item)
+    {
+        return ((ForgeRegistry<Item>) ForgeRegistries.ITEMS).getID(item);
+    }
+
+
 
     @NotNull
     @Override

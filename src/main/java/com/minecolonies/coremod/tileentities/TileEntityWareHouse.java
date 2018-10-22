@@ -3,6 +3,7 @@ package com.minecolonies.coremod.tileentities;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -94,6 +95,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      */
     public void dumpInventoryIntoWareHouse(@NotNull final InventoryCitizen inventoryCitizen)
     {
+        ((BuildingWareHouse) getBuilding()).sort();
         for (int i = 0; i < new InvWrapper(inventoryCitizen).getSlots(); i++)
         {
             final ItemStack stack = inventoryCitizen.getStackInSlot(i);
