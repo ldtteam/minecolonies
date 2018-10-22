@@ -167,6 +167,8 @@ public class WindowHireWorker extends Window implements ButtonHandler
 
                 final Button isPaused = rowPane.findPaneOfTypeByID(BUTTON_PAUSE, Button.class);
 
+                findPaneOfTypeByID(AUTO_HIRE_WARN, Label.class).off();
+
                 if (citizen.getWorkBuilding() == null)
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).off();
@@ -181,7 +183,7 @@ public class WindowHireWorker extends Window implements ButtonHandler
                     if (!building.getColony().isManualHiring())
                     {
                         rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).disable();
-                        findPaneOfTypeByID(AUTO_HIRE_WARN, Label.class).setLabelText(LanguageHandler.format(AUTOMATIC_HIRE_WARNING));
+                        findPaneOfTypeByID(AUTO_HIRE_WARN, Label.class).on();
                     }
 
                     isPaused.on();
