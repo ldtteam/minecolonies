@@ -172,6 +172,12 @@ public class WindowHireWorker extends Window implements ButtonHandler
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).off();
                     rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).on();
+
+                    if (!building.getColony().isManualHiring())
+                    {
+                        rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).disable();
+                    }
+
                     isPaused.on();
                     isPaused.setLabel(LanguageHandler.format(citizen.isPaused() ? COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE : COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE));
                 }
