@@ -27,18 +27,21 @@ import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -258,31 +261,36 @@ public class BuildingWareHouse extends AbstractBuilding
 
     public void sort()
     {
-        final IItemHandler inv = getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        final CombinedItemHandler inv = (CombinedItemHandler) getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
         AtomicInteger runCount = new AtomicInteger(0);
-        Comparator<Map.Entry<ItemStorage, Integer>> sortingRule = TileEntityRack::compare;
 
         final Map<ItemStorage, Integer> map = new HashMap<>();
         if (inv != null)
         {
             for (int i = 0; i < inv.getSlots(); i++)
             {
-                final ItemStorage storgage = new ItemStorage(inv.extractItem(i, 64, false));
-
-                int amount = storgage.getAmount();
-                if (map.containsKey(storgage))
+                if (ItemStackUtils.isEmpty(inv.getStackInSlot(i)))
                 {
-                    amount += map.remove(storgage);
+                    continue;
                 }
-                map.put(storgage, amount);
-
+                final ItemStorage storage = new ItemStorage(inv.extractItem(i, 64, false));
+                int amount = storage.getAmount();
+                if (map.containsKey(storage))
+                {
+                    amount += map.remove(storage);
+                }
+                map.put(storage, amount);
             }
 
-            map.entrySet().stream().sorted(sortingRule).forEach(entry -> TileEntityRack.pushIntoInv(runCount, entry, inv));
-            Log.getLogger().warn(map.size());
+            Tuple<AtomicInteger, Map<Integer, Integer>> tuple = TileEntityRack.calcRequiredSlots(map);
+            final double totalSlots = inv.getSlots();
+            final int totalReq = tuple.getFirst().get();
+            map.entrySet().stream().sorted(TileEntityRack::compare)
+              .forEach(entry -> TileEntityRack.pushIntoInv(runCount, entry, inv, tuple.getFirst(), totalSlots, totalReq, tuple.getSecond()));
         }
-
     }
+
+
 
     /**
      * Handles the chest placement.

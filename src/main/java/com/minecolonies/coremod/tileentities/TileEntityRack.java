@@ -7,6 +7,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.types.RackType;
+import com.minecolonies.coremod.inventory.api.CombinedItemHandler;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -17,6 +18,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -325,6 +327,7 @@ public class TileEntityRack extends TileEntity
 
     /**
      * Method to change the main attribute of the rack.
+     *
      * @param main the boolean value defining it.
      */
     public void setMain(final boolean main)
@@ -335,6 +338,7 @@ public class TileEntityRack extends TileEntity
 
     /**
      * On neighbor changed this will be called from the block.
+     *
      * @param newNeighbor the blockPos which has changed.
      */
     public void neighborChanged(final BlockPos newNeighbor)
@@ -361,7 +365,8 @@ public class TileEntityRack extends TileEntity
             updateItemStorage();
             this.markDirty();
         }
-        else if (relativeNeighbor != null && this.pos.subtract(relativeNeighbor).equals(newNeighbor) && !(world.getBlockState(newNeighbor).getBlock() instanceof BlockMinecoloniesRack))
+        else if (relativeNeighbor != null && this.pos.subtract(relativeNeighbor).equals(newNeighbor) && !(world.getBlockState(newNeighbor)
+                                                                                                            .getBlock() instanceof BlockMinecoloniesRack))
         {
             this.relativeNeighbor = null;
             single = true;
@@ -483,7 +488,6 @@ public class TileEntityRack extends TileEntity
     {
         final IItemHandler inv = getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
         AtomicInteger runCount = new AtomicInteger(0);
-        Comparator<Map.Entry<ItemStorage, Integer>> sortingRule = TileEntityRack::compare;
 
         final Map<ItemStorage, Integer> map = new HashMap<>();
         if (inv != null)
@@ -498,32 +502,62 @@ public class TileEntityRack extends TileEntity
                     amount += map.remove(storgage);
                 }
                 map.put(storgage, amount);
-
             }
 
-            map.entrySet().stream().sorted(sortingRule).forEach(entry -> pushIntoInv(runCount, entry, inv));
+            //map.entrySet().stream().sorted(TileEntityRack::compare).forEach(entry -> pushIntoInv(runCount, entry, inv, requiredSlots, totalSlots, creativeTabsCount, creativeTabs));
             Log.getLogger().warn(map.size());
         }
     }
 
-    public static void pushIntoInv(final AtomicInteger currentSlot, final Map.Entry<ItemStorage, Integer> entry, final IItemHandler inv)
+    public static void pushIntoInv(
+      final AtomicInteger currentSlot,
+      final Map.Entry<ItemStorage, Integer> entry,
+      final CombinedItemHandler inv,
+      final AtomicInteger requiredSlots,
+      final double totalSlots, final double totalRequirement, final Map<Integer, Integer> creativeTabs)
     {
+        int creativeTabId = entry.getKey().getCreativeTabIndex();
+
+        final int slotLimit = inv.getLastIndex(currentSlot.get());
         final ItemStack stack = entry.getKey().getItemStack();
         int tempSize = entry.getValue();
         while (tempSize > 0)
         {
             final ItemStack tempStack = stack.copy();
             tempStack.setCount(Math.min(tempSize, tempStack.getMaxStackSize()));
-            while (!inv.insertItem(currentSlot.getAndIncrement(), tempStack, false).isEmpty())
+            if (!inv.insertItem(currentSlot.getAndIncrement(), tempStack, false).isEmpty())
             {
-                Log.getLogger().error("Unable to insert item into slot, trying next!");
+                Log.getLogger().error("Dumping into same slot again!");
             }
             tempSize -= tempStack.getCount();
+            requiredSlots.decrementAndGet();
+            creativeTabs.put(creativeTabId, creativeTabs.get(creativeTabId) - 1);
+        }
+
+        if (creativeTabs.get(creativeTabId) <= 0 && (totalSlots - slotLimit) >= requiredSlots.get())
+        {
+            final double dumpedSlots = (totalRequirement - requiredSlots.get());
+            final double usageFactor = totalSlots/dumpedSlots;
+            final double theoreticalJumpFactor = (totalSlots - slotLimit) / requiredSlots.get();
+
+            if (theoreticalJumpFactor <= usageFactor || theoreticalJumpFactor > 4)
+            {
+                Log.getLogger().warn(currentSlot.get() + " " + slotLimit);
+                currentSlot.set(slotLimit);
+            }
         }
     }
 
     public static int compare(final Map.Entry<ItemStorage, Integer> t1, final Map.Entry<ItemStorage, Integer> t2)
     {
+        final int creativeTabId1 = t1.getKey().getCreativeTabIndex();
+        final int creativeTabId2 = t2.getKey().getCreativeTabIndex();
+
+        if (creativeTabId1 != creativeTabId2)
+        {
+            return creativeTabId1 - creativeTabId2;
+        }
+
         final int id1 = getId(t1.getKey().getItem());
         final int id2 = getId(t2.getKey().getItem());
 
@@ -539,7 +573,19 @@ public class TileEntityRack extends TileEntity
         return ((ForgeRegistry<Item>) ForgeRegistries.ITEMS).getID(item);
     }
 
+    public static Tuple<AtomicInteger, Map<Integer, Integer>> calcRequiredSlots(final Map<ItemStorage, Integer> map)
+    {
+        final Map<Integer, Integer> creativeTabs = new HashMap<>();
+        int sum = 0;
+        for (Map.Entry<ItemStorage, Integer> entry : map.entrySet())
+        {
+            sum += Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize());
+            creativeTabs.put(entry.getKey().getCreativeTabIndex(),
+              creativeTabs.getOrDefault(entry.getKey().getCreativeTabIndex(), 0) + (int) Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize()));
+        }
 
+        return new Tuple(new AtomicInteger(sum), creativeTabs);
+    }
 
     @NotNull
     @Override
@@ -621,7 +667,8 @@ public class TileEntityRack extends TileEntity
             markDirty();
         }
 
-        if ((this.relativeNeighbor == null && neighbor != null) || (this.relativeNeighbor != null && neighbor != null && !this.relativeNeighbor.equals(this.pos.subtract(neighbor))))
+        if ((this.relativeNeighbor == null && neighbor != null) || (this.relativeNeighbor != null && neighbor != null
+                                                                      && !this.relativeNeighbor.equals(this.pos.subtract(neighbor))))
         {
             this.relativeNeighbor = this.pos.subtract(neighbor);
             markDirty();
