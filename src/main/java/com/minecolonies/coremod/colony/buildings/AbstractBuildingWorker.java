@@ -40,6 +40,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.BONUS_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.ColonyConstants.ONWORLD_TICK_AVERAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
@@ -463,6 +464,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
             return TOOL_LEVEL_WOOD_OR_GOLD;
         }
         return getBuildingLevel() - WOOD_HUT_LEVEL;
+    }
+
+    /**
+     * Method which defines if a worker should be allowed to work during the rain.
+     * @return true if so.
+     */
+    public boolean canWorkDuringTheRain()
+    {
+        return getBuildingLevel() >= BONUS_BUILDING_LEVEL;
     }
 
     /**

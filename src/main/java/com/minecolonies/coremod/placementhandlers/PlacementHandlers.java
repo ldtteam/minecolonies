@@ -51,6 +51,7 @@ public final class PlacementHandlers
         handlers.add(new StairBlockPlacementHandler());
         handlers.add(new ChestPlacementHandler());
         handlers.add(new FallingBlockPlacementHandler());
+        handlers.add(new BannerPlacementHandler());
         handlers.add(new GeneralBlockPlacementHandler());
     }
 
@@ -544,6 +545,50 @@ public final class PlacementHandlers
 
             itemList.removeIf(ItemStackUtils::isEmpty);
 
+            return itemList;
+        }
+    }
+
+    public static class BannerPlacementHandler implements IPlacementHandler
+    {
+        @Override
+        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState)
+        {
+            return blockState.getBlock() instanceof BlockBanner;
+        }
+
+        @Override
+        public Object handle(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final IBlockState blockState,
+          @Nullable final NBTTagCompound tileEntityData,
+          final boolean complete,
+          final BlockPos centerPos)
+        {
+            if (world.getBlockState(pos).equals(blockState))
+            {
+                return ActionProcessingResult.ACCEPT;
+            }
+
+            if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
+            {
+                return ActionProcessingResult.DENY;
+            }
+
+            if (tileEntityData != null)
+            {
+                handleTileEntityPlacement(tileEntityData, world, pos);
+            }
+
+            return blockState;
+        }
+
+        @Override
+        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
+        {
+            final List<ItemStack> itemList = new ArrayList<>(getItemsFromTileEntity(tileEntityData, world));
+            itemList.removeIf(ItemStackUtils::isEmpty);
             return itemList;
         }
     }

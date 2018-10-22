@@ -39,6 +39,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.BONUS_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -878,6 +879,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     {
         final AbstractBuildingWorker buildingWorker =  citizen.getCitizenColonyHandler().getWorkBuilding();
         return !(buildingWorker instanceof AbstractBuildingGuards) || ((AbstractBuildingGuards) buildingWorker).task != GuardTask.FOLLOW || !player.equals(((AbstractBuildingGuards) buildingWorker).followPlayer);
+    }
+
+    @Override
+    public boolean canWorkDuringTheRain()
+    {
+        return true;
     }
 
     /**
