@@ -13,5 +13,6 @@
             <label id="attributes" size="100% 12" pos="0 16" textalign="MIDDLE_LEFT" color="white" textscale="0.8"/>
         </view>
     </list>
-    <button id="cancel" size="200 20" pos="110 194" label="$(gui.cancel)"/>
+    <label id="autoHireWarn" size="100% 11" pos="0 195" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.auto.hire.warning)"/>
+    <button id="cancel" size="200 20" pos="110 210" label="$(gui.cancel)"/>
 </window>
