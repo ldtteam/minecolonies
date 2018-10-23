@@ -4,13 +4,10 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.types.RackType;
-import com.minecolonies.coremod.inventory.api.CombinedItemHandler;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -18,21 +15,16 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
-import net.minecraftforge.registries.ForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -482,109 +474,6 @@ public class TileEntityRack extends TileEntity
     {
         final NBTTagCompound compound = new NBTTagCompound();
         return new SPacketUpdateTileEntity(this.pos, 0, this.writeToNBT(compound));
-    }
-
-    public void sort()
-    {
-        final IItemHandler inv = getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-        AtomicInteger runCount = new AtomicInteger(0);
-
-        final Map<ItemStorage, Integer> map = new HashMap<>();
-        if (inv != null)
-        {
-            for (int i = 0; i < inv.getSlots(); i++)
-            {
-                final ItemStorage storgage = new ItemStorage(inv.extractItem(i, 64, false));
-
-                int amount = storgage.getAmount();
-                if (map.containsKey(storgage))
-                {
-                    amount += map.remove(storgage);
-                }
-                map.put(storgage, amount);
-            }
-
-            //map.entrySet().stream().sorted(TileEntityRack::compare).forEach(entry -> pushIntoInv(runCount, entry, inv, requiredSlots, totalSlots, creativeTabsCount, creativeTabs));
-            Log.getLogger().warn(map.size());
-        }
-    }
-
-    public static void pushIntoInv(
-      final AtomicInteger currentSlot,
-      final Map.Entry<ItemStorage, Integer> entry,
-      final CombinedItemHandler inv,
-      final AtomicInteger requiredSlots,
-      final double totalSlots, final double totalRequirement, final Map<Integer, Integer> creativeTabs)
-    {
-        int creativeTabId = entry.getKey().getCreativeTabIndex();
-
-        final int slotLimit = inv.getLastIndex(currentSlot.get());
-        final ItemStack stack = entry.getKey().getItemStack();
-        int tempSize = entry.getValue();
-        while (tempSize > 0)
-        {
-            final ItemStack tempStack = stack.copy();
-            tempStack.setCount(Math.min(tempSize, tempStack.getMaxStackSize()));
-            if (!inv.insertItem(currentSlot.getAndIncrement(), tempStack, false).isEmpty())
-            {
-                Log.getLogger().error("Dumping into same slot again!");
-            }
-            tempSize -= tempStack.getCount();
-            requiredSlots.decrementAndGet();
-            creativeTabs.put(creativeTabId, creativeTabs.get(creativeTabId) - 1);
-        }
-
-        if (creativeTabs.get(creativeTabId) <= 0 && (totalSlots - slotLimit) >= requiredSlots.get())
-        {
-            final double dumpedSlots = (totalRequirement - requiredSlots.get());
-            final double usageFactor = totalSlots/dumpedSlots;
-            final double theoreticalJumpFactor = (totalSlots - slotLimit) / requiredSlots.get();
-
-            if (theoreticalJumpFactor <= usageFactor || theoreticalJumpFactor > 4)
-            {
-                Log.getLogger().warn(currentSlot.get() + " " + slotLimit);
-                currentSlot.set(slotLimit);
-            }
-        }
-    }
-
-    public static int compare(final Map.Entry<ItemStorage, Integer> t1, final Map.Entry<ItemStorage, Integer> t2)
-    {
-        final int creativeTabId1 = t1.getKey().getCreativeTabIndex();
-        final int creativeTabId2 = t2.getKey().getCreativeTabIndex();
-
-        if (creativeTabId1 != creativeTabId2)
-        {
-            return creativeTabId1 - creativeTabId2;
-        }
-
-        final int id1 = getId(t1.getKey().getItem());
-        final int id2 = getId(t2.getKey().getItem());
-
-        if (id1 == id2)
-        {
-            return t1.getKey().getDamageValue() - t2.getKey().getDamageValue();
-        }
-        return id1 - id2;
-    }
-
-    public static int getId(final Item item)
-    {
-        return ((ForgeRegistry<Item>) ForgeRegistries.ITEMS).getID(item);
-    }
-
-    public static Tuple<AtomicInteger, Map<Integer, Integer>> calcRequiredSlots(final Map<ItemStorage, Integer> map)
-    {
-        final Map<Integer, Integer> creativeTabs = new HashMap<>();
-        int sum = 0;
-        for (Map.Entry<ItemStorage, Integer> entry : map.entrySet())
-        {
-            sum += Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize());
-            creativeTabs.put(entry.getKey().getCreativeTabIndex(),
-              creativeTabs.getOrDefault(entry.getKey().getCreativeTabIndex(), 0) + (int) Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize()));
-        }
-
-        return new Tuple(new AtomicInteger(sum), creativeTabs);
     }
 
     @NotNull

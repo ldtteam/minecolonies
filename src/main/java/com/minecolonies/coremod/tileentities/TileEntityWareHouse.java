@@ -95,7 +95,6 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      */
     public void dumpInventoryIntoWareHouse(@NotNull final InventoryCitizen inventoryCitizen)
     {
-        ((BuildingWareHouse) getBuilding()).sort();
         for (int i = 0; i < new InvWrapper(inventoryCitizen).getSlots(); i++)
         {
             final ItemStack stack = inventoryCitizen.getStackInSlot(i);

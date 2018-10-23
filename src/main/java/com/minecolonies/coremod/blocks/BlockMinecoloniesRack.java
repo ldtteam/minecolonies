@@ -243,10 +243,6 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
                 {
                     ((TileEntityRack) rack).neighborChanged(neighbor);
                 }
-                else
-                {
-                    ((TileEntityRack) rack).sort();
-                }
             }
         }
         super.neighborChanged(state, worldIn, pos, blockIn, fromPos);

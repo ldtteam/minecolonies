@@ -3,11 +3,9 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.huts.BlockHutDeliveryman;
 import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
@@ -20,32 +18,25 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
-import com.minecolonies.coremod.inventory.api.CombinedItemHandler;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Class of the warehouse building.
@@ -258,39 +249,6 @@ public class BuildingWareHouse extends AbstractBuilding
             addContainerPosition(pos);
         }
     }
-
-    public void sort()
-    {
-        final CombinedItemHandler inv = (CombinedItemHandler) getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-        AtomicInteger runCount = new AtomicInteger(0);
-
-        final Map<ItemStorage, Integer> map = new HashMap<>();
-        if (inv != null)
-        {
-            for (int i = 0; i < inv.getSlots(); i++)
-            {
-                if (ItemStackUtils.isEmpty(inv.getStackInSlot(i)))
-                {
-                    continue;
-                }
-                final ItemStorage storage = new ItemStorage(inv.extractItem(i, 64, false));
-                int amount = storage.getAmount();
-                if (map.containsKey(storage))
-                {
-                    amount += map.remove(storage);
-                }
-                map.put(storage, amount);
-            }
-
-            Tuple<AtomicInteger, Map<Integer, Integer>> tuple = TileEntityRack.calcRequiredSlots(map);
-            final double totalSlots = inv.getSlots();
-            final int totalReq = tuple.getFirst().get();
-            map.entrySet().stream().sorted(TileEntityRack::compare)
-              .forEach(entry -> TileEntityRack.pushIntoInv(runCount, entry, inv, tuple.getFirst(), totalSlots, totalReq, tuple.getSecond()));
-        }
-    }
-
-
 
     /**
      * Handles the chest placement.

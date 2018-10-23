@@ -993,7 +993,13 @@ public final class WindowConstants
      * ID for happiness modifier view
      */
     public static final String HAPPINESS_MODIFIER_PANE = "happinessModifierView";
-    
+
+    /**
+     * Warehouse constants
+     */
+    public static final String HUT_WAREHOUSE_RESOURCE_SUFFIX = ":gui/windowhutwarehouse.xml";
+    public static final String SORT_WAREHOUSE_BUTTON         = "sort";
+
     /**
      * public constructor to hide implicit public one.
      */

@@ -2,14 +2,15 @@ package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.controls.Button;
+import com.minecolonies.blockout.controls.ButtonImage;
 import com.minecolonies.blockout.controls.ItemIcon;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
+import com.minecolonies.coremod.network.messages.SortWarehouseMessage;
 import com.minecolonies.coremod.network.messages.UpgradeWarehouseMessage;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
@@ -17,26 +18,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.coremod.client.gui.WindowHutBuilder.*;
+
 /**
  * Window for the home building.
  */
 public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse.View>
 {
-    /**
-     * The builders gui file.
-     */
-    private static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutwarehouse.xml";
-    private static final String RESOURCE_NAME               = "resourceName";
-    private static final String RESOURCE_AVAILABLE_NEEDED   = "resourceAvailableNeeded";
-    private static final String RESOURCE_MISSING            = "resourceMissing";
-    private static final String RESOURCE_ADD                = "resourceAdd";
-    private static final String RESOURCE_QUANTITY_MISSING   = "resourceQuantity";
-    private static final String RESOURCE_ICON               = "resourceIcon";
-
-    private static final int RED       = Color.getByName("red", 0);
-    private static final int DARKGREEN = Color.getByName("darkgreen", 0);
-    private static final int BLACK     = Color.getByName("black", 0);
-
     /**
      * Allow more upgrades of the storage.
      */
@@ -49,8 +38,9 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
      */
     public WindowHutWareHouse(final BuildingWareHouse.View building)
     {
-        super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
+        super(building, Constants.MOD_ID + HUT_WAREHOUSE_RESOURCE_SUFFIX);
         registerButton(RESOURCE_ADD, this::transferItems);
+        registerButton(SORT_WAREHOUSE_BUTTON, this::sortWarehouse);
         if (building.isBuildingMaxLevel() && building.canUpgradeStorage())
         {
             allowMoreStorageUpgrades = true;
@@ -60,6 +50,10 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
     @Override
     public void onOpened()
     {
+        if (building.getBuildingLevel() < 3)
+        {
+            findPaneOfTypeByID(SORT_WAREHOUSE_BUTTON, ButtonImage.class).hide();
+        }
         super.onOpened();
 
         updateResourcePane();
@@ -149,13 +143,21 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
     }
 
     /**
-     * On Button click transfert Items.
+     * On Button click transfer Items.
      */
     private void transferItems()
     {
         MineColonies.getNetwork().sendToServer(new UpgradeWarehouseMessage(this.building));
         allowMoreStorageUpgrades = false;
         this.updateResourcePane();
+    }
+
+    /**
+     * On button click for warehouse sorting.
+     */
+    private void sortWarehouse()
+    {
+        MineColonies.getNetwork().sendToServer(new SortWarehouseMessage(this.building));
     }
 
     /**
