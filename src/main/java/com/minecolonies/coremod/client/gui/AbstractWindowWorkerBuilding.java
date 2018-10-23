@@ -104,17 +104,14 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
      */
     private void hireClicked(@NotNull final Button button)
     {
-        if (building.getColony().isManualHiring())
+        if (building.getBuildingLevel() == 0 && !BUILDER_HUT_NAME.equals(getBuildingName()))
         {
-            if (building.getBuildingLevel() == 0 && !BUILDER_HUT_NAME.equals(getBuildingName()))
-            {
-                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.gui.workerHuts.level0");
-                return;
-            }
-
-            @NotNull final WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getLocation());
-            window.open();
+            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.gui.workerHuts.level0");
+            return;
         }
+
+        @NotNull final WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getLocation());
+        window.open();
     }
 
     /**
