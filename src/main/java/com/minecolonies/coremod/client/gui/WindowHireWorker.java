@@ -69,6 +69,11 @@ public class WindowHireWorker extends Window implements ButtonHandler
     private static final String BUTTON_FIRE = "fire";
 
     /**
+     * Id of the automatic hiring warning
+     */
+    private static final String AUTO_HIRE_WARN = "autoHireWarn";
+
+    /**
      * Id of the pause button
      */
     private static final String BUTTON_PAUSE = "pause";
@@ -162,6 +167,8 @@ public class WindowHireWorker extends Window implements ButtonHandler
 
                 final Button isPaused = rowPane.findPaneOfTypeByID(BUTTON_PAUSE, Button.class);
 
+                findPaneOfTypeByID(AUTO_HIRE_WARN, Label.class).off();
+
                 if (citizen.getWorkBuilding() == null)
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).off();
@@ -172,6 +179,13 @@ public class WindowHireWorker extends Window implements ButtonHandler
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).off();
                     rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).on();
+
+                    if (!building.getColony().isManualHiring())
+                    {
+                        rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).disable();
+                        findPaneOfTypeByID(AUTO_HIRE_WARN, Label.class).on();
+                    }
+
                     isPaused.on();
                     isPaused.setLabel(LanguageHandler.format(citizen.isPaused() ? COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE : COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE));
                 }
@@ -197,7 +211,7 @@ public class WindowHireWorker extends Window implements ButtonHandler
                   LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_INTELLIGENCE, citizen.getIntelligence()));
 
                 //Creates the list of attributes for each citizen
-                @NotNull final String attributes = strength + charisma + dexterity + endurance + intelligence;
+                @NotNull final String attributes = strength + " | " + charisma + " | " + dexterity + " | " + endurance + " | " + intelligence;
 
                 rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText(citizen.getName());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabelText(attributes);
