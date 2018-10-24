@@ -299,7 +299,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
     {
         if (worker.getCitizenData() != null)
         {
-            int delay = PHYSICAL_ATTACK_DELAY_BASE - (worker.getCitizenData().getLevel());
+            final int delay = PHYSICAL_ATTACK_DELAY_BASE - (worker.getCitizenData().getLevel());
             return delay > PHYSICAL_ATTACK_DELAY_MIN ? PHYSICAL_ATTACK_DELAY_MIN : delay;
         }
         return PHYSICAL_ATTACK_DELAY_BASE;

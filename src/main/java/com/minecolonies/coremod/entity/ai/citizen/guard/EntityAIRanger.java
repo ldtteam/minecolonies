@@ -109,6 +109,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
 
     /**
      * Calculates the actual attack range
+     * @return The attack range
      */
     private int getRealAttackRange()
     {
@@ -308,13 +309,13 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 double damage = getRangedAttackDamage();
 
                 // Add bow enchant effects: Knocback and fire
-                ItemStack bow = worker.getHeldItem(EnumHand.MAIN_HAND);
+                final ItemStack bow = worker.getHeldItem(EnumHand.MAIN_HAND);
 
                 if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, bow) > 0)
                 {
                     arrow.setFire(100);
                 }
-                int k = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, bow);
+                final int k = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, bow);
                 if (k > 0)
                 {
                     arrow.setKnockbackStrength(k);
@@ -393,7 +394,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
      *
      * @return the attack damage
      */
-    private float getRangedAttackDamage()
+    private double getRangedAttackDamage()
     {
         if (worker.getCitizenData() != null)
         {

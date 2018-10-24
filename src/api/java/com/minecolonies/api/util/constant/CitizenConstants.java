@@ -200,15 +200,15 @@ public final class CitizenConstants
     /**
      * The Guard Building health modifier Name
      */
-    public static String GUARD_HEALTH_MOD_BUILDING_NAME = "MinecoloniesGuardBuildingHP";
+    public static final String GUARD_HEALTH_MOD_BUILDING_NAME = "MinecoloniesGuardBuildingHP";
 
     /**
      * The Config guard health modifier name
      */
-    public static String GUARD_HEALTH_MOD_CONFIG_NAME = "MinecoloniesGuardConfigHP";
+    public static final String GUARD_HEALTH_MOD_CONFIG_NAME = "MinecoloniesGuardConfigHP";
 
     /**
      * The guard's level based health bonus mod's name
      */
-    public static String GUARD_HEALTH_MOD_LEVEL_NAME = "MinecoloniesGuardLevelHealth";
+    public static final String GUARD_HEALTH_MOD_LEVEL_NAME = "MinecoloniesGuardLevelHealth";
 }

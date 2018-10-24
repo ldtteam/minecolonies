@@ -765,7 +765,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     public void removeAllHealthModifiers()
     {
-        for (AttributeModifier mod : getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getModifiers())
+        for (final AttributeModifier mod : getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getModifiers())
         {
             getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(mod);
         }
@@ -776,11 +776,12 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
-     * Removes a maxhealth modifier by name
+     * Remove healthmodifier by name.
+     * @param modifierName Name of the modifier to remove, see e.g. GUARD_HEALTH_MOD_LEVEL_NAME
      */
     public void removeHealthModifier(final String modifierName)
     {
-        for (AttributeModifier mod : getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getModifiers())
+        for (final AttributeModifier mod : getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getModifiers())
         {
             if (mod.getName().equals(modifierName))
             {

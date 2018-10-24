@@ -111,7 +111,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     /**
      * The health modifier which changes the HP
      */
-    private AttributeModifier healthModConfig = new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME, Configurations.gameplay.guardHealthMult - 1, 1);
+    private final AttributeModifier healthModConfig = new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME, Configurations.gameplay.guardHealthMult - 1, 1);
 
     /**
      * Vision range per building level.

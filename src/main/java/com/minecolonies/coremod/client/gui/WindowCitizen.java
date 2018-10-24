@@ -72,6 +72,14 @@ public class WindowCitizen extends AbstractWindowSkeleton
         HALF_BLUE(GREEN_BLUE_ICON, BLUE_HALF_HEART_ICON_X, BLUE_HEARTS_ICON_Y, BLUE_HEART_VALUE - 1, null, GREEN),
         BLUE(GREEN_BLUE_ICON, BLUE_HEART_ICON_X, BLUE_HEARTS_ICON_Y, BLUE_HEART_VALUE, HALF_BLUE, GREEN);
 
+        private final int              X;
+        private final int              Y;
+        private final int              hpValue;
+        private final HeartsEnum       prevHeart;
+        private final HeartsEnum       halfHeart;
+        private       boolean          isHalfHeart = false;
+        private final ResourceLocation Image;
+
         HeartsEnum(
           final ResourceLocation heartImage, final int x, final int y, final int hpValue,
           final HeartsEnum halfHeart, final HeartsEnum prevHeart)
@@ -87,14 +95,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
             }
             this.prevHeart = prevHeart;
         }
-
-        private final int              X;
-        private final int              Y;
-        private final int              hpValue;
-        private final HeartsEnum       prevHeart;
-        private final HeartsEnum       halfHeart;
-        private       boolean          isHalfHeart = false;
-        private final ResourceLocation Image;
     }
 
     /**
@@ -277,7 +277,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
         heartList.add(HeartsEnum.RED);
 
         // Iterate through hearts
-        for (HeartsEnum heart : heartList)
+        for (final HeartsEnum heart : heartList)
         {
             if (heart.isHalfHeart || heart.prevHeart == null)
             {
