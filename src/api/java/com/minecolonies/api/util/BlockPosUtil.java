@@ -219,6 +219,11 @@ public final class BlockPosUtil
             mid = (bot + top) / 2;
         }
 
+        if (world.getBlockState(tempPos).getMaterial().isSolid())
+        {
+            return foundland.up();
+        }
+
         return foundland;
     }
 
