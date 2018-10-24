@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.event;
 
-import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -18,20 +17,14 @@ import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.structures.client.TemplateRenderHandler;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
@@ -48,7 +41,6 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
-import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
  * Used to handle client events.
@@ -63,7 +55,12 @@ public class ClientEventHandler
     /**
      * Seconds to show the citizen info sign.
      */
-    private static final int SECONDS_TO_SHOW = 5;
+    private static final int SECONDS_TO_SHOW       = 5;
+
+    /**
+     * Intervals between border blocks to show.
+     */
+    private static final int BORDER_BLOCK_INTERVAL = 3;
 
     /**
      * The currently displayed citizen.
@@ -91,6 +88,11 @@ public class ClientEventHandler
     private Template partolPointTemplate;
 
     /**
+     * The colony view required here.
+     */
+    private ColonyView view = null;
+
+    /**
      * Used to catch the renderWorldLastEvent in order to draw the debug nodes for pathfinding.
      *
      * @param event the catched event.
@@ -108,8 +110,8 @@ public class ClientEventHandler
         {
             if (Settings.instance.getStructureName().contains(AbstractEntityAIStructure.WAYPOINT_STRING))
             {
-                final ColonyView view = ColonyManager.getClosestColonyView(world, player.getPosition());
-                if (view != null)
+                final ColonyView tempView = ColonyManager.getClosestColonyView(world, player.getPosition());
+                if (tempView != null)
                 {
                     if (wayPointTemplate == null)
                     {
@@ -117,29 +119,30 @@ public class ClientEventHandler
                           "schematics/infrastructure/Waypoint",
                           new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror())).getTemplate();
                     }
-                    TemplateRenderHandler.getInstance().drawTemplateAtListOfPositions(new ArrayList<>(view.getWayPoints()), event.getPartialTicks(), wayPointTemplate);
+                    TemplateRenderHandler.getInstance().drawTemplateAtListOfPositions(new ArrayList<>(tempView.getWayPoints()), event.getPartialTicks(), wayPointTemplate);
                 }
             }
             else
             {
-                final ColonyView view = ColonyManager.getClosestColonyView(world, player.getPosition());
-                if (view != null)
+                final ColonyView tempView = ColonyManager.getClosestColonyView(world, player.getPosition());
+                if (tempView != null)
                 {
-                    if (colonyBorder.isEmpty())
+                    if (colonyBorder.isEmpty() || this.view == null || !tempView.getCenter().equals(this.view.getCenter()))
                     {
-                        //calculateColonyBorder(world, colonyBorder, view);
+                        calculateColonyBorder(world, tempView);
                     }
+                    this.view = tempView;
 
                     if (colonyBorderTemplate == null)
                     {
                         colonyBorderTemplate = new Structure(null,
-                          "schematics/infrastructure/Waypoint",
+                          "schematics/infrastructure/BorderBlock",
                           new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror())).getTemplate();
                     }
                 }
                 if (!colonyBorder.isEmpty() && colonyBorderTemplate != null)
                 {
-                    //TemplateRenderHandler.getInstance().drawTemplateAtListOfPositions(colonyBorder, event.getPartialTicks(), wayPointTemplate);
+                    TemplateRenderHandler.getInstance().drawTemplateAtListOfPositions(colonyBorder, event.getPartialTicks(), colonyBorderTemplate);
                 }
             }
             return;
@@ -280,30 +283,21 @@ public class ClientEventHandler
         colonyBorder.clear();
     }
 
-    private void calculateColonyBorder(final WorldClient world, final List<BlockPos> colonyBorder, final ColonyView view)
+    private void calculateColonyBorder(final WorldClient world, final ColonyView view)
     {
-        final BlockPos center = view.getCenter();
+        final Chunk chunk = world.getChunk(view.getCenter());
+        final BlockPos center = new BlockPos(chunk.x * BLOCKS_PER_CHUNK + BLOCKS_PER_CHUNK / 2, view.getCenter().getY(), chunk.z * BLOCKS_PER_CHUNK + BLOCKS_PER_CHUNK / 2);
 
-        BlockPos pos = center.offset(EnumFacing.EAST, Configurations.gameplay.workingRangeTownHallChunks * 16);
-
-
-        Chunk chunk = world.getChunk(pos);
-        IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
-        if (cap.getOwningColony() == view.getID())
+        final int range = (Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK) + (BLOCKS_PER_CHUNK / 2);
+        for (int i = 0; i < (Configurations.gameplay.workingRangeTownHallChunks * 2 + 1) * BLOCKS_PER_CHUNK;i++)
         {
-           // while (cap.getOwningColony() == view.getID())
+            if (i % BORDER_BLOCK_INTERVAL == 0)
             {
-                //todo get chunk until no colony found (going father away from the colony)
-                //chunk(chunk.x, chunk.z);
-                //chunk = world.ge(chunk.x*BLOCKS_PER_CHUNK, 70, chunk.z * BLOCKS_PER_CHUNK);
+                colonyBorder.add(BlockPosUtil.findLand(new BlockPos(center.getX() - range + i, center.getY(), center.getZ() + range - 1), world).up());
+                colonyBorder.add(BlockPosUtil.findLand(new BlockPos(center.getX() - range + i, center.getY(), center.getZ() - range), world).up());
+                colonyBorder.add(BlockPosUtil.findLand(new BlockPos(center.getX() + range - 1, center.getY(), center.getZ() - range + i), world).up());
+                colonyBorder.add(BlockPosUtil.findLand(new BlockPos(center.getX() - range, center.getY(), center.getZ() - range + i), world).up());
             }
         }
-        else
-        {
-            //todo get chunk until colony found (back to the colony)
-        }
-
-        //todo when endline is found mark x or z point
-        //todo when all x z points found then draw the line.
     }
 }
