@@ -5,7 +5,9 @@
     <label id="name" size="164 11" color="black" pos="13 14" textalign="MIDDLE"/>
     <image id="deco1" size="82 16" source="minecolonies:textures/gui/citizen/colonist_text_decor_down.png" pos="54 29"/>
 
-    <view id="healthBar" size="120 11" pos="35 42"/>
+    <view id="healthBar" size="120 11" pos="35 42">
+        <label id="healthLabel" size="30 11" color="black" pos="115 10" text="44"/>
+    </view>
     <view id="saturationBar" size="120 11" pos="35 54"/>
     <view id="xpBar" size="120 11" pos="35 66"/>
     <label id="xpLabel" size="30 11" color="black" pos="150 73"/> 

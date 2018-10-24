@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -42,6 +43,19 @@ public abstract class AbstractJobGuard extends AbstractJob
         if (source.getTrueSource() instanceof EntityEnderman && citizen.getCitizenColonyHandler().getColony() != null)
         {
             citizen.getCitizenColonyHandler().getColony().getStatsManager().triggerAchievement(ModAchievements.achievementGuardDeathEnderman);
+        }
+    }
+
+    /**
+     * Custom Action on Levelup, increases Guard HP
+     */
+    @Override
+    public void onLevelUp(final int newLevel)
+    {
+        // Bonus Health for guards(gets reset upon Firing)
+        if (getCitizen().getCitizenEntity().isPresent())
+        {
+            getCitizen().getCitizenEntity().get().increaseHPForGuards();
         }
     }
 

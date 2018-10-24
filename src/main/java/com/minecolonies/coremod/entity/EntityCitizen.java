@@ -11,6 +11,7 @@ import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -30,10 +31,12 @@ import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIOpenDoor;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.ai.EntityAIWatchClosest2;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemFood;
@@ -737,6 +740,56 @@ public class EntityCitizen extends AbstractEntityCitizen
 
             heal(healAmount);
             citizenData.markDirty();
+        }
+    }
+
+    /**
+     * Applies healthmodifiers for Guards based on level
+     */
+    public void increaseHPForGuards()
+    {
+        if (getCitizenData() != null)
+        {
+            // Remove old mod first
+            removeHealthModifier(GUARD_HEALTH_MOD_LEVEL_NAME);
+
+            // +1 Heart on levels 6,12,18,25,34,43,54 ...
+            final AttributeModifier healthModLevel =
+              new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME, (int) (getCitizenData().getLevel() / (5.0 + getCitizenData().getLevel() / 20.0) * 2), 0);
+            getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(healthModLevel);
+        }
+    }
+
+    /**
+     * Remove all healthmodifiers from a citizen
+     */
+    public void removeAllHealthModifiers()
+    {
+        for (AttributeModifier mod : getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getModifiers())
+        {
+            getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(mod);
+        }
+        if (getHealth() > getMaxHealth())
+        {
+            setHealth(getMaxHealth());
+        }
+    }
+
+    /**
+     * Removes a maxhealth modifier by name
+     */
+    public void removeHealthModifier(final String modifierName)
+    {
+        for (AttributeModifier mod : getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getModifiers())
+        {
+            if (mod.getName().equals(modifierName))
+            {
+                getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(mod);
+            }
+        }
+        if (getHealth() > getMaxHealth())
+        {
+            setHealth(getMaxHealth());
         }
     }
 
