@@ -172,7 +172,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
             final BlockPos front = entity.getPosition().down().offset(entity.getHorizontalFacing());
             final AxisAlignedBB collisionBox = world.getBlockState(entity.getPosition()).getCollisionBoundingBox(world, entity.getPosition());
             if (!world.getBlockState(front).getMaterial().isSolid()
-                  || world.getBlockState(entity.getPosition().up()).getMaterial().isSolid()
+                  || world.getBlockState(entity.getPosition().up().offset(entity.getHorizontalFacing())).getMaterial().isSolid()
                   || (collisionBox != null && collisionBox.maxY > 1.0))
             {
                 Log.getLogger().warn("Stuck for " + stuckTime);
@@ -196,6 +196,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
             Log.getLogger().warn("Reset!");
             entity.setStuckCounter(0);
             entity.setLadderCounter(0);
+            notStuckTime = 0;
             return true;
         }
 
