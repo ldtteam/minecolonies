@@ -526,7 +526,19 @@ public class TileEntityRack extends TileEntity
                 }
                 else
                 {
-                    return (T) getOtherChest().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                    if (getOtherChest().main)
+                    {
+                        return (T) getOtherChest().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                    }
+                    else
+                    {
+                        this.main = true;
+                        if (combinedHandler == null)
+                        {
+                            combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().inventory);
+                        }
+                        markDirty();
+                    }
                 }
             }
         }
