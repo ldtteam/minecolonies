@@ -334,18 +334,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     @Override
     public AbstractJob createJob(final CitizenData citizen)
     {
-        if (job == null)
-        {
-            job = new Random().nextBoolean() ? GuardJob.KNIGHT : GuardJob.RANGER;
-        }
-        return job.getGuardJob(citizen);
+        return getJob().getGuardJob(citizen);
     }
 
     @NotNull
     @Override
     public String getJobName()
     {
-        return job.jobName;
+        return getJob().jobName;
     }
 
     /**
@@ -457,10 +453,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
-        if (job == null)
-        {
-            job = new Random().nextBoolean() ? GuardJob.KNIGHT : GuardJob.RANGER;
-        }
+        getJob();
 
         if (getAssignedEntities() != null)
         {
@@ -558,6 +551,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      */
     public GuardJob getJob()
     {
+        if (job == null)
+        {
+            job = new Random().nextBoolean() ? GuardJob.KNIGHT : GuardJob.RANGER;
+        }
         return this.job;
     }
 
