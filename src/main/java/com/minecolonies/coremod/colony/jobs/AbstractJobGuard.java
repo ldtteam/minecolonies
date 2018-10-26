@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.EntityCitizen;

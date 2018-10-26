@@ -11,7 +11,6 @@ import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
