@@ -289,6 +289,14 @@ public abstract class AbstractJob
     }
 
     /**
+     * Levelup actions on citizen levelup, allows custom actions based on Jobs
+     */
+    public void onLevelUp(final int newLevel)
+    {
+        // Default does nothing
+    }
+
+    /**
      * Get the CitizenData that this Job belongs to.
      *
      * @return CitizenData that owns this Job.
