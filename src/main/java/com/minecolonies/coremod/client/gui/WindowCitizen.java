@@ -285,10 +285,11 @@ public class WindowCitizen extends AbstractWindowSkeleton
             }
 
             // Add full hearts
-            for (heartPos = heartPos; heartPos < MAX_HEART_ICONS && health > heart.prevHeart.hpValue * MAX_HEART_ICONS + 1; heartPos++)
+            for (int i = heartPos; i < MAX_HEART_ICONS && health > heart.prevHeart.hpValue * MAX_HEART_ICONS + 1; i++)
             {
                 addHeart(healthBarView, heartPos, heart);
                 health -= heart.hpValue - heart.prevHeart.hpValue;
+                heartPos++;
             }
 
             // Add half heart
