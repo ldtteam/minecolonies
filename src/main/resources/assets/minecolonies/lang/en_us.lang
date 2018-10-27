@@ -804,3 +804,23 @@ com.minecolonies.coremod.job.composter=Composter
 
 com.minecolonies.coremod.gui.auto.hire.warning=Turn off Automatic Hiring in your Town Hall options to enable Firing!
 com.minecolonies.coremod.citizens.nospace=<Mysterious Voice> Colonists can't arrive at your colony because there is not enough space around the town hall!
+
+tile.minecolonies.blockcushion.name=Cushion
+tile.minecolonies.blockcushion_black.name=Black Cushion
+tile.minecolonies.blockcushion_blue.name=Blue Cushion
+tile.minecolonies.blockcushion_brown.name=Brown Cushion
+tile.minecolonies.blockcushion_cyan.name=Cyan Cushion
+tile.minecolonies.blockcushion_gray.name=Gray Cushion
+tile.minecolonies.blockcushion_green.name=Green Cushion
+tile.minecolonies.blockcushion_lightBlue.name=Light blue Cushion
+tile.minecolonies.blockcushion_lime.name=Lime Cushion
+tile.minecolonies.blockcushion_magenta.name=Magenta Cushion
+tile.minecolonies.blockcushion_orange.name=Orange Cushion
+tile.minecolonies.blockcushion_pink.name=Pink Cushion
+tile.minecolonies.blockcushion_purple.name=Purple Cushion
+tile.minecolonies.blockcushion_red.name=Red Cushion
+tile.minecolonies.blockcushion_silver.name=Silver Cushion
+tile.minecolonies.blockcushion_white.name=White Cushion
+tile.minecolonies.blockcushion_yellow.name=Yellow Cushion
+tile.minecolonies.blockcushion_red.name=Red Cushion
+block.minecolonies.blockcushion.name=Cushion

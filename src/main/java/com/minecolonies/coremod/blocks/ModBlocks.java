@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.blocks;
 
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.cactus.*;
 import com.minecolonies.coremod.blocks.decorative.*;
 import com.minecolonies.coremod.blocks.huts.*;
@@ -7,14 +8,25 @@ import com.minecolonies.coremod.blocks.schematic.BlockSolidSubstitution;
 import com.minecolonies.coremod.blocks.schematic.BlockSubstitution;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.blocks.types.TimberFrameType;
+import com.minecolonies.coremod.items.ItemCushions;
+import com.minecolonies.coremod.items.ModItems;
+
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockCarpet;
 import net.minecraft.block.BlockPlanks;
+import net.minecraft.block.material.MapColor;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemSlab;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Class to create the modBlocks.
@@ -84,6 +96,25 @@ public final class ModBlocks
     public static MultiBlock                  multiBlock;
     public static BlockBarrel                 blockBarrel;
 
+//      public static BlockCushion                blockCushion;
+    public static BlockCushion                blockCushionWhite;
+    public static BlockCushion                blockCushionOrange;
+    public static BlockCushion                blockCushionMagenta;
+    public static BlockCushion                blockCushionLight_blue;
+    public static BlockCushion                blockCushionYellow;
+    public static BlockCushion                blockCushionLime;
+    public static BlockCushion                blockCushionPink;
+    public static BlockCushion                blockCushionGray;
+    public static BlockCushion                blockCushionSilver;
+    public static BlockCushion                blockCushionCyan;
+    public static BlockCushion                blockCushionPurple;
+    public static BlockCushion                blockCushionBlue;
+    public static BlockCushion                blockCushionBrown;
+    public static BlockCushion                blockCushionGreen;
+    public static BlockCushion                blockCushionRed;
+    public static BlockCushion                blockCushionBlack;
+
+    
     public static List<BlockTimberFrame> getTimberFrames()
     {
         return new ArrayList<>(timberFrames);
@@ -145,6 +176,27 @@ public final class ModBlocks
         blockCactusSlabDouble = new BlockCactusSlabDouble().registerBlock(registry);
 
         blockCactusStair = new BlockCactusStair(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK)).registerBlock(registry);
+
+//        blockCushionWhite = new BlockCushion(MapColor.COLORS[0],BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.WHITE.getUnlocalizedName()).registerBlock(registry);
+//        blockCushionGreen = new BlockCushion(MapColor.GREEN,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.GREEN.getUnlocalizedName()).registerBlock(registry);
+//        blockCushionBlue = new BlockCushion(MapColor.BLUE,BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.BLUE.getUnlocalizedName()).registerBlock(registry);
+
+        blockCushionWhite = new BlockCushion(BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.WHITE.getUnlocalizedName()).registerBlock(registry);
+        blockCushionGreen = new BlockCushion(BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.GREEN.getUnlocalizedName()).registerBlock(registry);
+        blockCushionBlue = new BlockCushion(BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.BLUE.getUnlocalizedName()).registerBlock(registry);
+        blockCushionOrange = new BlockCushion(BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.ORANGE.getUnlocalizedName()).registerBlock(registry);
+        blockCushionMagenta = new BlockCushion(BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.MAGENTA.getUnlocalizedName()).registerBlock(registry);
+        blockCushionLight_blue = new BlockCushion(BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.LIGHT_BLUE.getUnlocalizedName()).registerBlock(registry);
+        blockCushionYellow = new BlockCushion(BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.YELLOW.getUnlocalizedName()).registerBlock(registry);
+        blockCushionLime = new BlockCushion(BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.LIME.getUnlocalizedName()).registerBlock(registry);
+        blockCushionPink = new BlockCushion(BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.PINK.getUnlocalizedName()).registerBlock(registry);
+        blockCushionGray = new BlockCushion(BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.GRAY.getUnlocalizedName()).registerBlock(registry);
+        blockCushionSilver = new BlockCushion(BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.SILVER.getUnlocalizedName()).registerBlock(registry);
+        blockCushionCyan = new BlockCushion(BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.CYAN.getUnlocalizedName()).registerBlock(registry);
+        blockCushionPurple = new BlockCushion(BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.PURPLE.getUnlocalizedName()).registerBlock(registry);
+        blockCushionBrown = new BlockCushion(BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.BROWN.getUnlocalizedName()).registerBlock(registry);
+        blockCushionRed = new BlockCushion(BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.RED.getUnlocalizedName()).registerBlock(registry);
+        blockCushionBlack = new BlockCushion(BlockCushion.BLOCK_PREFIX + "_" + EnumDyeColor.BLACK.getUnlocalizedName()).registerBlock(registry);
 
         blockShingleOak = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK),
           BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.OAK.getName()).registerBlock(registry);
@@ -219,6 +271,25 @@ public final class ModBlocks
         blockCactusStair.registerItemBlock(registry);
         registry.register(new ItemSlab(blockCactusSlabHalf, blockCactusSlabHalf, blockCactusSlabDouble).setRegistryName(blockCactusSlabHalf.getRegistryName()));
         blockBarrel.registerItemBlock(registry);
+
+        blockCushionWhite.registerItemBlock(registry);
+        blockCushionGreen.registerItemBlock(registry);
+        blockCushionBlue.registerItemBlock(registry);
+        blockCushionOrange.registerItemBlock(registry);
+        blockCushionMagenta.registerItemBlock(registry);
+        blockCushionLight_blue.registerItemBlock(registry);
+        blockCushionYellow.registerItemBlock(registry);
+        blockCushionLime.registerItemBlock(registry);
+        blockCushionPink.registerItemBlock(registry);
+        blockCushionGray.registerItemBlock(registry);
+        blockCushionSilver.registerItemBlock(registry);
+        blockCushionCyan.registerItemBlock(registry);
+        blockCushionPurple.registerItemBlock(registry);
+        blockCushionBrown.registerItemBlock(registry);
+        blockCushionRed.registerItemBlock(registry);
+        blockCushionBlack.registerItemBlock(registry);
+
+        
 
         for (final BlockTimberFrame frame: timberFrames)
         {
