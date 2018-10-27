@@ -282,7 +282,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
                                      final float hitY,
                                      final float hitZ)
     {
-        final Colony colony = ColonyManager.getColony(worldIn, pos);
+        final Colony colony = ColonyManager.getColonyByPosFromWorld(worldIn, pos);
         final TileEntity tileEntity = worldIn.getTileEntity(pos);
 
         if ((colony == null || colony.getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS))

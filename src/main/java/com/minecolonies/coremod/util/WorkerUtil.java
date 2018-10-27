@@ -2,16 +2,26 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.util.EntityUtils;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.pathfinding.PathResult;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.MoverType;
 import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
+import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +37,12 @@ public final class WorkerUtil
      * Default range for moving to something until we stop.
      */
     private static final double MIDDLE_BLOCK_OFFSET = 0.5D;
+
+    /**
+     * Placeholder text in a level sign.
+     */
+    private static final String LEVEL_SIGN_TEXT = "{\"text\":\"level_placeholder\"}";
+    private static final String LEVEL_SIGN_FIRST_ROW = "Text1";
 
     private WorkerUtil()
     {
@@ -190,5 +206,70 @@ public final class WorkerUtil
 
         //Have to move the entity minimally into the direction to render his new rotation.
         citizen.move(MoverType.SELF, (float) goToX, 0, (float) goToZ);
+    }
+
+    /**
+     * Find the first level in a structure and return it.
+     * @param structure the structure to scan.
+     * @return the position of the sign.
+     */
+    @Nullable
+    public static BlockPos findFirstLevelSign(final StructureWrapper structure)
+    {
+        for (int j = 0; j < structure.getHeight(); j++)
+        {
+            for (int k = 0; k < structure.getLength(); k++)
+            {
+                for (int i = 0; i < structure.getWidth(); i++)
+                {
+                    @NotNull final BlockPos localPos = new BlockPos(i, j, k);
+                    final Template.BlockInfo te = structure.getStructure().getBlockInfo(localPos);
+                    if (te != null)
+                    {
+                        final NBTTagCompound teData = te.tileentityData;
+                        if (teData != null && teData.getString(LEVEL_SIGN_FIRST_ROW).equals(LEVEL_SIGN_TEXT))
+                        {
+                            // try to make an anchor in 0,0,0 instead of the middle of the structure
+                            BlockPos zeroAnchor = structure.getPosition();
+                            zeroAnchor = zeroAnchor.add(new BlockPos(-((int) structure.getWidth() / 2), 0, -((int) structure.getLength() / 2)));
+                            return zeroAnchor.add(localPos);
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Updated the level sign of a certain level in the world.
+     * @param world the world.
+     * @param level the level to update.
+     * @param levelId the id of the level.
+     */
+    public static void updateLevelSign(final World world, final Level level, final int levelId)
+    {
+        @Nullable final BlockPos levelSignPos = level.getLevelSign();
+
+        if (levelSignPos != null)
+        {
+            final TileEntity te = world.getTileEntity(levelSignPos);
+
+            if (te instanceof TileEntitySign)
+            {
+                final IBlockState iblockstate = world.getBlockState(levelSignPos);
+                final TileEntitySign teLevelSign = (TileEntitySign) te;
+
+                teLevelSign.signText[0] = new TextComponentString(TextFormatting.getTextWithoutFormattingCodes(
+                  LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.minerMineNode") + ": " + levelId));
+                teLevelSign.signText[1] = new TextComponentString(TextFormatting.getTextWithoutFormattingCodes("Y: " + (level.getDepth() + 1)));
+                teLevelSign.signText[2] = new TextComponentString(TextFormatting.getTextWithoutFormattingCodes(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.minerNode") + ": " + level.getNumberOfBuiltNodes()));
+                teLevelSign.signText[3] = new TextComponentString(TextFormatting.getTextWithoutFormattingCodes(""));
+
+                teLevelSign.markDirty();
+                world.notifyBlockUpdate(levelSignPos, iblockstate, iblockstate, 3);
+            }
+        }
     }
 }

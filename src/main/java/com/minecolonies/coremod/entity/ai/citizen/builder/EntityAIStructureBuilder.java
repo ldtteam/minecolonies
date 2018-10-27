@@ -137,7 +137,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         final BuildingBuilder building = getOwnBuilding();
         final List<Predicate<ItemStack>> neededItemsList = new ArrayList<>(building.getRequiredItemsAndAmount().keySet());
-        if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(new InvWrapper(worker.getInventoryCitizen())) < MIN_OPEN_SLOTS)
+        if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(new InvWrapper(worker.getInventoryCitizen())) <= MIN_OPEN_SLOTS)
         {
             pickUpCount = 0;
             return START_WORKING;

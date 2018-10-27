@@ -250,6 +250,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_MANUAL                 = "com.minecolonies.coremod.gui.workerHuts.modeM";
     @NonNls
+    public static final String AUTOMATIC_HIRE_WARNING                                              = "com.minecolonies.coremod.gui.auto.hire.warning";
+    @NonNls
     public static final String RAID_EVENT_MESSAGE                                                  = "event.minecolonies.raidMessage";
     @NonNls
     public static final String ONLY_X_BARBARIANS_LEFT_MESSAGE                                      = "com.minecolonies.coremod.barbarians.left";
@@ -291,6 +293,13 @@ public final class TranslationConstants
     public static final String CMCG_HAPPINESS_TOOLS                                                = "com.minecolonies.coremod.gui.happiness.tools";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_MOURN                                      = "com.minecolonies.coremod.mourning";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE                             = "com.minecolonies.coremod.gui.hiring.buttonPaused";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE                           = "com.minecolonies.coremod.gui.hiring.buttonUnpaused";
+    @NonNls
+    public static final String CMC_GUI_TOWNHALL_BUILDING_LEVEL                                     = "com.minecolonies.coremod.gui.townHall.buildingLevel";
+
 
     private TranslationConstants()
     {

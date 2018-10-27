@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -8,11 +10,14 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
+import com.minecolonies.coremod.entity.ai.util.StudyItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBookshelf;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -56,13 +61,67 @@ public class BuildingLibrary extends AbstractBuildingWorker
     private final Random random = new Random();
 
     /**
+     * Study Item list, loaded from config, Typle<int,int> First is the study chance increase,second is the breakchance
+     */
+    private final List<StudyItem> studyItems;
+
+    /**
      * Instantiates the building.
+     *
      * @param c the colony.
      * @param l the location.
      */
     public BuildingLibrary(final Colony c, final BlockPos l)
     {
         super(c, l);
+
+        studyItems = parseFromConfig();
+    }
+
+    /**
+     * Parses Study Items from the Config and adds them on the keepX list
+     */
+    private List<StudyItem> parseFromConfig()
+    {
+        final List<StudyItem> studyItemList = new ArrayList<>();
+
+        for (final String entry : Configurations.gameplay.configListStudyItems)
+        {
+
+            try
+            {
+                final String[] entries = entry.split(";");
+                if (entries.length < 3)
+                {
+                    Log.getLogger().info("Minecolonies: Parsing config for study items for Library failed for entry:" + entry);
+                    continue;
+                }
+                final Item item = Item.REGISTRY.getObject(new ResourceLocation(entries[0]));
+                final int skillChance = Integer.parseInt(entries[1]);
+                final int breakChance = Integer.parseInt(entries[2]);
+
+                if (item == null || skillChance < 100 || skillChance > 1000 || breakChance > 100 || breakChance < 0)
+                {
+                    Log.getLogger().info("Minecolonies: Parsing config for study items for Library failed for entry:" + entry);
+                    continue;
+                }
+
+                studyItemList.add(new StudyItem(item, skillChance, breakChance));
+                // Keep a certain part of the items in the Chest
+                keepX.put(itemStack -> itemStack.getItem() == item, breakChance < 5 ? 5 : breakChance);
+            }
+            catch (NumberFormatException | ClassCastException e)
+            {
+                Log.getLogger().info("Minecolonies: Parsing config for study items for Library failed for entry:" + entry + " Exception:" + e.getMessage());
+            }
+        }
+        return studyItemList;
+    }
+
+    @Override
+    public boolean canWorkDuringTheRain()
+    {
+        return true;
     }
 
     @NotNull
@@ -127,7 +186,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
         super.registerBlockPosition(block, pos, world);
-        if(block instanceof BlockBookshelf)
+        if (block instanceof BlockBookshelf)
         {
             bookCases.add(pos);
         }
@@ -135,6 +194,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
 
     /**
      * Returns a random bookshelf from the list.
+     *
      * @return the position of it.
      */
     public BlockPos getRandomBookShelf()
@@ -152,6 +212,11 @@ public class BuildingLibrary extends AbstractBuildingWorker
         return getLocation();
     }
 
+    public List<StudyItem> getStudyItems()
+    {
+        return studyItems;
+    }
+
     /**
      * ClientSide representation of the building.
      */
@@ -159,6 +224,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
     {
         /**
          * Instantiates the view of the building.
+         *
          * @param c the colonyView.
          * @param l the location of the block.
          */

@@ -4,6 +4,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
+import com.minecolonies.coremod.util.BackUpHelper;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -62,7 +63,7 @@ public class BackupCommand extends AbstractSingleCommand implements IActionComma
         {
             server.addScheduledTask(() ->
             {
-                if (ColonyManager.backupColonyData())
+                if (BackUpHelper.backupColonyData())
                 {
                     sender.sendMessage(new TextComponentString(BACKUP_SUCCESS_MESSAGE));
                 }

@@ -185,10 +185,30 @@ public final class CitizenConstants
     /**
      * Min slots the builder should never fill.
      */
-    public static final long MIN_OPEN_SLOTS = 3;
+    public static final long MIN_OPEN_SLOTS = 5;
 
     /**
      * Distance between Barbarian and Citizen to not remove happiness.
      */
     public static final int BARB_DISTANCE_FOR_FREE_DEATH = 21;
+
+    /**
+     * The max citizen level.
+     */
+    public static final int MAX_CITIZEN_LEVEL = 99;
+
+    /**
+     * The Guard Building health modifier Name
+     */
+    public static final String GUARD_HEALTH_MOD_BUILDING_NAME = "MinecoloniesGuardBuildingHP";
+
+    /**
+     * The Config guard health modifier name
+     */
+    public static final String GUARD_HEALTH_MOD_CONFIG_NAME = "MinecoloniesGuardConfigHP";
+
+    /**
+     * The guard's level based health bonus mod's name
+     */
+    public static final String GUARD_HEALTH_MOD_LEVEL_NAME = "MinecoloniesGuardLevelHealth";
 }

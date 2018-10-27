@@ -39,6 +39,11 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
     private int citizenID;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty public constructor.
      */
     public HireFireMessage()
@@ -60,6 +65,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
         this.buildingId = building.getID();
         this.hire = hire;
         this.citizenID = citizenID;
+        this.dimension = building.getColony().getDimension();
     }
 
     /**
@@ -74,6 +80,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
         buildingId = BlockPosUtil.readFromByteBuf(buf);
         hire = buf.readBoolean();
         citizenID = buf.readInt();
+        dimension = buf.readInt();
     }
 
     /**
@@ -88,12 +95,13 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
         BlockPosUtil.writeToByteBuf(buf, buildingId);
         buf.writeBoolean(hire);
         buf.writeInt(citizenID);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final HireFireMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
@@ -103,6 +111,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
             }
 
             final CitizenData citizen = colony.getCitizenManager().getCitizen(message.citizenID);
+            citizen.setPaused(false);
             if (message.hire)
             {
 

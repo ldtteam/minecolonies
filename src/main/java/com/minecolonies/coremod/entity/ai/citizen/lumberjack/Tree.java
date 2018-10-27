@@ -718,7 +718,7 @@ public class Tree
      */
     public static boolean checkIfInColonyAndNotInBuilding(final BlockPos pos, final Colony colony)
     {
-        if(colony.getDistanceSquared(pos) > (Configurations.gameplay.workingRangeTownHall * Configurations.gameplay.workingRangeTownHall))
+        if(!colony.isCoordInColony(colony.getWorld(), pos))
         {
             return false;
         }

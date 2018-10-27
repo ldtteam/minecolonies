@@ -14,11 +14,12 @@ import net.minecraft.util.math.Vec3d;
  */
 public class EntityAICitizenWander extends EntityAIBase
 {
-    private final EntityCitizen citizen;
-    private final double        speed;
-    private       double        xPosition;
-    private       double        yPosition;
-    private       double        zPosition;
+    protected final EntityCitizen citizen;
+    protected final double        speed;
+    private         double        xPosition;
+    private         double        yPosition;
+    private         double        zPosition;
+    private   final double        randomModifier;
 
     /**
      * Instantiates this task.
@@ -26,11 +27,12 @@ public class EntityAICitizenWander extends EntityAIBase
      * @param citizen the citizen.
      * @param speed   the speed.
      */
-    public EntityAICitizenWander(final EntityCitizen citizen, final double speed)
+    public EntityAICitizenWander(final EntityCitizen citizen, final double speed, final double randomModifier)
     {
         super();
         this.citizen = citizen;
         this.speed = speed;
+        this.randomModifier = randomModifier;
         this.setMutexBits(1);
     }
 
@@ -79,7 +81,7 @@ public class EntityAICitizenWander extends EntityAIBase
 
     private boolean checkForRandom()
     {
-        return citizen.getRNG().nextInt(120) != 0;
+        return citizen.getRNG().nextInt((int) (randomModifier * 120.0D)) != 0;
     }
 
     /**

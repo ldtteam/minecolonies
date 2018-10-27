@@ -26,6 +26,11 @@ public class AssignComposterItemMessage extends AbstractMessage<AssignComposterI
     private ItemStorage item;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty standard constructor.
      */
     public AssignComposterItemMessage()
@@ -47,6 +52,7 @@ public class AssignComposterItemMessage extends AbstractMessage<AssignComposterI
         this.buildingId = building.getID();
         this.assign = assign;
         this.item = item;
+        this.dimension = building.getColony().getDimension();
     }
 
     @Override
@@ -56,6 +62,7 @@ public class AssignComposterItemMessage extends AbstractMessage<AssignComposterI
         buildingId = BlockPosUtil.readFromByteBuf(buf);
         assign = buf.readBoolean();
         this.item = new ItemStorage(ByteBufUtils.readItemStack(buf));
+        dimension = buf.readInt();
     }
 
     @Override
@@ -65,12 +72,13 @@ public class AssignComposterItemMessage extends AbstractMessage<AssignComposterI
         BlockPosUtil.writeToByteBuf(buf, buildingId);
         buf.writeBoolean(assign);
         ByteBufUtils.writeItemStack(buf, item.getItemStack());
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final AssignComposterItemMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings

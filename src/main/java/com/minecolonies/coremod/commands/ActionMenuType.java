@@ -34,6 +34,15 @@ public enum ActionMenuType implements IMenuType
             ForgePermissionNodes.HOME_TELEPORT,
             HomeTeleportCommand.class
             )),
+    LOAD_BACKUP(new ActionMenu(
+      "LoadBackup",
+      "loadBackup",
+      ForgePermissionNodes.LOAD_BACKUP,
+      LoadColonyBackupCommand.class,
+      new ActionArgument("colony", ActionArgumentType.INTEGER, ActionArgumentType.Is.REQUIRED),
+      new ActionArgument("dimension", ActionArgumentType.INTEGER, ActionArgumentType.Is.REQUIRED)
+
+    )),
     RAID_ALL_TONIGHT(new ActionMenu(
             "RaidAllTonight",
             "raid-tonight",
@@ -276,7 +285,8 @@ public enum ActionMenuType implements IMenuType
             "claim",
             ForgePermissionNodes.CLAIM,
             ClaimChunksCommand.class,
-            new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.OPTIONAL),
+            new ActionArgument("colony", ActionArgumentType.INTEGER, ActionArgumentType.Is.REQUIRED),
+            new ActionArgument("dimension", ActionArgumentType.INTEGER, ActionArgumentType.Is.REQUIRED),
             new ActionArgument("range", ActionArgumentType.INTEGER, ActionArgumentType.Is.OPTIONAL),
             new ActionArgument("add", ActionArgumentType.BOOLEAN, ActionArgumentType.Is.OPTIONAL)
             )),

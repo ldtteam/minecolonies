@@ -481,7 +481,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
      */
     private void recalculate()
     {
-        MineColonies.getNetwork().sendToServer(new GuardRecalculateMessage(building.getColony().getID(), building.getID()));
+        MineColonies.getNetwork().sendToServer(new GuardRecalculateMessage(building.getColony().getID(), building));
         pullInfoFromHut();
     }
 

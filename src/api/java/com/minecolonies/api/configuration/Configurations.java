@@ -66,16 +66,19 @@ public class Configurations
 
         @Config.Comment("Ores for the miner to mine that aren't autodetected")
         public String[] extraOres = new String[]
-                {
-                        "minestuck:ore_cruxite",
-                        "minestuck:ore_uranium",
-                };
+                                      {
+                                        "minestuck:ore_cruxite",
+                                        "minestuck:ore_uranium",
+                                      };
 
         @Config.Comment("Should workers work during the rain?")
         public boolean workersAlwaysWorkInRain = false;
 
         @Config.Comment("Should the colony protection be enabled?")
         public boolean enableColonyProtection = true;
+
+        @Config.Comment("Should Players be sent entering/leaving colony notifications?")
+        public boolean sendEnteringLeavingMessages = true;
 
         @Config.Comment("Independent from the colony protection, should explosions be turned off?")
         public boolean turnOffExplosionsInColonies = true;
@@ -95,6 +98,9 @@ public class Configurations
         @Config.Comment("The max size of a barbarian horde")
         public int maxBarbarianSize = 20;
 
+        @Config.Comment("Whether or not to barbarians can break, scale, bridge obstacles")
+        public boolean doBarbariansBreakThroughWalls = true;
+
         @Config.Comment("The average amount of nights between raids")
         public int averageNumberOfNightsBetweenRaids = 3;
 
@@ -102,7 +108,7 @@ public class Configurations
         public int minimumNumberOfNightsBetweenRaids = 1;
 
         @Config.Comment("Should players be allowed to build their colonies over existing villages?")
-        public boolean protectVillages = false;
+        public boolean protectVillages         = false;
         /* schematics usage */
         @Config.Comment("Should the default schematics be ignored (from the jar)?")
         public boolean ignoreSchematicsFromJar = false;
@@ -114,19 +120,19 @@ public class Configurations
         public int maxCachedSchematics = 100;
 
         @Config.Comment("Should players be allowed to change names? -1 for false, 0 for specific groups, 1 for true")
-        public  int allowGlobalNameChanges = 1;
+        public int allowGlobalNameChanges = 1;
 
         @Config.Comment("Citizen should sit on cushions to get served.")
         public  boolean restaurantSittingRequired = false;
 
         
         @Config.Comment("Players who have special permission (Patreons for example)")
-        public  String[] specialPermGroup = new String[]
-                {
-                        "_Raycoms_"
-                };
+        public String[] specialPermGroup = new String[]
+                                             {
+                                               "_Raycoms_"
+                                             };
 
-    /* Command configs */
+        /* Command configs */
 
         @Config.Comment("Time until a next teleport can be executed (in seconds)")
         public int teleportBuffer = 120;
@@ -199,6 +205,15 @@ public class Configurations
         @Config.Comment("Should Guard Rangers benefit from Power/Smite/Bane of Arthropods enchants?")
         public boolean rangerEnchants = true;
 
+        @Config.Comment("Damage multiplier for Ranger Guards: Default:1.0")
+        public double rangerDamageMult = 1.0;
+
+        @Config.Comment("Damage multiplier for Knight Guards: Default:1.0")
+        public double knightDamageMult = 1.0;
+
+        @Config.Comment("Health multiplier for all Guards: Default:1.0")
+        public double guardHealthMult = 1.0;
+
         @Config.Comment("Amount of blocks the builder checks (to decrease lag by builder)")
         public int maxBlocksCheckedByBuilder = 1000;
 
@@ -209,41 +224,50 @@ public class Configurations
         public boolean enableInDevelopmentFeatures = false;
 
         @Config.Comment("Blocks players should be able to interact with in any colony (Ex vending machines)")
-        public String[] freeToInteractBlocks = new String[]
-                                                 {
-                                                   "block:dirt",
-                                                   "0 0 0"
-                                                 };
+        public String[] freeToInteractBlocks  = new String[]
+                                                  {
+                                                    "block:dirt",
+                                                    "0 0 0"
+                                                  };
         @Config.Comment("Should colonies in other dimensions be allowed (Default = false)?")
-        public boolean allowOtherDimColonies = false;
+        public boolean  allowOtherDimColonies = false;
 
         @Config.Comment("ResourceLocations for extra entities for the GuardHut's list. \n"
                           + "once done you'll need to recalculate the list."
                           + "EntityMob's already calculated in list.")
         public String[] guardResourceLocations = new String[]
-                                                           {
-                                                             "minecraft:slime",
-                                                             "tconstruct:blueslime"
-                                                           };
+                                                   {
+                                                     "minecraft:slime",
+                                                     "tconstruct:blueslime"
+                                                   };
+
+        @Config.Comment("List of items the Students in the library can use. \n"
+                          + "Format: itemname;SkillIncreasePCT[100-1000];BreakPCT[0-100] \n"
+                          + "Example: minecraft:paper;300;100 \n"
+                          + "Which adds minecraft Paper with a 300%(3x) increased chance to skillup and a 100% chance to be used up during the try to skillup")
+        public final String[] configListStudyItems = new String[]
+                                                       {
+                                                         "minecraft:paper;300;100"
+                                                       };
 
         @Config.Comment("The items and item-tags that the composter can use to produce compost.")
         public String[] listOfCompostableItems = new String[]
-                                                            {
-                                                              "minecraft:rotten_flesh",
-                                                              "minecraft:tallgrass",
-                                                              "minecraft:yellow_flower",
-                                                              "minecraft:red_flower",
-                                                              "minecraft:brown_mushroom",
-                                                              "minecraft:red_mushroom",
-                                                              "minecraft:double_plant",
-                                                              "food",
-                                                              "seed",
-                                                              "treeSapling"
-                                                            };
+                                                   {
+                                                     "minecraft:rotten_flesh",
+                                                     "minecraft:tallgrass",
+                                                     "minecraft:yellow_flower",
+                                                     "minecraft:red_flower",
+                                                     "minecraft:brown_mushroom",
+                                                     "minecraft:red_mushroom",
+                                                     "minecraft:double_plant",
+                                                     "food",
+                                                     "seed",
+                                                     "treeSapling"
+                                                   };
 
         @Config.Comment("Turn on Minecolonies pvp mode, attention (colonies can be destroyed and can be griefed under certain conditions.)")
         public boolean pvp_mode = false;
-     }
+    }
 
     public static class Pathfinding
     {

@@ -279,7 +279,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         if (placer instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
         {
             @NotNull final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
-            @Nullable final Colony colony = ColonyManager.getColony(worldIn, hut.getPosition());
+            @Nullable final Colony colony = ColonyManager.getColonyByPosFromWorld(worldIn, hut.getPosition());
 
             if (colony != null)
             {
@@ -294,6 +294,16 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     protected BlockStateContainer createBlockState()
     {
         return new BlockStateContainer(this, FACING);
+    }
+
+    @Override
+    public boolean canRenderInLayer(final IBlockState state, final BlockRenderLayer layer)
+    {
+        if (layer == BlockRenderLayer.CUTOUT || layer == BlockRenderLayer.SOLID)
+        {
+            return true;
+        }
+        return super.canRenderInLayer(state, layer);
     }
 
     @Override

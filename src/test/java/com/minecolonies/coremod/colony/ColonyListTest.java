@@ -147,7 +147,7 @@ public class ColonyListTest
         assertEquals(colony1, list.get(1));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testAddConflict()
     {
         list.add(colony1);

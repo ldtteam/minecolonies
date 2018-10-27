@@ -33,7 +33,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
@@ -890,5 +889,11 @@ public final class ColonyView implements IColony
     public boolean isPrintingProgress()
     {
         return printProgress;
+    }
+
+    @Override
+    public boolean isRemote()
+    {
+        return true;
     }
 }

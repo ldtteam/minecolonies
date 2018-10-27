@@ -37,6 +37,7 @@ public class CitizenDataView
     private int entityId;
     private String name;
     private boolean female;
+    private boolean paused;
 
     /**
      * colony id of the citizen.
@@ -150,6 +151,24 @@ public class CitizenDataView
     }
 
     /**
+     * Check if the entity is paused.
+     *
+     * @return true if entity is paused.
+     */
+    public boolean isPaused()
+    {
+        return paused;
+    }
+
+    /**
+     * DEPRECATED
+     */
+    public void setPaused(final boolean p)
+    {
+        this.paused = p;
+    }
+
+    /**
      * Entity level getter.
      *
      * @return the citizens level.
@@ -199,6 +218,15 @@ public class CitizenDataView
     public BlockPos getWorkBuilding()
     {
         return workBuilding;
+    }
+
+    /**
+     * DEPRECATED
+     */
+    @Nullable
+    public void setWorkBuilding(final BlockPos bp)
+    {
+        this.workBuilding = bp;
     }
 
     /**
@@ -322,6 +350,7 @@ public class CitizenDataView
         name = ByteBufUtils.readUTF8String(buf);
         female = buf.readBoolean();
         entityId = buf.readInt();
+        paused = buf.readBoolean();
 
         homeBuilding = buf.readBoolean() ? BlockPosUtil.readFromByteBuf(buf) : null;
         workBuilding = buf.readBoolean() ? BlockPosUtil.readFromByteBuf(buf) : null;

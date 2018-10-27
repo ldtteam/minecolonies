@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.workorders;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -352,6 +353,9 @@ public abstract class AbstractWorkOrder
      */
     public void onAdded(final Colony colony, final boolean readingFromNbt)
     {
+        /*
+         * Intentionally left empty.
+         */
     }
 
     /**
@@ -363,6 +367,9 @@ public abstract class AbstractWorkOrder
      */
     public void onCompleted(final Colony colony)
     {
+        /*
+         * Intentionally left empty.
+         */
     }
 
     /**
@@ -374,6 +381,20 @@ public abstract class AbstractWorkOrder
      */
     public void onRemoved(final Colony colony)
     {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
+    /**
+     * Check if this workOrder can be resolved by an existing builder.
+     * @param colony the colony to check in.
+     * @param level the new level of the building.
+     * @return true if so.
+     */
+    public boolean canBeResolved(final Colony colony, final int level)
+    {
+        return colony.getBuildingManager().getBuildings().values().stream().anyMatch(building -> building instanceof BuildingBuilder && building.getMainCitizen() != null && building.getBuildingLevel() >= level);
     }
 
     /**

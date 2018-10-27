@@ -2,16 +2,16 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.AbstractCitizenAssignable;
 import com.minecolonies.coremod.inventory.api.CombinedItemHandler;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.tileentities.TileEntityRack;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -35,6 +35,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
+import static com.minecolonies.api.util.constant.BuildingConstants.MIN_SLOTS_FOR_RECOGNITION;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CONTAINERS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PRIO;
 
@@ -249,7 +250,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
                 && colony.getWorld() != null
                 && getLocation() != null
                 && colony.getWorld().getBlockState(getLocation())
-                != null && colony.getWorld().getBlockState(this.getLocation()).getBlock() instanceof AbstractBlockHut)
+                != Blocks.AIR && colony.getWorld().getBlockState(this.getLocation()).getBlock() instanceof AbstractBlockHut)
         {
             final TileEntity te = getColony().getWorld().getTileEntity(getLocation());
             if (te instanceof TileEntityColonyBuilding)
@@ -260,6 +261,12 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
                     tileEntity.setColony(colony);
                     tileEntity.setBuilding(this);
                 }
+            }
+            else
+            {
+                Log.getLogger().error("Somehow the wrong TileEntity is at the location where the building should be!");
+                Log.getLogger().error("Trying to restore order!");
+                colony.getWorld().setTileEntity(getLocation(), new TileEntityColonyBuilding());
             }
         }
 
@@ -282,26 +289,27 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null)
         {
             final Set<ICapabilityProvider> providers = new HashSet<>();
+            final World world = colony.getWorld();
+            if (world != null)
+            {
+                //Add myself
+                providers.add(getTileEntity());
 
-            //Add myself
-            providers.add(getTileEntity());
-
-            //Add additional containers
-            providers.addAll(getAdditionalCountainers().stream()
-                    .map(getTileEntity().getWorld()::getTileEntity)
-                    .filter(entity -> (entity instanceof TileEntityChest) || (entity instanceof TileEntityRack))
-                    .collect(Collectors.toSet()));
-            providers.removeIf(Objects::isNull);
+                //Add additional containers
+                providers.addAll(getAdditionalCountainers().stream()
+                                   .map(world::getTileEntity)
+                                   .collect(Collectors.toSet()));
+                providers.removeIf(Objects::isNull);
+            }
 
             //Map all providers to IItemHandlers.
-            final Set<IItemHandlerModifiable> modifiables = providers
-                    .stream()
-                    .flatMap(provider -> InventoryUtils.getItemHandlersFromProvider(provider).stream())
-                    .filter(handler -> handler instanceof IItemHandlerModifiable)
-                    .map(handler -> (IItemHandlerModifiable) handler)
-                    .collect(Collectors.toSet());
 
-            return (T) new CombinedItemHandler(getSchematicName(), modifiables.toArray(new IItemHandlerModifiable[modifiables.size()]));
+            return (T) new CombinedItemHandler(getSchematicName(), providers
+                                                                     .stream()
+                                                                     .flatMap(provider -> InventoryUtils.getItemHandlersFromProvider(provider).stream())
+                                                                     .filter(handler -> handler instanceof IItemHandlerModifiable
+                                                                                          && handler.getSlots() >= MIN_SLOTS_FOR_RECOGNITION)
+                                                                     .map(handler -> (IItemHandlerModifiable) handler).distinct().toArray(IItemHandlerModifiable[]::new));
         }
 
         return null;

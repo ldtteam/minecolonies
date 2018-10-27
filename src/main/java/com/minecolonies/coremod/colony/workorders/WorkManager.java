@@ -12,6 +12,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+
 /**
  * Handles work orders for a colony.
  */
@@ -231,7 +233,7 @@ public class WorkManager
      */
     public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
-        if (event.phase == TickEvent.Phase.END)
+        if (event.phase == TickEvent.Phase.END && Colony.shallUpdate(event.world, TICKS_SECOND))
         {
             @NotNull final Iterator<AbstractWorkOrder> iter = workOrders.values().iterator();
             while (iter.hasNext())

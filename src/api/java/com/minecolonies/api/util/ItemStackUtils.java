@@ -2,6 +2,7 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
+import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.entity.Entity;
@@ -68,6 +69,11 @@ public final class ItemStackUtils
      * The compound id for fortune enchantment.
      */
     private static final int FORTUNE_ENCHANT_ID = 35;
+
+    /**
+     * The compound id for Silk Touch enchantment.
+     */
+    private static final int SILK_TOUCH_ENCHANT_ID = 33;
 
     /**
      * Predicate describing food.
@@ -283,6 +289,10 @@ public final class ItemStackUtils
                 final ItemSword itemSword = (ItemSword) stack.getItem();
                 return getToolLevel(itemSword.getToolMaterialName());
             }
+            else if (Compatibility.isTinkersWeapon(stack))
+            {
+                return Compatibility.getToolLevel(stack);
+            }
         }
         else if (ToolType.HELMET.equals(toolType)
                 || ToolType.BOOTS.equals(toolType)
@@ -419,7 +429,7 @@ public final class ItemStackUtils
         {
             return 0;
         }
-        else if (damageReductionAmount <= ArmorMaterial.GOLD.getDamageReductionAmount(EntityEquipmentSlot.CHEST))
+        else if (damageReductionAmount <= ArmorMaterial.GOLD.getDamageReductionAmount(EntityEquipmentSlot.CHEST) && material != ArmorMaterial.CHAIN)
         {
             return 1;
         }
@@ -498,6 +508,30 @@ public final class ItemStackUtils
         return fortune;
     }
 
+
+    public static boolean hasSilkTouch(@Nullable final ItemStack tool)
+    {
+        if (tool == null)
+        {
+            return false;
+        }
+        boolean hasSilk = false;
+        if (tool.isItemEnchanted())
+        {
+            final NBTTagList t = tool.getEnchantmentTagList();
+
+            for (int i = 0; i < t.tagCount(); i++)
+            {
+                final int id = t.getCompoundTagAt(i).getShort(NBT_TAG_ENCHANT_ID);
+                if (id == SILK_TOUCH_ENCHANT_ID)
+                {
+                    hasSilk = true;
+                }
+            }
+        }
+        return hasSilk;
+    }
+
     /**
      * Checks if an item serves as a weapon.
      *
@@ -514,6 +548,31 @@ public final class ItemStackUtils
      *
      * @param toolGrade the number of the grade of a tool
      * @return a string corresponding to the tool
+     */
+    public static String swapArmorGrade(final int toolGrade)
+    {
+        switch (toolGrade)
+        {
+            case 0:
+                return "Leather";
+            case 1:
+                return "Gold";
+            case 2:
+                return "Chain";
+            case 3:
+                return "Iron";
+            case 4:
+                return "Diamond";
+            default:
+                return "Better than Diamond";
+        }
+    }
+
+    /**
+     * Assigns a string containing the grade of the armor grade.
+     *
+     * @param toolGrade the number of the grade of an armor
+     * @return a string corresponding to the armor
      */
     public static String swapToolGrade(final int toolGrade)
     {

@@ -58,11 +58,14 @@ public final class Utils
                     {
                         @NotNull final BlockPos tempCoords = new BlockPos(i, j, k);
 
-                        final double distance = BlockPosUtil.getDistanceSquared(tempCoords, point);
-                        if (closestCoords == null || distance < minDistance)
+                        if (world.getBlockState(tempCoords.down()).getMaterial().isSolid() || world.getBlockState(tempCoords.down(2)).getMaterial().isSolid())
                         {
-                            closestCoords = tempCoords;
-                            minDistance = distance;
+                            final double distance = BlockPosUtil.getDistanceSquared(tempCoords, point);
+                            if (closestCoords == null || distance < minDistance)
+                            {
+                                closestCoords = tempCoords;
+                                minDistance = distance;
+                            }
                         }
                     }
                 }

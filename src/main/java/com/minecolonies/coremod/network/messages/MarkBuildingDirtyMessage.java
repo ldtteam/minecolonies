@@ -30,6 +30,11 @@ public class MarkBuildingDirtyMessage extends AbstractMessage<MarkBuildingDirtyM
     private int      colonyId;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty constructor used when registering the message.
      */
     public MarkBuildingDirtyMessage()
@@ -47,6 +52,7 @@ public class MarkBuildingDirtyMessage extends AbstractMessage<MarkBuildingDirtyM
         super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
+        this.dimension = building.getColony().getDimension();
     }
 
     @Override
@@ -54,6 +60,7 @@ public class MarkBuildingDirtyMessage extends AbstractMessage<MarkBuildingDirtyM
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
+        dimension = buf.readInt();
     }
 
     @Override
@@ -61,13 +68,13 @@ public class MarkBuildingDirtyMessage extends AbstractMessage<MarkBuildingDirtyM
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final MarkBuildingDirtyMessage message, final EntityPlayerMP player)
     {
-
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null)
         {
             Log.getLogger().warn("MarkBuildingDirtyMessage colony is null");

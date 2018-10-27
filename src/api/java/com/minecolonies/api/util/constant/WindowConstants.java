@@ -1,6 +1,7 @@
 package com.minecolonies.api.util.constant;
 
 import com.minecolonies.api.util.LanguageHandler;
+import net.minecraft.util.ResourceLocation;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -694,10 +695,6 @@ public final class WindowConstants
     public static final String TOOLS_MODIFIER   = "toolsLevel";
 
     /**
-     * Citizen view constants.
-     */
-
-    /**
      * The label to find the inventory button.
      */
     public static final String INVENTORY_BUTTON_ID = "inventory";
@@ -804,24 +801,69 @@ public final class WindowConstants
     public static final int HAPPINESS_BAR_FULL_ROW = 79;
 
     /**
-     * Row position of the empty heart icon.
+     * X position of the empty heart icon.
      */
-    public static final int EMPTY_HEART_ICON_ROW_POS = 16;
+    public static final int EMPTY_HEART_ICON_X = 16;
 
     /**
-     * Row position of the full heart icon.
+     * X position of the full red heart icon.
      */
-    public static final int FULL_HEART_ICON_ROW_POS = 53;
+    public static final int RED_HEART_ICON_X = 52;
 
     /**
-     * Row position of the half/full heart icon.
+     * X position of the half red heart icon.
      */
-    public static final int HALF_HEART_ICON_ROW_POS = 62;
+    public static final int HALF_RED_HEART_ICON_X = 61;
 
     /**
-     * Column position of the heart icons.
+     * X position of the full golden heart:
      */
-    public static final int HEART_ICON_COLUMN = 0;
+    public static final int GOLD_HEART_ICON_X = 160;
+
+    /**
+     * X position of the full golden heart:
+     */
+    public static final int HALF_GOLD_HEART_ICON_X = 169;
+
+    /**
+     * Y position of the empty,red,golden heart icons.
+     */
+    public static final int HEART_ICON_MC_Y = 0;
+
+    /**
+     * The resourcelocation for green and blue hearts
+     */
+    public static final ResourceLocation GREEN_BLUE_ICON = new ResourceLocation("minecolonies:textures/gui/citizen/green_bluehearts.png");
+
+    /**
+     * X position of the full green heart
+     */
+    public static final int GREEN_HEART_ICON_X = 0;
+
+    /**
+     * X position of the full green heart
+     */
+    public static final int GREEN_HALF_HEART_ICON_X = 8;
+
+    /**
+     * Y position of the green hearts
+     */
+    public static final int GREEN_HEARTS_ICON_Y = 0;
+
+    /**
+     * X position of the full blue heart
+     */
+    public static final int BLUE_HEART_ICON_X = 0;
+
+    /**
+     * X position of the full blue heart
+     */
+    public static final int BLUE_HALF_HEART_ICON_X = 8;
+
+    /**
+     * Y position of the blue hearts
+     */
+    public static final int BLUE_HEARTS_ICON_Y = 8;
 
     /**
      * Dimension of the hearts.
@@ -842,6 +884,36 @@ public final class WindowConstants
      * The position y where the heart is placed.
      */
     public static final int HEART_ICON_POS_Y = 10;
+
+    /**
+     * The maximum amount of Shown hearts
+     */
+    public static final int MAX_HEART_ICONS = 10;
+
+    /**
+     * HP Value of a empty heart
+     */
+    public static final int EMPTY_HEART_VALUE = 0;
+
+    /**
+     * HP Value of a red heart
+     */
+    public static final int RED_HEART_VALUE = 2;
+
+    /**
+     * HP Value of a golden heart
+     */
+    public static final int GOLDEN_HEART_VALUE = 4;
+
+    /**
+     * HP Value of a green heart
+     */
+    public static final int GREEN_HEART_VALUE = 6;
+
+    /**
+     * HP Value of the blue heart
+     */
+    public static final int BLUE_HEART_VALUE = 8;
 
     /**
      * The position y where the saturation is placed.
@@ -892,6 +964,11 @@ public final class WindowConstants
      * The label to find healthBar in the gui.
      */
     public static final String WINDOW_ID_HEALTHBAR = "healthBar";
+
+    /**
+     * THe label to find the HealthLavel
+     */
+    public static final String WINDOW_ID_HEALTHLABEL = "healthLabel";
 
     /**
      * The position of the empty saturation icon.

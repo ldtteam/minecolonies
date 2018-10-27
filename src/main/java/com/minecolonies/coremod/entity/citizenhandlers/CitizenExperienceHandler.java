@@ -85,8 +85,8 @@ public class CitizenExperienceHandler
         final double citizenHutMaxLevel = home == null ? 1 : home.getMaxBuildingLevel();
         if (citizen.getCitizenData() != null)
         {
-            if (citizenHutLevel < citizenHutMaxLevel
-                    && Math.pow(2.0, citizenHutLevel + 1.0) <= citizen.getCitizenData().getLevel())
+            if ((citizenHutLevel < citizenHutMaxLevel
+                    && Math.pow(2.0, citizenHutLevel + 1.0) <= citizen.getCitizenData().getLevel()) || citizen.getCitizenData().getLevel() >= MAX_CITIZEN_LEVEL)
             {
                 return;
             }
@@ -136,7 +136,7 @@ public class CitizenExperienceHandler
 
             while (ExperienceUtils.getXPNeededForNextLevel(citizen.getCitizenData().getLevel()) < citizen.getCitizenData().getExperience())
             {
-                citizen.getCitizenData().increaseLevel();
+                citizen.getCitizenData().levelUp();
             }
             updateLevel();
             citizen.markDirty();

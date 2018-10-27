@@ -86,6 +86,10 @@ public enum AIState
      * Decide what AIstate to go to next.
      */
     DECIDE,
+    /**
+     * Do not work, can be used for freetime activities.
+     */
+    PAUSED,
     /*
 ###FISHERMAN###
      */
@@ -244,6 +248,21 @@ public enum AIState
      * Patrol through the village.
      */
     GUARD_PATROL,
+
+    /**
+     * Follow a player.
+     */
+    GUARD_FOLLOW,
+
+    /**
+     * Guard a position.
+     */
+    GUARD_GUARD,
+
+    /**
+     * Regen at the building.
+     */
+    GUARD_REGEN,
 
     /**
      * Go back to the hut to "restock".

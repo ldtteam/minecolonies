@@ -108,7 +108,7 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
             }
         }
 
-        final Colony colony = ColonyManager.getColony(colonyId);
+        final Colony colony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(0));
         if (colony == null)
         {
             final String noColonyFoundMessage = String.format(COLONY_X_NULL, colonyId);

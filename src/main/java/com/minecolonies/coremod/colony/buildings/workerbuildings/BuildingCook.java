@@ -125,6 +125,18 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         compound.setTag(TAG_CHAIRS, furnacesTagList);
     }
 
+    @Override
+    public boolean canCraftComplexRecipes()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean canWorkDuringTheRain()
+    {
+        return true;
+    }
+
     /**
      * Return a list of chairs assigned to this hut.
      *
