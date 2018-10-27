@@ -1,0 +1,18 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "minecraft:wool",
+            "data": 6
+        },
+        {
+            "item": "minecraft:wooden_slab",
+            "data": 0
+        }
+    ],
+    "result": {
+        "item": "minecolonies:blockcushion_pink",
+        "data": 0,
+        "count": 1
+    }
+}

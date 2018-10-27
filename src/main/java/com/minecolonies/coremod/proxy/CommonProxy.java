@@ -174,7 +174,7 @@ public class CommonProxy implements IProxy
                 getNextEntityId(),
                 MineColonies.instance,
                 Constants.ENTITY_TRACKING_RANGE,
-                Constants.ENTITY_UPDATE_FREQUENCY_FISHHOOK,
+                Constants.ENTITY_UPDATE_FREQUENCY,
                 true);
         EntityRegistry.registerModEntity(BARBARIAN,
           EntityBarbarian.class,

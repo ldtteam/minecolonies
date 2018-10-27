@@ -122,6 +122,9 @@ public class Configurations
         @Config.Comment("Should players be allowed to change names? -1 for false, 0 for specific groups, 1 for true")
         public int allowGlobalNameChanges = 1;
 
+        @Config.Comment("Citizen should sit on cushions to get served.")
+        public  boolean restaurantSittingRequired = false;
+
         @Config.Comment("Players who have special permission (Patreons for example)")
         public String[] specialPermGroup = new String[]
                                              {

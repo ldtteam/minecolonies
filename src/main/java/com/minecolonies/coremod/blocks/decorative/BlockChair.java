@@ -7,7 +7,6 @@ import com.minecolonies.coremod.blocks.AbstractBlockMinecoloniesSeat;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 
 import net.minecraft.block.BlockHorizontal;
-import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
@@ -19,13 +18,29 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 
 /**
- * Block that renders as a tiny "cushion"
+ * Block that renders as a chair
  *
  */
-public class BlockCushion extends  AbstractBlockMinecoloniesSeat<BlockCushion>
+public class BlockChair extends  AbstractBlockMinecoloniesSeat<BlockChair>
 {
+
     /** Name of the block */
-    public static final String BLOCK_PREFIX = "blockcushion";
+    public static final String BLOCK_PREFIX = "blockchair";
+
+    /**
+     * The hardness this block has.
+     */
+    private static final float BLOCK_HARDNESS = 3F;
+
+    /**
+     * The resistance this block has.
+     */
+    private static final float RESISTANCE = 1F;
+
+    /**
+     * Light opacity of the block.
+     */
+    private static final int LIGHT_OPACITY = 255;
 
     /**
      * The direction the block is facing.
@@ -35,18 +50,18 @@ public class BlockCushion extends  AbstractBlockMinecoloniesSeat<BlockCushion>
     /**
      *
      */
-    public BlockCushion()
+    public BlockChair()
     {
-        super(Material.CARPET);
+        super(Material.WOOD);
         init(BLOCK_PREFIX);
     }
 
     /**
-     * @param name name of the localized block name
+     * @param name name of the localized name of the block.
      */
-    public BlockCushion(final String name)
+    public BlockChair(final String name)
     {
-        super(Material.CARPET);
+        super(Material.WOOD);
         init(name);
     }
 
@@ -54,15 +69,18 @@ public class BlockCushion extends  AbstractBlockMinecoloniesSeat<BlockCushion>
      * Defines all required information to register block to mine craft.
      * @param name name of the localized name of the block.
      */
-   private void init(final String name)
+    private void init(final String name)
     {
         setRegistryName(name);
         setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.US), name));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        setHardness(0.5F);
-        setSoundType(SoundType.CLOTH);
+        setHardness(BLOCK_HARDNESS);
+        setResistance(RESISTANCE);
         setTickRandomly(false);
+        useNeighborBrightness = true;
+        setLightOpacity(LIGHT_OPACITY);
     }
+
 
     @Override
     public boolean isOpaqueCube(final IBlockState state)
@@ -83,13 +101,20 @@ public class BlockCushion extends  AbstractBlockMinecoloniesSeat<BlockCushion>
     public boolean shouldSideBeRendered(final IBlockState blockState, final IBlockAccess blockAccess, final BlockPos pos,
             final EnumFacing side)
     {
-        return side == EnumFacing.UP ? true : super.shouldSideBeRendered(blockState, blockAccess, pos, side);
+        return true;
     }
+
+
+    @Override
+    public boolean canBeConnectedTo(final IBlockAccess world, final BlockPos pos, final EnumFacing facing)
+    {
+        return false;
+    }
+
 
     @Override
     public boolean isSeatBeingUsed()
     {
         return false;
     }
-
 }

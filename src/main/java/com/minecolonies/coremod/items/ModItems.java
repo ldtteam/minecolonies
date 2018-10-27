@@ -1,13 +1,17 @@
 package com.minecolonies.coremod.items;
 
+import java.util.Locale;
+
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.blocks.decorative.BlockCushion;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -66,8 +70,7 @@ public final class ModItems
         clipboard = new ItemClipBoard();
         compost = new ItemCompost();
         resourceScroll = new ItemResourceScroll();
-//        cushion = new ItemCushions(ModBlocks.blockCushion);
-
+        
         itemCactusDoor = new ItemCactusDoor(ModBlocks.blockCactusDoor, "cactusdoor");
         itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement");
         itemAchievementProxyTown = new ItemAchievementProxy("sizeTown");
