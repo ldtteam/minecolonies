@@ -1,5 +1,5 @@
 {
-	"parent": "minecolonies:block/blockcushion_lightblue",
+	"parent": "minecolonies:block/blockcushion_light_blue",
 	"display": {
 		"thirdperson": {
 			"rotation": [ 10, -45, 170 ],
