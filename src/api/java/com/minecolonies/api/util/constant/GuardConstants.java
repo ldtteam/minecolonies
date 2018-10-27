@@ -15,7 +15,7 @@ public final class GuardConstants
     /**
      * Range a guard should be within of GuardPos.
      */
-    public static final int GUARD_POS_RANGE = 0;
+    public static final int GUARD_POS_RANGE = 3;
 
     /**
      * Range a guard should be within of Follow for Tight Formation.
@@ -26,11 +26,6 @@ public final class GuardConstants
      * Range a guard should be within of Follow for Lose Formation.
      */
     public static final int GUARD_FOLLOW_LOSE_RANGE = 20;
-
-    /**
-     * double damage threshold
-     */
-    public static final int DOUBLE_DAMAGE_THRESHOLD = 2;
 
     /**
      * Y search range.
@@ -49,9 +44,39 @@ public final class GuardConstants
      */
     public static final int PREPARE_DELAY_SECONDS = 5;
 
+    /**
+     * Minimum physical Attack delay in ticks, Monsters are immune for 10 ticks
+     */
+    public static final int PHYSICAL_ATTACK_DELAY_MIN = 10;
+
+    /**
+     * Physical Attack delay in ticks.
+     */
+    public static final int PHYSICAL_ATTACK_DELAY_BASE = 60;
+
     // -- Delays -- \\
 
     // -- Ranged Guard Stuff -- \\
+
+    /**
+     * The base distance for an attack in Blocks
+     */
+    public static final int BASE_DISTANCE_FOR_RANGED_ATTACK = 7;
+
+    /**
+     * Rangers maximum distance in blocks for an attack.(24 max arrow dist)
+     */
+    public static final int MAX_DISTANCE_FOR_RANGED_ATTACK = 24;
+
+    /**
+     * Ranger's base damage
+     */
+    public static final int RANGER_BASE_DMG = 2;
+
+    /**
+     * Flee squaredistance from Target
+     */
+    public static final int RANGED_FLEE_SQDIST = 5 * 5;
 
     /**
      * Ranged attack velocity
@@ -74,6 +99,20 @@ public final class GuardConstants
     public static final double RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER = 0.20000000298023224D;
 
     // -- Ranged Guard Stuff -- \\
+
+    // -- Knight Guard Stuff -- \\
+
+    /**
+     * Basic delay for the next Knight attack.
+     */
+    public static final int KNIGHT_ATTACK_DELAY_BASE = 50;
+
+    /**
+     * This knight's max distance for attacking.
+     */
+    public static final double MAX_DISTANCE_FOR_ATTACK = 3;
+
+    // -- Knight Guard Stuff -- \\
 
     // -- Physical Guard Stuff -- \\
 

@@ -121,9 +121,9 @@ public class TileEntityRack extends TileEntity
     public int getFreeSlots()
     {
         int freeSlots = inventory.getSlots();
-        for (final int itemAmount : content.values())
+        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
         {
-            final double slotsNeeded = (double) itemAmount / Constants.STACKSIZE;
+            final double slotsNeeded = (double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize();
             freeSlots -= (int) Math.ceil(slotsNeeded);
         }
         return freeSlots;

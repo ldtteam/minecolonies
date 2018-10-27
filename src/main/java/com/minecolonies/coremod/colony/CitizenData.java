@@ -617,9 +617,21 @@ public class CitizenData
     }
 
     /**
-     * Sets the level of the citizen.
+     * Levelup actions for the citizen, increases level and notifies the Citizen's Job
      */
-    public void increaseLevel()
+    public void levelUp()
+    {
+        increaseLevel();
+        if (job != null)
+        {
+            job.onLevelUp(level);
+        }
+    }
+
+    /**
+     * Increases the level of the citizen.
+     */
+    private void increaseLevel()
     {
         if (this.level < MAX_CITIZEN_LEVEL)
         {

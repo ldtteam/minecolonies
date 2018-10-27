@@ -201,6 +201,15 @@ public class Configurations
         @Config.Comment("Should Guard Rangers benefit from Power/Smite/Bane of Arthropods enchants?")
         public boolean rangerEnchants = true;
 
+        @Config.Comment("Damage multiplier for Ranger Guards: Default:1.0")
+        public double rangerDamageMult = 1.0;
+
+        @Config.Comment("Damage multiplier for Knight Guards: Default:1.0")
+        public double knightDamageMult = 1.0;
+
+        @Config.Comment("Health multiplier for all Guards: Default:1.0")
+        public double guardHealthMult = 1.0;
+
         @Config.Comment("Amount of blocks the builder checks (to decrease lag by builder)")
         public int maxBlocksCheckedByBuilder = 1000;
 

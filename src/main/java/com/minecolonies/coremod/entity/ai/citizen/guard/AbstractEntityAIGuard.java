@@ -48,17 +48,17 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     /**
      * Max derivation of current position when patrolling.
      */
-    private static final int MAX_PATROL_DERIVATION = 100;
+    private static final int MAX_PATROL_DERIVATION = 50;
 
     /**
      * Max derivation of current position when following..
      */
-    private static final int MAX_FOLLOW_DERIVATION = 50;
+    private static final int MAX_FOLLOW_DERIVATION = 20;
 
     /**
      * Max derivation of current position when guarding.
      */
-    private static final int MAX_GUARD_DERIVATION = 20;
+    private static final int MAX_GUARD_DERIVATION = 10;
 
     /**
      * After this amount of ticks not seeing an entity stop persecution.
@@ -199,7 +199,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     }
 
     /**
-     * Method which calculates the possible attack range.
+     * Method which calculates the possible attack range in Blocks.
      *
      * @return the calculated range.
      */
@@ -214,7 +214,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     }
 
     /**
-     * Decide what we should do next!
+     * Decide what we should do next! Ticked once every 20 Ticks
      *
      * @return the next AIState.
      */
@@ -233,12 +233,14 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         checkForTarget();
         if (target != null)
         {
-            if (BlockPosUtil.getDistance2D(worker.getPosition(), target.getPosition()) > getAttackRange())
+            if (worker.getDistanceSq(target.posX, target.getEntityBoundingBox().minY, target.posZ) > getAttackRange() * getAttackRange())
             {
                 worker.isWorkerAtSiteWithMove(target.getPosition(), getAttackRange());
                 setDelay(STANDARD_DELAY);
                 return DECIDE;
             }
+            // No delay(1 tick) before activating Combat logic
+            setDelay(0);
             return getAttackState();
         }
 
@@ -276,6 +278,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Execute pre attack checks to check if worker can attack enemy.
+     * TODO: Check if enemy is in Range?
      * @return the next aiState to go to.
      */
     public AIState preAttackChecks()
@@ -300,6 +303,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         if(target == null || target.isDead || !isWithinPersecutionDistance(target.getPosition()))
         {
+            // Clear pathing when target changes
+            worker.getNavigator().clearPath();
+            worker.getMoveHelper().strafe(0, 0);
             return DECIDE;
         }
 
@@ -322,6 +328,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     protected EntityLivingBase getTarget()
     {
+        reduceAttackDelay(1);
+
         final Colony colony = worker.getCitizenColonyHandler().getColony();
         if (worker.getLastAttackedEntity() != null && !worker.getLastAttackedEntity().isDead)
         {
@@ -414,12 +422,26 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Check if a position is within regular attack distance.
+     * TODO:Fix so it actually says if sth is within attack Dist.
      * @param position the position to check.
      * @return true if so.
      */
     public boolean isInAttackDistance(final BlockPos position)
     {
         return BlockPosUtil.getDistance2D(worker.getPosition(), position) > getAttackRange() && isWithinPersecutionDistance(position);
+    }
+
+    /**
+     * Reduces the attack delay by the given Tickrate
+     *
+     * @param tickRate rate at which the caller is ticking
+     */
+    public void reduceAttackDelay(final int tickRate)
+    {
+        if (currentAttackDelay > 0)
+        {
+            currentAttackDelay -= tickRate;
+        }
     }
 
     /**
@@ -433,6 +455,19 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     }
 
     /**
+     * Calculates the dmg increase per level
+     */
+    public int getLevelDamage()
+    {
+        if (worker.getCitizenData() == null)
+        {
+            return 0;
+        }
+        // Level scaling damage, +1 on 6,12,19,28,38,50,66 ...
+        return worker.getCitizenData().getLevel() / (5 + worker.getCitizenData().getLevel() / 15);
+    }
+
+    /**
      * Get the reference point from which the guard comes.
      * @return the position depending ont he task.
      */
@@ -441,7 +476,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         switch (buildingGuards.getTask())
         {
             case PATROL:
-                return currentPatrolPoint;
+                return currentPatrolPoint != null ? currentPatrolPoint : worker.getCurrentPosition();
             case FOLLOW:
                 return buildingGuards.getPlayerToFollow();
             default:
@@ -449,6 +484,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         }
     }
 
+    /**
+     * Returns the block distance at which a guard should chase his target
+     */
     private int getPersecutionDistance()
     {
         switch (buildingGuards.getTask())
