@@ -10,7 +10,6 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Suppression;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.managers.*;
@@ -107,7 +106,7 @@ public class Colony implements IColony
     /**
      * Barbarian manager of the colony.
      */
-    private final IBarbarianManager barbarianManager = new BarbarianManager(this);
+    private final IRaiderManager barbarianManager = new RaidManager(this);
 
     /**
      * The colony package manager.
@@ -439,11 +438,11 @@ public class Colony implements IColony
 
         if(compound.hasKey(TAG_RAIDABLE))
         {
-            this.barbarianManager.setCanHaveBarbEvents(compound.getBoolean(TAG_RAIDABLE));
+            this.barbarianManager.setCanHaveRaiderEvents(compound.getBoolean(TAG_RAIDABLE));
         }
         else
         {
-            this.barbarianManager.setCanHaveBarbEvents(true);
+            this.barbarianManager.setCanHaveRaiderEvents(true);
         }
 
         if(compound.hasKey(TAG_AUTO_DELETE))
@@ -557,7 +556,7 @@ public class Colony implements IColony
         compound.setBoolean(TAG_MANUAL_HOUSING, manualHousing);
         compound.setTag(TAG_REQUESTMANAGER, getRequestManager().serializeNBT());
         compound.setString(TAG_STYLE, style);
-        compound.setBoolean(TAG_RAIDABLE, barbarianManager.canHaveBarbEvents());
+        compound.setBoolean(TAG_RAIDABLE, barbarianManager.canHaveRaiderEvents());
         compound.setBoolean(TAG_AUTO_DELETE, canColonyBeAutoDeleted);
         compound.setInteger(TAG_TEAM_COLOR, colonyTeamColor.ordinal());
         this.colonyTag = compound;
@@ -750,7 +749,7 @@ public class Colony implements IColony
         if (shallUpdate(world, TICKS_SECOND)
                 && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
                 && Configurations.gameplay.doBarbariansSpawn
-                && barbarianManager.canHaveBarbEvents()
+                && barbarianManager.canHaveRaiderEvents()
                 && !world.getMinecraftServer().getPlayerList().getPlayers()
                 .stream().filter(permissions::isSubscriber).collect(Collectors.toList()).isEmpty()
                 && MobEventsUtils.isItTimeToRaid(event.world, this))
@@ -966,7 +965,7 @@ public class Colony implements IColony
     @Override
     public boolean isCanHaveBarbEvents()
     {
-        return barbarianManager.canHaveBarbEvents();
+        return barbarianManager.canHaveRaiderEvents();
     }
 
     @Override
@@ -1224,7 +1223,7 @@ public class Colony implements IColony
      * Get the barbManager of the colony.
      * @return the barbManager.
      */
-    public IBarbarianManager getBarbManager()
+    public IRaiderManager getBarbManager()
     {
         return barbarianManager;
     }

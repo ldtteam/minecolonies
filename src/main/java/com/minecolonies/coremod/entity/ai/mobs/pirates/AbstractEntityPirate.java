@@ -1,6 +1,5 @@
-package com.minecolonies.coremod.entity.ai.mobs.barbarians;
+package com.minecolonies.coremod.entity.ai.mobs.pirates;
 
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.sounds.BarbarianSounds;
 import net.minecraft.util.SoundEvent;
@@ -13,19 +12,14 @@ import static com.minecolonies.api.util.constant.BarbarianConstants.*;
 /**
  * Abstract for all Barbarian entities.
  */
-public abstract class AbstractEntityBarbarian extends AbstractEntityMinecoloniesMob
+public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
 {
-    /**
-     * Sets the barbarians target colony on spawn Thus it never changes.
-     */
-    private Colony colony;
-
     /**
      * Constructor method for Abstract Barbarians.
      *
      * @param world the world.
      */
-    public AbstractEntityBarbarian(final World world)
+    public AbstractEntityPirate(final World world)
     {
         super(world);
     }
@@ -46,5 +40,11 @@ public abstract class AbstractEntityBarbarian extends AbstractEntityMinecolonies
     protected SoundEvent getAmbientSound()
     {
         return BarbarianSounds.barbarianSay;
+    }
+
+    @Override
+    public boolean getCanSpawnHere()
+    {
+        return true;
     }
 }

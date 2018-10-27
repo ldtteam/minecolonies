@@ -7,6 +7,7 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.ai.mobs.pirates.AbstractEntityPirate;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.pathfinding.*;
@@ -28,6 +29,7 @@ import java.util.concurrent.Future;
 public class PathNavigate extends PathNavigateGround
 {
     private static final double ON_PATH_SPEED_MULTIPLIER = 1.3D;
+    private static final double PIRATE_SWIM_BONUS = 50;
 
     /**
      * The range multiplier for the lumberjack.
@@ -110,6 +112,12 @@ public class PathNavigate extends PathNavigateGround
 
     public double getSpeed()
     {
+        if (ourEntity instanceof AbstractEntityPirate && ourEntity.isInWater())
+        {
+            speed = walkSpeed * 20;
+            return walkSpeed * 20;
+        }
+        speed = walkSpeed;
         return walkSpeed;
     }
 
@@ -246,7 +254,7 @@ public class PathNavigate extends PathNavigateGround
                     return;
                 }
 
-                setPath(future.get(), walkSpeed);
+                setPath(future.get(), getSpeed());
 
                 pathResult.setPathLength(getPath().getCurrentPathLength());
                 pathResult.setStatus(PathResult.Status.IN_PROGRESS_FOLLOWING);
@@ -336,17 +344,18 @@ public class PathNavigate extends PathNavigateGround
                     vec3d = this.getPath().getPosition(this.ourEntity);
                 }
 
-                this.ourEntity.getMoveHelper().setMoveTo(vec3d.x, vec3d.y, vec3d.z, walkSpeed);
+                ourEntity.setAIMoveSpeed((float) getSpeed());
+                this.ourEntity.getMoveHelper().setMoveTo(vec3d.x, vec3d.y, vec3d.z, getSpeed());
             }
             else
             {
                 if (BlockUtils.isPathBlock(world.getBlockState(ourEntity.getPosition().down()).getBlock()))
                 {
-                    speed = ON_PATH_SPEED_MULTIPLIER * walkSpeed;
+                    speed = ON_PATH_SPEED_MULTIPLIER * getSpeed();
                 }
                 else
                 {
-                    speed = walkSpeed;
+                    speed = getSpeed();
                 }
             }
         }

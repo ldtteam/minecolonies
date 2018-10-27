@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.commands.killcommands;
 
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 
 /**
  * Command for killing all Barbarians on map
  */
-public class BarbarianKillCommand extends AbstractKillCommand<AbstractEntityBarbarian>
+public class BarbarianKillCommand extends AbstractKillCommand<AbstractEntityMinecoloniesMob>
 {
     public static final String DESC = "barbarians";
 
@@ -24,8 +24,8 @@ public class BarbarianKillCommand extends AbstractKillCommand<AbstractEntityBarb
     }
 
     @Override
-    public Class<AbstractEntityBarbarian> getEntityClass()
+    public Class<AbstractEntityMinecoloniesMob> getEntityClass()
     {
-        return AbstractEntityBarbarian.class;
+        return AbstractEntityMinecoloniesMob.class;
     }
 }

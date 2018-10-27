@@ -21,6 +21,8 @@ public final class ModItems
     public static Item supplyCamp;
     public static Item ancientTome;
     public static Item chiefSword;
+    public static Item scimitar;
+
     public static Item clipboard;
     public static Item itemCactusDoor;
     public static Item compost;
@@ -55,6 +57,7 @@ public final class ModItems
         supplyCamp = new ItemSupplyCampDeployer();
         ancientTome = new ItemAncientTome();
         chiefSword = new ItemChiefSword();
+        scimitar = new ItemIronScimitar();
         clipboard = new ItemClipBoard();
         compost = new ItemCompost();
         resourceScroll = new ItemResourceScroll();
@@ -74,6 +77,7 @@ public final class ModItems
         registry.register(supplyCamp);
         registry.register(ancientTome);
         registry.register(chiefSword);
+        registry.register(scimitar);
         registry.register(itemAchievementProxySettlement);
         registry.register(itemAchievementProxyTown);
         registry.register(itemAchievementProxyCity);

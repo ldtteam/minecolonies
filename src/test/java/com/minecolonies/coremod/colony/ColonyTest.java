@@ -76,7 +76,7 @@ public class ColonyTest
     @Test
     public void testToggleOverManager()
     {
-        colony.getBarbManager().setCanHaveBarbEvents(true);
+        colony.getBarbManager().setCanHaveRaiderEvents(true);
         assertNotNull(colony.getColonyTag());
 
     }

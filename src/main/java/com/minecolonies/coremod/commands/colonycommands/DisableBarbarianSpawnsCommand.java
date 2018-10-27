@@ -105,7 +105,7 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand impleme
             return;
         }
 
-        colony.getBarbManager().setCanHaveBarbEvents(canHaveBarbEvents);
+        colony.getBarbManager().setCanHaveRaiderEvents(canHaveBarbEvents);
         colony.markDirty();
 
         sender.sendMessage(new TextComponentString("Colony \" Can have Barbarian Events \" now set to: " + colony.isCanHaveBarbEvents()));

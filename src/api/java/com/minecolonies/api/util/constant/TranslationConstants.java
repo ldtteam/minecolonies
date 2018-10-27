@@ -254,6 +254,8 @@ public final class TranslationConstants
     @NonNls
     public static final String RAID_EVENT_MESSAGE                                                  = "event.minecolonies.raidMessage";
     @NonNls
+    public static final String RAID_EVENT_MESSAGE_PIRATE                                           = "event.minecolonies.raidMessage_p";
+    @NonNls
     public static final String ONLY_X_BARBARIANS_LEFT_MESSAGE                                      = "com.minecolonies.coremod.barbarians.left";
     @NonNls
     public static final String ALL_BARBARIANS_KILLED_MESSAGE                                       = "com.minecolonies.coremod.barbarians.killed";

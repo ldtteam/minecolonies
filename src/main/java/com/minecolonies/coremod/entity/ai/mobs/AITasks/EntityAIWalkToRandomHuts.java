@@ -1,10 +1,11 @@
-package com.minecolonies.coremod.entity.ai.mobs.barbarians;
+package com.minecolonies.coremod.entity.ai.mobs.AITasks;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.state.IBlockState;
@@ -22,7 +23,7 @@ import static com.minecolonies.api.util.constant.BarbarianConstants.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
- * Barbarian Pathing Class
+ * Raider Pathing Class
  */
 public class EntityAIWalkToRandomHuts extends EntityAIBase
 {
@@ -30,7 +31,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     /**
      * The moving entity.
      */
-    protected final AbstractEntityBarbarian entity;
+    protected final AbstractEntityMinecoloniesMob entity;
 
     /**
      * All directions.
@@ -89,11 +90,10 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
 
     /**
      * Constructor for AI
-     *
-     * @param creatureIn the creature that the AI applies to
+     *  @param creatureIn the creature that the AI applies to
      * @param speedIn    The speed at which the Entity walks
      */
-    public EntityAIWalkToRandomHuts(final AbstractEntityBarbarian creatureIn, final double speedIn)
+    public EntityAIWalkToRandomHuts(final AbstractEntityMinecoloniesMob creatureIn, final double speedIn)
     {
         super();
         this.entity = creatureIn;
@@ -208,7 +208,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
             entity.setStuckCounter(entity.getStuckCounter() + 1);
             final BlockPos front = entity.getPosition().down().offset(entity.getHorizontalFacing());
 
-            if (!world.getBlockState(front).getMaterial().isSolid())
+            if (world.isAirBlock(front) || world.getBlockState(front).getBlock() == Blocks.LAVA || world.getBlockState(front).getBlock() == Blocks.FLOWING_LAVA)
             {
                 notStuckTime = 0;
                 world.setBlockState(front, Blocks.COBBLESTONE.getDefaultState());

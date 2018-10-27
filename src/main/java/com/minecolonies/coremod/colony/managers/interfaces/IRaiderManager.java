@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.managers.interfaces;
 
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
@@ -9,39 +9,39 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * Interface implementing all methods required for all barbarianmanagers.
+ * Interface implementing all methods required for all raider managers.
  */
-public interface IBarbarianManager
+public interface IRaiderManager
 {
     /**
-     * Checks if the barbarian manager can have barbarian events.
+     * Checks if the raider manager can have raider events.
      * @return true if so.
      */
-    boolean canHaveBarbEvents();
+    boolean canHaveRaiderEvents();
 
     /**
-     * Checks if the barbarian raid has been calculated already.
+     * Checks if the raider raid has been calculated already.
      * @return true if so.
      */
     boolean hasRaidBeenCalculated();
 
     /**
-     * Checks if barbs will raid tonight.
+     * Checks if raiders will raid tonight.
      * @return true if so.
      */
     boolean willRaidTonight();
 
     /**
-     * Set that the manager can receive barbarian events.
+     * Set that the manager can receive raider events.
      * @param canHave true or false.
      */
-    void setCanHaveBarbEvents(final boolean canHave);
+    void setCanHaveRaiderEvents(final boolean canHave);
 
     /**
-     * Add a spawnPoint to the last barb spawns.
+     * Add a spawnPoint to the last raiders spawns.
      * @param pos the position to set.
      */
-    void addBarbarianSpawnPoint(final BlockPos pos);
+    void addRaiderSpawnPoint(final BlockPos pos);
 
     /**
      * Set if the raid has been calculated.
@@ -50,7 +50,7 @@ public interface IBarbarianManager
     void setHasRaidBeenCalculated(final boolean hasSet);
 
     /**
-     * Set if barbarians will raid tonight.
+     * Set if raiders will raid tonight.
      * @param willRaid true or false.
      */
     void setWillRaidTonight(final boolean willRaid);
@@ -70,22 +70,22 @@ public interface IBarbarianManager
     List<BlockPos> getLastSpawnPoints();
 
     /**
-     * Register a barbarian at the colony.
-     * @param abstractEntityBarbarian the barbarian to register.
+     * Register a raider at the colony.
+     * @param raider the raider to register.
      */
-    void registerBarbarian(@NotNull final AbstractEntityBarbarian abstractEntityBarbarian);
+    void registerRaider(@NotNull final AbstractEntityMinecoloniesMob raider);
 
     /**
-     * Unregister a barbarian from the colony.
+     * Unregister a raider from the colony.
+     * @param raider the raider to unregister.
      * @param world the serverWorld.
-     * @param abstractEntityBarbarian the barbarian to unregister.
      */
-    void unregisterBarbarian(@NotNull final AbstractEntityBarbarian abstractEntityBarbarian, final WorldServer world);
+    void unregisterRaider(@NotNull final AbstractEntityMinecoloniesMob raider, final WorldServer world);
 
     /**
-     * Gets the horde of barbarians approaching the colony.
+     * Gets the horde of raiders approaching the colony.
      * @param world the serverWorld.
      * @return the list of entities.
      */
-    List<AbstractEntityBarbarian> getHorde(final WorldServer world);
+    List<AbstractEntityMinecoloniesMob> getHorde(final WorldServer world);
 }

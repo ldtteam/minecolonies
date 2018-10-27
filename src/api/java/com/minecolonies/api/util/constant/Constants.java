@@ -127,7 +127,8 @@ public final class Constants
      */
     public static final int SLOT_PER_LINE = 9;
 
-    public static final String ITEM_NAME         = "chiefsword";
+    public static final String SCIMITAR_NAME     = "iron_scimitar";
+    public static final String CHIEFSWORD_NAME   = "chiefsword";
     public static final Potion LEVITATION_EFFECT = Potion.getPotionById(25);
     public static final Potion GLOW_EFFECT       = Potion.getPotionById(24);
 

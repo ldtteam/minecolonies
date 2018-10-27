@@ -1,8 +1,10 @@
-package com.minecolonies.coremod.entity.ai.mobs.barbarians;
+package com.minecolonies.coremod.entity.ai.mobs.AITasks;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianSpawnUtils;
+import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.util.MobSpawnUtils;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -13,24 +15,24 @@ import net.minecraft.util.EnumHand;
 /**
  * Barbarian Attack AI class
  */
-public class EntityAIBarbarianAttackMelee extends EntityAIBase
+public class EntityAIRaiderAttackMelee extends EntityAIBase
 {
 
-    private static final int    CYCLES_TO_WAIT          = 100;
-    private static final double HALF_ROTATION           = 180;
-    private static final double MIN_DISTANCE_FOR_ATTACK = 2.5;
-    private static final double ATTACK_SPEED            = 1.3;
-    private static final int    MUTEX_BITS              = 3;
-    private final AbstractEntityBarbarian entity;
-    private       EntityLivingBase        target;
-    private int lastAttack = 0;
+    private static final int                           CYCLES_TO_WAIT          = 100;
+    private static final double                        HALF_ROTATION           = 180;
+    private static final double                        MIN_DISTANCE_FOR_ATTACK = 2.5;
+    private static final double                        ATTACK_SPEED            = 1.3;
+    private static final int                           MUTEX_BITS              = 3;
+    private final        AbstractEntityMinecoloniesMob entity;
+    private              EntityLivingBase              target;
+    private              int                           lastAttack = 0;
 
     /**
      * Constructor method for AI
      *
      * @param creatureIn The creature which is using the AI
      */
-    public EntityAIBarbarianAttackMelee(final AbstractEntityBarbarian creatureIn)
+    public EntityAIRaiderAttackMelee(final AbstractEntityMinecoloniesMob creatureIn)
     {
         super();
         this.entity = creatureIn;
@@ -78,7 +80,7 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
     {
         if (target != null)
         {
-            double damageToBeDealt = BarbarianSpawnUtils.ATTACK_DAMAGE;
+            double damageToBeDealt = MobSpawnUtils.ATTACK_DAMAGE;
 
             if (entity instanceof EntityChiefBarbarian)
             {

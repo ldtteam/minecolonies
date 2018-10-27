@@ -46,7 +46,7 @@ public final class Pond
      * @param world The world the player is in.
      * @param water The coordinate to check.
      */
-    private static boolean checkWater(@NotNull final IBlockAccess world, @NotNull final BlockPos water)
+    public static boolean checkWater(@NotNull final IBlockAccess world, @NotNull final BlockPos water)
     {
         if (world.getBlockState(water).getBlock() != Blocks.WATER || !world.isAirBlock(water.up()))
         {

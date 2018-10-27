@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.ai.mobs.barbarians;
+package com.minecolonies.coremod.entity.ai.mobs.AITasks;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.CompatibilityUtils;

@@ -3,8 +3,8 @@ package com.minecolonies.coremod.colony.managers;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.managers.interfaces.IBarbarianManager;
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
+import com.minecolonies.coremod.colony.managers.interfaces.IRaiderManager;
+import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
@@ -24,7 +24,7 @@ import static com.minecolonies.api.util.constant.Constants.WHOLE_CIRCLE;
 import static com.minecolonies.api.util.constant.TranslationConstants.ALL_BARBARIANS_KILLED_MESSAGE;
 import static com.minecolonies.api.util.constant.TranslationConstants.ONLY_X_BARBARIANS_LEFT_MESSAGE;
 
-public class BarbarianManager implements IBarbarianManager
+public class RaidManager implements IRaiderManager
 {
     /**
      * Whether there will be a raid in this colony tonight.
@@ -37,12 +37,12 @@ public class BarbarianManager implements IBarbarianManager
     private boolean raidBeenCalculated = false;
 
     /**
-     * Whether or not this colony may have Barbarian events. (set via command)
+     * Whether or not this colony may have Raider events. (set via command)
      */
     private boolean haveBarbEvents = true;
 
     /**
-     * Last barbarian spawnpoints.
+     * Last raider spawnpoints.
      */
     private final List<BlockPos> lastSpawnPoints = new ArrayList<>();
 
@@ -52,21 +52,21 @@ public class BarbarianManager implements IBarbarianManager
     private final Colony colony;
 
     /**
-     * List of barbarians registered to the colony.
+     * List of raiders registered to the colony.
      */
     private final List<UUID> horde = new ArrayList<>();
 
     /**
-     * Creates the BarbarianManager for a colony.
+     * Creates the RaidManager for a colony.
      * @param colony the colony.
      */
-    public BarbarianManager(final Colony colony)
+    public RaidManager(final Colony colony)
     {
         this.colony = colony;
     }
 
     @Override
-    public boolean canHaveBarbEvents()
+    public boolean canHaveRaiderEvents()
     {
         return this.haveBarbEvents;
     }
@@ -84,13 +84,13 @@ public class BarbarianManager implements IBarbarianManager
     }
 
     @Override
-    public void setCanHaveBarbEvents(final boolean canHave)
+    public void setCanHaveRaiderEvents(final boolean canHave)
     {
         this.haveBarbEvents = canHave;
     }
 
     @Override
-    public void addBarbarianSpawnPoint(final BlockPos pos)
+    public void addRaiderSpawnPoint(final BlockPos pos)
     {
         lastSpawnPoints.add(pos);
     }
@@ -176,18 +176,18 @@ public class BarbarianManager implements IBarbarianManager
     }
 
     @Override
-    public void registerBarbarian(@NotNull final AbstractEntityBarbarian abstractEntityBarbarian)
+    public void registerRaider(@NotNull final AbstractEntityMinecoloniesMob raider)
     {
-        this.horde.add(abstractEntityBarbarian.getUniqueID());
+        this.horde.add(raider.getUniqueID());
     }
 
     @Override
-    public void unregisterBarbarian(@NotNull final AbstractEntityBarbarian abstractEntityBarbarian, final WorldServer world)
+    public void unregisterRaider(@NotNull final AbstractEntityMinecoloniesMob raider, final WorldServer world)
     {
         for(final UUID uuid : new ArrayList<>(horde))
         {
-            final Entity barbarian = world.getEntityFromUuid(uuid);
-            if(barbarian == null || !barbarian.isEntityAlive() || uuid.equals(abstractEntityBarbarian.getUniqueID()))
+            final Entity raiderEntity = world.getEntityFromUuid(uuid);
+            if(raiderEntity == null || !raiderEntity.isEntityAlive() || uuid.equals(raiderEntity.getUniqueID()))
             {
                 horde.remove(uuid);
             }
@@ -222,23 +222,23 @@ public class BarbarianManager implements IBarbarianManager
     }
 
     @Override
-    public List<AbstractEntityBarbarian> getHorde(final WorldServer world)
+    public List<AbstractEntityMinecoloniesMob> getHorde(final WorldServer world)
     {
-        final List<AbstractEntityBarbarian> barbarians = new ArrayList<>();
+        final List<AbstractEntityMinecoloniesMob> raiders = new ArrayList<>();
         for (final UUID uuid : new ArrayList<>(horde))
         {
-            final Entity barbarian = world.getEntityFromUuid(uuid);
-            if (!(barbarian instanceof AbstractEntityBarbarian) || !barbarian.isEntityAlive())
+            final Entity raider = world.getEntityFromUuid(uuid);
+            if (!(raider instanceof AbstractEntityMinecoloniesMob) || !raider.isEntityAlive())
             {
                 horde.remove(uuid);
                 sendHordeMessage();
             }
             else
             {
-                barbarians.add((AbstractEntityBarbarian) barbarian);
+                raiders.add((AbstractEntityMinecoloniesMob) raider);
             }
 
         }
-        return barbarians;
+        return raiders;
     }
 }

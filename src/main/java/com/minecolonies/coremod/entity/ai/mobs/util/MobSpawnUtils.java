@@ -6,9 +6,18 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.ai.mobs.AITasks.EntityAIAttackArcher;
+import com.minecolonies.coremod.entity.ai.mobs.AITasks.EntityAIRaiderAttackMelee;
+import com.minecolonies.coremod.entity.ai.mobs.AITasks.EntityAIWalkToRandomHuts;
+import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.*;
+import com.minecolonies.coremod.entity.ai.mobs.pirates.AbstractEntityPirate;
+import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityArcherPirate;
+import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityChiefPirate;
+import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityPirate;
 import com.minecolonies.coremod.items.ModItems;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
@@ -27,7 +36,7 @@ import java.util.stream.IntStream;
 /**
  * Utils used for Barbarian Spawning
  */
-public final class BarbarianSpawnUtils
+public final class MobSpawnUtils
 {
     /**
      * Loot tables for Barbarians.
@@ -35,6 +44,13 @@ public final class BarbarianSpawnUtils
     public static final ResourceLocation BarbarianLootTable = new ResourceLocation(Constants.MOD_ID, "EntityBarbarianDrops");
     public static final ResourceLocation ArcherLootTable    = new ResourceLocation(Constants.MOD_ID, "EntityArcherBarbarianDrops");
     public static final ResourceLocation ChiefLootTable     = new ResourceLocation(Constants.MOD_ID, "EntityChiefBarbarianDrops");
+
+    /**
+     * Loot tables for Pirates.
+     */
+    public static final ResourceLocation PirateLootTable = new ResourceLocation(Constants.MOD_ID, "EntityPirateDrops");
+    public static final ResourceLocation PirateArcherLootTable    = new ResourceLocation(Constants.MOD_ID, "EntityArcherPirateDrops");
+    public static final ResourceLocation PirateChiefLootTable     = new ResourceLocation(Constants.MOD_ID, "EntityChiefPirateDrops");
 
     /**
      * Barbarian Attack Damage.
@@ -75,33 +91,33 @@ public final class BarbarianSpawnUtils
     /**
      * Private constructor to hide the implicit public one.
      */
-    private BarbarianSpawnUtils()
+    private MobSpawnUtils()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }
 
     /**
-     * Set barbarian attributes.
+     * Set mob attributes.
      *
-     * @param barbarian The barbarian to set the attributes on.
-     * @param colony    The colony that the barbarian is attacking.
+     * @param mob The mob to set the attributes on.
+     * @param colony    The colony that the mob is attacking.
      */
-    public static void setBarbarianAttributes(final AbstractEntityBarbarian barbarian, final Colony colony)
+    public static void setMobAttributes(final EntityLiving mob, final Colony colony)
     {
-        barbarian.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
-        barbarian.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
-        barbarian.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(ATTACK_DAMAGE);
-        if(barbarian instanceof EntityChiefBarbarian)
+        mob.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
+        mob.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
+        mob.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(ATTACK_DAMAGE);
+        if(mob instanceof EntityChiefBarbarian)
         {
-            barbarian.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(CHIEF_ARMOR);
+            mob.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(CHIEF_ARMOR);
         }
         else
         {
-            barbarian.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(ARMOR);
+            mob.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(ARMOR);
         }
-        barbarian.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getHealthBasedOnRaidLevel(colony));
+        mob.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getHealthBasedOnRaidLevel(colony));
     }
 
     /**
@@ -120,47 +136,59 @@ public final class BarbarianSpawnUtils
     }
 
     /**
-     * Set barbarian AI Tasks.
+     * Set mob AI Tasks.
      *
-     * @param barbarian The barbarian to set the AI Tasks on.
+     * @param mob The mob to set the AI Tasks on.
      */
-    public static void setBarbarianAI(final AbstractEntityBarbarian barbarian)
+    public static void setMobAI(final AbstractEntityMinecoloniesMob mob)
     {
-        barbarian.tasks.addTask(PRIORITY_ZERO, new EntityAISwimming(barbarian));
-        barbarian.tasks.addTask(PRIORITY_FOUR, new EntityAIWalkToRandomHuts(barbarian, AI_MOVE_SPEED));
-        barbarian.targetTasks.addTask(PRIORITY_TWO, new EntityAINearestAttackableTarget<>(barbarian, EntityPlayer.class, true));
-        barbarian.targetTasks.addTask(PRIORITY_THREE, new EntityAINearestAttackableTarget<>(barbarian, EntityCitizen.class, true));
-        barbarian.tasks.addTask(PRIORITY_FIVE, new EntityAIWatchClosest(barbarian, EntityPlayer.class, MAX_WATCH_DISTANCE));
+        mob.tasks.addTask(PRIORITY_ZERO, new EntityAISwimming(mob));
+        mob.tasks.addTask(PRIORITY_FOUR, new EntityAIWalkToRandomHuts(mob, AI_MOVE_SPEED));
+        mob.targetTasks.addTask(PRIORITY_TWO, new EntityAINearestAttackableTarget<>(mob, EntityPlayer.class, true));
+        mob.targetTasks.addTask(PRIORITY_THREE, new EntityAINearestAttackableTarget<>(mob, EntityCitizen.class, true));
+        mob.tasks.addTask(PRIORITY_FIVE, new EntityAIWatchClosest(mob, EntityPlayer.class, MAX_WATCH_DISTANCE));
 
-        if (barbarian instanceof EntityArcherBarbarian)
+        if (mob instanceof EntityArcherBarbarian)
         {
-            barbarian.tasks.addTask(PRIORITY_ONE, new EntityAIAttackArcher(barbarian));
+            mob.tasks.addTask(PRIORITY_ONE, new EntityAIAttackArcher(mob));
         }
         else
         {
-            barbarian.tasks.addTask(PRIORITY_ONE, new EntityAIBarbarianAttackMelee(barbarian));
+            mob.tasks.addTask(PRIORITY_ONE, new EntityAIRaiderAttackMelee(mob));
         }
     }
 
     /**
-     * Get the barbarians Loot Table.
+     * Get the mob Loot Table.
      *
-     * @param barbarian The barbarian for which to get the Loot Table.
+     * @param mob The mob for which to get the Loot Table.
      * @return The loot table.
      */
-    public static ResourceLocation getBarbarianLootTable(final AbstractEntityBarbarian barbarian)
+    public static ResourceLocation getBarbarianLootTable(final EntityLiving mob)
     {
-        if (barbarian instanceof EntityBarbarian)
+        if (mob instanceof EntityBarbarian)
         {
             return BarbarianLootTable;
         }
-        else if (barbarian instanceof EntityArcherBarbarian)
+        else if (mob instanceof EntityArcherBarbarian)
         {
             return ArcherLootTable;
         }
-        else if (barbarian instanceof EntityChiefBarbarian)
+        else if (mob instanceof EntityChiefBarbarian)
         {
             return ChiefLootTable;
+        }
+        else if (mob instanceof EntityPirate)
+        {
+            return PirateLootTable;
+        }
+        else if (mob instanceof EntityArcherPirate)
+        {
+            return PirateArcherLootTable;
+        }
+        else if (mob instanceof EntityChiefPirate)
+        {
+            return PirateChiefLootTable;
         }
 
         return BarbarianLootTable;
@@ -189,7 +217,7 @@ public final class BarbarianSpawnUtils
 
                 if (entity != null)
                 {
-                    setBarbarianEquipment(entity);
+                    setEquipment(entity);
                     entity.setPositionAndRotation(x, y + 1.0, z, (float) MathHelper.wrapDegrees(world.rand.nextDouble() * WHOLE_CIRCLE), 0.0F);
                     CompatibilityUtils.spawnEntity(world, entity);
                 }
@@ -197,23 +225,27 @@ public final class BarbarianSpawnUtils
         }
     }
 
-    public static void setBarbarianEquipment(final AbstractEntityBarbarian barbarian)
+    public static void setEquipment(final AbstractEntityMinecoloniesMob mob)
     {
-        if (barbarian instanceof EntityBarbarian)
+        if (mob instanceof EntityBarbarian)
         {
-            barbarian.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.STONE_AXE));
+            mob.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.STONE_AXE));
         }
-        else if (barbarian instanceof EntityArcherBarbarian)
+        else if (mob instanceof EntityArcherBarbarian || mob instanceof EntityArcherPirate)
         {
-            barbarian.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+            mob.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
         }
-        else if (barbarian instanceof EntityChiefBarbarian)
+        else if (mob instanceof EntityChiefBarbarian)
         {
-            barbarian.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(ModItems.chiefSword));
-            barbarian.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(Items.CHAINMAIL_HELMET));
-            barbarian.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
-            barbarian.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(Items.CHAINMAIL_LEGGINGS));
-            barbarian.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(Items.CHAINMAIL_BOOTS));
+            mob.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(ModItems.chiefSword));
+            mob.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(Items.CHAINMAIL_HELMET));
+            mob.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
+            mob.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(Items.CHAINMAIL_LEGGINGS));
+            mob.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(Items.CHAINMAIL_BOOTS));
+        }
+        else if (mob instanceof AbstractEntityPirate)
+        {
+            mob.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(ModItems.scimitar));
         }
     }
 }

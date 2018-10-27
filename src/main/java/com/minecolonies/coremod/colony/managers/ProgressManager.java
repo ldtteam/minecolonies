@@ -45,7 +45,7 @@ public class ProgressManager implements IProgressManager
     private boolean printProgress = true;
 
     /**
-     * Creates the BarbarianManager for a colony.
+     * Creates the RaidManager for a colony.
      * @param colony the colony.
      */
     public ProgressManager(final Colony colony)

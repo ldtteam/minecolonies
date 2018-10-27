@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.ai.minimal;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -61,7 +61,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     public boolean shouldExecute()
     {
         closestLivingEntity = getClosestToAvoid();
-        if (closestLivingEntity instanceof AbstractEntityBarbarian)
+        if (closestLivingEntity instanceof AbstractEntityMinecoloniesMob)
         {
             return false;
         }
@@ -102,7 +102,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     @Override
     public boolean shouldContinueExecuting()
     {
-        if (closestLivingEntity instanceof AbstractEntityBarbarian)
+        if (closestLivingEntity instanceof AbstractEntityMinecoloniesMob)
         {
             return false;
         }
@@ -124,7 +124,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
      */
     private void performMoveAway()
     {
-        if (closestLivingEntity instanceof AbstractEntityBarbarian)
+        if (closestLivingEntity instanceof AbstractEntityMinecoloniesMob)
         {
             return;
         }
