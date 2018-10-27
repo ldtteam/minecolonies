@@ -3,7 +3,6 @@ package com.minecolonies.coremod.tileentities;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.types.RackType;
 import net.minecraft.block.state.IBlockState;
@@ -193,6 +192,11 @@ public class TileEntityRack extends TileEntity
         inventory = tempInventory;
         final IBlockState state = world.getBlockState(pos);
         world.notifyBlockUpdate(pos, state, state, 0x03);
+
+        if (main && combinedHandler == null && getOtherChest() != null)
+        {
+            combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().inventory);
+        }
     }
 
     /* Get the amount of items matching a predicate in the inventory.
