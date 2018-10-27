@@ -3,10 +3,9 @@ package com.minecolonies.coremod.blocks;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.blocks.interfaces.IBlockMinecoloniesSeat;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.EntityCushion;
+import com.minecolonies.coremod.entity.EntitySitable;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
@@ -20,29 +19,20 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistry;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * @author kevin
- *
- * @param <B>
+ * Abstract class for all seat blocks.
  */
 public abstract class AbstractBlockMinecoloniesSeat<B extends AbstractBlockMinecoloniesSeat<B>> extends Block implements IBlockMinecoloniesSeat<B>
 {
     /**
      * Holds a temporary pointer to the seat Entity
      */
-    private EntityCushion seatEntity;
+    private EntitySitable seatEntity;
 
     /**
-     * @param blockMaterialIn Material Type
-     * @param blockMapColorIn Color Map
-     */
-    public AbstractBlockMinecoloniesSeat(final Material blockMaterialIn, final MapColor blockMapColorIn)
-    {
-        super(blockMaterialIn, blockMapColorIn);
-    }
-
-    /**
+     * Constructor for the block.
      * @param materialIn Material type
      */
     public AbstractBlockMinecoloniesSeat(final Material materialIn)
@@ -64,6 +54,7 @@ public abstract class AbstractBlockMinecoloniesSeat<B extends AbstractBlockMinec
         registry.register(this);
         return (B) this;
     }
+
     /**
      * Registery block at gameregistry.
      *
@@ -98,9 +89,9 @@ public abstract class AbstractBlockMinecoloniesSeat<B extends AbstractBlockMinec
     /**
      * Checks to see if the block can stay or if it needs to fall.
      *
-     * @param worldIn
-     * @param pos
-     * @param state
+     * @param worldIn the world.
+     * @param pos the position.
+     * @param state the state.
      * @return return false if block dropped
      */
     private boolean checkForDrop(final World worldIn, final BlockPos pos, final IBlockState state)
@@ -120,8 +111,8 @@ public abstract class AbstractBlockMinecoloniesSeat<B extends AbstractBlockMinec
     /**
      * Check the block below to see if you can place the seat at the Block Pos.
      *
-     * @param worldIn
-     * @param pos
+     * @param worldIn the world.
+     * @param pos the pos.
      * @return indicates if the block can stay at current location
      */
     private boolean canBlockStay(World worldIn, BlockPos pos)
@@ -192,21 +183,26 @@ public abstract class AbstractBlockMinecoloniesSeat<B extends AbstractBlockMinec
      * @param world pointer to the world
      * @return returns a new entity to seat on.
      */
-    private EntityCushion createSettingEntity(final World world)
+    private EntitySitable createSettingEntity(final World world)
     {
-        return new EntityCushion(world, 0);
+        return new EntitySitable(world, 0);
     }
 
+    @NotNull
     @Override
     public BlockFaceShape getBlockFaceShape(final IBlockAccess worldIn, final IBlockState state, final BlockPos pos, final EnumFacing face)
     {
         return BlockFaceShape.UNDEFINED;
     }
 
-    /**
-     * @return indicates if the block is a full block.
-     */
-    public boolean isFullCube()
+    @Override
+    public boolean isFullBlock(final IBlockState state)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isFullCube(final IBlockState state)
     {
         return false;
     }

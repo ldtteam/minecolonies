@@ -7,7 +7,7 @@ import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
-import com.minecolonies.coremod.entity.EntityCushion;
+import com.minecolonies.coremod.entity.EntitySitable;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityArcherBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
@@ -169,7 +169,7 @@ public class CommonProxy implements IProxy
           Constants.ENTITY_UPDATE_FREQUENCY_FISHHOOK,
           true);
         EntityRegistry.registerModEntity(locationCushion,
-                EntityCushion.class,
+                EntitySitable.class,
                 "cushionblock",
                 getNextEntityId(),
                 MineColonies.instance,

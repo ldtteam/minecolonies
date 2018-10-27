@@ -3,25 +3,31 @@ package com.minecolonies.coremod.entity;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Dummy Entity used to allow citizen to sit on a block.
  * These entities are removed from the world as soon as
  * the citizen stands up.
- * 
- * @author kevin
- *
  */
-public class EntityCushion extends Entity
+public class EntitySitable extends Entity
 {
-    protected double mountedYOffset = 2.2;
-    protected boolean citizenSitting;
-    
     /**
-     * @param worldIn
-     * @param mountHeight
+     * The y offset if mounted.
      */
-    public EntityCushion(World worldIn, double mountHeight)
+    private double  mountedYOffset;
+
+    /**
+     * If a citizen is sitting on it.
+     */
+    private boolean citizenSitting;
+
+    /**
+     * Creates a new entity which can be sat on.
+     * @param worldIn the world.
+     * @param mountHeight the desired mount height.
+     */
+    public EntitySitable(World worldIn, double mountHeight)
     {
         super(worldIn);
         mountedYOffset = mountHeight;
@@ -30,66 +36,77 @@ public class EntityCushion extends Entity
     }
 
     /**
-     * @param worldIn
+     * Constructor for creation, don't delete.
+     * @param worldIn the world.
      */
-    public EntityCushion(World worldIn) {
+    public EntitySitable(World worldIn)
+    {
         this(worldIn, 0);
     }
-    
-    
-    @Override
-    protected boolean canBeRidden(Entity entityIn) {
+
+        @Override
+    protected boolean canBeRidden(Entity entityIn)
+    {
         return !citizenSitting;
     }
 
     @Override
-    protected boolean canFitPassenger(Entity passenger) {
+    protected boolean canFitPassenger(Entity passenger)
+    {
         return true;
     }
 
     @Override
-    public double getMountedYOffset() {
+    public double getMountedYOffset()
+    {
         return mountedYOffset;
     }
 
     @Override
-    public void onEntityUpdate() {
+    public void onEntityUpdate()
+    {
         super.onEntityUpdate();
     }
 
     @Override
-    protected void removePassenger(Entity passenger) {
+    protected void removePassenger(Entity passenger)
+    {
         super.removePassenger(passenger);
         citizenSitting = false;
         setDead();
     }
+
     @Override
-    public boolean canBePushed() {
+    public boolean canBePushed()
+    {
         return false;
     }
 
     @Override
-    protected void entityInit() {
+    protected void entityInit()
+    {
     }
 
     @Override
-    protected void readEntityFromNBT(NBTTagCompound tagCompund) {
+    protected void readEntityFromNBT(@NotNull final NBTTagCompound tagCompund)
+    {
         mountedYOffset = tagCompund.getDouble("height");
     }
 
     @Override
-    protected void writeEntityToNBT(NBTTagCompound tagCompound) {
+    protected void writeEntityToNBT(@NotNull final NBTTagCompound tagCompound)
+    {
         tagCompound.setDouble("height", mountedYOffset);
     }
-    
+
     /**
-     * call to tell this entity is being riden.
+     * Call to tell this entity is being ridden.
      */
     public void setSeatTaken()
     {
         citizenSitting = true;
     }
-    
+
     /**
      * Indicates if the seat is being used or not.
      *

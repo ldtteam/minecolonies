@@ -38,7 +38,7 @@ public abstract class AbstractBlockSlab<B extends AbstractBlockSlab<B>> extends 
     @Override
     public void registerItemBlock(final IForgeRegistry<Item> registry)
     {
-        /**
+        /*
          * Ignore, we do our own soup.
          */
     }
@@ -64,6 +64,7 @@ public abstract class AbstractBlockSlab<B extends AbstractBlockSlab<B>> extends 
     /**
      * Convert the given metadata into a BlockState for this Block
      */
+    @NotNull
     @Override
     public IBlockState getStateFromMeta(final int meta)
     {

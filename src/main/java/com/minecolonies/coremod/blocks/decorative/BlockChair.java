@@ -11,20 +11,25 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 
 /**
- * Block that renders as a chair
- *
+ * Block that renders as a chair.
  */
-public class BlockChair extends  AbstractBlockMinecoloniesSeat<BlockChair>
+public class BlockChair extends AbstractBlockMinecoloniesSeat<BlockChair>
 {
 
-    /** Name of the block */
+    /**
+     * Name of the block.
+     */
     public static final String BLOCK_PREFIX = "blockchair";
 
     /**
@@ -45,16 +50,12 @@ public class BlockChair extends  AbstractBlockMinecoloniesSeat<BlockChair>
     /**
      * The direction the block is facing.
      */
-    public static final  PropertyDirection FACING     = BlockHorizontal.FACING;
+    public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
     /**
-     *
+     * Bounding box of the chair.
      */
-    public BlockChair()
-    {
-        super(Material.WOOD);
-        init(BLOCK_PREFIX);
-    }
+    private static final AxisAlignedBB CHAIR_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.5D, 1.0D);
 
     /**
      * @param name name of the localized name of the block.
@@ -67,6 +68,7 @@ public class BlockChair extends  AbstractBlockMinecoloniesSeat<BlockChair>
 
     /**
      * Defines all required information to register block to mine craft.
+     *
      * @param name name of the localized name of the block.
      */
     private void init(final String name)
@@ -81,7 +83,6 @@ public class BlockChair extends  AbstractBlockMinecoloniesSeat<BlockChair>
         setLightOpacity(LIGHT_OPACITY);
     }
 
-
     @Override
     public boolean isOpaqueCube(final IBlockState state)
     {
@@ -89,6 +90,7 @@ public class BlockChair extends  AbstractBlockMinecoloniesSeat<BlockChair>
     }
 
     /**
+     * Getter for the name of the block.
      * @return returns name of the block prefix.
      */
     public String getName()
@@ -98,12 +100,10 @@ public class BlockChair extends  AbstractBlockMinecoloniesSeat<BlockChair>
 
     @SideOnly(Side.CLIENT)
     @Override
-    public boolean shouldSideBeRendered(final IBlockState blockState, final IBlockAccess blockAccess, final BlockPos pos,
-            final EnumFacing side)
+    public boolean shouldSideBeRendered(final IBlockState blockState, @NotNull final IBlockAccess blockAccess, @NotNull final BlockPos pos, final EnumFacing side)
     {
         return true;
     }
-
 
     @Override
     public boolean canBeConnectedTo(final IBlockAccess world, final BlockPos pos, final EnumFacing facing)
@@ -111,6 +111,19 @@ public class BlockChair extends  AbstractBlockMinecoloniesSeat<BlockChair>
         return false;
     }
 
+    @NotNull
+    @Override
+    public AxisAlignedBB getSelectedBoundingBox(final IBlockState state, @NotNull final World worldIn, @NotNull final BlockPos pos)
+    {
+        return CHAIR_AABB;
+    }
+
+    @Nullable
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(final IBlockState blockState, @NotNull final IBlockAccess worldIn, @NotNull final BlockPos pos)
+    {
+        return CHAIR_AABB;
+    }
 
     @Override
     public boolean isSeatBeingUsed()
