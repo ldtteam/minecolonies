@@ -115,7 +115,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
           new AITarget(IDLE, START_WORKING, true),
           new AITarget(this::checkIfExecute, true, this::getState),
           new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
-          new AITarget(PICK_UP, true, this::pickUpMaterial)
+          new AITarget(PICK_UP, false, this::pickUpMaterial)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
                                   + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());

@@ -29,6 +29,11 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends AbstractEntityAISkill<J>
 {
     /**
+     * Base xp gain for the basic xp.
+     */
+    protected static final double BASE_XP_GAIN = 2;
+
+    /**
      * Retrieve smeltable if more than a certain amount.
      */
     private static final int RETRIEVE_SMELTABLE_IF_MORE_THAN = 10;

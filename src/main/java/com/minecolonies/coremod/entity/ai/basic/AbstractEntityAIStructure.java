@@ -835,6 +835,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 {
                     return false;
                 }
+                else
+                {
+                    incrementActionsDoneAndDecSaturation();
+                }
             }
         }
 
