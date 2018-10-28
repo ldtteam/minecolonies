@@ -204,13 +204,13 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
                 if (hasGathered)
                 {
+                    job.setReturning(true);
                     this.hasGathered = false;
                     building.alterPickUpPriority(1);
                 }
                 else
                 {
                     building.alterPickUpPriority(-1);
-
                     if (job.getCurrentTask() == null)
                     {
                         gatherTarget = null;
@@ -483,6 +483,17 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return DELIVERY;
         }
 
+        final TileEntity tileEntity = world.getTileEntity(buildingToDeliver.getInDimensionLocation());
+
+        if (!(tileEntity instanceof TileEntityColonyBuilding))
+        {
+            return DELIVERY;
+        }
+
+        final TileEntityColonyBuilding tileEntityColonyBuilding = (TileEntityColonyBuilding) tileEntity;
+        final AbstractBuildingContainer building = tileEntityColonyBuilding.getBuilding();
+
+        boolean success = true;
         final InvWrapper workerInventory = new InvWrapper(worker.getInventoryCitizen());
         for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
         {
@@ -492,41 +503,34 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 continue;
             }
 
-
-            final TileEntity tileEntity = world.getTileEntity(buildingToDeliver.getInDimensionLocation());
             final ItemStack insertionResultStack;
 
-            if (tileEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) tileEntity).getBuilding() instanceof AbstractBuildingWorker)
+            if (tileEntityColonyBuilding.getBuilding() instanceof AbstractBuildingWorker)
             {
-                final AbstractBuildingContainer building = ((TileEntityColonyBuilding) tileEntity).getBuilding();
                 building.alterPickUpPriority(1);
                 insertionResultStack = InventoryUtils.forceItemStackToItemHandler(
-                  new InvWrapper((TileEntityColonyBuilding) tileEntity), stack, ((AbstractBuildingWorker) building)::isItemStackInRequest);
+                  tileEntityColonyBuilding.getBuilding().getCapability(ITEM_HANDLER_CAPABILITY, null), stack, ((AbstractBuildingWorker) building)::isItemStackInRequest);
             }
             else
             {
-                insertionResultStack = InventoryUtils.forceItemStackToItemHandler(new InvWrapper((TileEntityColonyBuilding) tileEntity), stack, itemStack -> false);
+                insertionResultStack = InventoryUtils.forceItemStackToItemHandler(tileEntityColonyBuilding.getBuilding().getCapability(ITEM_HANDLER_CAPABILITY, null), stack, itemStack -> false);
             }
 
             if (!ItemStackUtils.isEmpty(insertionResultStack))
             {
+                success = false;
                 if (ItemStack.areItemStacksEqual(insertionResultStack, stack))
                 {
                     //same stack, we could not deliver ?
-                    if (buildingToDeliver instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) tileEntity).getBuilding() instanceof AbstractBuildingWorker)
+                    if (building instanceof AbstractBuildingWorker)
                     {
                         chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL,
-                          ((AbstractBuildingWorker) ((TileEntityColonyBuilding) tileEntity).getBuilding()).getMainCitizen().getName());
+                          building.getMainCitizen().getName());
                     }
                     else if (buildingToDeliver instanceof TileEntityColonyBuilding)
                     {
                         chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL,
-                          new TextComponentString(" :" + ((TileEntityColonyBuilding) tileEntity).getBuilding().getSchematicName()));
-                    }
-                    else
-                    {
-                        chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL,
-                          new TextComponentString(buildingToDeliver.getInDimensionLocation().toString()));
+                          new TextComponentString(" :" + building.getSchematicName()));
                     }
                 }
 
@@ -542,7 +546,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         job.finishRequest(true);
 
         setDelay(WAIT_DELAY);
-        return START_WORKING;
+        return success ? START_WORKING : DUMPING;
     }
 
     /**

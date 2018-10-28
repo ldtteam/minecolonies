@@ -173,15 +173,16 @@ public final class BlockPosUtil
      * this checks that you are not in liquid.  Will check for all liquids, even
      * those from other mods before TP
      *
-     * @param blockPos for the current block LOC
      * @param sender   uses the player to get the world
+     * @param blockPos for the current block LOC
      * @return isSafe true=safe false=water or lava
      */
-    public static boolean isPositionSafe(@NotNull final ICommandSender sender, final BlockPos blockPos)
+    public static boolean isPositionSafe(@NotNull final World sender, final BlockPos blockPos)
     {
-        return sender.getEntityWorld().getBlockState(blockPos).getBlock() != Blocks.AIR
-                 && !sender.getEntityWorld().getBlockState(blockPos).getMaterial().isLiquid()
-                 && !sender.getEntityWorld().getBlockState(blockPos.up()).getMaterial().isLiquid();
+        return sender.getBlockState(blockPos).getBlock() != Blocks.AIR
+                 && !sender.getBlockState(blockPos).getMaterial().isLiquid()
+                 && !sender.getBlockState(blockPos.up()).getMaterial().isLiquid()
+          && sender.getWorldBorder().contains(blockPos);
     }
 
     /**
@@ -216,6 +217,11 @@ public final class BlockPosUtil
                 foundland = tempPos;
             }
             mid = (bot + top) / 2;
+        }
+
+        if (world.getBlockState(tempPos).getMaterial().isSolid())
+        {
+            return foundland.up();
         }
 
         return foundland;
@@ -274,11 +280,11 @@ public final class BlockPosUtil
     }
 
     /**
-     * Squared distance between two BlockPos.
+     * X+Y Distance between two BlockPos.
      *
      * @param block1 position one.
      * @param block2 position two.
-     * @return squared distance.
+     * @return X+Y distance
      */
     public static long getDistance2D(@NotNull final BlockPos block1, @NotNull final BlockPos block2)
     {
@@ -452,7 +458,7 @@ public final class BlockPosUtil
      * @return returns BlockPos position with air above.
      */
     @Nullable
-    private static BlockPos getFloor(@NotNull final BlockPos position, final int depth, @NotNull final World world)
+    public static BlockPos getFloor(@NotNull final BlockPos position, final int depth, @NotNull final World world)
     {
         if (depth > MAX_DEPTH)
         {

@@ -202,7 +202,7 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
         }
         else
         {
-            final Colony colony = ColonyManager.getColony(world, buildPos);
+            final Colony colony = ColonyManager.getColonyByPosFromWorld(world, buildPos);
             if (colony == null)
             {
                 Log.getLogger().info("No colony for " + player.getName());
@@ -256,6 +256,11 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
                     citizen.setHomeBuilding(building);
                     building.assignCitizen(citizen);
                 }
+            }
+
+            if (building instanceof BuildingTownHall)
+            {
+                colony.getBuildingManager().setTownHall((BuildingTownHall) building);
             }
 
             colony.getWorkManager().addWorkOrder(new WorkOrderBuildRemoval(oldBuilding, oldBuilding.getBuildingLevel()), false);

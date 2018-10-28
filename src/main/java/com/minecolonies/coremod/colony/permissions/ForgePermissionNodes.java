@@ -48,7 +48,8 @@ public enum ForgePermissionNodes
     SHEEP_KILL("com.minecolonies.coremod.SheepKill", DefaultPermissionLevel.OP, "Can SheepKill...."),
     SCAN("com.minecolonies.coremod.Scan", DefaultPermissionLevel.OP, "Can scan structures."),
     CLAIM("com.minecolonies.coremod.Claim", DefaultPermissionLevel.OP, "Can claim structures."),
-    LOOT_GEN("com.minecolonies.coremod.lootGen", DefaultPermissionLevel.OP, "Can lootGen minecolonies building blocks.")
+    LOOT_GEN("com.minecolonies.coremod.lootGen", DefaultPermissionLevel.OP, "Can lootGen minecolonies building blocks."),
+    LOAD_BACKUP("com.minecolonies.coremod.loadBackup", DefaultPermissionLevel.OP, "Can load colony backups, should be OP only!")
     ;
 
     @NotNull private final String nodeName;

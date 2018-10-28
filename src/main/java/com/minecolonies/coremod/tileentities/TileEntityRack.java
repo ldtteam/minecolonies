@@ -86,6 +86,11 @@ public class TileEntityRack extends TileEntity
     };
 
     /**
+     * The combined inv wrapper for double racks.
+     */
+    private CombinedInvWrapper combinedHandler;
+
+    /**
      * Check if a certain itemstack is present in the inventory.
      * This method checks the content list, it is therefore extremely fast.
      *
@@ -117,9 +122,9 @@ public class TileEntityRack extends TileEntity
     public int getFreeSlots()
     {
         int freeSlots = inventory.getSlots();
-        for (final int itemAmount : content.values())
+        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
         {
-            final double slotsNeeded = (double) itemAmount / Constants.STACKSIZE;
+            final double slotsNeeded = (double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize();
             freeSlots -= (int) Math.ceil(slotsNeeded);
         }
         return freeSlots;
@@ -509,13 +514,29 @@ public class TileEntityRack extends TileEntity
             }
             else if (getOtherChest() != null)
             {
-                if (main && getOtherChest() != null)
+                if (main)
                 {
-                    return (T) new CombinedInvWrapper(inventory, getOtherChest().inventory);
+                    if (combinedHandler == null)
+                    {
+                        combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().inventory);
+                    }
+                    return (T) combinedHandler;
                 }
                 else
                 {
-                    return (T) new CombinedInvWrapper(getOtherChest().inventory, inventory);
+                    if (getOtherChest().main)
+                    {
+                        return (T) getOtherChest().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                    }
+                    else
+                    {
+                        this.main = true;
+                        if (combinedHandler == null)
+                        {
+                            combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().inventory);
+                        }
+                        markDirty();
+                    }
                 }
             }
         }
@@ -539,8 +560,16 @@ public class TileEntityRack extends TileEntity
      */
     public void setNeighbor(final BlockPos neighbor)
     {
-        this.single = neighbor == null;
-        this.relativeNeighbor = this.pos.subtract(neighbor);
-        markDirty();
+        if ((single && neighbor != null) || (!single && neighbor == null))
+        {
+            single = neighbor == null;
+            markDirty();
+        }
+
+        if ((this.relativeNeighbor == null && neighbor != null) || (this.relativeNeighbor != null && neighbor != null && !this.relativeNeighbor.equals(this.pos.subtract(neighbor))))
+        {
+            this.relativeNeighbor = this.pos.subtract(neighbor);
+            markDirty();
+        }
     }
 }

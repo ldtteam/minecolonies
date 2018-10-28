@@ -45,6 +45,11 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
     private int quantity;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty constructor used when registering the message.
      */
     public TransferItemsToCitizenRequestMessage()
@@ -67,6 +72,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
         this.citizenId = citizenDataView.getId();
         this.itemStack = itemStack;
         this.quantity = quantity;
+        this.dimension = ColonyManager.getColonyView(colonyId).getDimension();
     }
 
     @Override
@@ -76,6 +82,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
         citizenId = buf.readInt();
         itemStack = ByteBufUtils.readItemStack(buf);
         quantity = buf.readInt();
+        dimension = buf.readInt();
     }
 
     @Override
@@ -85,12 +92,13 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
         buf.writeInt(citizenId);
         ByteBufUtils.writeItemStack(buf, itemStack);
         buf.writeInt(quantity);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final TransferItemsToCitizenRequestMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null)
         {
             Log.getLogger().warn("TransferItemsRequestMessage colony is null");

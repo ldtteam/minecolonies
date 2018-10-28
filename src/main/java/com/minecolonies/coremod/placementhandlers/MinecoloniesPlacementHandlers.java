@@ -62,6 +62,7 @@ public final class MinecoloniesPlacementHandlers
         PlacementHandlers.handlers.add(new WayPointBlockPlacementHandler());
         PlacementHandlers.handlers.add(new RackPlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.FallingBlockPlacementHandler());
+        PlacementHandlers.handlers.add(new PlacementHandlers.BannerPlacementHandler());
         PlacementHandlers.handlers.add(new GeneralBlockPlacementHandler());
     }
 

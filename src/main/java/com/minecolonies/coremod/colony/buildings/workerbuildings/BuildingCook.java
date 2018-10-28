@@ -74,6 +74,18 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         return COOK_DESC;
     }
 
+    @Override
+    public boolean canCraftComplexRecipes()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean canWorkDuringTheRain()
+    {
+        return true;
+    }
+
     /**
      * BuildingCook View.
      */

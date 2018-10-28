@@ -175,7 +175,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
         //If the world is server, open the inventory of the field.
         if (!worldIn.isRemote)
         {
-            @Nullable final Colony colony = ColonyManager.getColony(worldIn, pos);
+            @Nullable final Colony colony = ColonyManager.getColonyByPosFromWorld(worldIn, pos);
             if (colony != null)
             {
                 playerIn.openGui(MineColonies.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
@@ -217,7 +217,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
 
         if (placer instanceof EntityPlayer)
         {
-            @Nullable final Colony colony = ColonyManager.getColony(worldIn, pos);
+            @Nullable final Colony colony = ColonyManager.getColonyByPosFromWorld(worldIn, pos);
 
             if (colony != null)
             {
@@ -258,7 +258,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
      */
     private static void notifyColonyAboutDestruction(final World worldIn, final BlockPos pos)
     {
-        @Nullable final Colony colony = ColonyManager.getColony(worldIn, pos);
+        @Nullable final Colony colony = ColonyManager.getColonyByPosFromWorld(worldIn, pos);
         if (colony != null)
         {
             colony.getBuildingManager().removeField(pos);

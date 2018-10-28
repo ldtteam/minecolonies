@@ -109,8 +109,7 @@ public final class TemplateRenderHandler
                 return tessellator;
             }).draw(rotation, mirror, drawingOffset, TemplateUtils.getPrimaryBlockOffset(template));
 
-
-            template.blocks.stream().filter(blockInfo -> blockInfo.tileentityData != null).map(b -> constructTileEntities(b, pos)).filter(Objects::nonNull).forEach(tileEntity -> TileEntityRendererDispatcher.instance.render(tileEntity, partialTicks, 0));
+            template.blocks.stream().filter(blockInfo -> blockInfo.tileentityData != null).map(b -> constructTileEntities(b, pos.subtract(TemplateUtils.getPrimaryBlockOffset(template)))).filter(Objects::nonNull).forEach(tileEntity -> TileEntityRendererDispatcher.instance.render(tileEntity, partialTicks, 0));
         }
         catch (ExecutionException e)
         {
@@ -127,7 +126,7 @@ public final class TemplateRenderHandler
             return null;
         }
 
-        entity.setPos(info.pos.add(pos));
+        entity.setPos(pos.add(info.pos));
         return entity;
     }
 

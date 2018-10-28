@@ -96,7 +96,7 @@ public class EntityAISleep extends EntityAIBase
                         final World world = citizen.world;
                         IBlockState state = world.getBlockState(pos);
                         state = state.getBlock().getExtendedState(state, world, pos);
-                        if (state.getBlock() instanceof BlockBed
+                        if (state.getBlock() == Blocks.BED
                               && !state.getValue(BlockBed.OCCUPIED)
                               && state.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
                         {
@@ -132,14 +132,18 @@ public class EntityAISleep extends EntityAIBase
         if (usedBed != null)
         {
             final IBlockState state = citizen.world.getBlockState(usedBed);
-            if (state.getBlock() instanceof BlockBed)
+            if (state.getBlock() == Blocks.BED)
             {
                 final IBlockState headState = citizen.world.getBlockState(usedBed);
                 citizen.world.setBlockState(usedBed, headState.withProperty(BlockBed.OCCUPIED, false), 0x03);
 
                 final BlockPos feetPos = usedBed.offset(headState.getValue(BlockBed.FACING).getOpposite());
                 final IBlockState feetState = citizen.world.getBlockState(feetPos);
-                citizen.world.setBlockState(feetPos, feetState.withProperty(BlockBed.OCCUPIED, true), 0x03);
+
+                if (feetState.getBlock() == Blocks.BED)
+                {
+                    citizen.world.setBlockState(feetPos, feetState.withProperty(BlockBed.OCCUPIED, false), 0x03);
+                }
             }
             usedBed = null;
 

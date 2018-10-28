@@ -69,6 +69,31 @@ public class RecipeStorage implements IRecipeStorage
     }
 
     @Override
+    public List<ItemStorage> getCleanedInput()
+    {
+        final List<ItemStorage> items = new ArrayList<>();
+
+        for(final ItemStack stack: input)
+        {
+            if(ItemStackUtils.isEmpty(stack))
+            {
+                continue;
+            }
+
+            ItemStorage storage = new ItemStorage(stack);
+            if(items.contains(storage))
+            {
+                final int index = items.indexOf(storage);
+                final ItemStorage tempStorage = items.remove(index);
+                tempStorage.setAmount(tempStorage.getAmount() + storage.getAmount());
+                storage = tempStorage;
+            }
+            items.add(storage);
+        }
+        return items;
+    }
+
+    @Override
     public ItemStack getPrimaryOutput()
     {
         return primaryOutput;
@@ -95,20 +120,7 @@ public class RecipeStorage implements IRecipeStorage
     @Override
     public boolean canFullFillRecipe(@NotNull final IItemHandler... inventories)
     {
-        final List<ItemStorage> items = new ArrayList<>();
-
-        for(final ItemStack stack: input)
-        {
-            ItemStorage storage = new ItemStorage(stack);
-            if(items.contains(storage))
-            {
-                final int index = items.indexOf(storage);
-                final ItemStorage tempStorage = items.remove(index);
-                tempStorage.setAmount(tempStorage.getAmount() + storage.getAmount());
-                storage = tempStorage;
-            }
-            items.add(storage);
-        }
+        final List<ItemStorage> items = getCleanedInput();
 
         for (final ItemStorage stack : items)
         {
@@ -120,7 +132,8 @@ public class RecipeStorage implements IRecipeStorage
 
                 if (hasStack)
                 {
-                    final int count = InventoryUtils.getItemCountInItemHandler(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack.getItemStack()));
+                    final int count = InventoryUtils.getItemCountInItemHandler(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack)
+                            && itemStack.isItemEqual(stack.getItemStack()));
                     if (count >= amountNeeded)
                     {
                         break;

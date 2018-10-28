@@ -213,6 +213,10 @@ public class CitizenManager implements ICitizenManager
             colony.getStatsManager().checkAchievements();
             markCitizensDirty();
         }
+        else
+        {
+            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.citizens.nospace");
+        }
     }
 
     @Override

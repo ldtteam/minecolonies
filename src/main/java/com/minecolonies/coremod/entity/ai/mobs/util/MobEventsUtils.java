@@ -6,6 +6,8 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -49,7 +51,7 @@ public final class MobEventsUtils
             return;
         }
 
-        final BlockPos targetSpawnPoint = calculateSpawnLocation(world, colony);
+        BlockPos targetSpawnPoint = calculateSpawnLocation(world, colony);
         Log.getLogger().info("[BarbarianEvent]: Spawning: " + targetSpawnPoint.getX() + " " + targetSpawnPoint.getZ());
         if (targetSpawnPoint.equals(colony.getCenter()))
         {
@@ -84,9 +86,35 @@ public final class MobEventsUtils
 
         colony.setNightsSinceLastRaid(0);
 
+        if (BlockPosUtil.getFloor(targetSpawnPoint, 0, world) == null)
+        {
+            targetSpawnPoint = new BlockPos(targetSpawnPoint.getX(), colony.getCenter().getY(), targetSpawnPoint.getZ());
+            buildPlatform(targetSpawnPoint, world);
+        }
+
         BarbarianSpawnUtils.spawn(BARBARIAN, horde.numberOfBarbarians, targetSpawnPoint, world);
         BarbarianSpawnUtils.spawn(ARCHER, horde.numberOfArchers, targetSpawnPoint, world);
         BarbarianSpawnUtils.spawn(CHIEF, horde.numberOfChiefs, targetSpawnPoint, world);
+    }
+
+    private static void buildPlatform(final BlockPos target, final World world)
+    {
+        final IBlockState platformBlock = Blocks.WOODEN_SLAB.getDefaultState();
+
+        for (int z = 0; z < 5; z++)
+        {
+            for (int x = 0; x < 5; x++)
+            {
+                int sum = x * x + z * z;
+                if (sum < (5 * 5) / 4)
+                {
+                    world.setBlockState(new BlockPos(target.getX() + x, target.getY()-1, target.getZ() + z), platformBlock);
+                    world.setBlockState(new BlockPos(target.getX() + x, target.getY()-1, target.getZ() -z), platformBlock);
+                    world.setBlockState(new BlockPos(target.getX() -x, target.getY()-1, target.getZ() + z), platformBlock);
+                    world.setBlockState(new BlockPos(target.getX() -x, target.getY()-1, target.getZ() -z), platformBlock);
+                }
+            }
+        }
     }
 
     /**

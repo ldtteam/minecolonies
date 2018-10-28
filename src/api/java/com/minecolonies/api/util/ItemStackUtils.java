@@ -2,6 +2,7 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
+import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.entity.Entity;
@@ -68,6 +69,11 @@ public final class ItemStackUtils
      * The compound id for fortune enchantment.
      */
     private static final int FORTUNE_ENCHANT_ID = 35;
+
+    /**
+     * The compound id for Silk Touch enchantment.
+     */
+    private static final int SILK_TOUCH_ENCHANT_ID = 33;
 
     /**
      * Predicate describing food.
@@ -283,6 +289,10 @@ public final class ItemStackUtils
                 final ItemSword itemSword = (ItemSword) stack.getItem();
                 return getToolLevel(itemSword.getToolMaterialName());
             }
+            else if (Compatibility.isTinkersWeapon(stack))
+            {
+                return Compatibility.getToolLevel(stack);
+            }
         }
         else if (ToolType.HELMET.equals(toolType)
                 || ToolType.BOOTS.equals(toolType)
@@ -496,6 +506,30 @@ public final class ItemStackUtils
             }
         }
         return fortune;
+    }
+
+
+    public static boolean hasSilkTouch(@Nullable final ItemStack tool)
+    {
+        if (tool == null)
+        {
+            return false;
+        }
+        boolean hasSilk = false;
+        if (tool.isItemEnchanted())
+        {
+            final NBTTagList t = tool.getEnchantmentTagList();
+
+            for (int i = 0; i < t.tagCount(); i++)
+            {
+                final int id = t.getCompoundTagAt(i).getShort(NBT_TAG_ENCHANT_ID);
+                if (id == SILK_TOUCH_ENCHANT_ID)
+                {
+                    hasSilk = true;
+                }
+            }
+        }
+        return hasSilk;
     }
 
     /**

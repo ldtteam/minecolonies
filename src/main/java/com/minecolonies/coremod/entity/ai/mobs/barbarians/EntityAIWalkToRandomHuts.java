@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.mobs.barbarians;
 
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.BarbarianConstants.*;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
  * Barbarian Pathing Class
@@ -33,7 +35,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     /**
      * All directions.
      */
-    private final List<EnumFacing> directions = Arrays.asList(EnumFacing.HORIZONTALS);
+    private final List<EnumFacing> directions = Arrays.asList(Arrays.copyOf(EnumFacing.HORIZONTALS, 4));
 
     /**
      * The world.
@@ -73,7 +75,17 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     /**
      * Time the entity is at the same position already.
      */
-    private int stuckTime = 0;
+    private int stuckTime = 1;
+
+    /**
+     * Time the entity is not stuck.
+     */
+    private int notStuckTime = 0;
+
+    /**
+     * The amount of passed ticks.
+     */
+    private int passedTicks = 0;
 
     /**
      * Constructor for AI
@@ -141,23 +153,56 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
      */
     private boolean isEntityAtSiteWithMove(@NotNull final BlockPos site, final int range)
     {
+        passedTicks++;
         if (proxy == null)
         {
             proxy = new GeneralEntityWalkToProxy(entity);
         }
 
+        if (passedTicks % TICKS_SECOND != 0)
+        {
+            lastPos = entity.getPosition();
+            return proxy.walkToBlock(site, range, true);
+        }
+        passedTicks = 0;
+
         if (new AxisAlignedBB(entity.getPosition()).expand(1, 1, 1).expand(-1, -1, -1)
               .intersects(new AxisAlignedBB(lastPos)))
         {
-            stuckTime++;
+            final BlockPos front = entity.getPosition().down().offset(entity.getHorizontalFacing());
+            final AxisAlignedBB collisionBox = world.getBlockState(entity.getPosition()).getCollisionBoundingBox(world, entity.getPosition());
+            if (!world.getBlockState(front).getMaterial().isSolid()
+                  || world.getBlockState(entity.getPosition().up().offset(entity.getHorizontalFacing())).getMaterial().isSolid()
+                  || (collisionBox != null && collisionBox.maxY > 1.0))
+            {
+                Log.getLogger().warn("Stuck for " + stuckTime);
+                stuckTime++;
+            }
+            else
+            {
+                Log.getLogger().warn("Not stuck! " + notStuckTime + entity.getPosition() );
+                notStuckTime++;
+            }
         }
         else
         {
+            Log.getLogger().warn("Not stuck! " + notStuckTime + entity.getPosition() );
             stuckTime = 0;
+            notStuckTime++;
         }
 
-        if (stuckTime > EVERY_X_TICKS)
+        if (notStuckTime > 1)
         {
+            Log.getLogger().warn("Reset!");
+            entity.setStuckCounter(0);
+            entity.setLadderCounter(0);
+            notStuckTime = 0;
+            return true;
+        }
+
+        if (stuckTime > 1)
+        {
+            Log.getLogger().warn("Stuck!");
             entity.getNavigator().clearPath();
             stuckTime = 0;
             entity.setStuckCounter(entity.getStuckCounter() + 1);
@@ -165,6 +210,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
 
             if (!world.getBlockState(front).getMaterial().isSolid())
             {
+                notStuckTime = 0;
                 world.setBlockState(front, Blocks.COBBLESTONE.getDefaultState());
             }
 
@@ -172,9 +218,8 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
             {
                 Collections.shuffle(directions);
 
-                entity.setStuckCounter(0);
                 entity.setLadderCounter(entity.getLadderCounter() + 1);
-
+                notStuckTime = 0;
                 final IBlockState ladderHere = world.getBlockState(entity.getPosition());
                 final IBlockState ladderUp = world.getBlockState(entity.getPosition().up());
                 if (entity.getLadderCounter() <= LADDERS_TO_PLACE || random.nextBoolean())

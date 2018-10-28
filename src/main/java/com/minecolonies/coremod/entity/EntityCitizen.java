@@ -30,10 +30,12 @@ import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIOpenDoor;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.ai.EntityAIWatchClosest2;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemFood;
@@ -159,6 +161,12 @@ public class EntityCitizen extends AbstractEntityCitizen
      * Indicate if the citizen is mourning or not.
      */
     private boolean mourning = false;
+
+    /**
+     * Indicates if the citizen is hiding from the rain or not.
+     */
+    private boolean hidingFromRain = false;
+
     /**
      * Citizen constructor.
      *
@@ -212,7 +220,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.tasks.addTask(priority, new EntityAIOpenFenceGate(this, true));
         this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, EntityPlayer.class, WATCH_CLOSEST2, 1.0F));
         this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
-        this.tasks.addTask(++priority, new EntityAICitizenWander(this, DEFAULT_SPEED));
+        this.tasks.addTask(++priority, new EntityAICitizenWander(this, DEFAULT_SPEED, 1.0D));
         this.tasks.addTask(++priority, new EntityAIWatchClosest(this, EntityLiving.class, WATCH_CLOSEST));
         this.tasks.addTask(++priority, new EntityAIMournCitizen(this, DEFAULT_SPEED));
 
@@ -440,7 +448,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Nullable
     public CitizenData getCitizenData()
     {
-        if (citizenData == null && citizenColonyHandler.getColony() != null)
+        if (citizenData == null && citizenColonyHandler != null && citizenColonyHandler.getColony() != null)
         {
             final CitizenData data = citizenColonyHandler.getColony().getCitizenManager().getCitizen(citizenId);
             if (data != null)
@@ -532,10 +540,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         if (compound.hasKey(TAG_MOURNING))
         {
             mourning = compound.getBoolean(TAG_MOURNING);
-        }
-        else
-        {
-            mourning = false;
         }
 
         if (compound.hasKey(TAG_HELD_ITEM_SLOT) || compound.hasKey(TAG_OFFHAND_HELD_ITEM_SLOT))
@@ -739,6 +743,57 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
+     * Applies healthmodifiers for Guards based on level
+     */
+    public void increaseHPForGuards()
+    {
+        if (getCitizenData() != null)
+        {
+            // Remove old mod first
+            removeHealthModifier(GUARD_HEALTH_MOD_LEVEL_NAME);
+
+            // +1 Heart on levels 6,12,18,25,34,43,54 ...
+            final AttributeModifier healthModLevel =
+              new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME, (int) (getCitizenData().getLevel() / (5.0 + getCitizenData().getLevel() / 20.0) * 2), 0);
+            getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(healthModLevel);
+        }
+    }
+
+    /**
+     * Remove all healthmodifiers from a citizen
+     */
+    public void removeAllHealthModifiers()
+    {
+        for (final AttributeModifier mod : getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getModifiers())
+        {
+            getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(mod);
+        }
+        if (getHealth() > getMaxHealth())
+        {
+            setHealth(getMaxHealth());
+        }
+    }
+
+    /**
+     * Remove healthmodifier by name.
+     * @param modifierName Name of the modifier to remove, see e.g. GUARD_HEALTH_MOD_LEVEL_NAME
+     */
+    public void removeHealthModifier(final String modifierName)
+    {
+        for (final AttributeModifier mod : getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getModifiers())
+        {
+            if (mod.getName().equals(modifierName))
+            {
+                getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(mod);
+            }
+        }
+        if (getHealth() > getMaxHealth())
+        {
+            setHealth(getMaxHealth());
+        }
+    }
+
+    /**
      * Getter of the dataview, the clientside representation of the citizen.
      *
      * @return the view.
@@ -828,54 +883,64 @@ public class EntityCitizen extends AbstractEntityCitizen
     @NotNull
     public DesiredActivity getDesiredActivity()
     {
+        if (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard)
+        {
+            return DesiredActivity.WORK;
+        }
+
         if (getCitizenColonyHandler().getColony() != null && (getCitizenColonyHandler().getColony().isMourning() && mourning))
         {
             return DesiredActivity.MOURN;
         }
 
-        if (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard & (getCitizenColonyHandler().getColony() != null && !getCitizenColonyHandler().getColony().isMourning()))
-        {
-            return DesiredActivity.WORK;
-        }
-
-        if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (!getCitizenColonyHandler().getColony().getBarbManager().getHorde((WorldServer) world).isEmpty()) && !(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
+        if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (!getCitizenColonyHandler().getColony().getBarbManager().getHorde((WorldServer) world).isEmpty()))
         {
             return DesiredActivity.SLEEP;
         }
 
-        if (!CompatibilityUtils.getWorld(this).isDaytime())
+        // Random delay of 60 seconds to detect a new day/night/rain/sun
+        if (Colony.shallUpdate(world, TICKS_SECOND * SECONDS_A_MINUTE))
         {
-            if (isDay && citizenData != null)
+            if (!CompatibilityUtils.getWorld(this).isDaytime())
             {
-                isDay = false;
-                final double decreaseBy = citizenColonyHandler.getPerBuildingFoodCost() * 2;
-                citizenData.decreaseSaturation(decreaseBy);
-                citizenData.markDirty();
+                if (isDay && citizenData != null)
+                {
+                    isDay = false;
+                    final double decreaseBy = citizenColonyHandler.getPerBuildingFoodCost() * 2;
+                    citizenData.decreaseSaturation(decreaseBy);
+                    citizenData.markDirty();
+                }
+
+                citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.sleeping"));
+                return DesiredActivity.SLEEP;
             }
 
-            citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.sleeping"));
-            return DesiredActivity.SLEEP;
-        }
 
-        if (citizenSleepHandler.isAsleep())
-        {
-            citizenSleepHandler.onWakeUp();
-        }
-        isDay = true;
-
-        if (CompatibilityUtils.getWorld(this).isRaining() && !shouldWorkWhileRaining())
-        {
-            citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"), new TextComponentTranslation("com.minecolonies.coremod.status.rainStop"));
-            return DesiredActivity.IDLE;
-        }
-        else
-        {
-            if (this.getNavigator().getPath() != null && this.getNavigator().getPath().getCurrentPathLength() == 0)
+            if (citizenSleepHandler.isAsleep())
             {
-                this.getNavigator().clearPath();
+                citizenSleepHandler.onWakeUp();
             }
-            return DesiredActivity.WORK;
+            isDay = true;
+
+
+            if (CompatibilityUtils.getWorld(this).isRaining() && !shouldWorkWhileRaining())
+            {
+                hidingFromRain = true;
+                citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"),
+                  new TextComponentTranslation("com.minecolonies.coremod.status.rainStop"));
+                return DesiredActivity.IDLE;
+            }
+            else
+            {
+                hidingFromRain = false;
+                if (this.getNavigator().getPath() != null && this.getNavigator().getPath().getCurrentPathLength() == 0)
+                {
+                    this.getNavigator().clearPath();
+                }
+                return DesiredActivity.WORK;
+            }
         }
+        return isDay ? hidingFromRain ? DesiredActivity.IDLE : DesiredActivity.WORK : DesiredActivity.SLEEP;
     }
 
     /**
@@ -885,9 +950,9 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     private boolean shouldWorkWhileRaining()
     {
-        return (citizenColonyHandler.getWorkBuilding() != null && (citizenColonyHandler.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL))
-                 || Configurations.gameplay.workersAlwaysWorkInRain
-                 || (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard);
+        return Configurations.gameplay.workersAlwaysWorkInRain ||
+                 (citizenColonyHandler.getWorkBuilding() != null && citizenColonyHandler.getWorkBuilding().canWorkDuringTheRain());
+
     }
 
     /**

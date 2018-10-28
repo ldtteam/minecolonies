@@ -18,6 +18,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL;
+import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
  * Class which handles the tileEntity of our colonyBuildings.
@@ -106,7 +107,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 LanguageHandler.sendPlayersMessage(getColony().getMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL);
                 return;
             }
-            InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(new InvWrapper(inventoryCitizen), i, chest);
+            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(new InvWrapper(inventoryCitizen), i, chest.getCapability(ITEM_HANDLER_CAPABILITY, null));
         }
     }
 
@@ -148,7 +149,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     private static boolean isInRack(final ItemStack stack, final TileEntity entity, final boolean ignoreDamageValue)
     {
         return entity instanceof TileEntityRack && !((TileEntityRack) entity).isEmpty() && ((TileEntityRack) entity).hasItemStack(stack, ignoreDamageValue)
-                 && InventoryUtils.findSlotInProviderNotFullWithItem(entity, stack.getItem(), ignoreDamageValue ? -1 : stack.getItemDamage(), ItemStackUtils.getSize(stack)) != -1;
+                 && InventoryUtils.findSlotInItemHandlerNotFullWithItem(entity.getCapability(ITEM_HANDLER_CAPABILITY, null), stack);
     }
 
     /**
@@ -162,7 +163,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     private static boolean isInChest(final ItemStack stack, final TileEntity entity, final boolean ignoreDamageValue)
     {
         return entity instanceof TileEntityChest
-                 && InventoryUtils.findSlotInProviderNotFullWithItem(entity, stack.getItem(), ignoreDamageValue ? -1 : stack.getItemDamage(), ItemStackUtils.getSize(stack)) != -1;
+                 && InventoryUtils.findSlotInItemHandlerNotFullWithItem(entity.getCapability(ITEM_HANDLER_CAPABILITY, null), stack);
     }
 
     /**

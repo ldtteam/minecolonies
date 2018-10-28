@@ -282,6 +282,11 @@ public final class EntityUtils
      */
     public static boolean isLivingAtSiteWithMove(@NotNull final EntityLiving entity, final int x, final int y, final int z, final int range)
     {
+        if (x == 0 && y == 0 && z == 0)
+        {
+            return false;
+        }
+
         if (!isLivingAtSite(entity, x, y, z, TELEPORT_RANGE))
         {
             BlockPos spawnPoint =
