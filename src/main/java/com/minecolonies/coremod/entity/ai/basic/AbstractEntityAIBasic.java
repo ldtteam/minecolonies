@@ -26,7 +26,6 @@ import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
@@ -97,11 +96,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private int exceptionTimer = 1;
 
     /**
-     * The restaurant this AI usually goes to.
-     */
-    private BlockPos restaurant = null;
-
-    /**
      * Slot he is currently trying to dump.
      */
     private int slotAt = 0;
@@ -138,80 +132,71 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
             Init safety checks and transition to IDLE
            */
-          new AITarget(this::initSafetyChecks),
+          new AITarget(this::initSafetyChecks, true),
           /*
             Update chestbelt and nametag
             Will be executed every time
             and does not stop execution
            */
-          new AITarget(this::updateVisualState),
+          new AITarget(this::updateVisualState, true),
           /*
             If waitingForSomething returns true
             stop execution to wait for it.
             this keeps the current state
             (returning null would not stop execution)
            */
-          new AITarget(this::waitingForSomething, this::getState),
+          new AITarget(this::waitingForSomething, true, this::getState),
           /*
             Check if any items are needed.
             If yes, transition to NEEDS_ITEM.
             and wait for new items.
            */
           new AITarget(() ->
-          {
-              return 
-                (    getState() == NEEDS_ITEM
-                  || this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData())
-                  || this.getOwnBuilding()
-                         .hasWorkerOpenRequestsFiltered(worker.getCitizenData(),r -> !worker.getCitizenData().isRequestAsync(r.getToken()))  
-                ) && !this.isPaused();
-          }, this::waitForRequests),
+                         (getState() == NEEDS_ITEM
+                           || this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData())
+                           || this.getOwnBuilding()
+                                  .hasWorkerOpenRequestsFiltered(worker.getCitizenData(),r -> !worker.getCitizenData().isRequestAsync(r.getToken()))
+                         ) && !this.isPaused(), true, this::waitForRequests),
           /*
             Dumps inventory as long as needs be.
             If inventory is dumped, execution continues
             to resolve state.
            */
-          new AITarget(INVENTORY_FULL, this::dumpInventory),
+          new AITarget(INVENTORY_FULL, true, this::dumpInventory),
           /*
             Check if inventory has to be dumped.
            */
-          new AITarget(this::inventoryNeedsDump, INVENTORY_FULL),
+          new AITarget(this::inventoryNeedsDump, INVENTORY_FULL, true),
           /*
            * Reset to idle if no specific tool is needed.
            */
           new AITarget(() ->
-          {
-              return getState() == NEEDS_TOOL
-                  && !this.isPaused()
-                  && this.getOwnBuilding()
-                         .getOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Tool.class))
-                         .isEmpty();
-          }, IDLE),
-          /*
-           * Called when the citizen saturation falls too low.
-           */
-          new AITarget(this::shouldGetFood, this::searchForFood),
+                         getState() == NEEDS_TOOL
+                             && !this.isPaused()
+                             && this.getOwnBuilding()
+                                    .getOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Tool.class))
+                                    .isEmpty(), IDLE, true),
           /*
            * Gather a needed item.
            */
-          new AITarget(GATHERING_REQUIRED_MATERIALS, this::getNeededItem),
+          new AITarget(GATHERING_REQUIRED_MATERIALS, true, this::getNeededItem),
           /*
            * Place any non-restart regarding AITargets before this one
            * Restart AI, building etc. 
            */
-          new AITarget(this::shouldRestart, this::restart),
+          new AITarget(this::shouldRestart, true, this::restart),
           /*
            * Reset if not paused.
            */
-          new AITarget(PAUSED, () -> !this.isPaused(), () -> IDLE),
+          new AITarget(PAUSED, true, () -> !this.isPaused(), () -> IDLE),
           /*
            * Do not work if worker is paused
            */
-          new AITarget(PAUSED, this::bePaused),
+          new AITarget(PAUSED, true, this::bePaused),
           /*
            * Start paused with inventory dump
            */
-          new AITarget(this::isPaused, INVENTORY_FULL)
+          new AITarget(this::isPaused, INVENTORY_FULL, true)
         );
     }
 
@@ -276,18 +261,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     public AIState getStateAfterPickUp()
     {
         return START_WORKING;
-    }
-
-    /**
-     * Check if the citizen should get food, meaning, check if he checked for food today already and check if his saturation is decent.
-     *
-     * @return true if he should go search for food.
-     */
-    private boolean shouldGetFood()
-    {
-        return (worker.getCitizenData().getSaturation() <= HIGH_SATURATION
-                  && !job.hasCheckedForFoodToday())
-                 || worker.getCitizenData().getSaturation() <= 0;
     }
 
     @Nullable
@@ -361,38 +334,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             Log.getLogger().error("Caused by ai exception:");
             e.printStackTrace();
         }
-    }
-
-    private AIState searchForFood()
-    {
-        if (!job.hasCheckedForFoodToday())
-        {
-            if (walkToBuilding())
-            {
-                return IDLE;
-            }
-
-            job.setCheckedForFood();
-            if (isInHut(itemStack -> (!ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood) || worker.getCitizenData().getSaturation() > 0))
-            {
-                return IDLE;
-            }
-        }
-
-        if (restaurant == null)
-        {
-            final BlockPos goodCook = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBestRestaurant(worker);
-
-            if (goodCook == null)
-            {
-                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.ai.noRestaurant");
-                return getState();
-            }
-            restaurant = goodCook;
-        }
-
-        walkToBlock(restaurant);
-        return IDLE;
     }
 
     /**

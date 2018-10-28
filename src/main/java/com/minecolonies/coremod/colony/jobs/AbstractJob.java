@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.registry.JobRegistry;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
+
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -312,6 +313,23 @@ public abstract class AbstractJob
     public void onWakeUp()
     {
         searchedForFoodToday = false;
+    }
+
+    /**
+     * Check if it is okay to eat by checking through the current tasks of the citizen the citizen is in.
+     * @return true if so.
+     */
+    public boolean isOkayToEat()
+    {
+        boolean value = true;
+        if (citizen.getCitizenEntity().isPresent())
+        {
+            if (citizen.getCitizenEntity().get().tasks.taskEntries.stream().anyMatch(task -> task.action instanceof AbstractAISkeleton && !((AbstractAISkeleton) task.action).isOkayToEat()))
+            {
+                value = false;
+            }
+        }
+        return value;
     }
 
     /**

@@ -100,11 +100,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     {
         super(job);
         super.registerTargets(
-          new AITarget(DECIDE, this::decide),
-          new AITarget(GUARD_PATROL, this::patrol),
-          new AITarget(GUARD_FOLLOW, this::follow),
-          new AITarget(GUARD_GUARD, this::guard),
-          new AITarget(GUARD_REGEN, this::regen)
+          new AITarget(DECIDE, true, this::decide),
+          new AITarget(GUARD_PATROL, true, this::patrol),
+          new AITarget(GUARD_FOLLOW, true, this::follow),
+          new AITarget(GUARD_GUARD, true, this::guard),
+          new AITarget(GUARD_REGEN, true, this::regen)
 
         );
         buildingGuards = getOwnBuilding();

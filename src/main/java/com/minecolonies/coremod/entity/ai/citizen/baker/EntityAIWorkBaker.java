@@ -114,13 +114,13 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepareForBaking),
-          new AITarget(BAKER_KNEADING, this::kneadTheDough),
-          new AITarget(BAKER_BAKING, this::bake),
-          new AITarget(BAKER_TAKE_OUT_OF_OVEN, this::takeFromOven),
-          new AITarget(BAKER_FINISHING, this::finishing)
+          new AITarget(IDLE, START_WORKING, true),
+          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, true, this::prepareForBaking),
+          new AITarget(BAKER_KNEADING, false, this::kneadTheDough),
+          new AITarget(BAKER_BAKING, false, this::bake),
+          new AITarget(BAKER_TAKE_OUT_OF_OVEN, false, this::takeFromOven),
+          new AITarget(BAKER_FINISHING, false, this::finishing)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(
           INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()

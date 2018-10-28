@@ -38,7 +38,6 @@ import net.minecraft.entity.ai.EntityAIWatchClosest2;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemNameTag;
 import net.minecraft.item.ItemShield;
 import net.minecraft.item.ItemStack;
@@ -210,6 +209,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         int priority = 0;
         this.tasks.addTask(priority, new EntityAISwimming(this));
+        this.tasks.addTask(++priority, new EntityAIEatTask(this));
         this.tasks.addTask(++priority, new EntityAISleep(this));
         if (citizenJobHandler.getColonyJob() == null || !"com.minecolonies.coremod.job.Guard".equals(citizenJobHandler.getColonyJob().getName()))
         {
@@ -624,11 +624,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                 this.removeActivePotionEffect(Potion.getPotionFromResourceLocation("slowness"));
             }
 
-            if (citizenData.getSaturation() < HIGH_SATURATION)
-            {
-                citizenData.getCitizenHappinessHandler().setFoodModifier(tryToEat()); 
-            } 
-            else  
+            if (citizenData.getSaturation() >= HIGH_SATURATION)
             { 
                 citizenData.getCitizenHappinessHandler().setSaturated();
             }
@@ -692,32 +688,6 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
             super.setCustomNameTag(name);
         }
-    }
-
-    /**
-     * Lets the citizen tryToEat to replenish saturation. 
-     *  
-     * @return return true or not if citizen eat food. 
-     */
-    private boolean tryToEat()
-    {
-        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(this,
-          itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
-
-        if (slot == -1)
-        {
-            return false;
-        }
-
-        final ItemStack stack = getCitizenData().getInventory().getStackInSlot(slot);
-        if (!ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemFood && citizenData != null)
-        {
-            final int heal = ((ItemFood) stack.getItem()).getHealAmount(stack);
-            citizenData.increaseSaturation(heal);
-            getCitizenData().getInventory().decrStackSize(slot, 1);
-            citizenData.markDirty();
-        }
-        return true;
     }
 
     /**
@@ -1136,6 +1106,25 @@ public class EntityCitizen extends AbstractEntityCitizen
     public CitizenStuckHandler getCitizenStuckHandler()
     {
         return citizenStuckHandler;
+    }
+
+    /**
+     * Check if the citizen can eat now by considering the state and the job tasks.
+     * @return true if so.
+     */
+    public boolean isOkayToEat()
+    {
+        boolean value = true;
+        if (getCitizenSleepHandler().isAsleep())
+        {
+            value = false;
+        }
+
+        if (citizenJobHandler.getColonyJob() != null && !citizenJobHandler.getColonyJob().isOkayToEat())
+        {
+            value = false;
+        }
+        return value;
     }
 
     /**

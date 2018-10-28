@@ -108,12 +108,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, () -> START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepareForFarming),
-          new AITarget(FARMER_HOE, this::workAtField),
-          new AITarget(FARMER_PLANT, this::workAtField),
-          new AITarget(FARMER_HARVEST, this::workAtField)
+          new AITarget(IDLE, true, () -> START_WORKING),
+          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, true, this::prepareForFarming),
+          new AITarget(FARMER_HOE, false, this::workAtField),
+          new AITarget(FARMER_PLANT, false, this::workAtField),
+          new AITarget(FARMER_HARVEST, false, this::workAtField)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
         worker.setCanPickUpLoot(true);

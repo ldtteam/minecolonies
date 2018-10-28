@@ -86,13 +86,13 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepareForHerding),
-          new AITarget(DECIDE, this::decideWhatToDo),
-          new AITarget(HERDER_BREED, this::breedAnimals),
-          new AITarget(HERDER_BUTCHER, this::butcherAnimals),
-          new AITarget(HERDER_PICKUP, this::pickupItems)
+          new AITarget(IDLE, START_WORKING, true),
+          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, true, this::prepareForHerding),
+          new AITarget(DECIDE, true, this::decideWhatToDo),
+          new AITarget(HERDER_BREED, false, this::breedAnimals),
+          new AITarget(HERDER_BUTCHER, false, this::butcherAnimals),
+          new AITarget(HERDER_PICKUP, true, this::pickupItems)
         );
         worker.setCanPickUpLoot(true);
     }

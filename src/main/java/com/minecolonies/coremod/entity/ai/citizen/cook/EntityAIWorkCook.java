@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.JobCook;
@@ -72,7 +73,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     {
         super(job);
         super.registerTargets(
-                new AITarget(COOK_SERVE_FOOD_TO_CITIZEN, this::serveFoodToCitizen)
+                new AITarget(COOK_SERVE_FOOD_TO_CITIZEN, true, this::serveFoodToCitizen)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma()
                 + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
@@ -132,7 +133,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             return START_WORKING;
         }
 
-        if (walkToBlock(citizenToServe.get(0).getPosition()))
+        if (!walkToBlock(citizenToServe.get(0).getPosition()))
         {
             setDelay(2);
             return getState();
@@ -175,7 +176,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 
         citizenToServe.clear();
         final List<EntityCitizen> citizenList = world.getEntitiesWithinAABB(EntityCitizen.class,
-                range, cit -> !(cit.getCitizenJobHandler().getColonyJob() instanceof JobCook) && cit.getCitizenData() != null && cit.getCitizenData().getSaturation() <= 0);
+                range, cit ->  cit.getCitizenData() != null && cit.getCitizenData().getSaturation() <= CitizenConstants.LOW_SATURATION);
         if (!citizenList.isEmpty())
         {
             citizenToServe.addAll(citizenList);
