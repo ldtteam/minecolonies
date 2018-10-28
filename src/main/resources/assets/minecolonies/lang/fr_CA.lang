@@ -467,7 +467,7 @@ com.minecolonies.coremod.gui.warehouse.upgrade=Améliorer la capacité de stocka
 
 com.minecolonies.coremod.job.cook=Cuisinier
 com.minecolonies.coremod.gui.workerHuts.cook=Cuisiner
-com.minecolonies.coremod.gui.townHall.population.cooks=Cooks: %d
+com.minecolonies.coremod.gui.townHall.population.cooks=Cuisiniers: %d
 tile.minecolonies.blockHutCook.name=Restaurant
 com.minecolonies.coremod.ai.noRestaurant=S'il vous plait construisez un restaurant ou apportez-moi à manger!
 com.minecolonies.coremod.ai.noWarehouse=Construisez un entrepôt ou apportez-moi de la nourriture pour que je serve mes clients!
@@ -529,7 +529,7 @@ tile.minecolonies.blockshingle_jungle.name=Jungle Shingle
 tile.minecolonies.blockshingle_dark_oak.name=Dark Oak Shingle
 tile.minecolonies.blockshingle_acacia.name=Acacia Shingle
 
-com.minecolonies.coremod.gui.recipe.remove=Remove
+com.minecolonies.coremod.gui.recipe.remove=Enlever
 com.minecolonies.coremod.gui.workerHuts.crafting=Teach recipe
 com.minecolonies.coremod.gui.recipe.done=Succesfully saved recipe!
 com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
