@@ -1,24 +1,30 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
-import com.minecolonies.coremod.colony.CitizenData;
-import org.jetbrains.annotations.Nullable;
-import com.minecolonies.api.entity.ai.DesiredActivity;
-import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.CitizenConstants;
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
+import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
-import net.minecraft.item.ItemFood;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
+import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
+import static com.minecolonies.coremod.entity.ai.minimal.EntityAIEatTask.STATE.*;
 
 /**
  * The AI task for citizens to execute when they are supposed to eat.
@@ -26,9 +32,29 @@ import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 public class EntityAIEatTask extends EntityAIBase
 {
     /**
-     * Chair searching range.
+     * Minutes between consecutive food checks.
      */
-    private final static int CHAIR_SEARCH_RANGE = 20;
+    private static final int MINUTES_BETWEEN_FOOD_CHECKS = 2;
+
+    /**
+     * Max waiting time for food in minutes..
+     */
+    private static final int MINUTES_WAITING_TIME = 2;
+
+    /**
+     * Min distance in blocks to placeToPath block.
+     */
+    private static final int MIN_DISTANCE_TO_RESTAURANT = 5;
+
+    /**
+     * Max distance from the restaurant block the citizen should eat in x/z.
+     */
+    private static final int PLACE_TO_EAT_DISTANCE = 10;
+
+    /**
+     * Time required to eat in seconds.
+     */
+    private static final int REQUIRED_TIME_TO_EAT  = 10;
 
     /**
      * The different types of AIStates related to eating.
@@ -36,46 +62,39 @@ public class EntityAIEatTask extends EntityAIBase
     public enum STATE
     {
         IDLE,
-        CHECKING_FOR_FOOD,
-        CHECKING_FOR_RESTAURANT,
-        AT_RESTAURANT,
-        EATING,
+        CHECK_FOR_FOOD,
+        SEARCH_RESTAURANT,
+        GO_TO_RESTAURANT,
+        WAIT_FOR_FOOD,
+        GET_FOOD_YOURSELF,
+        FIND_PLACE_TO_EAT,
+        EAT
     }
 
     /**
-     * The citizen, owner of the AI task.
+     * The citizen assigned to this task.
      */
     private final EntityCitizen citizen;
 
     /**
-     * The currently selected stack.
+     * The state the task is in currently.
      */
-    private ItemStack stack;
+    private STATE currentState = STATE.IDLE;
 
     /**
-     * Ticks since the citizen started to eat.
+     * Ticks since we're waiting for something.
      */
-    private int eatingTicks;
+    private int waitingTicks = 0;
 
     /**
-     * The slot the citizen has selected (slot of the stack).
+     * Inventory slot with food in it.
      */
-    private int slot;
+    private int foodSlot = -1;
 
     /**
-     * The chat spam filter to communicate through.
+     * Restaurant to which the citizen should path.
      */
-    protected ChatSpamFilter chatSpamFilter;
-
-    /**
-     * The current state the entity is in.
-     */
-    private STATE currentState;
-
-    /**
-     * The restaurant this AI usually goes to.
-     */
-    private BlockPos restaurant;
+    private BlockPos placeToPath;
 
     /**
      * Instantiates this task.
@@ -87,261 +106,255 @@ public class EntityAIEatTask extends EntityAIBase
         super();
         this.citizen = citizen;
         this.setMutexBits(1);
-        currentState = STATE.IDLE;
     }
     
     @Override
     public boolean shouldExecute()
     {
-        if (!citizen.isOkayToEat())
+        final CitizenData citizenData = citizen.getCitizenData();
+
+        if (citizenData == null || citizen.getCitizenData().getSaturation() >= CitizenConstants.HIGH_SATURATION || !citizen.isOkayToEat())
         {
             return false;
         }
 
-        if (currentState != STATE.IDLE && citizen.getDesiredActivity() != DesiredActivity.SLEEP)
+        if (citizenData.getSaturation() <= CitizenConstants.AVERAGE_SATURATION)
         {
-            return true;
+            waitingTicks++;
+            return waitingTicks >= TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_BETWEEN_FOOD_CHECKS || citizen.getCitizenData().getSaturation() < CitizenConstants.LOW_SATURATION;
         }
 
-        if ((citizen.getDesiredActivity() == DesiredActivity.SLEEP || citizen.getCitizenData() != null && citizen.getCitizenData().getSaturation() >= CitizenConstants.HIGH_SATURATION))
-        {
-            return false;
-        }
-
-        if (shouldGetFood())
-        {
-            currentState = STATE.CHECKING_FOR_RESTAURANT;
-            return true;
-        }
-
-        if (citizen.getCitizenData().getSaturation() < CitizenConstants.HIGH_SATURATION && tryToEat())
-        {
-            return true;
-        } 
-
-        cleanTask();
         return false;
     }
 
     @Override
     public void updateTask()
     {
-        super.updateTask();
-        switch (currentState)
-        {
-            case AT_RESTAURANT:
-                searchForPlaceToEat();
-                break;
-            case CHECKING_FOR_RESTAURANT:
-                searchForFood();
-                break;
-            case CHECKING_FOR_FOOD:
-                tryToEat();
-                break;
-            case EATING:
-                if(eatingTicks > 0 && slot != -1 && stack != null) {
-                    eatingTicks--;
-                    
-                    if(eatingTicks == 0) 
-                    {
-                        citizen.stopActiveHand();
-                        citizen.resetActiveHand();
-                        citizen.setHeldItem(EnumHand.MAIN_HAND,ItemStack.EMPTY);
-                        if (stack != null)
-                        {
-                            if (stack.getItem() instanceof ItemFood)
-                            {
-                                final int heal = ((ItemFood) stack.getItem()).getHealAmount(stack);
-                                citizen.getCitizenData().increaseSaturation(heal);
-                            }
-                        }
-                        citizen.getCitizenData().getCitizenHappinessHandler().setFoodModifier(true);
-                        citizen.getCitizenData().markDirty();
-                        cleanTask();
-                    }
-                }
-                else
-                {
-                    citizen.dismountRidingEntity();
-                    cleanTask();                
-                }
-                break;
-            default:
-                break;
-                
-        }
-    }
-
-    /**
-     * Search for a place to eat in the restaurant.
-     */
-    private void searchForPlaceToEat()
-    {
-        if (citizen.getCitizenJobHandler().getColonyJob() == null
-              && citizen.getCitizenData().getSaturation() >= CitizenConstants.LOW_SATURATION
-              && checkForRandom())
-        {
-            final double distance1 = restaurant.distanceSq(citizen.posX, citizen.posY, citizen.posZ);
-
-            if (distance1 < CHAIR_SEARCH_RANGE)
-            {
-                Vec3d vec3d = null;
-                if(vec3d == null)
-                {
-                    vec3d = RandomPositionGenerator.getLandPos(citizen, 3, 3);
-                    if (vec3d != null)
-                    {
-                        citizen.getNavigator().tryMoveToXYZ(vec3d.x, vec3d.y, vec3d.z, 0.2);
-                    }
-                }
-            }
-            else
-            {
-                citizen.getNavigator().tryMoveToXYZ(restaurant.getX(), restaurant.getY(), restaurant.getZ(), 3);
-            }
-        }
-        else
-        {
-            tryToEat();
-        }
-    }
-
-    /**
-     * Cleanup the task and reset all the tasks.
-     */
-    private void cleanTask()
-    {
-        citizen.stopActiveHand();
-        citizen.resetActiveHand();
-        citizen.setHeldItem(EnumHand.MAIN_HAND,ItemStack.EMPTY);
-
-        slot = -1;
-        stack = null;
-        eatingTicks = 0;
-        currentState = STATE.IDLE;
-        restaurant = null;
-    }
-
-    /**
-     * Lets the citizen tryToEat to replenish saturation. 
-     *  
-     * @return return true or not if citizen eat food. 
-     */
-    private boolean tryToEat()
-    {
         final CitizenData citizenData = citizen.getCitizenData();
-
         if (citizenData == null)
         {
-            return false;
+            return;
         }
 
-        slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, ISFOOD);
+        switch(currentState)
+        {
+            case CHECK_FOR_FOOD:
+                currentState = checkForFood(citizenData);
+                return;
+            case SEARCH_RESTAURANT:
+                currentState = searchRestaurant();
+                return;
+            case GO_TO_RESTAURANT:
+                currentState = goToRestaurant();
+                return;
+            case WAIT_FOR_FOOD:
+                currentState = waitForFood(citizenData);
+                return;
+            case FIND_PLACE_TO_EAT:
+                currentState = findPlaceToEat();
+                return;
+            case GET_FOOD_YOURSELF:
+                currentState = getFoodYourself();
+            case EAT:
+                currentState = eat(citizenData);
+                return;
+            default:
+                reset();
+        }
+    }
+
+    /**
+     * Actual action of eating.
+     * @return the next state to go to, if successful idle.
+     * @param citizenData the citizen.
+     */
+    private STATE eat(final CitizenData citizenData)
+    {
+        if (foodSlot == -1)
+        {
+            return WAIT_FOR_FOOD;
+        }
+
+        final ItemStack stack = citizenData.getInventory().getStackInSlot(foodSlot);
+        if (!ISFOOD.test(stack))
+        {
+            return WAIT_FOR_FOOD;
+        }
+
+        citizen.setHeldItem(EnumHand.MAIN_HAND, stack);
+        citizen.setActiveHand(EnumHand.MAIN_HAND);
+
+        waitingTicks ++;
+        if (waitingTicks < TICKS_SECOND * REQUIRED_TIME_TO_EAT)
+        {
+            return EAT;
+        }
+        citizen.playSound(SoundEvents.ENTITY_GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
+
+        citizenData.getInventory().decrStackSize(foodSlot, 1);
+        citizenData.markDirty();
+        return IDLE;
+    }
+
+    /**
+     * Try to gather some food from the restaurant block.
+     * @return the next state to go to.
+     */
+    private STATE getFoodYourself()
+    {
+        if (placeToPath == null)
+        {
+            return SEARCH_RESTAURANT;
+        }
+        final Colony colony = citizen.getCitizenColonyHandler().getColony();
+        if (colony == null)
+        {
+            return IDLE;
+        }
+
+        final BlockPos restaurant = colony.getBuildingManager().getBestRestaurant(citizen);
+        if (restaurant == null)
+        {
+            return SEARCH_RESTAURANT;
+        }
+
+        final AbstractBuilding cookBuilding = colony.getBuildingManager().getBuilding(restaurant);
+        if (cookBuilding instanceof BuildingCook)
+        {
+            InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
+              cookBuilding.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
+              ISFOOD,
+              Constants.STACKSIZE,
+              new InvWrapper(citizen.getInventoryCitizen()));
+            return WAIT_FOR_FOOD;
+        }
+
+        return IDLE;
+    }
+
+    /**
+     * Find a good place within the restaurant to eat.
+     * @return the next state to go to.
+     */
+    private STATE findPlaceToEat()
+    {
+        if (placeToPath == null)
+        {
+            final Vec3d placeToEat = RandomPositionGenerator.getLandPos(citizen, PLACE_TO_EAT_DISTANCE, 0);
+            if (placeToEat == null)
+            {
+                waitingTicks = 0;
+                return EAT;
+            }
+            placeToPath = new BlockPos(placeToEat);
+        }
+
+        if (!citizen.isWorkerAtSiteWithMove(placeToPath, MIN_DISTANCE_TO_RESTAURANT))
+        {
+            waitingTicks = 0;
+            return EAT;
+        }
+        return FIND_PLACE_TO_EAT;
+    }
+
+    /**
+     * Wander around the placeToPath a bit while waiting for the cook to deliver food.
+     * After waiting for a certain time, get the food yourself.
+     * @return the next state to go to.
+     * @param citizenData the citizen to check.
+     */
+    private STATE waitForFood(final CitizenData citizenData)
+    {
+        if (checkForFood(citizenData) == EAT)
+        {
+            return FIND_PLACE_TO_EAT;
+        }
+        waitingTicks++;
+
+        if (waitingTicks > TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_WAITING_TIME)
+        {
+            waitingTicks = 0;
+            return GET_FOOD_YOURSELF;
+        }
+        return WAIT_FOR_FOOD;
+    }
+
+    /**
+     * Go to the previously found placeToPath to get some food.
+     * @return the next state to go to.
+     */
+    private STATE goToRestaurant()
+    {
+        if (placeToPath == null)
+        {
+            return SEARCH_RESTAURANT;
+        }
+
+        if (!citizen.isWorkerAtSiteWithMove(placeToPath, MIN_DISTANCE_TO_RESTAURANT))
+        {
+            return WAIT_FOR_FOOD;
+        }
+        return SEARCH_RESTAURANT;
+    }
+
+    /**
+     * Search for a placeToPath within the colony of the citizen.
+     * @return the next state to go to.
+     */
+    private STATE searchRestaurant()
+    {
+        final Colony colony = citizen.getCitizenColonyHandler().getColony();
+        if (colony == null)
+        {
+            //todo notify player
+            return SEARCH_RESTAURANT;
+        }
+
+        placeToPath = colony.getBuildingManager().getBestRestaurant(citizen);
+
+        if (placeToPath == null)
+        {
+            //todo notify player
+            return SEARCH_RESTAURANT;
+        }
+
+        return GO_TO_RESTAURANT;
+    }
+
+    /**
+     * Checks if the citizen has food in the inventory and makes a decision based on that.
+     * @param citizenData the citizen to check.
+     * @return the next state to go to.
+     */
+    private STATE checkForFood(final CitizenData citizenData)
+    {
+        int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, ISFOOD);
 
         if (slot == -1)
         {
+            reset();
             citizenData.getCitizenHappinessHandler().setFoodModifier(false);
-            return false;
+            if (citizenData.getSaturation() < CitizenConstants.LOW_SATURATION)
+            {
+                return SEARCH_RESTAURANT;
+            }
+            return IDLE;
         }
-
-        final ItemStack stack = citizenData.getInventory().getStackInSlot(slot);
-        if (!ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemFood && citizenData != null)
-        {
-            citizenData.getInventory().decrStackSize(slot, 1);
-            citizenData.markDirty();
-            eatFood();
-            return true;
-        }
-
-        citizenData.getCitizenHappinessHandler().setFoodModifier(false);
-        return false;
+        foodSlot = slot;
+        return EAT;
     }
 
     /**
-     * Check if the citizen should get food, meaning, check if he checked for food today 
-     * already and check if his saturation is decent if they have a job.
-     * If no job then will check if they need food below high saturation.
-     *
-     * @return true if he should go search for food.
+     * Resets the state of the AI.
      */
-    private boolean shouldGetFood()
+    private void reset()
     {
-        //Do not go to building or restaurant at night.
-        if (!CompatibilityUtils.getWorld(citizen).isDaytime())
-        {
-            return false;
-        }
-        
-        return ((citizen.getCitizenData().getSaturation() < CitizenConstants.LOW_SATURATION
-                && (citizen.getCitizenJobHandler().getColonyJob() != null && !citizen.getCitizenJobHandler().getColonyJob().hasCheckedForFoodToday()))
-                || (citizen.getCitizenData().getSaturation() <= 0)
-                || (citizen.getCitizenData().getSaturation() < CitizenConstants.LOW_SATURATION
-                        && citizen.getCitizenJobHandler().getColonyJob() == null));
-    }
-
-    private void searchForFood()
-    {
-        if (citizen.getCitizenJobHandler().getColonyJob() != null && !citizen.getCitizenJobHandler().getColonyJob().hasCheckedForFoodToday())
-        {
-            @Nullable final AbstractBuilding homeBuilding = citizen.getCitizenColonyHandler().getWorkBuilding();
-            if (homeBuilding != null && !citizen.isWorkerAtSiteWithMove(homeBuilding.getLocation(),2))
-            {
-                return;
-            }
-
-           citizen.getCitizenJobHandler().getColonyJob().setCheckedForFood();
-            if (citizen.getCitizenJobHandler().isInHut(itemStack -> (!ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood)))
-            {
-                currentState = STATE.CHECKING_FOR_FOOD;
-                return;
-            }
-        }
-
-        if (restaurant == null)
-        {
-            final BlockPos goodCook = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestRestaurant(citizen);
-
-            if (goodCook == null)
-            {
-                sendChatMessage("com.minecolonies.coremod.ai.noRestaurant");
-                currentState = STATE.IDLE;
-                return;
-            }
-            restaurant = goodCook;
-        }
-
-        if (restaurant != null)
-        {
-             final boolean citizenAtRestaurant = citizen.isWorkerAtSiteWithMove(restaurant, 4);
-             if (citizenAtRestaurant)
-             {
-                 currentState = STATE.AT_RESTAURANT;
-             }
-        }
-    }
-
-    /**
-     * Consume a certain type of food.
-     */
-    private void eatFood()
-    {
-        eatingTicks = stack.getMaxItemUseDuration() * 2;
-        currentState = STATE.EATING;
-        citizen.setHeldItem(EnumHand.MAIN_HAND, stack);
-        citizen.setActiveHand(EnumHand.MAIN_HAND);
-    }
-
-    private boolean checkForRandom()
-    {
-        return citizen.getRNG().nextInt(120) == 0;
-    }
-
-    private void sendChatMessage(final String text)
-    {
-        if (chatSpamFilter == null)
-        {
-          this.chatSpamFilter = new ChatSpamFilter(citizen.getCitizenData());
-        }
-        chatSpamFilter.talkWithoutSpam(text);
+        waitingTicks = 0;
+        foodSlot = -1;
+        citizen.stopActiveHand();
+        citizen.resetActiveHand();
+        citizen.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+        placeToPath = null;
+        currentState = STATE.CHECK_FOR_FOOD;
     }
 }

@@ -1212,7 +1212,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     protected final void incrementActionsDoneAndDecSaturation()
     {
         worker.decreaseSaturationForAction();
-        job.incrementActionsDone();
+        incrementActionsDone();
     }
 
     /**
@@ -1229,7 +1229,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     protected final void incrementActionsDoneAndDecSaturation(final double descreaseAmount)
     {
         worker.decreaseSaturationForAction(descreaseAmount);
-        actionsDone++;
+        incrementActionsDone();
     }
 
     
@@ -1424,7 +1424,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param predicate the predicate to evaluate.
      * @return true if succesful.
      */
-    public boolean tryTransferFromPosToWorker(final BlockPos pos, @NotNull final Predicate<ItemStack> predicate)
+    private boolean tryTransferFromPosToWorker(final BlockPos pos, @NotNull final Predicate<ItemStack> predicate)
     {
         final TileEntity entity = world.getTileEntity(pos);
         if (entity == null)

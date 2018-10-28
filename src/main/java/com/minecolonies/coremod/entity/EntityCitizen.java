@@ -1126,17 +1126,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     public boolean isOkayToEat()
     {
-        boolean value = true;
-        if (getCitizenSleepHandler().isAsleep())
-        {
-            value = false;
-        }
-
-        if (citizenJobHandler.getColonyJob() != null && !citizenJobHandler.getColonyJob().isOkayToEat())
-        {
-            value = false;
-        }
-        return value;
+        return !getCitizenSleepHandler().isAsleep() && getDesiredActivity() != DesiredActivity.SLEEP && (citizenJobHandler.getColonyJob() == null || citizenJobHandler.getColonyJob().isOkayToEat());
     }
 
     /**
