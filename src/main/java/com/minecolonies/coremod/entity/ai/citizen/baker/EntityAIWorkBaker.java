@@ -225,6 +225,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
         final BakingProduct bakingProduct = getOwnBuilding().getFurnacesWithProduct().get(currentFurnace);
         getOwnBuilding().removeProductFromFurnace(currentFurnace);
+        worker.decreaseSaturationForAction();
         if (bakingProduct != null)
         {
             getOwnBuilding().addToTasks(bakingProduct.getState(), bakingProduct);
@@ -272,6 +273,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 	        if (progress >= getRequiredProgressForKneading())
 	        {
 	            worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+                worker.decreaseSaturationForAction();
 	            progress = 0;
 	            currentBakingProduct.nextState();
 	            getOwnBuilding().removeFromTasks(ProductState.RAW, currentBakingProduct);

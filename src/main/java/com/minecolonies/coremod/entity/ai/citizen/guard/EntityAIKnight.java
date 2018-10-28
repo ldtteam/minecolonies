@@ -127,6 +127,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
             worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
             worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+            worker.decreaseSaturationForAction(0.01);
         }
 
         return GUARD_ATTACK_PHYSICAL;

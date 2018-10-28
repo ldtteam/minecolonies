@@ -122,6 +122,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private static final int   MAX_BLOCKS_MINED        = 32;
 
+    private static final double SATURATION_DECREASE_FACTOR = 0.02;
+    
     /**
      * Position where the Builders constructs from.
      */
@@ -318,10 +320,19 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         {
             return IDLE;
         }
+        
+
         if (job.tree == null)
         {
             return LUMBERJACK_SEARCHING_TREE;
         }
+        
+        final int bestSlot = getMostEfficientTool(world.getBlockState(job.tree.getLocation()).getBlock());
+        if (bestSlot >= 0)
+        {
+            worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, bestSlot);
+        }
+
         return chopTree();
     }
 
@@ -365,7 +376,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                 job.tree = null;
                 checkedInHut = false;
             }
-            incrementActionsDoneAndDecSaturation();
+            incrementActionsDoneAndDecSaturation(SATURATION_DECREASE_FACTOR);
             building.getColony().getStatsManager().incrementStatistic("trees");
             workFrom = null;
             return LUMBERJACK_GATHERING;
@@ -393,6 +404,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                 return getState();
             }
             job.tree.pollNextLog();
+            worker.decreaseSaturationForAction(SATURATION_DECREASE_FACTOR);
         }
         else if (job.tree.hasLeaves() && job.tree.isSlimeTree())
         {
@@ -548,7 +560,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         if (job.tree.getStumpLocations().isEmpty() || timeWaited >= MAX_WAITING_TIME)
         {
             timeWaited = 0;
-            incrementActionsDoneAndDecSaturation();
+            incrementActionsDoneAndDecSaturation(SATURATION_DECREASE_FACTOR);
             setDelay(TIMEOUT_DELAY);
             return true;
         }

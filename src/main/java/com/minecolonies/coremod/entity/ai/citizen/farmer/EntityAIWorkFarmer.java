@@ -412,6 +412,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             if (workingOffset != null)
             {
+                if (((ScarecrowTileEntity) entity).getOwnerId() != worker.getCitizenId())
+                {
+                    buildingFarmer.setCurrentField(null);
+                    return getState();
+                }
+
                 final BlockPos position = field.down().south(workingOffset.getZ()).east(workingOffset.getX());
                 // Still moving to the block
                 if (walkToBlock(position.up()))

@@ -229,7 +229,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         if (!animal.isEntityAlive())
         {
             worker.getCitizenExperienceHandler().addExperience(1.0);
-            incrementActionsDoneAndDecSaturation();
+            worker.decreaseSaturationForAction();
         }
 
         return HERDER_BUTCHER;
@@ -248,7 +248,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         final EntityAnimal animalOne = animals
                                          .stream()
-                                         .filter(animal -> animal.getGrowingAge() == 0)
+                                         .filter(animal -> !animal.isChild())
                                          .findAny()
                                          .orElse(null);
 
@@ -406,6 +406,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
                 animal.setInLove(null);
                 worker.swingArm(EnumHand.MAIN_HAND);
                 InventoryUtils.removeStackFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), getBreedingItem());
+                worker.decreaseSaturationForAction();
             }
         }
     }
@@ -508,6 +509,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             worker.swingArm(EnumHand.MAIN_HAND);
             animal.attackEntityFrom(new DamageSource(worker.getName()), (float) BUTCHERING_ATTACK_DAMAGE);
             worker.getHeldItemMainhand().damageItem(1, animal);
+            worker.decreaseSaturationForAction();
         }
     }
 

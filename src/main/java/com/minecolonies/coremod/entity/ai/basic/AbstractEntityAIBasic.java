@@ -1155,7 +1155,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param target the Block type to mine
      * @return the slot with the best tool
      */
-    private int getMostEfficientTool(@NotNull final Block target)
+    protected int getMostEfficientTool(@NotNull final Block target)
     {
         final IToolType toolType = WorkerUtil.getBestToolForBlock(target);
         final int required = WorkerUtil.getCorrectHavestLevelForBlock(target);
@@ -1215,6 +1215,24 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         job.incrementActionsDone();
     }
 
+    /**
+     * Tell the ai that you have done one more action.
+     * <p>
+     * if the actions exceed a certain number,
+     * the ai will dump it's inventory.
+     * this also triggers the AI to get hungry.
+     * <p>
+     * For example:
+     * <p>
+     * After x blocks, bring everything back.
+     */
+    protected final void incrementActionsDoneAndDecSaturation(final double descreaseAmount)
+    {
+        worker.decreaseSaturationForAction(descreaseAmount);
+        actionsDone++;
+    }
+
+    
     /**
      * Tell the ai that you have done one more action.
      * <p>

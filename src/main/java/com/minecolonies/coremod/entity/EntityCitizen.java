@@ -959,6 +959,18 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
     }
 
+    /**
+     * Decrease the saturation of the citizen for 1 action.
+     */
+    public void decreaseSaturationForAction(final double decreaseAmount)
+    {
+        if (citizenData != null)
+        {
+            citizenData.decreaseSaturation(decreaseAmount);
+            citizenData.markDirty();
+        }
+    }
+
     @Override
     public boolean equals(final Object obj)
     {

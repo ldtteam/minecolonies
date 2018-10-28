@@ -85,6 +85,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
 
         // Search for Items to use to study
         final List<StudyItem> currentItems = new ArrayList<>();
+        worker.decreaseSaturationForAction();
 
         for (final StudyItem curItem : getOwnBuilding(BuildingLibrary.class).getStudyItems())
         {
