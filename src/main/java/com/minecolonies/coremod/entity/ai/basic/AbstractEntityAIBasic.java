@@ -1214,24 +1214,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         worker.decreaseSaturationForAction();
         incrementActionsDone();
     }
-
-    /**
-     * Tell the ai that you have done one more action.
-     * <p>
-     * if the actions exceed a certain number,
-     * the ai will dump it's inventory.
-     * this also triggers the AI to get hungry.
-     * <p>
-     * For example:
-     * <p>
-     * After x blocks, bring everything back.
-     */
-    protected final void incrementActionsDoneAndDecSaturation(final double descreaseAmount)
-    {
-        worker.decreaseSaturationForAction(descreaseAmount);
-        incrementActionsDone();
-    }
-
     
     /**
      * Tell the ai that you have done one more action.

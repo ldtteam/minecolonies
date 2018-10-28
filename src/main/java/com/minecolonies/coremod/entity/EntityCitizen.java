@@ -962,11 +962,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * Decrease the saturation of the citizen for 1 action.
      */
-    public void decreaseSaturationForAction(final double decreaseAmount)
+    public void decreaseSaturationForContinuousAction()
     {
         if (citizenData != null)
         {
-            citizenData.decreaseSaturation(decreaseAmount);
+            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost()/100.0);
             citizenData.markDirty();
         }
     }

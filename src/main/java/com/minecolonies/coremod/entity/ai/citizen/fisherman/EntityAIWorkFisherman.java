@@ -43,7 +43,6 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
  */
 public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
 {
-
     /**
      * The render name to render fish.
      */
@@ -444,7 +443,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             return notReadyState;
         }
 
-        worker.decreaseSaturationForAction(0.001);
+        worker.decreaseSaturationForContinuousAction();
         
         if (caughtFish())
         {

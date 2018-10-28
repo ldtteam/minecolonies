@@ -122,8 +122,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private static final int   MAX_BLOCKS_MINED        = 32;
 
-    private static final double SATURATION_DECREASE_FACTOR = 0.02;
-    
     /**
      * Position where the Builders constructs from.
      */
@@ -368,7 +366,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                 job.tree = null;
                 checkedInHut = false;
             }
-            incrementActionsDoneAndDecSaturation(SATURATION_DECREASE_FACTOR);
+            incrementActionsDoneAndDecSaturation();
             building.getColony().getStatsManager().incrementStatistic("trees");
             workFrom = null;
             return LUMBERJACK_GATHERING;
@@ -396,7 +394,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                 return getState();
             }
             job.tree.pollNextLog();
-            worker.decreaseSaturationForAction(SATURATION_DECREASE_FACTOR);
+            worker.decreaseSaturationForContinuousAction();
         }
         else if (job.tree.hasLeaves() && job.tree.isSlimeTree())
         {
@@ -552,7 +550,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         if (job.tree.getStumpLocations().isEmpty() || timeWaited >= MAX_WAITING_TIME)
         {
             timeWaited = 0;
-            incrementActionsDoneAndDecSaturation(SATURATION_DECREASE_FACTOR);
+            incrementActionsDoneAndDecSaturation();
             setDelay(TIMEOUT_DELAY);
             return true;
         }

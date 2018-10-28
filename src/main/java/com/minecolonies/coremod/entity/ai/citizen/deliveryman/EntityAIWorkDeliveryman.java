@@ -323,7 +323,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(handler, currentSlot, new InvWrapper(worker.getInventoryCitizen()));
         building.markDirty();
         setDelay(DUMP_AND_GATHER_DELAY);
-        worker.decreaseSaturationForAction(SATURATION_DECREASE_FACTOR);
+        worker.decreaseSaturationForContinuousAction();
 
         worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, SLOT_HAND);
         return false;
@@ -548,7 +548,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         lastDelivery = deliveryHut.getBuildingToDeliver();
         worker.getCitizenExperienceHandler().addExperience(1.0D);
-        worker.decreaseSaturationForAction(SATURATION_DECREASE_FACTOR);
+        worker.decreaseSaturationForContinuousAction();
         worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, SLOT_HAND);
         deliveryHut.setBuildingToDeliver(null);
         job.finishRequest(true);

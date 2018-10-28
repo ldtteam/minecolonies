@@ -467,7 +467,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     connectBlockToBuildingIfNecessary(decrease, coords);
                     worker.swingArm(worker.getActiveHand());
                     worker.getCitizenExperienceHandler().addExperience(XP_EACH_BLOCK);
-                    worker.decreaseSaturationForAction(SATURATION_DECREASE_FACTOR);
+                    worker.decreaseSaturationForContinuousAction();
                     return true;
                 }
 
@@ -830,7 +830,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 world.setBlockToAir(currentBlock.blockPosition);
                 world.setBlockState(currentBlock.blockPosition, Blocks.AIR.getDefaultState());
                 worker.swingArm(worker.getActiveHand());
-                worker.decreaseSaturationForAction(SATURATION_DECREASE_FACTOR);
+                worker.decreaseSaturationForContinuousAction();
                 setDelay(UNLIMITED_RESOURCES_TIMEOUT * PROGRESS_MULTIPLIER / (worker.getCitizenExperienceHandler().getLevel() + PROGRESS_MULTIPLIER));
             }
             else
