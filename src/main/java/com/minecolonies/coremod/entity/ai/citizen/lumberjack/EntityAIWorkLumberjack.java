@@ -320,19 +320,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         {
             return IDLE;
         }
-        
 
         if (job.tree == null)
         {
             return LUMBERJACK_SEARCHING_TREE;
         }
-        
-        final int bestSlot = getMostEfficientTool(world.getBlockState(job.tree.getLocation()).getBlock());
-        if (bestSlot >= 0)
-        {
-            worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, bestSlot);
-        }
-
         return chopTree();
     }
 
