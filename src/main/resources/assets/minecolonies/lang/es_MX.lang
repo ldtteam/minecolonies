@@ -467,7 +467,7 @@ com.minecolonies.coremod.gui.warehouse.upgrade=Actualizar Almacenamiento
 
 com.minecolonies.coremod.job.cook=Cocinero
 com.minecolonies.coremod.gui.workerHuts.cook=Cocinero
-com.minecolonies.coremod.gui.townHall.population.cooks=Cooks: %d
+com.minecolonies.coremod.gui.townHall.population.cooks=Cocineros: %d
 tile.minecolonies.blockHutCook.name=Restaurante
 com.minecolonies.coremod.ai.noRestaurant=¡Por favor construye un restaurante o consígueme algo de comer!
 com.minecolonies.coremod.ai.noWarehouse=¡Construye un bodega o tráeme comida para servir a mis clientes!
@@ -522,21 +522,21 @@ item.supplyChestDeployer.missing=¿Estás tratando de engañarme, recoge el Barc
 com.minecolonies.coremod.citizen.rename.same=¡Cambio de nombre fallido: no se permite que 2 ciudadanos tengan el mismo nombre!
 com.minecolonies.coremod.citizen.rename.notAllowed=Cambio de nombre fallido: No esta permitido que le cambies el nombre a tu ciudadano.
 
-tile.minecolonies.blockshingle_oak.name=Oak Shingle
-tile.minecolonies.blockshingle_birch.name=Birch Shingle
-tile.minecolonies.blockshingle_spruce.name=Spruce Shingle
-tile.minecolonies.blockshingle_jungle.name=Jungle Shingle
-tile.minecolonies.blockshingle_dark_oak.name=Dark Oak Shingle
-tile.minecolonies.blockshingle_acacia.name=Acacia Shingle
+tile.minecolonies.blockshingle_oak.name=Tablilla de roble
+tile.minecolonies.blockshingle_birch.name=Tablilla de abedul
+tile.minecolonies.blockshingle_spruce.name=Tablilla elegante
+tile.minecolonies.blockshingle_jungle.name=Tablilla de selva
+tile.minecolonies.blockshingle_dark_oak.name=Tabla de Roble Oscuro
+tile.minecolonies.blockshingle_acacia.name=Tablilla de acacia
 
-com.minecolonies.coremod.gui.recipe.remove=Remove
-com.minecolonies.coremod.gui.workerHuts.crafting=Teach recipe
-com.minecolonies.coremod.gui.recipe.done=Succesfully saved recipe!
-com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
-com.minecolonies.coremod.resolvers.crafter=Crafting Resolver
-com.minecolonies.coremod.request.smeltableore=Smeltable Ore
-tile.minecolonies.blockHutSmeltery.name=Smeltery
-com.minecolonies.coremod.gui.workerHuts.Smeltery=Smeltery
-com.minecolonies.coremod.job.smelter=Smelter
+com.minecolonies.coremod.gui.recipe.remove=Retirar
+com.minecolonies.coremod.gui.workerHuts.crafting=Enseñar receta
+com.minecolonies.coremod.gui.recipe.done=¡Receta exitosamente salvada!
+com.minecolonies.coremod.gui.workerHuts.listRecipes=Lista de recetas
+com.minecolonies.coremod.resolvers.crafter=Crear Resolutor
+com.minecolonies.coremod.request.smeltableore=Mineral de fundición
+tile.minecolonies.blockHutSmeltery.name=Taller de fundición
+com.minecolonies.coremod.gui.workerHuts.Smeltery=Taller de fundición
+com.minecolonies.coremod.job.smelter=Horno de fundición
 
-tile.minecolonies.blockShingleSlab.name=Shingle slab
+tile.minecolonies.blockShingleSlab.name=Placa de la losa
