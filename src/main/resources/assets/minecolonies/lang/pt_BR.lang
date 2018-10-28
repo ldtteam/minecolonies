@@ -529,9 +529,9 @@ tile.minecolonies.blockshingle_jungle.name=Jungle Shingle
 tile.minecolonies.blockshingle_dark_oak.name=Dark Oak Shingle
 tile.minecolonies.blockshingle_acacia.name=Acacia Shingle
 
-com.minecolonies.coremod.gui.recipe.remove=Remove
+com.minecolonies.coremod.gui.recipe.remove=Remover
 com.minecolonies.coremod.gui.workerHuts.crafting=Teach recipe
-com.minecolonies.coremod.gui.recipe.done=Succesfully saved recipe!
+com.minecolonies.coremod.gui.recipe.done=Receita salva com sucesso!
 com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
 com.minecolonies.coremod.resolvers.crafter=Crafting Resolver
 com.minecolonies.coremod.request.smeltableore=Smeltable Ore
