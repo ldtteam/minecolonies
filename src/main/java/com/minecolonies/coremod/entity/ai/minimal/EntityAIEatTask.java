@@ -11,7 +11,10 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
@@ -113,6 +116,11 @@ public class EntityAIEatTask extends EntityAIBase
     {
         final CitizenData citizenData = citizen.getCitizenData();
 
+        if (currentState != IDLE)
+        {
+            return true;
+        }
+
         if (citizenData == null || citizen.getCitizenData().getSaturation() >= CitizenConstants.HIGH_SATURATION || !citizen.isOkayToEat())
         {
             return false;
@@ -161,6 +169,7 @@ public class EntityAIEatTask extends EntityAIBase
                 return;
             default:
                 reset();
+                break;
         }
     }
 
@@ -183,7 +192,7 @@ public class EntityAIEatTask extends EntityAIBase
         }
 
         citizen.setHeldItem(EnumHand.MAIN_HAND, stack);
-        citizen.setActiveHand(EnumHand.MAIN_HAND);
+        citizen.swingArm(EnumHand.MAIN_HAND);
 
         waitingTicks ++;
         if (waitingTicks < TICKS_SECOND * REQUIRED_TIME_TO_EAT)
@@ -192,8 +201,16 @@ public class EntityAIEatTask extends EntityAIBase
         }
         citizen.playSound(SoundEvents.ENTITY_GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
 
+        final ItemFood itemFood = (ItemFood) stack.getItem();
+        citizenData.increaseSaturation(itemFood.getHealAmount(stack) * itemFood.getSaturationModifier(stack) * 2.0);
         citizenData.getInventory().decrStackSize(foodSlot, 1);
         citizenData.markDirty();
+
+        if (citizenData.getSaturation() < CitizenConstants.FULL_SATURATION && !stack.isEmpty())
+        {
+            waitingTicks = 0;
+            return EAT;
+        }
         return IDLE;
     }
 
@@ -250,7 +267,7 @@ public class EntityAIEatTask extends EntityAIBase
             placeToPath = new BlockPos(placeToEat);
         }
 
-        if (!citizen.isWorkerAtSiteWithMove(placeToPath, MIN_DISTANCE_TO_RESTAURANT))
+        if (citizen.isWorkerAtSiteWithMove(placeToPath, MIN_DISTANCE_TO_RESTAURANT))
         {
             waitingTicks = 0;
             return EAT;
@@ -291,7 +308,7 @@ public class EntityAIEatTask extends EntityAIBase
             return SEARCH_RESTAURANT;
         }
 
-        if (!citizen.isWorkerAtSiteWithMove(placeToPath, MIN_DISTANCE_TO_RESTAURANT))
+        if (citizen.isWorkerAtSiteWithMove(placeToPath, MIN_DISTANCE_TO_RESTAURANT))
         {
             return WAIT_FOR_FOOD;
         }
