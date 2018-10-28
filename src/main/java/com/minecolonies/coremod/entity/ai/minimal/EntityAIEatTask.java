@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.Constants;
@@ -8,20 +9,19 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
@@ -58,6 +58,9 @@ public class EntityAIEatTask extends EntityAIBase
      * Time required to eat in seconds.
      */
     private static final int REQUIRED_TIME_TO_EAT  = 10;
+
+    @NotNull
+    protected final ChatSpamFilter chatSpamFilter;
 
     /**
      * The different types of AIStates related to eating.
@@ -109,6 +112,7 @@ public class EntityAIEatTask extends EntityAIBase
         super();
         this.citizen = citizen;
         this.setMutexBits(1);
+        this.chatSpamFilter = new ChatSpamFilter(citizen.getCitizenData());;
     }
     
     @Override
@@ -150,7 +154,7 @@ public class EntityAIEatTask extends EntityAIBase
                 currentState = checkForFood(citizenData);
                 return;
             case SEARCH_RESTAURANT:
-                currentState = searchRestaurant();
+                currentState = searchRestaurant(citizenData);
                 return;
             case GO_TO_RESTAURANT:
                 currentState = goToRestaurant();
@@ -283,6 +287,19 @@ public class EntityAIEatTask extends EntityAIBase
      */
     private STATE waitForFood(final CitizenData citizenData)
     {
+        final Colony colony = citizenData.getColony();
+        placeToPath = colony.getBuildingManager().getBestRestaurant(citizen);
+
+        if (placeToPath == null)
+        {
+            return SEARCH_RESTAURANT;
+        }
+
+        if (BlockPosUtil.getDistance2D(placeToPath, citizen.getPosition()) > MIN_DISTANCE_TO_RESTAURANT)
+        {
+            return GO_TO_RESTAURANT;
+        }
+
         if (checkForFood(citizenData) == EAT)
         {
             return FIND_PLACE_TO_EAT;
@@ -318,21 +335,16 @@ public class EntityAIEatTask extends EntityAIBase
     /**
      * Search for a placeToPath within the colony of the citizen.
      * @return the next state to go to.
+     * @param citizenData the citizen.
      */
-    private STATE searchRestaurant()
+    private STATE searchRestaurant(final CitizenData citizenData)
     {
-        final Colony colony = citizen.getCitizenColonyHandler().getColony();
-        if (colony == null)
-        {
-            //todo notify player
-            return SEARCH_RESTAURANT;
-        }
-
+        final Colony colony = citizenData.getColony();
         placeToPath = colony.getBuildingManager().getBestRestaurant(citizen);
 
         if (placeToPath == null)
         {
-            //todo notify player
+            chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.ai.noRestaurant");
             return SEARCH_RESTAURANT;
         }
 
