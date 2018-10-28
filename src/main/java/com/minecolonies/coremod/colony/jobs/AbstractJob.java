@@ -321,15 +321,8 @@ public abstract class AbstractJob
      */
     public boolean isOkayToEat()
     {
-        boolean value = true;
-        if (citizen.getCitizenEntity().isPresent())
-        {
-            if (citizen.getCitizenEntity().get().tasks.taskEntries.stream().anyMatch(task -> task.action instanceof AbstractAISkeleton && !((AbstractAISkeleton) task.action).isOkayToEat()))
-            {
-                value = false;
-            }
-        }
-        return value;
+        return !citizen.getCitizenEntity().isPresent() || !citizen.getCitizenEntity().get().tasks.taskEntries.stream()
+                                                             .anyMatch(task -> task.action instanceof AbstractAISkeleton && !((AbstractAISkeleton) task.action).isOkayToEat());
     }
 
     /**

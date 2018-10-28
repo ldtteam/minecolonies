@@ -79,7 +79,7 @@ public class EntityAIEatTask extends EntityAIBase
     /**
      * The state the task is in currently.
      */
-    private STATE currentState = STATE.IDLE;
+    private STATE currentState = IDLE;
 
     /**
      * Ticks since we're waiting for something.
@@ -155,6 +155,7 @@ public class EntityAIEatTask extends EntityAIBase
                 return;
             case GET_FOOD_YOURSELF:
                 currentState = getFoodYourself();
+                return;
             case EAT:
                 currentState = eat(citizenData);
                 return;
@@ -328,7 +329,7 @@ public class EntityAIEatTask extends EntityAIBase
      */
     private STATE checkForFood(final CitizenData citizenData)
     {
-        int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, ISFOOD);
+        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, ISFOOD);
 
         if (slot == -1)
         {
@@ -355,6 +356,6 @@ public class EntityAIEatTask extends EntityAIBase
         citizen.resetActiveHand();
         citizen.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
         placeToPath = null;
-        currentState = STATE.CHECK_FOR_FOOD;
+        currentState = CHECK_FOR_FOOD;
     }
 }

@@ -165,7 +165,7 @@ public class CitizenJobHandler
      */
     public boolean isInHut(@Nullable final Predicate<ItemStack> predicate)
     {
-        AbstractEntityAIBasic job = getEntityAI();
+        final AbstractEntityAIBasic job = getEntityAI();
         if (job != null)
         {
             return job.isInHut(predicate);
@@ -180,13 +180,12 @@ public class CitizenJobHandler
      */
     private AbstractEntityAIBasic getEntityAI()
     {
-        EntityAITaskEntry task = citizen.tasks.taskEntries
+        return citizen.tasks.taskEntries
                 .stream()
                 .filter(t -> t.action instanceof AbstractEntityAIBasic)
+                .map(t -> (AbstractEntityAIBasic) t.action)
                 .findAny() 
                 .orElse(null);
-        if (task != null)
-            return (AbstractEntityAIBasic) task.action;
-        return null;
+
     }
 }

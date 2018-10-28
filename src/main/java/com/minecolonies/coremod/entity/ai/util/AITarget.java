@@ -23,8 +23,11 @@ public class AITarget
     private final BooleanSupplier   predicate;
     @NotNull
     private final Supplier<AIState> action;
-    
-    private boolean isOkayToEat;
+
+    /**
+     * Variable describing if it is okay to eat in a state.
+     */
+    private boolean okayToEat;
 
     /**
      * Construct a target.
@@ -59,7 +62,7 @@ public class AITarget
         this.state = state;
         this.predicate = predicate;
         this.action = action;
-        this.isOkayToEat = isOkayToEat;
+        this.okayToEat = isOkayToEat;
     }
 
     /**
@@ -136,6 +139,6 @@ public class AITarget
      */
     public boolean isOkayToEat()
     {
-        return isOkayToEat;
+        return okayToEat;
     }
 }
