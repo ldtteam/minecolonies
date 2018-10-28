@@ -1,72 +1,82 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
-
-import java.util.List;
-import java.util.Optional;
-
-import org.jetbrains.annotations.NotNull;
+import com.minecolonies.coremod.colony.CitizenData;
 import org.jetbrains.annotations.Nullable;
-
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.CitizenConstants;
-import com.minecolonies.coremod.blocks.interfaces.IBlockMinecoloniesSeat;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.EntityCushion;
 import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
-
-import net.minecraft.block.Block;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 
+import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
+
+/**
+ * The AI task for citizens to execute when they are supposed to eat.
+ */
 public class EntityAIEatTask extends EntityAIBase
 {
+    /**
+     * Chair searching range.
+     */
+    private final static int CHAIR_SEARCH_RANGE = 20;
+
+    /**
+     * The different types of AIStates related to eating.
+     */
     public enum STATE
     {
         IDLE,
         CHECKING_FOR_FOOD,
         CHECKING_FOR_RESTAURANT,
         AT_RESTAURANT,
-        CHECKING_FOR_CHAIR,
-        SITTING,
         EATING,
-        RELAXING
     }
 
-    
-    private final static int RELAXING_TICKS = 500;
+    /**
+     * The citizen, owner of the AI task.
+     */
     private final EntityCitizen citizen;
-    private int eatingTicks;
-    private int relaxingTicks;
+
+    /**
+     * The currently selected stack.
+     */
     private ItemStack stack;
+
+    /**
+     * Ticks since the citizen started to eat.
+     */
+    private int eatingTicks;
+
+    /**
+     * The slot the citizen has selected (slot of the stack).
+     */
     private int slot;
-    protected ChatSpamFilter      chatSpamFilter;
-    
+
+    /**
+     * The chat spam filter to communicate through.
+     */
+    protected ChatSpamFilter chatSpamFilter;
+
+    /**
+     * The current state the entity is in.
+     */
     private STATE currentState;
-    private boolean isSitting;
-    private BlockPos chairPosition;
-    private Optional<IBlockMinecoloniesSeat> seatBlock;
+
     /**
      * The restaurant this AI usually goes to.
      */
     private BlockPos restaurant;
 
-    private final static int CHAIR_SEARCH_RANGE = 20;
-    
     /**
      * Instantiates this task.
      *
@@ -78,34 +88,25 @@ public class EntityAIEatTask extends EntityAIBase
         this.citizen = citizen;
         this.setMutexBits(1);
         currentState = STATE.IDLE;
-        seatBlock = Optional.ofNullable(null);
-        
     }
     
     @Override
     public boolean shouldExecute()
     {
-        if ((citizen.isRiding() && (currentState == STATE.IDLE )) || (currentState == STATE.SITTING && !citizen.isRiding()))
+        if (!citizen.isOkayToEat())
         {
-            citizen.dismountRidingEntity();
-            currentState = STATE.IDLE;
+            return false;
         }
 
-        if (currentState != STATE.IDLE && citizen.getDesiredActivity() != DesiredActivity.SLEEP )
+        if (currentState != STATE.IDLE && citizen.getDesiredActivity() != DesiredActivity.SLEEP)
         {
             return true;
         }
 
-        
-        if ( (citizen.getDesiredActivity() == DesiredActivity.SLEEP || citizen.getCitizenData().getSaturation() >= CitizenConstants.HIGH_SATURATION))
+        if ((citizen.getDesiredActivity() == DesiredActivity.SLEEP || citizen.getCitizenData() != null && citizen.getCitizenData().getSaturation() >= CitizenConstants.HIGH_SATURATION))
         {
-            if (citizen.isRiding())
-            {
-                citizen.dismountRidingEntity();
-            }
             return false;
         }
-
 
         if (shouldGetFood())
         {
@@ -118,9 +119,8 @@ public class EntityAIEatTask extends EntityAIBase
             return true;
         } 
 
-//        cleanTask();
+        cleanTask();
         return false;
-        
     }
 
     @Override
@@ -130,77 +130,13 @@ public class EntityAIEatTask extends EntityAIBase
         switch (currentState)
         {
             case AT_RESTAURANT:
-                if (!citizen.isRiding() && Configurations.gameplay.restaurantSittingRequired)
-                {
-                    findChair();
-                }
-                else
-                {
-                    if (citizen.getCitizenJobHandler().getColonyJob() == null && citizen.getCitizenData().getSaturation() >= CitizenConstants.LOW_SATURATION
-                            && checkForRandom())
-                    {
-                        final double distance1 = restaurant.distanceSq(citizen.posX, citizen.posY, citizen.posZ);
-                        
-                        if (distance1 < CHAIR_SEARCH_RANGE)
-                        {
-                            Vec3d vec3d = null;
-                            if(vec3d == null)
-                            {
-                                vec3d = RandomPositionGenerator.getLandPos(citizen, 3, 3);
-                                if (vec3d != null)
-                                {
-                                    citizen.getNavigator().tryMoveToXYZ(vec3d.x, vec3d.y, vec3d.z, 0.2);
-                                }
-                            }
-                        }
-                        else 
-                        {
-                            citizen.getNavigator().tryMoveToXYZ(restaurant.getX(), restaurant.getY(), restaurant.getZ(), 3);
-                        }
-                    }
-                    else
-                    {
-                        tryToEat();
-                    }
-                }
+                searchForPlaceToEat();
                 break;
-            case CHECKING_FOR_CHAIR:
-                findChair();
             case CHECKING_FOR_RESTAURANT:
                 searchForFood();
                 break;
             case CHECKING_FOR_FOOD:
-            case SITTING:
                 tryToEat();
-                break;
-            case RELAXING:
-                if (relaxingTicks > 0)
-                {
-                    relaxingTicks--;
-                    if (eatingTicks > 0)
-                    {
-                        eatingTicks--;
-                    }
-                    else
-                    {
-                        citizen.stopActiveHand();
-                        citizen.resetActiveHand();
-                    }
-
-                    if(relaxingTicks == 0) 
-                    {
-                        citizen.dismountRidingEntity();
-                        cleanTask();
-                    }
-                    else if (eatingTicks == 0 && checkForRandom())
-                    {
-                        citizen.stopActiveHand();
-                        citizen.resetActiveHand();
-                        citizen.setHeldItem(EnumHand.MAIN_HAND, stack);
-                        citizen.setActiveHand(EnumHand.MAIN_HAND);
-                        eatingTicks = 50;
-                    }
-                }
                 break;
             case EATING:
                 if(eatingTicks > 0 && slot != -1 && stack != null) {
@@ -221,16 +157,7 @@ public class EntityAIEatTask extends EntityAIBase
                         }
                         citizen.getCitizenData().getCitizenHappinessHandler().setFoodModifier(true);
                         citizen.getCitizenData().markDirty();
-                        if (restaurant != null && Configurations.gameplay.restaurantSittingRequired)
-                        {
-                            currentState = STATE.RELAXING;
-                            relaxingTicks = RELAXING_TICKS;
-                        }
-                        else
-                        {
-                            citizen.dismountRidingEntity();
-                            cleanTask();
-                        }
+                        cleanTask();
                     }
                 }
                 else
@@ -245,13 +172,45 @@ public class EntityAIEatTask extends EntityAIBase
         }
     }
 
-    protected void cleanTask()
+    /**
+     * Search for a place to eat in the restaurant.
+     */
+    private void searchForPlaceToEat()
     {
-        if (isSitting)
+        if (citizen.getCitizenJobHandler().getColonyJob() == null
+              && citizen.getCitizenData().getSaturation() >= CitizenConstants.LOW_SATURATION
+              && checkForRandom())
         {
-            citizen.dismountRidingEntity();
-            seatBlock.ifPresent(block -> block.dismountSeat(CompatibilityUtils.getWorld(citizen)));
+            final double distance1 = restaurant.distanceSq(citizen.posX, citizen.posY, citizen.posZ);
+
+            if (distance1 < CHAIR_SEARCH_RANGE)
+            {
+                Vec3d vec3d = null;
+                if(vec3d == null)
+                {
+                    vec3d = RandomPositionGenerator.getLandPos(citizen, 3, 3);
+                    if (vec3d != null)
+                    {
+                        citizen.getNavigator().tryMoveToXYZ(vec3d.x, vec3d.y, vec3d.z, 0.2);
+                    }
+                }
+            }
+            else
+            {
+                citizen.getNavigator().tryMoveToXYZ(restaurant.getX(), restaurant.getY(), restaurant.getZ(), 3);
+            }
         }
+        else
+        {
+            tryToEat();
+        }
+    }
+
+    /**
+     * Cleanup the task and reset all the tasks.
+     */
+    private void cleanTask()
+    {
         citizen.stopActiveHand();
         citizen.resetActiveHand();
         citizen.setHeldItem(EnumHand.MAIN_HAND,ItemStack.EMPTY);
@@ -259,12 +218,8 @@ public class EntityAIEatTask extends EntityAIBase
         slot = -1;
         stack = null;
         eatingTicks = 0;
-        relaxingTicks = 0;
-        isSitting = false;
         currentState = STATE.IDLE;
-        chairPosition = null;
         restaurant = null;
-        seatBlock = Optional.ofNullable(null);
     }
 
     /**
@@ -274,29 +229,31 @@ public class EntityAIEatTask extends EntityAIBase
      */
     private boolean tryToEat()
     {
-        slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen,
-          itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
+        final CitizenData citizenData = citizen.getCitizenData();
 
-        if (slot == -1)
+        if (citizenData == null)
         {
-            citizen.getCitizenData().getCitizenHappinessHandler().setFoodModifier(false);
             return false;
         }
 
-        stack = citizen.getCitizenData().getInventory().getStackInSlot(slot);
-        if (!ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemFood && citizen.getCitizenData() != null)
+        slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, ISFOOD);
+
+        if (slot == -1)
         {
-            citizen.getCitizenData().getInventory().decrStackSize(slot, 1);
-            citizen.getCitizenData().markDirty();
+            citizenData.getCitizenHappinessHandler().setFoodModifier(false);
+            return false;
+        }
+
+        final ItemStack stack = citizenData.getInventory().getStackInSlot(slot);
+        if (!ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemFood && citizenData != null)
+        {
+            citizenData.getInventory().decrStackSize(slot, 1);
+            citizenData.markDirty();
             eatFood();
             return true;
         }
-        else
-        {
-            stack = null;
-        }
 
-        citizen.getCitizenData().getCitizenHappinessHandler().setFoodModifier(false);
+        citizenData.getCitizenHappinessHandler().setFoodModifier(false);
         return false;
     }
 
@@ -363,127 +320,15 @@ public class EntityAIEatTask extends EntityAIBase
         }
     }
 
-    protected void eatFood()
+    /**
+     * Consume a certain type of food.
+     */
+    private void eatFood()
     {
         eatingTicks = stack.getMaxItemUseDuration() * 2;
         currentState = STATE.EATING;
         citizen.setHeldItem(EnumHand.MAIN_HAND, stack);
         citizen.setActiveHand(EnumHand.MAIN_HAND);
-    }
-    
-    protected void findChair()
-    {
-        final World world = CompatibilityUtils.getWorld(citizen);
-        if (chairPosition != null)
-        {
-            if (citizen.isWorkerAtSiteWithMove(chairPosition,2))
-            {
-                final AxisAlignedBB range = new AxisAlignedBB(chairPosition);
-                List<EntityCushion> items = world.getEntitiesWithinAABB(EntityCushion.class, range);
-                
-                if (items.size() > 0)
-                {
-                    EntityCushion entity = items.get(0);
-                    if (entity.isBeingRidden() || entity.isSeatTaken())
-                    {
-                        chairPosition = null;
-                        return;
-                    }
-                }
-                
-                seatBlock.ifPresent(block -> block.startSeating(world, chairPosition, citizen));
-                currentState = STATE.SITTING;
-                isSitting = true;
-            }
-        }
-        else
-        {
-            List<BlockPos> chairs = null;
-            BuildingCook building = (BuildingCook) citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(restaurant);
-            if (building != null)
-            {
-                chairs = building.getChairs(citizen);
-            }
-            
-            if (chairs != null && chairs.size() > 0)
-            {
-                for(int i = 0;i < chairs.size(); i ++)
-                {
-                    tryFindChairAt(chairs.get(i));
-                    if (chairPosition != null)
-                    {
-                        return;
-                    }
-                }
-            }
-            if (chairPosition == null)
-            {
-                sendChatMessage("com.minecolonies.coremod.ai.noChairs");
-                return;
-            }
-        }
-    }
-
-    private void tryFindChairAt(@NotNull final BlockPos pos)
-    {
-        final World world = CompatibilityUtils.getWorld(citizen);
-        final Block block = world.getBlockState(pos).getBlock();
-
-        final AxisAlignedBB range = new AxisAlignedBB(pos);
-        List<EntityCushion> items = world.getEntitiesWithinAABB(EntityCushion.class, range);
-
-        if (!(block instanceof IBlockMinecoloniesSeat))
-        {
-            //rerun finding chairs, this chair is not available anymore.
-            BuildingCook building = (BuildingCook) citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(restaurant);
-            if (building != null)
-            {
-                building.recalculateChairs(citizen);
-                return;
-            }
-        }
-        
-        if (items.size() > 0)
-        {
-            EntityCushion entity = items.get(0);
-            if (entity.isBeingRidden() || entity.isSeatTaken())
-            {
-                return;
-            }
-            entity.setSeatTaken();
-        }
-        if (citizen.getRidingEntity() == null
-            && world.getBlockState(pos.add(0, 1, 0)).getBlock() == Blocks.AIR) 
-        {
-            seatBlock = Optional.ofNullable((IBlockMinecoloniesSeat) block);
-            chairPosition = pos;
-        }
-
-        
-//        final World world = CompatibilityUtils.getWorld(citizen);
-//        final Block block = world.getBlockState(pos).getBlock();
-//        if (block instanceof IBlockMinecoloniesSeat)
-//        {
-//            final AxisAlignedBB range = new AxisAlignedBB(pos);
-//            List<EntityCushion> items = world.getEntitiesWithinAABB(EntityCushion.class, range);
-//            IBlockMinecoloniesSeat seat = (IBlockMinecoloniesSeat) block;
-//            
-//            if (items.size() > 0)
-//            {
-//                EntityCushion entity = items.get(0);
-//                if (entity.isBeingRidden() || entity.isSeatTaken())
-//                {
-//                    return;
-//                }
-//                entity.setSeatTaken();
-//            }
-//            if (citizen.getRidingEntity() == null
-//                && world.getBlockState(pos.add(0, 1, 0)).getBlock() == Blocks.AIR) 
-//            {
-//                seatBlock = Optional.ofNullable((IBlockMinecoloniesSeat) block);
-//                chairPosition = pos;
-//            }
-//        }
     }
 
     private boolean checkForRandom()
