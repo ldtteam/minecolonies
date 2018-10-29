@@ -65,7 +65,7 @@ public final class ModBlocks
     public static        BlockCactusSlabDouble          blockCactusSlabDouble;
     public static        BlockHutComposter              blockHutComposter;
     public static        BlockHutLibrary                blockHutLibrary;
-    public static        BlockHutFlorist                blockHutFlorist;
+    //public static        BlockHutFlorist                blockHutFlorist;
 
     /**
      * Utility blocks.
@@ -165,7 +165,7 @@ public final class ModBlocks
         blockBarrel = new BlockBarrel().registerBlock(registry);
         blockHutComposter = new BlockHutComposter().registerBlock(registry);
         blockCompostedDirt = new BlockCompostedDirt().registerBlock(registry);
-        blockHutFlorist = new BlockHutFlorist().registerBlock(registry);
+        //blockHutFlorist = new BlockHutFlorist().registerBlock(registry);
 
         for (final BlockPlanks.EnumType type : BlockPlanks.EnumType.values())
         {
@@ -226,7 +226,7 @@ public final class ModBlocks
         blockBarrel.registerItemBlock(registry);
         blockHutComposter.registerItemBlock(registry);
         blockCompostedDirt.registerItemBlock(registry);
-        blockHutFlorist.registerItemBlock(registry);
+        //blockHutFlorist.registerItemBlock(registry);
 
         for (final BlockTimberFrame frame: timberFrames)
         {
