@@ -36,7 +36,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     /**
      * The pathresult of trying to move away
      */
-    PathResult moveAwayPath;
+    private PathResult moveAwayPath;
 
     /**
      * Constructor.
