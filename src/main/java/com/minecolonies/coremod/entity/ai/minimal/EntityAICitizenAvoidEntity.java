@@ -4,6 +4,7 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
+import com.minecolonies.coremod.entity.pathfinding.PathResult;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,6 +32,11 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     private final Class<? extends Entity> targetEntityClass;
     @Nullable
     private       Entity                  closestLivingEntity;
+
+    /**
+     * The pathresult of trying to move away
+     */
+    PathResult moveAwayPath;
 
     /**
      * Constructor.
@@ -129,7 +135,10 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
             return;
         }
 
-        theEntity.getNavigator().moveAwayFromEntityLiving(closestLivingEntity, distanceFromEntity * 2D, nearSpeed);
+        if (moveAwayPath == null || !moveAwayPath.isInProgress())
+        {
+            moveAwayPath = theEntity.getNavigator().moveAwayFromEntityLiving(closestLivingEntity, distanceFromEntity * 2D, nearSpeed);
+        }
     }
 
     /**

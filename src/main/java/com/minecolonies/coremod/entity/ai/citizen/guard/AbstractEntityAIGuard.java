@@ -26,12 +26,12 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.List;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
-import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
  * Class taking of the abstract guard methods for all fighting AIs.
@@ -165,6 +165,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             if (!isWithinPersecutionDistance(buildingGuards.getPlayerToFollow()))
             {
                 worker.getNavigator().clearPath();
+                worker.getMoveHelper().strafe(0, 0);
             }
             else
             {
