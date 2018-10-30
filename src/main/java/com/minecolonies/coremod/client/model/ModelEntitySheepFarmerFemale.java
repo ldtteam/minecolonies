@@ -23,7 +23,6 @@ public class ModelEntitySheepFarmerFemale extends ModelBiped
         ModelRenderer ponytail_8;
         ModelRenderer ponytail_9;
         ModelRenderer ponytail_10;
-        ModelRenderer ponytail_11;
         ModelRenderer hairbackbuttom1;
         ModelRenderer hairbackTop_1;
         ModelRenderer hairbackTop_2;
@@ -168,13 +167,6 @@ public class ModelEntitySheepFarmerFemale extends ModelBiped
         ponytail_10.setTextureSize(128, 64);
         ponytail_10.mirror = true;
         setRotation(ponytail_10, 0.25F, 1.58825F, -1.012291F);
-
-        ponytail_11 = new ModelRenderer(this, 0, 45);
-        ponytail_11.addBox(-1.5F, -5.5F, -3.5F, 1, 1, 4);
-        ponytail_11.setRotationPoint(1.5F, -2.9F, 2.6F);
-        ponytail_11.setTextureSize(128, 64);
-        ponytail_11.mirror = true;
-        setRotation(ponytail_11, 0.25F, 1.58825F, -1.012291F);
 
         hairbackbuttom1 = new ModelRenderer(this, 0, 45);
         hairbackbuttom1.addBox(-3.5F, -0.5F, 3.5F, 7, 3, 1);
@@ -364,7 +356,6 @@ public class ModelEntitySheepFarmerFemale extends ModelBiped
         this.bipedHead.addChild(ponytail_8);
         this.bipedHead.addChild(ponytail_9);
         this.bipedHead.addChild(ponytail_10);
-        this.bipedHead.addChild(ponytail_11);
 
         this.bipedHead.addChild(hairRightTop_1);
         this.bipedHead.addChild(hairfrontTop_1);
