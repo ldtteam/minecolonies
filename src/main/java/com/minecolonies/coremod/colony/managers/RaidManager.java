@@ -187,7 +187,7 @@ public class RaidManager implements IRaiderManager
         for(final UUID uuid : new ArrayList<>(horde))
         {
             final Entity raiderEntity = world.getEntityFromUuid(uuid);
-            if(raiderEntity == null || !raiderEntity.isEntityAlive() || uuid.equals(raiderEntity.getUniqueID()))
+            if(raiderEntity == null || !raiderEntity.isEntityAlive() || uuid.equals(raider.getUniqueID()))
             {
                 horde.remove(uuid);
             }
