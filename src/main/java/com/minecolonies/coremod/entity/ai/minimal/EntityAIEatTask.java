@@ -52,7 +52,7 @@ public class EntityAIEatTask extends EntityAIBase
     /**
      * Max distance from the restaurant block the citizen should eat in x/z.
      */
-    private static final int PLACE_TO_EAT_DISTANCE = 10;
+    private static final int PLACE_TO_EAT_DISTANCE = 5;
 
     /**
      * Time required to eat in seconds.
