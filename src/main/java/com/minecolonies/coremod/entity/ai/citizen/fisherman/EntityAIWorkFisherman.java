@@ -379,7 +379,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             {
                 chatSpamFilter.talkWithoutSpam("entity.fisherman.messageWaterTooFar");
             }
-            pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
+
+            if (pathResult == null || !pathResult.isInProgress())
+            {
+                pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
+            }
             return getState();
         }
         job.setWater(job.getPonds().get(random.nextInt(job.getPonds().size())));

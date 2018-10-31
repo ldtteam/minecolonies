@@ -23,6 +23,7 @@ import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbaria
 import com.minecolonies.coremod.entity.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
+import com.minecolonies.coremod.entity.pathfinding.PathResult;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.util.PermissionUtils;
@@ -79,6 +80,11 @@ public class EntityCitizen extends AbstractEntityCitizen
      * The New PathNavigate navigator.
      */
     private final PathNavigate newNavigator;
+
+    /**
+     * The path-result of trying to move away
+     */
+    private PathResult moveAwayPath;
 
     /**
      * It's citizen Id.
@@ -607,9 +613,9 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
         }
 
-        if (isEntityInsideOpaqueBlock() || isInsideOfMaterial(Material.LEAVES))
+        if ((isEntityInsideOpaqueBlock() || isInsideOfMaterial(Material.LEAVES)) && (moveAwayPath == null || !moveAwayPath.isInProgress()))
         {
-            getNavigator().moveAwayFromXYZ(this.getPosition(), MOVE_AWAY_RANGE, MOVE_AWAY_SPEED);
+            moveAwayPath = getNavigator().moveAwayFromXYZ(this.getPosition(), MOVE_AWAY_RANGE, MOVE_AWAY_SPEED);
         }
 
         citizenExperienceHandler.gatherXp();

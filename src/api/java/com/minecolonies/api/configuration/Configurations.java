@@ -275,6 +275,10 @@ public class Configurations
 
         @Config.Comment("Amount of additional threads to be used for pathfinding")
         public int pathfindingMaxThreadCount = 2;
+
+        @Config.Comment("Max amount of Nodes(positions) to map during pathfinding. Default 5000: Lowering increases performance, but might lead to pathing glitches")
+        public int pathfindingMaxNodes = 5000;
+
     }
 
     public static class Names

@@ -250,7 +250,11 @@ public final class EntityUtils
      */
     public static boolean tryMoveLivingToXYZ(@NotNull final EntityLiving living, final int x, final int y, final int z, final double speed)
     {
-        return living.getNavigator().tryMoveToXYZ(x, y, z, speed);
+        if (living.getNavigator().noPath())
+        {
+            return living.getNavigator().tryMoveToXYZ(x, y, z, speed);
+        }
+        return false;
     }
 
     /**
