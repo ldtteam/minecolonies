@@ -206,7 +206,7 @@ public class EntityAIEatTask extends EntityAIBase
         citizen.playSound(SoundEvents.ENTITY_GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
 
         final ItemFood itemFood = (ItemFood) stack.getItem();
-        citizenData.increaseSaturation(itemFood.getHealAmount(stack) * itemFood.getSaturationModifier(stack) * 2.0);
+        citizenData.increaseSaturation(itemFood.getHealAmount(stack) * itemFood.getSaturationModifier(stack));
         citizenData.getInventory().decrStackSize(foodSlot, 1);
         citizenData.markDirty();
 
