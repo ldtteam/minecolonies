@@ -243,7 +243,16 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModItems.chiefSword);
         createCustomModel(ModItems.scimitar);
 
+        createCustomModel(ModItems.pirateBoots_1);
+        createCustomModel(ModItems.pirateChest_1);
+        createCustomModel(ModItems.pirateHelmet_1);
+        createCustomModel(ModItems.pirateLegs_1);
 
+        createCustomModel(ModItems.pirateBoots_2);
+        createCustomModel(ModItems.pirateChest_2);
+        createCustomModel(ModItems.pirateHelmet_2);
+        createCustomModel(ModItems.pirateLegs_2);
+        
         // Achievement proxy Items
         createCustomModel(ModItems.itemAchievementProxySettlement);
         createCustomModel(ModItems.itemAchievementProxyTown);

@@ -31,6 +31,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
+import java.util.Random;
 import java.util.stream.IntStream;
 
 /**
@@ -48,9 +49,9 @@ public final class MobSpawnUtils
     /**
      * Loot tables for Pirates.
      */
-    public static final ResourceLocation PirateLootTable = new ResourceLocation(Constants.MOD_ID, "EntityPirateDrops");
-    public static final ResourceLocation PirateArcherLootTable    = new ResourceLocation(Constants.MOD_ID, "EntityArcherPirateDrops");
-    public static final ResourceLocation PirateChiefLootTable     = new ResourceLocation(Constants.MOD_ID, "EntityChiefPirateDrops");
+    public static final ResourceLocation PirateLootTable = new ResourceLocation(Constants.MOD_ID, "entitypiratedrops");
+    public static final ResourceLocation PirateArcherLootTable = new ResourceLocation(Constants.MOD_ID, "entityarcherpiratedrops");
+    public static final ResourceLocation PirateChiefLootTable = new ResourceLocation(Constants.MOD_ID, "entitychiefpiratedrops");
 
     /**
      * Barbarian Attack Damage.
@@ -246,6 +247,23 @@ public final class MobSpawnUtils
         else if (mob instanceof AbstractEntityPirate)
         {
             mob.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(ModItems.scimitar));
+            if (mob instanceof EntityChiefPirate)
+            {
+                if (new Random().nextBoolean())
+                {
+                    mob.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(ModItems.pirateHelmet_1));
+                    mob.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ModItems.pirateChest_1));
+                    mob.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(ModItems.pirateLegs_1));
+                    mob.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(ModItems.pirateBoots_1));
+                }
+                else
+                {
+                    mob.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(ModItems.pirateHelmet_2));
+                    mob.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ModItems.pirateChest_2));
+                    mob.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(ModItems.pirateLegs_2));
+                    mob.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(ModItems.pirateBoots_2));
+                }
+            }
         }
     }
 }

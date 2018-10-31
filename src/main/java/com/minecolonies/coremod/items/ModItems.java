@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.items;
 
 import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.coremod.creativetab.ModCreativeTabs;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -27,6 +29,16 @@ public final class ModItems
     public static Item itemCactusDoor;
     public static Item compost;
     public static Item resourceScroll;
+
+    public static Item pirateHelmet_1;
+    public static Item pirateChest_1;
+    public static Item pirateLegs_1;
+    public static Item pirateBoots_1;
+
+    public static Item pirateHelmet_2;
+    public static Item pirateChest_2;
+    public static Item pirateLegs_2;
+    public static Item pirateBoots_2;
 
     public static Item itemAchievementProxySettlement;
     public static Item itemAchievementProxyTown;
@@ -61,8 +73,18 @@ public final class ModItems
         clipboard = new ItemClipBoard();
         compost = new ItemCompost();
         resourceScroll = new ItemResourceScroll();
-
         itemCactusDoor = new ItemCactusDoor(ModBlocks.blockCactusDoor, "cactusdoor");
+
+        pirateHelmet_1 = new ItemPirateGear("pirate_hat", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EntityEquipmentSlot.HEAD);
+        pirateChest_1 = new ItemPirateGear("pirate_top", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EntityEquipmentSlot.CHEST);
+        pirateLegs_1 = new ItemPirateGear("pirate_legs", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 1, EntityEquipmentSlot.LEGS);
+        pirateBoots_1 = new ItemPirateGear("pirate_boots", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EntityEquipmentSlot.FEET);
+
+        pirateHelmet_2 = new ItemPirateGear("pirate_cap", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 0, EntityEquipmentSlot.HEAD);
+        pirateChest_2 = new ItemPirateGear("pirate_chest", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 0, EntityEquipmentSlot.CHEST);
+        pirateLegs_2 = new ItemPirateGear("pirate_leggins", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 1, EntityEquipmentSlot.LEGS);
+        pirateBoots_2 = new ItemPirateGear("pirate_shoes", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 0, EntityEquipmentSlot.FEET);
+
         itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement");
         itemAchievementProxyTown = new ItemAchievementProxy("sizeTown");
         itemAchievementProxyCity = new ItemAchievementProxy("sizeCity");
@@ -77,14 +99,27 @@ public final class ModItems
         registry.register(supplyCamp);
         registry.register(ancientTome);
         registry.register(chiefSword);
-        registry.register(scimitar);
-        registry.register(itemAchievementProxySettlement);
-        registry.register(itemAchievementProxyTown);
-        registry.register(itemAchievementProxyCity);
-        registry.register(itemAchievementProxyMetropolis);
         registry.register(clipboard);
         registry.register(itemCactusDoor);
         registry.register(compost);
         registry.register(resourceScroll);
+        registry.register(scimitar);
+
+        registry.register(pirateHelmet_1);
+        registry.register(pirateChest_1);
+        registry.register(pirateLegs_1);
+        registry.register(pirateBoots_1);
+
+        registry.register(pirateHelmet_2);
+        registry.register(pirateChest_2);
+        registry.register(pirateLegs_2);
+        registry.register(pirateBoots_2);
+
+        registry.register(itemAchievementProxySettlement);
+        registry.register(itemAchievementProxyTown);
+        registry.register(itemAchievementProxyCity);
+        registry.register(itemAchievementProxyMetropolis);
+
+
     }
 }
