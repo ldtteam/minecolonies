@@ -28,6 +28,11 @@ public class EntityAIRaiderAttackMelee extends EntityAIBase
     private              int                           lastAttack = 0;
 
     /**
+     * Timer for the update rate of attack logic
+     */
+    private int tickTimer = 0;
+
+    /**
      * Constructor method for AI
      *
      * @param creatureIn The creature which is using the AI
@@ -72,12 +77,21 @@ public class EntityAIRaiderAttackMelee extends EntityAIBase
     }
 
     /**
-     * AI for an Entity to attack the target
+     * AI for an Entity to attack the target, Called every Tick(20tps)
      *
      * @param target The target to attack
      */
     private void attack(final EntityLivingBase target)
     {
+        // Limit Actions to every 10 Ticks
+        if (tickTimer > 0)
+        {
+            tickTimer--;
+            lastAttack--;
+            return;
+        }
+        tickTimer = 10;
+
         if (target != null)
         {
             double damageToBeDealt = MobSpawnUtils.ATTACK_DAMAGE;

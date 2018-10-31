@@ -7,6 +7,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
+import com.minecolonies.coremod.entity.pathfinding.PathResult;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.BarbarianConstants.*;
+import static com.minecolonies.api.util.constant.BarbarianConstants.LADDERS_TO_PLACE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
@@ -87,6 +88,11 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
      * The amount of passed ticks.
      */
     private int passedTicks = 0;
+
+    /**
+     * The pathresult of trying to move away from a point
+     */
+    private PathResult moveAwayPath;
 
     /**
      * Constructor for AI
@@ -279,7 +285,10 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
             }
             else
             {
-                entity.getNavigator().moveAwayFromXYZ(entity.getPosition(), random.nextInt(4), 2);
+                if (moveAwayPath == null || !moveAwayPath.isInProgress())
+                {
+                    moveAwayPath = entity.getNavigator().moveAwayFromXYZ(entity.getPosition(), random.nextInt(4), 2);
+                }
             }
             return false;
         }
