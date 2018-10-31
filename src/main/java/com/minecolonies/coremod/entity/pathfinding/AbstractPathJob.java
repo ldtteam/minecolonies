@@ -52,9 +52,9 @@ public abstract class AbstractPathJob implements Callable<Path>
     private static final   int      MIN_Y                 = 0;
 
     /**
-     * The maximum amount of nodes to Map
+     * The maximum amount of nodes to Map, set in the config.
      */
-    private static final int MAX_NODES_VISITED = 5000;
+    private static final int MAX_NODES_VISITED = Configurations.pathfinding.pathfindingMaxNodes;
 
     /**
      * Additional cost of jumping and dropping - base 1.
