@@ -118,13 +118,12 @@ public class EntityAIEatTask extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        final CitizenData citizenData = citizen.getCitizenData();
-
         if (currentState != IDLE)
         {
             return true;
         }
 
+        final CitizenData citizenData = citizen.getCitizenData();
         if (citizenData == null || citizen.getCitizenData().getSaturation() >= CitizenConstants.HIGH_SATURATION || !citizen.isOkayToEat())
         {
             return false;

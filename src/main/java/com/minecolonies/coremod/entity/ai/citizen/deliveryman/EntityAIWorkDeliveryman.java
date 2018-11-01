@@ -82,11 +82,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private static final int TRIES_TO_GET_RANDOM_BUILDING = 3;
 
     /**
-     * Quantity the saturation decreases per action.
-     */
-    private static final double SATURATION_DECREASE_FACTOR = 0.01;
-
-    /**
      * Next target the deliveryman should gather stuff at.
      */
     private BlockPos gatherTarget = null;
