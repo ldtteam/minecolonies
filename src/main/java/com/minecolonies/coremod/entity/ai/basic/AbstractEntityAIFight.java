@@ -67,7 +67,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
     /**
      * The value of the speed which the guard will move.
      */
-    private static final double ATTACK_SPEED = 0.8;
+    private static final double COMBAT_SPEED = 1;
 
     /**
      * Creates the abstract part of the AI.
@@ -273,31 +273,24 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
     /**
      * This gets the attack speed for the guard
      * with adjustment for guards level.
+     * Capped at 2
      *
-     * @return attack speed for guard
+     * @return movement speed for guard
      */
-    public double getAttackSpeed()
+    public double getCombatMovementSpeed()
     {
-        final double speed = ATTACK_SPEED;
-        final double levelAdjustment = (worker.getCitizenData().getLevel() / 50.0);
+        if (worker.getCitizenData() == null)
+        {
+            return COMBAT_SPEED;
+        }
+        double levelAdjustment = worker.getCitizenData().getLevel() * 0.05;
 
-        return speed + levelAdjustment;
+        levelAdjustment = levelAdjustment > 1.0 ? 1.0 : levelAdjustment;
+        return COMBAT_SPEED + levelAdjustment;
     }
 
     /**
-     * Returns the attack distance for guard with current weapon
-     * plus adjustment for guards level.
-     *
-     * @return attack distance
-     */
-    public double getAttackDistance()
-    {
-        final double levelAdjustment = (worker.getCitizenData().getLevel() / 50.0) * 10;
-        return getAttackRange() * levelAdjustment;
-    }
-
-    /**
-     * Gets the reload time for a Range guard attack.
+     * Gets the base reload time for an attack.
      *
      * @return the reload time
      */
@@ -305,9 +298,10 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
     {
         if (worker.getCitizenData() != null)
         {
-            return RANGED_ATTACK_DELAY_BASE / (worker.getCitizenData().getLevel() + 1);
+            final int delay = PHYSICAL_ATTACK_DELAY_BASE - (worker.getCitizenData().getLevel());
+            return delay > PHYSICAL_ATTACK_DELAY_MIN ? PHYSICAL_ATTACK_DELAY_MIN : delay;
         }
-        return RANGED_ATTACK_DELAY_BASE;
+        return PHYSICAL_ATTACK_DELAY_BASE;
     }
 
     /**

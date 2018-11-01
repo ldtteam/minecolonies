@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.mobs.barbarians;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.constant.Constants;
-
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -32,6 +31,11 @@ public class EntityAIAttackArcher extends EntityAIBase
     private final EntityCreature   entity;
     private       EntityLivingBase target;
     private int lastAttack = 0;
+
+    /**
+     * Timer for the update rate of attack logic
+     */
+    private int tickTimer = 0;
 
     /**
      * Constructor method for AI
@@ -78,36 +82,53 @@ public class EntityAIAttackArcher extends EntityAIBase
     }
 
     /**
-     * AI for an Entity to attack the target
-     *
+     * AI for an Entity to attack the target. Called every Tick(20tps)
      * @param target The target to attack
      */
     private void attack(final EntityLivingBase target)
     {
-        final EntityTippedArrow arrowEntity = new EntityTippedArrow(CompatibilityUtils.getWorld(entity), entity);
-        final double xVector = target.posX - entity.posX;
-        final double yVector = target.getEntityBoundingBox().minY + target.height / AIM_HEIGHT - arrowEntity.posY;
-        final double zVector = target.posZ - entity.posZ;
-        final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
-        //Lower the variable higher the chance that the arrows hits the target.
-
-        arrowEntity.shoot(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) ARROW_SPEED, (float) HIT_CHANCE);
-
-        entity.faceEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
-        entity.getLookHelper().setLookPositionWithEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
+        // Limit Actions to every 10 Ticks
+        if (tickTimer > 0)
+        {
+            tickTimer--;
+            lastAttack--;
+            return;
+        }
+        tickTimer = 10;
 
         if (entity.getDistance(target) >= MAX_ATTACK_DISTANCE || !entity.canEntityBeSeen(target))
         {
             entity.getNavigator().tryMoveToEntityLiving(target, ATTACK_SPEED);
         }
-        else if (lastAttack <= 0 && entity.canEntityBeSeen(target))
+        else
         {
-            CompatibilityUtils.spawnEntity(CompatibilityUtils.getWorld(entity), arrowEntity);
-            entity.swingArm(EnumHand.MAIN_HAND);
-            entity.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) 1.0D, (float) getRandomPitch());
-            lastAttack = getAttackDelay();
-        }
+            // Stop walking when we're in attack range
+            if (entity.getDistance(target) < MAX_ATTACK_DISTANCE)
+            {
+                entity.getNavigator().clearPath();
+            }
 
+            if (lastAttack <= 0 && entity.canEntityBeSeen(target))
+            {
+
+                final EntityTippedArrow arrowEntity = new EntityTippedArrow(CompatibilityUtils.getWorld(entity), entity);
+                final double xVector = target.posX - entity.posX;
+                final double yVector = target.getEntityBoundingBox().minY + target.height / AIM_HEIGHT - arrowEntity.posY;
+                final double zVector = target.posZ - entity.posZ;
+                final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
+                //Lower the variable higher the chance that the arrows hits the target.
+
+                arrowEntity.shoot(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) ARROW_SPEED, (float) HIT_CHANCE);
+
+                entity.faceEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
+                entity.getLookHelper().setLookPositionWithEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
+
+                CompatibilityUtils.spawnEntity(CompatibilityUtils.getWorld(entity), arrowEntity);
+                entity.swingArm(EnumHand.MAIN_HAND);
+                entity.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) 1.0D, (float) getRandomPitch());
+                lastAttack = getAttackDelay();
+            }
+        }
         if (lastAttack > 0)
         {
             lastAttack -= 1;

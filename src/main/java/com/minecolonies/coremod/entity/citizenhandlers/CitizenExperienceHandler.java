@@ -136,7 +136,7 @@ public class CitizenExperienceHandler
 
             while (ExperienceUtils.getXPNeededForNextLevel(citizen.getCitizenData().getLevel()) < citizen.getCitizenData().getExperience())
             {
-                citizen.getCitizenData().increaseLevel();
+                citizen.getCitizenData().levelUp();
             }
             updateLevel();
             citizen.markDirty();
