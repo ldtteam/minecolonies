@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.ai.mobs.AITasks;
+package com.minecolonies.coremod.entity.ai.mobs.aitasks;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.blockout.Log;

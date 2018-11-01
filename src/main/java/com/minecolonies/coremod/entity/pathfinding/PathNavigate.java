@@ -29,7 +29,7 @@ import java.util.concurrent.Future;
 public class PathNavigate extends PathNavigateGround
 {
     private static final double ON_PATH_SPEED_MULTIPLIER = 1.3D;
-    private static final double PIRATE_SWIM_BONUS = 50;
+    private static final double PIRATE_SWIM_BONUS = 20;
 
     /**
      * The range multiplier for the lumberjack.
@@ -114,8 +114,8 @@ public class PathNavigate extends PathNavigateGround
     {
         if (ourEntity instanceof AbstractEntityPirate && ourEntity.isInWater())
         {
-            speed = walkSpeed * 20;
-            return walkSpeed * 20;
+            speed = walkSpeed * PIRATE_SWIM_BONUS;
+            return walkSpeed * PIRATE_SWIM_BONUS;
         }
         speed = walkSpeed;
         return walkSpeed;

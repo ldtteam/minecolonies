@@ -152,6 +152,8 @@ public final class MobEventsUtils
                 setupSpawner(targetSpawnPoint.up(22).south(), world, PIRATE_ARCHER);
                 setupSpawner(targetSpawnPoint.up(6).south(11), world, PIRATE_ARCHER);
                 break;
+            default:
+                Log.getLogger().warn("Invalid ship size detected!");
         }
     }
 
