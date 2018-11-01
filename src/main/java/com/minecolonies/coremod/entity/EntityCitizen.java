@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
@@ -294,7 +295,8 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
     {
-        if (damageSource.getDamageType().equals(DamageSource.IN_WALL.getDamageType()) && citizenSleepHandler.isAsleep())
+        if (damageSource.getDamageType().equals(DamageSource.IN_WALL.getDamageType()) && citizenSleepHandler.isAsleep()
+              || Compatibility.isDynTreePresent() && damageSource.damageType.equals(Compatibility.getDynamicTreeDamage()))
         {
             return false;
         }

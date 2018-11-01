@@ -141,6 +141,24 @@ public final class Compatibility
     }
 
     /**
+     * Check if dynamic tree's is present
+     */
+    public static boolean isDynTreePresent()
+    {
+        return DynamicTreeCompat.isDynTreePresent();
+    }
+
+    /**
+     * Returns the damageType string falling dynamic Tree's use
+     *
+     * @return damageType
+     */
+    public static String getDynamicTreeDamage()
+    {
+        return DynamicTreeCompat.getDynamicTreeDamage();
+    }
+
+    /**
      * Check if block is a Dynamic tree
      */
     public static boolean isDynamicBlock(final Block block)

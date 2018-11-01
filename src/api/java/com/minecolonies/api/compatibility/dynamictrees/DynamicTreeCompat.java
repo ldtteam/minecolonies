@@ -28,6 +28,8 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
 
     private static final String DYNAMIC_MODID = "dynamictrees";
 
+    private static final String DYNAMIC_TREE_DAMAGE = "fallingtree";
+
     private DynamicTreeCompat()
     {
         /**
@@ -36,7 +38,28 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
     }
 
     /**
-     * Check wether the block is part of a dynamic Tree
+     * Check whether dynamic tree's mod is present
+     * @return true
+     */
+    @Override
+    @Optional.Method(modid = DYNAMIC_MODID)
+    protected boolean isDynamicTreePresent()
+    {
+        return true;
+    }
+
+    /**
+     * Check whether dynamic tree's mod is present
+     *
+     * @return true or false
+     */
+    public static boolean isDynTreePresent()
+    {
+        return instance.isDynamicTreePresent();
+    }
+
+    /**
+     * Check whether the block is part of a dynamic Tree
      *
      * @param block Block to check
      */
@@ -240,5 +263,15 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
     public static boolean plantDynamicSapling(final World world, final BlockPos location, final ItemStack sapling)
     {
         return instance.plantDynamicSaplingCompat(world, location, sapling);
+    }
+
+    /**
+     * Returns the damageType string falling dynamic Tree's use
+     *
+     * @return damageType
+     */
+    public static String getDynamicTreeDamage()
+    {
+        return DYNAMIC_TREE_DAMAGE;
     }
 }

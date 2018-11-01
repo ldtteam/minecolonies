@@ -14,6 +14,13 @@ import net.minecraft.world.World;
  */
 public class DynamicTreeProxy
 {
+    /**
+     * Default method for when dynamic Tree's mod is not present, returns false
+     */
+    protected boolean isDynamicTreePresent()
+    {
+        return false;
+    }
 
     /**
      * Default method for when dynamic Tree's mod is not present, returns false
