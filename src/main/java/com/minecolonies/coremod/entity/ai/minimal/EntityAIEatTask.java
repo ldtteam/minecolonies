@@ -21,7 +21,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
-import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
@@ -59,8 +58,10 @@ public class EntityAIEatTask extends EntityAIBase
      */
     private static final int REQUIRED_TIME_TO_EAT  = 10;
 
-    @NotNull
-    protected final ChatSpamFilter chatSpamFilter;
+    /**
+     * Filter for message propagation.
+     */
+    protected ChatSpamFilter chatSpamFilter;
 
     /**
      * The different types of AIStates related to eating.
@@ -112,7 +113,6 @@ public class EntityAIEatTask extends EntityAIBase
         super();
         this.citizen = citizen;
         this.setMutexBits(1);
-        this.chatSpamFilter = new ChatSpamFilter(citizen.getCitizenData());;
     }
     
     @Override
@@ -142,6 +142,11 @@ public class EntityAIEatTask extends EntityAIBase
     @Override
     public void updateTask()
     {
+        if (chatSpamFilter == null)
+        {
+            chatSpamFilter = new ChatSpamFilter(citizen.getCitizenData());
+        }
+
         final CitizenData citizenData = citizen.getCitizenData();
         if (citizenData == null)
         {

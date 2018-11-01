@@ -127,8 +127,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      */
     private int rotation = 0;
 
-    private static final double SATURATION_DECREASE_FACTOR = 0.02;
-
     /**
      * Creates this ai base class and set's up important things.
      * <p>
@@ -830,7 +828,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 world.setBlockToAir(currentBlock.blockPosition);
                 world.setBlockState(currentBlock.blockPosition, Blocks.AIR.getDefaultState());
                 worker.swingArm(worker.getActiveHand());
-                worker.decreaseSaturationForContinuousAction();
                 setDelay(UNLIMITED_RESOURCES_TIMEOUT * PROGRESS_MULTIPLIER / (worker.getCitizenExperienceHandler().getLevel() + PROGRESS_MULTIPLIER));
             }
             else
@@ -841,7 +838,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 }
                 else
                 {
-                    incrementActionsDoneAndDecSaturation();
+                    worker.decreaseSaturationForContinuousAction();
                 }
             }
         }
