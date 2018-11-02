@@ -100,7 +100,9 @@ public final class MobEventsUtils
             buildPlatform(targetSpawnPoint, world);
         }
 
-        if (world.getBlockState(targetSpawnPoint).getBlock() == Blocks.WATER && Pond.checkWater(world, targetSpawnPoint))
+        if ((world.getBlockState(targetSpawnPoint).getBlock() == Blocks.WATER && Pond.checkWater(world, targetSpawnPoint))
+              || (world.getBlockState(targetSpawnPoint.down()).getBlock() == Blocks.WATER && Pond.checkWater(world, targetSpawnPoint.down()))
+        )
         {
             StructureWrapper.loadAndPlaceStructureWithRotation(world, Structures.SCHEMATICS_PREFIX + "/Ships/" + shipSize, targetSpawnPoint.down(3), 0, Mirror.NONE, false);
             loadSpawners(world, targetSpawnPoint, shipSize);
