@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.CitizenConstants;
@@ -118,6 +119,11 @@ public class EntityAIEatTask extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
+        if (citizen.getDesiredActivity() == DesiredActivity.SLEEP)
+        {
+            return false;
+        }
+
         if (currentState != IDLE)
         {
             return true;
