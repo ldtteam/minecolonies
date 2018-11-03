@@ -13,18 +13,9 @@ public class ModelEntitySheepFarmerFemale extends ModelBiped
     public ModelEntitySheepFarmerFemale()
     {
         ModelRenderer bipedChest;
-        ModelRenderer ponytail_1;
-        ModelRenderer ponytail_2;
-        ModelRenderer ponytail_3;
-        ModelRenderer ponytail_4;
-        ModelRenderer ponytail_5;
-        ModelRenderer ponytail_6;
-        ModelRenderer ponytail_7;
-        ModelRenderer ponytail_8;
-        ModelRenderer ponytail_9;
-        ModelRenderer ponytail_10;
+
+        ModelRenderer backhair;
         ModelRenderer hairbackbuttom1;
-        ModelRenderer hairbackTop_1;
         ModelRenderer hairbackTop_2;
         ModelRenderer hairbackTop_3;
         ModelRenderer hairBackTop_4;
@@ -39,6 +30,11 @@ public class ModelEntitySheepFarmerFemale extends ModelBiped
         ModelRenderer hairLeftTop_5;
         ModelRenderer hairRightTop_1;
         ModelRenderer hairTop_1;
+        ModelRenderer left_top_1;
+        ModelRenderer ponytail_1;
+        ModelRenderer ponytail_2;
+        ModelRenderer ponytail_3;
+
         ModelRenderer bagR;
         ModelRenderer bagL;
         ModelRenderer bagBack;
@@ -98,75 +94,12 @@ public class ModelEntitySheepFarmerFemale extends ModelBiped
         bipedBody.mirror = true;
         setRotation(bipedBody, 0F, 0F, 0F);
 
-        ponytail_1 = new ModelRenderer(this, 0, 45);
-        ponytail_1.addBox(-2.5F, -7.5F, 3.5F, 5, 7, 1);
-        ponytail_1.setRotationPoint(0F, 0F, 0F);
-        ponytail_1.setTextureSize(128, 64);
-        ponytail_1.mirror = true;
-        setRotation(ponytail_1, 0F, 0F, 0F);
-
-        ponytail_2 = new ModelRenderer(this, 0, 45);
-        ponytail_2.addBox(-1.5F, -6.1F, -3.5F, 2, 1, 3);
-        ponytail_2.setRotationPoint(2F, -2F, 3F);
-        ponytail_2.setTextureSize(128, 64);
-        ponytail_2.mirror = true;
-        setRotation(ponytail_2, 0F, 1.58825F, -0.3316126F);
-
-        ponytail_3 = new ModelRenderer(this, 0, 45);
-        ponytail_3.addBox(-1.5F, -5.5F, -3.5F, 1, 1, 3);
-        ponytail_3.setRotationPoint(2F, -2.1F, 3F);
-        ponytail_3.setTextureSize(128, 64);
-        ponytail_3.mirror = true;
-        setRotation(ponytail_3, 0.25F, 1.58825F, -1.012291F);
-
-        ponytail_4 = new ModelRenderer(this, 0, 45);
-        ponytail_4.addBox(-1.5F, -5.5F, -3.5F, 2, 1, 3);
-        ponytail_4.setRotationPoint(2F, -2.3F, 3F);
-        ponytail_4.setTextureSize(128, 64);
-        ponytail_4.mirror = true;
-        setRotation(ponytail_4, 0.25F, 1.58825F, -0.3316126F);
-
-        ponytail_5 = new ModelRenderer(this, 0, 45);
-        ponytail_5.addBox(0F, -5.5F, -3.5F, 3, 1, 2);
-        ponytail_5.setRotationPoint(2.5F, -5F, 3F);
-        ponytail_5.setTextureSize(128, 64);
-        ponytail_5.mirror = true;
-        setRotation(ponytail_5, 0.25F, 1.518436F, -2.164208F);
-
-        ponytail_6 = new ModelRenderer(this, 0, 45);
-        ponytail_6.addBox(-1.5F, -5.5F, -3.5F, 4, 1, 2);
-        ponytail_6.setRotationPoint(2.5F, -2.2F, 3F);
-        ponytail_6.setTextureSize(128, 64);
-        ponytail_6.mirror = true;
-        setRotation(ponytail_6, 0.25F, 1.58825F, -1.012291F);
-
-        ponytail_7 = new ModelRenderer(this, 0, 45);
-        ponytail_7.addBox(-0.5F, -5.5F, -3.5F, 3, 1, 2);
-        ponytail_7.setRotationPoint(2.5F, -4.7F, 3F);
-        ponytail_7.setTextureSize(128, 64);
-        ponytail_7.mirror = true;
-        setRotation(ponytail_7, 0.25F, 1.500983F, -2.164208F);
-
-        ponytail_8 = new ModelRenderer(this, 0, 45);
-        ponytail_8.addBox(-1.5F, -5.5F, -3.5F, 1, 1, 5);
-        ponytail_8.setRotationPoint(1F, -3.7F, 2.1F);
-        ponytail_8.setTextureSize(128, 64);
-        ponytail_8.mirror = true;
-        setRotation(ponytail_8, 0.25F, 1.58825F, -1.012291F);
-
-        ponytail_9 = new ModelRenderer(this, 0, 45);
-        ponytail_9.addBox(-1.5F, -5.5F, -3.5F, 3, 1, 2);
-        ponytail_9.setRotationPoint(2.5F, -5.5F, 3F);
-        ponytail_9.setTextureSize(128, 64);
-        ponytail_9.mirror = true;
-        setRotation(ponytail_9, 0.25F, 1.692969F, -2.164208F);
-
-        ponytail_10 = new ModelRenderer(this, 0, 45);
-        ponytail_10.addBox(-2.5F, -5.5F, -3.5F, 2, 1, 4);
-        ponytail_10.setRotationPoint(1.6F, -4.7F, 1.4F);
-        ponytail_10.setTextureSize(128, 64);
-        ponytail_10.mirror = true;
-        setRotation(ponytail_10, 0.25F, 1.58825F, -1.012291F);
+        backhair = new ModelRenderer(this, 0, 45);
+        backhair.addBox(-2.5F, -7.5F, 3.5F, 5, 7, 1);
+        backhair.setRotationPoint(0F, 0F, 0F);
+        backhair.setTextureSize(128, 64);
+        backhair.mirror = true;
+        setRotation(backhair, 0F, 0F, 0F);
 
         hairbackbuttom1 = new ModelRenderer(this, 0, 45);
         hairbackbuttom1.addBox(-3.5F, -0.5F, 3.5F, 7, 3, 1);
@@ -175,20 +108,13 @@ public class ModelEntitySheepFarmerFemale extends ModelBiped
         hairbackbuttom1.mirror = true;
         setRotation(hairbackbuttom1, 0F, 0F, 0F);
 
-        hairbackTop_1 = new ModelRenderer(this, 0, 45);
-        hairbackTop_1.addBox(-4.5F, -7.5F, -4.5F, 3, 2, 9);
-        hairbackTop_1.setRotationPoint(0F, 0F, 0F);
-        hairbackTop_1.setTextureSize(128, 64);
-        hairbackTop_1.mirror = true;
-        setRotation(hairbackTop_1, 0F, 0F, 0F);
-
         hairbackTop_2 = new ModelRenderer(this, 0, 45);
         hairbackTop_2.addBox(-4.5F, -5.5F, -0.5F, 2, 1, 8);
         hairbackTop_2.setRotationPoint(0F, 0F, -3F);
         hairbackTop_2.setTextureSize(128, 64);
         hairbackTop_2.mirror = true;
-        setRotation(hairbackTop_2, 0F, 0F, 0F);
 
+        setRotation(hairbackTop_2, 0F, 0F, 0F);
         hairbackTop_3 = new ModelRenderer(this, 0, 45);
         hairbackTop_3.addBox(-4.5F, -4.5F, 0.5F, 2, 1, 8);
         hairbackTop_3.setRotationPoint(0F, 0F, -4F);
@@ -280,6 +206,34 @@ public class ModelEntitySheepFarmerFemale extends ModelBiped
         hairTop_1.mirror = true;
         setRotation(hairTop_1, 0F, 0F, 0F);
 
+        left_top_1 = new ModelRenderer(this, 0, 45);
+        left_top_1.addBox(-4.5F, -7.5F, -4.5F, 3, 2, 9);
+        left_top_1.setRotationPoint(0F, 0F, 0F);
+        left_top_1.setTextureSize(128, 64);
+        left_top_1.mirror = true;
+        setRotation(left_top_1, 0F, 0F, 0F);
+
+        ponytail_1 = new ModelRenderer(this, 0, 45);
+        ponytail_1.addBox(-7.5F, -7.5F, -4.5F, 1, 1, 4);
+        ponytail_1.setRotationPoint(7F, 5.5F, 2F);
+        ponytail_1.setTextureSize(128, 64);
+        ponytail_1.mirror = true;
+        setRotation(ponytail_1, -1.186824F, 0F, 0F);
+
+        ponytail_2 = new ModelRenderer(this, 0, 45);
+        ponytail_2.addBox(-7.5F, -7.5F, -4.5F, 3, 2, 4);
+        ponytail_2.setRotationPoint(6F, -1F, 0F);
+        ponytail_2.setTextureSize(128, 64);
+        ponytail_2.mirror = true;
+        setRotation(ponytail_2, -1.064651F, 0F, 0F);
+
+        ponytail_3 = new ModelRenderer(this, 0, 45);
+        ponytail_3.addBox(-7.5F, -7.5F, -4.5F, 2, 2, 4);
+        ponytail_3.setRotationPoint(6.5F, 2F, 1F);
+        ponytail_3.setTextureSize(128, 64);
+        ponytail_3.mirror = true;
+        setRotation(ponytail_3, -1.186824F, 0F, 0F);
+
         bagR = new ModelRenderer(this, 40, 41);
         bagR.addBox(3F, 0F, 3F, 1, 9, 3);
         bagR.setRotationPoint(0F, 0F, 0F);
@@ -330,7 +284,9 @@ public class ModelEntitySheepFarmerFemale extends ModelBiped
         this.bipedBody.addChild(bagBot);
         this.bipedBody.addChild(bipedChest);
 
-        this.bipedHead.addChild(hairbackTop_1);
+        this.bipedHead.addChild(left_top_1);
+
+        this.bipedHead.addChild(backhair);
         this.bipedHead.addChild(hairbackTop_2);
         this.bipedHead.addChild(hairbackTop_3);
         this.bipedHead.addChild(hairBackTop_4);
@@ -349,13 +305,6 @@ public class ModelEntitySheepFarmerFemale extends ModelBiped
         this.bipedHead.addChild(ponytail_1);
         this.bipedHead.addChild(ponytail_2);
         this.bipedHead.addChild(ponytail_3);
-        this.bipedHead.addChild(ponytail_4);
-        this.bipedHead.addChild(ponytail_5);
-        this.bipedHead.addChild(ponytail_6);
-        this.bipedHead.addChild(ponytail_7);
-        this.bipedHead.addChild(ponytail_8);
-        this.bipedHead.addChild(ponytail_9);
-        this.bipedHead.addChild(ponytail_10);
 
         this.bipedHead.addChild(hairRightTop_1);
         this.bipedHead.addChild(hairfrontTop_1);
