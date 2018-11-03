@@ -57,7 +57,7 @@ public class EntityAIEatTask extends EntityAIBase
     /**
      * Time required to eat in seconds.
      */
-    private static final int REQUIRED_TIME_TO_EAT  = 10;
+    private static final int REQUIRED_TIME_TO_EAT  = 5;
 
     /**
      * Filter for message propagation.
