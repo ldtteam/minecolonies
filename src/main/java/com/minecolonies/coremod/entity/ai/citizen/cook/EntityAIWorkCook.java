@@ -152,7 +152,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             return START_WORKING;
         }
 
-        Entity living = citizenToServe.isEmpty() ? playerToServe.get(0) : citizenToServe.get(0);
+        final Entity living = citizenToServe.isEmpty() ? playerToServe.get(0) : citizenToServe.get(0);
 
         if (walkToBlock(living.getPosition()))
         {
