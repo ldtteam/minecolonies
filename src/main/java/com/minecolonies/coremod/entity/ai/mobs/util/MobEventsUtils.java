@@ -33,9 +33,14 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RAID_EVENT
 public final class MobEventsUtils
 {
     /**
-     * Spawn modifier to decrease the spawnrate.
+     * Spawn modifier to decrease the spawn-rate.
      */
-    private static final int SPAWN_MODIFIER   = 3;
+    private static final int SPAWN_MODIFIER         = 3;
+
+    /**
+     * Pirate ship water pool size.
+     */
+    private static final int PIRATE_SHIP_WATER_SIZE = 15n;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -100,10 +105,14 @@ public final class MobEventsUtils
             buildPlatform(targetSpawnPoint, world);
         }
 
-        if ((world.getBlockState(targetSpawnPoint).getBlock() == Blocks.WATER && Pond.checkWater(world, targetSpawnPoint))
-              || (world.getBlockState(targetSpawnPoint.down()).getBlock() == Blocks.WATER && Pond.checkWater(world, targetSpawnPoint.down()))
+        if ((world.getBlockState(targetSpawnPoint).getBlock() == Blocks.WATER && Pond.checkWater(world, targetSpawnPoint, PIRATE_SHIP_WATER_SIZE, PIRATE_SHIP_WATER_SIZE))
+              || (world.getBlockState(targetSpawnPoint.down()).getBlock() == Blocks.WATER && Pond.checkWater(world, targetSpawnPoint.down(), PIRATE_SHIP_WATER_SIZE, PIRATE_SHIP_WATER_SIZE))
         )
         {
+            if (world.getBlockState(targetSpawnPoint).getBlock() != Blocks.WATER)
+            {
+                targetSpawnPoint = targetSpawnPoint.down();
+            }
             StructureWrapper.loadAndPlaceStructureWithRotation(world, Structures.SCHEMATICS_PREFIX + "/Ships/" + shipSize, targetSpawnPoint.down(3), 0, Mirror.NONE, false);
             loadSpawners(world, targetSpawnPoint, shipSize);
             LanguageHandler.sendPlayersMessage(
