@@ -1136,6 +1136,15 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
+     * Check if the citizen is just idling at their job and can eat now.
+     * @return true if so.
+     */
+    public boolean isIdlingAtJob()
+    {
+        return isOkayToEat() && (citizenJobHandler.getColonyJob() == null || citizenJobHandler.getColonyJob().isIdling());
+    }
+
+    /**
      * Call this to set if the citizen should mourn or not.
      *
      * @param mourning indicate if the citizen should mourn

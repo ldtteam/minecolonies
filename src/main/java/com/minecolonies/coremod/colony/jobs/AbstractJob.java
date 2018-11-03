@@ -10,6 +10,7 @@ import com.minecolonies.coremod.colony.jobs.registry.JobRegistry;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 
+import com.minecolonies.coremod.entity.ai.util.AIState;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -351,5 +352,15 @@ public abstract class AbstractJob
     public void clearActionsDone()
     {
         this.actionsDone = 0;
+    }
+
+    /**
+     * Check if the citizen is in an idle state.
+     * @return true if so.
+     */
+    public boolean isIdling()
+    {
+        return !citizen.getCitizenEntity().isPresent() || citizen.getCitizenEntity().get().tasks.taskEntries.stream()
+                                                             .anyMatch(task -> task.action instanceof AbstractAISkeleton && ((AbstractAISkeleton) task.action).getState() == AIState.IDLE);
     }
 }

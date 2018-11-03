@@ -1048,10 +1048,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
         }
 
-        if (buildingWorker != null && !ItemStackUtils.isEmpty(stackToDump) && (!buildingWorker.buildingRequiresCertainAmountOfItem(stackToDump, alreadyKept) || dumpAnyway))
+        if (buildingWorker != null && !ItemStackUtils.isEmpty(stackToDump))
         {
-            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(
-              new InvWrapper(worker.getInventoryCitizen()), slotAt, buildingWorker.getCapability(ITEM_HANDLER_CAPABILITY, null));
+            final int amount = dumpAnyway ? stackToDump.getCount() : buildingWorker.buildingRequiresCertainAmountOfItem(stackToDump, alreadyKept);
+            if (amount > 0)
+            {
+                final ItemStack activeStack = new InvWrapper(getInventory()).extractItem(slotAt, amount, false);
+                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, buildingWorker.getCapability(ITEM_HANDLER_CAPABILITY, null));
+            }
         }
         slotAt++;
 

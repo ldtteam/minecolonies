@@ -345,7 +345,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         //but omitted because end of method.
         if (mineBlock(minerWorkingLocation, currentStandingPosition))
         {
-            incrementActionsDoneAndDecSaturation();
+            worker.decreaseSaturationForContinuousAction();
         }
 
         return MINER_MINING_SHAFT;

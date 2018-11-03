@@ -210,7 +210,7 @@ public class EntityAIEatTask extends EntityAIBase
         citizen.playSound(SoundEvents.ENTITY_GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
 
         final ItemFood itemFood = (ItemFood) stack.getItem();
-        citizenData.increaseSaturation(itemFood.getHealAmount(stack) * itemFood.getSaturationModifier(stack));
+        citizenData.increaseSaturation((itemFood.getHealAmount(stack) * itemFood.getSaturationModifier(stack)) / 2);
         citizenData.getInventory().decrStackSize(foodSlot, 1);
         citizenData.markDirty();
 
@@ -304,10 +304,17 @@ public class EntityAIEatTask extends EntityAIBase
             return GO_TO_RESTAURANT;
         }
 
-        if (checkForFood(citizenData) == EAT)
+        final STATE state = checkForFood(citizenData);
+        if (state == EAT)
         {
             return FIND_PLACE_TO_EAT;
         }
+        else if (state == IDLE)
+        {
+            reset();
+            return IDLE;
+        }
+
         waitingTicks++;
 
         if (waitingTicks > TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_WAITING_TIME)
@@ -368,7 +375,8 @@ public class EntityAIEatTask extends EntityAIBase
         {
             reset();
             citizenData.getCitizenHappinessHandler().setFoodModifier(false);
-            if (citizenData.getSaturation() < CitizenConstants.LOW_SATURATION)
+
+            if ((citizenData.getSaturation() < CitizenConstants.LOW_SATURATION || citizen.isIdlingAtJob()) && citizenData.getSaturation() < CitizenConstants.HIGH_SATURATION)
             {
                 return SEARCH_RESTAURANT;
             }

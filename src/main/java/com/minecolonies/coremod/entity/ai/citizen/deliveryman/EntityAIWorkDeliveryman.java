@@ -303,7 +303,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         final ItemStack stack = handler.getStackInSlot(currentSlot);
-        if (workerRequiresItem(building, stack, alreadyKept)
+
+        final int amount = workerRequiresItem(building, stack, alreadyKept);
+        if (amount <= 0
               || (building instanceof BuildingCook
                     && !ItemStackUtils.isEmpty(stack)
                     && stack.getItem() instanceof ItemFood))
@@ -317,7 +319,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         hasGathered = true;
-        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(handler, currentSlot, new InvWrapper(worker.getInventoryCitizen()));
+        final ItemStack activeStack = handler.extractItem(currentSlot, amount, false);
+        InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, new InvWrapper(worker.getInventoryCitizen()));
         building.markDirty();
         setDelay(DUMP_AND_GATHER_DELAY);
         worker.decreaseSaturationForContinuousAction();
@@ -382,9 +385,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * @param building         the building to check for.
      * @param stack            the stack to stack with.
      * @param localAlreadyKept already kept resources.
-     * @return true if required.
+     * @return the amount which can get dumped.
      */
-    public static boolean workerRequiresItem(final AbstractBuilding building, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
+    public static int workerRequiresItem(final AbstractBuilding building, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
     {
         return building.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept);
     }
