@@ -37,7 +37,7 @@ public final class SortingUtils
      */
     public static void sort(final CombinedItemHandler inv)
     {
-        AtomicInteger runCount = new AtomicInteger(0);
+        final AtomicInteger runCount = new AtomicInteger(0);
 
         final Map<ItemStorage, Integer> map = new HashMap<>();
         if (inv != null)
@@ -57,7 +57,7 @@ public final class SortingUtils
                 map.put(storage, amount);
             }
 
-            Tuple<AtomicInteger, Map<Integer, Integer>> tuple = SortingUtils.calcRequiredSlots(map);
+            final Tuple<AtomicInteger, Map<Integer, Integer>> tuple = SortingUtils.calcRequiredSlots(map);
             final double totalSlots = inv.getSlots();
             final int totalReq = tuple.getFirst().get();
             map.entrySet().stream().sorted(SortingUtils::compare)
@@ -82,7 +82,7 @@ public final class SortingUtils
       final AtomicInteger requiredSlots,
       final double totalSlots, final double totalRequirement, final Map<Integer, Integer> creativeTabs)
     {
-        int creativeTabId = entry.getKey().getCreativeTabIndex();
+        final int creativeTabId = entry.getKey().getCreativeTabIndex();
 
         int slotLimit = 0;
         final ItemStack stack = entry.getKey().getItemStack();
@@ -164,7 +164,7 @@ public final class SortingUtils
     {
         final Map<Integer, Integer> creativeTabs = new HashMap<>();
         int sum = 0;
-        for (Map.Entry<ItemStorage, Integer> entry : map.entrySet())
+        for (final Map.Entry<ItemStorage, Integer> entry : map.entrySet())
         {
             sum += Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize());
             creativeTabs.put(entry.getKey().getCreativeTabIndex(),
