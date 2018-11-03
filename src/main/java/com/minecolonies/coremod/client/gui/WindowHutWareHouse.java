@@ -27,6 +27,11 @@ import static com.minecolonies.coremod.client.gui.WindowHutBuilder.*;
 public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse.View>
 {
     /**
+     * Required building level for sorting.
+     */
+    private static final int BUILDING_LEVEL_FOR_SORTING = 3;
+
+    /**
      * Allow more upgrades of the storage.
      */
     private boolean allowMoreStorageUpgrades = false;
@@ -50,7 +55,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
     @Override
     public void onOpened()
     {
-        if (building.getBuildingLevel() < 3)
+        if (building.getBuildingLevel() < BUILDING_LEVEL_FOR_SORTING)
         {
             findPaneOfTypeByID(SORT_WAREHOUSE_BUTTON, ButtonImage.class).hide();
         }
