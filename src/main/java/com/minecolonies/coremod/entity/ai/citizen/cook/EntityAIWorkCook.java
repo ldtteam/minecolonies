@@ -20,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -154,6 +155,17 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 
         final Entity living = citizenToServe.isEmpty() ? playerToServe.get(0) : citizenToServe.get(0);
 
+        if (range == null)
+        {
+            range = getOwnBuilding().getTargetableArea(world);
+        }
+
+        if (!range.intersectsWithXZ(new Vec3d(living.getPosition())))
+        {
+            removeFromQueue();
+            return START_WORKING;
+        }
+
         if (walkToBlock(living.getPosition()))
         {
             setDelay(2);
@@ -165,14 +177,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
         if (InventoryUtils.isItemHandlerFull(handler))
         {
             chatSpamFilter.talkWithoutSpam(HUNGRY_INV_FULL);
-            if (citizenToServe.isEmpty())
-            {
-                playerToServe.remove(0);
-            }
-            else
-            {
-                citizenToServe.remove(0);
-            }
+            removeFromQueue();
             setDelay(SERVE_DELAY);
             return getState();
         }
@@ -185,17 +190,28 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
         if (citizenToServe.isEmpty() && living instanceof EntityPlayer)
         {
             LanguageHandler.sendPlayerMessage((EntityPlayer) living, "com.minecolonies.coremod.cook.serve.player", worker.getName());
+        }
+        removeFromQueue();
+
+        setDelay(SERVE_DELAY);
+        worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
+        this.incrementActionsDoneAndDecSaturation();
+        return START_WORKING;
+    }
+
+    /**
+     * Remove the last citizen or player from the queue.
+     */
+    private void removeFromQueue()
+    {
+        if (citizenToServe.isEmpty())
+        {
             playerToServe.remove(0);
         }
         else
         {
             citizenToServe.remove(0);
         }
-
-        setDelay(SERVE_DELAY);
-        worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
-        this.incrementActionsDoneAndDecSaturation();
-        return START_WORKING;
     }
 
     /**
