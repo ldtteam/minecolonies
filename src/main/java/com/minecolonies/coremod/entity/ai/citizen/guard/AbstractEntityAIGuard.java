@@ -13,7 +13,7 @@ import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.util.TeleportHelper;
@@ -356,14 +356,14 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         if (colony != null)
         {
-            if (!colony.getBarbManager().getHorde((WorldServer) worker.world).isEmpty() || colony.isColonyUnderAttack())
+            if (!colony.getRaiderManager().getHorde((WorldServer) worker.world).isEmpty() || colony.isColonyUnderAttack())
             {
                 for (final CitizenData citizen : colony.getCitizenManager().getCitizens())
                 {
                     if (citizen.getCitizenEntity().isPresent())
                     {
                         final EntityLivingBase entity = citizen.getCitizenEntity().get().getRevengeTarget();
-                        if (entity instanceof AbstractEntityBarbarian && worker.canEntityBeSeen(entity))
+                        if (entity instanceof AbstractEntityMinecoloniesMob && worker.canEntityBeSeen(entity))
                         {
                             return entity;
                         }

@@ -96,7 +96,7 @@ public class DoRaidNowCommand extends AbstractSingleCommand implements IActionCo
             return;
         }
 
-        MobEventsUtils.barbarianEvent(colony.getWorld(), colony);
+        MobEventsUtils.raiderEvent(colony.getWorld(), colony);
         sender.sendMessage(SUCCESSFUL);
     }
 

@@ -1,4 +1,4 @@
 /**
- * Classes describing the Barbarian entities and their AI.
+ * Classes describing the Barbarian entities.
  */
 package com.minecolonies.coremod.entity.ai.mobs.barbarians;

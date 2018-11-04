@@ -16,7 +16,7 @@ public class DeleteCommand extends AbstractSplitCommand
 
     private final ImmutableMap<String, ISubCommand> subCommands =
       new ImmutableMap.Builder<String, ISubCommand>()
-        .put(BarbarianKillCommand.DESC, new BarbarianKillCommand())
+        .put(RaiderKillCommand.DESC, new RaiderKillCommand())
         .put(AnimalKillCommand.DESC, new AnimalKillCommand())
         .put(MobKillCommand.DESC, new MobKillCommand())
         .put(ChickenKillCommand.DESC, new ChickenKillCommand())
