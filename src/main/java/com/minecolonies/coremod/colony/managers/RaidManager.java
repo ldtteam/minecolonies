@@ -229,7 +229,7 @@ public class RaidManager implements IRaiderManager
                 {
                     ships.remove(entry.getKey());
                 }
-                else if (entry.getValue().getSecond() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * Configurations.gameplay.daysUntilPirateshipsDespawn > world.getWorldTime())
+                else if (entry.getValue().getSecond() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * Configurations.gameplay.daysUntilPirateshipsDespawn < world.getWorldTime())
                 {
                     StructureWrapper.unloadStructure(world, entry.getKey(), entry.getValue().getFirst(), 0, Mirror.NONE);
                     ships.remove(entry.getKey());

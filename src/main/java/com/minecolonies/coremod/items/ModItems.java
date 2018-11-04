@@ -77,12 +77,12 @@ public final class ModItems
 
         pirateHelmet_1 = new ItemPirateGear("pirate_hat", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EntityEquipmentSlot.HEAD);
         pirateChest_1 = new ItemPirateGear("pirate_top", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EntityEquipmentSlot.CHEST);
-        pirateLegs_1 = new ItemPirateGear("pirate_legs", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 1, EntityEquipmentSlot.LEGS);
+        pirateLegs_1 = new ItemPirateGear("pirate_leggins", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 1, EntityEquipmentSlot.LEGS);
         pirateBoots_1 = new ItemPirateGear("pirate_boots", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EntityEquipmentSlot.FEET);
 
         pirateHelmet_2 = new ItemPirateGear("pirate_cap", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 0, EntityEquipmentSlot.HEAD);
         pirateChest_2 = new ItemPirateGear("pirate_chest", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 0, EntityEquipmentSlot.CHEST);
-        pirateLegs_2 = new ItemPirateGear("pirate_leggins", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 1, EntityEquipmentSlot.LEGS);
+        pirateLegs_2 = new ItemPirateGear("pirate_legs", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 1, EntityEquipmentSlot.LEGS);
         pirateBoots_2 = new ItemPirateGear("pirate_shoes", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 0, EntityEquipmentSlot.FEET);
 
         itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement");
