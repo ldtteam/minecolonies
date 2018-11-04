@@ -2,6 +2,7 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
+import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
 import net.minecraft.entity.Entity;
@@ -31,8 +32,8 @@ public class ItemChiefSword extends ItemSword
     public ItemChiefSword()
     {
         super(ToolMaterial.DIAMOND);
-        super.setTranslationKey(Constants.MOD_ID.toLowerCase() + "." + ITEM_NAME);
-        setRegistryName(ITEM_NAME);
+        super.setTranslationKey(Constants.MOD_ID.toLowerCase() + "." + CHIEFSWORD_NAME);
+        setRegistryName(CHIEFSWORD_NAME);
         super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
     }
 
@@ -42,7 +43,7 @@ public class ItemChiefSword extends ItemSword
 
         if (entityIn instanceof EntityPlayer && isSelected)
         {
-            final Stream<AbstractEntityBarbarian> barbarians = BarbarianUtils.getBarbariansCloseToEntity(entityIn, GLOW_EFFECT_DISTANCE).stream();
+            final Stream<AbstractEntityMinecoloniesMob> barbarians = BarbarianUtils.getBarbariansCloseToEntity(entityIn, GLOW_EFFECT_DISTANCE).stream();
             barbarians.forEach(entity -> entity.addPotionEffect(new PotionEffect(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER)));
         }
     }
@@ -65,6 +66,6 @@ public class ItemChiefSword extends ItemSword
      */
     public final String getName()
     {
-        return ITEM_NAME;
+        return CHIEFSWORD_NAME;
     }
 }

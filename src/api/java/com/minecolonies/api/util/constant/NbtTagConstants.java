@@ -353,6 +353,13 @@ public final class NbtTagConstants
     public static final String TAG_PRINT_PROGRESS   = "printProgrss";
 
     /**
+     * Raid manager tags
+     */
+    public static final String TAG_RAID_MANAGER   = "raidManager";
+    public static final String TAG_SCHEMATIC_LIST = "ships";
+
+
+    /**
      * String to store the existing time to NBT.
      */
     public static final String TAG_TIME = "time";
