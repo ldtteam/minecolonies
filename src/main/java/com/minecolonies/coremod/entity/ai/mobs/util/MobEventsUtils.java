@@ -226,12 +226,12 @@ public final class MobEventsUtils
     /**
      * Class representing a horde attack.
      */
-    static class Horde
+    protected static class Horde
     {
-        final int numberOfRaiders;
-        final int numberOfArchers;
-        final int numberOfBosses;
-        final int hordeSize;
+        protected final int numberOfRaiders;
+        protected final int numberOfArchers;
+        protected final int numberOfBosses;
+        protected final int hordeSize;
 
         /**
          * Create a new horde.
