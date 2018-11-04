@@ -294,11 +294,6 @@ public class RaidManager implements IRaiderManager
         }
     }
 
-    private Map.Entry<BlockPos, Tuple<String, Long>> readShipFromNBT()
-    {
-        return null;
-    }
-
     @Override
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
