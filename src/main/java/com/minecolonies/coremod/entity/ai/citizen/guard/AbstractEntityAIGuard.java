@@ -356,7 +356,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         if (colony != null)
         {
-            if (!colony.getBarbManager().getHorde((WorldServer) worker.world).isEmpty() || colony.isColonyUnderAttack())
+            if (!colony.getRaiderManager().getHorde((WorldServer) worker.world).isEmpty() || colony.isColonyUnderAttack())
             {
                 for (final CitizenData citizen : colony.getCitizenManager().getCitizens())
                 {

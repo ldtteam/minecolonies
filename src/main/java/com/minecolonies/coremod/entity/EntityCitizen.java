@@ -398,7 +398,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             if (damageSource.getTrueSource() instanceof EntityPlayer && !world.isRemote)
             {
                 boolean isBarbarianClose = false;
-                for(final AbstractEntityMinecoloniesMob barbarian : this.getCitizenColonyHandler().getColony().getBarbManager().getHorde((WorldServer) world))
+                for(final AbstractEntityMinecoloniesMob barbarian : this.getCitizenColonyHandler().getColony().getRaiderManager().getHorde((WorldServer) world))
                 {
                     if(MathUtils.twoDimDistance(barbarian.getPosition(), this.getPosition()) < BARB_DISTANCE_FOR_FREE_DEATH)
                     {
@@ -899,7 +899,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             return DesiredActivity.MOURN;
         }
 
-        if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (!getCitizenColonyHandler().getColony().getBarbManager().getHorde((WorldServer) world).isEmpty()))
+        if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (!getCitizenColonyHandler().getColony().getRaiderManager().getHorde((WorldServer) world).isEmpty()))
         {
             return DesiredActivity.SLEEP;
         }

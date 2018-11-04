@@ -76,7 +76,7 @@ public final class MobEventsUtils
               colony.getMessageEntityPlayers(),
               "Horde Spawn Point: " + targetSpawnPoint);
         }
-        colony.getBarbManager().addRaiderSpawnPoint(targetSpawnPoint);
+        colony.getRaiderManager().addRaiderSpawnPoint(targetSpawnPoint);
         colony.markDirty();
 
         int raidNumber = HUGE_HORDE_MESSAGE_ID;
@@ -113,6 +113,7 @@ public final class MobEventsUtils
             {
                 targetSpawnPoint = targetSpawnPoint.down();
             }
+            colony.getRaiderManager().registerShip(Structures.SCHEMATICS_PREFIX + "/Ships/" + shipSize, targetSpawnPoint.down(3), world.getWorldTime());
             StructureWrapper.loadAndPlaceStructureWithRotation(world, Structures.SCHEMATICS_PREFIX + "/Ships/" + shipSize, targetSpawnPoint.down(3), 0, Mirror.NONE, false);
             loadSpawners(world, targetSpawnPoint, shipSize);
             LanguageHandler.sendPlayersMessage(
@@ -235,7 +236,7 @@ public final class MobEventsUtils
     private static BlockPos calculateSpawnLocation(final World world, @NotNull final Colony colony)
     {
         final Random random = new Random();
-        final BlockPos pos = colony.getBarbManager().getRandomOutsiderInDirection(
+        final BlockPos pos = colony.getRaiderManager().getRandomOutsiderInDirection(
           random.nextInt(2) < 1 ? EnumFacing.EAST : EnumFacing.WEST,
           random.nextInt(2) < 1 ? EnumFacing.NORTH : EnumFacing.SOUTH);
 
@@ -278,7 +279,7 @@ public final class MobEventsUtils
 
         if (world.isDaytime() && !colony.isHasRaidBeenCalculated())
         {
-            colony.getBarbManager().setHasRaidBeenCalculated(true);
+            colony.getRaiderManager().setHasRaidBeenCalculated(true);
             if (!colony.hasWillRaidTonight())
             {
                 final boolean raid = raidThisNight(world, colony);
@@ -288,14 +289,14 @@ public final class MobEventsUtils
                       colony.getMessageEntityPlayers(),
                       "Will raid tonight: " + raid);
                 }
-                colony.getBarbManager().setWillRaidTonight(raid);
+                colony.getRaiderManager().setWillRaidTonight(raid);
             }
             return false;
         }
         else if (colony.hasWillRaidTonight() && !world.isDaytime() && colony.isHasRaidBeenCalculated())
         {
-            colony.getBarbManager().setHasRaidBeenCalculated(false);
-            colony.getBarbManager().setWillRaidTonight(false);
+            colony.getRaiderManager().setHasRaidBeenCalculated(false);
+            colony.getRaiderManager().setWillRaidTonight(false);
             if (Configurations.gameplay.enableInDevelopmentFeatures)
             {
                 LanguageHandler.sendPlayersMessage(
@@ -306,7 +307,7 @@ public final class MobEventsUtils
         }
         else if (!world.isDaytime() && colony.isHasRaidBeenCalculated())
         {
-            colony.getBarbManager().setHasRaidBeenCalculated(false);
+            colony.getRaiderManager().setHasRaidBeenCalculated(false);
         }
 
         return false;

@@ -1,28 +1,33 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
-import static com.minecolonies.api.util.constant.Constants.HALF_A_CIRCLE;
-import static com.minecolonies.api.util.constant.Constants.WHOLE_CIRCLE;
-import static com.minecolonies.api.util.constant.TranslationConstants.ALL_BARBARIANS_KILLED_MESSAGE;
-import static com.minecolonies.api.util.constant.TranslationConstants.ONLY_X_BARBARIANS_LEFT_MESSAGE;
+import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 public class RaidManager implements IRaiderManager
 {
@@ -45,6 +50,11 @@ public class RaidManager implements IRaiderManager
      * Last raider spawnpoints.
      */
     private final List<BlockPos> lastSpawnPoints = new ArrayList<>();
+
+    /**
+     * A map of ships which to despawn them after some time.
+     */
+    private final Map<BlockPos, Tuple<String, Long>> ships = new HashMap<>();
 
     /**
      * The colony of the manager.
@@ -208,6 +218,30 @@ public class RaidManager implements IRaiderManager
         }
     }
 
+    @Override
+    public void onWorldTick(@NotNull final World world)
+    {
+        if (Colony.shallUpdate(world, TICKS_SECOND * SECONDS_A_MINUTE))
+        {
+            for (final Map.Entry<BlockPos, Tuple<String, Long>> entry : new HashMap<>(ships).entrySet())
+            {
+                if (entry.getKey().equals(BlockPos.ORIGIN))
+                {
+                    ships.remove(entry.getKey());
+                }
+                else if (entry.getValue().getSecond() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * Configurations.gameplay.daysUntilPirateshipsDespawn > world.getWorldTime())
+                {
+                    StructureWrapper.unloadStructure(world, entry.getKey(), entry.getValue().getFirst(), 0, Mirror.NONE);
+                    ships.remove(entry.getKey());
+                    LanguageHandler.sendPlayersMessage(
+                      colony.getMessageEntityPlayers(),
+                      PIRATES_SAILING_OFF_MESSAGE, colony.getName());
+                    return;
+                }
+            }
+        }
+    }
+
     /**
      * Check if a certain vector matches two directions.
      *
@@ -240,5 +274,50 @@ public class RaidManager implements IRaiderManager
 
         }
         return raiders;
+    }
+
+    @Override
+    public void registerShip(final String ship, final BlockPos position, final long worldTime)
+    {
+        ships.put(position, new Tuple<>(ship, worldTime));
+    }
+
+    @Override
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        if (compound.hasKey(TAG_RAID_MANAGER))
+        {
+            final NBTTagCompound raiderCompound = compound.getCompoundTag(TAG_RAID_MANAGER);
+            final NBTTagList raiderTags = raiderCompound.getTagList(TAG_SHIP_LIST, Constants.NBT.TAG_COMPOUND);
+            ships.putAll(NBTUtils.streamCompound(raiderTags)
+                                      .collect(Collectors.toMap(raiderTagCompound -> BlockPosUtil.readFromNBT(raiderTagCompound, TAG_POS), raiderTagCompound ->  new Tuple<>(raiderTagCompound.getString(TAG_NAME), raiderTagCompound.getLong(TAG_TIME)))));
+        }
+    }
+
+    private Map.Entry<BlockPos, Tuple<String, Long>> readShipFromNBT()
+    {
+        return null;
+    }
+
+    @Override
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+        final NBTTagCompound raiderCompound = new NBTTagCompound();
+        @NotNull final NBTTagList raiderTagList = ships.entrySet().stream()
+                                                      .map(this::writeShipToNBT)
+                                                      .collect(NBTUtils.toNBTTagList());
+
+        raiderCompound.setTag(TAG_SHIP_LIST, raiderTagList);
+        compound.setTag(TAG_RAID_MANAGER, raiderCompound);
+    }
+
+    private NBTTagCompound writeShipToNBT(final Map.Entry<BlockPos, Tuple<String, Long>> blockPosTupleEntry)
+    {
+        final NBTTagCompound compound = new NBTTagCompound();
+        BlockPosUtil.writeToNBT(compound, TAG_POS, blockPosTupleEntry.getKey());
+        compound.setString(TAG_NAME, blockPosTupleEntry.getValue().getFirst());
+        compound.setLong(TAG_TIME, blockPosTupleEntry.getValue().getSecond());
+
+        return compound;
     }
 }

@@ -106,7 +106,7 @@ public class Colony implements IColony
     /**
      * Barbarian manager of the colony.
      */
-    private final IRaiderManager barbarianManager = new RaidManager(this);
+    private final IRaiderManager raidManager = new RaidManager(this);
 
     /**
      * The colony package manager.
@@ -398,6 +398,8 @@ public class Colony implements IColony
             colonyHappinessManager.setLockedHappinessModifier(Optional.empty());
         }
 
+        raidManager.readFromNBT(compound);
+
         //  Workload
         workManager.readFromNBT(compound.getCompoundTag(TAG_WORK));
 
@@ -438,11 +440,11 @@ public class Colony implements IColony
 
         if(compound.hasKey(TAG_RAIDABLE))
         {
-            this.barbarianManager.setCanHaveRaiderEvents(compound.getBoolean(TAG_RAIDABLE));
+            this.raidManager.setCanHaveRaiderEvents(compound.getBoolean(TAG_RAIDABLE));
         }
         else
         {
-            this.barbarianManager.setCanHaveRaiderEvents(true);
+            this.raidManager.setCanHaveRaiderEvents(true);
         }
 
         if(compound.hasKey(TAG_AUTO_DELETE))
@@ -520,6 +522,7 @@ public class Colony implements IColony
         compound.setTag(TAG_WORK, workManagerCompound);
 
         progressManager.writeToNBT(compound);
+        raidManager.writeToNBT(compound);
 
         // Waypoints
         @NotNull final NBTTagList wayPointTagList = new NBTTagList();
@@ -556,7 +559,7 @@ public class Colony implements IColony
         compound.setBoolean(TAG_MANUAL_HOUSING, manualHousing);
         compound.setTag(TAG_REQUESTMANAGER, getRequestManager().serializeNBT());
         compound.setString(TAG_STYLE, style);
-        compound.setBoolean(TAG_RAIDABLE, barbarianManager.canHaveRaiderEvents());
+        compound.setBoolean(TAG_RAIDABLE, raidManager.canHaveRaiderEvents());
         compound.setBoolean(TAG_AUTO_DELETE, canColonyBeAutoDeleted);
         compound.setInteger(TAG_TEAM_COLOR, colonyTeamColor.ordinal());
         this.colonyTag = compound;
@@ -749,7 +752,7 @@ public class Colony implements IColony
         if (shallUpdate(world, TICKS_SECOND)
                 && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
                 && Configurations.gameplay.doBarbariansSpawn
-                && barbarianManager.canHaveRaiderEvents()
+                && raidManager.canHaveRaiderEvents()
                 && !world.getMinecraftServer().getPlayerList().getPlayers()
                 .stream().filter(permissions::isSubscriber).collect(Collectors.toList()).isEmpty()
                 && MobEventsUtils.isItTimeToRaid(event.world, this))
@@ -772,6 +775,7 @@ public class Colony implements IColony
             }
         }
 
+        raidManager.onWorldTick(world);
         buildingManager.onWorldTick(event);
 
         if (isDay && !world.isDaytime())
@@ -959,19 +963,19 @@ public class Colony implements IColony
     @Override
     public boolean hasWillRaidTonight()
     {
-        return barbarianManager.willRaidTonight();
+        return raidManager.willRaidTonight();
     }
 
     @Override
     public boolean isCanHaveBarbEvents()
     {
-        return barbarianManager.canHaveRaiderEvents();
+        return raidManager.canHaveRaiderEvents();
     }
 
     @Override
     public boolean isHasRaidBeenCalculated()
     {
-        return barbarianManager.hasRaidBeenCalculated();
+        return raidManager.hasRaidBeenCalculated();
     }
 
     /**
@@ -1223,9 +1227,9 @@ public class Colony implements IColony
      * Get the barbManager of the colony.
      * @return the barbManager.
      */
-    public IRaiderManager getBarbManager()
+    public IRaiderManager getRaiderManager()
     {
-        return barbarianManager;
+        return raidManager;
     }
 
     /**

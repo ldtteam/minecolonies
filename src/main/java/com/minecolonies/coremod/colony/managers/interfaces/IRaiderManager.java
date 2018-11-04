@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.colony.managers.interfaces;
 
 import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import org.jetbrains.annotations.NotNull;
 
@@ -88,4 +90,30 @@ public interface IRaiderManager
      * @return the list of entities.
      */
     List<AbstractEntityMinecoloniesMob> getHorde(final WorldServer world);
+
+    /**
+     * Register a certain ship at a certain position to the colony.
+     * @param ship the ship description.
+     * @param position the position.
+     * @param worldTime the world time at spawn.
+     */
+    void registerShip(final String ship, final BlockPos position, final long worldTime);
+
+    /**
+     * Reads the raider manager from NBT.
+     * @param compound the compound to read it from.
+     */
+    void readFromNBT(@NotNull NBTTagCompound compound);
+
+    /**
+     * To be executed on each colony world tick.
+     * @param world the ticking world.
+     */
+    void onWorldTick(@NotNull final World world);
+
+    /**
+     * Writes the raider manager to NBT.
+     * @param compound the compound to write it to.
+     */
+    void writeToNBT(@NotNull NBTTagCompound compound);
 }

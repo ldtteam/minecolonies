@@ -115,7 +115,6 @@ public final class ColonyConstants
     public static final int CITIZEN_LIMIT_FOR_HELP  = 20;
     public static final int BUILDING_LIMIT_FOR_HELP = 10;
 
-
     /**
      * Private constructor to hide the implicit one.
      */

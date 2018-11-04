@@ -216,6 +216,5 @@ public class ProgressManager implements IProgressManager
         compound.setInteger(TAG_PROGRESS_TYPE, type.ordinal());
         return compound;
     }
-
 }
 

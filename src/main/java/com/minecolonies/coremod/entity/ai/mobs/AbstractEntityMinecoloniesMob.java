@@ -314,7 +314,7 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
             colony = ColonyManager.getClosestColony(CompatibilityUtils.getWorld(this), this.getPosition());
             if (colony != null)
             {
-                colony.getBarbManager().registerRaider(this);
+                colony.getRaiderManager().registerRaider(this);
             }
         }
 
@@ -327,7 +327,7 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
         super.onDeath(cause);
         if (!world.isRemote && getColony() != null)
         {
-            getColony().getBarbManager().unregisterRaider(this, (WorldServer) world);
+            getColony().getRaiderManager().unregisterRaider(this, (WorldServer) world);
         }
     }
 }
