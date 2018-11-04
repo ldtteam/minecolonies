@@ -757,7 +757,7 @@ public class Colony implements IColony
                 .stream().filter(permissions::isSubscriber).collect(Collectors.toList()).isEmpty()
                 && MobEventsUtils.isItTimeToRaid(event.world, this))
         {
-            MobEventsUtils.barbarianEvent(event.world, this);
+            MobEventsUtils.raiderEvent(event.world, this);
         }
 
         if (shallUpdate(world, TICKS_SECOND))

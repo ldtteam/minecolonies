@@ -25,7 +25,7 @@ import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityArcherBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityArcherPirate;
-import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityChiefPirate;
+import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityPirate;
 import com.minecolonies.coremod.event.ClientEventHandler;
 import com.minecolonies.coremod.items.ModItems;
@@ -100,7 +100,7 @@ public class ClientProxy extends CommonProxy
         RenderingRegistry.registerEntityRenderingHandler(EntityChiefBarbarian.class, RendererChiefBarbarian::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityPirate.class, RendererPirate::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityArcherPirate.class, RendererArcherPirate::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityChiefPirate.class, RendererChiefPirate::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityCaptainPirate.class, RendererChiefPirate::new);
     }
 
     @Override

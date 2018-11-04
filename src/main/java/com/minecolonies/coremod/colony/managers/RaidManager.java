@@ -52,9 +52,9 @@ public class RaidManager implements IRaiderManager
     private final List<BlockPos> lastSpawnPoints = new ArrayList<>();
 
     /**
-     * A map of ships which to despawn them after some time.
+     * A map of schematics which should despawn after some time.
      */
-    private final Map<BlockPos, Tuple<String, Long>> ships = new HashMap<>();
+    private final Map<BlockPos, Tuple<String, Long>> schematicMap = new HashMap<>();
 
     /**
      * The colony of the manager.
@@ -223,16 +223,16 @@ public class RaidManager implements IRaiderManager
     {
         if (Colony.shallUpdate(world, TICKS_SECOND * SECONDS_A_MINUTE))
         {
-            for (final Map.Entry<BlockPos, Tuple<String, Long>> entry : new HashMap<>(ships).entrySet())
+            for (final Map.Entry<BlockPos, Tuple<String, Long>> entry : new HashMap<>(schematicMap).entrySet())
             {
                 if (entry.getKey().equals(BlockPos.ORIGIN))
                 {
-                    ships.remove(entry.getKey());
+                    schematicMap.remove(entry.getKey());
                 }
                 else if (entry.getValue().getSecond() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * Configurations.gameplay.daysUntilPirateshipsDespawn < world.getWorldTime())
                 {
                     StructureWrapper.unloadStructure(world, entry.getKey(), entry.getValue().getFirst(), 0, Mirror.NONE);
-                    ships.remove(entry.getKey());
+                    schematicMap.remove(entry.getKey());
                     LanguageHandler.sendPlayersMessage(
                       colony.getMessageEntityPlayers(),
                       PIRATES_SAILING_OFF_MESSAGE, colony.getName());
@@ -277,9 +277,9 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public void registerShip(final String ship, final BlockPos position, final long worldTime)
+    public void registerRaiderOriginSchematic(final String schematicName, final BlockPos position, final long worldTime)
     {
-        ships.put(position, new Tuple<>(ship, worldTime));
+        schematicMap.put(position, new Tuple<>(schematicName, worldTime));
     }
 
     @Override
@@ -288,8 +288,8 @@ public class RaidManager implements IRaiderManager
         if (compound.hasKey(TAG_RAID_MANAGER))
         {
             final NBTTagCompound raiderCompound = compound.getCompoundTag(TAG_RAID_MANAGER);
-            final NBTTagList raiderTags = raiderCompound.getTagList(TAG_SHIP_LIST, Constants.NBT.TAG_COMPOUND);
-            ships.putAll(NBTUtils.streamCompound(raiderTags)
+            final NBTTagList raiderTags = raiderCompound.getTagList(TAG_SCHEMATIC_LIST, Constants.NBT.TAG_COMPOUND);
+            schematicMap.putAll(NBTUtils.streamCompound(raiderTags)
                                       .collect(Collectors.toMap(raiderTagCompound -> BlockPosUtil.readFromNBT(raiderTagCompound, TAG_POS), raiderTagCompound ->  new Tuple<>(raiderTagCompound.getString(TAG_NAME), raiderTagCompound.getLong(TAG_TIME)))));
         }
     }
@@ -298,20 +298,25 @@ public class RaidManager implements IRaiderManager
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         final NBTTagCompound raiderCompound = new NBTTagCompound();
-        @NotNull final NBTTagList raiderTagList = ships.entrySet().stream()
-                                                      .map(this::writeShipToNBT)
+        @NotNull final NBTTagList raiderTagList = schematicMap.entrySet().stream()
+                                                      .map(this::writeMapEntryToNBT)
                                                       .collect(NBTUtils.toNBTTagList());
 
-        raiderCompound.setTag(TAG_SHIP_LIST, raiderTagList);
+        raiderCompound.setTag(TAG_SCHEMATIC_LIST, raiderTagList);
         compound.setTag(TAG_RAID_MANAGER, raiderCompound);
     }
 
-    private NBTTagCompound writeShipToNBT(final Map.Entry<BlockPos, Tuple<String, Long>> blockPosTupleEntry)
+    /**
+     * Writes the map entry to NBT of the schematic map.
+     * @param entry the entry to write to NBT.
+     * @return an NBTTAGCompound
+     */
+    private NBTTagCompound writeMapEntryToNBT(final Map.Entry<BlockPos, Tuple<String, Long>> entry)
     {
         final NBTTagCompound compound = new NBTTagCompound();
-        BlockPosUtil.writeToNBT(compound, TAG_POS, blockPosTupleEntry.getKey());
-        compound.setString(TAG_NAME, blockPosTupleEntry.getValue().getFirst());
-        compound.setLong(TAG_TIME, blockPosTupleEntry.getValue().getSecond());
+        BlockPosUtil.writeToNBT(compound, TAG_POS, entry.getKey());
+        compound.setString(TAG_NAME, entry.getValue().getFirst());
+        compound.setLong(TAG_TIME, entry.getValue().getSecond());
 
         return compound;
     }

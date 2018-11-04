@@ -228,7 +228,7 @@ public enum ActionMenuType implements IMenuType
             "BarbarianKill",
             "barbarians",
             ForgePermissionNodes.BARBARIAN_KILL,
-            BarbarianKillCommand.class
+            RaiderKillCommand.class
             )),
     ANIMAL_KILL(new ActionMenu(
             "AnimalKill",

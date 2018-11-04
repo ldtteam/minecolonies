@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-import static com.minecolonies.api.util.constant.BarbarianConstants.*;
+import static com.minecolonies.api.util.constant.RaiderConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**

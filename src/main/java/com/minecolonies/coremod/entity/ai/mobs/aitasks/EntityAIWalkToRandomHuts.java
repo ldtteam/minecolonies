@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.mobs.aitasks;
 
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -20,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.BarbarianConstants.LADDERS_TO_PLACE;
+import static com.minecolonies.api.util.constant.RaiderConstants.LADDERS_TO_PLACE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**

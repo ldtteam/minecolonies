@@ -11,7 +11,7 @@ import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityArcherBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityArcherPirate;
-import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityChiefPirate;
+import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityPirate;
 import com.minecolonies.coremod.entity.ai.mobs.util.MobSpawnUtils;
 import com.minecolonies.coremod.inventory.GuiHandler;
@@ -213,7 +213,7 @@ public class CommonProxy implements IProxy
           Constants.ENTITY_UPDATE_FREQUENCY,
           true);
         EntityRegistry.registerModEntity(PIRATE_CHIEF,
-          EntityChiefPirate.class,
+          EntityCaptainPirate.class,
           "ChiefPirate",
           getNextEntityId(),
           MineColonies.instance,
@@ -222,14 +222,14 @@ public class CommonProxy implements IProxy
           true);
 
         //Register Barbarian loot tables.
-        LootTableList.register(MobSpawnUtils.BarbarianLootTable);
-        LootTableList.register(MobSpawnUtils.ArcherLootTable);
-        LootTableList.register(MobSpawnUtils.ChiefLootTable);
+        LootTableList.register(EntityBarbarian.LOOT_TABLE);
+        LootTableList.register(EntityArcherBarbarian.LOOT_TABLE);
+        LootTableList.register(EntityChiefBarbarian.LOOT_TABLE);
 
         //Register Pirate loot tables.
-        LootTableList.register(MobSpawnUtils.PirateLootTable);
-        LootTableList.register(MobSpawnUtils.PirateArcherLootTable);
-        LootTableList.register(MobSpawnUtils.PirateChiefLootTable);
+        LootTableList.register(EntityPirate.LOOT_TABLE);
+        LootTableList.register(EntityArcherPirate.LOOT_TABLE);
+        LootTableList.register(EntityCaptainPirate.LOOT_TABLE);
 
         //Register Barbarian spawn eggs
         EntityRegistry.registerEgg(BARBARIAN, PRIMARY_COLOR_BARBARIAN, SECONDARY_COLOR_BARBARIAN);

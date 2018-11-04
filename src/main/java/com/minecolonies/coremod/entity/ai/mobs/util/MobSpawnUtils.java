@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.mobs.util;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.mobs.aitasks.EntityAIAttackArcher;
@@ -13,8 +12,7 @@ import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.*;
 import com.minecolonies.coremod.entity.ai.mobs.pirates.AbstractEntityPirate;
 import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityArcherPirate;
-import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityChiefPirate;
-import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityPirate;
+import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.items.ModItems;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
@@ -34,61 +32,13 @@ import net.minecraft.world.World;
 import java.util.Random;
 import java.util.stream.IntStream;
 
+import static com.minecolonies.api.util.constant.RaiderConstants.*;
+
 /**
  * Utils used for Barbarian Spawning
  */
 public final class MobSpawnUtils
 {
-    /**
-     * Loot tables for Barbarians.
-     */
-    public static final ResourceLocation BarbarianLootTable = new ResourceLocation(Constants.MOD_ID, "EntityBarbarianDrops");
-    public static final ResourceLocation ArcherLootTable    = new ResourceLocation(Constants.MOD_ID, "EntityArcherBarbarianDrops");
-    public static final ResourceLocation ChiefLootTable     = new ResourceLocation(Constants.MOD_ID, "EntityChiefBarbarianDrops");
-
-    /**
-     * Loot tables for Pirates.
-     */
-    public static final ResourceLocation PirateLootTable = new ResourceLocation(Constants.MOD_ID, "entitypiratedrops");
-    public static final ResourceLocation PirateArcherLootTable = new ResourceLocation(Constants.MOD_ID, "entityarcherpiratedrops");
-    public static final ResourceLocation PirateChiefLootTable = new ResourceLocation(Constants.MOD_ID, "entitychiefpiratedrops");
-
-    /**
-     * Barbarian Attack Damage.
-     */
-    public static final double ATTACK_DAMAGE = 2.0D;
-
-    /**
-     * Values used in Spawn() method
-     */
-    private static final double WHOLE_CIRCLE = 360.0;
-
-    /**
-     * Values used for AI Task's Priorities.
-     */
-    private static final int    PRIORITY_ZERO               = 0;
-    private static final int    PRIORITY_ONE                = 1;
-    private static final int    PRIORITY_TWO                = 2;
-    private static final int    PRIORITY_THREE              = 3;
-    private static final int    PRIORITY_FOUR               = 4;
-    private static final int    PRIORITY_FIVE               = 5;
-
-    /**
-     * Other various values used for AI Tasks.
-     */
-    private static final double AI_MOVE_SPEED               = 2.0D;
-    private static final float  MAX_WATCH_DISTANCE          = 8.0F;
-
-    /**
-     * Values used for mob attributes.
-     */
-    private static final double FOLLOW_RANGE                = 35.0D;
-    private static final double MOVEMENT_SPEED              = 0.25D;
-    private static final double ARMOR                       = 1.5D;
-    private static final double CHIEF_ARMOR                 = 8D;
-    private static final double BARBARIAN_BASE_HEALTH       = 5;
-    private static final double BARBARIAN_HEALTH_MULTIPLIER = 0.2;
-
     /**
      * Private constructor to hide the implicit public one.
      */
@@ -110,7 +60,7 @@ public final class MobSpawnUtils
         mob.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
         mob.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
         mob.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(ATTACK_DAMAGE);
-        if(mob instanceof EntityChiefBarbarian)
+        if(mob instanceof EntityChiefBarbarian || mob instanceof EntityCaptainPirate)
         {
             mob.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(CHIEF_ARMOR);
         }
@@ -149,7 +99,7 @@ public final class MobSpawnUtils
         mob.targetTasks.addTask(PRIORITY_THREE, new EntityAINearestAttackableTarget<>(mob, EntityCitizen.class, true));
         mob.tasks.addTask(PRIORITY_FIVE, new EntityAIWatchClosest(mob, EntityPlayer.class, MAX_WATCH_DISTANCE));
 
-        if (mob instanceof EntityArcherBarbarian)
+        if (mob instanceof EntityArcherBarbarian || mob instanceof EntityArcherPirate)
         {
             mob.tasks.addTask(PRIORITY_ONE, new EntityAIAttackArcher(mob));
         }
@@ -157,42 +107,6 @@ public final class MobSpawnUtils
         {
             mob.tasks.addTask(PRIORITY_ONE, new EntityAIRaiderAttackMelee(mob));
         }
-    }
-
-    /**
-     * Get the mob Loot Table.
-     *
-     * @param mob The mob for which to get the Loot Table.
-     * @return The loot table.
-     */
-    public static ResourceLocation getBarbarianLootTable(final EntityLiving mob)
-    {
-        if (mob instanceof EntityBarbarian)
-        {
-            return BarbarianLootTable;
-        }
-        else if (mob instanceof EntityArcherBarbarian)
-        {
-            return ArcherLootTable;
-        }
-        else if (mob instanceof EntityChiefBarbarian)
-        {
-            return ChiefLootTable;
-        }
-        else if (mob instanceof EntityPirate)
-        {
-            return PirateLootTable;
-        }
-        else if (mob instanceof EntityArcherPirate)
-        {
-            return PirateArcherLootTable;
-        }
-        else if (mob instanceof EntityChiefPirate)
-        {
-            return PirateChiefLootTable;
-        }
-
-        return BarbarianLootTable;
     }
 
     /**
@@ -226,6 +140,10 @@ public final class MobSpawnUtils
         }
     }
 
+    /**
+     * Set the equipment of a certain mob.
+     * @param mob the equipment to set up.
+     */
     public static void setEquipment(final AbstractEntityMinecoloniesMob mob)
     {
         if (mob instanceof EntityBarbarian)
@@ -247,7 +165,7 @@ public final class MobSpawnUtils
         else if (mob instanceof AbstractEntityPirate)
         {
             mob.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(ModItems.scimitar));
-            if (mob instanceof EntityChiefPirate)
+            if (mob instanceof EntityCaptainPirate)
             {
                 if (new Random().nextBoolean())
                 {

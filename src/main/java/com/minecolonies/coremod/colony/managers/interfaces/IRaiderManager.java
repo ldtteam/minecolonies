@@ -92,12 +92,12 @@ public interface IRaiderManager
     List<AbstractEntityMinecoloniesMob> getHorde(final WorldServer world);
 
     /**
-     * Register a certain ship at a certain position to the colony.
+     * Register a certain raider origin schematic to the colony..
      * @param ship the ship description.
      * @param position the position.
      * @param worldTime the world time at spawn.
      */
-    void registerShip(final String ship, final BlockPos position, final long worldTime);
+    void registerRaiderOriginSchematic(final String ship, final BlockPos position, final long worldTime);
 
     /**
      * Reads the raider manager from NBT.

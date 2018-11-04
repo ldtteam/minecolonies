@@ -6,15 +6,9 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.entity.ai.citizen.fisherman.Pond;
-import com.minecolonies.coremod.util.StructureWrapper;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -24,8 +18,6 @@ import java.util.List;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.RAID_EVENT_MESSAGE;
-import static com.minecolonies.api.util.constant.TranslationConstants.RAID_EVENT_MESSAGE_PIRATE;
 
 /**
  * Utils for Colony mob events
@@ -49,7 +41,7 @@ public final class MobEventsUtils
     {
     }
 
-    public static void barbarianEvent(final World world, final Colony colony)
+    public static void raiderEvent(final World world, final Colony colony)
     {
         if (world == null || !colony.isCanHaveBarbEvents())
         {
@@ -99,12 +91,6 @@ public final class MobEventsUtils
 
         colony.setNightsSinceLastRaid(0);
 
-        if (BlockPosUtil.getFloor(targetSpawnPoint, 0, world) == null)
-        {
-            targetSpawnPoint = new BlockPos(targetSpawnPoint.getX(), colony.getCenter().getY(), targetSpawnPoint.getZ());
-            buildPlatform(targetSpawnPoint, world);
-        }
-
         if ((world.getBlockState(targetSpawnPoint).getBlock() == Blocks.WATER && Pond.checkWater(world, targetSpawnPoint, PIRATE_SHIP_WATER_SIZE, PIRATE_SHIP_WATER_SIZE))
               || (world.getBlockState(targetSpawnPoint.down()).getBlock() == Blocks.WATER && Pond.checkWater(world, targetSpawnPoint.down(), PIRATE_SHIP_WATER_SIZE, PIRATE_SHIP_WATER_SIZE))
         )
@@ -113,96 +99,11 @@ public final class MobEventsUtils
             {
                 targetSpawnPoint = targetSpawnPoint.down();
             }
-            colony.getRaiderManager().registerShip(Structures.SCHEMATICS_PREFIX + "/Ships/" + shipSize, targetSpawnPoint.down(3), world.getWorldTime());
-            StructureWrapper.loadAndPlaceStructureWithRotation(world, Structures.SCHEMATICS_PREFIX + "/Ships/" + shipSize, targetSpawnPoint.down(3), 0, Mirror.NONE, false);
-            loadSpawners(world, targetSpawnPoint, shipSize);
-            LanguageHandler.sendPlayersMessage(
-              colony.getMessageEntityPlayers(),
-              RAID_EVENT_MESSAGE_PIRATE + raidNumber, colony.getName());
+            PirateEventUtils.pirateEvent(targetSpawnPoint, world, colony, shipSize, raidNumber);
             return;
         }
 
-        LanguageHandler.sendPlayersMessage(
-          colony.getMessageEntityPlayers(),
-          RAID_EVENT_MESSAGE + raidNumber, colony.getName());
-
-        MobSpawnUtils.spawn(BARBARIAN, horde.numberOfBarbarians, targetSpawnPoint, world);
-        MobSpawnUtils.spawn(ARCHER, horde.numberOfArchers, targetSpawnPoint, world);
-        MobSpawnUtils.spawn(CHIEF, horde.numberOfChiefs, targetSpawnPoint, world);
-    }
-
-    /**
-     * Load pirate spawners on the ship.
-     * @param world the world to load it in.
-     * @param targetSpawnPoint the initital spawn point.
-     * @param shipSize the size of the ship.
-     */
-    private static void loadSpawners(final World world, final BlockPos targetSpawnPoint, final String shipSize)
-    {
-        switch (shipSize)
-        {
-            case SMALL_PIRATE_SHIP:
-                setupSpawner(targetSpawnPoint.up(2).north(), world, PIRATE);
-                break;
-            case MEDIUM_PIRATE_SHIP:
-                setupSpawner(targetSpawnPoint.up(3).north(10), world, PIRATE_CHIEF);
-                setupSpawner(targetSpawnPoint.up(1), world, PIRATE);
-                setupSpawner(targetSpawnPoint.up(5).south(6), world, PIRATE_ARCHER);
-                break;
-            case BIG_PIRATE_SHIP:
-                setupSpawner(targetSpawnPoint.up(3).south(), world, PIRATE);
-                setupSpawner(targetSpawnPoint.up(3).north(), world, PIRATE);
-                setupSpawner(targetSpawnPoint.down(1).south(5), world, PIRATE);
-                setupSpawner(targetSpawnPoint.down(1).north(5).east(2), world, PIRATE);
-                setupSpawner(targetSpawnPoint.down(1).north(8), world, PIRATE);
-                setupSpawner(targetSpawnPoint.up(2).south(12), world, PIRATE);
-
-                setupSpawner(targetSpawnPoint.up(3).north(10), world, PIRATE_CHIEF);
-                setupSpawner(targetSpawnPoint.up(6).north(12), world, PIRATE_CHIEF);
-
-                setupSpawner(targetSpawnPoint.up(9).north(13), world, PIRATE_ARCHER);
-                setupSpawner(targetSpawnPoint.up(22).south(), world, PIRATE_ARCHER);
-                setupSpawner(targetSpawnPoint.up(6).south(11), world, PIRATE_ARCHER);
-                break;
-            default:
-                Log.getLogger().warn("Invalid ship size detected!");
-        }
-    }
-
-    /**
-     * Setup a spawner.
-     * @param location the location to set it up at.
-     * @param world the world to place it in.
-     * @param mob the mob to spawn.
-     */
-    private static void setupSpawner(final BlockPos location, final World world, final ResourceLocation mob)
-    {
-        world.setBlockState(location, Blocks.MOB_SPAWNER.getDefaultState());
-        final TileEntityMobSpawner spawner = new TileEntityMobSpawner();
-        spawner.getSpawnerBaseLogic().setEntityId(mob);
-
-        world.setTileEntity(location, spawner);
-    }
-
-
-    private static void buildPlatform(final BlockPos target, final World world)
-    {
-        final IBlockState platformBlock = Blocks.WOODEN_SLAB.getDefaultState();
-
-        for (int z = 0; z < 5; z++)
-        {
-            for (int x = 0; x < 5; x++)
-            {
-                int sum = x * x + z * z;
-                if (sum < (5 * 5) / 4)
-                {
-                    world.setBlockState(new BlockPos(target.getX() + x, target.getY()-1, target.getZ() + z), platformBlock);
-                    world.setBlockState(new BlockPos(target.getX() + x, target.getY()-1, target.getZ() -z), platformBlock);
-                    world.setBlockState(new BlockPos(target.getX() -x, target.getY()-1, target.getZ() + z), platformBlock);
-                    world.setBlockState(new BlockPos(target.getX() -x, target.getY()-1, target.getZ() -z), platformBlock);
-                }
-            }
-        }
+        BarbarianEventUtils.barbarianEvent(world, colony, targetSpawnPoint, raidNumber, horde);
     }
 
     /**
@@ -258,10 +159,7 @@ public final class MobEventsUtils
     public static int getColonyRaidLevel(final Colony colony)
     {
         int levels = 0;
-
-        @NotNull final List<CitizenData> citizensList = new ArrayList<>();
-        citizensList.addAll(colony.getCitizenManager().getCitizens());
-
+        @NotNull final List<CitizenData> citizensList = new ArrayList<>(colony.getCitizenManager().getCitizens());
         for (@NotNull final CitizenData citizen : citizensList)
         {
             levels += citizen.getLevel();
@@ -328,19 +226,26 @@ public final class MobEventsUtils
     /**
      * Class representing a horde attack.
      */
-    private static class Horde
+    static class Horde
     {
-        private final int numberOfBarbarians;
-        private final int numberOfArchers;
-        private final int numberOfChiefs;
-        private final int hordeSize;
+        final int numberOfRaiders;
+        final int numberOfArchers;
+        final int numberOfBosses;
+        final int hordeSize;
 
-        public Horde(final int hordeSize, final int numberOfBarbarians, final int numberOfArchers, final int numberOfChiefs)
+        /**
+         * Create a new horde.
+         * @param hordeSize the size.
+         * @param numberOfRaiders the number of raiders.
+         * @param numberOfArchers the number of archers.
+         * @param numberOfBosses the number of bosses.
+         */
+        Horde(final int hordeSize, final int numberOfRaiders, final int numberOfArchers, final int numberOfBosses)
         {
             this.hordeSize = hordeSize;
-            this.numberOfBarbarians = numberOfBarbarians;
+            this.numberOfRaiders = numberOfRaiders;
             this.numberOfArchers = numberOfArchers;
-            this.numberOfChiefs = numberOfChiefs;
+            this.numberOfBosses = numberOfBosses;
         }
     }
 }

@@ -355,8 +355,8 @@ public final class NbtTagConstants
     /**
      * Raid manager tags
      */
-    public static final String TAG_RAID_MANAGER = "raidManager";
-    public static final String TAG_SHIP_LIST = "ships";
+    public static final String TAG_RAID_MANAGER   = "raidManager";
+    public static final String TAG_SCHEMATIC_LIST = "ships";
 
 
     /**
