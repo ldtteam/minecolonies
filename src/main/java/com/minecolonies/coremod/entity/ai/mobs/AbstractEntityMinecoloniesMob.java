@@ -128,13 +128,6 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
         return BarbarianSounds.barbarianSay;
     }
 
-    @Nullable
-    @Override
-    protected ResourceLocation getLootTable()
-    {
-        return MobSpawnUtils.getBarbarianLootTable(this);
-    }
-
     @Override
     protected boolean canDespawn()
     {

@@ -2,9 +2,9 @@ package com.minecolonies.coremod.entity.ai.mobs.aitasks;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.RaiderConstants;
 import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.util.MobSpawnUtils;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -94,7 +94,7 @@ public class EntityAIRaiderAttackMelee extends EntityAIBase
 
         if (target != null)
         {
-            double damageToBeDealt = MobSpawnUtils.ATTACK_DAMAGE;
+            double damageToBeDealt = RaiderConstants.ATTACK_DAMAGE;
 
             if (entity instanceof EntityChiefBarbarian)
             {
