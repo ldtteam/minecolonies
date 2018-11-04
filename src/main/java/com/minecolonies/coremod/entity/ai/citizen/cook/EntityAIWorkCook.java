@@ -51,7 +51,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     /**
      * The amount of food which should be served to the woker.
      */
-    private static final int AMOUNT_OF_FOOD_TO_SERVE = 2;
+    public static final int AMOUNT_OF_FOOD_TO_SERVE = 2;
 
     /**
      * Delay between each serving.
@@ -158,8 +158,9 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             range = getOwnBuilding().getTargetableArea(world);
         }
 
-        if (!range.intersectsWithXZ(new Vec3d(living.getPosition())))
+        if (!range.intersectsWithXZ(new Vec3d(living.getPosition())) || worker.getCitizenStuckHandler().isStuck())
         {
+            worker.getNavigator().clearPath();
             removeFromQueue();
             return START_WORKING;
         }

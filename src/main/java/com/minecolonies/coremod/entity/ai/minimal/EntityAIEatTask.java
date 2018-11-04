@@ -27,6 +27,7 @@ import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
+import static com.minecolonies.coremod.entity.ai.citizen.cook.EntityAIWorkCook.AMOUNT_OF_FOOD_TO_SERVE;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIEatTask.STATE.*;
 
 /**
@@ -219,6 +220,7 @@ public class EntityAIEatTask extends EntityAIBase
         citizenData.increaseSaturation(itemFood.getHealAmount(stack) / 2.0);
         citizenData.getInventory().decrStackSize(foodSlot, 1);
         citizenData.markDirty();
+        citizen.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
 
         if (citizenData.getSaturation() < CitizenConstants.FULL_SATURATION && !stack.isEmpty())
         {
@@ -256,7 +258,7 @@ public class EntityAIEatTask extends EntityAIBase
             InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
               cookBuilding.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
               ISFOOD,
-              Constants.STACKSIZE,
+              AMOUNT_OF_FOOD_TO_SERVE,
               new InvWrapper(citizen.getInventoryCitizen()));
             return WAIT_FOR_FOOD;
         }
@@ -379,13 +381,13 @@ public class EntityAIEatTask extends EntityAIBase
 
         if (slot == -1)
         {
-            reset();
             citizenData.getCitizenHappinessHandler().setFoodModifier(false);
-
             if ((citizenData.getSaturation() < CitizenConstants.LOW_SATURATION || citizen.isIdlingAtJob()) && citizenData.getSaturation() < CitizenConstants.HIGH_SATURATION)
             {
                 return SEARCH_RESTAURANT;
             }
+
+            reset();
             return IDLE;
         }
         foodSlot = slot;
