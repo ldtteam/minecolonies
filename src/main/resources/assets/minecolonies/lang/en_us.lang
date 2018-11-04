@@ -622,10 +622,10 @@ event.minecolonies.raidMessage2=§4Citizens report rumors of raiders close to %s
 event.minecolonies.raidMessage3=§4Buckle up cowboy! There's some darn raiders comin' for %s tonight!
 event.minecolonies.raidMessage4=§4A huge horde of raiders is comin' to %s, and they're not here to play!
 
-event.minecolonies.raidMessage_p1=§4Mysterious sailors have been spotted close to %s.
-event.minecolonies.raidMessage_p2=§4Citizens report rumors of pirates close to %s!
-event.minecolonies.raidMessage_p3=§4Arr Comrade! There's some darn pirates comin' for %s tonight!
-event.minecolonies.raidMessage_p4=§4A huge horde of pirates are sailin' to %s, and they're not here to play!
+event.minecolonies.raidMessage_p1=§4Mysterious sailors have been spotted close to %s, they sailed in on a small Sloop, you should consider destroying it.
+event.minecolonies.raidMessage_p2=§4Citizens report rumors of pirates close to %s, they brought a ship, better destroy it!
+event.minecolonies.raidMessage_p3=§4Arr Comrade! There's some darn pirates comin' for %s tonight, they sailed here and will continue attacking until we destroy their Caravel!
+event.minecolonies.raidMessage_p4=§4A huge horde of pirates are sailin' to %s and they're not here to play! Their rigorous waves will hit us unless we destroy their Galleon!
 
 com.minecolonies.coremod.gui.workerHuts.toggleAllOn=Toggle all (on)
 com.minecolonies.coremod.gui.workerHuts.toggleAllOff=Toggle all (off)

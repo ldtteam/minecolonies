@@ -40,7 +40,7 @@ public final class MobEventsUtils
     /**
      * Pirate ship water pool size.
      */
-    private static final int PIRATE_SHIP_WATER_SIZE = 15n;
+    private static final int PIRATE_SHIP_WATER_SIZE = 15;
 
     /**
      * Private constructor to hide the implicit public one.
