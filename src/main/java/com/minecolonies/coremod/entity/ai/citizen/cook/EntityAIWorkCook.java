@@ -14,12 +14,10 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.IItemHandler;
@@ -53,7 +51,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     /**
      * The amount of food which should be served to the woker.
      */
-    private static final int AMOUNT_OF_FOOD_TO_SERVE = 3;
+    private static final int AMOUNT_OF_FOOD_TO_SERVE = 2;
 
     /**
      * Delay between each serving.
@@ -127,7 +125,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     @Override
     protected boolean reachedMaxToKeep()
     {
-        return InventoryUtils.getItemCountInProvider(getOwnBuilding(), ItemStackUtils.ISFOOD) > Math.max(1, getOwnBuilding().getBuildingLevel() * getOwnBuilding().getBuildingLevel() / 2) * SLOT_PER_LINE;
+        return InventoryUtils.getItemCountInProvider(getOwnBuilding(), ItemStackUtils.ISFOOD) > Math.max(1, getOwnBuilding().getBuildingLevel() * getOwnBuilding().getBuildingLevel()) * SLOT_PER_LINE;
     }
 
     /**
@@ -184,7 +182,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
         InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
                 new InvWrapper(worker.getInventoryCitizen()),
                 ItemStackUtils.ISFOOD,
-                AMOUNT_OF_FOOD_TO_SERVE, handler
+                getOwnBuilding().getBuildingLevel() * AMOUNT_OF_FOOD_TO_SERVE, handler
                 );
 
         if (citizenToServe.isEmpty() && living instanceof EntityPlayer)
