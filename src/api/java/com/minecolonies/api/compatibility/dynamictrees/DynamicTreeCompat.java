@@ -19,6 +19,8 @@ import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public final class DynamicTreeCompat extends DynamicTreeProxy
@@ -29,6 +31,11 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
     private static final String DYNAMIC_MODID = "dynamictrees";
 
     private static final String DYNAMIC_TREE_DAMAGE = "fallingtree";
+
+    /**
+     * ArrayList of fakeplayers to use by dimension-id
+     */
+    private static List<FakePlayer> fakePlayers = new ArrayList<FakePlayer>();
 
     private DynamicTreeCompat()
     {
@@ -199,8 +206,15 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
                 Log.getLogger().error("Minecolonies:DynamicTreeCompat unexpected null while trying to get World");
                 return;
             }
-            final FakePlayer fake =
-              new FakePlayer(world.getMinecraftServer().getWorld(world.provider.getDimension()), new GameProfile(UUID.randomUUID(), "minecolonies_LumberjackFake"));
+
+            FakePlayer fake = fakePlayers.get(world.provider.getDimension());
+
+            if (fake == null)
+            {
+                fakePlayers.add(world.provider.getDimension(), new FakePlayer(world.getMinecraftServer().getWorld(world.provider.getDimension()),
+                  new GameProfile(UUID.randomUUID(), "minecolonies_LumberjackFake")));
+                fake = fakePlayers.get(world.provider.getDimension());
+            }
 
             if (workerPos != null)
             {
