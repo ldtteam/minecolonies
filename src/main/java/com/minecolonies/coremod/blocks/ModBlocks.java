@@ -163,7 +163,6 @@ public final class ModBlocks
         blockShingleSlab = new BlockShingleSlab().registerBlock(registry);
         multiBlock = new MultiBlock().registerBlock(registry);
         blockBarrel = new BlockBarrel().registerBlock(registry);
-        blockHutComposter = new BlockHutComposter().registerBlock(registry);
         blockCompostedDirt = new BlockCompostedDirt().registerBlock(registry);
         //blockHutFlorist = new BlockHutFlorist().registerBlock(registry);
 
@@ -224,7 +223,7 @@ public final class ModBlocks
         blockCactusStair.registerItemBlock(registry);
         registry.register(new ItemSlab(blockCactusSlabHalf, blockCactusSlabHalf, blockCactusSlabDouble).setRegistryName(blockCactusSlabHalf.getRegistryName()));
         blockBarrel.registerItemBlock(registry);
-        blockHutComposter.registerItemBlock(registry);
+        //blockHutComposter.registerItemBlock(registry);
         blockCompostedDirt.registerItemBlock(registry);
         //blockHutFlorist.registerItemBlock(registry);
 
