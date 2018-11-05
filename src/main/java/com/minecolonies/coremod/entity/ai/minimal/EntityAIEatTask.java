@@ -4,13 +4,14 @@ import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.CitizenConstants;
-import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
+import com.minecolonies.coremod.network.messages.ItemParticleEffectMessage;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
@@ -139,7 +140,7 @@ public class EntityAIEatTask extends EntityAIBase
         if (citizenData.getSaturation() <= CitizenConstants.AVERAGE_SATURATION)
         {
             waitingTicks++;
-            return waitingTicks >= TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_BETWEEN_FOOD_CHECKS || citizen.getCitizenData().getSaturation() < CitizenConstants.LOW_SATURATION;
+            return waitingTicks >= TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_BETWEEN_FOOD_CHECKS || citizen.getCitizenData().getSaturation() < CitizenConstants.LOW_SATURATION || citizenData.getJob() == null;
         }
 
         return false;
@@ -207,14 +208,19 @@ public class EntityAIEatTask extends EntityAIBase
         }
 
         citizen.setHeldItem(EnumHand.MAIN_HAND, stack);
-        citizen.swingArm(EnumHand.MAIN_HAND);
+
+        if (waitingTicks % 10 == 0)
+        {
+            citizen.swingArm(EnumHand.MAIN_HAND);
+            citizen.playSound(SoundEvents.ENTITY_GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
+            MineColonies.getNetwork().sendToAllTracking(new ItemParticleEffectMessage(citizen.getHeldItemMainhand(), citizen.posX, citizen.posY, citizen.posZ, citizen.rotationPitch, citizen.rotationYaw, citizen.getEyeHeight()), citizen);
+        }
 
         waitingTicks ++;
         if (waitingTicks < TICKS_SECOND * REQUIRED_TIME_TO_EAT)
         {
             return EAT;
         }
-        citizen.playSound(SoundEvents.ENTITY_GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
 
         final ItemFood itemFood = (ItemFood) stack.getItem();
         citizenData.increaseSaturation(itemFood.getHealAmount(stack) / 2.0);

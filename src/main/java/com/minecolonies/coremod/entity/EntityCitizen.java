@@ -39,6 +39,7 @@ import net.minecraft.entity.ai.EntityAIWatchClosest2;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemNameTag;
 import net.minecraft.item.ItemShield;
 import net.minecraft.item.ItemStack;
@@ -50,7 +51,9 @@ import net.minecraft.scoreboard.Team;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -1041,6 +1044,14 @@ public class EntityCitizen extends AbstractEntityCitizen
     public void setCurrentPosition(final BlockPos currentPosition)
     {
         this.currentPosition = currentPosition;
+    }
+
+    /**
+     * Spawn eating particles for the citizen.
+     */
+    public void spawnEatingParticle()
+    {
+        updateItemUse(getHeldItemMainhand(), EATING_PARTICLE_COUNT);
     }
 
     ///////// -------------------- The Handlers -------------------- /////////

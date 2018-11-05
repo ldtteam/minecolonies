@@ -211,4 +211,9 @@ public final class CitizenConstants
      * The guard's level based health bonus mod's name
      */
     public static final String GUARD_HEALTH_MOD_LEVEL_NAME = "MinecoloniesGuardLevelHealth";
+
+    /**
+     * Eating particle count.
+     */
+    public static final int EATING_PARTICLE_COUNT = 5;
 }
