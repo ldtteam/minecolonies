@@ -53,6 +53,17 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * If this limit is reached, no trees are found.
      */
     private static final int    SEARCH_LIMIT           = 150;
+
+    /**
+     * Vertical range in which the worker picks up items.
+     */
+    public static final float RANGE_VERTICAL_PICKUP = 2.0F;
+
+    /**
+     * Horizontal range in which the worker picks up items.
+     */
+    public static final float RANGE_HORIZONTAL_PICKUP = 5.0F;
+
     /**
      * Number of ticks to wait before coming to the conclusion of being stuck.
      */
@@ -276,6 +287,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         if (pathResult == null || pathResult.treeLocation == null)
         {
             pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE + searchIncrement, 1.0D, ((BuildingLumberjack) building).getTreesToNotCut(), worker.getCitizenColonyHandler().getColony());
+            // Delay between area searches
+            setDelay(100);
             return getState();
         }
         if (pathResult.isPathReachingDestination())
@@ -409,6 +422,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                 {
                     this.incrementActionsDone();
                 }
+                // Wait 5 sec for falling trees(dyn tree feature)/drops
+                setDelay(100);
             }
             else
             {

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -228,7 +229,8 @@ public class Tree
         }
 
         // Only harvest nearly fully grown dynamic trees(8 max)
-        if (Compatibility.isDynamicBlock(block) && state.getProperties().containsKey(dynamicTreeRadiusProp) && state.getValue(dynamicTreeRadiusProp) < 6)
+        if (Compatibility.isDynamicBlock(block) && state.getProperties().containsKey(dynamicTreeRadiusProp)
+              && state.getValue(dynamicTreeRadiusProp) < Configurations.compatibility.dynamicTreeHarvestSize)
         {
             return false;
         }
