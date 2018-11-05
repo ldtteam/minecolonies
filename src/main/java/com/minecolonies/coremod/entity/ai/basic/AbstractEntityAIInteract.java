@@ -154,7 +154,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
       @NotNull final BlockPos safeStand,
       @NotNull final boolean damageTool,
       @NotNull final boolean getDrops,
-      Runnable blockBreakAction)
+      final Runnable blockBreakAction)
     {
         final IBlockState curBlockState = world.getBlockState(blockToMine);
         @Nullable final Block curBlock = curBlockState.getBlock();

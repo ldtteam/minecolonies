@@ -127,8 +127,8 @@ public class Tree
     /**
      * Properties used by DynamicTree's leaves
      */
-    private static final PropertyInteger HYDRO = PropertyInteger.create("hydro", 1, 4);
-    private static final PropertyInteger TREE  = PropertyInteger.create("tree", 0, 3);
+    private static final PropertyInteger DYN_PROP_HYDRO = PropertyInteger.create("hydro", 1, 4);
+    private static final PropertyInteger DYN_PROP_TREE  = PropertyInteger.create("tree", 0, 3);
 
     /**
      * Private constructor of the tree.
@@ -185,7 +185,7 @@ public class Tree
                 if (Compatibility.isDynamicLeaf(block))
                 {
                     list = (Compatibility.getDropsForDynamicLeaf(world, pos, blockState, A_LOT_OF_LUCK, block));
-                    blockState = blockState.withProperty(HYDRO, 1).withProperty(TREE, 1);
+                    blockState = blockState.withProperty(DYN_PROP_HYDRO, 1).withProperty(DYN_PROP_TREE, 1);
                 }
                 else
                 {
@@ -354,7 +354,7 @@ public class Tree
             IBlockState bState = world.getBlockState(leafPos);
             if (Compatibility.isDynamicLeaf(bState.getBlock()))
             {
-                bState = bState.withProperty(HYDRO, 1).withProperty(TREE, 1);
+                bState = bState.withProperty(DYN_PROP_HYDRO, 1).withProperty(DYN_PROP_TREE, 1);
             }
             final ItemStack sap = ColonyManager.getCompatibilityManager().getSaplingForLeaf(bState);
             if (sap != null && sap.isItemEqual(stack.getItemStack()))

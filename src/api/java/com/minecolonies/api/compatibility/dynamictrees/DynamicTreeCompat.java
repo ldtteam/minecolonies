@@ -254,7 +254,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      */
     @Override
     @Optional.Method(modid = DYNAMIC_MODID)
-    protected boolean plantDynamicSaplingCompat(@NotNull World world, @NotNull BlockPos location, @NotNull ItemStack saplingStack)
+    protected boolean plantDynamicSaplingCompat(@NotNull final World world, @NotNull final BlockPos location, @NotNull final ItemStack saplingStack)
     {
         if (saplingStack.getItem() instanceof Seed)
         {
