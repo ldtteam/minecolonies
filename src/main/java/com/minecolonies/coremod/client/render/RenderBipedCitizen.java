@@ -40,6 +40,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         idToMaleModelMap.put(Model.SHEEP_FARMER, new ModelEntitySheepFarmerMale());
         idToMaleModelMap.put(Model.PIG_FARMER, new ModelEntityPigFarmerMale());
         idToMaleModelMap.put(Model.COW_FARMER, new ModelEntityCowFarmerMale());
+        idToMaleModelMap.put(Model.SMELTER, new ModelEntitySmelterMale());
 
         idToFemaleModelMap.put(Model.NOBLE, new ModelEntityCitizenFemaleNoble());
         idToFemaleModelMap.put(Model.ARISTOCRAT, new ModelEntityCitizenFemaleAristocrat());
@@ -54,10 +55,11 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         idToFemaleModelMap.put(Model.BAKER, new ModelEntityBakerFemale());
         idToFemaleModelMap.put(Model.COMPOSTER, new ModelEntityComposterFemale());
         idToFemaleModelMap.put(Model.COOK, new ModelEntityCookFemale());
-        idToFemaleModelMap.put(Model.CHICKEN_FARMER, new ModelEntityFarmerFemale());
-        idToFemaleModelMap.put(Model.COW_FARMER, new ModelEntityFarmerFemale());
-        idToFemaleModelMap.put(Model.PIG_FARMER, new ModelEntityFarmerFemale());
-        idToFemaleModelMap.put(Model.SHEEP_FARMER, new ModelEntityFarmerFemale());
+        idToFemaleModelMap.put(Model.CHICKEN_FARMER, new ModelEntityChickenFarmerFemale());
+        idToFemaleModelMap.put(Model.COW_FARMER, new ModelEntityCowFarmerFemale());
+        idToFemaleModelMap.put(Model.PIG_FARMER, new ModelEntityPigFarmerFemale());
+        idToFemaleModelMap.put(Model.SHEEP_FARMER, new ModelEntitySheepFarmerFemale());
+        idToFemaleModelMap.put(Model.SMELTER, new ModelEntitySmelterFemale());
     }
     /**
      * Renders model, see {@link RenderBiped}.
@@ -144,6 +146,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         PIG_FARMER("pigfarmer", 1),
         CHICKEN_FARMER("chickenfarmer", 1),
         COMPOSTER("composter", 1),
+        SMELTER("smelter", 1),
         COOK("cook", 1);
 
         /**

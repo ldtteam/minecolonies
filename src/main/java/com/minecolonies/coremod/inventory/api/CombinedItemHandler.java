@@ -149,6 +149,27 @@ public class CombinedItemHandler
     }
 
     /**
+     * Get last index of the current itemHandler a slot belongs to.
+     * @param slot the slot of an itemHandler.
+     */
+    public int getLastIndex(final int slot)
+    {
+        int slots = 0;
+        int activeSlot = slot;
+
+        for (final IItemHandlerModifiable modifiable : handlers)
+        {
+            if (activeSlot < modifiable.getSlots())
+            {
+                return modifiable.getSlots() + slots;
+            }
+            slots += modifiable.getSlots();
+            activeSlot -= modifiable.getSlots();
+        }
+        return 0;
+    }
+
+    /**
      * Returns the number of slots available.
      *
      * @return The number of slots available

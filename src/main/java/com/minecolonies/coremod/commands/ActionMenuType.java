@@ -225,10 +225,10 @@ public enum ActionMenuType implements IMenuType
             new ActionArgument("colony", ActionArgumentType.COLONY, ActionArgumentType.Is.REQUIRED)
             )),
     BARBARIAN_KILL(new ActionMenu(
-            "BarbarianKill",
-            "barbarians",
+            "RaiderKill",
+            "raiders",
             ForgePermissionNodes.BARBARIAN_KILL,
-            BarbarianKillCommand.class
+            RaiderKillCommand.class
             )),
     ANIMAL_KILL(new ActionMenu(
             "AnimalKill",
