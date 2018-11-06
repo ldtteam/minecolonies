@@ -19,8 +19,8 @@ import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public final class DynamicTreeCompat extends DynamicTreeProxy
@@ -33,9 +33,9 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
     private static final String DYNAMIC_TREE_DAMAGE = "fallingtree";
 
     /**
-     * ArrayList of fakeplayers to use by dimension-id
+     * Hashmap of fakeplayers, dimension-id as key
      */
-    private static List<FakePlayer> fakePlayers = new ArrayList<FakePlayer>();
+    private static Map<Integer, FakePlayer> fakePlayers = new HashMap<>();
 
     private DynamicTreeCompat()
     {
@@ -207,13 +207,14 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
                 return;
             }
 
-            FakePlayer fake = fakePlayers.get(world.provider.getDimension());
+            final int dim = world.provider.getDimension();
+            FakePlayer fake = fakePlayers.get(dim);
 
             if (fake == null)
             {
-                fakePlayers.add(world.provider.getDimension(), new FakePlayer(world.getMinecraftServer().getWorld(world.provider.getDimension()),
+                fakePlayers.put(dim, new FakePlayer(world.getMinecraftServer().getWorld(dim),
                   new GameProfile(UUID.randomUUID(), "minecolonies_LumberjackFake")));
-                fake = fakePlayers.get(world.provider.getDimension());
+                fake = fakePlayers.get(dim);
             }
 
             if (workerPos != null)
