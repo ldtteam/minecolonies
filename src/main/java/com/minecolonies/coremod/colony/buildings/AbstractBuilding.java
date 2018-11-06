@@ -438,33 +438,46 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      *
      * @param stack            the stack to check it with.
      * @param localAlreadyKept already kept items.
-     * @return true if it should be leave it behind.
+     * @return the amount which can get dumped or 0 if not.
      */
-    public boolean buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept)
+    public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept)
     {
         for (final Map.Entry<Predicate<ItemStack>, Integer> entry : getRequiredItemsAndAmount().entrySet())
         {
             if (entry.getKey().test(stack))
             {
                 final ItemStorage kept = ItemStorage.getItemStackOfListMatchingPredicate(localAlreadyKept, entry.getKey());
+                final int toKeep = entry.getValue();
+                int rest = stack.getCount() - toKeep;
                 if (kept != null)
                 {
-                    if (kept.getAmount() >= entry.getValue())
+                    if (kept.getAmount() >= toKeep)
                     {
-                        return false;
+                        return stack.getCount();
                     }
 
+                    rest = kept.getAmount() + stack.getCount() - toKeep;
+
                     localAlreadyKept.remove(kept);
-                    kept.setAmount(kept.getAmount() + ItemStackUtils.getSize(stack));
+                    kept.setAmount(kept.getAmount() + ItemStackUtils.getSize(stack) - Math.max(0, rest));
                     localAlreadyKept.add(kept);
-                    return true;
+                }
+                else
+                {
+                    final ItemStorage newStorage = new ItemStorage(stack);
+                    newStorage.setAmount(ItemStackUtils.getSize(stack) - Math.max(0, rest));
+                    localAlreadyKept.add(newStorage);
                 }
 
-                localAlreadyKept.add(new ItemStorage(stack));
-                return true;
+                if (rest <= 0)
+                {
+                    return 0;
+                }
+
+                return Math.min(rest, ItemStackUtils.getSize(stack));
             }
         }
-        return false;
+        return stack.getCount();
     }
 
     /**
@@ -519,7 +532,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     private ItemStack forceItemStackToProvider(@NotNull final ICapabilityProvider provider, @NotNull final ItemStack itemStack)
     {
         final List<ItemStorage> localAlreadyKept = new ArrayList<>();
-        return InventoryUtils.forceItemStackToProvider(provider, itemStack, (ItemStack stack) -> EntityAIWorkDeliveryman.workerRequiresItem(this, stack, localAlreadyKept));
+        return InventoryUtils.forceItemStackToProvider(provider, itemStack, (ItemStack stack) -> EntityAIWorkDeliveryman.workerRequiresItem(this, stack, localAlreadyKept) != stack.getCount());
     }
 
     //------------------------- Ending Required Tools/Item handling -------------------------//

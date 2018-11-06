@@ -23,7 +23,6 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -38,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.BONUS_BUILDING_LEVEL;
@@ -70,7 +70,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     public AbstractBuildingWorker(@NotNull final Colony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood, getBuildingLevel() * 2);
     }
 
     /**
@@ -106,6 +105,23 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
             }
         }
         return false;
+    }
+
+    /**
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @return a list of objects which should be kept.
+     */
+    public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
+    {
+        final Map<Predicate<ItemStack>, Integer> toKeep = new HashMap<>();
+        toKeep.putAll(keepX);
+        toKeep.putAll(super.getRequiredItemsAndAmount());
+        toKeep.put(ItemStackUtils.ISFOOD, getBuildingLevel() * 2);
+
+        return toKeep;
     }
 
     /**

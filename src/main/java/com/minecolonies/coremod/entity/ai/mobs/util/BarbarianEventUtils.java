@@ -65,7 +65,7 @@ public final class BarbarianEventUtils
         {
             for (int x = 0; x < 5; x++)
             {
-                int sum = x * x + z * z;
+                final int sum = x * x + z * z;
                 if (sum < (5 * 5) / 4)
                 {
                     world.setBlockState(new BlockPos(target.getX() + x, target.getY()-1, target.getZ() + z), platformBlock);

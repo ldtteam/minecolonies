@@ -44,9 +44,9 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(STUDY, this::study)
+          new AITarget(IDLE, START_WORKING, true),
+          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
+          new AITarget(STUDY, false, this::study)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -85,6 +85,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
 
         // Search for Items to use to study
         final List<StudyItem> currentItems = new ArrayList<>();
+        worker.decreaseSaturationForAction();
 
         for (final StudyItem curItem : getOwnBuilding(BuildingLibrary.class).getStudyItems())
         {

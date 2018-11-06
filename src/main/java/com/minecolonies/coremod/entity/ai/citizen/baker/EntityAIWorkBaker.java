@@ -114,13 +114,13 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepareForBaking),
-          new AITarget(BAKER_KNEADING, this::kneadTheDough),
-          new AITarget(BAKER_BAKING, this::bake),
-          new AITarget(BAKER_TAKE_OUT_OF_OVEN, this::takeFromOven),
-          new AITarget(BAKER_FINISHING, this::finishing)
+          new AITarget(IDLE, START_WORKING, true),
+          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, true, this::prepareForBaking),
+          new AITarget(BAKER_KNEADING, false, this::kneadTheDough),
+          new AITarget(BAKER_BAKING, false, this::bake),
+          new AITarget(BAKER_TAKE_OUT_OF_OVEN, false, this::takeFromOven),
+          new AITarget(BAKER_FINISHING, false, this::finishing)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(
           INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
@@ -225,6 +225,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
         final BakingProduct bakingProduct = getOwnBuilding().getFurnacesWithProduct().get(currentFurnace);
         getOwnBuilding().removeProductFromFurnace(currentFurnace);
+        worker.decreaseSaturationForAction();
         if (bakingProduct != null)
         {
             getOwnBuilding().addToTasks(bakingProduct.getState(), bakingProduct);
@@ -272,6 +273,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 	        if (progress >= getRequiredProgressForKneading())
 	        {
 	            worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+                worker.decreaseSaturationForAction();
 	            progress = 0;
 	            currentBakingProduct.nextState();
 	            getOwnBuilding().removeFromTasks(ProductState.RAW, currentBakingProduct);
