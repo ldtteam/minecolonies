@@ -212,7 +212,7 @@ public class CommandEntryPointTest
                 "backup", "scan", "lootgen");
     }
 
-    @Test
+    
     public void GIVEN_args_scan__DO_getTabCompletions__EXPECT_x1_x2_y1_y2_z1_z2()
     {
 
@@ -229,7 +229,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("player:", "x1:", "x2:", "y1:", "y2:", "z1:", "z2:", "name:");
     }
 
-    @Test
+    
     public void GIVEN_args_Scan__DO_getTabCompletions__EXPECT_x1_x2_y1_y2_z1_z2()
     {
 
@@ -246,7 +246,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("player:", "x1:", "x2:", "y1:", "y2:", "z1:", "z2:", "name:");
     }
 
-    @Test
+    
     public void GIVEN_args_SCAN__DO_getTabCompletions__EXPECT_x1_x2_y1_y2_z1_z2()
     {
 
@@ -263,7 +263,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("player:", "x1:", "x2:", "y1:", "y2:", "z1:", "z2:", "name:");
     }
 
-    @Test
+    
     public void GIVEN_args_SCAN_x1NoColon__DO_getTabCompletions__EXPECT_x1()
     {
 
@@ -280,7 +280,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("x1:");
     }
 
-    @Test
+    
     public void GIVEN_args_SCAN_X1NoColon__DO_getTabCompletions__EXPECT_x1()
     {
 
@@ -297,7 +297,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("x1:");
     }
 
-    @Test
+    
     public void GIVEN_args_SCAN_X1_space__DO_getTabCompletions__EXPECT_1()
     {
 
@@ -314,7 +314,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("1");
     }
 
-    @Test
+    
     public void GIVEN_args_SCAN_y2_space__DO_getTabCompletions__EXPECT_2()
     {
 
@@ -331,7 +331,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("2");
     }
 
-    @Test
+    
     public void GIVEN_args_SCAN_z2_space__DO_getTabCompletions__EXPECT_3()
     {
 
@@ -348,7 +348,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("3");
     }
 
-    @Test
+    
     public void GIVEN_args_SCAN_X1_1_x2_2_y1_3_y2_4_z1_5_z2_6__DO_execute__EXPECT_scan_command_executed() throws CommandException
     {
 
@@ -391,7 +391,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
+    
     public void GIVEN_args_CLAIM__DO_execute__EXPECT_claim_command_executed() throws CommandException
     {
 
@@ -429,7 +429,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
+    
     public void GIVEN_args_citizens__DO_getTabCompletions__EXPECT_citizens()
     {
 
@@ -446,7 +446,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("citizens");
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_space__DO_getTabCompletions__EXPECT_info()
     {
 
@@ -463,7 +463,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("kill", "spawn", "info", "list", "respawn");
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_in__DO_getTabCompletions__EXPECT_info()
     {
 
@@ -480,7 +480,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("info");
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info__DO_getTabCompletions__EXPECT_info()
     {
 
@@ -497,7 +497,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("info");
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_space__DO_getTabCompletions__EXPECT_colony()
     {
 
@@ -514,7 +514,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("colony:");
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colonyNoColon_space__DO_getTabCompletions__EXPECT_1_2()
     {
 
@@ -531,7 +531,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("colony:");
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_space__DO_getTabCompletions__EXPECT_1_2()
     {
 
@@ -548,7 +548,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("1", "2");
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_1_space__DO_getTabCompletions__EXPECT_citizen()
     {
 
@@ -565,7 +565,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("citizen:");
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_1_citizen_space__DO_getTabCompletions__EXPECT_101_102_103_104_John_Jenna()
     {
 
@@ -582,7 +582,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("101", "102", "103", "104", "John", "Jenna");
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_1_citizen_J__DO_getTabCompletions__EXPECT_John_Jenna()
     {
 
@@ -599,7 +599,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("John", "Jenna");
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_1_citizen_Jo__DO_getTabCompletions__EXPECT_John()
     {
 
@@ -616,7 +616,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("John");
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_1_citizen_John_space__DO_getTabCompletions__EXPECT_A_S()
     {
 
@@ -633,7 +633,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("A.", "S.");
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_1_citizen_John_A_space__DO_getTabCompletions__EXPECT_A_S()
     {
 
@@ -650,7 +650,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("Jones");
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_1_citizen_John_S_space__DO_getTabCompletions__EXPECT_A_S()
     {
 
@@ -667,7 +667,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("Smith", "Jones");
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_1_citizen_John_S_Smith_space__DO_getTabCompletions__EXPECT_citizen()
     {
 
@@ -684,7 +684,7 @@ public class CommandEntryPointTest
         assertThat(results).isEmpty();
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_1_citizen_1__DO_getTabCompletions__EXPECT_101_102_103_104()
     {
 
@@ -701,7 +701,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("101", "102", "103", "104");
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_2_citizen_space__DO_getTabCompletions__EXPECT_201_202_203_204_205_Sally_R()
     {
 
@@ -718,7 +718,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("201", "202", "203", "204", "205","Sally", "R");
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_2_citizen_Sally_space__DO_getTabCompletions__EXPECT_Jane()
     {
 
@@ -735,7 +735,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("Jane", "of");
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_2_citizen_SallyJaneJohnsonTheThird_space__DO_getTabCompletions__EXPECT_Banana()
     {
 
@@ -752,7 +752,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("Banana");
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_2_citizen_SallyJaneJohnsonTheThird_space_B__DO_getTabCompletions__EXPECT_Banana()
     {
 
@@ -770,7 +770,7 @@ public class CommandEntryPointTest
     }
 
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_1_citizen_Sally__DO_execute__EXPECT_colony_info_command_parses_Sally() throws CommandException
     {
 
@@ -808,7 +808,7 @@ public class CommandEntryPointTest
     }
 
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_1_citizen_Sally_Jane_Johnson_the_Third__DO_execute__EXPECT_colony_info_command_parses_SallyJaneJohnsonTheThird()
             throws CommandException
     {
@@ -847,7 +847,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_1_citizen_Sally_Jane_Johnson_the_Third_Banana_Fo_Fanna__DO_execute__EXPECT_colony_info_command_parses_SallyJaneJohnsonTheThirdBananaFoFanna() throws CommandException
     {
 
@@ -885,7 +885,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_1_citizen_1_space__DO_getTabCompletions__EXPECT_nothing()
     {
 
@@ -903,7 +903,7 @@ public class CommandEntryPointTest
         assertThat(results).isEmpty();
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_1_citizen_1_S__DO_getTabCompletions__EXPECT_nothing()
     {
 
@@ -921,7 +921,7 @@ public class CommandEntryPointTest
         assertThat(results).isEmpty();
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_1_citizen_1_space__DO_execute__EXPECT_bad_args() throws CommandException
     {
 
@@ -955,7 +955,7 @@ public class CommandEntryPointTest
         }
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_1_citizen_1_S__DO_execute__EXPECT_bad_args() throws CommandException
     {
 
@@ -989,7 +989,7 @@ public class CommandEntryPointTest
         }
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_1_citizen_John_S_Smith__DO_execute__EXPECT_colony_info_command_executed() throws CommandException
     {
 
@@ -1026,7 +1026,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
+    
     public void GIVEN_args_colony_space__DO_getTabCompletions__EXPECT_ownerchange()
     {
 
@@ -1044,7 +1044,7 @@ public class CommandEntryPointTest
                 "claim");
     }
 
-    @Test
+    
     public void GIVEN_args_colony_ownerchange_space__DO_getTabCompletions__EXPECT_colony_player()
     {
 
@@ -1061,7 +1061,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("colony:", "player:");
     }
 
-    @Test
+    
     public void GIVEN_args_colony_ownerchange_colony_space__DO_getTabCompletions__EXPECT_1_2()
     {
 
@@ -1078,7 +1078,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("1", "2");
     }
 
-    @Test
+    
     public void GIVEN_args_colony_ownerchange_player_space__DO_getTabCompletions__EXPECT_Bob_Sally()
     {
 
@@ -1095,7 +1095,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("Bob", "Sally");
     }
 
-    @Test
+    
     public void GIVEN_args_colony_ownerchange_player_B__DO_getTabCompletions__EXPECT_Bob()
     {
 
@@ -1112,7 +1112,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("Bob");
     }
 
-    @Test
+    
     public void GIVEN_args_colony_ownerchange_player_Bob_space__DO_getTabCompletions__EXPECT_colony()
     {
 
@@ -1129,7 +1129,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("colony:");
     }
 
-    @Test
+    
     public void GIVEN_args_colony_ownerchange_player_Bob_colony_space__DO_getTabCompletions__EXPECT_1_2()
     {
 
@@ -1146,7 +1146,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("1", "2");
     }
 
-    @Test
+    
     public void GIVEN_args_colony_ownerchange_player_Bob_colony_1_space__DO_getTabCompletions__EXPECT_nothing()
     {
 
@@ -1163,7 +1163,7 @@ public class CommandEntryPointTest
         assertThat(results).isEmpty();
     }
 
-    @Test
+    
     public void GIVEN_args_colony_ownerchange_colony_1_player_Bob_space__DO_execute__EXPECT_ChangeColonyOwnerCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1197,7 +1197,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
+    
     public void GIVEN_args_colony_ownerchange_player_Bob_colony_1_space__DO_execute__EXPECT_ChangeColonyOwnerCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1264,7 +1264,7 @@ public class CommandEntryPointTest
         }
     }
 
-    @Test
+    
     public void GIVEN_args_citizens__DO_execute__EXPECT_throwUsage()
     {
 
@@ -1298,7 +1298,7 @@ public class CommandEntryPointTest
         }
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info__DO_execute__EXPECT_throwUsage()
     {
 
@@ -1332,7 +1332,7 @@ public class CommandEntryPointTest
         }
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colonyNoColon__DO_execute__EXPECT_throwUsage()
     {
 
@@ -1366,7 +1366,7 @@ public class CommandEntryPointTest
         }
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony__DO_execute__EXPECT_throwUsage()
     {
 
@@ -1400,7 +1400,7 @@ public class CommandEntryPointTest
         }
     }
 
-    @Test
+    
     public void GIVEN_args_citizens_info_colony_BAD__DO_execute__EXPECT_throwUsage()
     {
 
@@ -1434,7 +1434,7 @@ public class CommandEntryPointTest
         }
     }
 
-//    @Test
+//    
 //    public void GIVEN_args_colony_info_sender_is_not_player__DO_execute__EXPECT_sendMsg() throws CommandException
 //    {
 //
@@ -1452,7 +1452,7 @@ public class CommandEntryPointTest
 //        verify(sender, times(1)).sendMessage(any());
 //    }
 //
-//    @Test
+//    
 //    public void GIVEN_args_colony_info_sender_is_a_player__DO_execute__EXPECT_sendMsg() throws CommandException
 //    {
 //
@@ -1474,7 +1474,7 @@ public class CommandEntryPointTest
 //        verify(playerSender, times(1)).sendMessage(any());
 //    }
 
-    @Test
+    
     public void GIVEN_args_colony_delete_colony_1_canDestroy_space__DO_getTabCompletions__EXPECT_true_false() throws CommandException
     {
         // GIVEN:
@@ -1490,7 +1490,7 @@ public class CommandEntryPointTest
         assertThat(results).containsExactlyInAnyOrder("true", "false");
     }
 
-    @Test
+    
     public void GIVEN_args_colonies_list_page_space__DO_getTabCompletions__EXPECT_nothing() throws CommandException
     {
         // GIVEN:
@@ -1506,7 +1506,7 @@ public class CommandEntryPointTest
         assertThat(results).isEmpty();
     }
 
-    @Test
+    
     public void GIVEN_args_colony_delete_colony_1_canDestroy_true_confirmDelete_true__DO_execute__EXPECT_DeleteColonyCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1547,7 +1547,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
+    
     public void GIVEN_args_colony_delete_colony_1__DO_execute__EXPECT_DeleteColonyCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1587,7 +1587,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
+    
     public void GIVEN_args_colonies_list_page_2_abandonedSinceTimeInHours_3__DO_execute__EXPECT_ListColoniesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1625,7 +1625,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
+    
     public void GIVEN_args_colonies_list_page_2__DO_execute__EXPECT_ListColoniesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1663,7 +1663,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
+    
     public void GIVEN_args_check_confirmDelete_true__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1697,7 +1697,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
+    
     public void GIVEN_args_check_confirmDelete_t__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1731,7 +1731,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
+    
     public void GIVEN_args_check_confirmDelete_yes__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1765,7 +1765,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
+    
     public void GIVEN_args_check_confirmDelete_y__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1799,7 +1799,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
+    
     public void GIVEN_args_check_confirmDelete_1__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1833,7 +1833,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
+    
     public void GIVEN_args_check_confirmDelete_false__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1867,7 +1867,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
+    
     public void GIVEN_args_check_confirmDelete_f__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1901,7 +1901,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
+    
     public void GIVEN_args_check_confirmDelete_no__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1935,7 +1935,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
+    
     public void GIVEN_args_check_confirmDelete_n__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
     {
         // GIVEN:
@@ -1969,8 +1969,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
-    public void GIVEN_args_check_confirmDelete_0__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
+        public void GIVEN_args_check_confirmDelete_0__DO_execute__EXPECT_CheckForAutoDeletesCommand_executed() throws CommandException
     {
         // GIVEN:
         final String[] args = new String[] {
@@ -2003,8 +2002,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, args, permissionsChecker, moduleContext);
     }
 
-    @Test
-    public void GIVEN_args_delete_colony_1__DO_execute_twice__EXPECT_DeleteColonyCommand_state_2nd_time_to_be_different() throws CommandException
+        public void GIVEN_args_delete_colony_1__DO_execute_twice__EXPECT_DeleteColonyCommand_state_2nd_time_to_be_different() throws CommandException
     {
         // GIVEN:
         final String[] argsFirstTime = new String[] {
@@ -2069,7 +2067,7 @@ public class CommandEntryPointTest
         instance.execute(server, sender, argsSecondTime, permissionsChecker, moduleContext);
     }
 
-    @Test
+    
     public void GIVEN_args_delete_colony_1__DO_execute__EXPECT_DeleteColonyCommand_executed() throws CommandException
     {
         // GIVEN:

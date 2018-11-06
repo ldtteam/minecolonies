@@ -42,8 +42,8 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     {
         super(job);
         super.registerTargets(
-          new AITarget(GUARD_ATTACK_PROTECT, this::attackProtect),
-          new AITarget(GUARD_ATTACK_PHYSICAL, this::attackPhysical)
+          new AITarget(GUARD_ATTACK_PROTECT, false, this::attackProtect),
+          new AITarget(GUARD_ATTACK_PHYSICAL, false, this::attackPhysical)
         );
         toolsNeeded.add(ToolType.SWORD);
 
@@ -127,6 +127,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
             worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
             worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+            worker.decreaseSaturationForContinuousAction();
         }
 
         return GUARD_ATTACK_PHYSICAL;
@@ -208,6 +209,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
                     addDmg += TinkersWeaponHelper.getDamage(heldItem);
                 }
                 addDmg += EnchantmentHelper.getModifierForCreature(heldItem, target.getCreatureAttribute()) / 2.5;
+                this.incrementActionsDoneAndDecSaturation();
             }
 
             addDmg += getLevelDamage();

@@ -106,7 +106,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     {
         super(job);
         super.registerTargets(
-          new AITarget(SMELTER_SMELTING_ITEMS, this::smeltStuff)
+          new AITarget(SMELTER_SMELTING_ITEMS, false, this::smeltStuff)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
                                   + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
@@ -194,6 +194,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
                 new InvWrapper(worker.getInventoryCitizen()).setStackInSlot(slot, stack);
             }
 
+            worker.decreaseSaturationForAction();
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
             worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
             return START_WORKING;
@@ -278,6 +279,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
                 return;
             }
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
+            worker.decreaseSaturationForAction();
         }
     }
 
@@ -353,6 +355,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
         {
             ItemEnchantedBook.addEnchantment(books, new EnchantmentData(entry.getKey(), entry.getValue()));
         }
+        worker.decreaseSaturationForAction();
         return books;
     }
 }
