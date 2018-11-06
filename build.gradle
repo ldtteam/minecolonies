@@ -28,6 +28,9 @@ repositories {
     maven {
         url 'http://dogforce-games.com/maven'
     }
+    maven {
+        url 'https://ldtteam.jfrog.io/ldtteam/modding'
+    }
 }
 
 apply plugin: 'idea'
@@ -98,6 +101,7 @@ configFile.withReader {
 dependencies {
     deobfCompile "slimeknights.mantle:Mantle:1.12-${config.mantle_version}"
     deobfCompile "slimeknights:TConstruct:1.12.2-${config.tinker_version}"
+    deobfCompile "com.ferreusveritas.dynamictrees:DynamicTrees:1.12.2-${config.dynamic_tree_version}"
     deobfCompile "gigaherz.guidebook:Guidebook-1.12.2:${config.guidebook_version}"
     deobfCompile "gigaherz.commons:gigaherz.commons-1.12.1:${config.guidebook_core_version}"
     compile "mod.chiselsandbits:chiselsandbits:${config.c_b_version}"

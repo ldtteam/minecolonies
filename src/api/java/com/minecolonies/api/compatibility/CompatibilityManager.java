@@ -26,13 +26,16 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.constant.Constants.ORE_STRING;
 import static com.minecolonies.api.util.constant.Constants.SAPLINGS;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAP_LEAF;
 
 /**
  * CompatibilityManager handling certain list and maps of itemStacks of certain types.
@@ -78,9 +81,9 @@ public class CompatibilityManager implements ICompatibilityManager
     public void discover()
     {
         discoverSaplings();
-        for(final String string: OreDictionary.getOreNames())
+        for (final String string : OreDictionary.getOreNames())
         {
-            if(string.contains(ORE_STRING))
+            if (string.contains(ORE_STRING))
             {
                 discoverOres(string);
             }
@@ -94,18 +97,18 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isCompost(final ItemStack itemStack)
     {
-        if(itemStack.isEmpty())
+        if (itemStack.isEmpty())
         {
             return false;
         }
 
-        for(final String string : Configurations.gameplay.listOfCompostableItems)
+        for (final String string : Configurations.gameplay.listOfCompostableItems)
         {
-            if(itemStack.getItem().getRegistryName().toString().equals(string))
+            if (itemStack.getItem().getRegistryName().toString().equals(string))
             {
                 return true;
             }
-            for(final int id: OreDictionary.getOreIDs(itemStack))
+            for (final int id : OreDictionary.getOreIDs(itemStack))
             {
                 if (OreDictionary.getOreName(id).equals(string))
                 {
@@ -117,9 +120,9 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public IBlockState getLeaveForSapling(final ItemStack stack)
+    public IBlockState getLeafForSapling(final ItemStack stack)
     {
-        if(leavesToSaplingMap.inverse().containsKey(new ItemStorage(stack, false, true)))
+        if (leavesToSaplingMap.inverse().containsKey(new ItemStorage(stack, false, true)))
         {
             return leavesToSaplingMap.inverse().get(new ItemStorage(stack, false, true));
         }
@@ -127,13 +130,13 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public ItemStack getSaplingForLeave(final IBlockState block)
+    public ItemStack getSaplingForLeaf(final IBlockState block)
     {
         final ItemStack stack = new ItemStack(block.getBlock(), 1, block.getBlock().getMetaFromState(block));
-        final IBlockState tempLeave = BlockLeaves.getBlockFromItem(stack.getItem()).getStateFromMeta(stack.getMetadata());
-        if(leavesToSaplingMap.containsKey(tempLeave))
+        final IBlockState tempLeaf = BlockLeaves.getBlockFromItem(stack.getItem()).getStateFromMeta(stack.getMetadata());
+        if (leavesToSaplingMap.containsKey(tempLeaf))
         {
-            return leavesToSaplingMap.get(tempLeave).getItemStack();
+            return leavesToSaplingMap.get(tempLeaf).getItemStack();
         }
         return null;
     }
@@ -145,7 +148,7 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public  List<ItemStorage> getCopyOfCompostableItems()
+    public List<ItemStorage> getCopyOfCompostableItems()
     {
         return ImmutableList.copyOf(compostableItems);
     }
@@ -153,7 +156,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isOre(final IBlockState block)
     {
-        if(block.getBlock() instanceof BlockOre || block.getBlock() instanceof BlockRedstoneOre)
+        if (block.getBlock() instanceof BlockOre || block.getBlock() instanceof BlockRedstoneOre)
         {
             return true;
         }
@@ -164,14 +167,14 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isOre(@NotNull final ItemStack stack)
     {
-        if(ItemStackUtils.isEmpty(stack))
+        if (ItemStackUtils.isEmpty(stack))
         {
             return false;
         }
         final int[] ids = OreDictionary.getOreIDs(stack);
-        for(final int id : ids)
+        for (final int id : ids)
         {
-            if(OreDictionary.getOreName(id).contains(ORE_STRING))
+            if (OreDictionary.getOreName(id).contains(ORE_STRING))
             {
                 return true;
             }
@@ -183,27 +186,27 @@ public class CompatibilityManager implements ICompatibilityManager
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         @NotNull final NBTTagList saplingsLeavesTagList =
-                leavesToSaplingMap.entrySet().stream().map(entry ->  writeLeaveSaplingEntryToNBT(entry.getKey(), entry.getValue())).collect(NBTUtils.toNBTTagList());
-        compound.setTag(TAG_SAP_LEAVE, saplingsLeavesTagList);
+          leavesToSaplingMap.entrySet().stream().map(entry -> writeLeafSaplingEntryToNBT(entry.getKey(), entry.getValue())).collect(NBTUtils.toNBTTagList());
+        compound.setTag(TAG_SAP_LEAF, saplingsLeavesTagList);
     }
 
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        NBTUtils.streamCompound(compound.getTagList(TAG_SAP_LEAVE, Constants.NBT.TAG_COMPOUND))
-                .map(CompatibilityManager::readLeaveSaplingEntryFromNBT)
-                .filter(key -> !leavesToSaplingMap.containsKey(key.getFirst()) && !leavesToSaplingMap.containsValue(key.getSecond()))
-                .forEach(key -> leavesToSaplingMap.put(key.getFirst(), key.getSecond()));
+        NBTUtils.streamCompound(compound.getTagList(TAG_SAP_LEAF, Constants.NBT.TAG_COMPOUND))
+          .map(CompatibilityManager::readLeafSaplingEntryFromNBT)
+          .filter(key -> !leavesToSaplingMap.containsKey(key.getFirst()) && !leavesToSaplingMap.containsValue(key.getSecond()))
+          .forEach(key -> leavesToSaplingMap.put(key.getFirst(), key.getSecond()));
     }
 
     @Override
-    public void connectLeaveToSapling(final IBlockState leave, final ItemStack stack)
+    public void connectLeafToSapling(final IBlockState leaf, final ItemStack stack)
     {
-        final ItemStack tempStack = new ItemStack(leave.getBlock(), 1, leave.getBlock().getMetaFromState(leave));
-        final IBlockState tempLeave = BlockLeaves.getBlockFromItem(tempStack.getItem()).getStateFromMeta(tempStack.getMetadata());
-        if(!leavesToSaplingMap.containsKey(tempLeave) && !leavesToSaplingMap.containsValue(new ItemStorage(stack, false, true)))
+        final ItemStack tempStack = new ItemStack(leaf.getBlock(), 1, leaf.getBlock().getMetaFromState(leaf));
+        final IBlockState tempLeaf = BlockLeaves.getBlockFromItem(tempStack.getItem()).getStateFromMeta(tempStack.getMetadata());
+        if (!leavesToSaplingMap.containsKey(tempLeaf) && !leavesToSaplingMap.containsValue(new ItemStorage(stack, false, true)))
         {
-            leavesToSaplingMap.put(tempLeave, new ItemStorage(stack, false, true));
+            leavesToSaplingMap.put(tempLeaf, new ItemStorage(stack, false, true));
         }
     }
 
@@ -228,7 +231,7 @@ public class CompatibilityManager implements ICompatibilityManager
                     if (!ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemBlock)
                     {
                         final Block block = ((ItemBlock) stack.getItem()).getBlock();
-                        if(!ores.contains(block))
+                        if (!ores.contains(block))
                         {
                             ores.add(block);
                         }
@@ -236,8 +239,8 @@ public class CompatibilityManager implements ICompatibilityManager
                 }
             }
         }
-        
-        for (final String oreString : Configurations.gameplay.extraOres) 
+
+        for (final String oreString : Configurations.gameplay.extraOres)
         {
             final Block block = Block.getBlockFromName(oreString);
             if (!(block == null || ores.contains(block)))
@@ -253,18 +256,29 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             if (saps.getHasSubtypes())
             {
-                for(final CreativeTabs tabs: CreativeTabs.CREATIVE_TAB_ARRAY)
+                for (final CreativeTabs tabs : CreativeTabs.CREATIVE_TAB_ARRAY)
                 {
                     final NonNullList<ItemStack> list = NonNullList.create();
                     saps.getItem().getSubItems(tabs, list);
                     for (final ItemStack stack : list)
                     {
-                        //Just put it in if not in there already, don't mind the leave yet.
-                        if(!ItemStackUtils.isEmpty(stack) && !leavesToSaplingMap.containsValue(new ItemStorage(stack, false, true)) && !saplings.contains(new ItemStorage(stack, false, true)))
+                        //Just put it in if not in there already, don't mind the leaf yet.
+                        if (!ItemStackUtils.isEmpty(stack) && !leavesToSaplingMap.containsValue(new ItemStorage(stack, false, true)) && !saplings.contains(new ItemStorage(stack,
+                          false,
+                          true)))
                         {
                             saplings.add(new ItemStorage(stack, false, true));
                         }
                     }
+                }
+            }
+            else
+            {
+                // Dynamictree's saplings dont have sub types
+                if (Compatibility.isDynamicTreeSapling(saps) && !ItemStackUtils.isEmpty(saps) && !leavesToSaplingMap.containsValue(new ItemStorage(saps, false, true))
+                      && !saplings.contains(new ItemStorage(saps, false, true)))
+                {
+                    saplings.add(new ItemStorage(saps, false, true));
                 }
             }
         }
@@ -289,13 +303,12 @@ public class CompatibilityManager implements ICompatibilityManager
 
 
                   return stacks.stream().filter(this::isCompost);
-
               }).map(ItemStorage::new).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering compostables");
     }
 
-    private static NBTTagCompound writeLeaveSaplingEntryToNBT(final IBlockState state, final ItemStorage storage)
+    private static NBTTagCompound writeLeafSaplingEntryToNBT(final IBlockState state, final ItemStorage storage)
     {
         final NBTTagCompound compound = new NBTTagCompound();
         NBTUtil.writeBlockState(compound, state);
@@ -303,7 +316,7 @@ public class CompatibilityManager implements ICompatibilityManager
         return compound;
     }
 
-    private static Tuple<IBlockState, ItemStorage> readLeaveSaplingEntryFromNBT(final NBTTagCompound compound)
+    private static Tuple<IBlockState, ItemStorage> readLeafSaplingEntryFromNBT(final NBTTagCompound compound)
     {
         return new Tuple<>(NBTUtil.readBlockState(compound), new ItemStorage(new ItemStack(compound), false, true));
     }
