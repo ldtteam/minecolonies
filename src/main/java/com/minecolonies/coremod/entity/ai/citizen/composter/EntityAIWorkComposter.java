@@ -79,11 +79,11 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(GET_MATERIALS, this::getMaterials),
-          new AITarget(START_WORKING, this::decideWhatToDo),
-          new AITarget(COMPOSTER_FILL, this::fillBarrels),
-          new AITarget(COMPOSTER_HARVEST, this::harvestBarrels)
+          new AITarget(IDLE, START_WORKING, true),
+          new AITarget(GET_MATERIALS, true, this::getMaterials),
+          new AITarget(START_WORKING, true, this::decideWhatToDo),
+          new AITarget(COMPOSTER_FILL, true, this::fillBarrels),
+          new AITarget(COMPOSTER_HARVEST, true, this::harvestBarrels)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(DESTERITY_MULTIPLIER * worker.getCitizenData().getDexterity()
                                                                 + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
@@ -229,6 +229,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             worker.getCitizenItemHandler().hitBlockWithToolInHand(currentTarget);
             barrel.addItem(worker.getHeldItem(EnumHand.MAIN_HAND));
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
+            this.incrementActionsDoneAndDecSaturation();
             worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
 
             incrementActionsDone();
@@ -263,6 +264,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), compost);
 
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
+            this.incrementActionsDoneAndDecSaturation();
         }
         setDelay(AFTER_TASK_DELAY);
         return START_WORKING;

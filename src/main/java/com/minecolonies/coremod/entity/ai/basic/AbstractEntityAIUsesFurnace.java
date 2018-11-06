@@ -29,6 +29,11 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends AbstractEntityAISkill<J>
 {
     /**
+     * Base xp gain for the basic xp.
+     */
+    protected static final double BASE_XP_GAIN = 2;
+
+    /**
      * Retrieve smeltable if more than a certain amount.
      */
     private static final int RETRIEVE_SMELTABLE_IF_MORE_THAN = 10;
@@ -47,10 +52,10 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
     {
         super(job);
         super.registerTargets(
-                new AITarget(IDLE, START_WORKING),
-                new AITarget(START_WORKING, this::startWorking),
-                new AITarget(START_USING_FURNACE, this::fillUpFurnace),
-                new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace));
+                new AITarget(IDLE, START_WORKING, true),
+                new AITarget(START_WORKING, true, this::startWorking),
+                new AITarget(START_USING_FURNACE, true, this::fillUpFurnace),
+                new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, true, this::retrieveSmeltableFromFurnace));
     }
 
     @Override

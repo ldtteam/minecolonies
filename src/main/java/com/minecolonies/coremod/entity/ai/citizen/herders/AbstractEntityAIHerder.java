@@ -86,13 +86,13 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepareForHerding),
-          new AITarget(DECIDE, this::decideWhatToDo),
-          new AITarget(HERDER_BREED, this::breedAnimals),
-          new AITarget(HERDER_BUTCHER, this::butcherAnimals),
-          new AITarget(HERDER_PICKUP, this::pickupItems)
+          new AITarget(IDLE, START_WORKING, true),
+          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, true, this::prepareForHerding),
+          new AITarget(DECIDE, true, this::decideWhatToDo),
+          new AITarget(HERDER_BREED, false, this::breedAnimals),
+          new AITarget(HERDER_BUTCHER, false, this::butcherAnimals),
+          new AITarget(HERDER_PICKUP, true, this::pickupItems)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -229,7 +229,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         if (!animal.isEntityAlive())
         {
             worker.getCitizenExperienceHandler().addExperience(1.0);
-            incrementActionsDoneAndDecSaturation();
+            worker.decreaseSaturationForAction();
         }
 
         return HERDER_BUTCHER;
@@ -248,7 +248,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         final EntityAnimal animalOne = animals
                                          .stream()
-                                         .filter(animal -> animal.getGrowingAge() == 0)
+                                         .filter(animal -> !animal.isChild())
                                          .findAny()
                                          .orElse(null);
 
@@ -406,6 +406,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
                 animal.setInLove(null);
                 worker.swingArm(EnumHand.MAIN_HAND);
                 InventoryUtils.removeStackFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), getBreedingItem());
+                worker.decreaseSaturationForAction();
             }
         }
     }
@@ -508,6 +509,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             worker.swingArm(EnumHand.MAIN_HAND);
             animal.attackEntityFrom(new DamageSource(worker.getName()), (float) BUTCHERING_ATTACK_DAMAGE);
             worker.getHeldItemMainhand().damageItem(1, animal);
+            worker.decreaseSaturationForAction();
         }
     }
 

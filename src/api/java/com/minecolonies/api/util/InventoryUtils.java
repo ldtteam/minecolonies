@@ -2065,6 +2065,11 @@ public class InventoryUtils
       final IItemHandler handler,
       final ItemStack inStack)
     {
+        if (handler == null)
+        {
+            return false;
+        }
+        
         boolean foundEmptySlot = false;
         boolean foundItem = false;
         for (int slot = 0; slot < handler.getSlots(); slot++)
