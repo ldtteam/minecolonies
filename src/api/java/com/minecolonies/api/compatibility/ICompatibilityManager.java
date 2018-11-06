@@ -24,14 +24,14 @@ public interface ICompatibilityManager
      * @param stack the sapling.
      * @return the leave block.
      */
-    IBlockState getLeaveForSapling(final ItemStack stack);
+    IBlockState getLeafForSapling(final ItemStack stack);
 
     /**
      * Gets the sapling matching a leave.
      * @param block the leave.
      * @return the sapling stack.
      */
-    ItemStack getSaplingForLeave(final IBlockState block);
+    ItemStack getSaplingForLeaf(final IBlockState block);
 
     /**
      * Get a copy of the list of saplings.
@@ -85,7 +85,7 @@ public interface ICompatibilityManager
      * @param block the block to connect the sapling to.
      * @param stack the sapling.
      */
-    void connectLeaveToSapling(IBlockState block, ItemStack stack);
+    void connectLeafToSapling(IBlockState block, ItemStack stack);
 
     /**
      * If discovery process ran already.
