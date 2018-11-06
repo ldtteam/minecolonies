@@ -1,15 +1,13 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -110,7 +108,7 @@ public class ItemParticleEffectMessage extends AbstractMessage<ItemParticleEffec
     @Override
     protected void messageOnClientThread(final ItemParticleEffectMessage message, final MessageContext ctx)
     {
-        final World world = Minecraft.getMinecraft().world;
+        final WorldClient world = Minecraft.getMinecraft().world;
         final ItemStack localStack = message.stack;
         if (localStack.getItemUseAction() == EnumAction.EAT)
         {
