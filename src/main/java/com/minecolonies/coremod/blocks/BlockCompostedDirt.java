@@ -100,7 +100,7 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
 
                 try
                 {
-                    ((TileEntityCompostedDirt) te).compost(20, item);
+                    ((TileEntityCompostedDirt) te).compost(100, item);
                 }catch (Exception e)
                 {
                     Log.getLogger().info(e.getMessage());

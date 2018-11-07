@@ -21,7 +21,7 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
 
     private int percentage = 20;
 
-    private final static int TICKER_LIMIT = 4500;
+    private final static int TICKER_LIMIT = 450;
 
     private final Random random = new Random();
 
