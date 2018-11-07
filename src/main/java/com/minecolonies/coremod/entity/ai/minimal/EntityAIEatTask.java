@@ -370,7 +370,7 @@ public class EntityAIEatTask extends EntityAIBase
         if (placeToPath == null)
         {
             chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.ai.noRestaurant");
-            return SEARCH_RESTAURANT;
+            return CHECK_FOR_FOOD;
         }
 
         return GO_TO_RESTAURANT;
