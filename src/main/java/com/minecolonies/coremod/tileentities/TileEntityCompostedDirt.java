@@ -2,6 +2,7 @@ package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.blockout.Log;
 import net.minecraft.block.BlockFlower;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
@@ -24,7 +25,7 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
 
     private final Random random = new Random();
 
-    private BlockFlower.EnumFlowerType flowerType;
+    private ItemStack flower;
 
     @Override
     public void update()
@@ -66,21 +67,17 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
 
     // AI interface
 
-    public void compost(final int percentage, Class flowerType)
+    public void compost(final int percentage, ItemStack flower)
     {
         if(percentage >= 0 && percentage <= 100)
         {
             this.percentage = percentage;
             try
             {
-                if(flowerType.newInstance() instanceof BlockFlower.EnumFlowerType)
-                this.flowerType = (BlockFlower.EnumFlowerType)flowerType.newInstance();
+                this.flower = flower;
+                Log.getLogger().info(flower.getItem().getItemStackDisplayName(flower));
             }
-            catch (InstantiationException e)
-            {
-                e.printStackTrace();
-            }
-            catch (IllegalAccessException e)
+            catch (Exception e)
             {
                 e.printStackTrace();
             }
