@@ -94,13 +94,12 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
                 ItemStack item = playerIn.inventory.getCurrentItem();
                 Block block = Block.getBlockFromItem(item.getItem());
 
-                if(block == Blocks.AIR || !(block instanceof BlockFlower)) return false;
-
-                BlockFlower flower = (BlockFlower) block;
+                if(block == Blocks.AIR ) return false;
 
                 try
                 {
                     ((TileEntityCompostedDirt) te).compost(100, item);
+                    Log.getLogger().info(new TextComponentString("Item added"));
                 }catch (Exception e)
                 {
                     Log.getLogger().info(e.getMessage());

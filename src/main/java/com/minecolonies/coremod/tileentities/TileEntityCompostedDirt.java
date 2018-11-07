@@ -1,11 +1,15 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.blockout.Log;
+import javafx.geometry.Pos;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
@@ -54,6 +58,9 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
             {
                 Log.getLogger().info("SPAWNING A FLOWER");
                 //Todo: spawn flower over the block if the block above is AIR
+                BlockPos position = pos.up();
+                if(worldIn.getBlockState(position).getBlock()== Blocks.AIR)
+                    worldIn.setBlockState(position, Block.getBlockFromItem(flower.getItem()).getStateFromMeta(flower.getMetadata()));
             }
         }
 
