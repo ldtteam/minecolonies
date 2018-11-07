@@ -10,6 +10,9 @@ public class Configurations
     @Config.Comment("All configuration related to gameplay")
     public static Gameplay gameplay = new Gameplay();
 
+    @Config.Comment("All configuration related to mod compatibility")
+    public static Compatibility compatibility = new Compatibility();
+
     @Config.Comment("All configurations related to pathfinding")
     public static Pathfinding pathfinding = new Pathfinding();
 
@@ -263,6 +266,15 @@ public class Configurations
 
         @Config.Comment("Turn on Minecolonies pvp mode, attention (colonies can be destroyed and can be griefed under certain conditions.)")
         public boolean pvp_mode = false;
+
+        @Config.Comment("Days until the pirate ships despawn again.")
+        public int daysUntilPirateshipsDespawn = 3;
+    }
+
+    public static class Compatibility
+    {
+        @Config.Comment("Harvest trunk-size for dynamic trees:1-8, default:5")
+        public int dynamicTreeHarvestSize = 5;
     }
 
     public static class Pathfinding
@@ -275,6 +287,10 @@ public class Configurations
 
         @Config.Comment("Amount of additional threads to be used for pathfinding")
         public int pathfindingMaxThreadCount = 2;
+
+        @Config.Comment("Max amount of Nodes(positions) to map during pathfinding. Default 5000: Lowering increases performance, but might lead to pathing glitches")
+        public int pathfindingMaxNodes = 5000;
+
     }
 
     public static class Names

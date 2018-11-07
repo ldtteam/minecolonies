@@ -231,8 +231,24 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         return state;
     }
 
+    /**
+     * Get the level delay.
+     * @return by default 10.
+     */
     protected int getLevelDelay()
     {
         return 10;
+    }
+
+    /**
+     * Check if it is okay to eat by checking if the current target is good to eat.
+     * @return true if so.
+     */
+    public boolean isOkayToEat()
+    {
+        return targetList
+                .stream()
+                .filter(t -> t.getState() == state)
+                .anyMatch(AITarget::isOkayToEat);
     }
 }

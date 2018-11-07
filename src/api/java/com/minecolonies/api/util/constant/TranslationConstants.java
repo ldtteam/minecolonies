@@ -254,6 +254,8 @@ public final class TranslationConstants
     @NonNls
     public static final String RAID_EVENT_MESSAGE                                                  = "event.minecolonies.raidMessage";
     @NonNls
+    public static final String RAID_EVENT_MESSAGE_PIRATE                                           = "event.minecolonies.raidMessage_p";
+    @NonNls
     public static final String ONLY_X_BARBARIANS_LEFT_MESSAGE                                      = "com.minecolonies.coremod.barbarians.left";
     @NonNls
     public static final String ALL_BARBARIANS_KILLED_MESSAGE                                       = "com.minecolonies.coremod.barbarians.killed";
@@ -299,7 +301,8 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE                           = "com.minecolonies.coremod.gui.hiring.buttonUnpaused";
     @NonNls
     public static final String CMC_GUI_TOWNHALL_BUILDING_LEVEL                                     = "com.minecolonies.coremod.gui.townHall.buildingLevel";
-
+    @NonNls
+    public static final String PIRATES_SAILING_OFF_MESSAGE                                         = "com.minecolonies.coremod.pirates.sailing.away";
 
     private TranslationConstants()
     {

@@ -207,8 +207,8 @@ public final class ColonyView implements IColony
             buf.writeBoolean(false);
         }
 
-        buf.writeInt(colony.getBarbManager().getLastSpawnPoints().size());
-        for (final BlockPos block : colony.getBarbManager().getLastSpawnPoints())
+        buf.writeInt(colony.getRaiderManager().getLastSpawnPoints().size());
+        for (final BlockPos block : colony.getRaiderManager().getLastSpawnPoints())
         {
             BlockPosUtil.writeToByteBuf(buf, block);
         }

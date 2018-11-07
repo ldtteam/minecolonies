@@ -43,7 +43,6 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
  */
 public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
 {
-
     /**
      * The render name to render fish.
      */
@@ -158,13 +157,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepareForFishing),
-          new AITarget(FISHERMAN_CHECK_WATER, this::tryDifferentAngles),
-          new AITarget(FISHERMAN_SEARCHING_WATER, this::findWater),
-          new AITarget(FISHERMAN_WALKING_TO_WATER, this::getToWater),
-          new AITarget(FISHERMAN_START_FISHING, this::doFishing)
+          new AITarget(IDLE, START_WORKING, true),
+          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, true, this::prepareForFishing),
+          new AITarget(FISHERMAN_CHECK_WATER, true, this::tryDifferentAngles),
+          new AITarget(FISHERMAN_SEARCHING_WATER, true, this::findWater),
+          new AITarget(FISHERMAN_WALKING_TO_WATER, true, this::getToWater),
+          new AITarget(FISHERMAN_START_FISHING, false, this::doFishing)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(
           INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
@@ -380,8 +379,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             {
                 chatSpamFilter.talkWithoutSpam("entity.fisherman.messageWaterTooFar");
             }
-            pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
-            return getState();
+
+            if (pathResult == null || !pathResult.isInProgress())
+            {
+                pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
+            }
+
+            return START_WORKING;
         }
         job.setWater(job.getPonds().get(random.nextInt(job.getPonds().size())));
 
@@ -414,6 +418,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             }
             lastPathResult = pathResult;
             pathResult = null;
+            worker.decreaseSaturationForAction();
             return FISHERMAN_CHECK_WATER;
         }
         if (pathResult.isCancelled())
@@ -442,6 +447,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         {
             return notReadyState;
         }
+
+        worker.decreaseSaturationForContinuousAction();
+        
         if (caughtFish())
         {
             this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("fish");
@@ -517,6 +525,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
 
         worker.swingArm(worker.getActiveHand());
+        this.incrementActionsDoneAndDecSaturation();
     }
 
     /**

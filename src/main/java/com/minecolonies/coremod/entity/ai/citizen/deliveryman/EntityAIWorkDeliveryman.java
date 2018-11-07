@@ -11,7 +11,9 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.*;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingContainer;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
@@ -55,9 +57,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private static final int MIN_DISTANCE_TO_WAREHOUSE = 5;
 
     /**
-     * Walking speed double at this level.
+     * Walking speed bonus per level
      */
-    private static final double WALKING_SPEED_MULTIPLIER = 25;
+    private static final double BONUS_SPEED_PER_LEVEL = 0.003;
 
     /**
      * Delay in ticks between every inventory operation.
@@ -126,13 +128,13 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
           /*
            * Check if tasks should be executed.
            */
-          new AITarget(this::checkIfExecute, IDLE),
-          new AITarget(IDLE, () -> START_WORKING),
-          new AITarget(START_WORKING, this::checkWareHouse),
-          new AITarget(PREPARE_DELIVERY, this::prepareDelivery),
-          new AITarget(DELIVERY, this::deliver),
-          new AITarget(GATHERING, this::gather),
-          new AITarget(DUMPING, this::dump)
+          new AITarget(this::checkIfExecute, IDLE, true),
+          new AITarget(IDLE, true, () -> START_WORKING),
+          new AITarget(START_WORKING, true, this::checkWareHouse),
+          new AITarget(PREPARE_DELIVERY, true, this::prepareDelivery),
+          new AITarget(DELIVERY, true, this::deliver),
+          new AITarget(GATHERING, true, this::gather),
+          new AITarget(DUMPING, false, this::dump)
 
         );
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
@@ -301,7 +303,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         final ItemStack stack = handler.getStackInSlot(currentSlot);
-        if (workerRequiresItem(building, stack, alreadyKept)
+
+        final int amount = workerRequiresItem(building, stack, alreadyKept);
+        if (amount <= 0
               || (building instanceof BuildingCook
                     && !ItemStackUtils.isEmpty(stack)
                     && stack.getItem() instanceof ItemFood))
@@ -315,9 +319,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         hasGathered = true;
-        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(handler, currentSlot, new InvWrapper(worker.getInventoryCitizen()));
+        final ItemStack activeStack = handler.extractItem(currentSlot, amount, false);
+        InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, new InvWrapper(worker.getInventoryCitizen()));
         building.markDirty();
         setDelay(DUMP_AND_GATHER_DELAY);
+        worker.decreaseSaturationForContinuousAction();
+
         worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, SLOT_HAND);
         return false;
     }
@@ -378,9 +385,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * @param building         the building to check for.
      * @param stack            the stack to stack with.
      * @param localAlreadyKept already kept resources.
-     * @return true if required.
+     * @return the amount which can get dumped.
      */
-    public static boolean workerRequiresItem(final AbstractBuilding building, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
+    public static int workerRequiresItem(final AbstractBuilding building, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
     {
         return building.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept);
     }
@@ -541,6 +548,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         lastDelivery = deliveryHut.getBuildingToDeliver();
         worker.getCitizenExperienceHandler().addExperience(1.0D);
+        worker.decreaseSaturationForContinuousAction();
         worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, SLOT_HAND);
         deliveryHut.setBuildingToDeliver(null);
         job.finishRequest(true);
@@ -635,7 +643,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             return START_WORKING;
         }
-        worker.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED + BASE_MOVEMENT_SPEED * worker.getCitizenExperienceHandler().getLevel() / WALKING_SPEED_MULTIPLIER);
+        worker.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
+          .setBaseValue(
+            BASE_MOVEMENT_SPEED + (worker.getCitizenExperienceHandler().getLevel() > 50 ? 50 : worker.getCitizenExperienceHandler().getLevel()) * BONUS_SPEED_PER_LEVEL);
 
         final AbstractBuildingWorker ownBuilding = getOwnBuilding();
 

@@ -13,7 +13,7 @@ import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.util.TeleportHelper;
@@ -26,12 +26,12 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.List;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
-import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
  * Class taking of the abstract guard methods for all fighting AIs.
@@ -100,11 +100,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     {
         super(job);
         super.registerTargets(
-          new AITarget(DECIDE, this::decide),
-          new AITarget(GUARD_PATROL, this::patrol),
-          new AITarget(GUARD_FOLLOW, this::follow),
-          new AITarget(GUARD_GUARD, this::guard),
-          new AITarget(GUARD_REGEN, this::regen)
+          new AITarget(DECIDE, true, this::decide),
+          new AITarget(GUARD_PATROL, true, this::patrol),
+          new AITarget(GUARD_FOLLOW, true, this::follow),
+          new AITarget(GUARD_GUARD, true, this::guard),
+          new AITarget(GUARD_REGEN, true, this::regen)
 
         );
         buildingGuards = getOwnBuilding();
@@ -165,6 +165,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             if (!isWithinPersecutionDistance(buildingGuards.getPlayerToFollow()))
             {
                 worker.getNavigator().clearPath();
+                worker.getMoveHelper().strafe(0, 0);
             }
             else
             {
@@ -355,14 +356,14 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         if (colony != null)
         {
-            if (!colony.getBarbManager().getHorde((WorldServer) worker.world).isEmpty() || colony.isColonyUnderAttack())
+            if (!colony.getRaiderManager().getHorde((WorldServer) worker.world).isEmpty() || colony.isColonyUnderAttack())
             {
                 for (final CitizenData citizen : colony.getCitizenManager().getCitizens())
                 {
                     if (citizen.getCitizenEntity().isPresent())
                     {
                         final EntityLivingBase entity = citizen.getCitizenEntity().get().getRevengeTarget();
-                        if (entity instanceof AbstractEntityBarbarian && worker.canEntityBeSeen(entity))
+                        if (entity instanceof AbstractEntityMinecoloniesMob && worker.canEntityBeSeen(entity))
                         {
                             return entity;
                         }

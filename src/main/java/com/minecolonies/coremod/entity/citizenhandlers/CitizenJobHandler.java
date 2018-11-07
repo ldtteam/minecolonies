@@ -4,12 +4,21 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.entity.ai.util.AITarget;
+
 import net.minecraft.entity.ai.EntityAITasks;
+import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.coremod.entity.AbstractEntityCitizen.DATA_MODEL;
+
+import java.util.function.Predicate;
 
 /**
  * Handles the citizen job methods.
@@ -147,5 +156,36 @@ public class CitizenJobHandler
     public AbstractJob getColonyJob()
     {
         return citizen.getCitizenData() == null ? null : citizen.getCitizenData().getJob();
+    }
+
+    /**
+     * Check if a certain item is in the hut of the citizen.
+     * @param predicate the predicate to check.
+     * @return true if so.
+     */
+    public boolean isInHut(@Nullable final Predicate<ItemStack> predicate)
+    {
+        final AbstractEntityAIBasic job = getEntityAI();
+        if (job != null)
+        {
+            return job.isInHut(predicate);
+        }
+        
+        return false;
+    }
+
+    /**
+     * Get the entityAI via the job of the entity.
+     * @return the AbstractEntityAIBasic AI.
+     */
+    private AbstractEntityAIBasic getEntityAI()
+    {
+        return citizen.tasks.taskEntries
+                .stream()
+                .filter(t -> t.action instanceof AbstractEntityAIBasic)
+                .map(t -> (AbstractEntityAIBasic) t.action)
+                .findAny() 
+                .orElse(null);
+
     }
 }

@@ -85,6 +85,8 @@ public final class ColonyConstants
     public static final double           CHIEF_BARBARIANS_MULTIPLIER  = 0.1;
     public static final int              MIN_CITIZENS_FOR_RAID        = 5;
     public static final int              NUMBER_OF_CITIZENS_NEEDED    = 5;
+
+
     /**
      * Different horde ids and their sizes.
      */
@@ -97,9 +99,20 @@ public final class ColonyConstants
     public static final int              BIG_HORDE_SIZE               = 20;
 
     /**
+     * Pirate Constants.
+     */
+    public static final ResourceLocation PIRATE        = new ResourceLocation(Constants.MOD_ID, "Pirate");
+    public static final ResourceLocation PIRATE_ARCHER = new ResourceLocation(Constants.MOD_ID, "ArcherPirate");
+    public static final ResourceLocation PIRATE_CHIEF  = new ResourceLocation(Constants.MOD_ID, "ChiefPirate");
+
+    public static final String SMALL_PIRATE_SHIP = "small_pirate_ship";
+    public static final String MEDIUM_PIRATE_SHIP = "medium_pirate_ship";
+    public static final String BIG_PIRATE_SHIP = "big_pirate_ship";
+
+    /**
      * Turn off the help manager when one of these applies.
      */
-    public static final int CITIZEN_LIMIT_FOR_HELP = 20;
+    public static final int CITIZEN_LIMIT_FOR_HELP  = 20;
     public static final int BUILDING_LIMIT_FOR_HELP = 10;
 
     /**

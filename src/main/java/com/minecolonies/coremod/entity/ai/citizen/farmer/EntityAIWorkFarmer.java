@@ -108,12 +108,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, () -> START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepareForFarming),
-          new AITarget(FARMER_HOE, this::workAtField),
-          new AITarget(FARMER_PLANT, this::workAtField),
-          new AITarget(FARMER_HARVEST, this::workAtField)
+          new AITarget(IDLE, true, () -> START_WORKING),
+          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, true, this::prepareForFarming),
+          new AITarget(FARMER_HOE, false, this::workAtField),
+          new AITarget(FARMER_PLANT, false, this::workAtField),
+          new AITarget(FARMER_HARVEST, false, this::workAtField)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
         worker.setCanPickUpLoot(true);
@@ -412,6 +412,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             if (workingOffset != null)
             {
+                if (((ScarecrowTileEntity) entity).getOwnerId() != worker.getCitizenId())
+                {
+                    buildingFarmer.setCurrentField(null);
+                    return getState();
+                }
+
                 final BlockPos position = field.down().south(workingOffset.getZ()).east(workingOffset.getX());
                 // Still moving to the block
                 if (walkToBlock(position.up()))
@@ -477,6 +483,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 worker.swingArm(worker.getActiveHand());
                 world.setBlockState(position, Blocks.FARMLAND.getDefaultState());
                 worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
+                worker.decreaseSaturationForContinuousAction();
                 return true;
             }
             return false;
@@ -580,6 +587,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
 
         world.setBlockState(position.up(), seed.getPlant(world, position));
+        worker.decreaseSaturationForContinuousAction();
         new InvWrapper(getInventory()).extractItem(slot, 1, false);
         return true;
     }
@@ -665,6 +673,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             world.setBlockState(pos, crops.withAge(0));
         }
 
+        this.incrementActionsDone();
+        worker.decreaseSaturationForContinuousAction();
         worker.getCitizenExperienceHandler().addExperience(XP_PER_BLOCK);
     }
 

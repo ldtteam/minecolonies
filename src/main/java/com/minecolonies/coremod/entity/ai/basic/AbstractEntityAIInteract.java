@@ -132,6 +132,30 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      */
     protected final boolean mineBlock(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
     {
+        return mineBlock(blockToMine, safeStand, true, true, null);
+    }
+
+    /**
+     * Will simulate mining a block with particles ItemDrop etc.
+     * Attention:
+     * Because it simulates delay, it has to be called 2 times.
+     * So make sure the code path up to this function is reachable a second time.
+     * And make sure to immediately exit the update function when this returns false.
+     *
+     * @param blockToMine      the block that should be mined
+     * @param safeStand        the block we want to stand on to do that
+     * @param damageTool       boolean wether we want to damage the tool used
+     * @param getDrops         boolean wether we want to get Drops
+     * @param blockBreakAction Runnable that is used instead of the default block break action, can be null
+     * @return true once we're done
+     */
+    protected final boolean mineBlock(
+      @NotNull final BlockPos blockToMine,
+      @NotNull final BlockPos safeStand,
+      @NotNull final boolean damageTool,
+      @NotNull final boolean getDrops,
+      final Runnable blockBreakAction)
+    {
         final IBlockState curBlockState = world.getBlockState(blockToMine);
         @Nullable final Block curBlock = curBlockState.getBlock();
         if (curBlock == null
@@ -155,41 +179,51 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
 
         final ItemStack tool = worker.getHeldItemMainhand();
 
-        //calculate fortune enchantment
-        final int fortune = ItemStackUtils.getFortuneOf(tool);
-
-        //check if tool has Silk Touch
-        final boolean silkTouch = ItemStackUtils.hasSilkTouch(tool);
-
-        //create list for all item drops to be stored in
-        final List<ItemStack> localItems = new ArrayList<ItemStack>();
-
-        //Checks to see if the equipped tool has Silk Touch AND if the blocktoMine has a viable Item SilkTouch can get.
-        if (silkTouch && Item.getItemFromBlock(BlockPosUtil.getBlock(world, blockToMine)) != null)
+        if (getDrops)
         {
-            //Stores Silk Touch Block in localItems
-            final ItemStack silkItem = new ItemStack(Item.getItemFromBlock(BlockPosUtil.getBlock(world, blockToMine)), 1);
-            localItems.add(silkItem);
-        }
-        //If Silk Touch doesn't work, get blocks with Fortune value as normal.
-        else
-        {
-            localItems.addAll(BlockPosUtil.getBlockDrops(world, blockToMine, fortune));
-        }
+            //calculate fortune enchantment
+            final int fortune = ItemStackUtils.getFortuneOf(tool);
 
+            //check if tool has Silk Touch
+            final boolean silkTouch = ItemStackUtils.hasSilkTouch(tool);
+
+            //create list for all item drops to be stored in
+            final List<ItemStack> localItems = new ArrayList<ItemStack>();
+
+            //Checks to see if the equipped tool has Silk Touch AND if the blocktoMine has a viable Item SilkTouch can get.
+            if (silkTouch && Item.getItemFromBlock(BlockPosUtil.getBlock(world, blockToMine)) != null)
+            {
+                //Stores Silk Touch Block in localItems
+                final ItemStack silkItem = new ItemStack(Item.getItemFromBlock(BlockPosUtil.getBlock(world, blockToMine)), 1);
+                localItems.add(silkItem);
+            }
+            //If Silk Touch doesn't work, get blocks with Fortune value as normal.
+            else
+            {
+                localItems.addAll(BlockPosUtil.getBlockDrops(world, blockToMine, fortune));
+            }
+
+            //add the drops to the citizen
+            for (final ItemStack item : localItems)
+            {
+                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, new InvWrapper(worker.getInventoryCitizen()));
+            }
+        }
         //if block in statistic then increment that statistic.
         triggerMinedBlock(blockToMine);
 
-        //Break the block
-        worker.getCitizenItemHandler().breakBlockWithToolInHand(blockToMine);
-
-        //add the drops to the citizen
-        for (final ItemStack item : localItems)
+        if (blockBreakAction == null)
         {
-            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, new InvWrapper(worker.getInventoryCitizen()));
+            //Break the block
+            worker.getCitizenItemHandler().breakBlockWithToolInHand(blockToMine);
+        }
+        else
+        {
+            blockBreakAction.run();
         }
 
-        if (tool != null)
+
+        if (tool != null && damageTool)
         {
             tool.getItem().onUpdate(tool, world, worker, worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(tool.getItem(), tool.getItemDamage()), true);
         }

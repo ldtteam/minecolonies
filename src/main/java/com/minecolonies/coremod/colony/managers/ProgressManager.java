@@ -45,7 +45,7 @@ public class ProgressManager implements IProgressManager
     private boolean printProgress = true;
 
     /**
-     * Creates the BarbarianManager for a colony.
+     * Creates the progress for a colony.
      * @param colony the colony.
      */
     public ProgressManager(final Colony colony)
@@ -216,6 +216,5 @@ public class ProgressManager implements IProgressManager
         compound.setInteger(TAG_PROGRESS_TYPE, type.ordinal());
         return compound;
     }
-
 }
 
