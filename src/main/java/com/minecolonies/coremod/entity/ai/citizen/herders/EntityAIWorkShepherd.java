@@ -52,10 +52,18 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
     {
         super(job);
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getDexterity() + worker.getCitizenData().getStrength());
-        toolsNeeded.add(ToolType.SHEARS);
+
         super.registerTargets(
           new AITarget(SHEPHERD_SHEAR, false, this::shearSheep)
         );
+    }
+
+    @Override
+    public List<ToolType> getExtraToolsNeeded()
+    {
+        final List<ToolType> toolsNeeded = new ArrayList<>();
+        toolsNeeded.add(ToolType.SHEARS);
+        return toolsNeeded;
     }
 
     @Override

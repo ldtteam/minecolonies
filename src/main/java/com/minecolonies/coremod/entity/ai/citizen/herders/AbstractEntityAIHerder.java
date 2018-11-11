@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,12 +37,6 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      * How many animals per hut level the worker should max have.
      */
     private static final int ANIMAL_MULTIPLIER = 2;
-
-    /**
-     * Tools and Items needed by the worker.
-     */
-    public final List<ToolType>  toolsNeeded = new ArrayList<>();
-    public final List<ItemStack> itemsNeeded = new ArrayList<>();
 
     /**
      * Amount of animals needed to bread.
@@ -113,6 +108,26 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     }
 
     /**
+     * Get the extra tools needed for this job.
+     * @return a list of tools or empty.
+     */
+    @NotNull
+    public List<ToolType> getExtraToolsNeeded()
+    {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Get the extra items needed for this job.
+     * @return a list of items needed or empty.
+     */
+    @NotNull
+    public List<ItemStack> getExtraItemsNeeded()
+    {
+        return Collections.emptyList();
+    }
+
+    /**
      * Decides what job the herder should switch to, breeding or Butchering.
      *
      * @return The next {@link AIState} the herder should switch to, after executing this method.
@@ -174,7 +189,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      */
     private AIState prepareForHerding()
     {
-        setDelay(DECIDING_DELAY);
+        final List<ItemStack> itemsNeeded = new ArrayList<>(getExtraItemsNeeded());
+        final List<ToolType> toolsNeeded = new ArrayList<>(getExtraToolsNeeded());
 
         toolsNeeded.add(ToolType.AXE);
         itemsNeeded.add(getBreedingItems());
@@ -192,6 +208,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             checkIfRequestForItemExistOrCreateAsynch(item);
         }
 
+        setDelay(DECIDING_DELAY);
         return DECIDE;
     }
 
