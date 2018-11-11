@@ -189,6 +189,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      */
     private AIState prepareForHerding()
     {
+        setDelay(DECIDING_DELAY);
         final List<ItemStack> itemsNeeded = new ArrayList<>(getExtraItemsNeeded());
         final List<ToolType> toolsNeeded = new ArrayList<>(getExtraToolsNeeded());
 
@@ -208,7 +209,6 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             checkIfRequestForItemExistOrCreateAsynch(item);
         }
 
-        setDelay(DECIDING_DELAY);
         return DECIDE;
     }
 
