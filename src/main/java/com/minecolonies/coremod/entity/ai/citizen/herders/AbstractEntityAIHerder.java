@@ -174,6 +174,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      */
     private AIState prepareForHerding()
     {
+        setDelay(DECIDING_DELAY);
+
         toolsNeeded.add(ToolType.AXE);
         itemsNeeded.add(getBreedingItems());
 
@@ -189,7 +191,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         {
             checkIfRequestForItemExistOrCreateAsynch(item);
         }
-        setDelay(DECIDING_DELAY);
+
         return DECIDE;
     }
 
