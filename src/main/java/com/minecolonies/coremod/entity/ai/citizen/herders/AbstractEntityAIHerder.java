@@ -38,12 +38,6 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     private static final int ANIMAL_MULTIPLIER = 2;
 
     /**
-     * Tools and Items needed by the worker.
-     */
-    public final List<ToolType>  toolsNeeded = new ArrayList<>();
-    public final List<ItemStack> itemsNeeded = new ArrayList<>();
-
-    /**
      * Amount of animals needed to bread.
      */
     private static final int NUM_OF_ANIMALS_TO_BREED = 2;
@@ -113,6 +107,30 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     }
 
     /**
+     * Get the extra tools needed for this job.
+     * @return a list of tools or empty.
+     */
+    @NotNull
+    public List<ToolType> getExtraToolsNeeded()
+    {
+        final List<ToolType> toolsNeeded = new ArrayList<>();
+        toolsNeeded.add(ToolType.AXE);
+        return toolsNeeded;
+    }
+
+    /**
+     * Get the extra items needed for this job.
+     * @return a list of items needed or empty.
+     */
+    @NotNull
+    public List<ItemStack> getExtraItemsNeeded()
+    {
+        final List<ItemStack> itemsNeeded = new ArrayList<>();
+        itemsNeeded.add(getBreedingItems());
+        return itemsNeeded;
+    }
+
+    /**
      * Decides what job the herder should switch to, breeding or Butchering.
      *
      * @return The next {@link AIState} the herder should switch to, after executing this method.
@@ -175,11 +193,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     private AIState prepareForHerding()
     {
         setDelay(DECIDING_DELAY);
-
-        toolsNeeded.add(ToolType.AXE);
-        itemsNeeded.add(getBreedingItems());
-
-        for (final ToolType tool : toolsNeeded)
+        for (final ToolType tool : getExtraToolsNeeded())
         {
             if (checkForToolOrWeapon(tool))
             {
@@ -187,7 +201,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             }
         }
 
-        for (final ItemStack item : itemsNeeded)
+        for (final ItemStack item : getExtraItemsNeeded())
         {
             checkIfRequestForItemExistOrCreateAsynch(item);
         }
