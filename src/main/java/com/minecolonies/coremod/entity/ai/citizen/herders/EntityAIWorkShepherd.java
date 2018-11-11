@@ -58,10 +58,11 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
         );
     }
 
+    @NotNull
     @Override
     public List<ToolType> getExtraToolsNeeded()
     {
-        final List<ToolType> toolsNeeded = new ArrayList<>();
+        final List<ToolType> toolsNeeded = super.getExtraToolsNeeded();
         toolsNeeded.add(ToolType.SHEARS);
         return toolsNeeded;
     }

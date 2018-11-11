@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -114,7 +113,9 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     @NotNull
     public List<ToolType> getExtraToolsNeeded()
     {
-        return Collections.emptyList();
+        final List<ToolType> toolsNeeded = new ArrayList<>();
+        toolsNeeded.add(ToolType.AXE);
+        return toolsNeeded;
     }
 
     /**
@@ -124,7 +125,9 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     @NotNull
     public List<ItemStack> getExtraItemsNeeded()
     {
-        return Collections.emptyList();
+        final List<ItemStack> itemsNeeded = new ArrayList<>();
+        itemsNeeded.add(getBreedingItems());
+        return itemsNeeded;
     }
 
     /**
@@ -190,13 +193,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     private AIState prepareForHerding()
     {
         setDelay(DECIDING_DELAY);
-        final List<ItemStack> itemsNeeded = new ArrayList<>(getExtraItemsNeeded());
-        final List<ToolType> toolsNeeded = new ArrayList<>(getExtraToolsNeeded());
-
-        toolsNeeded.add(ToolType.AXE);
-        itemsNeeded.add(getBreedingItems());
-
-        for (final ToolType tool : toolsNeeded)
+        for (final ToolType tool : getExtraToolsNeeded())
         {
             if (checkForToolOrWeapon(tool))
             {
@@ -204,7 +201,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             }
         }
 
-        for (final ItemStack item : itemsNeeded)
+        for (final ItemStack item : getExtraItemsNeeded())
         {
             checkIfRequestForItemExistOrCreateAsynch(item);
         }

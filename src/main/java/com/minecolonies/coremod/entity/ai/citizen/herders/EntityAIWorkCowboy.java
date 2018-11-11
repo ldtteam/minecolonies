@@ -87,7 +87,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
     @Override
     public List<ItemStack> getExtraItemsNeeded()
     {
-        final List<ItemStack> list = new ArrayList<>();
+        final List<ItemStack> list = super.getExtraItemsNeeded();
         if (getOwnBuilding(BuildingCowboy.class).isMilkingCows())
         {
             list.add(new ItemStack(Items.BUCKET));
