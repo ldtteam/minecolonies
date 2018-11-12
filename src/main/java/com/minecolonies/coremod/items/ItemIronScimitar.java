@@ -18,7 +18,7 @@ public class ItemIronScimitar extends ItemSword
     {
         super(ToolMaterial.IRON);
         super.setTranslationKey(Constants.MOD_ID.toLowerCase() + "." + SCIMITAR_NAME);
-        setRegistryName(SCIMITAR_NAME);
+        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + SCIMITAR_NAME);
         super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
     }
 

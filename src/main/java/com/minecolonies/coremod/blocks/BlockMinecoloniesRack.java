@@ -84,7 +84,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
      */
     private void initBlock()
     {
-        setRegistryName(BLOCK_NAME);
+        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + BLOCK_NAME);
         setTranslationKey(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(VARIANT, RackType.DEFAULT));
