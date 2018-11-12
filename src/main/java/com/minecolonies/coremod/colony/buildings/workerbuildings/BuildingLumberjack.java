@@ -15,7 +15,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -54,10 +53,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
      * Whether or not the LJ should replant saplings
      */
     private boolean replant = true;
-    /**
-     * A default sapling itemStack.
-     */
-    private static final ItemStack SAPLING_STACK = new ItemStack(Blocks.SAPLING);
 
     /**
      * The maximum upgrade of the building.
@@ -99,13 +94,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             {
                 final ItemStack stack = getMainCitizen().getInventory().getStackInSlot(i);
 
-                if (ItemStackUtils.isEmpty(stack))
-                {
-                    continue;
-                }
-
-                // Check if item is sapling by Oredict
-                if (ItemStackUtils.isStackSapling(stack))
+                if (ItemStackUtils.isEmpty(stack) || !ItemStackUtils.isStackSapling(stack))
                 {
                     continue;
                 }

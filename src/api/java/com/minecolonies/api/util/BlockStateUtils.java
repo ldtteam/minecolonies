@@ -88,7 +88,7 @@ public class BlockStateUtils
      */
     public static IProperty getPropertyByNameFromState(@NotNull final IBlockState state, @NotNull final String name)
     {
-        IProperty property = propertyBlockMap.get(state.getBlock().getRegistryName() + ":prop:" + name);
+        IProperty property = propertyBlockMap.get(state.getBlock().getRegistryName().toString() + ":" + name);
 
         if (property != null && state.getPropertyKeys().contains(property))
         {
@@ -101,7 +101,7 @@ public class BlockStateUtils
 
             if (property != null)
             {
-                propertyBlockMap.put(state.getBlock().getRegistryName() + ":prop:" + name, property);
+                propertyBlockMap.put(state.getBlock().getRegistryName().toString() + ":" + name, property);
             }
             return property;
         }
