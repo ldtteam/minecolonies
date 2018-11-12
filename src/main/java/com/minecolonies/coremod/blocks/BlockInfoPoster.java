@@ -53,7 +53,7 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     private void initBlock()
     {
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, NORTH));
-        setRegistryName(BLOCK_NAME);
+        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + BLOCK_NAME);
         setTranslationKey(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME));
     }
 

@@ -93,7 +93,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
      */
     private void initBlock()
     {
-        setRegistryName(REGISTRY_NAME);
+        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + REGISTRY_NAME);
         setTranslationKey(Constants.MOD_ID.toLowerCase(Locale.ENGLISH) + "." + REGISTRY_NAME);
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         //Blast resistance for creepers etc. makes them explosion proof.

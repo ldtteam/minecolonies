@@ -24,7 +24,7 @@ public class ItemCactusDoor extends Item
     {
         super();
         this.block = block;
-        setRegistryName(name);
+        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + name);
         super.setTranslationKey(Constants.MOD_ID.toLowerCase() + "." + name);
         this.setCreativeTab(ModCreativeTabs.MINECOLONIES);
 

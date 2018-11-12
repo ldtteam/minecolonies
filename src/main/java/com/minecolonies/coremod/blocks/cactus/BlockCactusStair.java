@@ -14,7 +14,7 @@ public class BlockCactusStair extends AbstractBlockMinecoloniesStairs<BlockCactu
     public BlockCactusStair(final IBlockState modelState)
     {
         super(modelState);
-        setRegistryName("blockcactusstair");
+        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + "blockcactusstair");
         setTranslationKey(Constants.MOD_ID.toLowerCase(Locale.ENGLISH) + "." + "blockcactusstair");
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setSoundType(SoundType.WOOD);

@@ -37,7 +37,7 @@ public class BlockShingle extends AbstractBlockMinecoloniesStairs<BlockShingle>
 
     private void init(final String name)
     {
-        setRegistryName(name);
+        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + name);
         setTranslationKey(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.US), name));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setHardness(BLOCK_HARDNESS);

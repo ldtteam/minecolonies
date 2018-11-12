@@ -16,7 +16,7 @@ public class BlockCactusPlank extends AbstractBlockMinecolonies<BlockCactusPlank
     public BlockCactusPlank()
     {
         super(Material.WOOD, MapColor.GREEN);
-        setRegistryName("blockcactusplank");
+        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + "blockcactusplank");
         setTranslationKey(Constants.MOD_ID.toLowerCase(Locale.ENGLISH) + "." + "blockcactusplank");
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setSoundType(SoundType.WOOD);

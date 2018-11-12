@@ -77,7 +77,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      */
     private void initBlock()
     {
-        setRegistryName(getName());
+        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + getName());
         setTranslationKey(Constants.MOD_ID.toLowerCase() + "." + getName());
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         //Blast resistance for creepers etc. makes them explosion proof
