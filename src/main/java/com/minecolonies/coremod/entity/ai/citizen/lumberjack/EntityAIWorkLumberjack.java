@@ -23,11 +23,13 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+import static com.minecolonies.api.util.constant.Constants.SAPLINGS;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -317,7 +319,16 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         else
         {
             job.tree = new Tree(world, pathResult.treeLocation);
-            job.tree.findLogs(world);
+
+            // Check if tree creation was successful
+            if (job.tree.isTree())
+            {
+                job.tree.findLogs(world);
+            }
+            else
+            {
+                job.tree = null;
+            }
         }
         pathResult = null;
 
@@ -554,7 +565,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         final Block worldBlock = world.getBlockState(location).getBlock();
         if (worldBlock != Blocks.AIR && !(worldBlock instanceof BlockSapling))
         {
-            return false;
+            return true;
         }
 
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.planting"));
@@ -598,7 +609,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
         if (timeWaited >= MAX_WAITING_TIME / 2 && !checkedInHut && !walkToBuilding())
         {
-            isInHut(new ItemStack(Blocks.SAPLING, 1, job.tree.getVariant()));
+            isInHut(job.tree.getSapling());
             checkedInHut = true;
         }
 
@@ -609,7 +620,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             setDelay(TIMEOUT_DELAY);
             return true;
         }
-        timeWaited++;
+        timeWaited += 10;
         return false;
     }
 
@@ -676,7 +687,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         return -1;
     }
 
-    //todo: we need to use a different way to get Metadata
+    //todo: we need to use a different way to get Metadata, check other Mods like BOP for compatibility then
     @SuppressWarnings("deprecation")
     private void placeSaplings(final int saplingSlot, @NotNull final ItemStack stack, @NotNull final Block block)
     {
@@ -698,7 +709,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         }
     }
 
-    @SuppressWarnings("deprecation")
     /**
      * Checks if this is the correct Sapling.
      * @param stack incoming stack.
@@ -711,11 +721,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             return false;
         }
 
-        if (job.tree.isSlimeTree())
-        {
-            return isStackSapling(stack) && Compatibility.isSlimeSapling(((ItemBlock) stack.getItem()).getBlock()) && job.tree.getVariant() == stack.getMetadata();
-        }
-        else if (ItemStackUtils.isEmpty(job.tree.getSapling()))
+        if (ItemStackUtils.isEmpty(job.tree.getSapling()))
         {
             return true;
         }
@@ -726,15 +732,26 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     /**
-     * Checks if a stack is a type of sapling.
+     * Checks if a stack is a type of sapling, using Oredict
      *
      * @param stack the stack to check.
      * @return true if sapling.
      */
     private static boolean isStackSapling(@Nullable final ItemStack stack)
     {
-        return !ItemStackUtils.isEmpty(stack) && (stack.getItem() instanceof ItemBlock && (((ItemBlock) stack.getItem()).getBlock() instanceof BlockSapling)
-                                                    || Compatibility.isDynamicTreeSapling(stack));
+        if (ItemStackUtils.isEmpty(stack))
+        {
+            return false;
+        }
+
+        for (final int oreId : OreDictionary.getOreIDs(stack))
+        {
+            if (OreDictionary.getOreName(oreId).equals(SAPLINGS))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
