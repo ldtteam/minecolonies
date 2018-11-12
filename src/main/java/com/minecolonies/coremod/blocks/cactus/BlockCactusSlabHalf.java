@@ -24,7 +24,7 @@ public class BlockCactusSlabHalf extends AbstractBlockSlab<BlockCactusSlabHalf>
     public BlockCactusSlabHalf()
     {
         super(Material.WOOD);
-        setRegistryName(NAME);
+        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + NAME);
         setTranslationKey(Constants.MOD_ID.toLowerCase(Locale.ENGLISH) + "." + NAME);
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setSoundType(SoundType.WOOD);

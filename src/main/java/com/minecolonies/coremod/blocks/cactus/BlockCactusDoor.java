@@ -14,7 +14,7 @@ public class BlockCactusDoor extends AbstractBlockDoor<BlockCactusDoor>
     public BlockCactusDoor(final Block block)
     {
         super(Material.WOOD, block);
-        setRegistryName("blockcactusdoor");
+        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + "blockcactusdoor");
         setTranslationKey(Constants.MOD_ID.toLowerCase(Locale.ENGLISH) + "." + "blockcactusdoor");
         setSoundType(SoundType.WOOD);
         setLightOpacity(0);
