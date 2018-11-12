@@ -31,7 +31,7 @@ public class ItemPirateGear extends ItemArmor
     {
         super(materialIn, renderIndexIn, equipmentSlotIn);
         setTranslationKey(name);
-        setRegistryName(Constants.MOD_ID + ":" + name);
+        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" +  name);
         setCreativeTab(tab);
     }
 }
