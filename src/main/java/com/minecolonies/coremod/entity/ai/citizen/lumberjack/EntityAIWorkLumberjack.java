@@ -23,13 +23,11 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
-import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static com.minecolonies.api.util.constant.Constants.SAPLINGS;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -716,7 +714,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private boolean isCorrectSapling(final ItemStack stack)
     {
-        if (!isStackSapling(stack))
+        if (!ItemStackUtils.isStackSapling(stack))
         {
             return false;
         }
@@ -729,29 +727,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         {
             return job.tree.getSapling().isItemEqual(stack);
         }
-    }
-
-    /**
-     * Checks if a stack is a type of sapling, using Oredict
-     *
-     * @param stack the stack to check.
-     * @return true if sapling.
-     */
-    private static boolean isStackSapling(@Nullable final ItemStack stack)
-    {
-        if (ItemStackUtils.isEmpty(stack))
-        {
-            return false;
-        }
-
-        for (final int oreId : OreDictionary.getOreIDs(stack))
-        {
-            if (OreDictionary.getOreName(oreId).equals(SAPLINGS))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

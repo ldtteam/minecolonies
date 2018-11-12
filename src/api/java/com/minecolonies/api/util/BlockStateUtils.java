@@ -1,7 +1,6 @@
 package com.minecolonies.api.util;
 
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import org.jetbrains.annotations.NotNull;
 
@@ -89,7 +88,7 @@ public class BlockStateUtils
      */
     public static IProperty getPropertyByNameFromState(@NotNull final IBlockState state, @NotNull final String name)
     {
-        IProperty property = propertyBlockMap.get(state.getBlock().getClass().getName() + name);
+        IProperty property = propertyBlockMap.get(state.getBlock().getRegistryName() + ":prop:" + name);
 
         if (property != null && state.getPropertyKeys().contains(property))
         {
@@ -102,7 +101,7 @@ public class BlockStateUtils
 
             if (property != null)
             {
-                propertyBlockMap.put(state.getBlock().getClass().getName() + name, property);
+                propertyBlockMap.put(state.getBlock().getRegistryName() + ":prop:" + name, property);
             }
             return property;
         }
@@ -125,38 +124,6 @@ public class BlockStateUtils
             }
         }
         return null;
-    }
-
-    /**
-     * Returns a copy of the state without the given property
-     *
-     * @param state    The state to use
-     * @param property The property to remove
-     * @return State without property
-     */
-    public static IBlockState getStateWithoutProperty(@NotNull final IBlockState state, final IProperty property)
-    {
-        final Collection<IProperty<?>> tList = state.getPropertyKeys();
-
-        for (final IProperty prop : state.getPropertyKeys())
-        {
-            if (prop == property)
-            {
-                tList.remove(prop);
-                break;
-            }
-        }
-
-        final IProperty[] tempArray = new IProperty[tList.size()];
-        tList.toArray(tempArray);
-
-        IBlockState newState = new BlockStateContainer(state.getBlock(), tempArray).getBaseState();
-
-        for (final IProperty prop : tList)
-        {
-            newState = newState.withProperty(prop, state.getValue(prop));
-        }
-        return newState;
     }
 
     /**
