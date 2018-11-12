@@ -76,7 +76,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarre
     @SuppressWarnings(DEPRECATION)
     private void initBlock()
     {
-        setRegistryName(BLOCK_NAME);
+        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + BLOCK_NAME);
         setTranslationKey(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setHardness(BLOCK_HARDNESS);
