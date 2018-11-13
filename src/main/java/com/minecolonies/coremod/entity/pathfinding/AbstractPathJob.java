@@ -363,9 +363,10 @@ public abstract class AbstractPathJob implements Callable<Path>
         {
             return search();
         }
-        catch (final RuntimeException e)
+        catch (final Exception e)
         {
-            Log.getLogger().debug(e);
+            // Log everything, so exceptions of the pathfinding-thread show in Log
+            Log.getLogger().warn("Pathfinding Exception", e);
         }
 
         return null;

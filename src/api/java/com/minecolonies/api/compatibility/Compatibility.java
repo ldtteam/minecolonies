@@ -235,4 +235,16 @@ public final class Compatibility
     {
         return DynamicTreeCompat.isDynamicTreeSapling(stack.getItem());
     }
+
+    /**
+     * Method to check if two given blocks have the same Tree family
+     *
+     * @param block1 First blockpos to compare
+     * @param block2 Second blockpos to compare
+     * @return true when same family
+     */
+    public static boolean isDynamicFamilyFitting(final BlockPos block1, final BlockPos block2, final IBlockAccess world)
+    {
+        return DynamicTreeCompat.hasFittingTreeFamily(block1, block2, world);
+    }
 }
