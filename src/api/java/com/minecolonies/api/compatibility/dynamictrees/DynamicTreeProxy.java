@@ -82,4 +82,12 @@ public class DynamicTreeProxy
      * @return false
      */
     protected boolean plantDynamicSaplingCompat(final World world, final BlockPos location, final ItemStack sapling) {return false;}
+
+    /**
+     * Default method to check if two given blocks have the same Tree family
+     *
+     * @param block1 First blockpos to compare
+     * @param block2 Second blockpos to compare
+     */
+    protected boolean hasFittingTreeFamilyCompat(final BlockPos block1, final BlockPos block2, final IBlockAccess world) {return false;}
 }
