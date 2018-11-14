@@ -3,6 +3,7 @@ package com.minecolonies.api.compatibility.dynamictrees;
 import com.ferreusveritas.dynamictrees.blocks.BlockBranch;
 import com.ferreusveritas.dynamictrees.blocks.BlockDynamicLeaves;
 import com.ferreusveritas.dynamictrees.items.Seed;
+import com.ferreusveritas.dynamictrees.trees.TreeFamily;
 import com.minecolonies.api.util.Log;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.block.Block;
@@ -130,7 +131,11 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
         if (isDynamicLeavesBlock(leaf))
         {
             final NonNullList<ItemStack> list = NonNullList.create();
-            list.addAll(((BlockDynamicLeaves) leaf).getDrops(world, pos, blockState, fortune));
+            // Implementation is chance based, so repeat till we get an item
+            for (int i = 0; i < 100 && list.isEmpty(); i++)
+            {
+                list.addAll(((BlockDynamicLeaves) leaf).getDrops(world, pos, blockState, fortune));
+            }
             return list;
         }
         return NonNullList.create();
@@ -288,5 +293,60 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
     public static String getDynamicTreeDamage()
     {
         return DYNAMIC_TREE_DAMAGE;
+    }
+
+    /**
+     * Method to check if two given blocks have the same Tree family
+     *
+     * @param block1 First blockpos to compare
+     * @param block2 Second blockpos to compare
+     * @return true when same family
+     */
+    @Override
+    @Optional.Method(modid = DYNAMIC_MODID)
+    protected boolean hasFittingTreeFamilyCompat(@NotNull final BlockPos block1, @NotNull final BlockPos block2, @NotNull final IBlockAccess world)
+    {
+        TreeFamily fam1 = getFamilyForBlock(block1, world);
+        TreeFamily fam2 = getFamilyForBlock(block2, world);
+
+        if (fam1 != null && fam2 != null)
+        {
+            return fam1 == fam2;
+        }
+        return false;
+    }
+
+    /**
+     * Returns the dynamic tree family for the give blockpos
+     *
+     * @param blockPos position
+     * @param world    blockaccess
+     * @return dynamic tree family
+     */
+    private static TreeFamily getFamilyForBlock(@NotNull final BlockPos blockPos, @NotNull final IBlockAccess world)
+    {
+        final Block block = world.getBlockState(blockPos).getBlock();
+        if (block instanceof BlockBranch)
+        {
+            return ((BlockBranch) block).getFamily();
+        }
+        if (block instanceof BlockDynamicLeaves)
+        {
+            return ((BlockDynamicLeaves) block).getFamily(world.getBlockState(blockPos), world, blockPos);
+        }
+
+        return null;
+    }
+
+    /**
+     * Method to check if two given blocks have the same Tree family
+     *
+     * @param block1 First blockpos to compare
+     * @param block2 Second blockpos to compare
+     * @return true when same family
+     */
+    public static boolean hasFittingTreeFamily(@NotNull final BlockPos block1, @NotNull final BlockPos block2, @NotNull final IBlockAccess world)
+    {
+        return instance.hasFittingTreeFamilyCompat(block1, block2, world);
     }
 }
