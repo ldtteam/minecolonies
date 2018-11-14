@@ -33,7 +33,7 @@ public class ItemChiefSword extends ItemSword
     {
         super(ToolMaterial.DIAMOND);
         super.setTranslationKey(Constants.MOD_ID.toLowerCase() + "." + CHIEFSWORD_NAME);
-        setRegistryName(CHIEFSWORD_NAME);
+        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + CHIEFSWORD_NAME);
         super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
     }
 
