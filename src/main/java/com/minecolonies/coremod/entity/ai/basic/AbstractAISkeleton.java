@@ -4,6 +4,7 @@ import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -42,6 +43,11 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      * Used to compare to state matching targets.
      */
     private         AIState             state;
+
+    /**
+     * Server-Tick counter for the AI
+     */
+    private int tickCount = 1;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -127,11 +133,16 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     }
 
     /**
-     * Updates the task.
+     * Updates the task and increases the tickCounter.
      */
     @Override
     public final void updateTask()
     {
+        tickCount++;
+        if (tickCount >= Constants.MAX_AI_TICKRATE + Constants.MAX_AI_TICKRATE_VARIANT)
+        {
+            tickCount = 1;
+        }
         targetList.stream().anyMatch(this::checkOnTarget);
     }
 
@@ -166,6 +177,13 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         {
             return false;
         }
+
+        // Check if the state should be run this Tick
+        if (((tickCount + target.getTickOffset()) % target.getTickRate()) != 0)
+        {
+            return false;
+        }
+
         try
         {
             if (!target.test())

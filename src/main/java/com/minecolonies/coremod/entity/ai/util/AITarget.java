@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.util;
 
+import com.minecolonies.api.util.constant.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +26,23 @@ public class AITarget
     private final Supplier<AIState> action;
 
     /**
+     * The tickrate at which the Target should be called, e.g. tickRate = 20 means call function every 20 Ticks
+     */
+    @NotNull
+    private final int tickRate;
+
+    /**
+     * The random offset for Ticks, so that AITargets get more distributed activations on server ticks
+     */
+    @NotNull
+    private final int tickOffset;
+
+    /**
+     * The variant used upon creation of the AITarget to uniformly distribute the Tick offset
+     */
+    private static int tickVariant = 0;
+
+    /**
      * Variable describing if it is okay to eat in a state.
      */
     private boolean okayToEat;
@@ -33,10 +51,22 @@ public class AITarget
      * Construct a target.
      *
      * @param action the action to apply
+     * @param tickRate the Tickrate to expect, e.g. 20 = called once every 20 ticks
+     */
+    public AITarget(@NotNull final Supplier<AIState> action, final boolean isOkayToEat, final int tickRate)
+    {
+        this(() -> true, isOkayToEat, action, tickRate);
+    }
+
+    /**
+     * Default Tickrate - Construct a target.
+     * TODO:Remove once classes are transitioned to the new system
+     *
+     * @param action the action to apply
      */
     public AITarget(@NotNull final Supplier<AIState> action, final boolean isOkayToEat)
     {
-        this(() -> true, isOkayToEat, action);
+        this(() -> true, isOkayToEat, action, 1);
     }
 
     /**
@@ -44,10 +74,23 @@ public class AITarget
      *
      * @param predicate the predicate for execution
      * @param action    the action to apply
+     * @param tickRate the Tickrate to expect, e.g. 20 = called once every 20 ticks
+     */
+    public AITarget(@NotNull final BooleanSupplier predicate, final boolean isOkayToEat, @NotNull final Supplier<AIState> action, final int tickRate)
+    {
+        this(null, isOkayToEat, predicate, action, tickRate);
+    }
+
+    /**
+     * Default Tickrate - Construct a target.
+     * TODO:Remove once classes are transitioned to the new system
+     *
+     * @param predicate the predicate for execution
+     * @param action    the action to apply
      */
     public AITarget(@NotNull final BooleanSupplier predicate, final boolean isOkayToEat, @NotNull final Supplier<AIState> action)
     {
-        this(null, isOkayToEat, predicate, action);
+        this(null, isOkayToEat, predicate, action, 1);
     }
 
     /**
@@ -56,13 +99,32 @@ public class AITarget
      * @param state     the state it needs to be | null
      * @param predicate the predicate for execution
      * @param action    the action to apply
+     * @param tickRate the Tickrate to expect, e.g. 20 = called once every 20 ticks
      */
-    public AITarget(@Nullable final AIState state, final boolean isOkayToEat, @NotNull final BooleanSupplier predicate, @NotNull final Supplier<AIState> action)
+    public AITarget(
+      @Nullable final AIState state,
+      final boolean isOkayToEat,
+      @NotNull final BooleanSupplier predicate,
+      @NotNull final Supplier<AIState> action,
+      @NotNull int tickRate)
     {
         this.state = state;
         this.predicate = predicate;
         this.action = action;
         this.okayToEat = isOkayToEat;
+
+        tickRate = tickRate > Constants.MAX_AI_TICKRATE ? Constants.MAX_AI_TICKRATE : tickRate;
+        this.tickRate = tickRate < 1 ? 1 : tickRate;
+
+        // Calculate offSet % tickRate already to not have redundant calculations later
+        this.tickOffset = tickVariant % tickRate;
+
+        // Increase variant for next AITarget and reset variant at a certain point
+        tickVariant++;
+        if (tickVariant >= Constants.MAX_AI_TICKRATE_VARIANT)
+        {
+            tickVariant = 0;
+        }
     }
 
     /**
@@ -70,10 +132,23 @@ public class AITarget
      *
      * @param predicate the predicate for execution
      * @param state     the state to switch to
+     * @param tickRate the Tickrate to expect, e.g. 20 = called once every 20 ticks
+     */
+    public AITarget(@NotNull final BooleanSupplier predicate, @Nullable final AIState state, final boolean isOkayToEat, @NotNull final int tickRate)
+    {
+        this(null, isOkayToEat, predicate, () -> state, tickRate);
+    }
+
+    /**
+     * Default Tickrate - Construct a target.
+     * TODO:Remove once classes are transitioned to the new system
+     *
+     * @param predicate the predicate for execution
+     * @param state     the state to switch to
      */
     public AITarget(@NotNull final BooleanSupplier predicate, @Nullable final AIState state, final boolean isOkayToEat)
     {
-        this(null, isOkayToEat, predicate, () -> state);
+        this(null, isOkayToEat, predicate, () -> state, 1);
     }
 
     /**
@@ -81,21 +156,48 @@ public class AITarget
      *
      * @param predicateState the state it needs to be | null
      * @param state          the state to switch to
+     * @param tickRate the Tickrate to expect, e.g. 20 = called once every 20 ticks
+     */
+    public AITarget(@NotNull final AIState predicateState, @Nullable final AIState state, final boolean isOkayToEat, @NotNull final int tickRate)
+    {
+        this(predicateState, isOkayToEat, () -> state, tickRate);
+    }
+
+    /**
+     * Default Tickrate - Construct a target.
+     * TODO:Remove once classes are transitioned to the new system
+     *
+     * @param predicateState the state it needs to be | null
+     * @param state          the state to switch to
      */
     public AITarget(@NotNull final AIState predicateState, @Nullable final AIState state, final boolean isOkayToEat)
     {
-        this(predicateState, isOkayToEat, () -> state);
+        this(predicateState, isOkayToEat, () -> state, 1);
     }
+
 
     /**
      * Construct a target.
      *
      * @param state  the state it needs to be | null
      * @param action the action to apply
+     * @param tickRate the Tickrate to expect, e.g. 20 = called once every 20 ticks
+     */
+    public AITarget(@Nullable final AIState state, final boolean isOkayToEat, @NotNull final Supplier<AIState> action, @NotNull final int tickRate)
+    {
+        this(state, isOkayToEat, () -> true, action, tickRate);
+    }
+
+    /**
+     * Default Tickrate - Construct a target.
+     * TODO:Remove once classes are transitioned to the new system
+     *
+     * @param state  the state it needs to be | null
+     * @param action the action to apply
      */
     public AITarget(@Nullable final AIState state, final boolean isOkayToEat, @NotNull final Supplier<AIState> action)
     {
-        this(state, isOkayToEat, () -> true, action);
+        this(state, isOkayToEat, () -> true, action, 1);
     }
 
     /**
@@ -118,6 +220,26 @@ public class AITarget
     public boolean test()
     {
         return predicate.getAsBoolean();
+    }
+
+    /**
+     * Returns the intended tickRate of the AITarget
+     *
+     * @return Tickrate
+     */
+    public int getTickRate()
+    {
+        return tickRate;
+    }
+
+    /**
+     * Returns a random offset to Ticks
+     *
+     * @return random
+     */
+    public int getTickOffset()
+    {
+        return tickOffset;
     }
 
     /**

@@ -140,6 +140,16 @@ public final class Constants
     public static final int GLOW_EFFECT_DURATION_TEAM = 20 * 60 * 10;
 
     /**
+     * The max delay one can set upon AITarget creation
+     */
+    public static final int MAX_AI_TICKRATE = 500;
+
+    /**
+     * Maximum of the random offset for AI Ticks, to not activate on the same tick.
+     */
+    public static final int MAX_AI_TICKRATE_VARIANT = 50;
+
+    /**
      * Private constructor to hide implicit public one.
      */
     private Constants()

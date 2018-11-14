@@ -132,20 +132,20 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
             Init safety checks and transition to IDLE
            */
-          new AITarget(this::initSafetyChecks, true),
+          new AITarget(this::initSafetyChecks, true, 10),
           /*
             Update chestbelt and nametag
             Will be executed every time
             and does not stop execution
            */
-          new AITarget(this::updateVisualState, true),
+          new AITarget(this::updateVisualState, true, 10),
           /*
             If waitingForSomething returns true
             stop execution to wait for it.
             this keeps the current state
             (returning null would not stop execution)
            */
-          new AITarget(this::waitingForSomething, true, this::getState),
+          new AITarget(this::waitingForSomething, true, this::getState, 1),
           /*
             Check if any items are needed.
             If yes, transition to NEEDS_ITEM.
@@ -156,7 +156,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                            || this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData())
                            || this.getOwnBuilding()
                                   .hasWorkerOpenRequestsFiltered(worker.getCitizenData(),r -> !worker.getCitizenData().isRequestAsync(r.getToken()))
-                         ) && !this.isPaused(), true, this::waitForRequests),
+                         ) && !this.isPaused(), true, this::waitForRequests, DELAY_RECHECK),
           /*
             Dumps inventory as long as needs be.
             If inventory is dumped, execution continues
@@ -175,7 +175,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                              && !this.isPaused()
                              && this.getOwnBuilding()
                                     .getOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Tool.class))
-                                    .isEmpty(), IDLE, true),
+                                  .isEmpty(), IDLE, true, 10),
           /*
            * Gather a needed item.
            */
@@ -188,7 +188,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
            * Reset if not paused.
            */
-          new AITarget(PAUSED, true, () -> !this.isPaused(), () -> IDLE),
+          new AITarget(PAUSED, true, () -> !this.isPaused(), () -> IDLE, 20),
           /*
            * Do not work if worker is paused
            */
@@ -488,7 +488,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @NotNull
     private AIState waitForRequests()
     {
-        delay = DELAY_RECHECK;
         updateWorkerStatusFromRequests();
         return lookForRequests();
     }
