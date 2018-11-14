@@ -311,7 +311,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
      */
     private void updateArmor()
     {
-        if (worker.getRandom().nextInt(60) <= 0)
+        if (worker.getRandom().nextInt(6) <= 0)
         {
             worker.setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStackUtils.EMPTY);
             worker.setItemStackToSlot(EntityEquipmentSlot.FEET, ItemStackUtils.EMPTY);

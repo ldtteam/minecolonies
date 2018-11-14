@@ -29,7 +29,7 @@ public class AITarget
      * The tickrate at which the Target should be called, e.g. tickRate = 20 means call function every 20 Ticks
      */
     @NotNull
-    private final int tickRate;
+    private int tickRate;
 
     /**
      * The random offset for Ticks, so that AITargets get more distributed activations on server ticks
@@ -106,18 +106,18 @@ public class AITarget
       final boolean isOkayToEat,
       @NotNull final BooleanSupplier predicate,
       @NotNull final Supplier<AIState> action,
-      @NotNull int tickRate)
+      @NotNull final int tickRate)
     {
         this.state = state;
         this.predicate = predicate;
         this.action = action;
         this.okayToEat = isOkayToEat;
 
-        tickRate = tickRate > Constants.MAX_AI_TICKRATE ? Constants.MAX_AI_TICKRATE : tickRate;
-        this.tickRate = tickRate < 1 ? 1 : tickRate;
+        this.tickRate = tickRate > Constants.MAX_AI_TICKRATE ? Constants.MAX_AI_TICKRATE : tickRate;
+        this.tickRate = this.tickRate < 1 ? 1 : this.tickRate;
 
         // Calculate offSet % tickRate already to not have redundant calculations later
-        this.tickOffset = tickVariant % tickRate;
+        this.tickOffset = tickVariant % this.tickRate;
 
         // Increase variant for next AITarget and reset variant at a certain point
         tickVariant++;
@@ -230,6 +230,16 @@ public class AITarget
     public int getTickRate()
     {
         return tickRate;
+    }
+
+    /**
+     * Allow to dynamically change the tickrate
+     *
+     * @param tickRate rate at which the AITarget should tick
+     */
+    public void setTickRate(@NotNull final int tickRate)
+    {
+        this.tickRate = tickRate;
     }
 
     /**
