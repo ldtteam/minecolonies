@@ -39,6 +39,7 @@ public class AITarget
 
     /**
      * The variant used upon creation of the AITarget to uniformly distribute the Tick offset
+     * Static variable counter that changes with each AITarget creation and affects the next one.
      */
     private static int tickVariant = 0;
 
