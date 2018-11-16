@@ -6,19 +6,14 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.coremod.entity.ai.util.AITarget;
-
 import net.minecraft.entity.ai.EntityAITasks;
-import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.coremod.entity.AbstractEntityCitizen.DATA_MODEL;
-
 import java.util.function.Predicate;
+
+import static com.minecolonies.coremod.entity.AbstractEntityCitizen.DATA_MODEL;
 
 /**
  * Handles the citizen job methods.
@@ -127,7 +122,7 @@ public class CitizenJobHandler
 
         if (job != null)
         {
-            job.addTasks(citizen.tasks);
+            job.addWorkerAIToTaskList(citizen.tasks);
             if (citizen.ticksExisted > 0 && citizen.getCitizenColonyHandler().getWorkBuilding() != null)
             {
                 BlockPosUtil.tryMoveLivingToXYZ(citizen, citizen.getCitizenColonyHandler().getWorkBuilding().getLocation());
@@ -180,12 +175,11 @@ public class CitizenJobHandler
      */
     private AbstractEntityAIBasic getEntityAI()
     {
-        return citizen.tasks.taskEntries
-                .stream()
-                .filter(t -> t.action instanceof AbstractEntityAIBasic)
-                .map(t -> (AbstractEntityAIBasic) t.action)
-                .findAny() 
-                .orElse(null);
+        if (getColonyJob() != null && getColonyJob().getWorkerAI() instanceof AbstractEntityAIBasic)
+        {
+            return (AbstractEntityAIBasic) getColonyJob().getWorkerAI();
+        }
 
+        return null;
     }
 }

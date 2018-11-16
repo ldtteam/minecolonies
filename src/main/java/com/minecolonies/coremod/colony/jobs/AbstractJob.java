@@ -9,7 +9,6 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.registry.JobRegistry;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
@@ -69,6 +68,11 @@ public abstract class AbstractJob
      * Check if the worker has searched for food today.
      */
     private boolean searchedForFoodToday;
+
+    /**
+     * The workerAI for this Job
+     */
+    protected AbstractAISkeleton workerAI;
 
     /**
      * Initialize citizen data.
@@ -161,12 +165,12 @@ public abstract class AbstractJob
      *
      * @param tasks EntityAITasks list to add tasks to.
      */
-    public void addTasks(@NotNull final EntityAITasks tasks)
+    public void addWorkerAIToTaskList(@NotNull final EntityAITasks tasks)
     {
-        final AbstractAISkeleton<? extends AbstractJob> aiTask = generateAI();
-        if (aiTask != null)
+        workerAI = generateAI();
+        if (workerAI != null)
         {
-            tasks.addTask(TASK_PRIORITY, aiTask);
+            tasks.addTask(TASK_PRIORITY, workerAI);
         }
     }
 
@@ -317,13 +321,12 @@ public abstract class AbstractJob
     }
 
     /**
-     * Check if it is okay to eat by checking through the current tasks of the citizen the citizen is in.
+     * Check if it is okay to eat
      * @return true if so.
      */
     public boolean isOkayToEat()
     {
-        return !citizen.getCitizenEntity().isPresent() || !citizen.getCitizenEntity().get().tasks.taskEntries.stream()
-                                                             .anyMatch(task -> task.action instanceof AbstractAISkeleton && !((AbstractAISkeleton) task.action).isOkayToEat());
+        return (workerAI != null && workerAI.isOkayToEat());
     }
 
     /**
@@ -355,12 +358,30 @@ public abstract class AbstractJob
     }
 
     /**
+     * Get the worker AI associated to this job
+     *
+     * @return worker AI
+     */
+    public AbstractAISkeleton getWorkerAI()
+    {
+        return workerAI;
+    }
+
+    /**
      * Check if the citizen is in an idle state.
      * @return true if so.
      */
     public boolean isIdling()
     {
-        return !citizen.getCitizenEntity().isPresent() || citizen.getCitizenEntity().get().tasks.taskEntries.stream()
-                                                             .anyMatch(task -> task.action instanceof AbstractAISkeleton && ((AbstractAISkeleton) task.action).getState() == AIState.IDLE);
+        return (workerAI != null && workerAI.getState() == AIState.IDLE);
     }
+
+    /**
+     * Reset the AI after eating at a restaurant
+     */
+    public void resetAIAfterEating()
+    {
+        workerAI.resetAIToIdle();
+    }
+
 }
