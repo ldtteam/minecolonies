@@ -4,10 +4,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockDirt;
-import net.minecraft.block.BlockFlower;
-import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
@@ -15,6 +12,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemColored;
 import net.minecraft.item.ItemDye;
@@ -30,6 +28,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -92,7 +91,9 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
             if(te instanceof  TileEntityCompostedDirt)
             {
                 ItemStack item = playerIn.inventory.getCurrentItem();
-                Block block = Block.getBlockFromItem(item.getItem());
+                //Block block = Block.getBlockFromItem(item.getItem());
+
+                Block block = Blocks.REEDS;
 
                 if(block == Blocks.AIR ) return false;
 
@@ -164,6 +165,12 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
 
     @Override
     public boolean isFullCube(final IBlockState state)
+    {
+        return true;
+    }
+
+    @Override
+    public boolean canSustainPlant(final IBlockState state, final IBlockAccess world, final BlockPos pos, final EnumFacing direction, final IPlantable plantable)
     {
         return true;
     }

@@ -65,7 +65,7 @@ public final class ModBlocks
     public static        BlockCactusSlabDouble          blockCactusSlabDouble;
     public static        BlockHutComposter              blockHutComposter;
     public static        BlockHutLibrary                blockHutLibrary;
-    //public static        BlockHutFlorist                blockHutFlorist;
+    public static        BlockHutFlorist                blockHutFlorist;
 
     /**
      * Utility blocks.
@@ -130,6 +130,7 @@ public final class ModBlocks
         blockHutSmeltery = new BlockHutSmeltery().registerBlock(registry);
         blockHutComposter = new BlockHutComposter().registerBlock(registry);
         blockHutLibrary =  new BlockHutLibrary().registerBlock(registry);
+        blockHutFlorist = new BlockHutFlorist().registerBlock(registry);
 
         blockInfoPoster = new BlockInfoPoster().registerBlock(registry);
         blockPaperWall = new BlockPaperwall().registerBlock(registry);
@@ -164,7 +165,6 @@ public final class ModBlocks
         multiBlock = new MultiBlock().registerBlock(registry);
         blockBarrel = new BlockBarrel().registerBlock(registry);
         blockCompostedDirt = new BlockCompostedDirt().registerBlock(registry);
-        //blockHutFlorist = new BlockHutFlorist().registerBlock(registry);
 
         for (final BlockPlanks.EnumType type : BlockPlanks.EnumType.values())
         {
@@ -201,6 +201,7 @@ public final class ModBlocks
         blockHutSmeltery.registerItemBlock(registry);
         blockHutComposter.registerItemBlock(registry);
         blockHutLibrary.registerItemBlock(registry);
+        blockHutFlorist.registerItemBlock(registry);
 
         blockConstructionTape.registerItemBlock(registry);
         blockSolidSubstitution.registerItemBlock(registry);
@@ -223,9 +224,7 @@ public final class ModBlocks
         blockCactusStair.registerItemBlock(registry);
         registry.register(new ItemSlab(blockCactusSlabHalf, blockCactusSlabHalf, blockCactusSlabDouble).setRegistryName(blockCactusSlabHalf.getRegistryName()));
         blockBarrel.registerItemBlock(registry);
-        //blockHutComposter.registerItemBlock(registry);
         blockCompostedDirt.registerItemBlock(registry);
-        //blockHutFlorist.registerItemBlock(registry);
 
         for (final BlockTimberFrame frame: timberFrames)
         {

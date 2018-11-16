@@ -38,6 +38,7 @@ public class JobRegistry
     private static final String MAPPING_KNIGHT         = "Knight";
     private static final String MAPPING_COMPOSTER      = "Composter";
     private static final String MAPPING_STUDENT        = "Student";
+    private static final String MAPPING_FLORIST        = "Florist";
 
     /**
      * Map to resolve names to class.
@@ -66,6 +67,7 @@ public class JobRegistry
         addMapping(MAPPING_KNIGHT, JobKnight.class);
         addMapping(MAPPING_COMPOSTER, JobComposter.class);
         addMapping(MAPPING_STUDENT, JobStudent.class);
+        addMapping(MAPPING_FLORIST, JobFlorist.class);
     }
 
     /**

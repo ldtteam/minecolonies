@@ -5,6 +5,7 @@ import javafx.geometry.Pos;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
@@ -56,11 +57,17 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
         {
             if(random.nextInt(100) <= this.percentage)
             {
-                Log.getLogger().info("SPAWNING A FLOWER");
-                //Todo: spawn flower over the block if the block above is AIR
                 BlockPos position = pos.up();
                 if(worldIn.getBlockState(position).getBlock()== Blocks.AIR)
-                    worldIn.setBlockState(position, Block.getBlockFromItem(flower.getItem()).getStateFromMeta(flower.getMetadata()));
+                {
+                    Block block = Block.getBlockFromItem(flower.getItem());
+                    if(flower.getItem() == Items.REEDS)
+                    {
+                        block = Blocks.REEDS;
+                    }
+                    worldIn.setBlockState(position, block.getStateFromMeta(this.flower.getMetadata()));
+                    Log.getLogger().info(block.getLocalizedName());
+                }
             }
         }
 

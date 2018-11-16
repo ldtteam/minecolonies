@@ -1,7 +1,10 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.coremod.entity.ai.citizen.florist.EntityAIWorkFlorist;
+import org.jetbrains.annotations.NotNull;
 
 //Todo: implement this class
 public class JobFlorist extends AbstractJob
@@ -19,12 +22,24 @@ public class JobFlorist extends AbstractJob
     @Override
     public String getName()
     {
-        return null;
+        return "com.minecolonies.coremod.job.florist";
+    }
+
+    /**
+     * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
+     *
+     * @return Model of the citizen.
+     */
+    @NotNull
+    @Override
+    public RenderBipedCitizen.Model getModel()
+    {
+        return RenderBipedCitizen.Model.COMPOSTER;
     }
 
     @Override
     public AbstractAISkeleton<? extends AbstractJob> generateAI()
     {
-        return null;
+        return new EntityAIWorkFlorist(this);
     }
 }
