@@ -122,14 +122,14 @@ public class CommonProxy implements IProxy
     @Override
     public void registerTileEntities()
     {
-        GameRegistry.registerTileEntity(TileEntityColonyBuilding.class, Constants.MOD_ID + ".ColonyBuilding");
-        GameRegistry.registerTileEntity(ScarecrowTileEntity.class, Constants.MOD_ID + ".Scarecrow");
-        GameRegistry.registerTileEntity(TileEntityWareHouse.class, Constants.MOD_ID + ".WareHouse");
-        GameRegistry.registerTileEntity(TileEntityRack.class, Constants.MOD_ID + ".rack");
-        GameRegistry.registerTileEntity(TileEntityInfoPoster.class, Constants.MOD_ID + ".InfoPoster");
-        GameRegistry.registerTileEntity(TileEntityMultiBlock.class, Constants.MOD_ID + ".MultiBlock");
-        GameRegistry.registerTileEntity(TileEntityBarrel.class, Constants.MOD_ID + ".Barrel");
-        GameRegistry.registerTileEntity(TileEntityCompostedDirt.class, Constants.MOD_ID + "CompostedDirt");
+        GameRegistry.registerTileEntity(TileEntityColonyBuilding.class, Constants.MOD_ID + ":ColonyBuilding");
+        GameRegistry.registerTileEntity(ScarecrowTileEntity.class, Constants.MOD_ID + ":Scarecrow");
+        GameRegistry.registerTileEntity(TileEntityWareHouse.class, Constants.MOD_ID + ":WareHouse");
+        GameRegistry.registerTileEntity(TileEntityRack.class, Constants.MOD_ID + ":rack");
+        GameRegistry.registerTileEntity(TileEntityInfoPoster.class, Constants.MOD_ID + ":InfoPoster");
+        GameRegistry.registerTileEntity(TileEntityMultiBlock.class, Constants.MOD_ID + ":MultiBlock");
+        GameRegistry.registerTileEntity(TileEntityBarrel.class, Constants.MOD_ID + ":Barrel");
+        GameRegistry.registerTileEntity(TileEntityCompostedDirt.class, Constants.MOD_ID + ":CompostedDirt");
 
         NetworkRegistry.INSTANCE.registerGuiHandler(MineColonies.instance, new GuiHandler());
     }
