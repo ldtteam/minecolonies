@@ -391,11 +391,18 @@ public class Tree
     {
         boolean checkedLeaves = false;
         int leafCount = 0;
+        int dynamicBonusY = 0;
+        // Additional leaf search range for dynamic trees, as we start from the baselog
+        if (Compatibility.isDynamicBlock(world.getBlockState(pos).getBlock()))
+        {
+            dynamicBonusY = 10;
+        }
+
         for (int dx = -1; dx <= 1; dx++)
         {
             for (int dz = -1; dz <= 1; dz++)
             {
-                for (int dy = -1; dy <= 1; dy++)
+                for (int dy = -1; dy <= 1 + dynamicBonusY; dy++)
                 {
                     final BlockPos leafPos = pos.add(dx, dy, dz);
                     if (world.getBlockState(leafPos).getMaterial().equals(Material.LEAVES))
