@@ -167,11 +167,7 @@ public abstract class AbstractJob
      */
     public void addWorkerAIToTaskList(@NotNull final EntityAITasks tasks)
     {
-        workerAI = generateAI();
-        if (workerAI != null)
-        {
-            tasks.addTask(TASK_PRIORITY, workerAI);
-        }
+        tasks.addTask(TASK_PRIORITY, getOrGenWorkerAI());
     }
 
     /**
@@ -358,12 +354,16 @@ public abstract class AbstractJob
     }
 
     /**
-     * Get the worker AI associated to this job
-     *
+     * Get the worker AI associated to this job,
+     * generates the AI when not created yet.
      * @return worker AI
      */
-    public AbstractAISkeleton getWorkerAI()
+    public AbstractAISkeleton getOrGenWorkerAI()
     {
+        if (workerAI == null)
+        {
+            workerAI = generateAI();
+        }
         return workerAI;
     }
 

@@ -175,9 +175,9 @@ public class CitizenJobHandler
      */
     private AbstractEntityAIBasic getEntityAI()
     {
-        if (getColonyJob() != null && getColonyJob().getWorkerAI() instanceof AbstractEntityAIBasic)
+        if (getColonyJob() != null && getColonyJob().getOrGenWorkerAI() instanceof AbstractEntityAIBasic)
         {
-            return (AbstractEntityAIBasic) getColonyJob().getWorkerAI();
+            return (AbstractEntityAIBasic) getColonyJob().getOrGenWorkerAI();
         }
 
         return null;
