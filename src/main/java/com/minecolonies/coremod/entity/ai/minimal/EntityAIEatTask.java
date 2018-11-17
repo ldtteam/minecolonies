@@ -233,6 +233,11 @@ public class EntityAIEatTask extends EntityAIBase
             waitingTicks = 0;
             return EAT;
         }
+        // Reset AI after eating action
+        if (citizen.getCitizenJobHandler().getColonyJob() != null)
+        {
+            citizen.getCitizenJobHandler().getColonyJob().resetAIAfterEating();
+        }
         return IDLE;
     }
 
