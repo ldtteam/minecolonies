@@ -231,7 +231,7 @@ public class RaidManager implements IRaiderManager
                 }
                 else if (entry.getValue().getSecond() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * Configurations.gameplay.daysUntilPirateshipsDespawn < world.getWorldTime())
                 {
-                    StructureWrapper.unloadStructure(world, entry.getKey(), entry.getValue().getFirst(), 0, Mirror.NONE);
+                    StructureWrapper.unloadWaterStructure(world, entry.getKey(), entry.getValue().getFirst(), 0, Mirror.NONE);
                     schematicMap.remove(entry.getKey());
                     LanguageHandler.sendPlayersMessage(
                       colony.getMessageEntityPlayers(),

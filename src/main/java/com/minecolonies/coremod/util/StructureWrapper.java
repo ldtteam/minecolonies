@@ -7,8 +7,8 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -18,6 +18,7 @@ import com.minecolonies.structures.helpers.StructureProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockStairs;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -131,6 +132,17 @@ public final class StructureWrapper
     }
 
     /**
+     * Unloads a structure spawn on water. Fills up with water to fit the surrounding water
+     */
+    public static void unloadWaterStructure(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final String first, final int rotation, @NotNull final Mirror mirror)
+    {
+        @NotNull final StructureWrapper structureWrapper = new StructureWrapper(world, first);
+        structureWrapper.position = pos;
+        structureWrapper.rotate(rotation, world, pos, mirror);
+        structureWrapper.removeStructureInWater(pos.subtract(structureWrapper.getOffset()));
+    }
+
+    /**
      * Rotates the structure x times.
      *
      * @param times     times to rotateWithMirror.
@@ -162,6 +174,57 @@ public final class StructureWrapper
                     if (!world.isAirBlock(worldPos))
                     {
                         world.setBlockToAir(worldPos);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Remove a structure surrounded by water from the world.
+     * Places water or Air, depending on the surrounding
+     *
+     * @param pos coordinates
+     */
+    private void removeStructureInWater(@NotNull final BlockPos pos)
+    {
+        setLocalPosition(pos);
+
+        // Find the waterlevel
+        int waterLevel = 0;
+        for (int j = structure.getHeight(); j > 0 && waterLevel == 0; j--)
+        {
+            for (int k = 0; k < structure.getLength() * 2; k++)
+            {
+                for (int i = 0; i < structure.getWidth() * 2; i++)
+                {
+                    if (world.getBlockState(pos.add(i, j, k)).getMaterial() == Material.WATER)
+                    {
+                        waterLevel = j;
+                        break;
+                    }
+                }
+            }
+        }
+
+        for (int j = 0; j < structure.getHeight(); j++)
+        {
+            for (int k = 0; k < structure.getLength(); k++)
+            {
+                for (int i = 0; i < structure.getWidth(); i++)
+                {
+                    @NotNull final BlockPos localPos = new BlockPos(i, j, k);
+                    final BlockPos worldPos = pos.add(localPos);
+                    if (!world.isAirBlock(worldPos))
+                    {
+                        if (j <= waterLevel)
+                        {
+                            world.setBlockState(worldPos, Blocks.WATER.getDefaultState(), 3);
+                        }
+                        else
+                        {
+                            world.setBlockToAir(worldPos);
+                        }
                     }
                 }
             }
