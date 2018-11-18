@@ -269,4 +269,12 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
                 .filter(t -> t.getState() == state)
                 .anyMatch(AITarget::isOkayToEat);
     }
+
+    /**
+     * Resets the worker AI to Idle state, use with care interrupts all current Actions
+     */
+    public void resetAIToIdle()
+    {
+        state = AIState.IDLE;
+    }
 }
