@@ -54,7 +54,7 @@ public final class PirateEventUtils
         if (!ItemScanTool.saveStructureOnServer(world,
           targetSpawnPoint.down(3),
           targetSpawnPoint.add(structure.getWidth(), structure.getHeight(), structure.getLength()),
-          Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize + colony.getID() + colony.getDimension()))
+          Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize + colony.getID() + colony.getDimension() + targetSpawnPoint.down(3)))
         {
             // No event if we didnt successfully save the surroundings before
             Log.getLogger().info("Failed to save schematics for Pirate ship spawn");
