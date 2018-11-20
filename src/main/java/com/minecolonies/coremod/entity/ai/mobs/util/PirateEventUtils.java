@@ -4,7 +4,9 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.Structures;
+import com.minecolonies.coremod.items.ItemScanTool;
 import com.minecolonies.coremod.util.StructureWrapper;
+import com.minecolonies.structures.helpers.StructureProxy;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.Mirror;
@@ -21,6 +23,11 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RAID_EVENT
 public final class PirateEventUtils
 {
     /**
+     * Folder name for the pirate ship schematics
+     */
+    private static final String PIRATESHIP_FOLDER = "/Ships/";
+
+    /**
      * Private constructor to hide the implicit public one.
      */
     private PirateEventUtils()
@@ -32,16 +39,29 @@ public final class PirateEventUtils
 
     /**
      * Used to trigger a pirate event.
+     *
      * @param targetSpawnPoint the target spawn point.
-     * @param world the target world.
-     * @param colony the target colony.
-     * @param shipSize the size of the ship.
-     * @param raidNumber the size of the raid.
+     * @param world            the target world.
+     * @param colony           the target colony.
+     * @param shipSize         the size of the ship.
+     * @param raidNumber       the size of the raid.
      */
     public static void pirateEvent(final BlockPos targetSpawnPoint, final World world, final Colony colony, final String shipSize, final int raidNumber)
     {
-        colony.getRaiderManager().registerRaiderOriginSchematic(Structures.SCHEMATICS_PREFIX + "/Ships/" + shipSize, targetSpawnPoint.down(3), world.getWorldTime());
-        StructureWrapper.loadAndPlaceStructureWithRotation(world, Structures.SCHEMATICS_PREFIX + "/Ships/" + shipSize, targetSpawnPoint.down(3), 0, Mirror.NONE, false);
+
+
+        final StructureProxy structure = new StructureProxy(world, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize);
+        if (!ItemScanTool.saveStructureOnServer(world,
+          targetSpawnPoint.down(3),
+          targetSpawnPoint.add(structure.getWidth(), structure.getHeight(), structure.getLength()),
+          Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize + colony.getID() + colony.getDimension() + targetSpawnPoint.down(3)))
+        {
+            // No event if we didnt successfully save the surroundings before
+            Log.getLogger().info("Failed to save schematics for Pirate ship spawn");
+            return;
+        }
+        colony.getRaiderManager().registerRaiderOriginSchematic(Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, targetSpawnPoint.down(3), world.getWorldTime());
+        StructureWrapper.loadAndPlaceStructureWithRotation(world, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, targetSpawnPoint.down(3), 0, Mirror.NONE, false);
         loadSpawners(world, targetSpawnPoint, shipSize);
         LanguageHandler.sendPlayersMessage(
           colony.getMessageEntityPlayers(),

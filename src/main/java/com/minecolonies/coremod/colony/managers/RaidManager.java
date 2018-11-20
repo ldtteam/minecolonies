@@ -5,6 +5,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
@@ -231,7 +232,13 @@ public class RaidManager implements IRaiderManager
                 }
                 else if (entry.getValue().getSecond() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * Configurations.gameplay.daysUntilPirateshipsDespawn < world.getWorldTime())
                 {
-                    StructureWrapper.unloadStructure(world, entry.getKey(), entry.getValue().getFirst(), 0, Mirror.NONE);
+                    // Load the backup from before spawning
+                    StructureWrapper.loadAndPlaceStructureWithRotation(world,
+                      new StructureName("scans", "backup", entry.getValue().getFirst()).toString() + colony.getID() + colony.getDimension() + entry.getKey(),
+                      entry.getKey(),
+                      0,
+                      Mirror.NONE,
+                      true);
                     schematicMap.remove(entry.getKey());
                     LanguageHandler.sendPlayersMessage(
                       colony.getMessageEntityPlayers(),
