@@ -122,7 +122,7 @@ public class CitizenJobHandler
 
         if (job != null)
         {
-            job.addWorkerAIToTaskList(citizen.tasks, citizen);
+            job.addWorkerAIToTaskList(citizen.tasks);
             if (citizen.ticksExisted > 0 && citizen.getCitizenColonyHandler().getWorkBuilding() != null)
             {
                 BlockPosUtil.tryMoveLivingToXYZ(citizen, citizen.getCitizenColonyHandler().getWorkBuilding().getLocation());
@@ -175,9 +175,9 @@ public class CitizenJobHandler
      */
     private AbstractEntityAIBasic getEntityAI()
     {
-        if (getColonyJob() != null && getColonyJob().getOrGenWorkerAI(citizen) instanceof AbstractEntityAIBasic)
+        if (getColonyJob() != null && getColonyJob().getOrGenWorkerAI() instanceof AbstractEntityAIBasic)
         {
-            return (AbstractEntityAIBasic) getColonyJob().getOrGenWorkerAI(citizen);
+            return (AbstractEntityAIBasic) getColonyJob().getOrGenWorkerAI();
         }
 
         return null;
