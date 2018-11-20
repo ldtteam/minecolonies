@@ -250,11 +250,7 @@ public final class EntityUtils
      */
     public static boolean tryMoveLivingToXYZ(@NotNull final EntityLiving living, final int x, final int y, final int z, final double speed)
     {
-        if (living.getNavigator().noPath())
-        {
-            return living.getNavigator().tryMoveToXYZ(x, y, z, speed);
-        }
-        return false;
+        return living.getNavigator().tryMoveToXYZ(x, y, z, speed);
     }
 
     /**
@@ -306,7 +302,7 @@ public final class EntityUtils
 
             if (spawnPoint == null)
             {
-                spawnPoint = new BlockPos(x,y,z);
+                spawnPoint = new BlockPos(x, y, z);
             }
 
             entity.setLocationAndAngles(

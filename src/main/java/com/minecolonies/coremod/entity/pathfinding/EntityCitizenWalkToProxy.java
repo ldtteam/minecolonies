@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.entity.ai.pathfinding.AbstractWalkToProxy;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
@@ -239,6 +240,12 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
     @Override
     public boolean isLivingAtSiteWithMove(final EntityLiving entity, final int x, final int y, final int z, final int range)
     {
-        return WorkerUtil.isWorkerAtSiteWithMove((EntityCitizen) entity, x, y, z, range);
+        if (!WorkerUtil.isWorkerAtSiteWithMove((EntityCitizen) entity, x, y, z, range))
+        {
+            EntityUtils.tryMoveLivingToXYZ(entity, x, y, z);
+            return false;
+        }
+        return true;
     }
+
 }
