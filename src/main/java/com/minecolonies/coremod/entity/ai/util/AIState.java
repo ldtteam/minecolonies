@@ -8,6 +8,11 @@ package com.minecolonies.coremod.entity.ai.util;
 public enum AIState
 {
 
+    /**
+     * Replacement of null, used when a Target is always calculated
+     */
+    NULLSTATE,
+
     /*
 ###GENERAL###
      */

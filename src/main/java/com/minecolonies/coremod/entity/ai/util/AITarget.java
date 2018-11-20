@@ -59,7 +59,14 @@ public class AITarget
      */
     public AITarget(@Nullable final AIState state, final boolean isOkayToEat, @NotNull final BooleanSupplier predicate, @NotNull final Supplier<AIState> action)
     {
-        this.state = state;
+        if (state == null)
+        {
+            this.state = AIState.NULLSTATE;
+        }
+        else
+        {
+            this.state = state;
+        }
         this.predicate = predicate;
         this.action = action;
         this.okayToEat = isOkayToEat;

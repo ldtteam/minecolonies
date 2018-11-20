@@ -15,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Skeleton class for worker ai.
@@ -27,21 +29,21 @@ import java.util.Arrays;
 public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAIBase
 {
 
-    private static final int                 MUTEX_MASK = 3;
+    private static final int                               MUTEX_MASK = 3;
     @NotNull
-    protected final      J                   job;
+    protected final      J                                 job;
     @NotNull
-    protected final      EntityCitizen       worker;
-    protected final      World               world;
+    protected final      EntityCitizen                     worker;
+    protected final      World                             world;
     @NotNull
-    protected final      ChatSpamFilter      chatSpamFilter;
+    protected final      ChatSpamFilter                    chatSpamFilter;
     @NotNull
-    private final        ArrayList<AITarget> targetList;
+    private final        Map<AIState, ArrayList<AITarget>> targetMap;
     /**
      * The current state the ai is in.
      * Used to compare to state matching targets.
      */
-    private              AIState             state;
+    private              AIState                           state;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -57,7 +59,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
             throw new IllegalArgumentException("Cannot instantiate a AI from a Job that is attached to a Citizen without entity.");
         }
 
-        this.targetList = new ArrayList<>();
+        this.targetMap = new HashMap<>();
         setMutexBits(MUTEX_MASK);
         this.job = job;
         this.worker = this.job.getCitizen().getCitizenEntity().get();
@@ -73,7 +75,16 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      */
     private void registerTarget(final AITarget target)
     {
-        targetList.add(target);
+        if (!targetMap.containsKey(target.getState()))
+        {
+            final ArrayList<AITarget> newList = new ArrayList<>();
+            newList.add(target);
+            targetMap.put(target.getState(), newList);
+        }
+        else
+        {
+            targetMap.get(target.getState()).add(target);
+        }
     }
 
     /**
@@ -132,7 +143,10 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     @Override
     public final void updateTask()
     {
-        targetList.stream().anyMatch(this::checkOnTarget);
+        if (!targetMap.get(AIState.NULLSTATE).stream().anyMatch(this::checkOnTarget))
+        {
+            targetMap.get(state).stream().anyMatch(this::checkOnTarget);
+        }
     }
 
     /**
@@ -162,10 +176,6 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      */
     private boolean checkOnTarget(@NotNull final AITarget target)
     {
-        if (state != target.getState() && target.getState() != null)
-        {
-            return false;
-        }
         try
         {
             if (!target.test())
@@ -175,7 +185,6 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         }
         catch (final RuntimeException e)
         {
-            Log.getLogger().warn("Condition check for target " + target + " threw an exception:", e);
             this.onException(e);
             return false;
         }
@@ -246,10 +255,13 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      */
     public boolean isOkayToEat()
     {
-        return targetList
-                .stream()
-                .filter(t -> t.getState() == state)
-                .anyMatch(AITarget::isOkayToEat);
+        if (targetMap.get(state) == null)
+        {
+            return false;
+        }
+        return targetMap.get(state)
+                 .stream()
+                 .anyMatch(AITarget::isOkayToEat);
     }
 
     /**
