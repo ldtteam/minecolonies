@@ -25,7 +25,7 @@ public final class PirateEventUtils
     /**
      * Folder name for the pirate ship schematics
      */
-    private static String PIRATESHIP_FOLDER = "/Ships/";
+    private static final String PIRATESHIP_FOLDER = "/Ships/";
 
     /**
      * Private constructor to hide the implicit public one.
