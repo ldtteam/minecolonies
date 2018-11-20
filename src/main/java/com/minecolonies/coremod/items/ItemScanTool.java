@@ -2,16 +2,22 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowScan;
+import com.minecolonies.coremod.colony.StructureName;
+import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.network.messages.SaveScanMessage;
+import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.*;
@@ -21,7 +27,10 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.gen.structure.template.Template;
 import net.minecraft.world.gen.structure.template.TemplateManager;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 import static com.minecolonies.api.util.constant.Constants.MAX_SCHEMATIC_SIZE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.FIRST_POS_STRING;
@@ -85,14 +94,14 @@ public class ItemScanTool extends AbstractItemMinecolonies
     @NotNull
     @Override
     public EnumActionResult onItemUse(
-                                       final EntityPlayer playerIn,
-                                       final World worldIn,
-                                       final BlockPos pos,
-                                       final EnumHand hand,
-                                       final EnumFacing facing,
-                                       final float hitX,
-                                       final float hitY,
-                                       final float hitZ)
+      final EntityPlayer playerIn,
+      final World worldIn,
+      final BlockPos pos,
+      final EnumHand hand,
+      final EnumFacing facing,
+      final float hitX,
+      final float hitY,
+      final float hitZ)
     {
         final ItemStack stack = playerIn.getHeldItem(hand);
         if (!stack.hasTagCompound())
@@ -124,21 +133,17 @@ public class ItemScanTool extends AbstractItemMinecolonies
      * @param from   First corner.
      * @param to     Second corner.
      * @param player causing this action.
-     * @param name the name of it.
+     * @param name   the name of it.
      */
-    public static void saveStructure(@Nullable final World world, @Nullable final BlockPos from, @Nullable final BlockPos to, @NotNull final EntityPlayer player, final String name)
+    public static void saveStructure(@NotNull final World world, @NotNull final BlockPos from, @NotNull final BlockPos to, @NotNull final EntityPlayer player, final String name)
     {
-        if (world == null || from == null || to == null)
-        {
-            throw new IllegalArgumentException("Invalid method call, arguments can't be null. Contact a developer.");
-        }
 
         final BlockPos blockpos =
           new BlockPos(Math.min(from.getX(), to.getX()), Math.min(from.getY(), to.getY()), Math.min(from.getZ(), to.getZ()));
         final BlockPos blockpos1 =
           new BlockPos(Math.max(from.getX(), to.getX()), Math.max(from.getY(), to.getY()), Math.max(from.getZ(), to.getZ()));
         final BlockPos size = blockpos1.subtract(blockpos).add(1, 1, 1);
-        if(size.getX() * size.getY() * size.getZ() > MAX_SCHEMATIC_SIZE)
+        if (size.getX() * size.getY() * size.getZ() > MAX_SCHEMATIC_SIZE)
         {
             LanguageHandler.sendPlayerMessage(player, MAX_SCHEMATIC_SIZE_REACHED, MAX_SCHEMATIC_SIZE);
             return;
@@ -151,7 +156,7 @@ public class ItemScanTool extends AbstractItemMinecolonies
         final String currentMillisString = Long.toString(currentMillis);
         final String prefix = "/minecolonies/scans/";
         final String fileName;
-        if(name == null || name.isEmpty())
+        if (name == null || name.isEmpty())
         {
             fileName = LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillisString);
         }
@@ -164,6 +169,55 @@ public class ItemScanTool extends AbstractItemMinecolonies
         template.takeBlocksFromWorld(world, blockpos, size, true, Blocks.STRUCTURE_VOID);
         template.setAuthor(Constants.MOD_ID);
         MineColonies.getNetwork().sendTo(
-                new SaveScanMessage(template.writeToNBT(new NBTTagCompound()), fileName), (EntityPlayerMP) player);
+          new SaveScanMessage(template.writeToNBT(new NBTTagCompound()), fileName), (EntityPlayerMP) player);
+    }
+
+    public static boolean saveStructureOnServer(@NotNull final World world, @NotNull final BlockPos from, @NotNull final BlockPos to, final String name)
+    {
+
+        final BlockPos blockpos =
+          new BlockPos(Math.min(from.getX(), to.getX()), Math.min(from.getY(), to.getY()), Math.min(from.getZ(), to.getZ()));
+        final BlockPos blockpos1 =
+          new BlockPos(Math.max(from.getX(), to.getX()), Math.max(from.getY(), to.getY()), Math.max(from.getZ(), to.getZ()));
+        final BlockPos size = blockpos1.subtract(blockpos).add(1, 1, 1);
+        if (size.getX() * size.getY() * size.getZ() > MAX_SCHEMATIC_SIZE)
+        {
+            Log.getLogger().warn("Saving too large schematic for:" + name);
+        }
+        final WorldServer worldserver = (WorldServer) world;
+        final MinecraftServer minecraftserver = world.getMinecraftServer();
+        final TemplateManager templatemanager = worldserver.getStructureTemplateManager();
+
+        final String prefix = "scans";
+        final String fileName;
+        if (name == null || name.isEmpty())
+        {
+            fileName = LanguageHandler.format("item.scepterSteel.scanFormat");
+        }
+        else
+        {
+            fileName = name;
+        }
+
+        final StructureName structureName = new StructureName(prefix, "backup", fileName);
+
+        final Template template = templatemanager.getTemplate(minecraftserver,
+          new ResourceLocation(Structure.getClientSchematicsFolder() + "/" + structureName.toString() + Structures.SCHEMATIC_EXTENSION));
+
+        template.takeBlocksFromWorld(world, blockpos, size, false, Blocks.STRUCTURE_VOID);
+        template.setAuthor(Constants.MOD_ID);
+
+        final File file = new File(Structure.getClientSchematicsFolder(), structureName.toString() + Structures.SCHEMATIC_EXTENSION);
+        Utils.checkDirectory(file.getParentFile());
+
+        try (OutputStream outputstream = new FileOutputStream(file))
+        {
+            CompressedStreamTools.writeCompressed(template.writeToNBT(new NBTTagCompound()), outputstream);
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+        return true;
     }
 }
