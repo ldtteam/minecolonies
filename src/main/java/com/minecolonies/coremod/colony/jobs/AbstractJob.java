@@ -165,9 +165,9 @@ public abstract class AbstractJob
      *
      * @param tasks EntityAITasks list to add tasks to.
      */
-    public void addWorkerAIToTaskList(@NotNull final EntityAITasks tasks)
+    public void addWorkerAIToTaskList(@NotNull final EntityAITasks tasks, @NotNull final EntityCitizen worker)
     {
-        tasks.addTask(TASK_PRIORITY, getOrGenWorkerAI());
+        tasks.addTask(TASK_PRIORITY, getOrGenWorkerAI(worker));
     }
 
     /**
@@ -358,12 +358,14 @@ public abstract class AbstractJob
      * generates the AI when not created yet.
      * @return worker AI
      */
-    public AbstractAISkeleton getOrGenWorkerAI()
+    public AbstractAISkeleton getOrGenWorkerAI(@NotNull final EntityCitizen worker)
     {
         if (workerAI == null)
         {
             workerAI = generateAI();
         }
+        // update the AI's worker, as we're saving the AI in the Job
+        workerAI.updateWorkerInstance(worker);
         return workerAI;
     }
 

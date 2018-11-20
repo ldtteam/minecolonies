@@ -27,21 +27,21 @@ import java.util.Arrays;
 public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAIBase
 {
 
-    private static final int MUTEX_MASK = 3;
+    private static final int                 MUTEX_MASK = 3;
     @NotNull
-    protected final J                   job;
+    protected final      J                   job;
     @NotNull
-    protected final EntityCitizen       worker;
-    protected final World               world;
+    protected            EntityCitizen       worker;
+    protected final      World               world;
     @NotNull
-    protected final ChatSpamFilter      chatSpamFilter;
+    protected final      ChatSpamFilter      chatSpamFilter;
     @NotNull
-    private final   ArrayList<AITarget> targetList;
+    private final        ArrayList<AITarget> targetList;
     /**
      * The current state the ai is in.
      * Used to compare to state matching targets.
      */
-    private         AIState             state;
+    private              AIState             state;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -258,5 +258,15 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     public void resetAIToIdle()
     {
         state = AIState.IDLE;
+    }
+
+    /**
+     * Update the worker instance, worker AI is saved in the Job
+     *
+     * @param worker worker to set
+     */
+    public void updateWorkerInstance(final EntityCitizen worker)
+    {
+        this.worker = worker;
     }
 }
