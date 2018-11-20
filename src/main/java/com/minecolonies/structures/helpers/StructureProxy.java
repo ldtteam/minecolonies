@@ -67,6 +67,13 @@ public class StructureProxy
         for (final Template.EntityInfo info : structure.getTileEntities())
         {
             final BlockPos tempPos = info.blockPos;
+
+            // Don't load item entities
+            if (info.entityData.getString("id").equals("minecraft:item"))
+            {
+                continue;
+            }
+
             entities[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info;
         }
     }
@@ -321,6 +328,12 @@ public class StructureProxy
 
         for (final Template.EntityInfo info : structure.getTileEntities())
         {
+            // Don't load item entities
+            if (info.entityData.getString("id").equals("minecraft:item"))
+            {
+                continue;
+            }
+
             final Template.EntityInfo newInfo = structure.transformEntityInfoWithSettings(info, world, rotatePos.subtract(offset).add(new BlockPos(minX, minY, minZ)), settings);
             //289 74 157 - 289.9 76.5, 157.5
             final BlockPos tempPos = Template.transformedBlockPos(settings, info.blockPos);
