@@ -360,7 +360,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return (worker.getCitizenInventoryHandler().isInventoryFull()
                   || job.getActionsDone() >= getActionsDoneUntilDumping()
                   || wantInventoryDumped())
-                 && !(job instanceof JobDeliveryman);
+                 && !(job instanceof JobDeliveryman) && getState() != INVENTORY_FULL;
     }
 
     /**
