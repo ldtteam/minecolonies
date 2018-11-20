@@ -167,7 +167,8 @@ public abstract class AbstractJob
      */
     public void addWorkerAIToTaskList(@NotNull final EntityAITasks tasks)
     {
-        tasks.addTask(TASK_PRIORITY, getOrGenWorkerAI());
+        workerAI = generateAI();
+        tasks.addTask(TASK_PRIORITY, workerAI);
     }
 
     /**
@@ -358,17 +359,8 @@ public abstract class AbstractJob
      * generates the AI when not created yet.
      * @return worker AI
      */
-    public AbstractAISkeleton getOrGenWorkerAI()
+    public AbstractAISkeleton getWorkerAI()
     {
-        if (workerAI == null)
-        {
-            workerAI = generateAI();
-        }
-        // update the AI's worker, as we're saving the AI in the Job
-        if (citizen.getCitizenEntity().isPresent())
-        {
-            workerAI.updateWorkerInstance(citizen.getCitizenEntity().get());
-        }
         return workerAI;
     }
 

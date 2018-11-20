@@ -31,7 +31,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     @NotNull
     protected final      J                   job;
     @NotNull
-    protected            EntityCitizen       worker;
+    protected final      EntityCitizen       worker;
     protected final      World               world;
     @NotNull
     protected final      ChatSpamFilter      chatSpamFilter;
@@ -260,13 +260,4 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         state = AIState.IDLE;
     }
 
-    /**
-     * Update the worker instance, worker AI is saved in the Job
-     *
-     * @param worker worker to set
-     */
-    public void updateWorkerInstance(final EntityCitizen worker)
-    {
-        this.worker = worker;
-    }
 }
