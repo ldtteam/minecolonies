@@ -234,7 +234,7 @@ public class RaidManager implements IRaiderManager
                 {
                     // Load the backup from before spawning
                     StructureWrapper.loadAndPlaceStructureWithRotation(world,
-                      new StructureName("scans", "backup", entry.getValue().getFirst()).toString() + colony.getID() + colony.getDimension() + entry.getKey(),
+                      new StructureName("cache", "backup", entry.getValue().getFirst()).toString() + colony.getID() + colony.getDimension() + entry.getKey(),
                       entry.getKey(),
                       0,
                       Mirror.NONE,
