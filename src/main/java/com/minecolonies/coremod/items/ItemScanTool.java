@@ -188,7 +188,7 @@ public class ItemScanTool extends AbstractItemMinecolonies
         final MinecraftServer minecraftserver = world.getMinecraftServer();
         final TemplateManager templatemanager = worldserver.getStructureTemplateManager();
 
-        final String prefix = "scans";
+        final String prefix = "cache";
         final String fileName;
         if (name == null || name.isEmpty())
         {
@@ -202,12 +202,12 @@ public class ItemScanTool extends AbstractItemMinecolonies
         final StructureName structureName = new StructureName(prefix, "backup", fileName);
 
         final Template template = templatemanager.getTemplate(minecraftserver,
-          new ResourceLocation(Structure.getClientSchematicsFolder() + "/" + structureName.toString() + Structures.SCHEMATIC_EXTENSION));
+          new ResourceLocation(Structure.getCachedSchematicsFolder() + "/" + structureName.toString() + Structures.SCHEMATIC_EXTENSION));
 
         template.takeBlocksFromWorld(world, blockpos, size, false, Blocks.STRUCTURE_VOID);
         template.setAuthor(Constants.MOD_ID);
 
-        final File file = new File(Structure.getClientSchematicsFolder(), structureName.toString() + Structures.SCHEMATIC_EXTENSION);
+        final File file = new File(Structure.getCachedSchematicsFolder(), structureName.toString() + Structures.SCHEMATIC_EXTENSION);
         Utils.checkDirectory(file.getParentFile());
 
         try (OutputStream outputstream = new FileOutputStream(file))
