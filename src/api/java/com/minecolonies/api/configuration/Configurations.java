@@ -66,10 +66,10 @@ public class Configurations
 
         @Config.Comment("Ores for the miner to mine that aren't autodetected")
         public String[] extraOres = new String[]
-                {
-                        "minestuck:ore_cruxite",
-                        "minestuck:ore_uranium",
-                };
+                                      {
+                                        "minestuck:ore_cruxite",
+                                        "minestuck:ore_uranium",
+                                      };
 
         @Config.Comment("Should workers work during the rain?")
         public boolean workersAlwaysWorkInRain = false;
@@ -108,7 +108,7 @@ public class Configurations
         public int minimumNumberOfNightsBetweenRaids = 1;
 
         @Config.Comment("Should players be allowed to build their colonies over existing villages?")
-        public boolean protectVillages = false;
+        public boolean protectVillages         = false;
         /* schematics usage */
         @Config.Comment("Should the default schematics be ignored (from the jar)?")
         public boolean ignoreSchematicsFromJar = false;
@@ -120,15 +120,15 @@ public class Configurations
         public int maxCachedSchematics = 100;
 
         @Config.Comment("Should players be allowed to change names? -1 for false, 0 for specific groups, 1 for true")
-        public  int allowGlobalNameChanges = 1;
+        public int allowGlobalNameChanges = 1;
 
         @Config.Comment("Players who have special permission (Patreons for example)")
-        public  String[] specialPermGroup = new String[]
-                {
-                        "_Raycoms_"
-                };
+        public String[] specialPermGroup = new String[]
+                                             {
+                                               "_Raycoms_"
+                                             };
 
-    /* Command configs */
+        /* Command configs */
 
         @Config.Comment("Time until a next teleport can be executed (in seconds)")
         public int teleportBuffer = 120;
@@ -211,41 +211,50 @@ public class Configurations
         public boolean enableInDevelopmentFeatures = false;
 
         @Config.Comment("Blocks players should be able to interact with in any colony (Ex vending machines)")
-        public String[] freeToInteractBlocks = new String[]
-                                                 {
-                                                   "block:dirt",
-                                                   "0 0 0"
-                                                 };
+        public String[] freeToInteractBlocks  = new String[]
+                                                  {
+                                                    "block:dirt",
+                                                    "0 0 0"
+                                                  };
         @Config.Comment("Should colonies in other dimensions be allowed (Default = false)?")
-        public boolean allowOtherDimColonies = false;
+        public boolean  allowOtherDimColonies = false;
 
         @Config.Comment("ResourceLocations for extra entities for the GuardHut's list. \n"
                           + "once done you'll need to recalculate the list."
                           + "EntityMob's already calculated in list.")
         public String[] guardResourceLocations = new String[]
-                                                           {
-                                                             "minecraft:slime",
-                                                             "tconstruct:blueslime"
-                                                           };
+                                                   {
+                                                     "minecraft:slime",
+                                                     "tconstruct:blueslime"
+                                                   };
+
+        @Config.Comment("List of items the Students in the library can use. \n"
+                          + "Format: itemname;SkillIncreasePCT[100-1000];BreakPCT[0-100] \n"
+                          + "Example: minecraft:paper;300;100 \n"
+                          + "Which adds minecraft Paper with a 300%(3x) increased chance to skillup and a 100% chance to be used up during the try to skillup")
+        public final String[] configListStudyItems = new String[]
+                                                       {
+                                                         "minecraft:paper;300;100"
+                                                       };
 
         @Config.Comment("The items and item-tags that the composter can use to produce compost.")
         public String[] listOfCompostableItems = new String[]
-                                                            {
-                                                              "minecraft:rotten_flesh",
-                                                              "minecraft:tallgrass",
-                                                              "minecraft:yellow_flower",
-                                                              "minecraft:red_flower",
-                                                              "minecraft:brown_mushroom",
-                                                              "minecraft:red_mushroom",
-                                                              "minecraft:double_plant",
-                                                              "food",
-                                                              "seed",
-                                                              "treeSapling"
-                                                            };
+                                                   {
+                                                     "minecraft:rotten_flesh",
+                                                     "minecraft:tallgrass",
+                                                     "minecraft:yellow_flower",
+                                                     "minecraft:red_flower",
+                                                     "minecraft:brown_mushroom",
+                                                     "minecraft:red_mushroom",
+                                                     "minecraft:double_plant",
+                                                     "food",
+                                                     "seed",
+                                                     "treeSapling"
+                                                   };
 
         @Config.Comment("Turn on Minecolonies pvp mode, attention (colonies can be destroyed and can be griefed under certain conditions.)")
         public boolean pvp_mode = false;
-     }
+    }
 
     public static class Pathfinding
     {

@@ -9,6 +9,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
@@ -42,7 +43,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     /**
      * Entities to kill before dumping into chest.
      */
-    private static final int ACTIONS_UNTIL_DUMPING = 10;
+    private static final int ACTIONS_UNTIL_DUMPING = 5;
 
     /**
      * Max derivation of current position when patrolling.
@@ -373,6 +374,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             final List<EntityLivingBase> targets = world.getEntitiesWithinAABB(EntityLivingBase.class, getSearchArea(),
               entity -> buildingGuards.getMobsToAttack()
                           .stream()
+                          .filter(MobEntryView::hasAttack)
                           .anyMatch(mobEntry -> mobEntry.getEntityEntry().getEntityClass().isInstance(entity)));
 
 

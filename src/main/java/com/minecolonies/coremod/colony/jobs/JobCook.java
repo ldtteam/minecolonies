@@ -42,7 +42,7 @@ public class JobCook extends AbstractJob
     @Override
     public RenderBipedCitizen.Model getModel()
     {
-        return RenderBipedCitizen.Model.BAKER;
+        return RenderBipedCitizen.Model.COOK;
     }
 
     /**

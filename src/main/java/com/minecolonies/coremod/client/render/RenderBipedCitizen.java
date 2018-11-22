@@ -35,6 +35,11 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         idToMaleModelMap.put(Model.FISHERMAN, new ModelEntityFishermanMale());
         idToMaleModelMap.put(Model.BAKER, new ModelEntityBakerMale());
         idToMaleModelMap.put(Model.COMPOSTER, new ModelEntityComposterMale());
+        idToMaleModelMap.put(Model.COOK, new ModelEntityCookMale());
+        idToMaleModelMap.put(Model.CHICKEN_FARMER, new ModelEntityChickenFarmerMale());
+        idToMaleModelMap.put(Model.SHEEP_FARMER, new ModelEntitySheepFarmerMale());
+        idToMaleModelMap.put(Model.PIG_FARMER, new ModelEntityPigFarmerMale());
+        idToMaleModelMap.put(Model.COW_FARMER, new ModelEntityCowFarmerMale());
 
         idToFemaleModelMap.put(Model.NOBLE, new ModelEntityCitizenFemaleNoble());
         idToFemaleModelMap.put(Model.ARISTOCRAT, new ModelEntityCitizenFemaleAristocrat());
@@ -48,6 +53,11 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         idToFemaleModelMap.put(Model.KNIGHT_GUARD, new ModelBiped());
         idToFemaleModelMap.put(Model.BAKER, new ModelEntityBakerFemale());
         idToFemaleModelMap.put(Model.COMPOSTER, new ModelEntityComposterFemale());
+        idToFemaleModelMap.put(Model.COOK, new ModelEntityCookFemale());
+        idToFemaleModelMap.put(Model.CHICKEN_FARMER, new ModelEntityFarmerFemale());
+        idToFemaleModelMap.put(Model.COW_FARMER, new ModelEntityFarmerFemale());
+        idToFemaleModelMap.put(Model.PIG_FARMER, new ModelEntityFarmerFemale());
+        idToFemaleModelMap.put(Model.SHEEP_FARMER, new ModelEntityFarmerFemale());
     }
     /**
      * Renders model, see {@link RenderBiped}.
@@ -133,7 +143,9 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         COW_FARMER("cowfarmer", 1),
         PIG_FARMER("pigfarmer", 1),
         CHICKEN_FARMER("chickenfarmer", 1),
-        COMPOSTER("composter", 1);
+        COMPOSTER("composter", 1),
+        COOK("cook", 1);
+
         /**
          * String describing the citizen.
          * Used by the renderer.

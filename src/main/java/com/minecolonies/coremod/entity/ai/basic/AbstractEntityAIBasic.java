@@ -87,11 +87,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private boolean hasDelayed = false;
 
     /**
-     * A counter to dump the inventory after x actions.
-     */
-    private int actionsDone = 0;
-
-    /**
      * Walk to proxy.
      */
     private IWalkToProxy proxy;
@@ -107,6 +102,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private BlockPos restaurant = null;
 
     /**
+     * Slot he is currently trying to dump.
+     */
+    private int slotAt = 0;
+
+    /**
      * Delay for walking.
      */
     protected static final int WALK_DELAY = 20;
@@ -120,6 +120,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * The current position the worker should walk to.
      */
     protected BlockPos walkTo = null;
+
+    /**
+     * Already kept items during the dumping cycle.
+     */
+    private final List<ItemStorage> alreadyKept = new ArrayList<>();
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -246,7 +251,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 walkTo = pos;
             }
 
-            if (walkToBlock(walkTo))
+            if (walkToBlock(walkTo) && !worker.getCitizenStuckHandler().isStuck())
             {
                 setDelay(2);
                 return getState();
@@ -412,7 +417,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private boolean inventoryNeedsDump()
     {
         return (worker.getCitizenInventoryHandler().isInventoryFull()
-                  || actionsDone >= getActionsDoneUntilDumping()
+                  || job.getActionsDone() >= getActionsDoneUntilDumping()
                   || wantInventoryDumped())
                  && !(job instanceof JobDeliveryman);
     }
@@ -599,7 +604,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 final ItemStack deliveredItemStack = firstDeliverableRequest.getDelivery();
                 final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
                         stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(deliveredItemStack, stack, true, true));
-                if (count >= deliveredItemStack.getCount() && getTotalRequiredAmount(deliveredItemStack) <= count)
+                if (count >= deliveredItemStack.getCount())
                 {
                     return NEEDS_ITEM;
                 }
@@ -1050,6 +1055,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             delay += DELAY_RECHECK;
             return INVENTORY_FULL;
         }
+
+        alreadyKept.clear();
+        slotAt = 0;
         //collect items that are nice to have if they are available
         this.itemsNiceToHave().forEach(this::isInHut);
         // we dumped the inventory, reset actions done
@@ -1079,17 +1087,34 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean dumpOneMoreSlot()
     {
-        //Items already kept in the inventory
-        final List<ItemStorage> alreadyKept = new ArrayList<>();
+        if (walkToBuilding())
+        {
+            return true;
+        }
+
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 
-        return buildingWorker != null
-                 && (walkToBuilding() || InventoryFunctions.matchFirstInHandlerWithAction(new InvWrapper(worker.getInventoryCitizen()),
-          itemStack -> !ItemStackUtils.isEmpty(itemStack) && !buildingWorker.buildingRequiresCertainAmountOfItem(itemStack, alreadyKept),
-          (handler, slot) ->
+        final ItemStack stackToDump = worker.getInventoryCitizen().getStackInSlot(slotAt);
+        final int totalSize = worker.getInventoryCitizen().getSizeInventory();
+
+        boolean dumpAnyway = false;
+        if (slotAt + MIN_OPEN_SLOTS * 2 >= totalSize)
+        {
+            final long openSlots = InventoryUtils.openSlotCount(new InvWrapper(worker.getInventoryCitizen()));
+            if (openSlots < MIN_OPEN_SLOTS * 2)
+            {
+                dumpAnyway = worker.getRandom().nextBoolean();
+            }
+        }
+
+        if (buildingWorker != null && !ItemStackUtils.isEmpty(stackToDump) && (!buildingWorker.buildingRequiresCertainAmountOfItem(stackToDump, alreadyKept) || dumpAnyway))
+        {
             InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(
-              new InvWrapper(worker.getInventoryCitizen()), slot, buildingWorker.getCapability(ITEM_HANDLER_CAPABILITY, null))
-        ));
+              new InvWrapper(worker.getInventoryCitizen()), slotAt, buildingWorker.getCapability(ITEM_HANDLER_CAPABILITY, null));
+        }
+        slotAt++;
+
+        return slotAt < totalSize;
     }
 
     /**
@@ -1106,12 +1131,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Clear the amount of blocks mined.
+     * Clear the actions done counter.
      * Call this when dumping into the chest.
      */
     private void clearActionsDone()
     {
-        this.actionsDone = 0;
+        job.clearActionsDone();
     }
 
     /**
@@ -1246,7 +1271,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     protected final void incrementActionsDoneAndDecSaturation()
     {
         worker.decreaseSaturationForAction();
-        actionsDone++;
+        job.incrementActionsDone();
     }
 
     /**
@@ -1261,7 +1286,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     protected final void incrementActionsDone()
     {
-        actionsDone++;
+        job.incrementActionsDone();
     }
 
     /**

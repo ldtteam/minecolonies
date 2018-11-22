@@ -297,6 +297,16 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     }
 
     @Override
+    public boolean canRenderInLayer(final IBlockState state, final BlockRenderLayer layer)
+    {
+        if (layer == BlockRenderLayer.CUTOUT || layer == BlockRenderLayer.SOLID)
+        {
+            return true;
+        }
+        return super.canRenderInLayer(state, layer);
+    }
+
+    @Override
     public boolean doesSideBlockRendering(final IBlockState state, final IBlockAccess world, final BlockPos pos, final EnumFacing face)
     {
         return false;

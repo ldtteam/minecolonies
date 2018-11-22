@@ -1,23 +1,32 @@
 {
-  "variants": {
-    "facing=up": {
-      "model": "minecolonies:blockHutLumberjack"
+  "forge_marker": 1,
+  "defaults": {
+    "model": "forge:multi-layer",
+    "custom": {
+      "base": "minecolonies:blockhutlumberjack#base",
+      "Solid": "minecolonies:blockhutlumberjack#base",
+      "Cutout": "minecolonies:blockhutlumberjack#overlay"
     },
+    "transform": "forge:default-block"
+  },
+  "variants": {
     "facing=east": {
-      "model": "minecolonies:blockHutLumberjack",
       "y": 0
     },
     "facing=south": {
-      "model": "minecolonies:blockHutLumberjack",
       "y": 90
     },
     "facing=west": {
-      "model": "minecolonies:blockHutLumberjack",
       "y": 180
     },
     "facing=north": {
-      "model": "minecolonies:blockHutLumberjack",
       "y": 270
-    }
+    },
+    "base": [{
+      "model": "minecolonies:blockhutlumberjack"
+    }],
+    "overlay": [{
+      "model": "minecolonies:blockhutlumberjacksapling"
+    }]
   }
 }

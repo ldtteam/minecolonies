@@ -34,7 +34,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     /**
      * This guard's minimum distance for attack.
      */
-    private static final int MAX_DISTANCE_FOR_ATTACK = 160;
+    private static final int MAX_DISTANCE_FOR_ATTACK = 150;
 
     /**
      * The value of the speed which the guard will move.
@@ -181,12 +181,12 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 timeCanSee--;
             }
 
-            if (distanceToEntity < getAttackDistance() && timeCanSee >= 20 && (!canSee && timeAtSameSpot > 20))
+            if (distanceToEntity > getAttackDistance() && timeCanSee >= 20 && (!canSee && timeAtSameSpot > 20))
             {
                 worker.getNavigator().clearPath();
                 strafingTime++;
             }
-            else if (distanceToEntity < getAttackRange())
+            else if (distanceToEntity > getAttackRange())
             {
                 worker.getNavigator().tryMoveToEntityLiving(target, ATTACK_SPEED);
                 strafingTime = -1;

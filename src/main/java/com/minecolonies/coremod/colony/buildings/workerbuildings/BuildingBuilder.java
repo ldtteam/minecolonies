@@ -170,9 +170,9 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     }
 
     @Override
-    public boolean canBeBuiltByBuilder()
+    public boolean canBeBuiltByBuilder(final int newLevel)
     {
-        return getBuildingLevel() == 0;
+        return getBuildingLevel() + 1 == newLevel;
     }
 
     /**

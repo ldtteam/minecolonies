@@ -5,9 +5,9 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelEntitySheepFarmerMale extends ModelBiped
+public class ModelEntityCowFarmerMale extends ModelBiped
 {
-    public ModelEntitySheepFarmerMale()
+    public ModelEntityCowFarmerMale()
     {
         ModelRenderer bagR;
         ModelRenderer bagL;
@@ -33,6 +33,7 @@ public class ModelEntitySheepFarmerMale extends ModelBiped
         bipedLeftArm.mirror = true;
         setRotation(bipedLeftArm, 0F, 0F, 0F);
 
+        bipedLeftArm.mirror = false;
         bipedRightLeg = new ModelRenderer(this, 0, 16);
         bipedRightLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
         bipedRightLeg.setRotationPoint(-2F, 12F, 0F);
@@ -114,12 +115,12 @@ public class ModelEntitySheepFarmerMale extends ModelBiped
     @Override
     public void render(
       @NotNull final Entity entity,
-      final float limbSwing,
-      final float limbSwingAmount,
-      final float ageInTicks,
-      final float netHeadYaw,
-      final float headPitch,
-      final float scaleFactor)
+                       final float limbSwing,
+                       final float limbSwingAmount,
+                       final float ageInTicks,
+                       final float netHeadYaw,
+                       final float headPitch,
+                       final float scaleFactor)
     {
         super.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
         setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);

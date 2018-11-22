@@ -52,13 +52,19 @@ public final class CommandConstants
     public static final String DELETE_COLONY_TASK_SCHEDULED = "Delete colony task scheduled.";
     @NonNls
     public static final String SUCCESFULLY_CLAIMED_CHUNKS = "Succesfully claimed chunks in every direction";
+    @NonNls
+    public static final String TOO_MANY_CHUNKS = "You are trying to claim an area bigger than twice the colony size! Aborting to avoid lags and crashes.";
+    @NonNls
+    public static final int CHUNKS_TO_CLAM_THRESHOLD = 50000;
+    @NonNls
+    public static final String TOO_MANY_CHUNKS_CLAIMED = "You already got a lot of chunks to be claimed in the storage, please try to generate these chunks bevore increasing it.";
 
     /**
      * Private constructor to hide the implicit one.
      */
     private CommandConstants()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }
