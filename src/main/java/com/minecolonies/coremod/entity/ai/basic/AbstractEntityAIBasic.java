@@ -151,12 +151,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             If yes, transition to NEEDS_ITEM.
             and wait for new items.
            */
+          new AITarget(NEEDS_ITEM, true, this::waitForRequests),
           new AITarget(() ->
-                         (getState() == NEEDS_ITEM
+                         (getState() != NEEDS_ITEM
                             || this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData())
-                            || this.getOwnBuilding()
-                                 .hasWorkerOpenRequestsFiltered(worker.getCitizenData(), r -> !worker.getCitizenData().isRequestAsync(r.getToken()))
-                         ) && !this.isPaused(), true, this::waitForRequests),
+                            || this.getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(), r -> !worker.getCitizenData().isRequestAsync(r.getToken()))
+                         ), true, () -> NEEDS_ITEM),
+
           /*
             Dumps inventory as long as needs be.
             If inventory is dumped, execution continues
@@ -167,15 +168,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             Check if inventory has to be dumped.
            */
           new AITarget(this::inventoryNeedsDump, INVENTORY_FULL, true),
-          /*
-           * Reset to idle if no specific tool is needed.
-           */
-          new AITarget(() ->
-                         getState() == NEEDS_TOOL
-                           && !this.isPaused()
-                           && this.getOwnBuilding()
-                                .getOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Tool.class))
-                                .isEmpty(), IDLE, true),
           /*
            * Gather a needed item.
            */
@@ -196,7 +188,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
            * Start paused with inventory dump
            */
-          new AITarget(this::isPaused, INVENTORY_FULL, true)
+          new AITarget(this::isStartingPaused, INVENTORY_FULL, true)
         );
     }
 
@@ -1442,6 +1434,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private boolean isPaused()
     {
         return worker.getCitizenData().isPaused();
+    }
+
+    /**
+     * Is worker starting paused
+     *
+     * @return true if starting paused
+     */
+    private boolean isStartingPaused()
+    {
+        return isPaused() && getState() != PAUSED && getState() != INVENTORY_FULL;
     }
 
     /**

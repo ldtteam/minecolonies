@@ -20,8 +20,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.MIN_OPEN_SLOTS;
@@ -156,6 +156,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     private boolean checkIfExecute()
     {
         setDelay(1);
+
+        // Don't check for workorder when we're idle
+        if (getState() == IDLE)
+        {
+            return false;
+        }
 
         if (!job.hasWorkOrder())
         {
