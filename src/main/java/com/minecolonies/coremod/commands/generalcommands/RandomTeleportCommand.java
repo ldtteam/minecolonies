@@ -168,7 +168,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
                 continue;
             }
 
-            final boolean foundPosition = BlockPosUtil.isPositionSafe(sender, groundPosition);
+            final boolean foundPosition = BlockPosUtil.isPositionSafe(sender.getEntityWorld(), groundPosition);
 
             if (foundPosition)
             {
