@@ -100,7 +100,7 @@ configFile.withReader {
 }
 
 dependencies {
-    deobfCompile "com.structurize:structurize:${config.minecraft_version}-${config.structurize_version}"
+    compile "com.structurize:structurize:${config.minecraft_version}-${config.structurize_version}"
 
     deobfCompile "slimeknights.mantle:Mantle:1.12-${config.mantle_version}"
     deobfCompile "slimeknights:TConstruct:1.12.2-${config.tinker_version}"

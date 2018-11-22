@@ -68,7 +68,6 @@ public final class ModItems
         clipboard = new ItemClipBoard();
         compost = new ItemCompost();
         resourceScroll = new ItemResourceScroll();
-        itemCactusDoor = new ItemCactusDoor(ModBlocks.blockCactusDoor, "cactusdoor");
 
         pirateHelmet_1 = new ItemPirateGear("pirate_hat", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EntityEquipmentSlot.HEAD);
         pirateChest_1 = new ItemPirateGear("pirate_top", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EntityEquipmentSlot.CHEST);
@@ -93,7 +92,6 @@ public final class ModItems
         registry.register(ancientTome);
         registry.register(chiefSword);
         registry.register(clipboard);
-        registry.register(itemCactusDoor);
         registry.register(compost);
         registry.register(resourceScroll);
         registry.register(scimitar);
