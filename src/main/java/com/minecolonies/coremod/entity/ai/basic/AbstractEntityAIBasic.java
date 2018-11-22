@@ -18,6 +18,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
+import com.minecolonies.coremod.entity.ai.minimal.EntityAIStatePausedHandler;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
@@ -106,6 +107,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private BlockPos restaurant = null;
 
     /**
+     * Delay for walking.
+     */
+    protected static final int WALK_DELAY = 20;
+    
+    /**
      * What he currently might be needing.
      */
     protected Predicate<ItemStack> needsCurrently = null;
@@ -148,12 +154,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
            */
           new AITarget(() ->
           {
-              return getState() == NEEDS_ITEM
-                       || this.getOwnBuilding()
-                            .hasWorkerOpenRequestsFiltered(
-                              worker.getCitizenData(),
-                              r -> !worker.getCitizenData().isRequestAsync(r.getToken()))
-                       || this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData());
+              return 
+                (    getState() == NEEDS_ITEM
+                  || this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData())
+                  || this.getOwnBuilding()
+                         .hasWorkerOpenRequestsFiltered(worker.getCitizenData(),r -> !worker.getCitizenData().isRequestAsync(r.getToken()))  
+                ) && !this.isPaused();
           }, this::waitForRequests),
           /*
             Dumps inventory as long as needs be.
@@ -171,10 +177,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           new AITarget(() ->
           {
               return getState() == NEEDS_TOOL
-                       && this.getOwnBuilding().getOpenRequestsOfType(
-                worker.getCitizenData(),
-                TypeToken.of(Tool.class)
-              ).isEmpty();
+                  && !this.isPaused()
+                  && this.getOwnBuilding()
+                         .getOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Tool.class))
+                         .isEmpty();
           }, IDLE),
           /*
            * Called when the citizen saturation falls too low.
@@ -183,7 +189,24 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
            * Gather a needed item.
            */
-          new AITarget(GATHERING_REQUIRED_MATERIALS, this::getNeededItem)
+          new AITarget(GATHERING_REQUIRED_MATERIALS, this::getNeededItem),
+          /*
+           * Place any non-restart regarding AITargets before this one
+           * Restart AI, building etc. 
+           */
+          new AITarget(this::shouldRestart, this::restart),
+          /*
+           * Reset if not paused.
+           */
+          new AITarget(PAUSED, () -> !this.isPaused(), () -> IDLE),
+          /*
+           * Do not work if worker is paused
+           */
+          new AITarget(PAUSED, this::bePaused),
+          /*
+           * Start paused with inventory dump
+           */
+          new AITarget(this::isPaused, INVENTORY_FULL)
         );
     }
 
@@ -1040,6 +1063,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public AIState afterDump()
     {
+        if (isPaused())
+        {
+            // perform a cleanUp before going to PAUSED
+            this.getOwnBuilding().onCleanUp(worker.getCitizenData());
+            return PAUSED;
+        }
         return IDLE;
     }
 
@@ -1424,5 +1453,51 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           predicate,
           Constants.STACKSIZE,
           new InvWrapper(worker.getInventoryCitizen()));
+    }
+
+    /**
+     * Is worker paused?
+     * 
+     * @return true if paused
+     */
+    private boolean isPaused()
+    {
+        return worker.getCitizenData().isPaused();
+    }
+
+    /**
+     * Worker executes {@link EntityAIStatePausedHandler}.
+     * 
+     * @return <code>State.PAUSED</code>
+     */
+    private AIState bePaused()
+    {
+        EntityAIStatePausedHandler.doPause(worker, getOwnBuilding());
+        setDelay(WALK_DELAY);
+        return PAUSED;
+    }
+
+    /**
+     * Is worker paused but not walking.
+     * 
+     * @return true if restart is scheduled
+     */
+    private boolean shouldRestart()
+    {
+        return worker.getCitizenData().shouldRestart() && this.isPaused();
+    }
+
+    /**
+     * Restart AI, building etc.
+     * 
+     * @return <code>State.INIT</code>
+     */
+    private AIState restart()
+    {
+        this.getOwnBuilding().onCleanUp(worker.getCitizenData());
+        this.getOwnBuilding().onRestart(worker.getCitizenData());
+        setDelay(WALK_DELAY);
+        worker.getCitizenData().restartDone();
+        return INIT;
     }
 }

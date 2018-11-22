@@ -161,7 +161,7 @@ com.minecolonies.coremod.gui.buildtool.nullHut=Pas de cabane disponible
 com.minecolonies.coremod.gui.townHall.defaultName=La Colonie de %s
 com.minecolonies.coremod.gui.townHall.jobHiring=
 Mode d'embauche des travailleurs:
-com.minecolonies.coremod.gui.workerHuts.hire=Engager un travailleur
+com.minecolonies.coremod.gui.workerHuts.manage=Engager un travailleur
 com.minecolonies.coremod.gui.workerHuts.minerHut=Mineur
 com.minecolonies.coremod.gui.townHall.currentSpecialization=Spécialisation actuelle:
 com.minecolonies.coremod.gui.inventory.scarecrow=Épouvantail

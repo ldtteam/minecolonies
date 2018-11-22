@@ -75,7 +75,7 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
     @Override
     public void onAdded(final Colony colony, final boolean readingFromNbt)
     {
-        /**
+        /*
          * Override this to avoid action!
          */
     }
@@ -83,7 +83,7 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
     @Override
     public void onRemoved(final Colony colony)
     {
-        /**
+        /*
          * Override this to avoid action!
          */
     }
@@ -91,9 +91,15 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
     @Override
     public void onCompleted(final Colony colony)
     {
-        /**
+        /*
          * Override this to avoid action!
          */
+    }
+
+    @Override
+    public boolean isValid(final Colony colony)
+    {
+        return colony.getBuildingManager().getBuilding(minerBuilding) != null;
     }
 
     /**

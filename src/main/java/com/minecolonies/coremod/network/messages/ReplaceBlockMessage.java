@@ -2,6 +2,9 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.coremod.blocks.cactus.BlockCactusSlabDouble;
+import com.minecolonies.coremod.blocks.cactus.BlockCactusSlabHalf;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.*;
@@ -154,9 +157,35 @@ public class ReplaceBlockMessage extends AbstractMessage<ReplaceBlockMessage, IM
                         else if(newBlockState.getBlock() instanceof BlockSlab && blockState.getBlock() instanceof BlockSlab)
                         {
                             final IBlockState transformation;
-                            if (blockState.getBlock() instanceof BlockDoubleStoneSlab || blockState.getBlock() instanceof BlockDoubleStoneSlabNew)
+                            if (blockState.getBlock() instanceof BlockDoubleStoneSlab
+                                  || blockState.getBlock() instanceof BlockDoubleStoneSlabNew
+                                  || blockState.getBlock() instanceof BlockDoubleWoodSlab
+                                  || blockState.getBlock() instanceof BlockCactusSlabDouble)
                             {
-                                transformation = blockState.withProperty(BlockDoubleStoneSlab.VARIANT, newBlockState.getValue(BlockDoubleStoneSlab.VARIANT));
+                                if (newBlockState.getBlock() instanceof BlockStoneSlab)
+                                {
+                                    transformation = Blocks.DOUBLE_STONE_SLAB.getDefaultState().withProperty(BlockDoubleStoneSlab.VARIANT, newBlockState.getValue(BlockDoubleStoneSlab.VARIANT));
+                                }
+                                else if (newBlockState.getBlock() instanceof BlockStoneSlabNew)
+                                {
+                                    transformation = Blocks.DOUBLE_STONE_SLAB2.getDefaultState().withProperty(BlockDoubleStoneSlabNew.VARIANT, newBlockState.getValue(BlockDoubleStoneSlabNew.VARIANT));
+                                }
+                                else if (newBlockState.getBlock() instanceof BlockCactusSlabHalf)
+                                {
+                                    transformation = ModBlocks.blockCactusSlabDouble.getDefaultState();
+                                }
+                                else if (newBlockState.getBlock() instanceof BlockPurpurSlab)
+                                {
+                                    transformation = Blocks.PURPUR_DOUBLE_SLAB.getDefaultState();
+                                }
+                                else if (newBlockState.getBlock() instanceof BlockWoodSlab)
+                                {
+                                    transformation = Blocks.DOUBLE_WOODEN_SLAB.getDefaultState().withProperty(BlockDoubleWoodSlab.VARIANT, newBlockState.getValue(BlockDoubleWoodSlab.VARIANT));
+                                }
+                                else
+                                {
+                                    transformation = newBlockState;
+                                }
                             }
                             else
                             {

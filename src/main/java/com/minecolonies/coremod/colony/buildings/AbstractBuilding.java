@@ -118,10 +118,37 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
-     * executed when a new day start.
+     * Executed when a new day start.
      */
     public void onWakeUp()
     {
+        /*
+         * Buildings override this if required.
+         */
+    }
+
+    /**
+     * Executed every time when citizen finish inventory cleanup called after citizen got paused.
+     * Use for cleaning a state only.
+     */
+    public void onCleanUp(final CitizenData citizen)
+    {
+        // Cancel all open requests
+        getOpenRequests(citizen).forEach(r -> colony.getRequestManager().updateRequestState(r.getToken(), RequestState.CANCELLED));
+
+        /*
+         * Buildings override this if required.
+         */
+    }
+
+    /**
+     * Executed when RestartCitizenMessage is called and worker is paused.
+     * Use for reseting, onCleanUp is called before this
+     */
+    public void onRestart(final CitizenData citizen)
+    {
+        // Unpause citizen
+        citizen.setPaused(false);
         /*
          * Buildings override this if required.
          */
@@ -187,12 +214,29 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                 return;
             }
         }
+
         final WorkOrderBuildBuilding workOrderBuildBuilding = new WorkOrderBuildBuilding(this, level);
+        if (!canBeBuiltByBuilder() && !workOrderBuildBuilding.canBeResolved(colony, level))
+        {
+            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+              "entity.builder.messageBuilderNecessary", Integer.toString(level));
+            return;
+        }
+
         colony.getWorkManager().addWorkOrder(workOrderBuildBuilding, false);
         colony.getProgressManager().progressWorkOrderPlacement(workOrderBuildBuilding);
 
         LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
         markDirty();
+    }
+
+    /**
+     * Method to define if a builder can build this although the builder is not level 1 yet.
+     * @return true if so.
+     */
+    public boolean canBeBuiltByBuilder()
+    {
+        return false;
     }
 
     @Override

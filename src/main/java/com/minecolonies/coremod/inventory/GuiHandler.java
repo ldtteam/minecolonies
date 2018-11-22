@@ -39,9 +39,9 @@ public class GuiHandler implements IGuiHandler
             else
             {
                 @Nullable final AbstractBuilding building = ColonyManager.getBuilding(world, new BlockPos(x,y,z));
-                if (building != null)
+                if (building instanceof AbstractBuildingWorker)
                 {
-                    return new CraftingGUIBuilding(player.inventory, world);
+                    return new CraftingGUIBuilding(player.inventory, world, ((AbstractBuildingWorker) building).canCraftComplexRecipes());
                 }
                 return null;
             }

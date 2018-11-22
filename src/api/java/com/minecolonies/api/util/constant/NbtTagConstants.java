@@ -87,6 +87,7 @@ public final class NbtTagConstants
     public static final String TAG_DISPLAY                = "display";
     public static final String TAG_NEED_TO_MOURN          = "needToMourn";
     public static final String TAG_MOURNING               = "mourning";
+    public static final String TAG_PAUSED                 = "paused";
 
 
     /**

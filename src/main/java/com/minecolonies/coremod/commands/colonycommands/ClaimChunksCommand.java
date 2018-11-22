@@ -41,19 +41,14 @@ public class ClaimChunksCommand implements IActionCommand
         //See if the player is opped.
         if (sender instanceof EntityPlayerMP && isPlayerOpped(sender))
         {
-            final Colony colony = actionMenuState.getColonyForArgument("colony");
-
-            if (colony == null)
-            {
-                sender.sendMessage(new TextComponentString(NO_COLONY_MESSAGE));
-                return;
-            }
+            final int colonyId = actionMenuState.getIntegerForArgument("colony");
+            final int dimId = actionMenuState.getIntegerForArgument("dimension");
 
             final int range = actionMenuState.getIntValueForArgument("range", Configurations.gameplay.workingRangeTownHallChunks);
             final Boolean add = actionMenuState.getBooleanForArgument("add");
 
             final Chunk chunk = ((EntityPlayerMP) sender).getServerWorld().getChunk(sender.getPosition());
-            ChunkDataHelper.claimChunksInRange(colony.getID(), colony.getDimension(), add == null || add, chunk.x, chunk.z, range, 0, sender.getEntityWorld());
+            ChunkDataHelper.claimChunksInRange(colonyId, dimId, add == null || add, chunk.x, chunk.z, range, 0, sender.getEntityWorld());
             sender.sendMessage(new TextComponentString(SUCCESFULLY_CLAIMED_CHUNKS));
         }
         else
