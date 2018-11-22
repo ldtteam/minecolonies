@@ -4,6 +4,7 @@ import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.BlockStateUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -11,6 +12,8 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -29,8 +32,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Constants.SAPLINGS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Custom class for Trees. Used by lumberjack
@@ -38,29 +43,9 @@ import static com.minecolonies.api.util.constant.Constants.SAPLINGS;
 public class Tree
 {
     /**
-     * Tag to save the location to NBT.
+     * Radius property for dynamic trees, used to check growth status
      */
-    private static final String TAG_LOCATION = "Location";
-
-    /**
-     * Tag to save the log list to NBT.
-     */
-    private static final String TAG_LOGS = "Logs";
-
-    /**
-     * Tage to save the stump list to NBT.
-     */
-    private static final String TAG_STUMPS = "Stumps";
-
-    /**
-     * Tag to store the topLog to NBT.
-     */
-    private static final String TAG_TOP_LOG = "topLog";
-
-    /**
-     * Tag to store if the Tree is a slime tree to NBT.
-     */
-    private static final String TAG_IS_SLIME_TREE = "slimeTree";
+    private static final PropertyInteger dynamicTreeRadiusProp = PropertyInteger.create("radius", 1, 8);
 
     /**
      * Number of leaves necessary for a tree to be recognized.
@@ -80,7 +65,7 @@ public class Tree
     /**
      * A lot of luck to get a guaranteed saplings drop.
      */
-    private static final int A_LOT_OF_LUCK = 100;
+    private static final int A_LOT_OF_LUCK = 10000;
 
     /**
      * The location of the tree stump.
@@ -118,24 +103,25 @@ public class Tree
     private ArrayList<BlockPos> stumpLocations;
 
     /**
-     * The wood variant
-     * Oak Sapling         :0
-     * Spruce Sapling      :1
-     * Birch Sapling       :2
-     * Jungle Sapling      :3
-     * Acacia Sapling      :4
-     * Dark Oak Sapling    :5
-     * <p>
-     * Blue Slime Sapling      :0
-     * Purple Slime Sapling    :1
-     * Magma Slime Sapling     :2
+     * The wood variant of the Tree. Can change depending on Mod
      */
-    private int variantNumber;
+    private IProperty variant;
 
     /**
      * If the Tree is a Slime Tree.
      */
     private boolean slimeTree = false;
+
+    /**
+     * If the tree is a Dynamic Tree
+     */
+    private boolean dynamicTree = false;
+
+    /**
+     * Properties used by DynamicTree's leaves
+     */
+    private static final PropertyInteger DYN_PROP_HYDRO = PropertyInteger.create("hydro", 1, 4);
+    private static final PropertyInteger DYN_PROP_TREE  = PropertyInteger.create("tree", 0, 3);
 
     /**
      * Private constructor of the tree.
@@ -156,8 +142,9 @@ public class Tree
     public Tree(@NotNull final World world, @NotNull final BlockPos log)
     {
         final Block block = BlockPosUtil.getBlock(world, log);
-        if (block.isWood(world, log) || Compatibility.isSlimeBlock(block))
+        if (block.isWood(world, log) || Compatibility.isSlimeBlock(block) || Compatibility.isDynamicBlock(block))
         {
+            isTree = true;
             woodBlocks = new LinkedList<>();
             leaves = new LinkedList<>();
             location = log;
@@ -167,55 +154,163 @@ public class Tree
             addAndSearch(world);
 
             checkTree(world, topLog);
-            saplingToUse = calcSapling(world, leaves);
+
+            final Block bottomBlock = world.getBlockState(location).getBlock();
+            dynamicTree = Compatibility.isDynamicBlock(bottomBlock);
+            saplingToUse = calcSapling(world);
             stumpLocations = new ArrayList<>();
             woodBlocks.clear();
-            final Block bottomBlock = world.getBlockState(location).getBlock();
             slimeTree = Compatibility.isSlimeBlock(bottomBlock);
+
+            // Calculate the Tree's variant IProperty, add mod compat for other property names later when needed
+            variant = BlockStateUtils.getPropertyByNameFromState(world.getBlockState(location), "variant");
+        }
+        else
+        {
+            isTree = false;
         }
     }
 
-    private static ItemStack calcSapling(final IBlockAccess world, final List<BlockPos> leaves)
+    /**
+     * Checks the leaf above the highest Log for drops
+     *
+     * @param world world the tree is in
+     * @return ItemStack of the sapling found
+     */
+    private ItemStack calcSapling(final IBlockAccess world)
     {
-        for(final BlockPos pos : leaves)
-        {
-            final Block block = world.getBlockState(pos).getBlock();
+        ItemStack sapling;
 
-            if(block instanceof BlockLeaves)
+        // Try leaf directly above the tree base first
+        final BlockPos firstLeaf = getFirstLeaf(world);
+        sapling = calcSaplingForPos(world, firstLeaf, true);
+        if (sapling != null)
+        {
+            return sapling;
+        }
+
+        // Try all leaves found related to the tree
+        for (final BlockPos pos : leaves)
+        {
+            sapling = calcSaplingForPos(world, pos, true);
+
+            if (sapling != null)
             {
-                final NonNullList<ItemStack> list = NonNullList.create();
-                block.getDrops(list, world, pos, world.getBlockState(pos), A_LOT_OF_LUCK);
-                for(final ItemStack stack: list)
+                return sapling;
+            }
+        }
+
+        // Get sapling from Leaf above the treebase without checking compability
+        sapling = calcSaplingForPos(world, firstLeaf, false);
+        if (sapling != null)
+        {
+            return sapling;
+        }
+
+        return ItemStackUtils.EMPTY;
+    }
+
+    /**
+     * Calculates a sapling from the leaf at the given position
+     *
+     * @param world         world to use for accessing blocks
+     * @param pos           Blockposition of the leaf
+     * @param checkFitsBase boolean whether we should check leaf and tree's log compatibility
+     */
+    private ItemStack calcSaplingForPos(final IBlockAccess world, final BlockPos pos, final boolean checkFitsBase)
+    {
+        IBlockState blockState = world.getBlockState(pos);
+        final Block block = blockState.getBlock();
+
+        if (block instanceof BlockLeaves)
+        {
+            NonNullList<ItemStack> list = NonNullList.create();
+
+            if (checkFitsBase)
+            {
+                // Check if the tree's base log variant fits the leaf
+                if (Compatibility.isDynamicLeaf(block))
                 {
-                    final int[] oreIds = OreDictionary.getOreIDs(stack);
-                    for(final int oreId: oreIds)
+                    if (!isDynamicTree() || !Compatibility.isDynamicFamilyFitting(pos, location, world))
                     {
-                        if(OreDictionary.getOreName(oreId).equals(SAPLINGS))
-                        {
-                            ColonyManager.getCompatibilityManager().connectLeaveToSapling(world.getBlockState(pos), stack);
-                            return stack;
-                        }
+                        return null;
+                    }
+                }
+                else if (!BlockStateUtils.stateEqualsStateInPropertyByName(world.getBlockState(pos), world.getBlockState(location), "variant"))
+                {
+                    return null;
+                }
+            }
+
+            // Dynamic trees is using a custom Drops function
+            if (Compatibility.isDynamicLeaf(block))
+            {
+                list = (Compatibility.getDropsForDynamicLeaf(world, pos, blockState, A_LOT_OF_LUCK, block));
+                blockState = blockState.withProperty(DYN_PROP_HYDRO, 1).withProperty(DYN_PROP_TREE, 1);
+            }
+            else
+            {
+                list.add(new ItemStack(block.getItemDropped(blockState, new Random(), A_LOT_OF_LUCK), 1, block.damageDropped(blockState)));
+            }
+
+            for (final ItemStack stack : list)
+            {
+                final int[] oreIds = OreDictionary.getOreIDs(stack);
+                for (final int oreId : oreIds)
+                {
+                    if (OreDictionary.getOreName(oreId).equals(SAPLINGS))
+                    {
+                        ColonyManager.getCompatibilityManager().connectLeafToSapling(blockState, stack);
+                        return stack;
                     }
                 }
             }
         }
-        return ItemStackUtils.EMPTY;
+        return null;
+    }
+
+    /**
+     * Returns the first Leaf above the toplog
+     *
+     * @param world the world to search in
+     * @return leaf pos found
+     */
+    private BlockPos getFirstLeaf(final IBlockAccess world)
+    {
+        // Find the closest leaf above, stay below max height
+        for (int i = 1; (i + topLog.getY()) < 255 && i < 10; i++)
+        {
+            final IBlockState blockState = world.getBlockState(topLog.add(0, i, 0));
+            if (blockState.getBlock() instanceof BlockLeaves)
+            {
+                return topLog.add(0, i, 0);
+            }
+        }
+        return topLog.add(0,1,0);
     }
 
     /**
      * For use in PathJobFindTree.
      *
-     * @param world      the world.
-     * @param pos        The coordinates.
+     * @param world         the world.
+     * @param pos           The coordinates.
      * @param treesToNotCut the trees the lumberjack is not supposed to cut.
      * @return true if the log is part of a tree.
      */
     public static boolean checkTree(@NotNull final IBlockAccess world, final BlockPos pos, final List<ItemStorage> treesToNotCut)
     {
+
         //Is the first block a log?
         final IBlockState state = world.getBlockState(pos);
         final Block block = state.getBlock();
-        if (!block.isWood(world, pos) && !Compatibility.isSlimeBlock(block))
+        if (!block.isWood(world, pos) && !Compatibility.isSlimeBlock(block) && !Compatibility.isDynamicBlock(block))
+        {
+            return false;
+        }
+
+        // Only harvest nearly fully grown dynamic trees(8 max)
+        if (Compatibility.isDynamicBlock(block) && state.getProperties().containsKey(dynamicTreeRadiusProp)
+              && state.getValue(dynamicTreeRadiusProp) < Configurations.compatibility.dynamicTreeHarvestSize)
         {
             return false;
         }
@@ -240,11 +335,11 @@ public class Tree
      */
     @NotNull
     private static Tuple<BlockPos, BlockPos> getBottomAndTopLog(
-                                                                 @NotNull final IBlockAccess world,
-                                                                 @NotNull final BlockPos log,
-                                                                 @NotNull final LinkedList<BlockPos> woodenBlocks,
-                                                                 final BlockPos bottomLog,
-                                                                 final BlockPos topLog)
+      @NotNull final IBlockAccess world,
+      @NotNull final BlockPos log,
+      @NotNull final LinkedList<BlockPos> woodenBlocks,
+      final BlockPos bottomLog,
+      final BlockPos topLog)
     {
         BlockPos bottom = bottomLog == null ? log : bottomLog;
         BlockPos top = topLog == null ? log : topLog;
@@ -273,7 +368,7 @@ public class Tree
                 {
                     final BlockPos temp = log.add(x, y, z);
                     final Block block = world.getBlockState(temp).getBlock();
-                    if ((block.isWood(null, temp) || Compatibility.isSlimeBlock(block)) && !woodenBlocks.contains(temp))
+                    if ((block.isWood(null, temp) || Compatibility.isSlimeBlock(block) || Compatibility.isDynamicBlock(block)) && !woodenBlocks.contains(temp))
                     {
                         return getBottomAndTopLog(world, temp, woodenBlocks, bottom, top);
                     }
@@ -287,8 +382,8 @@ public class Tree
     /**
      * Check if the tree has enough leaves and the lj is supposed to cut them.
      *
-     * @param world      the world it is in.
-     * @param pos        the position.
+     * @param world         the world it is in.
+     * @param pos           the position.
      * @param treesToNotCut the trees the lj is not supposed to cut.
      * @return true if so.
      */
@@ -296,11 +391,18 @@ public class Tree
     {
         boolean checkedLeaves = false;
         int leafCount = 0;
+        int dynamicBonusY = 0;
+        // Additional leaf search range for dynamic trees, as we start from the baselog
+        if (Compatibility.isDynamicBlock(world.getBlockState(pos).getBlock()))
+        {
+            dynamicBonusY = 10;
+        }
+
         for (int dx = -1; dx <= 1; dx++)
         {
             for (int dz = -1; dz <= 1; dz++)
             {
-                for (int dy = -1; dy <= 1; dy++)
+                for (int dy = -1; dy <= 1 + dynamicBonusY; dy++)
                 {
                     final BlockPos leafPos = pos.add(dx, dy, dz);
                     if (world.getBlockState(leafPos).getMaterial().equals(Material.LEAVES))
@@ -312,7 +414,8 @@ public class Tree
                         checkedLeaves = true;
 
                         leafCount++;
-                        if (leafCount >= NUMBER_OF_LEAVES)
+                        // Dynamic tree growth is checked by radius instead of leafcount
+                        if (leafCount >= NUMBER_OF_LEAVES || (Compatibility.isDynamicLeaf(world.getBlockState(leafPos).getBlock())))
                         {
                             return true;
                         }
@@ -326,17 +429,22 @@ public class Tree
     /**
      * Check if the Lj is supposed to cut a tree.
      *
-     * @param world      the world it is in.
+     * @param world         the world it is in.
      * @param treesToNotCut the trees he is supposed to cut.
-     * @param leafPos        the position a leaf is at.
+     * @param leafPos       the position a leaf is at.
      * @return false if not.
      */
     private static boolean supposedToCut(final IBlockAccess world, final List<ItemStorage> treesToNotCut, final BlockPos leafPos)
     {
         for (final ItemStorage stack : treesToNotCut)
         {
-            final ItemStack sap = ColonyManager.getCompatibilityManager().getSaplingForLeave(world.getBlockState(leafPos));
-            if(sap != null && sap.isItemEqual(stack.getItemStack()))
+            IBlockState bState = world.getBlockState(leafPos);
+            if (Compatibility.isDynamicLeaf(bState.getBlock()))
+            {
+                bState = bState.withProperty(DYN_PROP_HYDRO, 1).withProperty(DYN_PROP_TREE, 1);
+            }
+            final ItemStack sap = ColonyManager.getCompatibilityManager().getSaplingForLeaf(bState);
+            if (sap != null && sap.isItemEqual(stack.getItemStack()))
             {
                 return false;
             }
@@ -374,6 +482,7 @@ public class Tree
         tree.topLog = BlockPosUtil.readFromNBT(compound, TAG_TOP_LOG);
 
         tree.slimeTree = compound.getBoolean(TAG_IS_SLIME_TREE);
+        tree.dynamicTree = compound.getBoolean(TAG_DYNAMIC_TREE);
 
         return tree;
     }
@@ -456,6 +565,12 @@ public class Tree
             return;
         }
 
+        // Check if the new log fits the Tree's base log type
+        if (!BlockStateUtils.stateEqualsStateByBlockAndProp(world.getBlockState(log), world.getBlockState(location), "variant"))
+        {
+            return;
+        }
+
         if (log.getY() < location.getY())
         {
             location = log;
@@ -467,6 +582,13 @@ public class Tree
         }
 
         woodBlocks.add(log);
+
+        // Only add the base to a dynamic tree
+        if (Compatibility.isDynamicBlock(BlockPosUtil.getBlock(world, log)))
+        {
+            return;
+        }
+
         for (int y = -1; y <= 1; y++)
         {
             for (int x = -1; x <= 1; x++)
@@ -594,6 +716,14 @@ public class Tree
     }
 
     /**
+     * @return if tree is dynamic tree
+     */
+    public boolean isDynamicTree()
+    {
+        return dynamicTree;
+    }
+
+    /**
      * All stump positions of a tree (A tree may have been planted with different saplings).
      *
      * @return an Arraylist of the positions.
@@ -620,20 +750,9 @@ public class Tree
      *
      * @return the EnumType variant.
      */
-    public int getVariant()
+    public IProperty getVariant()
     {
-        return variantNumber;
-    }
-
-    /**
-     * Calculates the squareDistance to another Tree.
-     *
-     * @param other the other tree.
-     * @return the square distance in double.
-     */
-    public double squareDistance(@NotNull final Tree other)
-    {
-        return this.getLocation().distanceSq(other.getLocation());
+        return variant;
     }
 
     /**
@@ -700,6 +819,7 @@ public class Tree
         BlockPosUtil.writeToNBT(compound, TAG_TOP_LOG, topLog);
 
         compound.setBoolean(TAG_IS_SLIME_TREE, slimeTree);
+        compound.setBoolean(TAG_DYNAMIC_TREE, dynamicTree);
     }
 
     /**
@@ -711,8 +831,19 @@ public class Tree
     }
 
     /**
+     * Returns whether the Tree object actually is a tree.
+     *
+     * @return isTree
+     */
+    public boolean isTree()
+    {
+        return isTree;
+    }
+
+    /**
      * Calculates with a colony if the position is inside the colony and if it is inside a building.
-     * @param pos the position.
+     *
+     * @param pos    the position.
      * @param colony the colony.
      * @return return false if not inside the colony or if inside a building.
      */
@@ -723,7 +854,13 @@ public class Tree
             return false;
         }
 
-        for (final AbstractBuilding building: colony.getBuildingManager().getBuildings().values())
+        // Dynamic tree's are never part of buildings
+        if (colony.getWorld() != null && Compatibility.isDynamicBlock(colony.getWorld().getBlockState(pos).getBlock()))
+        {
+            return true;
+        }
+
+        for (final AbstractBuilding building : colony.getBuildingManager().getBuildings().values())
         {
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = building.getCorners();
             final int x1 = corners.getFirst().getFirst();
@@ -733,7 +870,7 @@ public class Tree
 
             final int x = pos.getX();
             final int z = pos.getZ();
-            if(x > x1 && x < x2 && z > z1 && z < z2)
+            if (x > x1 && x < x2 && z > z1 && z < z2)
             {
                 return false;
             }

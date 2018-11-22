@@ -7,8 +7,8 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -122,6 +122,14 @@ public final class StructureWrapper
         }
     }
 
+    public static void unloadStructure(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final String first, final int rotation, @NotNull final Mirror mirror)
+    {
+        @NotNull final StructureWrapper structureWrapper = new StructureWrapper(world, first);
+        structureWrapper.position = pos;
+        structureWrapper.rotate(rotation, world, pos, mirror);
+        structureWrapper.removeStructure(pos.subtract(structureWrapper.getOffset()));
+    }
+
     /**
      * Rotates the structure x times.
      *
@@ -133,6 +141,31 @@ public final class StructureWrapper
     public void rotate(final int times, @NotNull final World world, @NotNull final BlockPos rotatePos, @NotNull final Mirror mirror)
     {
         structure.rotateWithMirror(times, world, rotatePos, mirror);
+    }
+
+    /**
+     * Remove a structure from the world.
+     *
+     * @param pos      coordinates
+     */
+    private void removeStructure(@NotNull final BlockPos pos)
+    {
+        setLocalPosition(pos);
+        for (int j = 0; j < structure.getHeight(); j++)
+        {
+            for (int k = 0; k < structure.getLength(); k++)
+            {
+                for (int i = 0; i < structure.getWidth(); i++)
+                {
+                    @NotNull final BlockPos localPos = new BlockPos(i, j, k);
+                    final BlockPos worldPos = pos.add(localPos);
+                    if (!world.isAirBlock(worldPos))
+                    {
+                        world.setBlockToAir(worldPos);
+                    }
+                }
+            }
+        }
     }
 
     /**

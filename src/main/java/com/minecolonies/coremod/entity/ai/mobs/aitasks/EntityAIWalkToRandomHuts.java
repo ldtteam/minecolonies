@@ -1,11 +1,12 @@
-package com.minecolonies.coremod.entity.ai.mobs.barbarians;
+package com.minecolonies.coremod.entity.ai.mobs.aitasks;
 
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
+import com.minecolonies.coremod.entity.pathfinding.PathResult;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -18,11 +19,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.BarbarianConstants.*;
+import static com.minecolonies.api.util.constant.RaiderConstants.LADDERS_TO_PLACE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
- * Barbarian Pathing Class
+ * Raider Pathing Class
  */
 public class EntityAIWalkToRandomHuts extends EntityAIBase
 {
@@ -30,7 +31,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     /**
      * The moving entity.
      */
-    protected final AbstractEntityBarbarian entity;
+    protected final AbstractEntityMinecoloniesMob entity;
 
     /**
      * All directions.
@@ -88,12 +89,16 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     private int passedTicks = 0;
 
     /**
+     * The pathresult of trying to move away from a point
+     */
+    private PathResult moveAwayPath;
+
+    /**
      * Constructor for AI
-     *
-     * @param creatureIn the creature that the AI applies to
+     *  @param creatureIn the creature that the AI applies to
      * @param speedIn    The speed at which the Entity walks
      */
-    public EntityAIWalkToRandomHuts(final AbstractEntityBarbarian creatureIn, final double speedIn)
+    public EntityAIWalkToRandomHuts(final AbstractEntityMinecoloniesMob creatureIn, final double speedIn)
     {
         super();
         this.entity = creatureIn;
@@ -175,25 +180,21 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
                   || world.getBlockState(entity.getPosition().up().offset(entity.getHorizontalFacing())).getMaterial().isSolid()
                   || (collisionBox != null && collisionBox.maxY > 1.0))
             {
-                Log.getLogger().warn("Stuck for " + stuckTime);
                 stuckTime++;
             }
             else
             {
-                Log.getLogger().warn("Not stuck! " + notStuckTime + entity.getPosition() );
                 notStuckTime++;
             }
         }
         else
         {
-            Log.getLogger().warn("Not stuck! " + notStuckTime + entity.getPosition() );
             stuckTime = 0;
             notStuckTime++;
         }
 
         if (notStuckTime > 1)
         {
-            Log.getLogger().warn("Reset!");
             entity.setStuckCounter(0);
             entity.setLadderCounter(0);
             notStuckTime = 0;
@@ -202,13 +203,12 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
 
         if (stuckTime > 1)
         {
-            Log.getLogger().warn("Stuck!");
             entity.getNavigator().clearPath();
             stuckTime = 0;
             entity.setStuckCounter(entity.getStuckCounter() + 1);
             final BlockPos front = entity.getPosition().down().offset(entity.getHorizontalFacing());
 
-            if (!world.getBlockState(front).getMaterial().isSolid())
+            if (world.isAirBlock(front) || world.getBlockState(front).getBlock() == Blocks.LAVA || world.getBlockState(front).getBlock() == Blocks.FLOWING_LAVA)
             {
                 notStuckTime = 0;
                 world.setBlockState(front, Blocks.COBBLESTONE.getDefaultState());
@@ -279,7 +279,10 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
             }
             else
             {
-                entity.getNavigator().moveAwayFromXYZ(entity.getPosition(), random.nextInt(4), 2);
+                if (moveAwayPath == null || !moveAwayPath.isInProgress())
+                {
+                    moveAwayPath = entity.getNavigator().moveAwayFromXYZ(entity.getPosition(), random.nextInt(4), 2);
+                }
             }
             return false;
         }

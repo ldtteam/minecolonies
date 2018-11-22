@@ -64,7 +64,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
      */
     public boolean walkToBlock(@NotNull final BlockPos target, final int range)
     {
-        return walkToBlock(target, range, false);
+        return walkToBlock(target, range, true);
     }
 
     /**

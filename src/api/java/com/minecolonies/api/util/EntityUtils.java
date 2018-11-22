@@ -302,7 +302,7 @@ public final class EntityUtils
 
             if (spawnPoint == null)
             {
-                spawnPoint = new BlockPos(x,y,z);
+                spawnPoint = new BlockPos(x, y, z);
             }
 
             entity.setLocationAndAngles(

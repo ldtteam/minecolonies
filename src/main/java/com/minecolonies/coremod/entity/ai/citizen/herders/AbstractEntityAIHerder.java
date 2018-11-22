@@ -38,12 +38,6 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     private static final int ANIMAL_MULTIPLIER = 2;
 
     /**
-     * Tools and Items needed by the worker.
-     */
-    public final List<ToolType>  toolsNeeded = new ArrayList<>();
-    public final List<ItemStack> itemsNeeded = new ArrayList<>();
-
-    /**
      * Amount of animals needed to bread.
      */
     private static final int NUM_OF_ANIMALS_TO_BREED = 2;
@@ -86,13 +80,13 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepareForHerding),
-          new AITarget(DECIDE, this::decideWhatToDo),
-          new AITarget(HERDER_BREED, this::breedAnimals),
-          new AITarget(HERDER_BUTCHER, this::butcherAnimals),
-          new AITarget(HERDER_PICKUP, this::pickupItems)
+          new AITarget(IDLE, START_WORKING, true),
+          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, true, this::prepareForHerding),
+          new AITarget(DECIDE, true, this::decideWhatToDo),
+          new AITarget(HERDER_BREED, false, this::breedAnimals),
+          new AITarget(HERDER_BUTCHER, false, this::butcherAnimals),
+          new AITarget(HERDER_PICKUP, true, this::pickupItems)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -110,6 +104,30 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         final List<ItemStack> list = super.itemsNiceToHave();
         list.add(getBreedingItems());
         return list;
+    }
+
+    /**
+     * Get the extra tools needed for this job.
+     * @return a list of tools or empty.
+     */
+    @NotNull
+    public List<ToolType> getExtraToolsNeeded()
+    {
+        final List<ToolType> toolsNeeded = new ArrayList<>();
+        toolsNeeded.add(ToolType.AXE);
+        return toolsNeeded;
+    }
+
+    /**
+     * Get the extra items needed for this job.
+     * @return a list of items needed or empty.
+     */
+    @NotNull
+    public List<ItemStack> getExtraItemsNeeded()
+    {
+        final List<ItemStack> itemsNeeded = new ArrayList<>();
+        itemsNeeded.add(getBreedingItems());
+        return itemsNeeded;
     }
 
     /**
@@ -174,10 +192,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      */
     private AIState prepareForHerding()
     {
-        toolsNeeded.add(ToolType.AXE);
-        itemsNeeded.add(getBreedingItems());
-
-        for (final ToolType tool : toolsNeeded)
+        setDelay(DECIDING_DELAY);
+        for (final ToolType tool : getExtraToolsNeeded())
         {
             if (checkForToolOrWeapon(tool))
             {
@@ -185,11 +201,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             }
         }
 
-        for (final ItemStack item : itemsNeeded)
+        for (final ItemStack item : getExtraItemsNeeded())
         {
             checkIfRequestForItemExistOrCreateAsynch(item);
         }
-        setDelay(DECIDING_DELAY);
+
         return DECIDE;
     }
 
@@ -229,7 +245,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         if (!animal.isEntityAlive())
         {
             worker.getCitizenExperienceHandler().addExperience(1.0);
-            incrementActionsDoneAndDecSaturation();
+            worker.decreaseSaturationForAction();
         }
 
         return HERDER_BUTCHER;
@@ -248,7 +264,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         final EntityAnimal animalOne = animals
                                          .stream()
-                                         .filter(animal -> animal.getGrowingAge() == 0)
+                                         .filter(animal -> !animal.isChild())
                                          .findAny()
                                          .orElse(null);
 
@@ -406,6 +422,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
                 animal.setInLove(null);
                 worker.swingArm(EnumHand.MAIN_HAND);
                 InventoryUtils.removeStackFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), getBreedingItem());
+                worker.decreaseSaturationForAction();
             }
         }
     }
@@ -508,6 +525,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             worker.swingArm(EnumHand.MAIN_HAND);
             animal.attackEntityFrom(new DamageSource(worker.getName()), (float) BUTCHERING_ATTACK_DAMAGE);
             worker.getHeldItemMainhand().damageItem(1, animal);
+            worker.decreaseSaturationForAction();
         }
     }
 

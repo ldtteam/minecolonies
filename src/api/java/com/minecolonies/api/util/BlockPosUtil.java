@@ -280,11 +280,11 @@ public final class BlockPosUtil
     }
 
     /**
-     * Squared distance between two BlockPos.
+     * X+Y Distance between two BlockPos.
      *
      * @param block1 position one.
      * @param block2 position two.
-     * @return squared distance.
+     * @return X+Y distance
      */
     public static long getDistance2D(@NotNull final BlockPos block1, @NotNull final BlockPos block2)
     {

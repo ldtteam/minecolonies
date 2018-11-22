@@ -144,7 +144,6 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param size the size.
      * @return true if so.
      */
-    @NotNull
     public static boolean canShipBePlaced(@NotNull final World world, @NotNull final BlockPos pos, final BlockPos size)
     {
         for(int z = pos.getZ() - size.getZ() / 2 + 1; z < pos.getZ() + size.getZ() / 2 + 1; z++)

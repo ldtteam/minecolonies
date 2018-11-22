@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.registry.JobRegistry;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.coremod.entity.ai.util.AIState;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -67,6 +68,11 @@ public abstract class AbstractJob
      * Check if the worker has searched for food today.
      */
     private boolean searchedForFoodToday;
+
+    /**
+     * The workerAI for this Job
+     */
+    protected AbstractAISkeleton workerAI;
 
     /**
      * Initialize citizen data.
@@ -159,13 +165,10 @@ public abstract class AbstractJob
      *
      * @param tasks EntityAITasks list to add tasks to.
      */
-    public void addTasks(@NotNull final EntityAITasks tasks)
+    public void addWorkerAIToTaskList(@NotNull final EntityAITasks tasks)
     {
-        final AbstractAISkeleton<? extends AbstractJob> aiTask = generateAI();
-        if (aiTask != null)
-        {
-            tasks.addTask(TASK_PRIORITY, aiTask);
-        }
+        workerAI = generateAI();
+        tasks.addTask(TASK_PRIORITY, workerAI);
     }
 
     /**
@@ -289,6 +292,14 @@ public abstract class AbstractJob
     }
 
     /**
+     * Levelup actions on citizen levelup, allows custom actions based on Jobs
+     */
+    public void onLevelUp(final int newLevel)
+    {
+        // Default does nothing
+    }
+
+    /**
      * Get the CitizenData that this Job belongs to.
      *
      * @return CitizenData that owns this Job.
@@ -304,6 +315,15 @@ public abstract class AbstractJob
     public void onWakeUp()
     {
         searchedForFoodToday = false;
+    }
+
+    /**
+     * Check if it is okay to eat
+     * @return true if so.
+     */
+    public boolean isOkayToEat()
+    {
+        return (workerAI != null && workerAI.isOkayToEat());
     }
 
     /**
@@ -333,4 +353,32 @@ public abstract class AbstractJob
     {
         this.actionsDone = 0;
     }
+
+    /**
+     * Get the worker AI associated to this job,
+     * generates the AI when not created yet.
+     * @return worker AI
+     */
+    public AbstractAISkeleton getWorkerAI()
+    {
+        return workerAI;
+    }
+
+    /**
+     * Check if the citizen is in an idle state.
+     * @return true if so.
+     */
+    public boolean isIdling()
+    {
+        return (workerAI != null && workerAI.getState() == AIState.IDLE);
+    }
+
+    /**
+     * Reset the AI after eating at a restaurant
+     */
+    public void resetAIAfterEating()
+    {
+        workerAI.resetAIToIdle();
+    }
+
 }

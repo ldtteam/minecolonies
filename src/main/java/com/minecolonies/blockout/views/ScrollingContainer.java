@@ -39,7 +39,10 @@ public class ScrollingContainer extends View
 
         for (@NotNull final Pane child : children)
         {
-            contentHeight = Math.max(contentHeight, child.getY() + child.getHeight());
+            if (child != null)
+            {
+                contentHeight = Math.max(contentHeight, child.getY() + child.getHeight());
+            }
         }
 
         //  Recompute scroll

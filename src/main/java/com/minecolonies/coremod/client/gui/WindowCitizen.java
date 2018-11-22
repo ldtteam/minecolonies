@@ -22,7 +22,7 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler; 
+import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsToCitizenRequestMessage;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
@@ -32,6 +32,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -43,8 +44,9 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
-import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
+
 /**
  * Window for the citizen.
  */
@@ -56,24 +58,64 @@ public class WindowCitizen extends AbstractWindowSkeleton
     private final CitizenDataView citizen;
 
     /**
+     * Enum for the available hearts
+     */
+    private enum HeartsEnum
+    {
+        EMPTY(Gui.ICONS, EMPTY_HEART_ICON_X, HEART_ICON_MC_Y, EMPTY_HEART_VALUE, null, null),
+        HALF_RED(Gui.ICONS, HALF_RED_HEART_ICON_X, HEART_ICON_MC_Y, RED_HEART_VALUE - 1, null, EMPTY),
+        RED(Gui.ICONS, RED_HEART_ICON_X, HEART_ICON_MC_Y, RED_HEART_VALUE, HALF_RED, EMPTY),
+        HALF_GOLDEN(Gui.ICONS, HALF_GOLD_HEART_ICON_X, HEART_ICON_MC_Y, GOLDEN_HEART_VALUE - 1, null, RED),
+        GOLDEN(Gui.ICONS, GOLD_HEART_ICON_X, HEART_ICON_MC_Y, GOLDEN_HEART_VALUE, HALF_GOLDEN, RED),
+        HALF_GREEN(GREEN_BLUE_ICON, GREEN_HALF_HEART_ICON_X, GREEN_HEARTS_ICON_Y, GREEN_HEART_VALUE - 1, null, GOLDEN),
+        GREEN(GREEN_BLUE_ICON, GREEN_HEART_ICON_X, GREEN_HEARTS_ICON_Y, GREEN_HEART_VALUE, HALF_GREEN, GOLDEN),
+        HALF_BLUE(GREEN_BLUE_ICON, BLUE_HALF_HEART_ICON_X, BLUE_HEARTS_ICON_Y, BLUE_HEART_VALUE - 1, null, GREEN),
+        BLUE(GREEN_BLUE_ICON, BLUE_HEART_ICON_X, BLUE_HEARTS_ICON_Y, BLUE_HEART_VALUE, HALF_BLUE, GREEN);
+
+        private final int              X;
+        private final int              Y;
+        private final int              hpValue;
+        private final HeartsEnum       prevHeart;
+        private final HeartsEnum       halfHeart;
+        private       boolean          isHalfHeart = false;
+        private final ResourceLocation Image;
+
+        HeartsEnum(
+          final ResourceLocation heartImage, final int x, final int y, final int hpValue,
+          final HeartsEnum halfHeart, final HeartsEnum prevHeart)
+        {
+            this.Image = heartImage;
+            this.X = x;
+            this.Y = y;
+            this.hpValue = hpValue;
+            this.halfHeart = halfHeart;
+            if (halfHeart == null)
+            {
+                isHalfHeart = true;
+            }
+            this.prevHeart = prevHeart;
+        }
+    }
+
+    /**
      * Scrollinglist of the resources.
      */
-    private       ScrollingList   resourceList;
+    private ScrollingList resourceList;
 
     /**
      * Inventory of the player.
      */
-    private final InventoryPlayer inventory  = this.mc.player.inventory;
+    private final InventoryPlayer inventory = this.mc.player.inventory;
 
     /**
      * Is the player in creative or not.
      */
-    private final boolean         isCreative = this.mc.player.capabilities.isCreativeMode;
+    private final boolean isCreative = this.mc.player.capabilities.isCreativeMode;
 
     /**
      * Life count.
      */
-    private       int             lifeCount  = 0;
+    private int lifeCount = 0;
 
     /**
      * Constructor to initiate the citizen windows.
@@ -107,11 +149,11 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
         createHealthBar(citizen, findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class));
         createSaturationBar();
-        createHappinessBar(); 
+        createHappinessBar();
         createXpBar(citizen, this);
         createSkillContent(citizen, this);
         updateHappiness();
-        
+
         resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
         updateRequests();
 
@@ -152,8 +194,8 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
                 final RequestWrapper wrapper = requestWrappers.get(index);
                 final Box wrapperBox = rowPane.findPaneOfTypeByID(WINDOW_ID_REQUEST_BOX, Box.class);
-                wrapperBox.setPosition(wrapperBox.getX() + 10*wrapper.getDepth(), wrapperBox.getY());
-                wrapperBox.setSize(wrapperBox.getParent().getWidth() - 10*wrapper.getDepth(), wrapperBox.getHeight());
+                wrapperBox.setPosition(wrapperBox.getX() + 10 * wrapper.getDepth(), wrapperBox.getY());
+                wrapperBox.setSize(wrapperBox.getParent().getWidth() - 10 * wrapper.getDepth(), wrapperBox.getHeight());
                 rowPane.findPaneByID(REQUEST_FULLFIL).enable();
                 final IRequest<?> request = wrapper.getRequest();
                 final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
@@ -213,35 +255,69 @@ public class WindowCitizen extends AbstractWindowSkeleton
      */
     public static void createHealthBar(final CitizenDataView citizen, final View healthBarView)
     {
+        int health = (int) citizen.getHealth();
+
         healthBarView.setAlignment(Alignment.MIDDLE_RIGHT);
+        healthBarView.findPaneOfTypeByID(WINDOW_ID_HEALTHLABEL, Label.class).setLabelText(Integer.toString(health / 2));
 
-        //MaxHealth (Black hearts).
-        for (int i = 0; i < citizen.getMaxHealth() / 2; i++)
+        // Add Empty heart background
+        for (int i = 0; i < MAX_HEART_ICONS; i++)
         {
-            @NotNull final Image heart = new Image();
-            heart.setImage(Gui.ICONS, EMPTY_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH, false);
-            heart.setPosition(i * HEART_ICON_POS_X + HEART_ICON_OFFSET_X, HEART_ICON_POS_Y);
-            healthBarView.addChild(heart);
+            addHeart(healthBarView, i, HeartsEnum.EMPTY);
         }
 
-        //Current health (Red hearts).
-        int heartPos;
-        for (heartPos = 0; heartPos < ((int) citizen.getHealth() / 2); heartPos++)
-        {
-            @NotNull final Image heart = new Image();
-            heart.setImage(Gui.ICONS, FULL_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH, false);
-            heart.setPosition(heartPos * HEART_ICON_POS_X + HEART_ICON_OFFSET_X, HEART_ICON_POS_Y);
-            healthBarView.addChild(heart);
-        }
+        // Current Heart we're filling
+        int heartPos = 0;
 
-        //Half hearts.
-        if (citizen.getHealth() / 2 % 1 > 0)
+        // Order we're filling the hearts with from high to low
+        final List<HeartsEnum> heartList = new ArrayList<>();
+        heartList.add(HeartsEnum.BLUE);
+        heartList.add(HeartsEnum.GREEN);
+        heartList.add(HeartsEnum.GOLDEN);
+        heartList.add(HeartsEnum.RED);
+
+        // Iterate through hearts
+        for (final HeartsEnum heart : heartList)
         {
-            @NotNull final Image heart = new Image();
-            heart.setImage(Gui.ICONS, HALF_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH, false);
-            heart.setPosition(heartPos * HEART_ICON_POS_X + HEART_ICON_OFFSET_X, HEART_ICON_POS_Y);
-            healthBarView.addChild(heart);
+            if (heart.isHalfHeart || heart.prevHeart == null)
+            {
+                continue;
+            }
+
+            // Add full hearts
+            for (int i = heartPos; i < MAX_HEART_ICONS && health > (heart.prevHeart.hpValue * MAX_HEART_ICONS + 1); i++)
+            {
+                addHeart(healthBarView, heartPos, heart);
+                health -= (heart.hpValue - heart.prevHeart.hpValue);
+                heartPos++;
+            }
+
+            // Add half heart
+            if (health % 2 == 1 && heartPos < MAX_HEART_ICONS && heart.halfHeart != null && health > heart.prevHeart.hpValue * MAX_HEART_ICONS)
+            {
+                addHeart(healthBarView, heartPos, heart.prevHeart);
+                addHeart(healthBarView, heartPos, heart.halfHeart);
+
+                health -= (heart.halfHeart.hpValue - heart.prevHeart.hpValue);
+                heartPos++;
+            }
+            // Finished
+            if (heartPos >= MAX_HEART_ICONS)
+            {
+                return;
+            }
         }
+    }
+
+    /**
+     * Adds a heart to the healthbarView at the given Position
+     */
+    private static void addHeart(final View healthBarView, final int heartPos, final HeartsEnum heart)
+    {
+        @NotNull final Image heartImage = new Image();
+        heartImage.setImage(heart.Image, heart.X, heart.Y, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH, false);
+        heartImage.setPosition(heartPos * HEART_ICON_POS_X + HEART_ICON_OFFSET_X, HEART_ICON_POS_Y);
+        healthBarView.addChild(heartImage);
     }
 
     /**
@@ -281,45 +357,44 @@ public class WindowCitizen extends AbstractWindowSkeleton
         }
     }
 
-    
-   /** 
-+
-    * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness. 
-    */ 
-   private void createHappinessBar() 
-   { 
-       final double experienceRatio = (citizen.getHappiness() / CitizenHappinessHandler.MAX_HAPPINESS) * XP_BAR_WIDTH; 
-       findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT); 
-       window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Label.class).setLabelText(Integer.toString((int)citizen.getHappiness())); 
+    /**
+     * +
+     * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness.
+     */
+    private void createHappinessBar()
+    {
+        final double experienceRatio = (citizen.getHappiness() / CitizenHappinessHandler.MAX_HAPPINESS) * XP_BAR_WIDTH;
+        findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
+        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Label.class).setLabelText(Integer.toString((int) citizen.getHappiness()));
 
-        
-       @NotNull final Image xpBar = new Image(); 
-       xpBar.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false); 
-       xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y); 
 
-       @NotNull final Image xpBar2 = new Image(); 
-       xpBar2.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false); 
-       xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y); 
+        @NotNull final Image xpBar = new Image();
+        xpBar.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);
+        xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
 
-       window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar); 
-       window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar2); 
+        @NotNull final Image xpBar2 = new Image();
+        xpBar2.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false);
+        xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y);
 
-       if (experienceRatio > 0) 
-       { 
-           @NotNull final Image xpBarFull = new Image(); 
-           xpBarFull.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false); 
-           xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y); 
-           window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull); 
-       } 
-   } 
+        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar);
+        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar2);
 
+        if (experienceRatio > 0)
+        {
+            @NotNull final Image xpBarFull = new Image();
+            xpBarFull.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false);
+            xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
+            window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull);
+        }
+    }
 
     /**
      * Creates the xp bar for each citizen.
      * Calculates an xpBarCap which is the maximum of xp to fit into the bar.
      * Then creates an xp bar and fills it up with the available xp.
+     *
      * @param citizen the citizen.
-     * @param window the window to fill.
+     * @param window  the window to fill.
      */
     public static void createXpBar(final CitizenDataView citizen, final AbstractWindowSkeleton window)
     {
@@ -347,43 +422,44 @@ public class WindowCitizen extends AbstractWindowSkeleton
         }
     }
 
-    /** 
-     * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness. 
-     *  
-     * @param citizen  pointer to the citizen data view 
-     * @param window  pointer to the current window 
-     */ 
-    public static void createHappinessBar(final CitizenDataView citizen, final AbstractWindowSkeleton window) 
-    { 
+    /**
+     * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness.
+     *
+     * @param citizen pointer to the citizen data view
+     * @param window  pointer to the current window
+     */
+    public static void createHappinessBar(final CitizenDataView citizen, final AbstractWindowSkeleton window)
+    {
         //Calculates how much percent of the next level has been completed. 
-        final double experienceRatio = (citizen.getHappiness() / CitizenHappinessHandler.MAX_HAPPINESS) * XP_BAR_WIDTH; 
-        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT); 
-        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Label.class).setLabelText(Integer.toString((int)citizen.getHappiness())); 
- 
-        @NotNull final Image xpBar = new Image(); 
-        xpBar.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false); 
-        xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y); 
- 
-        @NotNull final Image xpBar2 = new Image(); 
-        xpBar2.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false); 
-        xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y); 
- 
-        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar); 
-        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar2); 
- 
-        if (experienceRatio > 0) 
-        { 
-            @NotNull final Image xpBarFull = new Image(); 
-            xpBarFull.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false); 
-            xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y); 
-            window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull); 
-        } 
-    } 
- 
+        final double experienceRatio = (citizen.getHappiness() / CitizenHappinessHandler.MAX_HAPPINESS) * XP_BAR_WIDTH;
+        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
+        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Label.class).setLabelText(Integer.toString((int) citizen.getHappiness()));
+
+        @NotNull final Image xpBar = new Image();
+        xpBar.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);
+        xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
+
+        @NotNull final Image xpBar2 = new Image();
+        xpBar2.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false);
+        xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y);
+
+        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar);
+        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar2);
+
+        if (experienceRatio > 0)
+        {
+            @NotNull final Image xpBarFull = new Image();
+            xpBarFull.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false);
+            xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
+            window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull);
+        }
+    }
+
     /**
      * Fills the citizen gui with it's skill values.
+     *
      * @param citizen the citizen to use.
-     * @param window the window to fill.
+     * @param window  the window to fill.
      */
     public static void createSkillContent(final CitizenDataView citizen, final AbstractWindowSkeleton window)
     {
@@ -417,7 +493,11 @@ public class WindowCitizen extends AbstractWindowSkeleton
         return ImmutableList.copyOf(treeElements);
     }
 
-    private void constructTreeFromRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request, @NotNull final List<RequestWrapper> list, final int currentDepth)
+    private void constructTreeFromRequest(
+      @NotNull final IRequestManager manager,
+      @NotNull final IRequest<?> request,
+      @NotNull final List<RequestWrapper> list,
+      final int currentDepth)
     {
         list.add(new RequestWrapper(request, currentDepth));
         if (request.hasChildren())
@@ -454,8 +534,10 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
         final BlockPos playerPos = Minecraft.getMinecraft().player.getPosition();
         requests.sort(Comparator.comparing((IRequest request) -> request.getRequester()
-                .getDeliveryLocation().getInDimensionLocation().getDistance(playerPos.getX(), playerPos.getY(), playerPos.getZ()))
-                .thenComparingInt(request -> request.getToken().hashCode()));
+                                                                   .getDeliveryLocation()
+                                                                   .getInDimensionLocation()
+                                                                   .getDistance(playerPos.getX(), playerPos.getY(), playerPos.getZ()))
+                        .thenComparingInt(request -> request.getToken().hashCode()));
 
         return ImmutableList.copyOf(requests);
     }
@@ -470,7 +552,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
         }
 
         final AbstractBuildingView building = colonyView.getBuilding(buildingPos);
-        if(building == null)
+        if (building == null)
         {
             return ImmutableList.of();
         }
@@ -580,7 +662,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
                 itemStack = inventory.getStackInSlot(InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(inventory), requestPredicate));
             }
             MineColonies.getNetwork().sendToServer(
-                    new TransferItemsToCitizenRequestMessage(citizen, itemStack, isCreative ? amount : Math.min(amount, count), citizen.getColonyId()));
+              new TransferItemsToCitizenRequestMessage(citizen, itemStack, isCreative ? amount : Math.min(amount, count), citizen.getColonyId()));
             MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.OVERRULED, itemStack));
         }
         button.disable();
@@ -593,7 +675,9 @@ public class WindowCitizen extends AbstractWindowSkeleton
     private void updateHappiness()
     {
         int row = 1;
-        final double[] levels = new double[] {citizen.getFoodModifier(), citizen.getHouseModifier(), citizen.getDamageModifier(), citizen.getJobModifier(), citizen.getFieldsModifier(), citizen.getToolsModifiers()};
+        final double[] levels =
+          new double[] {citizen.getFoodModifier(), citizen.getHouseModifier(), citizen.getDamageModifier(), citizen.getJobModifier(), citizen.getFieldsModifier(),
+            citizen.getToolsModifiers()};
         final String[] labelIds = new String[] {CMCG_HAPPINESS_FOOD, CMCG_HAPPINESS_DAMAGE, CMCG_HAPPINESS_HOUSE, CMCG_HAPPINESS_JOB, CMCG_HAPPINESS_FARMS, CMCG_HAPPINESS_TOOLS};
 
         findPaneOfTypeByID(HAPPINESS_MODIFIER_PANE, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
@@ -603,34 +687,33 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
             for (int i = 0; i < levels.length; i++)
             {
-                final Image image = findPaneOfTypeByID("modifierImage"+row, Image.class);
+                final Image image = findPaneOfTypeByID("modifierImage" + row, Image.class);
                 if (levels[i] < 0)
                 {
-                    findPaneOfTypeByID("modifier"+row, Label.class).setLabelText(LanguageHandler.format(labelIds[i]));
+                    findPaneOfTypeByID("modifier" + row, Label.class).setLabelText(LanguageHandler.format(labelIds[i]));
                     image.setImage(RED_ICON);
                     row++;
                 }
                 else if (levels[i] > 0)
                 {
-                    findPaneOfTypeByID("modifier"+row, Label.class).setLabelText(LanguageHandler.format(labelIds[i]));
+                    findPaneOfTypeByID("modifier" + row, Label.class).setLabelText(LanguageHandler.format(labelIds[i]));
                     image.setImage(GREEN_ICON);
                     row++;
                 }
             }
-            
-            for (int i = row; i<= levels.length; i++)
+
+            for (int i = row; i <= levels.length; i++)
             {
-                final Image image = findPaneOfTypeByID("modifierImage"+i, Image.class);
+                final Image image = findPaneOfTypeByID("modifierImage" + i, Image.class);
                 image.hide();
             }
         }
     }
 
-    
     private final class RequestWrapper
     {
         private final IRequest request;
-        private final int depth;
+        private final int      depth;
 
         private RequestWrapper(final IRequest request, final int depth)
         {

@@ -24,7 +24,7 @@ public abstract class AbstractItemMinecolonies extends Item
         this.name = name;
 
         super.setTranslationKey(Constants.MOD_ID.toLowerCase() + "." + this.name);
-        setRegistryName(this.name);
+        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + this.name);
     }
 
     /**

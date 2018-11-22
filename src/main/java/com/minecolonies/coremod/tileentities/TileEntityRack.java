@@ -3,7 +3,6 @@ package com.minecolonies.coremod.tileentities;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.types.RackType;
 import net.minecraft.block.state.IBlockState;
@@ -24,8 +23,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -122,9 +120,9 @@ public class TileEntityRack extends TileEntity
     public int getFreeSlots()
     {
         int freeSlots = inventory.getSlots();
-        for (final int itemAmount : content.values())
+        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
         {
-            final double slotsNeeded = (double) itemAmount / Constants.STACKSIZE;
+            final double slotsNeeded = (double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize();
             freeSlots -= (int) Math.ceil(slotsNeeded);
         }
         return freeSlots;
@@ -194,6 +192,11 @@ public class TileEntityRack extends TileEntity
         inventory = tempInventory;
         final IBlockState state = world.getBlockState(pos);
         world.notifyBlockUpdate(pos, state, state, 0x03);
+
+        if (main && combinedHandler == null && getOtherChest() != null)
+        {
+            combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().inventory);
+        }
     }
 
     /* Get the amount of items matching a predicate in the inventory.
@@ -320,6 +323,7 @@ public class TileEntityRack extends TileEntity
 
     /**
      * Method to change the main attribute of the rack.
+     *
      * @param main the boolean value defining it.
      */
     public void setMain(final boolean main)
@@ -330,6 +334,7 @@ public class TileEntityRack extends TileEntity
 
     /**
      * On neighbor changed this will be called from the block.
+     *
      * @param newNeighbor the blockPos which has changed.
      */
     public void neighborChanged(final BlockPos newNeighbor)
@@ -356,7 +361,8 @@ public class TileEntityRack extends TileEntity
             updateItemStorage();
             this.markDirty();
         }
-        else if (relativeNeighbor != null && this.pos.subtract(relativeNeighbor).equals(newNeighbor) && !(world.getBlockState(newNeighbor).getBlock() instanceof BlockMinecoloniesRack))
+        else if (relativeNeighbor != null && this.pos.subtract(relativeNeighbor).equals(newNeighbor) && !(world.getBlockState(newNeighbor)
+                                                                                                            .getBlock() instanceof BlockMinecoloniesRack))
         {
             this.relativeNeighbor = null;
             single = true;
@@ -566,7 +572,8 @@ public class TileEntityRack extends TileEntity
             markDirty();
         }
 
-        if ((this.relativeNeighbor == null && neighbor != null) || (this.relativeNeighbor != null && neighbor != null && !this.relativeNeighbor.equals(this.pos.subtract(neighbor))))
+        if ((this.relativeNeighbor == null && neighbor != null) || (this.relativeNeighbor != null && neighbor != null
+                                                                      && !this.relativeNeighbor.equals(this.pos.subtract(neighbor))))
         {
             this.relativeNeighbor = this.pos.subtract(neighbor);
             markDirty();

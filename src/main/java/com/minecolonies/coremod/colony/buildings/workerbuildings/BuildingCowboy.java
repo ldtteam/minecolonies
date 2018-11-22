@@ -98,7 +98,7 @@ public class BuildingCowboy extends AbstractBuildingWorker
         this.milkCows = compound.getBoolean(NBT_MILK_COWS);
     }
 
-    public boolean isMilkCows()
+    public boolean isMilkingCows()
     {
         return milkCows;
     }

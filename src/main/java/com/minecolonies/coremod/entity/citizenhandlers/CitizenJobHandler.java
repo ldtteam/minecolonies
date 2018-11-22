@@ -4,10 +4,14 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.entity.ai.EntityAITasks;
+import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Predicate;
 
 import static com.minecolonies.coremod.entity.AbstractEntityCitizen.DATA_MODEL;
 
@@ -118,7 +122,7 @@ public class CitizenJobHandler
 
         if (job != null)
         {
-            job.addTasks(citizen.tasks);
+            job.addWorkerAIToTaskList(citizen.tasks);
             if (citizen.ticksExisted > 0 && citizen.getCitizenColonyHandler().getWorkBuilding() != null)
             {
                 BlockPosUtil.tryMoveLivingToXYZ(citizen, citizen.getCitizenColonyHandler().getWorkBuilding().getLocation());
@@ -147,5 +151,35 @@ public class CitizenJobHandler
     public AbstractJob getColonyJob()
     {
         return citizen.getCitizenData() == null ? null : citizen.getCitizenData().getJob();
+    }
+
+    /**
+     * Check if a certain item is in the hut of the citizen.
+     * @param predicate the predicate to check.
+     * @return true if so.
+     */
+    public boolean isInHut(@Nullable final Predicate<ItemStack> predicate)
+    {
+        final AbstractEntityAIBasic job = getEntityAI();
+        if (job != null)
+        {
+            return job.isInHut(predicate);
+        }
+        
+        return false;
+    }
+
+    /**
+     * Get the entityAI via the job of the entity.
+     * @return the AbstractEntityAIBasic AI.
+     */
+    private AbstractEntityAIBasic getEntityAI()
+    {
+        if (getColonyJob() != null && getColonyJob().getWorkerAI() instanceof AbstractEntityAIBasic)
+        {
+            return (AbstractEntityAIBasic) getColonyJob().getWorkerAI();
+        }
+
+        return null;
     }
 }

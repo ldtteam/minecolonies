@@ -140,43 +140,43 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
           /*
            * Pick up stuff which might've been
            */
-          new AITarget(PICK_UP_RESIDUALS, this::pickUpResiduals),
+          new AITarget(PICK_UP_RESIDUALS, true, this::pickUpResiduals),
           /*
            * Check if tasks should be executed.
            */
-          new AITarget(this::checkIfCanceled, IDLE),
+          new AITarget(this::checkIfCanceled, IDLE, true),
           /*
            * Select the appropriate State to do next.
            */
-          new AITarget(START_BUILDING, this::startBuilding),
+          new AITarget(START_BUILDING, false, this::startBuilding),
           /*
            * Check if we have to build something.
            */
-          new AITarget(IDLE, this::isThereAStructureToBuild, () -> START_BUILDING),
+          new AITarget(IDLE, true, this::isThereAStructureToBuild, () -> START_BUILDING),
           /*
            * Clean up area completely.
            */
-          new AITarget(REMOVE_STEP, generateStructureGenerator(this::clearStep, COMPLETE_BUILD)),
+          new AITarget(REMOVE_STEP, false, generateStructureGenerator(this::clearStep, COMPLETE_BUILD)),
           /*
            * Clear out the building area.
            */
-          new AITarget(CLEAR_STEP, generateStructureGenerator(this::clearStep, BUILDING_STEP)),
+          new AITarget(CLEAR_STEP, false, generateStructureGenerator(this::clearStep, BUILDING_STEP)),
           /*
            * Build the structure and foundation of the building.
            */
-          new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, SPAWN_STEP)),
+          new AITarget(BUILDING_STEP, false, generateStructureGenerator(this::structureStep, SPAWN_STEP)),
           /*
            * Spawn entities on the structure.
            */
-          new AITarget(SPAWN_STEP, generateStructureGenerator(this::spawnEntity, DECORATION_STEP)),
+          new AITarget(SPAWN_STEP, false, generateStructureGenerator(this::spawnEntity, DECORATION_STEP)),
           /*
            * Decorate the AbstractBuilding with torches etc.
            */
-          new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, COMPLETE_BUILD)),
+          new AITarget(DECORATION_STEP, false, generateStructureGenerator(this::decorationStep, COMPLETE_BUILD)),
           /*
            * Finalize the building and give back control to the ai.
            */
-          new AITarget(COMPLETE_BUILD, this::completeBuild)
+          new AITarget(COMPLETE_BUILD, true, this::completeBuild)
         );
     }
 
@@ -463,6 +463,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     connectBlockToBuildingIfNecessary(decrease, coords);
                     worker.swingArm(worker.getActiveHand());
                     worker.getCitizenExperienceHandler().addExperience(XP_EACH_BLOCK);
+                    worker.decreaseSaturationForContinuousAction();
                     return true;
                 }
 
@@ -832,6 +833,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 if (!mineBlock(currentBlock.blockPosition, getCurrentWorkingPosition()))
                 {
                     return false;
+                }
+                else
+                {
+                    worker.decreaseSaturationForContinuousAction();
                 }
             }
         }

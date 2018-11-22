@@ -96,7 +96,7 @@ public class DoRaidTonightCommand extends AbstractSingleCommand implements IActi
             return;
         }
 
-        colony.getBarbManager().setWillRaidTonight(true);
+        colony.getRaiderManager().setWillRaidTonight(true);
         sender.sendMessage(SUCCESSFUL);
     }
 

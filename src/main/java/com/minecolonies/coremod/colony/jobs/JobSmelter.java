@@ -42,7 +42,7 @@ public class JobSmelter extends AbstractJob
     @Override
     public RenderBipedCitizen.Model getModel()
     {
-        return RenderBipedCitizen.Model.MINER;
+        return RenderBipedCitizen.Model.SMELTER;
     }
 
     /**

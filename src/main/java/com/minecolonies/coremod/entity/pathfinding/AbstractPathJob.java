@@ -52,6 +52,11 @@ public abstract class AbstractPathJob implements Callable<Path>
     private static final   int      MIN_Y                 = 0;
 
     /**
+     * The maximum amount of nodes to Map, set in the config.
+     */
+    private static final int MAX_NODES_VISITED = Configurations.pathfinding.pathfindingMaxNodes;
+
+    /**
      * Additional cost of jumping and dropping - base 1.
      */
     private static final double JUMP_DROP_COST = 2.5D;
@@ -358,9 +363,10 @@ public abstract class AbstractPathJob implements Callable<Path>
         {
             return search();
         }
-        catch (final RuntimeException e)
+        catch (final Exception e)
         {
-            Log.getLogger().debug(e);
+            // Log everything, so exceptions of the pathfinding-thread show in Log
+            Log.getLogger().warn("Pathfinding Exception", e);
         }
 
         return null;
@@ -388,6 +394,12 @@ public abstract class AbstractPathJob implements Callable<Path>
             final Node currentNode = nodesOpen.poll();
 
             totalNodesVisited++;
+
+            // Limiting max amount of nodes mapped
+            if (totalNodesVisited > MAX_NODES_VISITED)
+            {
+                break;
+            }
             currentNode.setCounterVisited(totalNodesVisited);
 
             handleDebugOptions(currentNode);

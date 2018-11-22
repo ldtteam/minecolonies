@@ -7,6 +7,9 @@ import com.minecolonies.coremod.client.gui.*;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
+import com.minecolonies.coremod.client.render.mobs.pirates.RendererArcherPirate;
+import com.minecolonies.coremod.client.render.mobs.pirates.RendererChiefPirate;
+import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -14,6 +17,9 @@ import com.minecolonies.coremod.entity.EntityFishHook;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityArcherBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityArcherPirate;
+import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityCaptainPirate;
+import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityPirate;
 import com.minecolonies.coremod.event.ClientEventHandler;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
@@ -79,6 +85,9 @@ public class ClientProxy extends CommonProxy
         RenderingRegistry.registerEntityRenderingHandler(EntityBarbarian.class, RendererBarbarian::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityArcherBarbarian.class, RendererBarbarian::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityChiefBarbarian.class, RendererChiefBarbarian::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityPirate.class, RendererPirate::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityArcherPirate.class, RendererArcherPirate::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityCaptainPirate.class, RendererChiefPirate::new);
     }
 
     @Override
@@ -191,7 +200,18 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModItems.permTool);
         createCustomModel(ModItems.ancientTome);
         createCustomModel(ModItems.chiefSword);
+        createCustomModel(ModItems.scimitar);
 
+        createCustomModel(ModItems.pirateBoots_1);
+        createCustomModel(ModItems.pirateChest_1);
+        createCustomModel(ModItems.pirateHelmet_1);
+        createCustomModel(ModItems.pirateLegs_1);
+
+        createCustomModel(ModItems.pirateBoots_2);
+        createCustomModel(ModItems.pirateChest_2);
+        createCustomModel(ModItems.pirateHelmet_2);
+        createCustomModel(ModItems.pirateLegs_2);
+        
         // Achievement proxy Items
         createCustomModel(ModItems.itemAchievementProxySettlement);
         createCustomModel(ModItems.itemAchievementProxyTown);

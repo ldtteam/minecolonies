@@ -1,30 +1,36 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.managers.interfaces.IBarbarianManager;
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
+import com.minecolonies.coremod.colony.managers.interfaces.IRaiderManager;
+import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
-import static com.minecolonies.api.util.constant.Constants.HALF_A_CIRCLE;
-import static com.minecolonies.api.util.constant.Constants.WHOLE_CIRCLE;
-import static com.minecolonies.api.util.constant.TranslationConstants.ALL_BARBARIANS_KILLED_MESSAGE;
-import static com.minecolonies.api.util.constant.TranslationConstants.ONLY_X_BARBARIANS_LEFT_MESSAGE;
+import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
-public class BarbarianManager implements IBarbarianManager
+public class RaidManager implements IRaiderManager
 {
     /**
      * Whether there will be a raid in this colony tonight.
@@ -37,14 +43,19 @@ public class BarbarianManager implements IBarbarianManager
     private boolean raidBeenCalculated = false;
 
     /**
-     * Whether or not this colony may have Barbarian events. (set via command)
+     * Whether or not this colony may have Raider events. (set via command)
      */
     private boolean haveBarbEvents = true;
 
     /**
-     * Last barbarian spawnpoints.
+     * Last raider spawnpoints.
      */
     private final List<BlockPos> lastSpawnPoints = new ArrayList<>();
+
+    /**
+     * A map of schematics which should despawn after some time.
+     */
+    private final Map<BlockPos, Tuple<String, Long>> schematicMap = new HashMap<>();
 
     /**
      * The colony of the manager.
@@ -52,21 +63,21 @@ public class BarbarianManager implements IBarbarianManager
     private final Colony colony;
 
     /**
-     * List of barbarians registered to the colony.
+     * List of raiders registered to the colony.
      */
     private final List<UUID> horde = new ArrayList<>();
 
     /**
-     * Creates the BarbarianManager for a colony.
+     * Creates the RaidManager for a colony.
      * @param colony the colony.
      */
-    public BarbarianManager(final Colony colony)
+    public RaidManager(final Colony colony)
     {
         this.colony = colony;
     }
 
     @Override
-    public boolean canHaveBarbEvents()
+    public boolean canHaveRaiderEvents()
     {
         return this.haveBarbEvents;
     }
@@ -84,13 +95,13 @@ public class BarbarianManager implements IBarbarianManager
     }
 
     @Override
-    public void setCanHaveBarbEvents(final boolean canHave)
+    public void setCanHaveRaiderEvents(final boolean canHave)
     {
         this.haveBarbEvents = canHave;
     }
 
     @Override
-    public void addBarbarianSpawnPoint(final BlockPos pos)
+    public void addRaiderSpawnPoint(final BlockPos pos)
     {
         lastSpawnPoints.add(pos);
     }
@@ -176,18 +187,18 @@ public class BarbarianManager implements IBarbarianManager
     }
 
     @Override
-    public void registerBarbarian(@NotNull final AbstractEntityBarbarian abstractEntityBarbarian)
+    public void registerRaider(@NotNull final AbstractEntityMinecoloniesMob raider)
     {
-        this.horde.add(abstractEntityBarbarian.getUniqueID());
+        this.horde.add(raider.getUniqueID());
     }
 
     @Override
-    public void unregisterBarbarian(@NotNull final AbstractEntityBarbarian abstractEntityBarbarian, final WorldServer world)
+    public void unregisterRaider(@NotNull final AbstractEntityMinecoloniesMob raider, final WorldServer world)
     {
         for(final UUID uuid : new ArrayList<>(horde))
         {
-            final Entity barbarian = world.getEntityFromUuid(uuid);
-            if(barbarian == null || !barbarian.isEntityAlive() || uuid.equals(abstractEntityBarbarian.getUniqueID()))
+            final Entity raiderEntity = world.getEntityFromUuid(uuid);
+            if(raiderEntity == null || !raiderEntity.isEntityAlive() || uuid.equals(raider.getUniqueID()))
             {
                 horde.remove(uuid);
             }
@@ -208,6 +219,36 @@ public class BarbarianManager implements IBarbarianManager
         }
     }
 
+    @Override
+    public void onWorldTick(@NotNull final World world)
+    {
+        if (Colony.shallUpdate(world, TICKS_SECOND * SECONDS_A_MINUTE))
+        {
+            for (final Map.Entry<BlockPos, Tuple<String, Long>> entry : new HashMap<>(schematicMap).entrySet())
+            {
+                if (entry.getKey().equals(BlockPos.ORIGIN))
+                {
+                    schematicMap.remove(entry.getKey());
+                }
+                else if (entry.getValue().getSecond() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * Configurations.gameplay.daysUntilPirateshipsDespawn < world.getWorldTime())
+                {
+                    // Load the backup from before spawning
+                    StructureWrapper.loadAndPlaceStructureWithRotation(world,
+                      new StructureName("cache", "backup", entry.getValue().getFirst()).toString() + colony.getID() + colony.getDimension() + entry.getKey(),
+                      entry.getKey(),
+                      0,
+                      Mirror.NONE,
+                      true);
+                    schematicMap.remove(entry.getKey());
+                    LanguageHandler.sendPlayersMessage(
+                      colony.getMessageEntityPlayers(),
+                      PIRATES_SAILING_OFF_MESSAGE, colony.getName());
+                    return;
+                }
+            }
+        }
+    }
+
     /**
      * Check if a certain vector matches two directions.
      *
@@ -222,23 +263,68 @@ public class BarbarianManager implements IBarbarianManager
     }
 
     @Override
-    public List<AbstractEntityBarbarian> getHorde(final WorldServer world)
+    public List<AbstractEntityMinecoloniesMob> getHorde(final WorldServer world)
     {
-        final List<AbstractEntityBarbarian> barbarians = new ArrayList<>();
+        final List<AbstractEntityMinecoloniesMob> raiders = new ArrayList<>();
         for (final UUID uuid : new ArrayList<>(horde))
         {
-            final Entity barbarian = world.getEntityFromUuid(uuid);
-            if (!(barbarian instanceof AbstractEntityBarbarian) || !barbarian.isEntityAlive())
+            final Entity raider = world.getEntityFromUuid(uuid);
+            if (!(raider instanceof AbstractEntityMinecoloniesMob) || !raider.isEntityAlive())
             {
                 horde.remove(uuid);
                 sendHordeMessage();
             }
             else
             {
-                barbarians.add((AbstractEntityBarbarian) barbarian);
+                raiders.add((AbstractEntityMinecoloniesMob) raider);
             }
 
         }
-        return barbarians;
+        return raiders;
+    }
+
+    @Override
+    public void registerRaiderOriginSchematic(final String schematicName, final BlockPos position, final long worldTime)
+    {
+        schematicMap.put(position, new Tuple<>(schematicName, worldTime));
+    }
+
+    @Override
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        if (compound.hasKey(TAG_RAID_MANAGER))
+        {
+            final NBTTagCompound raiderCompound = compound.getCompoundTag(TAG_RAID_MANAGER);
+            final NBTTagList raiderTags = raiderCompound.getTagList(TAG_SCHEMATIC_LIST, Constants.NBT.TAG_COMPOUND);
+            schematicMap.putAll(NBTUtils.streamCompound(raiderTags)
+                                      .collect(Collectors.toMap(raiderTagCompound -> BlockPosUtil.readFromNBT(raiderTagCompound, TAG_POS), raiderTagCompound ->  new Tuple<>(raiderTagCompound.getString(TAG_NAME), raiderTagCompound.getLong(TAG_TIME)))));
+        }
+    }
+
+    @Override
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+        final NBTTagCompound raiderCompound = new NBTTagCompound();
+        @NotNull final NBTTagList raiderTagList = schematicMap.entrySet().stream()
+                                                      .map(this::writeMapEntryToNBT)
+                                                      .collect(NBTUtils.toNBTTagList());
+
+        raiderCompound.setTag(TAG_SCHEMATIC_LIST, raiderTagList);
+        compound.setTag(TAG_RAID_MANAGER, raiderCompound);
+    }
+
+    /**
+     * Writes the map entry to NBT of the schematic map.
+     * @param entry the entry to write to NBT.
+     * @return an NBTTAGCompound
+     */
+    private NBTTagCompound writeMapEntryToNBT(final Map.Entry<BlockPos, Tuple<String, Long>> entry)
+    {
+        final NBTTagCompound compound = new NBTTagCompound();
+        BlockPosUtil.writeToNBT(compound, TAG_POS, entry.getKey());
+        compound.setString(TAG_NAME, entry.getValue().getFirst());
+        compound.setLong(TAG_TIME, entry.getValue().getSecond());
+
+        return compound;
     }
 }

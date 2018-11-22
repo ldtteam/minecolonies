@@ -2,7 +2,6 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
-import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.entity.Entity;
@@ -22,6 +21,7 @@ import net.minecraft.tileentity.*;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.Template;
+import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.Constants.SAPLINGS;
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
 /**
@@ -748,6 +749,29 @@ public final class ItemStackUtils
         return stack.isItemEqualIgnoreDurability(new ItemStack(Items.COAL))
                 || stack.isItemEqualIgnoreDurability(new ItemStack(Blocks.LOG))
                 || stack.isItemEqualIgnoreDurability(new ItemStack(Blocks.LOG2));
+    }
+
+    /**
+     * Checks if a stack is a type of sapling, using Oredict
+     *
+     * @param stack the stack to check.
+     * @return true if sapling.
+     */
+    public static boolean isStackSapling(@Nullable final ItemStack stack)
+    {
+        if (ItemStackUtils.isEmpty(stack))
+        {
+            return false;
+        }
+
+        for (final int oreId : OreDictionary.getOreIDs(stack))
+        {
+            if (OreDictionary.getOreName(oreId).equals(SAPLINGS))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
 
