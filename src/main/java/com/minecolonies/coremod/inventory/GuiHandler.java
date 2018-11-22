@@ -54,12 +54,12 @@ public class GuiHandler implements IGuiHandler
                 final TileEntityColonyBuilding tileEntityColonyBuilding = (TileEntityColonyBuilding) entity;
                 final Colony colony = ColonyManager.getClosestColony(world, tileEntityColonyBuilding.getPos());
 
-                return new ContainerMinecoloniesBuildingInventory(player.inventory, tileEntityColonyBuilding, colony.getID(), tileEntityColonyBuilding.getPos());
+                return new ContainerMinecoloniesBuildingInventory(player.inventory, tileEntityColonyBuilding, colony.getID(), tileEntityColonyBuilding.getPos(), world);
             }
         }
         else if (id == ID.CITIZEN_INVENTORY.ordinal())
         {
-            final Colony colony = ColonyManager.getColony(x);
+            final Colony colony = ColonyManager.getColonyByWorld(x, world);
             final CitizenData citizen = colony.getCitizenManager().getCitizen(y);
             final AbstractBuilding building = citizen.getWorkBuilding();
 
@@ -67,7 +67,7 @@ public class GuiHandler implements IGuiHandler
                                                               citizen.getInventory(),
                                                               colony.getID(),
                                                               building == null ? null : building.getID(),
-                                                              citizen.getId());
+                                                              citizen.getId(), world);
         }
         return null;
     }

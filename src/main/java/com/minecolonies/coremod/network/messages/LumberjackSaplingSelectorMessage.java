@@ -41,6 +41,11 @@ public class LumberjackSaplingSelectorMessage extends AbstractMessage<Lumberjack
     private boolean shouldCut;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty standard constructor.
      */
     public LumberjackSaplingSelectorMessage()
@@ -66,6 +71,7 @@ public class LumberjackSaplingSelectorMessage extends AbstractMessage<Lumberjack
         this.buildingId = building.getID();
         this.stack = saplingStack;
         this.shouldCut = shouldCut;
+        this.dimension = building.getColony().getDimension();
     }
 
     @Override
@@ -75,6 +81,7 @@ public class LumberjackSaplingSelectorMessage extends AbstractMessage<Lumberjack
         buildingId = BlockPosUtil.readFromByteBuf(buf);
         stack = ByteBufUtils.readItemStack(buf);
         shouldCut = buf.readBoolean();
+        dimension = buf.readInt();
     }
 
     @Override
@@ -84,12 +91,13 @@ public class LumberjackSaplingSelectorMessage extends AbstractMessage<Lumberjack
         BlockPosUtil.writeToByteBuf(buf, buildingId);
         ByteBufUtils.writeItemStack(buf, stack);
         buf.writeBoolean(shouldCut);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final LumberjackSaplingSelectorMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings

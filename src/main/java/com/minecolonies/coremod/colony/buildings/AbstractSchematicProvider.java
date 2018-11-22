@@ -312,7 +312,6 @@ public abstract class AbstractSchematicProvider
 
         buildingLevel = level;
         markDirty();
-        ColonyManager.markDirty();
     }
 
     /**

@@ -81,7 +81,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
             return true;
         }
 
-        final Colony chkColony = ColonyManager.getColony(colonyId);
+        final Colony chkColony = ColonyManager.getColonyByWorld(colonyId, FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0));
         if (chkColony == null)
         {
             return false;

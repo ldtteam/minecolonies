@@ -35,6 +35,11 @@ public class LumberjackReplantSaplingToggleMessage extends AbstractMessage<Lumbe
     private boolean shouldReplant;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty standard constructor.
      */
     public LumberjackReplantSaplingToggleMessage()
@@ -57,6 +62,7 @@ public class LumberjackReplantSaplingToggleMessage extends AbstractMessage<Lumbe
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.shouldReplant = shouldReplant;
+        this.dimension = building.getColony().getDimension();
     }
 
     @Override
@@ -65,6 +71,7 @@ public class LumberjackReplantSaplingToggleMessage extends AbstractMessage<Lumbe
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
         shouldReplant = buf.readBoolean();
+        dimension = buf.readInt();
     }
 
     @Override
@@ -73,12 +80,13 @@ public class LumberjackReplantSaplingToggleMessage extends AbstractMessage<Lumbe
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
         buf.writeBoolean(shouldReplant);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final LumberjackReplantSaplingToggleMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this hut's settings

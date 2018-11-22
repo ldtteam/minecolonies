@@ -1,10 +1,12 @@
 package com.minecolonies.coremod;
 
+import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
+import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
@@ -26,10 +28,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -48,6 +47,9 @@ public class MineColonies
 
     @CapabilityInject(IChunkmanagerCapability.class)
     public static Capability<IChunkmanagerCapability> CHUNK_STORAGE_UPDATE_CAP;
+
+    @CapabilityInject(IColonyManagerCapability.class)
+    public static Capability<IColonyManagerCapability> COLONY_MANAGER_CAP;
 
     private static final Logger logger = LogManager.getLogger(Constants.MOD_ID);
     /**
@@ -113,6 +115,7 @@ public class MineColonies
         Structure.originFolders.add(Constants.MOD_ID);
         CapabilityManager.INSTANCE.register(IColonyTagCapability.class, new IColonyTagCapability.Storage(), IColonyTagCapability.Impl::new);
         CapabilityManager.INSTANCE.register(IChunkmanagerCapability.class, new IChunkmanagerCapability.Storage(), IChunkmanagerCapability.Impl::new);
+        CapabilityManager.INSTANCE.register(IColonyManagerCapability.class, new IColonyManagerCapability.Storage(), IColonyManagerCapability.Impl::new);
 
         StandardFactoryControllerInitializer.onPreInit();
         proxy.registerEntities();
@@ -274,6 +277,12 @@ public class MineColonies
     public void postInit(final FMLPostInitializationEvent event)
     {
         RequestSystemInitializer.onPostInit();
+    }
+
+    @Mod.EventHandler
+    public void serverAboutLoad(final FMLServerAboutToStartEvent event)
+    {
+        Structures.init();
     }
 
     @Mod.EventHandler

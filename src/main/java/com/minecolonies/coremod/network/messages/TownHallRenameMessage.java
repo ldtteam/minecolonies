@@ -22,6 +22,11 @@ public class TownHallRenameMessage extends AbstractMessage<TownHallRenameMessage
     private String name;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Empty public constructor.
      */
     public TownHallRenameMessage()
@@ -40,6 +45,7 @@ public class TownHallRenameMessage extends AbstractMessage<TownHallRenameMessage
         super();
         this.colonyId = colony.getID();
         this.name = (name.length() <= MAX_NAME_LENGTH) ? name : name.substring(0, SUBSTRING_LENGTH);
+        this.dimension = colony.getDimension();
     }
 
     @Override
@@ -47,6 +53,7 @@ public class TownHallRenameMessage extends AbstractMessage<TownHallRenameMessage
     {
         colonyId = buf.readInt();
         name = ByteBufUtils.readUTF8String(buf);
+        dimension = buf.readInt();
     }
 
     @Override
@@ -54,12 +61,13 @@ public class TownHallRenameMessage extends AbstractMessage<TownHallRenameMessage
     {
         buf.writeInt(colonyId);
         ByteBufUtils.writeUTF8String(buf, name);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final TownHallRenameMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings

@@ -50,7 +50,7 @@ public class ContainerField extends Container
             @NotNull final BlockPos location)
     {
         super();
-        this.colony = ColonyManager.getColony(world, location);
+        this.colony = ColonyManager.getColonyByPosFromWorld(world, location);
         this.inventory = scarecrowTileEntity.getInventory();
         final int extraOffset = 0;
 

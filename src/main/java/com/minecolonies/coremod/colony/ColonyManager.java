@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony;
 
-import com.google.common.io.Files;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
@@ -13,48 +12,41 @@ import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRecipeManager;
-import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
-import com.minecolonies.coremod.util.AchievementUtils;
 import com.structurize.coremod.management.Structures;
+import com.minecolonies.coremod.util.BackUpHelper;
+import com.minecolonies.coremod.util.ChunkDataHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.Constants.HALF_A_CIRCLE;
+import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.coremod.MineColonies.CHUNK_STORAGE_UPDATE_CAP;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
+import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 
 /**
  * Singleton class that links colonies to minecraft.
@@ -62,103 +54,10 @@ import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 public final class ColonyManager
 {
     /**
-     * Distance NBT tag.
-     */
-    private static final String TAG_DISTANCE = "dist";
-
-    /**
-     * Tag storing the amount of colonies to NBT.
-     */
-    private static final String TAG_NEW_COLONIES = "amountOfColonies";
-
-    /**
-     * The file name of the minecolonies path.
-     */
-    public static final String FILENAME_MINECOLONIES_PATH = "minecolonies";
-
-    /**
-     * The file name of the minecolonies path.
-     */
-    public static final String CHUNK_INFO_PATH = FILENAME_MINECOLONIES_PATH + "/chunkInfo";
-
-    /**
-     * The file name of the minecolonies.
-     */
-    private static final String FILENAME_MINECOLONIES = "colonies.dat";
-
-    /**
-     * The file name pattern of the minecolonies backup.
-     */
-    private static final String FILENAME_MINECOLONIES_BACKUP = "colonies-%s.zip";
-
-    /**
-     * Printed text if world capability couldn't be found.
-     */
-    private static final String UNABLE_TO_FIND_WORLD_CAP_TEXT = "Unable to find Chunk manager in world capability, please report this to the mod author!";
-
-    /**
-     * The tag of the colonies.
-     */
-    private static final String TAG_COLONIES = "colonies";
-
-    /**
-     * Compound tag key for the recipe manager.
-     */
-    private static final String RECIPE_MANAGER_TAG = "recipeManager";
-
-    /**
-     * The tag of the pseudo unique identifier
-     */
-    private static final String TAG_UUID     = "uuid";
-
-    /**
-     * Colony filename.
-     */
-    public static final String FILENAME_COLONY = "colony%d.dat";
-
-    /**
-     * Distance in chunks to load immediately after creating the colony.
-     */
-    private static final int DISTANCE_TO_LOAD_IMMEDIATELY = 5;
-
-    /**
-     * The damage source used to kill citizens.
-     */
-    private static final DamageSource               CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
-
-    /**
-     * The list of all colonies.
-     */
-    @NotNull
-    private static final ColonyList<Colony>         colonies        = new ColonyList<>();
-
-    /**
-     * The list of all colonies by world.
-     */
-    @NotNull
-    private static final Map<Integer, List<Colony>> coloniesByWorld = new HashMap<>();
-
-    /**
      * The list of colony views.
      */
     @NotNull
-    private static final ColonyList<ColonyView>     colonyViews = new ColonyList<>();
-
-    /**
-     * Amount of worlds loaded.
-     */
-    private static int numWorldsLoaded;
-
-    /**
-     * Whether the colonyManager should persist data.
-     */
-    private static boolean saveNeeded;
-
-    /**
-     * Indicate if a schematic have just been downloaded.
-     * Client only
-     */
-    private static          boolean schematicDownloaded = false;
+    private static final ColonyList<ColonyView> colonyViews = new ColonyList<>();
 
     /**
      * Recipemanager of this server.
@@ -166,19 +65,25 @@ public final class ColonyManager
     private static final IRecipeManager recipeManager = new StandardRecipeManager();
 
     /**
-     * Pseudo unique id for the server
-     */
-    private static volatile UUID    serverUUID          = null;
-
-    /**
-     * Removed elements of the list of chunks to load.
-     */
-    private static int missingChunksToLoad = 0;
-
-    /**
      * Creates a new compatibilityManager.
      */
     private static final ICompatibilityManager compatibilityManager = new CompatibilityManager();
+
+    /**
+     * Pseudo unique id for the server
+     */
+    private static volatile UUID serverUUID = null;
+
+    /**
+     * Indicate if a schematic have just been downloaded.
+     * Client only
+     */
+    private static boolean schematicDownloaded = false;
+
+    /**
+     * If the manager finished loading already.
+     */
+    private static boolean loaded = false;
 
     private ColonyManager()
     {
@@ -191,15 +96,19 @@ public final class ColonyManager
      * @param w      World of the colony.
      * @param pos    Coordinate of the center of the colony.
      * @param player the player that creates the colony - owner.
-     * @param style the default style of the colony.
+     * @param style  the default style of the colony.
      */
     public static void createColony(@NotNull final World w, final BlockPos pos, @NotNull final EntityPlayer player, @NotNull final String style)
     {
-        final Colony colony = colonies.create(w, pos);
+        final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null);
+        if (cap == null)
+        {
+            Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
+            return;
+        }
 
+        final Colony colony = cap.createColony(w, pos);
         colony.setStyle(style);
-
-        addColonyByWorld(colony);
 
         final String colonyName = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.defaultName", player.getDisplayNameString());
         colony.setName(colonyName);
@@ -215,196 +124,58 @@ public final class ColonyManager
             return;
         }
 
-        ColonyManager.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
-        ColonyManager.markDirty();
+        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
     }
 
     /**
-     * Notify all chunks in the range of the colony about the colony.
-     * @param world the world of the colony.
-     * @param add remove or add
+     * Delete the colony in a world.
+     *
+     * @param id         the id of it.
+     * @param canDestroy if can destroy the buildings.
+     * @param world      the world.
      */
-    private static void claimColonyChunks(final World world, final boolean add, final int id, final BlockPos center, final int dimension)
+    public static void deleteColonyByWorld(final int id, final boolean canDestroy, final World world)
     {
-        final Chunk centralChunk = world.getChunk(center);
-        loadChunkAndAddData(world, center, add, id);
-
-        final int chunkX = centralChunk.x;
-        final int chunkZ = centralChunk.z;
-
-        final int range = Configurations.gameplay.workingRangeTownHallChunks;
-        final int buffer = Configurations.gameplay.townHallPaddingChunk;
-
-        claimChunksInRange(id, dimension, add, chunkX, chunkZ, range, buffer, world);
+        deleteColony(getColonyByWorld(id, world), canDestroy);
     }
 
     /**
-     * Claim a number of chunks in a certain range around a position.
-     * @param colonyId the colony id.
-     * @param dimension the dimension.
-     * @param add if claim or unclaim.
-     * @param chunkX the chunkX starter position.
-     * @param chunkZ the chunkZ starter position.
-     * @param range the range.
-     * @param buffer the buffer.
-     * @param world the world.
+     * Delete the colony by dimension.
+     *
+     * @param id         the id of it.
+     * @param canDestroy if can destroy the buildings.
+     * @param dimension  the dimension.
      */
-    public static void claimChunksInRange(final int colonyId, final int dimension, final boolean add, final int chunkX, final int chunkZ, final int range, final int buffer, final World world)
+    public static void deleteColonyByDimension(final int id, final boolean canDestroy, final int dimension)
     {
-        final int maxRange = range * 2 + buffer;
-        final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
-        if (chunkManager == null)
+        deleteColony(getColonyByDimension(id, dimension), canDestroy);
+    }
+
+    /**
+     * Delete a colony and purge all buildings and citizens.
+     *
+     * @param colony     the colony to destroy.
+     * @param canDestroy if the building outlines should be destroyed as well.
+     */
+    private static void deleteColony(@Nullable final Colony colony, final boolean canDestroy)
+    {
+        if (colony == null)
         {
-            Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT);
+            Log.getLogger().warn("Deleting Colony errored, colony null");
             return;
         }
-
-        for(int i = chunkX - maxRange; i <= chunkX + maxRange; i++)
-        {
-            for (int j = chunkZ - maxRange; j <= chunkZ + maxRange; j++)
-            {
-                if (i >= chunkX - DISTANCE_TO_LOAD_IMMEDIATELY && j >= chunkZ - DISTANCE_TO_LOAD_IMMEDIATELY && i <= chunkX + DISTANCE_TO_LOAD_IMMEDIATELY && j <= chunkZ + DISTANCE_TO_LOAD_IMMEDIATELY
-                      && loadChunkAndAddData(world, new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK), add, colonyId))
-                {
-                    continue;
-                }
-
-
-                final boolean owning = i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range;
-                @NotNull final ChunkLoadStorage newStorage = new ChunkLoadStorage(colonyId, ChunkPos.asLong(i, j), add, dimension, owning);
-                if (!chunkManager.addChunkStorage(i, j, newStorage))
-                {
-                    missingChunksToLoad++;
-                }
-            }
-        }
-    }
-
-    /**
-     * Add the data to the chunk directly.
-     * @param world the world.
-     * @param pos the position.
-     * @param add if add or delete.
-     * @param id the id.
-     * @return true if successful.
-     */
-    private static boolean loadChunkAndAddData(final World world, final BlockPos pos, final boolean add, final int id)
-    {
-        if (!world.isBlockLoaded(pos))
-        {
-            return false;
-        }
-
-        final Chunk chunk = world.getChunk(pos);
-        if(chunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() == id && add)
-        {
-            return false;
-        }
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
-
-        if (cap == null)
-        {
-            return false;
-        }
-
-        if(add)
-        {
-            cap.setOwningColony(id);
-            cap.addColony(id);
-        }
-        else
-        {
-            cap.removeColony(id);
-        }
-
-        chunk.markDirty();
-        MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
-        return true;
-    }
-
-    /**
-     * Add a chunk storage to a chunk.
-     * @param chunk the chunk to add it to.
-     * @param storage the said storage.
-     */
-    private static void addStorageToChunk(final Chunk chunk, final ChunkLoadStorage storage)
-    {
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
-        storage.applyToCap(cap);
-        chunk.markDirty();
-
-        if (cap != null)
-        {
-            MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
-        }
-    }
-
-    /**
-     * Load the colony info for a certain chunk.
-     * @param chunk the chunk.
-     * @param world the worldg to.
-     */
-    public static void loadChunk(final Chunk chunk, final World world)
-    {
-        if(missingChunksToLoad > 0)
-        {
-            final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
-            if (chunkManager == null)
-            {
-                Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT);
-                return;
-            }
-
-            final ChunkLoadStorage existingStorage = chunkManager.getChunkStorage(chunk.x, chunk.z);
-
-            if(existingStorage != null)
-            {
-                addStorageToChunk(chunk, existingStorage);
-                missingChunksToLoad--;
-            }
-        }
-    }
-
-    /**
-     * Add colony by world.
-     * @param colony the colony to add.
-     */
-    private static void addColonyByWorld(final Colony colony)
-    {
-        if (colony.getDimension() >= 0)
-        {
-            coloniesByWorld.computeIfAbsent(colony.getDimension(), ArrayList::new).add(colony);
-        }
-    }
-
-    /**
-     * Specify that colonies should be saved.
-     */
-    public static void markDirty()
-    {
-        saveNeeded = true;
-    }
-
-    /**
-     * Delete a colony and kill all citizens/purge all buildings.
-     *
-     * @param id the colonies id.
-     */
-    public static void deleteColony(final int id, final boolean canDestroy)
-    {
+        final int id = colony.getID();
+        final World world = colony.getWorld();
         try
         {
-            final Colony colony = getColony(id);
-            ColonyManager.claimColonyChunks(colony.getWorld(), false, id, colony.getCenter(), colony.getDimension());
-            final Set<World> colonyWorlds = new HashSet<>();
+            ChunkDataHelper.claimColonyChunks(world, false, id, colony.getCenter(), colony.getDimension());
+
             Log.getLogger().info("Removing citizens for " + id);
             for (final CitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
             {
                 Log.getLogger().info("Kill Citizen " + citizenData.getName());
                 citizenData.getCitizenEntity().ifPresent(entityCitizen -> {
-                    final World world = entityCitizen.getEntityWorld();
                     entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE);
-                    colonyWorlds.add(world);
                 });
             }
 
@@ -417,32 +188,31 @@ public final class ColonyManager
                     Log.getLogger().info("Delete Building at " + location);
                     building.deconstruct();
                     building.destroy();
-                    for (final World world : colonyWorlds)
+                    if (world.getBlockState(location).getBlock() instanceof AbstractBlockHut)
                     {
-                        if (world.getBlockState(location).getBlock() instanceof AbstractBlockHut)
-                        {
-                            Log.getLogger().info("Found Block, deleting " + world.getBlockState(location).getBlock());
-                            world.setBlockToAir(location);
-                        }
+                        Log.getLogger().info("Found Block, deleting " + world.getBlockState(location).getBlock());
+                        world.setBlockToAir(location);
                     }
                 }
             }
 
             MinecraftForge.EVENT_BUS.unregister(colony.getEventHandler());
             Log.getLogger().info("Deleting colony: " + colony.getID());
-            colonies.remove(id);
-            coloniesByWorld.get(colony.getDimension()).remove(colony);
 
+            final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
+            if (cap == null)
+            {
+                Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
+                return;
+            }
+
+            cap.deleteColony(id);
             Log.getLogger().info("Done with " + id);
         }
         catch (final RuntimeException e)
         {
             Log.getLogger().warn("Deleting Colony " + id + " errored:", e);
         }
-        @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-        @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, id));
-        file.delete();
-        ColonyManager.markDirty();
     }
 
     /**
@@ -451,17 +221,35 @@ public final class ColonyManager
      * @param id ID of colony.
      * @return Colony with given ID.
      */
-    public static Colony getColony(final int id)
+    @Nullable
+    public static Colony getColonyByWorld(final int id, final World world)
     {
-        return colonies.get(id);
+        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
+        if (cap == null)
+        {
+            Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
+            return null;
+        }
+        return cap.getColony(id);
     }
 
     /**
-     * Syncs the achievements for all colonies.
+     * Get Colony by UUID.
+     *
+     * @param id ID of colony.
+     * @return Colony with given ID.
      */
-    public static void syncAllColoniesAchievements()
+    @Nullable
+    public static Colony getColonyByDimension(final int id, final int dimension)
     {
-        colonies.forEach(AchievementUtils::syncAchievements);
+        final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension);
+        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
+        if (cap == null)
+        {
+            Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
+            return null;
+        }
+        return cap.getColony(id);
     }
 
     /**
@@ -473,7 +261,7 @@ public final class ColonyManager
      */
     public static AbstractBuilding getBuilding(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        @Nullable final Colony colony = getColony(w, pos);
+        @Nullable final Colony colony = getColonyByPosFromWorld(w, pos);
         if (colony != null)
         {
             final AbstractBuilding building = colony.getBuildingManager().getBuilding(pos);
@@ -497,21 +285,34 @@ public final class ColonyManager
     }
 
     /**
-     * Get colony that contains a given coordinate.
+     * Get colony that contains a given coordinate from world.
      *
      * @param w   World.
      * @param pos coordinates.
      * @return Colony at the given location.
      */
-    public static Colony getColony(@NotNull final World w, @NotNull final BlockPos pos)
+    public static Colony getColonyByPosFromWorld(@NotNull final World w, @NotNull final BlockPos pos)
     {
         final Chunk centralChunk = w.getChunk(pos);
         final int id = centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony();
-        if(id == 0)
+        if (id == 0)
         {
             return null;
         }
-        return getColony(id);
+        return getColonyByWorld(id, w);
+    }
+
+    /**
+     * Get colony that contains a given coordinate from dimension.
+     *
+     * @param dim the dimension.
+     * @param pos coordinates.
+     * @return Colony at the given location.
+     */
+    public static Colony getColonyByPosFromDim(final int dim, @NotNull final BlockPos pos)
+    {
+        final World w = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dim);
+        return getColonyByPosFromWorld(w, pos);
     }
 
     /**
@@ -551,12 +352,13 @@ public final class ColonyManager
     @NotNull
     public static List<Colony> getColonies(@NotNull final World w)
     {
-        final List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimension());
-        if (coloniesInWorld == null)
+        final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null);
+        if (cap == null)
         {
+            Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
             return Collections.emptyList();
         }
-        return coloniesInWorld;
+        return cap.getColonies();
     }
 
     /**
@@ -565,9 +367,18 @@ public final class ColonyManager
      * @return a list of colonies.
      */
     @NotNull
-    public static List<Colony> getColonies()
+    public static List<Colony> getAllColonies()
     {
-        return colonies.getCopyAsList();
+        final List<Colony> allColonies = new ArrayList<>();
+        for (final World world : FMLCommonHandler.instance().getMinecraftServerInstance().worlds)
+        {
+            final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
+            if (cap != null)
+            {
+                allColonies.addAll(cap.getColonies());
+            }
+        }
+        return allColonies;
     }
 
     /**
@@ -580,7 +391,7 @@ public final class ColonyManager
     public static List<Colony> getColoniesAbandonedSince(final int abandonedSince)
     {
         final List<Colony> sortedList = new ArrayList<>();
-        for (final Colony colony : colonies.getCopyAsList())
+        for (final Colony colony : ColonyManager.getAllColonies())
         {
             if (colony.getLastContactInHours() >= abandonedSince)
             {
@@ -624,7 +435,7 @@ public final class ColonyManager
     @Nullable
     public static IColony getIColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        return w.isRemote ? getColonyView(w, pos) : getColony(w, pos);
+        return w.isRemote ? getColonyView(w, pos) : getColonyByPosFromWorld(w, pos);
     }
 
     /**
@@ -638,7 +449,7 @@ public final class ColonyManager
     {
         final Chunk centralChunk = w.getChunk(pos);
         final int id = centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony();
-        if(id == 0)
+        if (id == 0)
         {
             return null;
         }
@@ -679,11 +490,11 @@ public final class ColonyManager
 
         final Chunk chunk = w.getChunk(pos);
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
-        if(cap.getOwningColony() != 0)
+        if (cap.getOwningColony() != 0)
         {
             return getColonyView(cap.getOwningColony());
         }
-        else if(!cap.getAllCloseColonies().isEmpty())
+        else if (!cap.getAllCloseColonies().isEmpty())
         {
             @Nullable ColonyView closestColony = null;
             long closestDist = Long.MAX_VALUE;
@@ -734,18 +545,18 @@ public final class ColonyManager
     {
         final Chunk chunk = w.getChunk(pos);
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
-        if(cap.getOwningColony() != 0)
+        if (cap.getOwningColony() != 0)
         {
-            return getColony(cap.getOwningColony());
+            return getColonyByWorld(cap.getOwningColony(), w);
         }
-        else if(!cap.getAllCloseColonies().isEmpty())
+        else if (!cap.getAllCloseColonies().isEmpty())
         {
             @Nullable Colony closestColony = null;
             long closestDist = Long.MAX_VALUE;
 
             for (final int cId : cap.getAllCloseColonies())
             {
-                final Colony c = getColony(cId);
+                final Colony c = getColonyByWorld(cId, w);
                 if (c != null && c.getDimension() == w.provider.getDimension())
                 {
                     final long dist = c.getDistanceSquared(pos);
@@ -846,7 +657,7 @@ public final class ColonyManager
             return null;
         }
 
-        return colonies.stream()
+        return getAllColonies().stream()
                  .filter(c -> owner.equals(c.getPermissions().getOwner()))
                  .findFirst()
                  .orElse(null);
@@ -874,43 +685,11 @@ public final class ColonyManager
     {
         if (event.phase == TickEvent.Phase.END)
         {
-            for (@NotNull final Colony c : colonies)
+            for (@NotNull final Colony c : getAllColonies())
             {
                 c.onServerTick(event);
             }
-
-            if (saveNeeded)
-            {
-                saveColonies(false);
-            }
         }
-    }
-
-    /**
-     * Save all the Colonies.
-     */
-    private static void saveColonies(final boolean isWorldUnload)
-    {
-        @NotNull final NBTTagCompound compound = new NBTTagCompound();
-        writeToNBT(compound);
-
-        @NotNull final File file = getSaveLocation();
-        saveNBTToPath(file, compound);
-        @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-        for (final Colony colony : colonies)
-        {
-            if (isWorldUnload)
-            {
-                final NBTTagCompound colonyCompound = new NBTTagCompound();
-                colony.writeToNBT(colonyCompound);
-                saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID())), colonyCompound);
-            }
-            else
-            {
-                saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID())), colony.getColonyTag());
-            }
-        }
-        saveNeeded = false;
     }
 
     /**
@@ -934,43 +713,78 @@ public final class ColonyManager
         final NBTTagCompound recipeCompound = new NBTTagCompound();
         recipeManager.writeToNBT(recipeCompound);
         compound.setTag(RECIPE_MANAGER_TAG, recipeCompound);
-        compound.setInteger(TAG_NEW_COLONIES, colonies.getTopID());
-        compound.setInteger(TAG_MISSING_CHUNKS, missingChunksToLoad);
         compound.setBoolean(TAG_ALL_CHUNK_STORAGES, true);
+        compound.setBoolean(TAG_NEW_COLONIES, true);
+        compound.setBoolean(TAG_CAP_COLONIES, true);
     }
 
     /**
-     * Get save location for Minecolonies data, from the world/save directory.
+     * Read Colonies from saved NBT data.
      *
-     * @return Save file for minecolonies.
+     * @param compound NBT Tag.
      */
-    @NotNull
-    private static File getSaveLocation()
+    public static void readFromNBT(@NotNull final NBTTagCompound compound, @NotNull final World world)
     {
-        @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-        return new File(saveDir, FILENAME_MINECOLONIES);
-    }
-
-    /**
-     * Save an NBTTagCompound to a file.  Does so in a safe manner using an
-     * intermediate tmp file.
-     *
-     * @param file     The destination file to write the data to.
-     * @param compound The NBTTagCompound to write to the file.
-     */
-    public static void saveNBTToPath(@Nullable final File file, @NotNull final NBTTagCompound compound)
-    {
-        try
+        if (!compound.hasKey(TAG_DISTANCE))
         {
-            if (file != null)
-            {
-                file.getParentFile().mkdir();
-                CompressedStreamTools.safeWrite(compound, file);
-            }
+            Configurations.gameplay.workingRangeTownHallChunks =
+              (int) ((Math.cos(45.0 / HALF_A_CIRCLE * Math.PI) * Configurations.gameplay.workingRangeTownHall) / BLOCKS_PER_CHUNK);
         }
-        catch (final IOException exception)
+
+        if (!compound.hasKey(TAG_CAP_COLONIES))
         {
-            Log.getLogger().error("Exception when saving ColonyManager", exception);
+            if (!compound.hasKey(TAG_NEW_COLONIES))
+            {
+                final NBTTagList colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
+                for (int i = 0; i < colonyTags.tagCount(); ++i)
+                {
+                    final NBTTagCompound colonyCompound = colonyTags.getCompoundTagAt(i);
+                    final World colonyWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyCompound.getInteger(TAG_DIMENSION));
+                    final IColonyManagerCapability cap = colonyWorld.getCapability(COLONY_MANAGER_CAP, null);
+                    @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i), FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyCompound.getInteger(TAG_DIMENSION)));
+                    cap.addColony(colony);
+                }
+
+                final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
+                cap.setMissingChunksToLoad(compound.getInteger(TAG_MISSING_CHUNKS));
+                Log.getLogger().info(String.format("Loaded %d colonies", cap.getColonies().size()));
+            }
+            else
+            {
+                final int size = compound.getInteger(TAG_NEW_COLONIES);
+                @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+                for (int colonyId = 0; colonyId <= size; colonyId++)
+                {
+                    @Nullable final NBTTagCompound colonyData = BackUpHelper.loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY_OLD, colonyId)));
+                    if (colonyData != null)
+                    {
+                        final World colonyWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyData.getInteger(TAG_DIMENSION));
+                        final IColonyManagerCapability cap = colonyWorld.getCapability(COLONY_MANAGER_CAP, null);
+                        @NotNull final Colony colony = Colony.loadColony(colonyData, colonyWorld);
+                        colony.getCitizenManager().checkCitizensForHappiness();
+                        cap.addColony(colony);
+                    }
+                }
+            }
+
+        }
+
+        if (compound.hasUniqueId(TAG_UUID))
+        {
+            serverUUID = compound.getUniqueId(TAG_UUID);
+        }
+
+        if (compound.hasKey(TAG_COMPATABILITY_MANAGER))
+        {
+            compatibilityManager.readFromNBT(compound.getCompoundTag(TAG_COMPATABILITY_MANAGER));
+        }
+
+        final NBTTagCompound recipeCompound = compound.getCompoundTag(RECIPE_MANAGER_TAG);
+        recipeManager.readFromNBT(recipeCompound);
+
+        if (!compound.hasKey(TAG_ALL_CHUNK_STORAGES))
+        {
+            ChunkDataHelper.loadChunkStorageToWorldCapability(world);
         }
     }
 
@@ -1014,8 +828,7 @@ public final class ColonyManager
 
     /**
      * When a world is loaded, Colonies in that world need to grab the reference
-     * to the World. Additionally, when loading the first world, load all
-     * colonies.
+     * to the World. Additionally, when loading the first world, load the manager data.
      *
      * @param world World.
      */
@@ -1023,55 +836,26 @@ public final class ColonyManager
     {
         if (!world.isRemote && !(world instanceof WorldServerMulti))
         {
-            if (numWorldsLoaded == 0)
+            if (!loaded)
             {
-                //load the structures when we know where the world is
-                Structures.init();
-
-                @NotNull final File file = getSaveLocation();
-                @Nullable final NBTTagCompound data = loadNBTFromPath(file);
+                @NotNull final File file = BackUpHelper.getSaveLocation();
+                @Nullable final NBTTagCompound data = BackUpHelper.loadNBTFromPath(file);
                 if (data != null)
                 {
                     readFromNBT(data, world);
-
-                    if (data.hasKey(TAG_NEW_COLONIES))
-                    {
-                        final int size = data.getInteger(TAG_NEW_COLONIES);
-
-                        @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-                        for (int colonyId = 0; colonyId <= size; colonyId++)
-                        {
-                            @Nullable final NBTTagCompound colonyData = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY, colonyId)));
-                            if (colonyData != null)
-                            {
-                                @NotNull final Colony colony = Colony.loadColony(colonyData, world);
-                                colony.getCitizenManager().checkCitizensForHappiness();
-                                colonies.add(colony);
-                                ColonyManager.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
-                                addColonyByWorld(colony);
-                            }
-                        }
-                    }
-                    Log.getLogger().info(String.format("Loaded %d colonies", colonies.getSize()));
                 }
 
                 if (serverUUID == null)
                 {
                     serverUUID = UUID.randomUUID();
                     Log.getLogger().info(String.format("New Server UUID %s", serverUUID));
-                    markDirty();
                 }
                 else
                 {
                     Log.getLogger().info(String.format("Server UUID %s", serverUUID));
                 }
-
-                if (!backupColonyData())
-                {
-                    MineColonies.getLogger().error("Failed to save " + FILENAME_MINECOLONIES + " backup!");
-                }
+                loaded = true;
             }
-            ++numWorldsLoaded;
 
             for (@NotNull final Colony c : getColonies(world))
             {
@@ -1080,182 +864,6 @@ public final class ColonyManager
 
             world.addEventListener(new ColonyManagerWorldAccess());
         }
-    }
-
-    public static boolean backupColonyData()
-    {
-        if (numWorldsLoaded > 0 && saveNeeded)
-        {
-            saveColonies(false);
-        }
-
-        try(FileOutputStream fos = new FileOutputStream(getBackupSaveLocation(new Date())))
-        {
-            @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-            final ZipOutputStream zos = new ZipOutputStream(fos);
-
-            for (int i = 1; i < colonies.getTopID() + 1; i++)
-            {
-                @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i));
-                if (file.exists())
-                {
-                    addToZipFile(String.format(FILENAME_COLONY, i), zos, saveDir);
-                }
-            }
-            addToZipFile(getSaveLocation().getName(), zos, saveDir);
-
-            zos.close();
-            fos.close();
-        }
-        catch (final Exception e)
-        {
-            /*
-             * Intentionally not being thrown.
-             */
-            Log.getLogger().warn("Unable to backup colony data, please contact an administrator");
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Add zip to file.
-     * @param fileName the file name.
-     * @param zos the output stream.
-     * @param folder the folder.
-     */
-    private static void addToZipFile(final String fileName, final ZipOutputStream zos, final File folder)
-    {
-        final File file = new File(folder, fileName);
-        try(FileInputStream fis = new FileInputStream(file))
-        {
-            zos.putNextEntry(new ZipEntry(fileName));
-            Files.copy(file, zos);
-        }
-        catch (final Exception e)
-        {
-            /*
-             * Intentionally not being thrown.
-             */
-            Log.getLogger().warn("Error packing " + fileName + " into the zip.");
-        }
-    }
-
-    /**
-     * Load a file and return the data as an NBTTagCompound.
-     *
-     * @param file The path to the file.
-     * @return the data from the file as an NBTTagCompound, or null.
-     */
-    private static NBTTagCompound loadNBTFromPath(@Nullable final File file)
-    {
-        try
-        {
-            if (file != null && file.exists())
-            {
-                return CompressedStreamTools.read(file);
-            }
-        }
-        catch (final IOException exception)
-        {
-            Log.getLogger().error("Exception when loading file from path in ColonyManager!", exception);
-        }
-        return null;
-    }
-
-    /**
-     * Read Colonies from saved NBT data.
-     *
-     * @param compound NBT Tag.
-     */
-    public static void readFromNBT(@NotNull final NBTTagCompound compound, @NotNull final World world)
-    {
-        if(!compound.hasKey(TAG_DISTANCE))
-        {
-            Configurations.gameplay.workingRangeTownHallChunks =
-                    (int) ((Math.cos(45.0 / HALF_A_CIRCLE * Math.PI) * Configurations.gameplay.workingRangeTownHall) / BLOCKS_PER_CHUNK);
-        }
-
-        if(!compound.hasKey(TAG_NEW_COLONIES))
-        {
-            final NBTTagList colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
-            for (int i = 0; i < colonyTags.tagCount(); ++i)
-            {
-                @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i), world);
-                colonies.add(colony);
-                addColonyByWorld(colony);
-            }
-        }
-
-        if (compound.hasUniqueId(TAG_UUID))
-        {
-            serverUUID = compound.getUniqueId(TAG_UUID);
-        }
-
-        if(compound.hasKey(TAG_COMPATABILITY_MANAGER))
-        {
-            compatibilityManager.readFromNBT(compound.getCompoundTag(TAG_COMPATABILITY_MANAGER));
-        }
-
-        final NBTTagCompound recipeCompound = compound.getCompoundTag(RECIPE_MANAGER_TAG);
-        recipeManager.readFromNBT(recipeCompound);
-
-        missingChunksToLoad = compound.getInteger(TAG_MISSING_CHUNKS);
-
-        if (!compound.hasKey(TAG_ALL_CHUNK_STORAGES))
-        {
-            loadChunkStorageToWorldCapability(world);
-        }
-
-        Log.getLogger().info(String.format("Loaded %d colonies", colonies.getSize()));
-    }
-
-    private static void loadChunkStorageToWorldCapability(final World world)
-    {
-        @NotNull final File chunkDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), CHUNK_INFO_PATH);
-        if (!chunkDir.exists())
-        {
-            return;
-        }
-
-        final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
-        if (chunkManager == null)
-        {
-            Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT);
-            return;
-        }
-
-        final File[] files = chunkDir.listFiles();
-        if (files != null)
-        {
-            for (final File file : files)
-            {
-                @Nullable final NBTTagCompound chunkData = loadNBTFromPath(file);
-                if (chunkData != null)
-                {
-                    final ChunkLoadStorage storage = new ChunkLoadStorage(chunkData);
-                    final int z = (int)(storage.getXz() >> 32);
-                    final int x = (int)storage.getXz();
-
-                    chunkManager.addChunkStorage(x, z, storage);
-                    file.delete();
-                }
-            }
-        }
-    }
-
-    /**
-     * Get save location for Minecolonies backup data, from the world/save
-     * directory.
-     *
-     * @return Save file for minecolonies.
-     */
-    @NotNull
-    private static File getBackupSaveLocation(final Date date)
-    {
-        @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-        return new File(saveDir, String.format(FILENAME_MINECOLONIES_BACKUP, new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(date)));
     }
 
     /**
@@ -1288,22 +896,14 @@ public final class ColonyManager
     {
         if (!world.isRemote && !(world instanceof WorldServerMulti))
         {
-            if (world.provider.getDimension() == 0)
-            {
-                saveColonies(true);
-            }
-
-
             for (@NotNull final Colony c : getColonies(world))
             {
                 c.onWorldUnload(world);
             }
-
-            --numWorldsLoaded;
-            if (numWorldsLoaded == 0)
+            if (loaded)
             {
-                colonies.clear();
-                coloniesByWorld.clear();
+                BackUpHelper.backupColonyData();
+                loaded = false;
             }
         }
     }
@@ -1526,6 +1126,7 @@ public final class ColonyManager
 
     /**
      * Get an instance of the compatibilityManager.
+     *
      * @return the manager.
      */
     public static ICompatibilityManager getCompatibilityManager()
@@ -1535,10 +1136,34 @@ public final class ColonyManager
 
     /**
      * Getter for the recipeManager.
+     *
      * @return an IRecipeManager.
      */
     public static IRecipeManager getRecipeManager()
     {
         return recipeManager;
+    }
+
+    /**
+     * Get the top colony id of all colonies.
+     *
+     * @return the top id.
+     */
+    public static int getTopColonyId()
+    {
+        int top = 0;
+        for (final World world : FMLCommonHandler.instance().getMinecraftServerInstance().worlds)
+        {
+            final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
+            if (cap != null)
+            {
+                final int tempTop = cap.getTopID();
+                if (tempTop > top)
+                {
+                    top = tempTop;
+                }
+            }
+        }
+        return 0;
     }
 }

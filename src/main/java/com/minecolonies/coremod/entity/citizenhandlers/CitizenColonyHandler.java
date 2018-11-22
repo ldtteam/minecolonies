@@ -119,7 +119,7 @@ public class CitizenColonyHandler
     {
         if (colonyId == 0)
         {
-            final Colony colony = ColonyManager.getColony(citizen.getEntityWorld(), citizen.getPosition());
+            final Colony colony = ColonyManager.getColonyByPosFromWorld(citizen.getEntityWorld(), citizen.getPosition());
             if (colony == null)
             {
                 citizen.setDead();
@@ -143,7 +143,7 @@ public class CitizenColonyHandler
      */
     private void handleNullColony()
     {
-        final Colony c = ColonyManager.getColony(colonyId);
+        final Colony c = ColonyManager.getColonyByWorld(colonyId, citizen.world);
 
         if (c == null)
         {

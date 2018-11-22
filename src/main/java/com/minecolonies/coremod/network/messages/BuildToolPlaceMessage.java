@@ -227,7 +227,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
                                           final StructureName sn, final String workOrderName,
                                           final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
-        @Nullable final Colony colony = ColonyManager.getColony(world, buildPos);
+        @Nullable final Colony colony = ColonyManager.getColonyByPosFromWorld(world, buildPos);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
         {
             colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(sn.toString(), workOrderName, rotation, buildPos, mirror), false);
@@ -264,7 +264,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         {
             if (building.getTileEntity() != null)
             {
-                final Colony colony = ColonyManager.getColony(world, buildPos);
+                final Colony colony = ColonyManager.getColonyByPosFromWorld(world, buildPos);
                 if (colony == null)
                 {
                     Log.getLogger().info("No colony for " + player.getName());

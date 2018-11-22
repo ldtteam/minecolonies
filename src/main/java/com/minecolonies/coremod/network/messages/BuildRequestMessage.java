@@ -24,22 +24,32 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
      * The int mode for a build job.
      */
     public static final int BUILD  = 0;
+
     /**
      * The int mode for a repair job.
      */
     public static final int REPAIR = 1;
+
     /**
      * The id of the building.
      */
     private BlockPos buildingId;
+
     /**
      * The id of the colony.
      */
     private int      colonyId;
+
     /**
      * The mode id.
      */
     private int      mode;
+
+    /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
 
     /**
      * Empty constructor used when registering the message.
@@ -61,6 +71,7 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.mode = mode;
+        this.dimension = building.getColony().getDimension();
     }
 
     @Override
@@ -69,6 +80,7 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
         mode = buf.readInt();
+        dimension = buf.readInt();
     }
 
     @Override
@@ -77,12 +89,13 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
         buf.writeInt(mode);
+        buf.writeInt(dimension);
     }
 
     @Override
     public void messageOnServerThread(final BuildRequestMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null)
         {
             return;
