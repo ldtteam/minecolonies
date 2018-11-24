@@ -46,6 +46,11 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     private              AIState                           state;
 
     /**
+     * Tick counter for the AI
+     */
+    private int tickCount = 0;
+
+    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class.
@@ -159,6 +164,13 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     @Override
     public final void updateTask()
     {
+
+        tickCount++;
+        if (tickCount >= AITarget.MAX_AI_TICKRATE + AITarget.MAX_AI_TICKRATE_VARIANT)
+        {
+            tickCount = 1;
+        }
+
         // Check targets in order by priority
         if (!targetMap.get(AIState.AI_BLOCKING_PRIO).stream().anyMatch(this::checkOnTarget)
               && !targetMap.get(AIState.EVENT).stream().anyMatch(this::checkOnTarget)
@@ -195,6 +207,12 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      */
     private boolean checkOnTarget(@NotNull final AITarget target)
     {
+        // Check if the target should be run this Tick
+        if (((tickCount + target.getTickOffset()) % target.getTickRate()) != 0)
+        {
+            return false;
+        }
+
         try
         {
             if (!target.test())

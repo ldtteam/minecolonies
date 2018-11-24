@@ -23,7 +23,7 @@ public class AIEvent extends AITarget
      */
     public AIEvent(@NotNull final BooleanSupplier predicate, @NotNull final Supplier<AIState> action)
     {
-        super(AIState.EVENT, false, predicate, action);
+        super(AIState.EVENT, false, predicate, action, 1);
     }
 
     /**
@@ -34,7 +34,7 @@ public class AIEvent extends AITarget
      */
     public AIEvent(@NotNull final BooleanSupplier predicate, @NotNull final AIState state)
     {
-        super(AIState.EVENT, false, predicate, () -> state);
+        super(AIState.EVENT, false, predicate, () -> state, 1);
     }
 
     /**
@@ -44,7 +44,7 @@ public class AIEvent extends AITarget
      */
     public AIEvent(@NotNull final Supplier<AIState> action)
     {
-        super(AIState.EVENT, false, () -> true, action);
+        super(AIState.EVENT, false, () -> true, action, 1);
     }
 
     /**
@@ -54,7 +54,7 @@ public class AIEvent extends AITarget
      */
     public AIEvent(@NotNull final AIState state)
     {
-        super(AIState.EVENT, false, () -> true, () -> state);
+        super(AIState.EVENT, false, () -> true, () -> state, 1);
     }
 
     /**

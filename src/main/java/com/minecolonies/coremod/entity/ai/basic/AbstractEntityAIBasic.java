@@ -145,7 +145,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             this keeps the current state
             (returning null would not stop execution)
            */
-          new AITarget(AI_BLOCKING_PRIO, true, this::waitingForSomething, this::getState),
+          new AITarget(AI_BLOCKING_PRIO, true, this::waitingForSomething, this::getState, 1),
           /*
             Check if any items are needed.
             If yes, transition to NEEDS_ITEM.
@@ -180,7 +180,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
            * Reset if not paused.
            */
-          new AITarget(PAUSED, true, () -> !this.isPaused(), () -> IDLE),
+          new AITarget(PAUSED, true, () -> !this.isPaused(), () -> IDLE, 20),
           /*
            * Do not work if worker is paused
            */
