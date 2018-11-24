@@ -17,18 +17,6 @@ plugins {
 }
 repositories {
     maven {
-        name 'DVS1 Maven FS'
-        url 'http://dvs1.progwml6.com/files/maven'
-    }
-    maven {
-        // location of a maven mirror for JEI files, as a fallback
-        name = "ModMaven"
-        url = "modmaven.k-4u.nl"
-    }
-    maven {
-        url 'http://dogforce-games.com/maven'
-    }
-    maven {
         name 'LDTTeam - Modding'
         url 'https://ldtteam.jfrog.io/ldtteam/modding/'
     }
@@ -62,15 +50,6 @@ sourceSets {
         }
         compileClasspath += sourceSets.api.compileClasspath
     }
-    structures {
-        java {
-            srcDir 'src/structures/java'
-        }
-        resources {
-            srcDir 'src/structures/resources'
-        }
-        compileClasspath += sourceSets.api.compileClasspath
-    }
     main {
         java {
             srcDir 'src/main/java'
@@ -78,7 +57,6 @@ sourceSets {
         resources {
             srcDir 'src/main/resources'
         }
-        compileClasspath += sourceSets.structures.output
         compileClasspath += sourceSets.blockOut.output
         compileClasspath += sourceSets.api.output
     }
@@ -99,8 +77,15 @@ configFile.withReader {
     ext.config = new ConfigSlurper().parse prop
 }
 
+configurations {
+    embed
+    deobfEmbed
+    compile.extendsFrom(embed)
+    deobfCompile.extendsFrom(deobfEmbed)
+}
+
 dependencies {
-    deobfCompile "com.structurize:structurize:${config.minecraft_version}-${config.structurize_version}"
+    deobfEmbed "com.structurize:structurize:${config.minecraft_version}-${config.structurize_version}"
 
     deobfCompile "slimeknights.mantle:Mantle:1.12-${config.mantle_version}"
     deobfCompile "slimeknights:TConstruct:1.12.2-${config.tinker_version}"
@@ -108,15 +93,11 @@ dependencies {
     deobfCompile "gigaherz.guidebook:Guidebook-1.12.2:${config.guidebook_version}"
     deobfCompile "gigaherz.commons:gigaherz.commons-1.12.1:${config.guidebook_core_version}"
 
-    structuresCompile sourceSets.api.output
-    //blockOutCompile sourceSets.api.output
-
     // compile against the JEI API but do not include it at runtime
     deobfProvided "mezz.jei:jei_${config.minecraft_version}:${config.jei_version}:api"
     // at runtime, use the full JEI jar
     runtime "mezz.jei:jei_${config.minecraft_version}:${config.jei_version}"
 
-    testCompile sourceSets.structures.output
     testCompile sourceSets.blockOut.output
 
     testCompile 'junit:junit:4.11'
@@ -177,35 +158,49 @@ task blockOutJar(type: Jar) {
     classifier 'blockOut'
 }
 
-task structuresJar(type: Jar){
-    from sourceSets.structures.output
-    classifier 'structures'
-}
-
-jar {
+task minimalJar(type: Jar) {
     from sourceSets.api.output
     from sourceSets.blockOut.output
-    from sourceSets.structures.output
     from sourceSets.main.output
-    
-    classifier = 'universal'
+
+    classifier = 'minimal'
 
     manifest {
         attributes 'FMLAT': "minecolonies_at.cfg"
     }
 }
 
+jar {
+    from sourceSets.api.output
+    from sourceSets.blockOut.output
+    from sourceSets.main.output
+
+    into('META-INF/libraries'){
+        from configurations.embed
+        from configurations.deobfEmbed
+    }
+
+    manifest {
+        attributes([
+                'ContainedDeps': configurations.embed.collect { it.getName() }.join(' ') + ' ' + configurations.deobfEmbed.collect { it.getName() }.join(' '),
+                'Maven-Artifact': "${project.group}:${project.archivesBaseName}:${project.version}:universal",
+                'Timestamp': System.currentTimeMillis(),
+                'FMLAT': "minecolonies_at.cfg"
+        ])
+    }
+
+    classifier = 'universal'
+}
+
 reobf {
     jar {}
     apiJar {}
     blockOutJar {}
-    structuresJar {}
 }
 
 javadoc {
     source += sourceSets.api.allSource
     source += sourceSets.blockOut.allSource
-    source += sourceSets.structures.allSource
 }
 
 idea {
