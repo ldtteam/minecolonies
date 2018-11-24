@@ -61,7 +61,7 @@ public class AITarget
     {
         if (state == null)
         {
-            this.state = AIState.NULLSTATE;
+            this.state = AIState.STATE_BLOCKING_PRIO;
         }
         else
         {
@@ -147,5 +147,15 @@ public class AITarget
     public boolean isOkayToEat()
     {
         return okayToEat;
+    }
+
+    /**
+     * Never unregister persistent AITargets
+     *
+     * @return false
+     */
+    public boolean shouldUnregister()
+    {
+        return false;
     }
 }

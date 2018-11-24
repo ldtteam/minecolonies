@@ -66,6 +66,10 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         this.world = CompatibilityUtils.getWorld(this.worker);
         this.chatSpamFilter = new ChatSpamFilter(job.getCitizen());
         this.state = AIState.INIT;
+        this.targetMap.put(AIState.INIT, new ArrayList<>());
+        this.targetMap.put(AIState.AI_BLOCKING_PRIO, new ArrayList<>());
+        this.targetMap.put(AIState.STATE_BLOCKING_PRIO, new ArrayList<>());
+        this.targetMap.put(AIState.EVENT, new ArrayList<>());
     }
 
     /**
@@ -83,8 +87,20 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         }
         else
         {
-            targetMap.get(target.getState()).add(target);
+            final ArrayList<AITarget> temp = new ArrayList<>(targetMap.get(target.getState()));
+            temp.add(target);
+            targetMap.put(target.getState(), temp);
         }
+    }
+
+    /**
+     * Unregisters an AI Target
+     */
+    protected final void unRegisterTarget(final AITarget target)
+    {
+        final ArrayList<AITarget> temp = new ArrayList<>(targetMap.get(target.getState()));
+        temp.remove(target);
+        targetMap.put(target.getState(), temp);
     }
 
     /**
@@ -143,7 +159,10 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     @Override
     public final void updateTask()
     {
-        if (!targetMap.get(AIState.NULLSTATE).stream().anyMatch(this::checkOnTarget))
+        // Check targets in order by priority
+        if (!targetMap.get(AIState.AI_BLOCKING_PRIO).stream().anyMatch(this::checkOnTarget)
+              && !targetMap.get(AIState.EVENT).stream().anyMatch(this::checkOnTarget)
+              && !targetMap.get(AIState.STATE_BLOCKING_PRIO).stream().anyMatch(this::checkOnTarget))
         {
             targetMap.get(state).stream().anyMatch(this::checkOnTarget);
         }
@@ -224,6 +243,10 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         }
         if (newState != null)
         {
+            if (target.shouldUnregister())
+            {
+                unRegisterTarget(target);
+            }
             state = newState;
             return true;
         }
@@ -242,6 +265,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
 
     /**
      * Get the level delay.
+     *
      * @return by default 10.
      */
     protected int getLevelDelay()
@@ -251,6 +275,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
 
     /**
      * Check if it is okay to eat by checking if the current target is good to eat.
+     *
      * @return true if so.
      */
     public boolean isOkayToEat()
@@ -271,5 +296,4 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     {
         state = AIState.IDLE;
     }
-
 }

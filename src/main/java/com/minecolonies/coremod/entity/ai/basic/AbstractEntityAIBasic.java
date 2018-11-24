@@ -132,7 +132,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
             Init safety checks and transition to IDLE
            */
-          new AITarget(this::initSafetyChecks, true),
+          new AITarget(AI_BLOCKING_PRIO, true, this::initSafetyChecks),
           /*
             Update chestbelt and nametag
             Will be executed every time
@@ -145,7 +145,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             this keeps the current state
             (returning null would not stop execution)
            */
-          new AITarget(this::waitingForSomething, true, this::getState),
+          new AITarget(AI_BLOCKING_PRIO, true, this::waitingForSomething, this::getState),
           /*
             Check if any items are needed.
             If yes, transition to NEEDS_ITEM.
