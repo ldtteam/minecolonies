@@ -417,11 +417,11 @@ com.minecolonies.coremod.item.permissionscepter.removelocation.success=Position 
 tile.blockHut.warehouse.limit=Die Anzahl an Lagerhäusern ist auf 1 pro Kolonie begrenzt.
 
 com.minecolonies.coremod.gui.workerHuts.baker=Bäcker
-com.minecolonies.coremod.baker.noFurnace=Mein gebäude hat keine Öfen, bitte reparier es.
+com.minecolonies.coremod.baker.noFurnace=Mein Gebäude hat keine Öfen, bitte repariere es.
 com.minecolonies.coremod.job.baker=Bäcker
 com.minecolonies.coremod.gui.workerHuts.saplingList=Aufgabenliste
 
-com.minecolonies.coremod.gui.townHall.housing=Hauszuweisungsmodus
+com.minecolonies.coremod.gui.townHall.housing=Hauszuweisungsmodus:
 com.minecolonies.coremod.gui.home.assign=Bürger %s zuweisen
 com.minecolonies.coremod.gui.workerHuts.unassign=Bürger rausschmeißen
 tile.minecolonies.blockTimberFrame.name=Einfacher Holzrahmen
