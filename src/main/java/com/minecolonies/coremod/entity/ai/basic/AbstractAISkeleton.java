@@ -92,9 +92,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         }
         else
         {
-            final ArrayList<AITarget> temp = new ArrayList<>(targetMap.get(target.getState()));
-            temp.add(target);
-            targetMap.put(target.getState(), temp);
+            targetMap.get(target.getState()).add(target);
         }
     }
 
@@ -222,6 +220,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         }
         catch (final RuntimeException e)
         {
+            Log.getLogger().warn("Condition check for target " + target + " threw an exception:", e);
             this.onException(e);
             return false;
         }
