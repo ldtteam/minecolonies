@@ -18,7 +18,7 @@ tile.blockHutTownHall.messageMaxSize=%d hat die maximale Größe erreicht
 tile.blockHutTownHall.messageColonistDead=Dein Bürger %s ist bei %d %d %d durch %s gestorben!
 tile.blockHutTownHall.messagePlacedAlready=Du hast bereits ein Rathaus platziert
 tile.blockHutTownHall.messageInvalidWorld=In diesem Welttyp kannst du kein Rathaus platzieren
-tile.blockHutTownHall.messageTooClose=Du bist zu Nahe an einem anderen Rathaus
+tile.blockHutTownHall.messageTooClose=Du bist zu nah an einem anderen Rathaus
 tile.blockHutTownHall.messageTooFar=Du bist zu Weit von deiner Kolonie entfernt
 tile.blockHut.messageTooFarFromTownHall=Du musst näher an deinem Rathaus sein!
 tile.blockHut.messageNoTownHall=Du musst zuerst ein Rathaus errichten!
@@ -490,7 +490,7 @@ com.minecolonies.coremod.request.tool.premaxlevel=mit maximalem Level:
 
 com.minecolonies.coremod.general.and=und
 
-com.minecolonies.coremod.tooltype.none=Unbekannt
+com.minecolonies.coremod.tooltype.none=unbekannt
 com.minecolonies.coremod.tooltype.pickaxe=Spitzhacke
 com.minecolonies.coremod.tooltype.shovel=Schaufel
 com.minecolonies.coremod.tooltype.axe=Axt
