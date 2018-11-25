@@ -13,7 +13,7 @@ public class AIEvent extends AITarget
     /**
      * Boolean which is checked for unregistering the Event
      */
-    private boolean shouldUnregister = false;
+    private boolean unregister = false;
 
     /**
      * Event to trigger a one time transition.
@@ -68,10 +68,10 @@ public class AIEvent extends AITarget
     public AIState apply()
     {
         // Unregister once a different state is returned.
-        AIState result = super.apply();
+        final AIState result = super.apply();
         if (result != null)
         {
-            shouldUnregister = true;
+            unregister = true;
         }
         return result;
     }
@@ -84,6 +84,6 @@ public class AIEvent extends AITarget
     @Override
     public boolean shouldUnregister()
     {
-        return shouldUnregister;
+        return unregister;
     }
 }
