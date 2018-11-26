@@ -4,6 +4,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -233,12 +234,20 @@ public class RaidManager implements IRaiderManager
                 else if (entry.getValue().getSecond() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * Configurations.gameplay.daysUntilPirateshipsDespawn < world.getWorldTime())
                 {
                     // Load the backup from before spawning
-                    StructureWrapper.loadAndPlaceStructureWithRotation(world,
-                      new StructureName("cache", "backup", entry.getValue().getFirst()).toString() + colony.getID() + colony.getDimension() + entry.getKey(),
-                      entry.getKey(),
-                      0,
-                      Mirror.NONE,
-                      true);
+                    try
+                    {
+                        StructureWrapper.loadAndPlaceStructureWithRotation(world,
+                          new StructureName("cache", "backup", entry.getValue().getFirst()).toString() + colony.getID() + colony.getDimension() + entry.getKey(),
+                          entry.getKey(),
+                          0,
+                          Mirror.NONE,
+                          true);
+                    }
+                    catch(final NullPointerException e)
+                    {
+                        Log.getLogger().warn("Unable to retrieve backed up structure. This can happen when updating to a newer version!");
+                    }
+
                     schematicMap.remove(entry.getKey());
                     LanguageHandler.sendPlayersMessage(
                       colony.getMessageEntityPlayers(),

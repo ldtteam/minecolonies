@@ -527,7 +527,6 @@ public class EntityCitizen extends AbstractEntityCitizen
             compound.setInteger(TAG_CITIZEN, citizenData.getId());
         }
 
-        compound.setString(TAG_LAST_JOB, citizenJobHandler.getLastJob());
         compound.setBoolean(TAG_DAY, isDay);
         compound.setBoolean(TAG_MOURNING, mourning);
     }
@@ -546,7 +545,6 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenColonyHandler.updateColonyServer();
         }
 
-        citizenJobHandler.setLastJob(compound.getString(TAG_LAST_JOB));
         isDay = compound.getBoolean(TAG_DAY);
         if (compound.hasKey(TAG_MOURNING))
         {
