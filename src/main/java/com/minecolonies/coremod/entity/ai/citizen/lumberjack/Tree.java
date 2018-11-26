@@ -368,7 +368,7 @@ public class Tree
                 {
                     final BlockPos temp = log.add(x, y, z);
                     final Block block = world.getBlockState(temp).getBlock();
-                    if ((block.isWood(null, temp) || Compatibility.isSlimeBlock(block) || Compatibility.isDynamicBlock(block)) && !woodenBlocks.contains(temp))
+                    if ((block.isWood(world, temp) || Compatibility.isSlimeBlock(block) || Compatibility.isDynamicBlock(block)) && !woodenBlocks.contains(temp))
                     {
                         return getBottomAndTopLog(world, temp, woodenBlocks, bottom, top);
                     }
@@ -597,7 +597,7 @@ public class Tree
                 {
                     final BlockPos temp = log.add(x, y, z);
                     final Block block = BlockPosUtil.getBlock(world, temp);
-                    if ((block.isWood(null, temp) || Compatibility.isSlimeBlock(block)) && !woodBlocks.contains(temp))
+                    if ((block.isWood(world, temp) || Compatibility.isSlimeBlock(block)) && !woodBlocks.contains(temp))
                     {
                         addAndSearch(world, temp);
                     }
