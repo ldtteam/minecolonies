@@ -256,7 +256,7 @@ public class CitizenData
             for (int i = 0; i < levelTagList.tagCount(); ++i)
             {
                 final NBTTagCompound levelExperienceAtJob = levelTagList.getCompoundTagAt(i);
-                levelExperienceMap.put(levelExperienceAtJob.getString(TAG_NAME), new Tuple<>(levelExperienceAtJob.getInteger(TAG_LEVEL), levelExperienceAtJob.getDouble(TAG_EXPERIENCE)));
+                levelExperienceMap.put(levelExperienceAtJob.getString(TAG_NAME), new Tuple<>(Math.min(levelExperienceAtJob.getInteger(TAG_LEVEL), MAX_CITIZEN_LEVEL), levelExperienceAtJob.getDouble(TAG_EXPERIENCE)));
             }
         }
         else if (job != null)
@@ -282,15 +282,6 @@ public class CitizenData
         {
             bedPos = BlockPosUtil.readFromNBT(compound, TAG_POS);
             isAsleep = compound.getBoolean(TAG_ASLEEP);
-        }
-
-        for (final Map.Entry<String, Tuple<Integer, Double>> entry : levelExperienceMap.entrySet())
-        {
-            final Tuple<Integer, Double> tuple = entry.getValue();
-            if (job != null && tuple.getFirst() > MAX_CITIZEN_LEVEL)
-            {
-                levelExperienceMap.put(entry.getKey(), new Tuple<>(MAX_CITIZEN_LEVEL, tuple.getSecond()));
-            }
         }
     }
 
