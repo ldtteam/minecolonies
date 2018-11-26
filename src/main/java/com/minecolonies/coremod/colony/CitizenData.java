@@ -22,6 +22,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
@@ -173,14 +174,10 @@ public class CitizenData
 
     /**
      * The current experiences levels the citizen is on depending on his job.
-     */
-    private Map<String, Integer> levels =  new HashMap<>();
-
-    /**
      * The total amount of experiences the citizen has depending on his job.
      * This also includes the amount of experiences within their Experience Bar.
      */
-    private Map<String, Double> experiences =  new HashMap<>();
+    private Map<String, Tuple<Integer, Double>> levelExperienceMap =  new HashMap<>();
 
     /**
      * The last position of the citizen.
@@ -258,21 +255,13 @@ public class CitizenData
             final NBTTagList levelTagList = compound.getTagList(TAG_LEVEL_MAP, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < levelTagList.tagCount(); ++i)
             {
-                final NBTTagCompound levelAtJob = levelTagList.getCompoundTagAt(i);
-                levels.put(levelAtJob.getString(TAG_NAME), levelAtJob.getInteger(TAG_LEVEL));
-            }
-
-            final NBTTagList experienceTagList = compound.getTagList(TAG_EXPERIENCE_MAP, Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < experienceTagList.tagCount(); ++i)
-            {
-                final NBTTagCompound experienceAtJob = experienceTagList.getCompoundTagAt(i);
-                experiences.put(experienceAtJob.getString(TAG_NAME), experienceAtJob.getDouble(TAG_EXPERIENCE));
+                final NBTTagCompound levelExperienceAtJob = levelTagList.getCompoundTagAt(i);
+                levelExperienceMap.put(levelExperienceAtJob.getString(TAG_NAME), new Tuple<>(levelExperienceAtJob.getInteger(TAG_LEVEL), levelExperienceAtJob.getDouble(TAG_EXPERIENCE)));
             }
         }
         else if (job != null)
         {
-            levels.put(job.getName(), compound.getInteger(TAG_LEVEL));
-            experiences.put(job.getName(), compound.getDouble(TAG_EXPERIENCE));
+            levelExperienceMap.put(job.getName(), new Tuple<>(compound.getInteger(TAG_LEVEL), compound.getDouble(TAG_EXPERIENCE)));
         }
 
         if (compound.hasKey(TAG_INVENTORY))
@@ -295,9 +284,13 @@ public class CitizenData
             isAsleep = compound.getBoolean(TAG_ASLEEP);
         }
 
-        if (job != null && levels.getOrDefault(job.getName(), 0) > MAX_CITIZEN_LEVEL)
+        for (final Map.Entry<String, Tuple<Integer, Double>> entry : levelExperienceMap.entrySet())
         {
-            levels.put(job.getName(), MAX_CITIZEN_LEVEL);
+            final Tuple<Integer, Double> tuple = entry.getValue();
+            if (job != null && tuple.getFirst() > MAX_CITIZEN_LEVEL)
+            {
+                levelExperienceMap.put(entry.getKey(), new Tuple<>(MAX_CITIZEN_LEVEL, tuple.getSecond()));
+            }
         }
     }
 
@@ -851,24 +844,15 @@ public class CitizenData
         //  Attributes
 
         @NotNull final NBTTagList levelTagList = new NBTTagList();
-        for (@NotNull final Map.Entry<String, Integer> entry : levels.entrySet())
+        for (@NotNull final Map.Entry<String, Tuple<Integer, Double>> entry : levelExperienceMap.entrySet())
         {
             @NotNull final NBTTagCompound levelCompound = new NBTTagCompound();
             levelCompound.setString(TAG_NAME, entry.getKey());
-            levelCompound.setInteger(TAG_LEVEL, entry.getValue());
+            levelCompound.setInteger(TAG_LEVEL, entry.getValue().getFirst());
+            levelCompound.setDouble(TAG_EXPERIENCE, entry.getValue().getSecond());
             levelTagList.appendTag(levelCompound);
         }
         compound.setTag(TAG_LEVEL_MAP, levelTagList);
-
-        @NotNull final NBTTagList experienceTagList = new NBTTagList();
-        for (@NotNull final Map.Entry<String, Double> entry : experiences.entrySet())
-        {
-            @NotNull final NBTTagCompound experienceCompound = new NBTTagCompound();
-            experienceCompound.setString(TAG_NAME, entry.getKey());
-            experienceCompound.setDouble(TAG_EXPERIENCE, entry.getValue());
-            experienceTagList.appendTag(experienceCompound);
-        }
-        compound.setTag(TAG_EXPERIENCE_MAP, experienceTagList);
 
         compound.setDouble(TAG_HEALTH, health);
         compound.setDouble(TAG_MAX_HEALTH, maxHealth);
@@ -988,7 +972,7 @@ public class CitizenData
         {
             return 0;
         }
-        return levels.computeIfAbsent(job.getName(), jobKey -> 0);
+        return levelExperienceMap.computeIfAbsent(job.getName(), jobKey -> new Tuple<>(0, 0.0D)).getFirst();
     }
 
     /**
@@ -1002,7 +986,8 @@ public class CitizenData
         {
             return;
         }
-        this.levels.put(job.getName(), lvl);
+        final Tuple<Integer, Double> entry = levelExperienceMap.computeIfAbsent(job.getName(), jobKey -> new Tuple<>(0, 0.0D));
+        this.levelExperienceMap.put(job.getName(), new Tuple<>(lvl, entry.getSecond()));
     }
 
     /**
@@ -1014,7 +999,8 @@ public class CitizenData
     {
         if (this.job != null)
         {
-            experiences.put(job.getName(), experiences.get(job.getName()) + xp);
+            final Tuple<Integer, Double> entry = levelExperienceMap.computeIfAbsent(job.getName(), jobKey -> new Tuple<>(0, 0.0D));
+            this.levelExperienceMap.put(job.getName(), new Tuple<>(entry.getFirst(), entry.getSecond() + xp));
         }
     }
 
@@ -1026,7 +1012,8 @@ public class CitizenData
         increaseLevel();
         if (job != null)
         {
-            job.onLevelUp(levels.get(job.getName()));
+            final Tuple<Integer, Double> entry = levelExperienceMap.computeIfAbsent(job.getName(), jobKey -> new Tuple<>(0, 0.0D));
+            job.onLevelUp(entry.getFirst());
         }
     }
 
@@ -1037,10 +1024,10 @@ public class CitizenData
     {
         if (job != null)
         {
-            final int currentLevel = this.levels.computeIfAbsent(job.getName(), jobKey -> 0);
-            if (currentLevel < MAX_CITIZEN_LEVEL)
+            final Tuple<Integer, Double> entry = levelExperienceMap.computeIfAbsent(job.getName(), jobKey -> new Tuple<>(0, 0.0D));
+            if (entry.getFirst() < MAX_CITIZEN_LEVEL)
             {
-                this.levels.put(job.getName(), currentLevel + 1);
+                this.levelExperienceMap.put(job.getName(), new Tuple<>(entry.getFirst() + 1, entry.getSecond()));
             }
         }
     }
@@ -1091,7 +1078,7 @@ public class CitizenData
         {
             return 0;
         }
-        return experiences.computeIfAbsent(job.getName(), jobKey -> 0.0D);
+        return levelExperienceMap.computeIfAbsent(job.getName(), jobKey -> new Tuple<>(0, 0.0D)).getSecond();
     }
 
     /**
