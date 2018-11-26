@@ -462,7 +462,7 @@ com.minecolonies.coremod.gui.workerHuts.buildBarracks=Kaserne
 com.minecolonies.coremod.permission.teleport_to_colony=Zur Colony Teleportieren
 com.minecolonies.coremod.gui.hiring.buttonFire=Feuer
 com.minecolonies.coremod.worker.noUpgrade=Keine Aufwertung verfügbar.
-com.minecolonies.coremod.worker.needBarracks=Bitte upgrade zuerst die Kaserne
+com.minecolonies.coremod.worker.needBarracks=Bitte werte zuerst die Kaserne auf.
 com.minecolonies.coremod.gui.warehouse.upgrade=Lagerraum erweitern
 
 com.minecolonies.coremod.job.cook=Koch
