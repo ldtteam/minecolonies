@@ -59,7 +59,7 @@
         },
         {
           "type": "item",
-          "weight": 50,
+          "weight": 25,
           "quality": 1,
           "name": "minecolonies:iron_scimitar"
         },
