@@ -19,13 +19,13 @@ public class TileEntityIdFixer implements IFixableData
     public TileEntityIdFixer()
     {
         idsToFix = ImmutableMap.<String, String>builder()
-                     .put("minecraft:" + Constants.MOD_ID + ".ColonyBuilding", Constants.MOD_ID + ":ColonyBuilding")
-                     .put("minecraft:" + Constants.MOD_ID + ".Scarecrow", Constants.MOD_ID + ":Scarecrow")
-                     .put("minecraft:" + Constants.MOD_ID + ".WareHouse", Constants.MOD_ID + ":WareHouse")
+                     .put("minecraft:" + Constants.MOD_ID + ".colonybuilding", Constants.MOD_ID + ":colonybuilding")
+                     .put("minecraft:" + Constants.MOD_ID + ".scarecrow", Constants.MOD_ID + ":scarecrow")
+                     .put("minecraft:" + Constants.MOD_ID + ".wareHouse", Constants.MOD_ID + ":warehouse")
                      .put("minecraft:" + Constants.MOD_ID + ".rack", Constants.MOD_ID + ":rack")
-                     .put("minecraft:" + Constants.MOD_ID + ".InfoPoster", Constants.MOD_ID + ":InfoPoster")
-                     .put("minecraft:" + Constants.MOD_ID + ".MultiBlock", Constants.MOD_ID + ":MultiBlock")
-                     .put("minecraft:" + Constants.MOD_ID + ".Barrel", Constants.MOD_ID + ":Barrel")
+                     .put("minecraft:" + Constants.MOD_ID + ".infoposter", Constants.MOD_ID + ":infoposter")
+                     .put("minecraft:" + Constants.MOD_ID + ".multiblock", Constants.MOD_ID + ":multiblock")
+                     .put("minecraft:" + Constants.MOD_ID + ".barrel", Constants.MOD_ID + ":barrel")
                      .build();
     }
 
