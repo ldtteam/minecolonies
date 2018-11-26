@@ -972,7 +972,7 @@ public class CitizenData
         {
             return 0;
         }
-        return levelExperienceMap.computeIfAbsent(job.getName(), jobKey -> new Tuple<>(0, 0.0D)).getFirst();
+        return queryLevelExperienceMap().getFirst();
     }
 
     /**
@@ -986,7 +986,7 @@ public class CitizenData
         {
             return;
         }
-        final Tuple<Integer, Double> entry = levelExperienceMap.computeIfAbsent(job.getName(), jobKey -> new Tuple<>(0, 0.0D));
+        final Tuple<Integer, Double> entry = queryLevelExperienceMap();
         this.levelExperienceMap.put(job.getName(), new Tuple<>(lvl, entry.getSecond()));
     }
 
@@ -999,7 +999,7 @@ public class CitizenData
     {
         if (this.job != null)
         {
-            final Tuple<Integer, Double> entry = levelExperienceMap.computeIfAbsent(job.getName(), jobKey -> new Tuple<>(0, 0.0D));
+            final Tuple<Integer, Double> entry = queryLevelExperienceMap();
             this.levelExperienceMap.put(job.getName(), new Tuple<>(entry.getFirst(), entry.getSecond() + xp));
         }
     }
@@ -1012,7 +1012,7 @@ public class CitizenData
         increaseLevel();
         if (job != null)
         {
-            final Tuple<Integer, Double> entry = levelExperienceMap.computeIfAbsent(job.getName(), jobKey -> new Tuple<>(0, 0.0D));
+            final Tuple<Integer, Double> entry = queryLevelExperienceMap();
             job.onLevelUp(entry.getFirst());
         }
     }
@@ -1024,7 +1024,7 @@ public class CitizenData
     {
         if (job != null)
         {
-            final Tuple<Integer, Double> entry = levelExperienceMap.computeIfAbsent(job.getName(), jobKey -> new Tuple<>(0, 0.0D));
+            final Tuple<Integer, Double> entry = queryLevelExperienceMap();
             if (entry.getFirst() < MAX_CITIZEN_LEVEL)
             {
                 this.levelExperienceMap.put(job.getName(), new Tuple<>(entry.getFirst() + 1, entry.getSecond()));
@@ -1078,7 +1078,16 @@ public class CitizenData
         {
             return 0;
         }
-        return levelExperienceMap.computeIfAbsent(job.getName(), jobKey -> new Tuple<>(0, 0.0D)).getSecond();
+        return queryLevelExperienceMap().getSecond();
+    }
+
+    /**
+     * Query the map and compute absent if necessary.
+     * @return the tuple for the job.
+     */
+    private Tuple<Integer, Double> queryLevelExperienceMap()
+    {
+        return levelExperienceMap.computeIfAbsent(job.getName(), jobKey -> new Tuple<>(0, 0.0D));
     }
 
     /**
