@@ -21,7 +21,7 @@ public class TileEntityIdFixer implements IFixableData
         idsToFix = ImmutableMap.<String, String>builder()
                      .put("minecraft:" + Constants.MOD_ID + ".colonybuilding", Constants.MOD_ID + ":colonybuilding")
                      .put("minecraft:" + Constants.MOD_ID + ".scarecrow", Constants.MOD_ID + ":scarecrow")
-                     .put("minecraft:" + Constants.MOD_ID + ".wareHouse", Constants.MOD_ID + ":warehouse")
+                     .put("minecraft:" + Constants.MOD_ID + ".warehouse", Constants.MOD_ID + ":warehouse")
                      .put("minecraft:" + Constants.MOD_ID + ".rack", Constants.MOD_ID + ":rack")
                      .put("minecraft:" + Constants.MOD_ID + ".infoposter", Constants.MOD_ID + ":infoposter")
                      .put("minecraft:" + Constants.MOD_ID + ".multiblock", Constants.MOD_ID + ":multiblock")
