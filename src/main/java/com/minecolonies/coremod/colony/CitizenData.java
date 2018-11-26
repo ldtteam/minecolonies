@@ -3,10 +3,7 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
@@ -27,14 +24,13 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_CITIZEN_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -56,7 +52,7 @@ public class CitizenData
     private static final float MAX_HEALTH = 20.0F;
 
     /**
-     * Max level of an attribute a citizen may initially have.
+     * Max levels of an attribute a citizen may initially have.
      */
     private static final int LETTERS_IN_THE_ALPHABET = 26;
 
@@ -66,7 +62,7 @@ public class CitizenData
     private static final int MIN_SATURATION = 0;
 
     /**
-     * The chance the citizen has to level. is 1 in this number.
+     * The chance the citizen has to levels. is 1 in this number.
      */
     private static final int CHANCE_TO_LEVEL = 100;
 
@@ -176,15 +172,15 @@ public class CitizenData
     private double saturation;
 
     /**
-     * The current experience level the citizen is on.
+     * The current experiences levels the citizen is on depending on his job.
      */
-    private int level = 0;
+    private Map<String, Integer> levels =  new HashMap<>();
 
     /**
-     * The total amount of experience the citizen has.
-     * This also includes the amount of experience within their Experience Bar.
+     * The total amount of experiences the citizen has depending on his job.
+     * This also includes the amount of experiences within their Experience Bar.
      */
-    private double experience;
+    private Map<String, Double> experiences =  new HashMap<>();
 
     /**
      * The last position of the citizen.
@@ -240,9 +236,6 @@ public class CitizenData
         paused = compound.getBoolean(TAG_PAUSED);
         textureId = compound.getInteger(TAG_TEXTURE);
 
-        //  Attributes
-        level = compound.getInteger(TAG_LEVEL);
-        experience = compound.getInteger(TAG_EXPERIENCE);
         health = compound.getFloat(TAG_HEALTH);
         maxHealth = compound.getFloat(TAG_MAX_HEALTH);
 
@@ -257,6 +250,29 @@ public class CitizenData
         if (compound.hasKey("job"))
         {
             setJob(JobRegistry.createFromNBT(this, compound.getCompoundTag("job")));
+        }
+
+        //  Attributes
+        if (compound.hasKey(TAG_LEVEL_MAP))
+        {
+            final NBTTagList levelTagList = compound.getTagList(TAG_LEVEL_MAP, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < levelTagList.tagCount(); ++i)
+            {
+                final NBTTagCompound levelAtJob = levelTagList.getCompoundTagAt(i);
+                levels.put(levelAtJob.getString(TAG_NAME), levelAtJob.getInteger(TAG_LEVEL));
+            }
+
+            final NBTTagList experienceTagList = compound.getTagList(TAG_EXPERIENCE_MAP, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < experienceTagList.tagCount(); ++i)
+            {
+                final NBTTagCompound experienceAtJob = experienceTagList.getCompoundTagAt(i);
+                experiences.put(experienceAtJob.getString(TAG_NAME), experienceAtJob.getDouble(TAG_EXPERIENCE));
+            }
+        }
+        else if (job != null)
+        {
+            levels.put(job.getName(), compound.getInteger(TAG_LEVEL));
+            experiences.put(job.getName(), compound.getDouble(TAG_EXPERIENCE));
         }
 
         if (compound.hasKey(TAG_INVENTORY))
@@ -279,9 +295,9 @@ public class CitizenData
             isAsleep = compound.getBoolean(TAG_ASLEEP);
         }
 
-        if (level > MAX_CITIZEN_LEVEL)
+        if (job != null && levels.getOrDefault(job.getName(), 0) > MAX_CITIZEN_LEVEL)
         {
-            level = MAX_CITIZEN_LEVEL;
+            levels.put(job.getName(), MAX_CITIZEN_LEVEL);
         }
     }
 
@@ -483,8 +499,6 @@ public class CitizenData
         textureId = CompatibilityUtils.getWorld(entity).rand.nextInt(Integer.MAX_VALUE);
         health = entity.getHealth();
         maxHealth = entity.getMaxHealth();
-        experience = 0;
-        level = 0;
         saturation = MAX_SATURATION;
         final int levelCap = (int) colony.getOverallHappiness();
         @NotNull final Random random = new Random();
@@ -604,39 +618,6 @@ public class CitizenData
     public int getTextureId()
     {
         return textureId;
-    }
-
-    /**
-     * Adds experience of the citizen.
-     *
-     * @param xp the amount of xp to add.
-     */
-    public void addExperience(final double xp)
-    {
-        this.experience += xp;
-    }
-
-    /**
-     * Levelup actions for the citizen, increases level and notifies the Citizen's Job
-     */
-    public void levelUp()
-    {
-        increaseLevel();
-        if (job != null)
-        {
-            job.onLevelUp(level);
-        }
-    }
-
-    /**
-     * Increases the level of the citizen.
-     */
-    private void increaseLevel()
-    {
-        if (this.level < MAX_CITIZEN_LEVEL)
-        {
-            this.level += 1;
-        }
     }
 
     /**
@@ -868,8 +849,27 @@ public class CitizenData
         compound.setInteger(TAG_TEXTURE, textureId);
 
         //  Attributes
-        compound.setInteger(TAG_LEVEL, level);
-        compound.setDouble(TAG_EXPERIENCE, experience);
+
+        @NotNull final NBTTagList levelTagList = new NBTTagList();
+        for (@NotNull final Map.Entry<String, Integer> entry : levels.entrySet())
+        {
+            @NotNull final NBTTagCompound levelCompound = new NBTTagCompound();
+            levelCompound.setString(TAG_NAME, entry.getKey());
+            levelCompound.setInteger(TAG_LEVEL, entry.getValue());
+            levelTagList.appendTag(levelCompound);
+        }
+        compound.setTag(TAG_LEVEL_MAP, levelTagList);
+
+        @NotNull final NBTTagList experienceTagList = new NBTTagList();
+        for (@NotNull final Map.Entry<String, Double> entry : experiences.entrySet())
+        {
+            @NotNull final NBTTagCompound experienceCompound = new NBTTagCompound();
+            experienceCompound.setString(TAG_NAME, entry.getKey());
+            experienceCompound.setDouble(TAG_EXPERIENCE, entry.getValue());
+            experienceTagList.appendTag(experienceCompound);
+        }
+        compound.setTag(TAG_EXPERIENCE_MAP, experienceTagList);
+
         compound.setDouble(TAG_HEALTH, health);
         compound.setDouble(TAG_MAX_HEALTH, maxHealth);
 
@@ -969,34 +969,79 @@ public class CitizenData
         buf.writeInt(optionalEntityCitizen.map(entityCitizen -> entityCitizen.getCitizenStatusHandler().getLatestStatus().length).orElse(0));
 
         optionalEntityCitizen.ifPresent(entityCitizen -> {
-            final ITextComponent[] latestStatus = entityCitizen.getCitizenStatusHandler().getLatestStatus();
-            for (int i = 0; i < latestStatus.length; i++)
+            final ITextComponent[] latestStatusArray = entityCitizen.getCitizenStatusHandler().getLatestStatus();
+            for (final ITextComponent latestStatus : latestStatusArray)
             {
-                ByteBufUtils.writeUTF8String(buf, latestStatus[i] == null ? "" : latestStatus[i].getUnformattedText());
+                ByteBufUtils.writeUTF8String(buf, latestStatus == null ? "" : latestStatus.getUnformattedText());
             }
         });
     }
 
     /**
-     * Returns the level of the citizen.
+     * Returns the levels of the citizen.
      *
-     * @return level of the citizen.
+     * @return levels of the citizen.
      */
     public int getLevel()
     {
-        return level;
+        if (job == null)
+        {
+            return 0;
+        }
+        return levels.computeIfAbsent(job.getName(), jobKey -> 0);
     }
 
     /**
-     * Sets the level of the citizen.
+     * Sets the levels of the citizen.
      *
-     * @param lvl the new level for the citizen.
+     * @param lvl the new levels for the citizen.
      */
     public void setLevel(final int lvl)
     {
-        if (level < MAX_CITIZEN_LEVEL)
+        if (job == null)
         {
-            this.level = lvl;
+            return;
+        }
+        this.levels.put(job.getName(), lvl);
+    }
+
+    /**
+     * Adds experiences of the citizen.
+     *
+     * @param xp the amount of xp to add.
+     */
+    public void addExperience(final double xp)
+    {
+        if (this.job != null)
+        {
+            experiences.put(job.getName(), experiences.get(job.getName()) + xp);
+        }
+    }
+
+    /**
+     * Levelup actions for the citizen, increases levels and notifies the Citizen's Job
+     */
+    public void levelUp()
+    {
+        increaseLevel();
+        if (job != null)
+        {
+            job.onLevelUp(levels.get(job.getName()));
+        }
+    }
+
+    /**
+     * Increases the levels of the citizen.
+     */
+    private void increaseLevel()
+    {
+        if (job != null)
+        {
+            final int currentLevel = this.levels.computeIfAbsent(job.getName(), jobKey -> 0);
+            if (currentLevel < MAX_CITIZEN_LEVEL)
+            {
+                this.levels.put(job.getName(), currentLevel + 1);
+            }
         }
     }
 
@@ -1026,15 +1071,6 @@ public class CitizenData
     }
 
     /**
-     * Resets the experience and the experience level of the citizen.
-     */
-    public void resetExperienceAndLevel()
-    {
-        this.level = 0;
-        this.experience = 0;
-    }
-
-    /**
      * Set the citizen name.
      *
      * @param name the name to set.
@@ -1045,13 +1081,17 @@ public class CitizenData
     }
 
     /**
-     * Returns the experience of the citizen.
+     * Returns the experiences of the citizen.
      *
-     * @return experience of the citizen.
+     * @return experiences of the citizen.
      */
     public double getExperience()
     {
-        return experience;
+        if (job == null)
+        {
+            return 0;
+        }
+        return experiences.computeIfAbsent(job.getName(), jobKey -> 0.0D);
     }
 
     /**
@@ -1247,7 +1287,7 @@ public class CitizenData
     }
 
     /**
-     * Try a random level up.
+     * Try a random levels up.
      */
     public void tryRandomLevelUp(final Random random)
     {
@@ -1255,7 +1295,7 @@ public class CitizenData
     }
 
     /**
-     * Try a random level up.
+     * Try a random levels up.
      *
      * @param customChance set to 0 to not use, chance for levelup is 1/customChance
      */

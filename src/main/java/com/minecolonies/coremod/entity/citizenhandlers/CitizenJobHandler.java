@@ -4,10 +4,8 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.entity.ai.EntityAITasks;
-import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,38 +24,12 @@ public class CitizenJobHandler
     private final EntityCitizen citizen;
 
     /**
-     * The last job of the citizen.
-     */
-    private String lastJob = "";
-
-    /**
      * Constructor for the experience handler.
      * @param citizen the citizen owning the handler.
      */
     public CitizenJobHandler(final EntityCitizen citizen)
     {
         this.citizen = citizen;
-    }
-
-    /**
-     * Getter for the last job.
-     *
-     * @return the last job he had.
-     */
-    @NotNull
-    public String getLastJob()
-    {
-        return this.lastJob;
-    }
-
-    /**
-     * Sets the last job of the citizen.
-     *
-     * @param jobName the job he last had.
-     */
-    public void setLastJob(@NotNull final String jobName)
-    {
-        this.lastJob = jobName;
     }
 
     /**
@@ -151,35 +123,5 @@ public class CitizenJobHandler
     public AbstractJob getColonyJob()
     {
         return citizen.getCitizenData() == null ? null : citizen.getCitizenData().getJob();
-    }
-
-    /**
-     * Check if a certain item is in the hut of the citizen.
-     * @param predicate the predicate to check.
-     * @return true if so.
-     */
-    public boolean isInHut(@Nullable final Predicate<ItemStack> predicate)
-    {
-        final AbstractEntityAIBasic job = getEntityAI();
-        if (job != null)
-        {
-            return job.isInHut(predicate);
-        }
-        
-        return false;
-    }
-
-    /**
-     * Get the entityAI via the job of the entity.
-     * @return the AbstractEntityAIBasic AI.
-     */
-    private AbstractEntityAIBasic getEntityAI()
-    {
-        if (getColonyJob() != null && getColonyJob().getWorkerAI() instanceof AbstractEntityAIBasic)
-        {
-            return (AbstractEntityAIBasic) getColonyJob().getWorkerAI();
-        }
-
-        return null;
     }
 }
