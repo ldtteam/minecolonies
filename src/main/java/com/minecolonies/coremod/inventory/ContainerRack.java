@@ -157,6 +157,7 @@ public class ContainerRack extends net.minecraft.inventory.Container
         }
         else
         {
+            slot.putStack(stackCopy);
             slot.onSlotChanged();
         }
 
