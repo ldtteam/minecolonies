@@ -56,68 +56,18 @@ public class AITarget
 
     /**
      * Construct a target.
-     * TODO: Remove once all Targets transitioned to tickRate
-     * @param action the action to apply
-     */
-    public AITarget(@NotNull final Supplier<AIState> action, final boolean isOkayToEat)
-    {
-        this(() -> true, isOkayToEat, action, 1);
-    }
-
-    /**
-     * Construct a target.
-     *
-     * @param action the action to apply
-     */
-    public AITarget(@NotNull final Supplier<AIState> action, final boolean isOkayToEat, @NotNull final int tickRate)
-    {
-        this(() -> true, isOkayToEat, action, tickRate);
-    }
-
-    /**
-     * Construct a target.
-     * TODO: Remove once all Targets transitioned to tickRate
-     * @param predicate the predicate for execution
-     * @param action    the action to apply
-     */
-    public AITarget(@NotNull final BooleanSupplier predicate, final boolean isOkayToEat, @NotNull final Supplier<AIState> action)
-    {
-        this(null, isOkayToEat, predicate, action, 1);
-    }
-
-    /**
-     * Construct a target.
-     *
-     * @param predicate the predicate for execution
-     * @param action    the action to apply
-     */
-    public AITarget(@NotNull final BooleanSupplier predicate, final boolean isOkayToEat, @NotNull final Supplier<AIState> action, @NotNull final int tickRate)
-    {
-        this(null, isOkayToEat, predicate, action, tickRate);
-    }
-
-    /**
-     * Construct a target.
-     * TODO: Remove once all Targets transitioned to tickRate
      * @param state     the state it needs to be | null
      * @param predicate the predicate for execution
      * @param action    the action to apply
      */
     public AITarget(
-      @Nullable final AIState state,
+      @NotNull final AIState state,
       final boolean isOkayToEat,
       @NotNull final BooleanSupplier predicate,
       @NotNull final Supplier<AIState> action,
       @NotNull final int tickRate)
     {
-        if (state == null)
-        {
-            this.state = AIState.STATE_BLOCKING_PRIO;
-        }
-        else
-        {
-            this.state = state;
-        }
+        this.state = state;
         this.predicate = predicate;
         this.action = action;
         this.okayToEat = isOkayToEat;
@@ -137,25 +87,34 @@ public class AITarget
     }
 
     /**
-     * Construct a target.
-     * TODO: Remove once all Targets transitioned to tickRate
-     * @param predicate the predicate for execution
-     * @param state     the state to switch to
-     */
-    public AITarget(@NotNull final BooleanSupplier predicate, @Nullable final AIState state, final boolean isOkayToEat)
-    {
-        this(null, isOkayToEat, predicate, () -> state, 1);
-    }
-
-    /**
-     * Construct a target.
+     * Construct a null state target for subclasses. Only this constructor should be for allowed for targets without states.
      *
      * @param predicate the predicate for execution
-     * @param state     the state to switch to
+     * @param action    the action to apply
      */
-    public AITarget(@NotNull final BooleanSupplier predicate, @Nullable final AIState state, final boolean isOkayToEat, @NotNull final int tickRate)
+    protected AITarget(
+      final boolean isOkayToEat,
+      @NotNull final BooleanSupplier predicate,
+      @NotNull final Supplier<AIState> action,
+      @NotNull final int tickRate)
     {
-        this(null, isOkayToEat, predicate, () -> state, tickRate);
+        this.state = null;
+        this.predicate = predicate;
+        this.action = action;
+        this.okayToEat = isOkayToEat;
+
+        // Limit rates
+        this.tickRate = tickRate > MAX_AI_TICKRATE ? MAX_AI_TICKRATE : tickRate;
+        this.tickRate = this.tickRate < 1 ? 1 : this.tickRate;
+
+        // Calculate offSet % tickRate already to not have redundant calculations later
+        this.tickOffset = tickOffsetVariant % this.tickRate;
+        // Increase variant for next AITarget and reset variant at a certain point
+        tickOffsetVariant++;
+        if (tickOffsetVariant >= MAX_AI_TICKRATE_VARIANT)
+        {
+            tickOffsetVariant = 0;
+        }
     }
 
     /**

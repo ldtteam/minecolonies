@@ -20,6 +20,8 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHal
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.entity.ai.util.AISpecialState;
+import com.minecolonies.coremod.entity.ai.util.AISpecialTarget;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
@@ -128,7 +130,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
           /*
            * Check if tasks should be executed.
            */
-          new AITarget(this::checkIfExecute, IDLE, true),
+          new AISpecialTarget(AISpecialState.STATE_BLOCKING, true, this::checkIfExecute, IDLE),
           new AITarget(IDLE, true, () -> START_WORKING),
           new AITarget(START_WORKING, true, this::checkWareHouse),
           new AITarget(PREPARE_DELIVERY, true, this::prepareDelivery),

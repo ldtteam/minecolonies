@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 /**
  * One time usage AITarget, unregisters itself after usage
  */
-public class AIEvent extends AITarget
+public class AIEvent extends AISpecialTarget
 {
     /**
      * Boolean which is checked for unregistering the Event
@@ -23,7 +23,7 @@ public class AIEvent extends AITarget
      */
     public AIEvent(@NotNull final BooleanSupplier predicate, @NotNull final Supplier<AIState> action)
     {
-        super(AIState.EVENT, false, predicate, action, 1);
+        super(AISpecialState.EVENT, false, predicate, action, 1);
     }
 
     /**
@@ -34,7 +34,7 @@ public class AIEvent extends AITarget
      */
     public AIEvent(@NotNull final BooleanSupplier predicate, @NotNull final AIState state)
     {
-        super(AIState.EVENT, false, predicate, () -> state, 1);
+        super(AISpecialState.EVENT, false, predicate, () -> state, 1);
     }
 
     /**
@@ -44,7 +44,7 @@ public class AIEvent extends AITarget
      */
     public AIEvent(@NotNull final Supplier<AIState> action)
     {
-        super(AIState.EVENT, false, () -> true, action, 1);
+        super(AISpecialState.EVENT, false, () -> true, action, 1);
     }
 
     /**
@@ -54,7 +54,7 @@ public class AIEvent extends AITarget
      */
     public AIEvent(@NotNull final AIState state)
     {
-        super(AIState.EVENT, false, () -> true, () -> state, 1);
+        super(AISpecialState.EVENT, false, () -> true, () -> state, 1);
     }
 
     /**

@@ -19,6 +19,8 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIStatePausedHandler;
+import com.minecolonies.coremod.entity.ai.util.AISpecialState;
+import com.minecolonies.coremod.entity.ai.util.AISpecialTarget;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
@@ -132,31 +134,33 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
             Init safety checks and transition to IDLE
            */
-          new AITarget(AI_BLOCKING_PRIO, true, this::initSafetyChecks),
+          new AISpecialTarget(AISpecialState.AI_BLOCKING, true, this::initSafetyChecks),
           /*
             Update chestbelt and nametag
             Will be executed every time
             and does not stop execution
            */
-          new AITarget(this::updateVisualState, true),
+          new AISpecialTarget(AISpecialState.AI_BLOCKING, this::updateVisualState, true),
           /*
             If waitingForSomething returns true
             stop execution to wait for it.
             this keeps the current state
             (returning null would not stop execution)
            */
-          new AITarget(AI_BLOCKING_PRIO, true, this::waitingForSomething, this::getState, 1),
+          new AISpecialTarget(AISpecialState.AI_BLOCKING, true, this::waitingForSomething, this::getState, 1),
           /*
             Check if any items are needed.
             If yes, transition to NEEDS_ITEM.
             and wait for new items.
            */
           new AITarget(NEEDS_ITEM, true, this::waitForRequests),
-          new AITarget(() ->
-                         (getState() != NEEDS_ITEM
-                            && (this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData())
-                                  || this.getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(), r -> !worker.getCitizenData().isRequestAsync(r.getToken())))
-                         ), true, () -> NEEDS_ITEM),
+          new AISpecialTarget(AISpecialState.AI_BLOCKING, true, () ->
+                                                                  (getState() != NEEDS_ITEM
+                                                                     && (this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData())
+                                                                           || this.getOwnBuilding()
+                                                                                .hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
+                                                                                  r -> !worker.getCitizenData().isRequestAsync(r.getToken())))
+                                                                  ), () -> NEEDS_ITEM),
 
           /*
             Dumps inventory as long as needs be.
@@ -167,7 +171,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
             Check if inventory has to be dumped.
            */
-          new AITarget(this::inventoryNeedsDump, INVENTORY_FULL, true),
+          new AISpecialTarget(AISpecialState.STATE_BLOCKING, true, this::inventoryNeedsDump, INVENTORY_FULL),
           /*
            * Gather a needed item.
            */
@@ -176,7 +180,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
            * Place any non-restart regarding AITargets before this one
            * Restart AI, building etc.
            */
-          new AITarget(this::shouldRestart, true, this::restart),
+          new AISpecialTarget(AISpecialState.STATE_BLOCKING, true, this::shouldRestart, this::restart),
           /*
            * Reset if not paused.
            */
@@ -188,7 +192,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
            * Start paused with inventory dump
            */
-          new AITarget(this::isStartingPaused, INVENTORY_FULL, true)
+          new AISpecialTarget(AISpecialState.AI_BLOCKING, true, this::isStartingPaused, INVENTORY_FULL)
         );
     }
 

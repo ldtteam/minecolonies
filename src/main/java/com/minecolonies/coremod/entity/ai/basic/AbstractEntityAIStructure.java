@@ -11,9 +11,7 @@ import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.util.AIState;
-import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.entity.ai.util.Structure;
+import com.minecolonies.coremod.entity.ai.util.*;
 import com.minecolonies.coremod.placementhandlers.IPlacementHandler;
 import com.minecolonies.coremod.placementhandlers.PlacementHandlers;
 import com.minecolonies.coremod.util.StructureWrapper;
@@ -146,7 +144,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
           /*
            * Check if tasks should be executed.
            */
-          new AITarget(this::checkIfCanceled, IDLE, true),
+          new AISpecialTarget(AISpecialState.STATE_BLOCKING, true, this::checkIfCanceled, IDLE),
           /*
            * Select the appropriate State to do next.
            */

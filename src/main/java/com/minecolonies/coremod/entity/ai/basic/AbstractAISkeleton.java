@@ -6,9 +6,7 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.util.AIState;
-import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
+import com.minecolonies.coremod.entity.ai.util.*;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -29,21 +27,23 @@ import java.util.Map;
 public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAIBase
 {
 
-    private static final int                               MUTEX_MASK = 3;
+    private static final int                                      MUTEX_MASK = 3;
     @NotNull
-    protected final      J                                 job;
+    protected final      J                                        job;
     @NotNull
-    protected final      EntityCitizen                     worker;
-    protected final      World                             world;
+    protected final      EntityCitizen                            worker;
+    protected final      World                                    world;
     @NotNull
-    protected final      ChatSpamFilter                    chatSpamFilter;
+    protected final      ChatSpamFilter                           chatSpamFilter;
     @NotNull
-    private final        Map<AIState, ArrayList<AITarget>> targetMap;
+    private final        Map<AIState, ArrayList<AITarget>>        targetMap;
+    @NotNull
+    private final        Map<AISpecialState, ArrayList<AITarget>> specialTargetMap;
     /**
      * The current state the ai is in.
      * Used to compare to state matching targets.
      */
-    private              AIState                           state;
+    private              AIState                                  state;
 
     /**
      * Tick counter for the AI
@@ -65,6 +65,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         }
 
         this.targetMap = new HashMap<>();
+        this.specialTargetMap = new HashMap<>();
         setMutexBits(MUTEX_MASK);
         this.job = job;
         this.worker = this.job.getCitizen().getCitizenEntity().get();
@@ -72,9 +73,9 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         this.chatSpamFilter = new ChatSpamFilter(job.getCitizen());
         this.state = AIState.INIT;
         this.targetMap.put(AIState.INIT, new ArrayList<>());
-        this.targetMap.put(AIState.AI_BLOCKING_PRIO, new ArrayList<>());
-        this.targetMap.put(AIState.STATE_BLOCKING_PRIO, new ArrayList<>());
-        this.targetMap.put(AIState.EVENT, new ArrayList<>());
+        this.specialTargetMap.put(AISpecialState.AI_BLOCKING, new ArrayList<>());
+        this.specialTargetMap.put(AISpecialState.STATE_BLOCKING, new ArrayList<>());
+        this.specialTargetMap.put(AISpecialState.EVENT, new ArrayList<>());
     }
 
     /**
@@ -84,26 +85,43 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      */
     private void registerTarget(final AITarget target)
     {
-        if (!targetMap.containsKey(target.getState()))
+        if (target.getState() != null)
         {
-            final ArrayList<AITarget> newList = new ArrayList<>();
-            newList.add(target);
-            targetMap.put(target.getState(), newList);
+            if (!targetMap.containsKey(target.getState()))
+            {
+                final ArrayList<AITarget> newList = new ArrayList<>();
+                newList.add(target);
+                targetMap.put(target.getState(), newList);
+            }
+            else
+            {
+                targetMap.get(target.getState()).add(target);
+            }
         }
-        else
+        else if (target instanceof AISpecialTarget)
         {
-            targetMap.get(target.getState()).add(target);
+            final AISpecialState state = ((AISpecialTarget) target).getSpecialState();
+            if (!specialTargetMap.containsKey(state))
+            {
+                final ArrayList<AITarget> newList = new ArrayList<>();
+                newList.add(target);
+                specialTargetMap.put(state, newList);
+            }
+            else
+            {
+                specialTargetMap.get(state).add(target);
+            }
         }
     }
 
     /**
      * Unregisters an AI Target
      */
-    protected final void unRegisterTarget(final AITarget target)
+    protected final void unRegisterEvent(final AITarget target)
     {
-        final ArrayList<AITarget> temp = new ArrayList<>(targetMap.get(target.getState()));
+        final ArrayList<AITarget> temp = new ArrayList<>(specialTargetMap.get(AISpecialState.EVENT));
         temp.remove(target);
-        targetMap.put(target.getState(), temp);
+        specialTargetMap.put(AISpecialState.EVENT, temp);
     }
 
     /**
@@ -170,9 +188,9 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         }
 
         // Check targets in order by priority
-        if (!targetMap.get(AIState.AI_BLOCKING_PRIO).stream().anyMatch(this::checkOnTarget)
-              && !targetMap.get(AIState.EVENT).stream().anyMatch(this::checkOnTarget)
-              && !targetMap.get(AIState.STATE_BLOCKING_PRIO).stream().anyMatch(this::checkOnTarget))
+        if (!specialTargetMap.get(AISpecialState.AI_BLOCKING).stream().anyMatch(this::checkOnTarget)
+              && !specialTargetMap.get(AISpecialState.EVENT).stream().anyMatch(this::checkOnTarget)
+              && !specialTargetMap.get(AISpecialState.STATE_BLOCKING).stream().anyMatch(this::checkOnTarget))
         {
             targetMap.get(state).stream().anyMatch(this::checkOnTarget);
         }
@@ -262,7 +280,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         {
             if (target.shouldUnregister())
             {
-                unRegisterTarget(target);
+                unRegisterEvent(target);
             }
             state = newState;
             return true;
