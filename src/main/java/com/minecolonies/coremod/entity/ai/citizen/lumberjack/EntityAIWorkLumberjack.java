@@ -204,9 +204,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * @param stack the stack to check.
      * @return true if it is a log type.
      */
-    private static boolean isStackLog(@Nullable final ItemStack stack)
+    private boolean isStackLog(@Nullable final ItemStack stack)
     {
-        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock().isWood(null, new BlockPos(0, 0, 0));
+        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock().isWood(world, new BlockPos(0, 0, 0));
     }
 
     /**
@@ -800,6 +800,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private boolean hasLogs()
     {
-        return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventory()), EntityAIWorkLumberjack::isStackLog);
+        return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventory()), this::isStackLog);
     }
 }

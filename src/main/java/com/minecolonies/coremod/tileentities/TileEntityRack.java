@@ -542,6 +542,7 @@ public class TileEntityRack extends TileEntity
                             combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().inventory);
                         }
                         markDirty();
+                        return (T) combinedHandler;
                     }
                 }
             }
