@@ -375,7 +375,7 @@ achievement.farmer.wheatHarvested.500.desc=Awon agbe e ti kore oka ogorun.
 achievement.farmer.wheatHarvested.1000.desc=Awon agbe re kore alikama 1000.
 
 com.minecolonies.coremod.permission.no=A ko gba e laye lati se eleyi ni ileto yi!
-com.minecolonies.coremod.gui.townHall.freeBlocks=Free for interaction
+com.minecolonies.coremod.gui.townHall.freeBlocks=Aye si sile fun ibaraenisepo
 
 com.minecolonies.coremod.permission.access_huts=Access GUIs
 com.minecolonies.coremod.permission.guards_attack=Fight guards
