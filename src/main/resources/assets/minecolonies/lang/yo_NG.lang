@@ -372,7 +372,7 @@ achievement.farmer.wheatHarvested.one.desc=awon agbe e ti kore oka kan.
 achievement.farmer.wheatHarvested.25.desc=awon agbe e ti kore oka marundinlogbon.
 achievement.farmer.wheatHarvested.100.desc=awom agbe e tikore oka ogorun.
 achievement.farmer.wheatHarvested.500.desc=Awon agbe e ti kore oka ogorun.
-achievement.farmer.wheatHarvested.1000.desc=Your farmers harvested 1000 wheat.
+achievement.farmer.wheatHarvested.1000.desc=Awon agbe re kore alikama 1000.
 
 com.minecolonies.coremod.permission.no=You have no permission to do this in this colony!
 com.minecolonies.coremod.gui.townHall.freeBlocks=Free for interaction
