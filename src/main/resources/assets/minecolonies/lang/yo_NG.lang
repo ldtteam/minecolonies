@@ -417,9 +417,9 @@ com.minecolonies.coremod.item.permissionscepter.removelocation.success=Agbegbe t
 tile.blockHut.warehouse.limit=Iye ile ikojasi ko le ju eyokan ni ileto kan lo.
 
 com.minecolonies.coremod.gui.workerHuts.baker=Asakara
-com.minecolonies.coremod.baker.noFurnace=My building doesn't have any furnaces, please repair it.
-com.minecolonies.coremod.job.baker=Baker
-com.minecolonies.coremod.gui.workerHuts.saplingList=Tasklist
+com.minecolonies.coremod.baker.noFurnace=Ile mi ko ni awon ileru kankan, jowo tunse.
+com.minecolonies.coremod.job.baker=Asakara
+com.minecolonies.coremod.gui.workerHuts.saplingList=Akojo ise-sise
 
 com.minecolonies.coremod.gui.townHall.housing=Housing assignment mode:
 com.minecolonies.coremod.gui.home.assign=Assign %d citizens
