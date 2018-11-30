@@ -52,13 +52,14 @@ public final class BlockPosUtil
      * @param name     Name of the tag.
      * @param pos      Coordinates to write to NBT.
      */
-    public static void writeToNBT(@NotNull final NBTTagCompound compound, final String name, @NotNull final BlockPos pos)
+    public static NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound, final String name, @NotNull final BlockPos pos)
     {
         @NotNull final NBTTagCompound coordsCompound = new NBTTagCompound();
         coordsCompound.setInteger("x", pos.getX());
         coordsCompound.setInteger("y", pos.getY());
         coordsCompound.setInteger("z", pos.getZ());
         compound.setTag(name, coordsCompound);
+        return compound;
     }
 
     /**

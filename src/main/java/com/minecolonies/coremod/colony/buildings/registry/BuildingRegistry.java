@@ -83,7 +83,7 @@ public class BuildingRegistry
         addMapping("Smeltery", BuildingSmeltery.class, BuildingSmeltery.View.class, BlockHutSmeltery.class);
         addMapping("Composter", BuildingComposter.class, BuildingComposter.View.class, BlockHutComposter.class);
         addMapping("Library", BuildingLibrary.class, BuildingLibrary.View.class, BlockHutLibrary.class);
-
+        addMapping("Archery", BuildingArchery.class, BuildingArchery.View.class, BlockHutArchery.class);
     }
 
     /**

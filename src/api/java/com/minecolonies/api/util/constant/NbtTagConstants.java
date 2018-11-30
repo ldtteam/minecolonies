@@ -393,6 +393,15 @@ public final class NbtTagConstants
     public static final String TAG_TOP_LOG               = "topLog";
 
     /**
+     * Archery building constants.
+     */
+    public static final String TAG_ARCHERY_TARGETS = "archeryTargets";
+    public static final String TAG_STAND = "stand";
+    public static final String TAG_TARGET = "target";
+    public static final String TAG_ARCHERY_STANDS = "archeryStands";
+
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private NbtTagConstants()
