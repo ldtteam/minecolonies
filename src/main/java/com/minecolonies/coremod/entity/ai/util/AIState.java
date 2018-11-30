@@ -424,4 +424,37 @@ public enum AIState
      */
 
     STUDY,
+    /*
+### Archers in Training ###
+     */
+
+    /**
+     * Wander around the building
+     */
+    ARCHER_WANDER,
+
+    /**
+     * Find a good position to shoot from.
+     */
+    ARCHER_FIND_SHOOTING_STAND_POSITION,
+
+    /**
+     * Select a random target.
+     */
+    ARCHER_SELECT_TARGET,
+
+    /**
+     * Go to the shooting position.
+     */
+    ARCHER_GO_TO_SHOOTING_STAND,
+
+    /**
+     * Check the shot result.
+     */
+    ARCHER_CHECK_SHOT,
+
+    /**
+     * Archer shoot target.
+     */
+    ARCHER_SHOOT,
 }

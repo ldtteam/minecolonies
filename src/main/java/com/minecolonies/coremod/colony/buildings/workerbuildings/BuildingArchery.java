@@ -2,6 +2,8 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.blockout.views.Window;
+import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -20,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -33,6 +36,11 @@ public class BuildingArchery extends AbstractBuildingWorker
      * The Schematic name.
      */
     private static final String SCHEMATIC_NAME   = "Archery";
+
+    /**
+     * The Schematic name.
+     */
+    private static final String DESC   = "Archery";
 
     /**
      * List of shooting stands in the building.
@@ -65,7 +73,7 @@ public class BuildingArchery extends AbstractBuildingWorker
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        if (block == Blocks.WHEAT && world.getBlockState(pos.down()) instanceof BlockFence)
+        if (block == Blocks.HAY_BLOCK && world.getBlockState(pos.down()).getBlock() instanceof BlockFence)
         {
             shootingTargets.add(pos);
         }
@@ -130,6 +138,34 @@ public class BuildingArchery extends AbstractBuildingWorker
     }
 
     /**
+     * Get a random position to shoot from.
+     * @param random the random obj.
+     * @return a random shooting stand position.
+     */
+    public BlockPos getRandomShootingStandPosition(final Random random)
+    {
+         if (shootingStands.size() > 0)
+        {
+            return shootingStands.get(random.nextInt(shootingStands.size()));
+        }
+        return null;
+    }
+
+    /**
+     * Get a random position to shoot at.
+     * @param random the random obj.
+     * @return a random shooting target position.
+     */
+    public BlockPos getRandomShootingTarget(final Random random)
+    {
+        if (shootingTargets.size() > 0)
+        {
+            return shootingTargets.get(random.nextInt(shootingTargets.size()));
+        }
+        return null;
+    }
+
+    /**
      * The client view for the baker building.
      */
     public static class View extends AbstractBuildingWorker.View
@@ -145,6 +181,13 @@ public class BuildingArchery extends AbstractBuildingWorker
             super(c, l);
         }
 
+        @NotNull
+        @Override
+        public Window getWindow()
+        {
+            return new WindowHutWorkerPlaceholder<>(this, DESC);
+        }
+
         /**
          * Check if it has enough workers.
          *
@@ -154,6 +197,20 @@ public class BuildingArchery extends AbstractBuildingWorker
         public boolean hasEnoughWorkers()
         {
             return getWorkerId().size() >= getBuildingLevel();
+        }
+
+        @NotNull
+        @Override
+        public Skill getPrimarySkill()
+        {
+            return Skill.INTELLIGENCE;
+        }
+
+        @NotNull
+        @Override
+        public Skill getSecondarySkill()
+        {
+            return Skill.STRENGTH;
         }
     }
 }
