@@ -424,7 +424,7 @@ com.minecolonies.coremod.gui.workerHuts.saplingList=Akojo ise-sise
 com.minecolonies.coremod.gui.townHall.housing=Ipo pinpin ilegbe:
 com.minecolonies.coremod.gui.home.assign=Yan awon omo ilu %d
 com.minecolonies.coremod.gui.workerHuts.unassign=Yo omo ilu kuro
-tile.minecolonies.blockTimberFrame.name=Plain Timber Frame
+tile.minecolonies.blockTimberFrame.name=Feremu igi gedu
 tile.minecolonies.blockMinecoloniesRack.name=Rack
 
 com.minecolonies.coremod.status.waitingForWork=Searching job
