@@ -519,8 +519,8 @@ tile.minecolonies.blockPaperwall.name=Ogiri onitakada
 com.minecolonies.coremod.gui.workerHuts.buildPrio=Aayo ifijise:
 item.supplyChestDeployer.invalid=O gbodo gbe sinu adagun omi to se dede.
 item.supplyChestDeployer.missing=Se o fe ma tan mi je ni, mu oko ipese yen lekansi?
-com.minecolonies.coremod.citizen.rename.same=Renaming failed: 2 Citizen are not allowed to have the same name!
-com.minecolonies.coremod.citizen.rename.notAllowed=Renaming failed: You're not allowed to rename your Citizen.
+com.minecolonies.coremod.citizen.rename.same=Fifun loruko mii kuna: Ko si anfani fun omo ilu meji lati ni oruko kanna!
+com.minecolonies.coremod.citizen.rename.notAllowed=Fifun loruko mii kuna: O ko ni anfani lati fun omo ilu re ni oruko miran.
 
 tile.minecolonies.blockshingle_oak.name=Oak Shingle
 tile.minecolonies.blockshingle_birch.name=Birch Shingle
