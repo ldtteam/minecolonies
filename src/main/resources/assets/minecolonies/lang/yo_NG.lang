@@ -402,8 +402,8 @@ com.minecolonies.coremod.permission.access_free_blocks=Ni anfani si awon bulooki
 
 item.supplyCampDeployer.invalid=O nilo ile ti ote o kere ju 16*17.
 com.minecolonies.coremod.gui.townHall.currentHappiness=Idunnu lapapo:
-com.minecolonies.coremod.job.guard.toolClickGuardTooFar=Too far away from guard tower, please upgrade your guardtower.
-com.minecolonies.coremod.saturation.0=I'm starving, I can't work anymore
+com.minecolonies.coremod.job.guard.toolClickGuardTooFar=O ti jina ju si ile iso eso, jowo se igbesoke ile iso re.
+com.minecolonies.coremod.saturation.0=Ebi n pa mi, mi ko le sise mo
 com.minecolonies.coremod.saturation.3=I'm quite hungry, I feel very unproductive
 com.minecolonies.coremod.saturation.5=I'm hungry, I'm not that productive anymore
 com.minecolonies.coremod.saturation.7=I'm quite saturated, but I'll have to eat soon again
