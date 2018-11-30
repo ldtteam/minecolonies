@@ -52,7 +52,7 @@ public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTrain
     /**
      * Xp per successful shot.
      */
-    private static final int XP_PER_SUCCESSFUL_SHOT = 5;
+    private static final int XP_PER_SUCCESSFUL_SHOT = 1;
 
     /**
      * Number of target tries per building level.
@@ -72,7 +72,7 @@ public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTrain
     /**
      * Base rate experience for every shot.
      */
-    private static final double XP_BASE_RATE  = 1;
+    private static final double XP_BASE_RATE  = 0.1;
 
     /**
      * Time to wait before analyzing the shot.
