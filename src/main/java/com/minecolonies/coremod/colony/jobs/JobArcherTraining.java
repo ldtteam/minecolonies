@@ -30,6 +30,12 @@ public class JobArcherTraining extends AbstractJob
     }
 
     @Override
+    public String getExperienceTag()
+    {
+        return JobRanger.DESC;
+    }
+
+    @Override
     public RenderBipedCitizen.Model getModel()
     {
         return RenderBipedCitizen.Model.ARCHER_GUARD;
