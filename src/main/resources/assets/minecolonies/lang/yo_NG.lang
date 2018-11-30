@@ -522,15 +522,15 @@ item.supplyChestDeployer.missing=Se o fe ma tan mi je ni, mu oko ipese yen lekan
 com.minecolonies.coremod.citizen.rename.same=Fifun loruko mii kuna: Ko si anfani fun omo ilu meji lati ni oruko kanna!
 com.minecolonies.coremod.citizen.rename.notAllowed=Fifun loruko mii kuna: O ko ni anfani lati fun omo ilu re ni oruko miran.
 
-tile.minecolonies.blockshingle_oak.name=Pako igi apado
+tile.minecolonies.blockshingle_oak.name=Pako igi Oaku
 tile.minecolonies.blockshingle_birch.name=Pako igi Birch
 tile.minecolonies.blockshingle_spruce.name=Pako igi Spruce
 tile.minecolonies.blockshingle_jungle.name=Pako igi igbo
-tile.minecolonies.blockshingle_dark_oak.name=Dark Oak Shingle
-tile.minecolonies.blockshingle_acacia.name=Acacia Shingle
+tile.minecolonies.blockshingle_dark_oak.name=Pako igi Oaku dudu
+tile.minecolonies.blockshingle_acacia.name=Pako igi akasia
 
-com.minecolonies.coremod.gui.recipe.remove=Remove
-com.minecolonies.coremod.gui.workerHuts.crafting=Teach recipe
+com.minecolonies.coremod.gui.recipe.remove=Yọ kúrò
+com.minecolonies.coremod.gui.workerHuts.crafting=Ko won ni ohunelo idana
 com.minecolonies.coremod.gui.recipe.done=Succesfully saved recipe!
 com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
 com.minecolonies.coremod.resolvers.crafter=Crafting Resolver
