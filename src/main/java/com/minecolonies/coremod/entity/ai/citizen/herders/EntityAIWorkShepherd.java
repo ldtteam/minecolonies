@@ -5,7 +5,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingShepherd;
 import com.minecolonies.coremod.colony.jobs.JobShepherd;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.init.Items;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.IAIWorkerState.*;
 
 /**
  * The AI behind the {@link JobShepherd} for Breeding, Killing and Shearing sheep.
@@ -86,10 +86,10 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
     }
 
     @Override
-    public AIState decideWhatToDo()
+    public IAIState decideWhatToDo()
     {
 
-        final AIState result = super.decideWhatToDo();
+        final IAIState result = super.decideWhatToDo();
 
         final List<EntitySheep> animals = new ArrayList<>(searchForAnimals());
         final EntitySheep shearingSheep = animals.stream().filter(sheepie -> !sheepie.getSheared() && !sheepie.isChild()).findFirst().orElse(null);
@@ -111,9 +111,9 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
     /**
      * Shears a sheep, with a chance of dying it!
      *
-     * @return The next {@link AIState}
+     * @return The next {@link IAIState}
      */
-    private AIState shearSheep()
+    private IAIState shearSheep()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SHEPHERD_SHEARING));
 

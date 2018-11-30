@@ -9,8 +9,8 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIWorkerState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.util.StructureWrapper;
 import com.minecolonies.coremod.util.WorkerUtil;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.IAIWorkerState.*;
 
 /**
  * Class which handles the miner behaviour.
@@ -141,7 +141,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     //Miner wants to work but is not at building
     @NotNull
-    private AIState startWorkingAtOwnBuilding()
+    private IAIState startWorkingAtOwnBuilding()
     {
         if (worker.posY >= getOwnBuilding().getLocation().getY() && walkToBuilding())
         {
@@ -189,7 +189,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     }
 
     @NotNull
-    private AIState prepareForMining()
+    private IAIState prepareForMining()
     {
         if (getOwnBuilding() != null && !getOwnBuilding().hasFoundLadder())
         {
@@ -201,10 +201,10 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     /**
      * Walking to the ladder to check out the mine.
      *
-     * @return next AIState.
+     * @return next IAIState.
      */
     @NotNull
-    private AIState goToLadder()
+    private IAIState goToLadder()
     {
         if (walkToLadder())
         {
@@ -219,7 +219,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     }
 
     @NotNull
-    private AIState checkMineShaft()
+    private IAIState checkMineShaft()
     {
         final BuildingMiner buildingMiner = getOwnBuilding();
         //Check if we reached the mineshaft depth limit
@@ -240,7 +240,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     }
 
     @NotNull
-    private AIState lookForLadder()
+    private IAIState lookForLadder()
     {
         @Nullable final BuildingMiner buildingMiner = getOwnBuilding();
 
@@ -329,7 +329,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         buildingMiner.setFoundLadder(true);
     }
 
-    private AIState doShaftMining()
+    private IAIState doShaftMining()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.mining"));
 
@@ -350,7 +350,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         return MINER_MINING_SHAFT;
     }
 
-    private AIState advanceLadder(final AIState state)
+    private IAIState advanceLadder(final IAIState state)
     {
         if (getOwnBuilding().getStartingLevelShaft() >= 4)
         {
@@ -517,7 +517,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     }
 
     @NotNull
-    private AIState doShaftBuilding()
+    private IAIState doShaftBuilding()
     {
         if (walkToBuilding())
         {
@@ -536,7 +536,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     }
 
     @NotNull
-    private AIState executeNodeMining()
+    private IAIState executeNodeMining()
     {
         @Nullable final Level currentLevel = getOwnBuilding().getCurrentLevel();
         if (currentLevel == null)
@@ -548,7 +548,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         return searchANodeToMine(currentLevel);
     }
 
-    private AIState searchANodeToMine(@NotNull final Level currentLevel)
+    private IAIState searchANodeToMine(@NotNull final Level currentLevel)
     {
         final BuildingMiner buildingMiner = getOwnBuilding(BuildingMiner.class);
         if (buildingMiner == null)
@@ -713,7 +713,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         return 0;
     }
 
-    private AIState executeStructurePlacement(@NotNull final Node mineNode, @NotNull final BlockPos standingPosition, final int rotation)
+    private IAIState executeStructurePlacement(@NotNull final Node mineNode, @NotNull final BlockPos standingPosition, final int rotation)
     {
         mineNode.setStatus(Node.NodeStatus.IN_PROGRESS);
         //Preload structures
@@ -918,7 +918,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         }
         if (!isThereAStructureToBuild())
         {
-            switch ((AIWorkerState) getState())
+            switch ((IAIWorkerState) getState())
             {
                 case CLEAR_STEP:
                 case BUILDING_STEP:

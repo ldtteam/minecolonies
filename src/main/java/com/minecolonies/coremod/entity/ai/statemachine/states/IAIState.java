@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.entity.ai.statemachine.states;
 
 /**
- * Interface type for AIState enums
+ * Interface type for IAIState enums
  * Implement this interface to add new statetypes
  */
-public interface AIState
+public interface IAIState
 {
     /**
      * Check whether we can interrupt the current state to eat

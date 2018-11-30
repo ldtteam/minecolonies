@@ -4,7 +4,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCowboy;
 import com.minecolonies.coremod.colony.jobs.JobCowboy;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.init.Items;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.IAIWorkerState.*;
 
 /**
  * The AI behind the {@link JobCowboy} for Breeding, Killing and Milking Cows.
@@ -68,9 +68,9 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
     }
 
     @Override
-    public AIState decideWhatToDo()
+    public IAIState decideWhatToDo()
     {
-        final AIState result = super.decideWhatToDo();
+        final IAIState result = super.decideWhatToDo();
         final BuildingCowboy building = getOwnBuilding();
 
         final boolean hasBucket = InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), Items.BUCKET, 0);
@@ -104,9 +104,9 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
      * Makes the Cowboy "Milk" the cows (Honestly all he does is swap an empty
      * bucket for a milk bucket, there's no actual "Milk" method in {@link EntityCow}
      *
-     * @return The next {@link AIState}
+     * @return The next {@link IAIState}
      */
-    private AIState milkCows()
+    private IAIState milkCows()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING));
 

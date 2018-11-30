@@ -6,7 +6,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.ai.util.StudyItem;
 import net.minecraft.item.ItemStack;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.IAIWorkerState.*;
 
 /**
  * The Entity AI study class.
@@ -61,9 +61,9 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
      * The AI task for the student to study.
      * For this he should walk between the different bookcase hit them once and then stand around for a while.
      *
-     * @return the next AIState.
+     * @return the next IAIState.
      */
-    private AIState study()
+    private IAIState study()
     {
         final CitizenData data = worker.getCitizenData();
         if (data == null)
@@ -149,7 +149,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
      *
      * @return the next state.
      */
-    private AIState startWorkingAtOwnBuilding()
+    private IAIState startWorkingAtOwnBuilding()
     {
         if (walkToBuilding())
         {

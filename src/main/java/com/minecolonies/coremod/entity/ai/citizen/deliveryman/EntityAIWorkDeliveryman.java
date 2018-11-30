@@ -20,8 +20,8 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHal
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIBlockingEventType;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.util.AISpecialTarget;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.IAIWorkerState.*;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
@@ -130,7 +130,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
           /*
            * Check if tasks should be executed.
            */
-          new AISpecialTarget(AIBlockingEventType.STATE_BLOCKING, this::checkIfExecute, IDLE),
+          new AISpecialTarget(IAIBlockingEventType.STATE_BLOCKING, this::checkIfExecute, IDLE),
           new AITarget(IDLE, () -> START_WORKING),
           new AITarget(START_WORKING, this::checkWareHouse),
           new AITarget(PREPARE_DELIVERY, this::prepareDelivery),
@@ -154,7 +154,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      *
      * @return the next state to go to.
      */
-    public AIState gather()
+    public IAIState gather()
     {
         if (maximalGatherCount < 0)
         {
@@ -399,7 +399,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      *
      * @return the next state to go to.
      */
-    public AIState dump()
+    public IAIState dump()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.dumping"));
 
@@ -454,7 +454,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      *
      * @return the next state.
      */
-    private AIState deliver()
+    private IAIState deliver()
     {
         if (job.isReturning())
         {
@@ -565,7 +565,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      *
      * @return the next state to go to.
      */
-    private AIState prepareDelivery()
+    private IAIState prepareDelivery()
     {
         final AbstractBuildingWorker ownBuilding = getOwnBuilding();
         if (ownBuilding instanceof BuildingDeliveryman)
@@ -596,7 +596,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      *
      * @param request request to gather
      */
-    private AIState gatherItems(@NotNull final IRequest<? extends Delivery> request)
+    private IAIState gatherItems(@NotNull final IRequest<? extends Delivery> request)
     {
         final ILocation location = request.getRequest().getStart();
 
@@ -639,7 +639,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      *
      * @return the next AiState to go to.
      */
-    private AIState checkWareHouse()
+    private IAIState checkWareHouse()
     {
         if (!worker.isWorkerAtSiteWithMove(getWareHouse().getLocation(), MIN_DISTANCE_TO_WAREHOUSE))
         {

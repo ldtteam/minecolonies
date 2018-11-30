@@ -7,7 +7,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.IAIWorkerState.*;
 
 /**
  * AI class for all workers which use a furnace and require fuel and a block to smelt in it.
@@ -123,7 +123,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
      * Then check if able to smelt already.
      * @return the next state to go to.
      */
-    private AIState startWorking()
+    private IAIState startWorking()
     {
         if (walkToBuilding())
         {
@@ -133,7 +133,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
 
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
 
-        final AIState nextState = checkForImportantJobs();
+        final IAIState nextState = checkForImportantJobs();
         if(nextState != START_WORKING)
         {
             return nextState;
@@ -183,7 +183,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
      * @param amountOfSmeltable the total amount of smeltables.
      * @return START_USING_FURNACE if enough, else check for additional worker specific jobs.
      */
-    private AIState checkIfAbleToSmelt(final int amountOfFuel, final int amountOfSmeltable)
+    private IAIState checkIfAbleToSmelt(final int amountOfFuel, final int amountOfSmeltable)
     {
         for (final BlockPos pos : ((AbstractBuildingFurnaceUser) getOwnBuilding()).getFurnaces())
         {
@@ -207,9 +207,9 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
 
     /**
      * Check for additional jobs to execute after the traditional furnace user jobs have been handled.
-     * @return the next AIState to go to.
+     * @return the next IAIState to go to.
      */
-    protected AIState checkForAdditionalJobs()
+    protected IAIState checkForAdditionalJobs()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
         setDelay(WAIT_AFTER_REQUEST);
@@ -218,9 +218,9 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
 
     /**
      * Check for important jobs to execute before the traditional furnace user jobs are handled.
-     * @return the next AIState to go to.
+     * @return the next IAIState to go to.
      */
-    protected AIState checkForImportantJobs()
+    protected IAIState checkForImportantJobs()
     {
         return START_WORKING;
     }
@@ -243,7 +243,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
      * On arrival execute the extract method of the specialized worker.
      * @return the next state to go to.
      */
-    private AIState retrieveSmeltableFromFurnace()
+    private IAIState retrieveSmeltableFromFurnace()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
 
@@ -278,7 +278,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
      * Smelt the smeltable after the required items are in the inv.
      * @return the next state to go to.
      */
-    private AIState fillUpFurnace()
+    private IAIState fillUpFurnace()
     {
         if (((AbstractBuildingFurnaceUser) getOwnBuilding()).getFurnaces().isEmpty())
         {

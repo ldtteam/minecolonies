@@ -11,7 +11,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -27,7 +27,7 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.IAIWorkerState.*;
 
 /**
  * Class taking of the abstract guard methods for both archer and knights.
@@ -113,9 +113,9 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
     /**
      * Redirects the herder to their building.
      *
-     * @return The next {@link AIState}.
+     * @return The next {@link IAIState}.
      */
-    private AIState startWorkingAtOwnBuilding()
+    private IAIState startWorkingAtOwnBuilding()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT));
         if (walkToBuilding())
@@ -129,9 +129,9 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
      * Prepares the guard.
      * Fills his required armor and tool lists and transfer from building chest if required.
      *
-     * @return The next {@link AIState}.
+     * @return The next {@link IAIState}.
      */
-    private AIState prepare()
+    private IAIState prepare()
     {
         setDelay(Constants.TICKS_SECOND * PREPARE_DELAY_SECONDS);
 

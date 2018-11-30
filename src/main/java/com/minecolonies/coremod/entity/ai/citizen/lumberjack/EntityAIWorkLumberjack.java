@@ -7,7 +7,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.PathJobFindTree;
 import com.minecolonies.coremod.util.WorkerUtil;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.IAIWorkerState.*;
 
 /**
  * The lumberjack AI class.
@@ -214,7 +214,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      *
      * @return PREPARING once at the building.
      */
-    private AIState startWorkingAtOwnBuilding()
+    private IAIState startWorkingAtOwnBuilding()
     {
         if (walkToBuilding())
         {
@@ -226,9 +226,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     /**
      * Checks if lumberjack has all necessary tools.
      *
-     * @return next AIState.
+     * @return next IAIState.
      */
-    private AIState prepareForWoodcutting()
+    private IAIState prepareForWoodcutting()
     {
         if (checkForToolOrWeapon(ToolType.AXE))
         {
@@ -244,7 +244,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      *
      * @return LUMBERJACK_SEARCHING_TREE once waited enough.
      */
-    private AIState waitBeforeCheckingAgain()
+    private IAIState waitBeforeCheckingAgain()
     {
         if (hasNotDelayed(WAIT_BEFORE_SEARCH))
         {
@@ -256,9 +256,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     /**
      * Checks if lumberjack has already found some trees. If not search trees.
      *
-     * @return next AIState
+     * @return next IAIState
      */
-    private AIState findTrees()
+    private IAIState findTrees()
     {
         if (job.tree == null)
         {
@@ -274,7 +274,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      *
      * @return LUMBERJACK_GATHERING if job was canceled.
      */
-    private AIState findTree()
+    private IAIState findTree()
     {
         final AbstractBuilding building = getOwnBuilding();
 
@@ -303,7 +303,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         return getState();
     }
 
-    private AIState setNewTree()
+    private IAIState setNewTree()
     {
         if (pathResult.treeLocation == null)
         {
@@ -337,9 +337,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * Again checks if all preconditions are given to execute chopping.
      * If yes go chopping, else return to previous AIStates.
      *
-     * @return next AIState
+     * @return next IAIState
      */
-    private AIState chopWood()
+    private IAIState chopWood()
     {
         if (checkForToolOrWeapon(ToolType.AXE))
         {
@@ -362,7 +362,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      *
      * @return LUMBERJACK_GATHERING if tree is done
      */
-    private AIState chopTree()
+    private IAIState chopTree()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.chopping"));
 
@@ -735,7 +735,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      *
      * @return LUMBERJACK_GATHERING as long as gathering takes.
      */
-    private AIState gathering()
+    private IAIState gathering()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.gathering"));
 

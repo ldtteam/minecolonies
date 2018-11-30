@@ -10,8 +10,8 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIBlockingEventType;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.util.AISpecialTarget;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.block.Block;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.MIN_OPEN_SLOTS;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.IAIWorkerState.*;
 
 /**
  * AI class for the builder.
@@ -115,7 +115,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         super(job);
         super.registerTargets(
           new AITarget(IDLE, START_WORKING),
-          new AISpecialTarget(AIBlockingEventType.STATE_BLOCKING, this::checkIfExecute, this::getState),
+          new AISpecialTarget(IAIBlockingEventType.STATE_BLOCKING, this::checkIfExecute, this::getState),
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
           new AITarget(PICK_UP, this::pickUpMaterial)
         );
@@ -125,7 +125,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
-    public AIState getStateAfterPickUp()
+    public IAIState getStateAfterPickUp()
     {
         return PICK_UP;
     }
@@ -134,7 +134,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
      * State to pick up material before going back to work.
      * @return the next state to go to.
      */
-    public AIState pickUpMaterial()
+    public IAIState pickUpMaterial()
     {
         final BuildingBuilder building = getOwnBuilding();
         final List<Predicate<ItemStack>> neededItemsList = new ArrayList<>(building.getRequiredItemsAndAmount().keySet());
@@ -195,7 +195,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
-    public AIState switchStage(final AIState state)
+    public IAIState switchStage(final IAIState state)
     {
         if (job.getWorkOrder() instanceof WorkOrderBuildRemoval && state.equals(BUILDING_STEP))
         {
@@ -204,8 +204,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         return super.switchStage(state);
     }
 
-
-    private AIState startWorkingAtOwnBuilding()
+    private IAIState startWorkingAtOwnBuilding()
     {
         if (walkToBuilding())
         {
@@ -215,13 +214,13 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
-    public AIState afterRequestPickUp()
+    public IAIState afterRequestPickUp()
     {
         return INVENTORY_FULL;
     }
 
     @Override
-    public AIState afterDump()
+    public IAIState afterDump()
     {
         return PICK_UP;
     }

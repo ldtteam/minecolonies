@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.ai.statemachine.states;
 
-public enum AIBlockingEventType implements AIEventType
+public enum IAIBlockingEventType implements IAIEventType
 {
     /*###Priority NonStates###*/
     /**

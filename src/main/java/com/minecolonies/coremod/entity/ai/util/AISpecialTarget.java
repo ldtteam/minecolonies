@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.util;
 
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIBlockingEventType;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;
@@ -16,7 +16,7 @@ public class AISpecialTarget extends AITarget
     /**
      * Special state for this AITarget
      */
-    private final AIBlockingEventType state;
+    private final IAIBlockingEventType state;
 
     /**
      * Construct a special target.
@@ -27,9 +27,9 @@ public class AISpecialTarget extends AITarget
      * @param tickRate    tickRate at which this target should be called
      */
     public AISpecialTarget(
-      @NotNull final AIBlockingEventType state,
+      @NotNull final IAIBlockingEventType state,
       @NotNull final BooleanSupplier predicate,
-      @NotNull final Supplier<AIState> action, @NotNull final int tickRate)
+      @NotNull final Supplier<IAIState> action, @NotNull final int tickRate)
     {
         super(predicate, action, tickRate);
         this.state = state;
@@ -37,19 +37,19 @@ public class AISpecialTarget extends AITarget
 
     // TODO:Remove after giving all targets a tickrate
     public AISpecialTarget(
-      @NotNull final AIBlockingEventType state,
+      @NotNull final IAIBlockingEventType state,
       @NotNull final BooleanSupplier predicate,
-      @NotNull final AIState aiState)
+      @NotNull final IAIState IAIState)
     {
-        super(predicate, () -> aiState, 1);
+        super(predicate, () -> IAIState, 1);
         this.state = state;
     }
 
     // TODO:Remove after giving all targets a tickrate
     public AISpecialTarget(
-      @NotNull final AIBlockingEventType state,
+      @NotNull final IAIBlockingEventType state,
       @NotNull final BooleanSupplier predicate,
-      @NotNull final Supplier<AIState> action)
+      @NotNull final Supplier<IAIState> action)
     {
         super(predicate, action, 1);
         this.state = state;
@@ -57,8 +57,8 @@ public class AISpecialTarget extends AITarget
 
     // TODO:Remove after giving all targets a tickrate
     public AISpecialTarget(
-      @NotNull final AIBlockingEventType state,
-      @NotNull final Supplier<AIState> action)
+      @NotNull final IAIBlockingEventType state,
+      @NotNull final Supplier<IAIState> action)
     {
         super((BooleanSupplier) () -> true, action, 1);
         this.state = state;
@@ -69,7 +69,7 @@ public class AISpecialTarget extends AITarget
      *
      * @return Special state
      */
-    public AIBlockingEventType getSpecialState()
+    public IAIBlockingEventType getSpecialState()
     {
         return state;
     }

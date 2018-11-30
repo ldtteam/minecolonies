@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.ai.util;
 
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,11 +19,11 @@ public class AITarget
 {
 
     @Nullable
-    private final AIState           state;
+    private final IAIState           state;
     @NotNull
-    private final BooleanSupplier   predicate;
+    private final BooleanSupplier    predicate;
     @NotNull
-    private final Supplier<AIState> action;
+    private final Supplier<IAIState> action;
 
     /**
      * The max delay one can set upon AITarget creation
@@ -57,9 +57,9 @@ public class AITarget
      * @param action    the action to apply
      */
     public AITarget(
-      @NotNull final AIState state,
+      @NotNull final IAIState state,
       @NotNull final BooleanSupplier predicate,
-      @NotNull final Supplier<AIState> action,
+      @NotNull final Supplier<IAIState> action,
       @NotNull final int tickRate)
     {
         this.state = state;
@@ -88,7 +88,7 @@ public class AITarget
      */
     protected AITarget(
       @NotNull final BooleanSupplier predicate,
-      @NotNull final Supplier<AIState> action,
+      @NotNull final Supplier<IAIState> action,
       @NotNull final int tickRate)
     {
         this.state = null;
@@ -115,7 +115,7 @@ public class AITarget
      * @param predicateState the state it needs to be | null
      * @param state          the state to switch to
      */
-    public AITarget(@NotNull final AIState predicateState, @Nullable final AIState state)
+    public AITarget(@NotNull final IAIState predicateState, @Nullable final IAIState state)
     {
         this(predicateState, () -> state, 1);
     }
@@ -126,7 +126,7 @@ public class AITarget
      * @param predicateState the state it needs to be | null
      * @param state          the state to switch to
      */
-    public AITarget(@NotNull final AIState predicateState, @Nullable final AIState state, @NotNull final int tickRate)
+    public AITarget(@NotNull final IAIState predicateState, @Nullable final IAIState state, @NotNull final int tickRate)
     {
         this(predicateState, () -> state, tickRate);
     }
@@ -137,7 +137,7 @@ public class AITarget
      * @param state  the state it needs to be | null
      * @param action the action to apply
      */
-    public AITarget(@Nullable final AIState state, @NotNull final Supplier<AIState> action)
+    public AITarget(@Nullable final IAIState state, @NotNull final Supplier<IAIState> action)
     {
         this(state, () -> true, action, 1);
     }
@@ -148,7 +148,7 @@ public class AITarget
      * @param state  the state it needs to be | null
      * @param action the action to apply
      */
-    public AITarget(@Nullable final AIState state, @NotNull final Supplier<AIState> action, @NotNull final int tickRate)
+    public AITarget(@Nullable final IAIState state, @NotNull final Supplier<IAIState> action, @NotNull final int tickRate)
     {
         this(state, () -> true, action, tickRate);
     }
@@ -160,7 +160,7 @@ public class AITarget
      * @return the state
      */
     @Nullable
-    public AIState getState()
+    public IAIState getState()
     {
         return state;
     }
@@ -181,7 +181,7 @@ public class AITarget
      *
      * @return the new state the ai is in. null if no change.
      */
-    public AIState apply()
+    public IAIState apply()
     {
         return action.get();
     }

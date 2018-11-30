@@ -11,7 +11,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,7 +29,7 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.HUNGRY_INV_FULL;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.IAIWorkerState.*;
 
 /**
  * Cook AI class.
@@ -138,9 +138,9 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
      * If food is no longer available, delay and transition to START_WORKING.
      * Otherwise, give the customer some food, then delay and repeat this state.
      *
-     * @return next AIState
+     * @return next IAIState
      */
-    private AIState serveFoodToCitizen()
+    private IAIState serveFoodToCitizen()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SERVING));
 
@@ -218,10 +218,10 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
      * If no citizen around switch to default jobs.
      * If citizens around check if food in inventory, if not, switch to gather job.
      * If food in inventory switch to serve job.
-     * @return the next AIState to transfer to.
+     * @return the next IAIState to transfer to.
      */
     @Override
-    protected AIState checkForImportantJobs()
+    protected IAIState checkForImportantJobs()
     {
         if (range == null)
         {

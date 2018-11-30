@@ -11,8 +11,8 @@ import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIBlockingEventType;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.util.AISpecialTarget;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.ai.util.Structure;
@@ -51,7 +51,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static com.minecolonies.api.util.constant.Suppression.MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.IAIWorkerState.*;
 import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.ACCEPT;
 import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.DENY;
 
@@ -148,7 +148,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
           /*
            * Check if tasks should be executed.
            */
-          new AISpecialTarget(AIBlockingEventType.STATE_BLOCKING, this::checkIfCanceled, IDLE),
+          new AISpecialTarget(IAIBlockingEventType.STATE_BLOCKING, this::checkIfCanceled, IDLE),
           /*
            * Select the appropriate State to do next.
            */
@@ -199,7 +199,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * @param nextState          the next state to change to once done iterating.
      * @return the new state this AI will be in after one pass.
      */
-    private Supplier<AIState> generateStructureGenerator(@NotNull final Function<Structure.StructureBlock, Boolean> evaluationFunction, @NotNull final AIState nextState)
+    private Supplier<IAIState> generateStructureGenerator(@NotNull final Function<Structure.StructureBlock, Boolean> evaluationFunction, @NotNull final IAIState nextState)
     {
         //do not replace with method reference, this one stays the same on changing reference for currentStructure
         //URGENT: DO NOT REPLACE FOR ANY MEANS THIS WILL CRASH THE GAME.
@@ -256,7 +256,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     /**
      * Switches the structures stage after the current one has been completed.
      */
-    public AIState switchStage(final AIState state)
+    public IAIState switchStage(final IAIState state)
     {
         if (state.equals(REMOVE_STEP))
         {
@@ -281,7 +281,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         return state;
     }
 
-    private AIState pickUpResiduals()
+    private IAIState pickUpResiduals()
     {
         if (getItemsForPickUp() == null)
         {
@@ -322,7 +322,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         searchForItems(new AxisAlignedBB(centerPos).expand(currentStructure.getLength() / 2.0, currentStructure.getHeight(), currentStructure.getWidth()));
     }
 
-    private AIState completeBuild()
+    private IAIState completeBuild()
     {
         storeProgressPos(null, Structure.Stage.CLEAR);
         incrementActionsDoneAndDecSaturation();
@@ -888,7 +888,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * @return the new State to start in.
      */
     @NotNull
-    private AIState startBuilding()
+    private IAIState startBuilding()
     {
         if (currentStructure == null)
         {
