@@ -462,8 +462,8 @@ com.minecolonies.coremod.gui.workerHuts.buildBarracks=Ibugbe awon jagunjagun
 com.minecolonies.coremod.permission.teleport_to_colony=Lo egbe lo si Ileto
 com.minecolonies.coremod.gui.hiring.buttonFire=Ina
 com.minecolonies.coremod.worker.noUpgrade=Kosi igbesoko nile.
-com.minecolonies.coremod.worker.needBarracks=Please upgrade the Barracks first.
-com.minecolonies.coremod.gui.warehouse.upgrade=Upgrade Storage
+com.minecolonies.coremod.worker.needBarracks=Jowo koko se igbesoke ibugbe awon jagunjagun.
+com.minecolonies.coremod.gui.warehouse.upgrade=Se igbesoke ibi ipamo
 
 com.minecolonies.coremod.job.cook=Cook
 com.minecolonies.coremod.gui.workerHuts.cook=Cook
