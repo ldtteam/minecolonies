@@ -518,7 +518,7 @@ tile.minecolonies.blockPaperwall.name=Ogiri onitakada
 
 com.minecolonies.coremod.gui.workerHuts.buildPrio=Aayo ifijise:
 item.supplyChestDeployer.invalid=O gbodo gbe sinu adagun omi to se dede.
-item.supplyChestDeployer.missing=Are you trying to trick me, pick up that Supplyship again?
+item.supplyChestDeployer.missing=Se o fe ma tan mi je ni, mu oko ipese yen lekansi?
 com.minecolonies.coremod.citizen.rename.same=Renaming failed: 2 Citizen are not allowed to have the same name!
 com.minecolonies.coremod.citizen.rename.notAllowed=Renaming failed: You're not allowed to rename your Citizen.
 
