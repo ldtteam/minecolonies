@@ -30,8 +30,8 @@ import static com.minecolonies.api.util.constant.Constants.RESULT_SLOT;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_IDLING;
 import static com.minecolonies.api.util.constant.TranslationConstants.SMELTING_DOWN;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.IAIWorkerState.SMELTER_SMELTING_ITEMS;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.IAIWorkerState.START_WORKING;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.SMELTER_SMELTING_ITEMS;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.START_WORKING;
 
 /**
  * Smelter AI class.

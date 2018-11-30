@@ -22,8 +22,8 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.IAIWorkerState.DECIDE;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.IAIWorkerState.GUARD_ATTACK_RANGED;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.DECIDE;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_RANGED;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>

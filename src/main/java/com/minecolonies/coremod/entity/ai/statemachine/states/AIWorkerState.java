@@ -5,7 +5,7 @@ package com.minecolonies.coremod.entity.ai.statemachine.states;
  * Please extend this class with the states your ai needs.
  * And please document each state on what it does.
  */
-public enum IAIWorkerState implements IAIState
+public enum AIWorkerState implements IAIState
 {
 
     /*
@@ -355,7 +355,7 @@ public enum IAIWorkerState implements IAIState
 
     private boolean isOkayToEat;
 
-    IAIWorkerState(final boolean okayToEat)
+    AIWorkerState(final boolean okayToEat)
     {
         this.isOkayToEat = okayToEat;
     }

@@ -6,10 +6,10 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIBlockingEventType;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIEventType;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIWorkerState;
 import com.minecolonies.coremod.entity.ai.util.AISpecialTarget;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
@@ -79,11 +79,11 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         this.worker = this.job.getCitizen().getCitizenEntity().get();
         this.world = CompatibilityUtils.getWorld(this.worker);
         this.chatSpamFilter = new ChatSpamFilter(job.getCitizen());
-        this.state = IAIWorkerState.INIT;
-        this.targetMap.put(IAIWorkerState.INIT, new ArrayList<>());
-        this.specialTargetMap.put(IAIBlockingEventType.AI_BLOCKING, new ArrayList<>());
-        this.specialTargetMap.put(IAIBlockingEventType.STATE_BLOCKING, new ArrayList<>());
-        this.specialTargetMap.put(IAIBlockingEventType.EVENT, new ArrayList<>());
+        this.state = AIWorkerState.INIT;
+        this.targetMap.put(AIWorkerState.INIT, new ArrayList<>());
+        this.specialTargetMap.put(AIBlockingEventType.AI_BLOCKING, new ArrayList<>());
+        this.specialTargetMap.put(AIBlockingEventType.STATE_BLOCKING, new ArrayList<>());
+        this.specialTargetMap.put(AIBlockingEventType.EVENT, new ArrayList<>());
     }
 
     /**
@@ -108,9 +108,9 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      */
     protected final void unRegisterEvent(final AITarget target)
     {
-        final ArrayList<AITarget> temp = new ArrayList<>(specialTargetMap.get(IAIBlockingEventType.EVENT));
+        final ArrayList<AITarget> temp = new ArrayList<>(specialTargetMap.get(AIBlockingEventType.EVENT));
         temp.remove(target);
-        specialTargetMap.put(IAIBlockingEventType.EVENT, temp);
+        specialTargetMap.put(AIBlockingEventType.EVENT, temp);
     }
 
     /**
@@ -176,9 +176,9 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
             tickCount = 1;
         }
 
-        if (!specialTargetMap.get(IAIBlockingEventType.AI_BLOCKING).stream().anyMatch(this::checkOnTarget)
-              && !specialTargetMap.get(IAIBlockingEventType.EVENT).stream().anyMatch(this::checkOnTarget)
-              && !specialTargetMap.get(IAIBlockingEventType.STATE_BLOCKING).stream().anyMatch(this::checkOnTarget))
+        if (!specialTargetMap.get(AIBlockingEventType.AI_BLOCKING).stream().anyMatch(this::checkOnTarget)
+              && !specialTargetMap.get(AIBlockingEventType.EVENT).stream().anyMatch(this::checkOnTarget)
+              && !specialTargetMap.get(AIBlockingEventType.STATE_BLOCKING).stream().anyMatch(this::checkOnTarget))
         {
             targetMap.get(state).stream().anyMatch(this::checkOnTarget);
         }
@@ -301,6 +301,6 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      */
     public void resetAIToIdle()
     {
-        state = IAIWorkerState.IDLE;
+        state = AIWorkerState.IDLE;
     }
 }
