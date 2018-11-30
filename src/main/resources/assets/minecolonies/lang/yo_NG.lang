@@ -459,9 +459,9 @@ tile.minecolonies.blockHutBarracksTower.name=Ile-iso ibugbe awon jagunjagun
 tile.minecolonies.blockHutBarracks.name=Ibugbe awon jagunjagun
 com.minecolonies.coremod.gui.workerHuts.buildBarracks=Ibugbe awon jagunjagun
 
-com.minecolonies.coremod.permission.teleport_to_colony=Teleport to Colony
-com.minecolonies.coremod.gui.hiring.buttonFire=Fire
-com.minecolonies.coremod.worker.noUpgrade=No Upgrade available.
+com.minecolonies.coremod.permission.teleport_to_colony=Lo egbe lo si Ileto
+com.minecolonies.coremod.gui.hiring.buttonFire=Ina
+com.minecolonies.coremod.worker.noUpgrade=Kosi igbesoko nile.
 com.minecolonies.coremod.worker.needBarracks=Please upgrade the Barracks first.
 com.minecolonies.coremod.gui.warehouse.upgrade=Upgrade Storage
 
