@@ -11,7 +11,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.entity.ai.util.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -27,7 +27,7 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Class taking of the abstract guard methods for both archer and knights.
@@ -79,9 +79,9 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, true),
-          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, true, this::prepare)
+          new AITarget(IDLE, START_WORKING),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, this::prepare)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getStrength() + worker.getCitizenData().getIntelligence());
         worker.setCanPickUpLoot(true);

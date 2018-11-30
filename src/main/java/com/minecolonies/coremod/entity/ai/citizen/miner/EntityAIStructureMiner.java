@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
-import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.coremod.colony.Colony;
@@ -10,7 +9,8 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
-import com.minecolonies.coremod.entity.ai.util.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.util.StructureWrapper;
 import com.minecolonies.coremod.util.WorkerUtil;
@@ -22,14 +22,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Class which handles the miner behaviour.
@@ -118,15 +117,15 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
           /*
            * If IDLE - switch to start working.
            */
-          new AITarget(IDLE, START_WORKING, true),
-          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, true, this::prepareForMining),
-          new AITarget(MINER_SEARCHING_LADDER, true, this::lookForLadder),
-          new AITarget(MINER_WALKING_TO_LADDER, true, this::goToLadder),
-          new AITarget(MINER_CHECK_MINESHAFT, true, this::checkMineShaft),
-          new AITarget(MINER_MINING_SHAFT, true, this::doShaftMining),
-          new AITarget(MINER_BUILDING_SHAFT, true, this::doShaftBuilding),
-          new AITarget(MINER_MINING_NODE, true, this::executeNodeMining)
+          new AITarget(IDLE, START_WORKING),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, this::prepareForMining),
+          new AITarget(MINER_SEARCHING_LADDER, this::lookForLadder),
+          new AITarget(MINER_WALKING_TO_LADDER, this::goToLadder),
+          new AITarget(MINER_CHECK_MINESHAFT, this::checkMineShaft),
+          new AITarget(MINER_MINING_SHAFT, this::doShaftMining),
+          new AITarget(MINER_BUILDING_SHAFT, this::doShaftBuilding),
+          new AITarget(MINER_MINING_NODE, this::executeNodeMining)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(
           2 * worker.getCitizenData().getStrength()
@@ -919,7 +918,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         }
         if (!isThereAStructureToBuild())
         {
-            switch (getState())
+            switch ((AIWorkerState) getState())
             {
                 case CLEAR_STEP:
                 case BUILDING_STEP:

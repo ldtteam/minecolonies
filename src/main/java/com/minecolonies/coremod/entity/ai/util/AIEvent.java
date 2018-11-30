@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.entity.ai.util;
 
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;
@@ -23,7 +25,7 @@ public class AIEvent extends AISpecialTarget
      */
     public AIEvent(@NotNull final BooleanSupplier predicate, @NotNull final Supplier<AIState> action)
     {
-        super(AISpecialState.EVENT, false, predicate, action, 1);
+        super(AIBlockingEventType.EVENT, predicate, action, 1);
     }
 
     /**
@@ -34,7 +36,7 @@ public class AIEvent extends AISpecialTarget
      */
     public AIEvent(@NotNull final BooleanSupplier predicate, @NotNull final AIState state)
     {
-        super(AISpecialState.EVENT, false, predicate, () -> state, 1);
+        super(AIBlockingEventType.EVENT, predicate, () -> state, 1);
     }
 
     /**
@@ -44,7 +46,7 @@ public class AIEvent extends AISpecialTarget
      */
     public AIEvent(@NotNull final Supplier<AIState> action)
     {
-        super(AISpecialState.EVENT, false, () -> true, action, 1);
+        super(AIBlockingEventType.EVENT, () -> true, action, 1);
     }
 
     /**
@@ -54,7 +56,7 @@ public class AIEvent extends AISpecialTarget
      */
     public AIEvent(@NotNull final AIState state)
     {
-        super(AISpecialState.EVENT, false, () -> true, () -> state, 1);
+        super(AIBlockingEventType.EVENT, () -> true, () -> state, 1);
     }
 
     /**

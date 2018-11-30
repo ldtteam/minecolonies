@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.util;
 
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,11 +51,6 @@ public class AITarget
     private static int tickOffsetVariant = 0;
 
     /**
-     * Variable describing if it is okay to eat in a state.
-     */
-    private boolean okayToEat;
-
-    /**
      * Construct a target.
      * @param state     the state it needs to be | null
      * @param predicate the predicate for execution
@@ -62,7 +58,6 @@ public class AITarget
      */
     public AITarget(
       @NotNull final AIState state,
-      final boolean isOkayToEat,
       @NotNull final BooleanSupplier predicate,
       @NotNull final Supplier<AIState> action,
       @NotNull final int tickRate)
@@ -70,7 +65,6 @@ public class AITarget
         this.state = state;
         this.predicate = predicate;
         this.action = action;
-        this.okayToEat = isOkayToEat;
 
         // Limit rates
         this.tickRate = tickRate > MAX_AI_TICKRATE ? MAX_AI_TICKRATE : tickRate;
@@ -93,7 +87,6 @@ public class AITarget
      * @param action    the action to apply
      */
     protected AITarget(
-      final boolean isOkayToEat,
       @NotNull final BooleanSupplier predicate,
       @NotNull final Supplier<AIState> action,
       @NotNull final int tickRate)
@@ -101,7 +94,6 @@ public class AITarget
         this.state = null;
         this.predicate = predicate;
         this.action = action;
-        this.okayToEat = isOkayToEat;
 
         // Limit rates
         this.tickRate = tickRate > MAX_AI_TICKRATE ? MAX_AI_TICKRATE : tickRate;
@@ -123,9 +115,9 @@ public class AITarget
      * @param predicateState the state it needs to be | null
      * @param state          the state to switch to
      */
-    public AITarget(@NotNull final AIState predicateState, @Nullable final AIState state, final boolean isOkayToEat)
+    public AITarget(@NotNull final AIState predicateState, @Nullable final AIState state)
     {
-        this(predicateState, isOkayToEat, () -> state, 1);
+        this(predicateState, () -> state, 1);
     }
 
     /**
@@ -134,9 +126,9 @@ public class AITarget
      * @param predicateState the state it needs to be | null
      * @param state          the state to switch to
      */
-    public AITarget(@NotNull final AIState predicateState, @Nullable final AIState state, final boolean isOkayToEat, @NotNull final int tickRate)
+    public AITarget(@NotNull final AIState predicateState, @Nullable final AIState state, @NotNull final int tickRate)
     {
-        this(predicateState, isOkayToEat, () -> state, tickRate);
+        this(predicateState, () -> state, tickRate);
     }
 
     /**
@@ -145,9 +137,9 @@ public class AITarget
      * @param state  the state it needs to be | null
      * @param action the action to apply
      */
-    public AITarget(@Nullable final AIState state, final boolean isOkayToEat, @NotNull final Supplier<AIState> action)
+    public AITarget(@Nullable final AIState state, @NotNull final Supplier<AIState> action)
     {
-        this(state, isOkayToEat, () -> true, action, 1);
+        this(state, () -> true, action, 1);
     }
 
     /**
@@ -156,9 +148,9 @@ public class AITarget
      * @param state  the state it needs to be | null
      * @param action the action to apply
      */
-    public AITarget(@Nullable final AIState state, final boolean isOkayToEat, @NotNull final Supplier<AIState> action, @NotNull final int tickRate)
+    public AITarget(@Nullable final AIState state, @NotNull final Supplier<AIState> action, @NotNull final int tickRate)
     {
-        this(state, isOkayToEat, () -> true, action, tickRate);
+        this(state, () -> true, action, tickRate);
     }
 
     /**
@@ -192,17 +184,6 @@ public class AITarget
     public AIState apply()
     {
         return action.get();
-    }
-
-    /**
-     * Called to see if it is okay for the citizen to eat when
-     * in this state.
-     *
-     * @return indicates if it is Okay to eat in this state
-     */
-    public boolean isOkayToEat()
-    {
-        return okayToEat;
     }
 
     /**

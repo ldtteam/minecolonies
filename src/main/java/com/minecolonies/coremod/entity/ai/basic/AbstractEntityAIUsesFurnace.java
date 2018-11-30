@@ -7,7 +7,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.entity.ai.util.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * AI class for all workers which use a furnace and require fuel and a block to smelt in it.
@@ -52,10 +52,10 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
     {
         super(job);
         super.registerTargets(
-                new AITarget(IDLE, START_WORKING, true),
-                new AITarget(START_WORKING, true, this::startWorking),
-                new AITarget(START_USING_FURNACE, true, this::fillUpFurnace),
-                new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, true, this::retrieveSmeltableFromFurnace));
+          new AITarget(IDLE, START_WORKING),
+          new AITarget(START_WORKING, this::startWorking),
+          new AITarget(START_USING_FURNACE, this::fillUpFurnace),
+          new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace));
     }
 
     @Override

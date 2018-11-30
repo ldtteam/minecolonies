@@ -8,7 +8,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSmelter
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
-import com.minecolonies.coremod.entity.ai.util.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentData;
@@ -30,8 +30,8 @@ import static com.minecolonies.api.util.constant.Constants.RESULT_SLOT;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_IDLING;
 import static com.minecolonies.api.util.constant.TranslationConstants.SMELTING_DOWN;
-import static com.minecolonies.coremod.entity.ai.util.AIState.SMELTER_SMELTING_ITEMS;
-import static com.minecolonies.coremod.entity.ai.util.AIState.START_WORKING;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.SMELTER_SMELTING_ITEMS;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.START_WORKING;
 
 /**
  * Smelter AI class.
@@ -106,7 +106,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     {
         super(job);
         super.registerTargets(
-          new AITarget(SMELTER_SMELTING_ITEMS, false, this::smeltStuff)
+          new AITarget(SMELTER_SMELTING_ITEMS, this::smeltStuff)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
                                   + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());

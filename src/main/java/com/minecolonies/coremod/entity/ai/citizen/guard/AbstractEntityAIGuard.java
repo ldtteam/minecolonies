@@ -14,7 +14,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
 import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.coremod.entity.ai.util.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -31,7 +31,7 @@ import java.util.List;
 import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Class taking of the abstract guard methods for all fighting AIs.
@@ -100,11 +100,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     {
         super(job);
         super.registerTargets(
-          new AITarget(DECIDE, true, this::decide),
-          new AITarget(GUARD_PATROL, true, this::patrol),
-          new AITarget(GUARD_FOLLOW, true, this::follow),
-          new AITarget(GUARD_GUARD, true, this::guard),
-          new AITarget(GUARD_REGEN, true, this::regen)
+          new AITarget(DECIDE, this::decide),
+          new AITarget(GUARD_PATROL, this::patrol),
+          new AITarget(GUARD_FOLLOW, this::follow),
+          new AITarget(GUARD_GUARD, this::guard),
+          new AITarget(GUARD_REGEN, this::regen)
 
         );
         buildingGuards = getOwnBuilding();

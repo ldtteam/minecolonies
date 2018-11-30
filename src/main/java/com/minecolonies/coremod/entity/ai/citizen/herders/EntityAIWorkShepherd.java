@@ -5,7 +5,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingShepherd;
 import com.minecolonies.coremod.colony.jobs.JobShepherd;
-import com.minecolonies.coremod.entity.ai.util.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.init.Items;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * The AI behind the {@link JobShepherd} for Breeding, Killing and Shearing sheep.
@@ -54,7 +54,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getDexterity() + worker.getCitizenData().getStrength());
 
         super.registerTargets(
-          new AITarget(SHEPHERD_SHEAR, false, this::shearSheep)
+          new AITarget(SHEPHERD_SHEAR, this::shearSheep)
         );
     }
 

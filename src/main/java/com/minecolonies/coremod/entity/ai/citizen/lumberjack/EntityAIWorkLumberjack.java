@@ -7,7 +7,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.coremod.entity.ai.util.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.PathJobFindTree;
 import com.minecolonies.coremod.util.WorkerUtil;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * The lumberjack AI class.
@@ -179,13 +179,13 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, true),
-          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, true, this::prepareForWoodcutting),
-          new AITarget(LUMBERJACK_SEARCHING_TREE, true, this::findTrees),
-          new AITarget(LUMBERJACK_CHOP_TREE, false, this::chopWood),
-          new AITarget(LUMBERJACK_GATHERING, true, this::gathering),
-          new AITarget(LUMBERJACK_NO_TREES_FOUND, true, this::waitBeforeCheckingAgain)
+          new AITarget(IDLE, START_WORKING),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, this::prepareForWoodcutting),
+          new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees),
+          new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood),
+          new AITarget(LUMBERJACK_GATHERING, this::gathering),
+          new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
                                                                 + CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma());

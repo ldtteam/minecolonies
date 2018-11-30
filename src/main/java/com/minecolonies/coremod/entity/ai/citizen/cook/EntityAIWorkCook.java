@@ -11,7 +11,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
-import com.minecolonies.coremod.entity.ai.util.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,11 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.Constants.RESULT_SLOT;
-import static com.minecolonies.api.util.constant.Constants.SLOT_PER_LINE;
-import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.HUNGRY_INV_FULL;
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Cook AI class.
@@ -88,7 +86,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     {
         super(job);
         super.registerTargets(
-                new AITarget(COOK_SERVE_FOOD_TO_CITIZEN, true, this::serveFoodToCitizen)
+          new AITarget(COOK_SERVE_FOOD_TO_CITIZEN, this::serveFoodToCitizen)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma()
                 + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());

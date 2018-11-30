@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.entity.ai.util;
 
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;
@@ -14,66 +16,51 @@ public class AISpecialTarget extends AITarget
     /**
      * Special state for this AITarget
      */
-    private final AISpecialState state;
+    private final AIBlockingEventType state;
 
     /**
      * Construct a special target.
      *
      * @param state       the AISpecial State
-     * @param isOkayToEat boolean wheter we can eat during this target
      * @param predicate   boolean predicate to check before executin the action
      * @param action      action supplier which returns the next state
      * @param tickRate    tickRate at which this target should be called
      */
     public AISpecialTarget(
-      @NotNull final AISpecialState state,
-      final boolean isOkayToEat,
+      @NotNull final AIBlockingEventType state,
       @NotNull final BooleanSupplier predicate,
       @NotNull final Supplier<AIState> action, @NotNull final int tickRate)
     {
-        super(isOkayToEat, predicate, action, tickRate);
+        super(predicate, action, tickRate);
         this.state = state;
     }
 
     // TODO:Remove after giving all targets a tickrate
     public AISpecialTarget(
-      @NotNull final AISpecialState state,
-      final boolean isOkayToEat,
+      @NotNull final AIBlockingEventType state,
       @NotNull final BooleanSupplier predicate,
       @NotNull final AIState aiState)
     {
-        super(isOkayToEat, predicate, () -> aiState, 1);
+        super(predicate, () -> aiState, 1);
         this.state = state;
     }
 
     // TODO:Remove after giving all targets a tickrate
     public AISpecialTarget(
-      @NotNull final AISpecialState state,
-      final boolean isOkayToEat,
+      @NotNull final AIBlockingEventType state,
       @NotNull final BooleanSupplier predicate,
       @NotNull final Supplier<AIState> action)
     {
-        super(isOkayToEat, predicate, action, 1);
+        super(predicate, action, 1);
         this.state = state;
     }
 
     // TODO:Remove after giving all targets a tickrate
     public AISpecialTarget(
-      @NotNull final AISpecialState state,
-      final boolean isOkayToEat,
+      @NotNull final AIBlockingEventType state,
       @NotNull final Supplier<AIState> action)
     {
-        super(isOkayToEat, () -> true, action, 1);
-        this.state = state;
-    }
-
-    // TODO:Remove after giving all targets a tickrate
-    public AISpecialTarget(
-      @NotNull final AISpecialState state,
-      @NotNull final Supplier<AIState> action,
-      final boolean isOkayToEat)
-    {
-        super(isOkayToEat, () -> true, action, 1);
+        super((BooleanSupplier) () -> true, action, 1);
         this.state = state;
     }
 
@@ -82,7 +69,7 @@ public class AISpecialTarget extends AITarget
      *
      * @return Special state
      */
-    public AISpecialState getSpecialState()
+    public AIBlockingEventType getSpecialState()
     {
         return state;
     }

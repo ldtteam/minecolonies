@@ -6,7 +6,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.coremod.entity.ai.util.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityAnimal;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Abstract class for all Citizen Herder AIs
@@ -80,13 +80,13 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, true),
-          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, true, this::prepareForHerding),
-          new AITarget(DECIDE, true, this::decideWhatToDo),
-          new AITarget(HERDER_BREED, false, this::breedAnimals),
-          new AITarget(HERDER_BUTCHER, false, this::butcherAnimals),
-          new AITarget(HERDER_PICKUP, true, this::pickupItems)
+          new AITarget(IDLE, START_WORKING),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, this::prepareForHerding),
+          new AITarget(DECIDE, this::decideWhatToDo),
+          new AITarget(HERDER_BREED, this::breedAnimals),
+          new AITarget(HERDER_BUTCHER, this::butcherAnimals),
+          new AITarget(HERDER_PICKUP, this::pickupItems)
         );
         worker.setCanPickUpLoot(true);
     }

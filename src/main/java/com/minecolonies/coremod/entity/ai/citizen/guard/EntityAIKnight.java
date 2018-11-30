@@ -7,7 +7,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobKnight;
-import com.minecolonies.coremod.entity.ai.util.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -26,7 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PHYSICAL;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PROTECT;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
@@ -42,8 +43,8 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     {
         super(job);
         super.registerTargets(
-          new AITarget(GUARD_ATTACK_PROTECT, false, this::attackProtect),
-          new AITarget(GUARD_ATTACK_PHYSICAL, false, this::attackPhysical)
+          new AITarget(GUARD_ATTACK_PROTECT, this::attackProtect),
+          new AITarget(GUARD_ATTACK_PHYSICAL, this::attackPhysical)
         );
         toolsNeeded.add(ToolType.SWORD);
 

@@ -10,9 +10,9 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
-import com.minecolonies.coremod.entity.ai.util.AISpecialState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
 import com.minecolonies.coremod.entity.ai.util.AISpecialTarget;
-import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.MIN_OPEN_SLOTS;
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * AI class for the builder.
@@ -114,10 +114,10 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, true),
-          new AISpecialTarget(AISpecialState.STATE_BLOCKING, true, this::checkIfExecute, this::getState),
-          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
-          new AITarget(PICK_UP, false, this::pickUpMaterial)
+          new AITarget(IDLE, START_WORKING),
+          new AISpecialTarget(AIBlockingEventType.STATE_BLOCKING, this::checkIfExecute, this::getState),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+          new AITarget(PICK_UP, this::pickUpMaterial)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
                                   + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());

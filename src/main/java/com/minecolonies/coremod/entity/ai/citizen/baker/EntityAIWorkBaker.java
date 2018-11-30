@@ -7,7 +7,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
-import com.minecolonies.coremod.entity.ai.util.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.state.IBlockState;
@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BAKER_NO_FURNACES;
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Fisherman AI class.
@@ -114,13 +114,13 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, true),
-          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, true, this::prepareForBaking),
-          new AITarget(BAKER_KNEADING, false, this::kneadTheDough),
-          new AITarget(BAKER_BAKING, false, this::bake),
-          new AITarget(BAKER_TAKE_OUT_OF_OVEN, false, this::takeFromOven),
-          new AITarget(BAKER_FINISHING, false, this::finishing)
+          new AITarget(IDLE, START_WORKING),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, this::prepareForBaking),
+          new AITarget(BAKER_KNEADING, this::kneadTheDough),
+          new AITarget(BAKER_BAKING, this::bake),
+          new AITarget(BAKER_TAKE_OUT_OF_OVEN, this::takeFromOven),
+          new AITarget(BAKER_FINISHING, this::finishing)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(
           INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()

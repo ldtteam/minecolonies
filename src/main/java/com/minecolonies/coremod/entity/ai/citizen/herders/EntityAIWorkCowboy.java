@@ -1,11 +1,10 @@
 package com.minecolonies.coremod.entity.ai.citizen.herders;
 
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCowboy;
 import com.minecolonies.coremod.colony.jobs.JobCowboy;
-import com.minecolonies.coremod.entity.ai.util.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.init.Items;
@@ -15,10 +14,9 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * The AI behind the {@link JobCowboy} for Breeding, Killing and Milking Cows.
@@ -41,7 +39,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
         super(job);
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getDexterity() + worker.getCitizenData().getStrength());
         super.registerTargets(
-          new AITarget(COWBOY_MILK, false, this::milkCows)
+          new AITarget(COWBOY_MILK, this::milkCows)
         );
     }
 

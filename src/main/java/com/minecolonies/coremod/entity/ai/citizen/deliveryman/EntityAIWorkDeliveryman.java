@@ -20,9 +20,9 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHal
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.coremod.entity.ai.util.AISpecialState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIState;
 import com.minecolonies.coremod.entity.ai.util.AISpecialTarget;
-import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
@@ -130,13 +130,13 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
           /*
            * Check if tasks should be executed.
            */
-          new AISpecialTarget(AISpecialState.STATE_BLOCKING, true, this::checkIfExecute, IDLE),
-          new AITarget(IDLE, true, () -> START_WORKING),
-          new AITarget(START_WORKING, true, this::checkWareHouse),
-          new AITarget(PREPARE_DELIVERY, true, this::prepareDelivery),
-          new AITarget(DELIVERY, true, this::deliver),
-          new AITarget(GATHERING, true, this::gather),
-          new AITarget(DUMPING, false, this::dump)
+          new AISpecialTarget(AIBlockingEventType.STATE_BLOCKING, this::checkIfExecute, IDLE),
+          new AITarget(IDLE, () -> START_WORKING),
+          new AITarget(START_WORKING, this::checkWareHouse),
+          new AITarget(PREPARE_DELIVERY, this::prepareDelivery),
+          new AITarget(DELIVERY, this::deliver),
+          new AITarget(GATHERING, this::gather),
+          new AITarget(DUMPING, this::dump)
 
         );
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
