@@ -524,8 +524,8 @@ com.minecolonies.coremod.citizen.rename.notAllowed=Fifun loruko mii kuna: O ko n
 
 tile.minecolonies.blockshingle_oak.name=Pako igi apado
 tile.minecolonies.blockshingle_birch.name=Pako igi Birch
-tile.minecolonies.blockshingle_spruce.name=Spruce Shingle
-tile.minecolonies.blockshingle_jungle.name=Jungle Shingle
+tile.minecolonies.blockshingle_spruce.name=Pako igi Spruce
+tile.minecolonies.blockshingle_jungle.name=Pako igi igbo
 tile.minecolonies.blockshingle_dark_oak.name=Dark Oak Shingle
 tile.minecolonies.blockshingle_acacia.name=Acacia Shingle
 
