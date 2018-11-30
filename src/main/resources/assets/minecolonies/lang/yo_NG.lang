@@ -530,9 +530,9 @@ tile.minecolonies.blockshingle_dark_oak.name=Pako igi Oaku dudu
 tile.minecolonies.blockshingle_acacia.name=Pako igi akasia
 
 com.minecolonies.coremod.gui.recipe.remove=Yọ kúrò
-com.minecolonies.coremod.gui.workerHuts.crafting=Ko won ni ohunelo idana
-com.minecolonies.coremod.gui.recipe.done=Succesfully saved recipe!
-com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
+com.minecolonies.coremod.gui.workerHuts.crafting=Ko won ni ohunelo
+com.minecolonies.coremod.gui.recipe.done=Ohunelo to ti wa ni ipamo!
+com.minecolonies.coremod.gui.workerHuts.listRecipes=Akojo awon ohunelo
 com.minecolonies.coremod.resolvers.crafter=Crafting Resolver
 com.minecolonies.coremod.request.smeltableore=Smeltable Ore
 tile.minecolonies.blockHutSmeltery.name=Smeltery
