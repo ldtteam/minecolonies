@@ -522,8 +522,8 @@ item.supplyChestDeployer.missing=Se o fe ma tan mi je ni, mu oko ipese yen lekan
 com.minecolonies.coremod.citizen.rename.same=Fifun loruko mii kuna: Ko si anfani fun omo ilu meji lati ni oruko kanna!
 com.minecolonies.coremod.citizen.rename.notAllowed=Fifun loruko mii kuna: O ko ni anfani lati fun omo ilu re ni oruko miran.
 
-tile.minecolonies.blockshingle_oak.name=Oak Shingle
-tile.minecolonies.blockshingle_birch.name=Birch Shingle
+tile.minecolonies.blockshingle_oak.name=Pako igi apado
+tile.minecolonies.blockshingle_birch.name=Pako igi Birch
 tile.minecolonies.blockshingle_spruce.name=Spruce Shingle
 tile.minecolonies.blockshingle_jungle.name=Jungle Shingle
 tile.minecolonies.blockshingle_dark_oak.name=Dark Oak Shingle
