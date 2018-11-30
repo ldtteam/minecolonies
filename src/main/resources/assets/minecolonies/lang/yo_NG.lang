@@ -412,8 +412,8 @@ com.minecolonies.coremod.item.permissionscepter.setmode=Seto si ipo '%s'
 com.minecolonies.coremod.item.permissionscepter.permission.deny=A o gba o laye lati satunse bulooki pelu ohun elo yi.
 com.minecolonies.coremod.item.permissionscepter.addblock.success=Iru bulooki ti a fikun '%s'
 com.minecolonies.coremod.item.permissionscepter.addposition.success=Agbegbe ti a fikun '%d %d %d'
-com.minecolonies.coremod.item.permissionscepter.removeblock.success=Removed block '%s'
-com.minecolonies.coremod.item.permissionscepter.removelocation.success=Removed location '%d %d %d'
+com.minecolonies.coremod.item.permissionscepter.removeblock.success=Bulooki ti a yo kuro '%s'
+com.minecolonies.coremod.item.permissionscepter.removelocation.success=Agbegbe ti a yo '%d %d %d'
 tile.blockHut.warehouse.limit=The amount of warehouses is limited to 1 per colony.
 
 com.minecolonies.coremod.gui.workerHuts.baker=Baker
