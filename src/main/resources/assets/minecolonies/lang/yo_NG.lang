@@ -394,11 +394,11 @@ com.minecolonies.coremod.permission.fill_bucket=Je ki awon garawa naa kun
 com.minecolonies.coremod.permission.open_container=Si apoti
 com.minecolonies.coremod.permission.rightclick_block=Te otun lori awon bulooki
 com.minecolonies.coremod.permission.rightclick_entity=Te otun lori awon eda
-com.minecolonies.coremod.permission.throw_potion=Throw potions
-com.minecolonies.coremod.permission.shoot_arrow=Shoot arrows
-com.minecolonies.coremod.permission.attack_citizen=Attack citizens
-com.minecolonies.coremod.permission.attack_entity=Attack entities
-com.minecolonies.coremod.permission.access_free_blocks=Access free-blocks
+com.minecolonies.coremod.permission.throw_potion=Ju aseje
+com.minecolonies.coremod.permission.shoot_arrow=Ta awon ofa
+com.minecolonies.coremod.permission.attack_citizen=Kolu awon ara-ilu
+com.minecolonies.coremod.permission.attack_entity=Kolu awon eda
+com.minecolonies.coremod.permission.access_free_blocks=Ni anfani si awon bulooki ofe
 
 item.supplyCampDeployer.invalid=Requiring a flat ground of at least 16*17.
 com.minecolonies.coremod.gui.townHall.currentHappiness=Overall happiness:
