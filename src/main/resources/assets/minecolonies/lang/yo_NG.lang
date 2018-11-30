@@ -516,8 +516,8 @@ com.minecolonies.requestsystem.playerresolver=%s is in need of %s at %s.
 com.minecolonies.coremod.buildings.warehouse.name=Ile ikoja si
 tile.minecolonies.blockPaperwall.name=Ogiri onitakada
 
-com.minecolonies.coremod.gui.workerHuts.buildPrio=Delivery Priority:
-item.supplyChestDeployer.invalid=You must place it in a fitting pool of water.
+com.minecolonies.coremod.gui.workerHuts.buildPrio=Aayo ifijise:
+item.supplyChestDeployer.invalid=O gbodo gbe sinu adagun omi to se dede.
 item.supplyChestDeployer.missing=Are you trying to trick me, pick up that Supplyship again?
 com.minecolonies.coremod.citizen.rename.same=Renaming failed: 2 Citizen are not allowed to have the same name!
 com.minecolonies.coremod.citizen.rename.notAllowed=Renaming failed: You're not allowed to rename your Citizen.
