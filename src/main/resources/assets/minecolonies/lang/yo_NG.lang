@@ -408,10 +408,10 @@ com.minecolonies.coremod.saturation.3=Ebi n pa mi, mo dabi eniti ko le sise to n
 com.minecolonies.coremod.saturation.5=Ebi n pa mi, mi o fi be le sise to nitumo mo
 com.minecolonies.coremod.saturation.7=Ikun mi si kun, sugbon ma ni lati jeun laipe si
 
-com.minecolonies.coremod.item.permissionscepter.setmode=Set to mode '%s'
-com.minecolonies.coremod.item.permissionscepter.permission.deny=You do not have permission to edit blocks with this tool.
-com.minecolonies.coremod.item.permissionscepter.addblock.success=Added block type '%s'
-com.minecolonies.coremod.item.permissionscepter.addposition.success=Added location '%d %d %d'
+com.minecolonies.coremod.item.permissionscepter.setmode=Seto si ipo '%s'
+com.minecolonies.coremod.item.permissionscepter.permission.deny=A o gba o laye lati satunse bulooki pelu ohun elo yi.
+com.minecolonies.coremod.item.permissionscepter.addblock.success=Iru bulooki ti a fikun '%s'
+com.minecolonies.coremod.item.permissionscepter.addposition.success=Agbegbe ti a fikun '%d %d %d'
 com.minecolonies.coremod.item.permissionscepter.removeblock.success=Removed block '%s'
 com.minecolonies.coremod.item.permissionscepter.removelocation.success=Removed location '%d %d %d'
 tile.blockHut.warehouse.limit=The amount of warehouses is limited to 1 per colony.
