@@ -425,11 +425,11 @@ com.minecolonies.coremod.gui.townHall.housing=Ipo pinpin ilegbe:
 com.minecolonies.coremod.gui.home.assign=Yan awon omo ilu %d
 com.minecolonies.coremod.gui.workerHuts.unassign=Yo omo ilu kuro
 tile.minecolonies.blockTimberFrame.name=Feremu igi gedu
-tile.minecolonies.blockMinecoloniesRack.name=Rack
+tile.minecolonies.blockMinecoloniesRack.name=Agbeko
 
-com.minecolonies.coremod.status.waitingForWork=Searching job
-com.minecolonies.coremod.status.sleeping=Let me sleep
-com.minecolonies.coremod.status.waiting=Waiting for:
+com.minecolonies.coremod.status.waitingForWork=Wiwa ise
+com.minecolonies.coremod.status.sleeping=Je ki n sun
+com.minecolonies.coremod.status.waiting=Nduro fun:
 com.minecolonies.coremod.status.rainStop=the rain to stop
 com.minecolonies.coremod.status.working=Working
 com.minecolonies.coremod.status.avoiding=Avoiding mob
