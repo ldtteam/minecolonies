@@ -454,10 +454,10 @@ com.minecolonies.coremod.status.hunting=Sisode
 com.minecolonies.coremod.status.searchingtree=Wiwa Igi
 com.minecolonies.coremod.status.chopping=Gige si wewe
 com.minecolonies.coremod.status.stuckinleaves=Ha sarin awon ewe!
-tile.minecolonies.blockWayPoint.name=Waypoint placeholder
-tile.minecolonies.blockHutBarracksTower.name=BarracksTower
-tile.minecolonies.blockHutBarracks.name=Barracks
-com.minecolonies.coremod.gui.workerHuts.buildBarracks=Barracks
+tile.minecolonies.blockWayPoint.name=Imubiduro atoka ona
+tile.minecolonies.blockHutBarracksTower.name=Ile-iso ibugbe awon jagunjagun
+tile.minecolonies.blockHutBarracks.name=Ibugbe awon jagunjagun
+com.minecolonies.coremod.gui.workerHuts.buildBarracks=Ibugbe awon jagunjagun
 
 com.minecolonies.coremod.permission.teleport_to_colony=Teleport to Colony
 com.minecolonies.coremod.gui.hiring.buttonFire=Fire
