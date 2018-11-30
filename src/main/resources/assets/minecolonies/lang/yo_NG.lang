@@ -400,8 +400,8 @@ com.minecolonies.coremod.permission.attack_citizen=Kolu awon ara-ilu
 com.minecolonies.coremod.permission.attack_entity=Kolu awon eda
 com.minecolonies.coremod.permission.access_free_blocks=Ni anfani si awon bulooki ofe
 
-item.supplyCampDeployer.invalid=Requiring a flat ground of at least 16*17.
-com.minecolonies.coremod.gui.townHall.currentHappiness=Overall happiness:
+item.supplyCampDeployer.invalid=O nilo ile ti ote o kere ju 16*17.
+com.minecolonies.coremod.gui.townHall.currentHappiness=Idunnu lapapo:
 com.minecolonies.coremod.job.guard.toolClickGuardTooFar=Too far away from guard tower, please upgrade your guardtower.
 com.minecolonies.coremod.saturation.0=I'm starving, I can't work anymore
 com.minecolonies.coremod.saturation.3=I'm quite hungry, I feel very unproductive
