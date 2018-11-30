@@ -380,11 +380,11 @@ com.minecolonies.coremod.gui.townHall.freeBlocks=Aye si sile fun ibaraenisepo
 com.minecolonies.coremod.permission.access_huts=Wole si awon GUI
 com.minecolonies.coremod.permission.guards_attack=Ba awon oluso ja
 com.minecolonies.coremod.permission.place_huts=Fi awon ahere si aaye
-com.minecolonies.coremod.permission.break_huts=Break huts
+com.minecolonies.coremod.permission.break_huts=Fo awon ahere
 
-com.minecolonies.coremod.permission.edit_permissions=Edit permissions
-com.minecolonies.coremod.permission.manage_huts=Manage huts
-com.minecolonies.coremod.permission.receive_messages=Receive messages
+com.minecolonies.coremod.permission.edit_permissions=Satunse awon igbanilaaye
+com.minecolonies.coremod.permission.manage_huts=Sakoso awon ahere
+com.minecolonies.coremod.permission.receive_messages=Gba awon ifiranse
 com.minecolonies.coremod.permission.use_scan_tool=Use scan-tool
 com.minecolonies.coremod.permission.place_blocks=Place blocks
 com.minecolonies.coremod.permission.break_blocks=Break blocks
