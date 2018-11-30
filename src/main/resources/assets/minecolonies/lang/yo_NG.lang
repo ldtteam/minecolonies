@@ -421,9 +421,9 @@ com.minecolonies.coremod.baker.noFurnace=Ile mi ko ni awon ileru kankan, jowo tu
 com.minecolonies.coremod.job.baker=Asakara
 com.minecolonies.coremod.gui.workerHuts.saplingList=Akojo ise-sise
 
-com.minecolonies.coremod.gui.townHall.housing=Housing assignment mode:
-com.minecolonies.coremod.gui.home.assign=Assign %d citizens
-com.minecolonies.coremod.gui.workerHuts.unassign=Remove citizen
+com.minecolonies.coremod.gui.townHall.housing=Ipo pinpin ilegbe:
+com.minecolonies.coremod.gui.home.assign=Yan awon omo ilu %d
+com.minecolonies.coremod.gui.workerHuts.unassign=Yo omo ilu kuro
 tile.minecolonies.blockTimberFrame.name=Plain Timber Frame
 tile.minecolonies.blockMinecoloniesRack.name=Rack
 
