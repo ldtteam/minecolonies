@@ -414,7 +414,7 @@ com.minecolonies.coremod.item.permissionscepter.addblock.success=Iru bulooki ti 
 com.minecolonies.coremod.item.permissionscepter.addposition.success=Agbegbe ti a fikun '%d %d %d'
 com.minecolonies.coremod.item.permissionscepter.removeblock.success=Bulooki ti a yo kuro '%s'
 com.minecolonies.coremod.item.permissionscepter.removelocation.success=Agbegbe ti a yo '%d %d %d'
-tile.blockHut.warehouse.limit=The amount of warehouses is limited to 1 per colony.
+tile.blockHut.warehouse.limit=Iye ile ikojasi ko le ju eyokan ni ileto kan lo.
 
 com.minecolonies.coremod.gui.workerHuts.baker=Baker
 com.minecolonies.coremod.baker.noFurnace=My building doesn't have any furnaces, please repair it.
