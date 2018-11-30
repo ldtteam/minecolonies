@@ -404,9 +404,9 @@ item.supplyCampDeployer.invalid=O nilo ile ti ote o kere ju 16*17.
 com.minecolonies.coremod.gui.townHall.currentHappiness=Idunnu lapapo:
 com.minecolonies.coremod.job.guard.toolClickGuardTooFar=O ti jina ju si ile iso eso, jowo se igbesoke ile iso re.
 com.minecolonies.coremod.saturation.0=Ebi n pa mi, mi ko le sise mo
-com.minecolonies.coremod.saturation.3=I'm quite hungry, I feel very unproductive
-com.minecolonies.coremod.saturation.5=I'm hungry, I'm not that productive anymore
-com.minecolonies.coremod.saturation.7=I'm quite saturated, but I'll have to eat soon again
+com.minecolonies.coremod.saturation.3=Ebi n pa mi, mo dabi eniti ko le sise to nitumo mo
+com.minecolonies.coremod.saturation.5=Ebi n pa mi, mi o fi be le sise to nitumo mo
+com.minecolonies.coremod.saturation.7=Ikun mi si kun, sugbon ma ni lati jeun laipe si
 
 com.minecolonies.coremod.item.permissionscepter.setmode=Set to mode '%s'
 com.minecolonies.coremod.item.permissionscepter.permission.deny=You do not have permission to edit blocks with this tool.
