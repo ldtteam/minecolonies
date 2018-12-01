@@ -28,7 +28,7 @@ public class BlockHutArchery extends AbstractBlockHut<BlockHutArchery>
     @Override
     public String getName()
     {
-        return "blockhutarchery";
+        return "blockHutArchery";
     }
 
     /**
