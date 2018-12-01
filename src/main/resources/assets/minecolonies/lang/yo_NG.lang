@@ -535,8 +535,8 @@ com.minecolonies.coremod.gui.recipe.done=Ohunelo to ti wa ni ipamo!
 com.minecolonies.coremod.gui.workerHuts.listRecipes=Akojo awon ohunelo
 com.minecolonies.coremod.resolvers.crafter=Oniyanju ise-owo
 com.minecolonies.coremod.request.smeltableore=Ohun alumoni ti o se yo
-tile.minecolonies.blockHutSmeltery.name=Smeltery
-com.minecolonies.coremod.gui.workerHuts.Smeltery=Smeltery
+tile.minecolonies.blockHutSmeltery.name=Yiyo ohun alumoni
+com.minecolonies.coremod.gui.workerHuts.Smeltery=Yiyo ohun alumoni
 com.minecolonies.coremod.job.smelter=Smelter
 
 tile.minecolonies.blockShingleSlab.name=Shingle slab
