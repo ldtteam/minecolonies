@@ -228,21 +228,7 @@ public class StructureProxy
      */
     public void rotateWithMirror(final int times, final World world, final BlockPos rotatePos, final Mirror mirror)
     {
-        final Rotation rotation;
-        switch (times)
-        {
-            case ROTATE_ONCE:
-                rotation = Rotation.CLOCKWISE_90;
-                break;
-            case ROTATE_TWICE:
-                rotation = Rotation.CLOCKWISE_180;
-                break;
-            case ROTATE_THREE_TIMES:
-                rotation = Rotation.COUNTERCLOCKWISE_90;
-                break;
-            default:
-                rotation = Rotation.NONE;
-        }
+        final Rotation rotation = BlockPosUtil.getRotationFromRotations(times);
         structure.setPlacementSettings(new PlacementSettings().setRotation(rotation).setMirror(mirror));
 
         final BlockPos size = structure.getSize(rotation);
