@@ -64,6 +64,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     protected static final int STANDARD_DELAY = 5;
 
     /**
+     * The standard delay after each terminated action.
+     */
+    protected static final int REQUEST_DELAY = TICKS_20 * 3;
+
+    /**
      * The block the ai is currently working at or wants to work.
      */
     @Nullable

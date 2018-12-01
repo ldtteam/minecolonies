@@ -143,6 +143,7 @@ public class PathNavigate extends PathNavigateGround
         {
             return false;
         }
+
         moveToXYZ(x, y, z, speed);
         return true;
     }

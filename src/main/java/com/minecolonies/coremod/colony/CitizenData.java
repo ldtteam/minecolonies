@@ -7,7 +7,7 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingArchery;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.registry.JobRegistry;
@@ -261,7 +261,7 @@ public class CitizenData
         }
         else if (job != null)
         {
-            levelExperienceMap.put(job.getName(), new Tuple<>(compound.getInteger(TAG_LEVEL), compound.getDouble(TAG_EXPERIENCE)));
+            levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(compound.getInteger(TAG_LEVEL), compound.getDouble(TAG_EXPERIENCE)));
         }
 
         if (compound.hasKey(TAG_INVENTORY))
@@ -666,7 +666,7 @@ public class CitizenData
             markDirty();
         }
 
-        if (building == null || building instanceof BuildingHome || building instanceof BuildingBarracksTower)
+        if (building == null || building instanceof BuildingHome || building instanceof BuildingArchery)
         {
             homeBuilding = building;
             markDirty();
@@ -978,7 +978,7 @@ public class CitizenData
             return;
         }
         final Tuple<Integer, Double> entry = queryLevelExperienceMap();
-        this.levelExperienceMap.put(job.getName(), new Tuple<>(lvl, entry.getSecond()));
+        this.levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(lvl, entry.getSecond()));
     }
 
     /**
@@ -991,7 +991,7 @@ public class CitizenData
         if (this.job != null)
         {
             final Tuple<Integer, Double> entry = queryLevelExperienceMap();
-            this.levelExperienceMap.put(job.getName(), new Tuple<>(entry.getFirst(), entry.getSecond() + xp));
+            this.levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(entry.getFirst(), entry.getSecond() + xp));
         }
     }
 
@@ -1018,7 +1018,7 @@ public class CitizenData
             final Tuple<Integer, Double> entry = queryLevelExperienceMap();
             if (entry.getFirst() < MAX_CITIZEN_LEVEL)
             {
-                this.levelExperienceMap.put(job.getName(), new Tuple<>(entry.getFirst() + 1, entry.getSecond()));
+                this.levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(entry.getFirst() + 1, entry.getSecond()));
             }
         }
     }
@@ -1078,7 +1078,7 @@ public class CitizenData
      */
     private Tuple<Integer, Double> queryLevelExperienceMap()
     {
-        return levelExperienceMap.computeIfAbsent(job.getName(), jobKey -> new Tuple<>(0, 0.0D));
+        return levelExperienceMap.computeIfAbsent(job.getExperienceTag(), jobKey -> new Tuple<>(0, 0.0D));
     }
 
     /**

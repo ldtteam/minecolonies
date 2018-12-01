@@ -14,6 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.Rotation;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -22,10 +23,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Random;
 
-import static com.minecolonies.api.util.constant.Constants.ROTATE_ONCE;
-import static com.minecolonies.api.util.constant.Constants.ROTATE_THREE_TIMES;
-import static com.minecolonies.api.util.constant.Constants.ROTATE_TWICE;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
@@ -56,13 +56,62 @@ public final class BlockPosUtil
      * @param name     Name of the tag.
      * @param pos      Coordinates to write to NBT.
      */
-    public static void writeToNBT(@NotNull final NBTTagCompound compound, final String name, @NotNull final BlockPos pos)
+    public static NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound, final String name, @NotNull final BlockPos pos)
     {
         @NotNull final NBTTagCompound coordsCompound = new NBTTagCompound();
         coordsCompound.setInteger("x", pos.getX());
         coordsCompound.setInteger("y", pos.getY());
         coordsCompound.setInteger("z", pos.getZ());
         compound.setTag(name, coordsCompound);
+        return compound;
+    }
+
+    /**
+     * Searches a random direction.
+     *
+     * @param random a random object.
+     * @return a tuple of two directions.
+     */
+    private static Tuple<EnumFacing, EnumFacing> getRandomDirectionTuple(final Random random)
+    {
+        return new Tuple<>(EnumFacing.random(random), EnumFacing.random(random));
+    }
+
+    /**
+     * Gets a random position within a certain range for wandering around.
+     * @param world the world.
+     * @param currentPosition the current position.
+     * @param def the default position if none was found.
+     * @return the BlockPos.
+     */
+    public static BlockPos getRandomPosition(final World world, final BlockPos currentPosition, final BlockPos def)
+    {
+        final Random random = new Random();
+
+        int tries = 0;
+        BlockPos pos = null;
+        while (pos == null
+                 || world.getBlockState(pos).getMaterial().isLiquid()
+                 || !world.getBlockState(pos.down()).getMaterial().isSolid()
+                 || (!world.isAirBlock(pos) && !world.isAirBlock(pos.up())))
+        {
+            final Tuple<EnumFacing, EnumFacing> direction = getRandomDirectionTuple(random);
+            pos =
+              new BlockPos(currentPosition)
+                .offset(direction.getFirst(), random.nextInt(LENGTH_RANGE))
+                .offset(direction.getSecond(), random.nextInt(LENGTH_RANGE))
+                .up(random.nextInt(UP_DOWN_RANGE))
+                .down(random.nextInt(UP_DOWN_RANGE));
+
+            if (tries >= MAX_TRIES)
+            {
+                return def;
+            }
+
+            tries++;
+        }
+
+        return pos;
     }
 
     /**
