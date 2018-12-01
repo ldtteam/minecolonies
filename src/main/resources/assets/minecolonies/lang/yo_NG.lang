@@ -501,9 +501,9 @@ com.minecolonies.coremod.tooltype.fishingrod=Opa ipeja
 com.minecolonies.coremod.tooltype.shears=Irekuru
 com.minecolonies.coremod.tooltype.shield=Apata
 
-com.minecolonies.coremod.gui.citizen.requests=Open requests:
-com.minecolonies.coremod.gui.citizen.requestTitle=Requests
-com.minecolonies.coremod.gui.citizen.requestsCancel=Cancel
+com.minecolonies.coremod.gui.citizen.requests=Awon ibeere to si sile:
+com.minecolonies.coremod.gui.citizen.requestTitle=Awon ibeere
+com.minecolonies.coremod.gui.citizen.requestsCancel=Fagilee
 com.minecolonies.coremod.gui.citizen.requestsFulfill=Fulfill
 
 item.minecolonies.clipboard.name=Clipboard
