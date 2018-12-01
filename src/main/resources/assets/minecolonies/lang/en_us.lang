@@ -836,3 +836,5 @@ item.pirate_leggins.name=Pirate Leggins
 item.pirate_shoes.name=Pirate Shoes
 com.minecolonies.coremod.pirates.sailing.away=A pirate ship close to %s just sailed away to search another victim.
 com.minecolonies.coremod.cook.serve.player=%s: Here you go Sir, take this food!
+tile.minecolonies.blockHutArchery.name=Archery
+com.minecolonies.coremod.gui.workerHuts.Archery=Archery

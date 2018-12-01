@@ -140,11 +140,26 @@ public final class Constants
     public static final int GLOW_EFFECT_DURATION_TEAM = 20 * 60 * 10;
 
     /**
+     * The length range one patrolling operation can have on x or z.
+     */
+    public static final int LENGTH_RANGE = 10;
+
+    /**
+     * The length range one patrolling operation can have on y.
+     */
+    public static final int UP_DOWN_RANGE = 4;
+
+    /**
+     * Max tries to find a position to path to.
+     */
+    public static final int MAX_TRIES = 20;
+
+    /**
      * Private constructor to hide implicit public one.
      */
     private Constants()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }

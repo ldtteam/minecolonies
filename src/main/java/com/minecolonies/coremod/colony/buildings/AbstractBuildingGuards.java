@@ -29,8 +29,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.EntityEntry;
@@ -42,7 +40,6 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_BUILDING_NAME;
 import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_CONFIG_NAME;
-import static com.minecolonies.api.util.constant.CitizenConstants.BONUS_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -127,21 +124,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      * Whether to retrieve the guard on low health.
      */
     private boolean retrieveOnLowHealth = false;
-
-    /**
-     * The length range one patrolling operation can have on x or z.
-     */
-    private static final int LENGTH_RANGE = 10;
-
-    /**
-     * The length range one patrolling operation can have on y.
-     */
-    private static final int UP_DOWN_RANGE = 4;
-
-    /**
-     * Max tries to find a position to path to.
-     */
-    private static final int MAX_TRIES = 20;
 
     /**
      * The level for getting our achievement
@@ -364,7 +346,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             }
             else
             {
-                return getRandomPosition(currentPatrolTarget);
+                final BlockPos pos = BlockPosUtil.getRandomPosition(getColony().getWorld(), currentPatrolTarget, getLocation());
+                if (BlockPosUtil.getDistance2D(pos, getLocation()) > getPatrolDistance())
+                {
+                    return getLocation();
+                }
+                return pos;
             }
         }
 
@@ -390,62 +377,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             return patrolTargets.get(index);
         }
         return patrolTargets.get(0);
-    }
-
-    /**
-     * Gets a random building from this colony.
-     *
-     * @return a random blockPos.
-     */
-    private BlockPos getRandomPosition(final BlockPos currentPosition)
-    {
-        if (getColony() == null)
-        {
-            return getLocation();
-        }
-
-        final Random random = new Random();
-
-        int tries = 0;
-        BlockPos pos = null;
-        while (pos == null
-                 || getColony().getWorld().getBlockState(pos).getMaterial().isLiquid()
-                 || !getColony().getWorld().getBlockState(pos.down()).getMaterial().isSolid()
-                 || (!getColony().getWorld().isAirBlock(pos) && !getColony().getWorld().isAirBlock(pos.up())))
-        {
-            final Tuple<EnumFacing, EnumFacing> direction = getRandomDirectionTuple(random);
-            pos =
-              new BlockPos(currentPosition)
-                .offset(direction.getFirst(), random.nextInt(LENGTH_RANGE))
-                .offset(direction.getSecond(), random.nextInt(LENGTH_RANGE))
-                .up(random.nextInt(UP_DOWN_RANGE))
-                .down(random.nextInt(UP_DOWN_RANGE));
-
-            if (tries >= MAX_TRIES)
-            {
-                return getLocation();
-            }
-
-            tries++;
-        }
-
-
-        if (BlockPosUtil.getDistance2D(pos, getLocation()) > getPatrolDistance())
-        {
-            return getLocation();
-        }
-        return pos;
-    }
-
-    /**
-     * Searches a random direction.
-     *
-     * @param random a random object.
-     * @return a tuple of two directions.
-     */
-    private Tuple<EnumFacing, EnumFacing> getRandomDirectionTuple(final Random random)
-    {
-        return new Tuple<>(EnumFacing.random(random), EnumFacing.random(random));
     }
 
     /**
