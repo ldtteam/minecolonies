@@ -16,6 +16,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.ChunkCache;
@@ -866,12 +867,14 @@ public abstract class AbstractPathJob implements Callable<Path>
             return -1;
         }
 
-        final BlockPos down = pos.down(2);
-        final IBlockState below = world.getBlockState(down);
-        if (isWalkableSurface(below, pos) == SurfaceType.WALKABLE)
+        for (int i = 2; i <= 4; i++ )
         {
-            //  Level path
-            return pos.getY() - 1;
+            final IBlockState below = world.getBlockState(pos.down(i));
+            if (isWalkableSurface(below, pos) == SurfaceType.WALKABLE)
+            {
+                //  Level path
+                return pos.getY() - i + 1;
+            }
         }
 
         return -1;
@@ -912,6 +915,13 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         //  Check for jump room from the origin space
         if (!isPassable(parent.pos.up(2)))
+        {
+            return -1;
+        }
+
+        final IBlockState below = world.getBlockState(parent.pos.down());
+        final AxisAlignedBB bb = below.getCollisionBoundingBox(world, pos.down());
+        if (bb != null && bb.maxY < 1)
         {
             return -1;
         }
