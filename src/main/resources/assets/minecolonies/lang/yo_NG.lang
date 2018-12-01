@@ -481,10 +481,10 @@ com.minecolonies.coremod.status.mining=Wiwakusa
 
 item.minecolonies.scepterPermission.name=Opa igbanilaaye
 
-com.minecolonies.coremod.request.delivery=Delivery of:
-com.minecolonies.coremod.request.food=Food
-com.minecolonies.coremod.request.burnable=Fuel
-com.minecolonies.coremod.request.tool.pretype=Tool of class:
+com.minecolonies.coremod.request.delivery=Ifijisee:
+com.minecolonies.coremod.request.food=Ounje
+com.minecolonies.coremod.request.burnable=Idana
+com.minecolonies.coremod.request.tool.pretype=Ohun elo kilasi:
 com.minecolonies.coremod.request.tool.preminlevel=with minimal level:
 com.minecolonies.coremod.request.tool.premaxlevel=with maximal level:
 
