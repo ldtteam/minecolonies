@@ -190,7 +190,7 @@ public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTrain
     private AIState goToShootingStand()
     {
         setDelay(STANDARD_DELAY);
-        if (walkToBlock(currentPathingTarget))
+        if (walkToBlock(currentPathingTarget, 1))
         {
             return getState();
         }
