@@ -491,11 +491,11 @@ com.minecolonies.coremod.request.tool.premaxlevel=pelu ipele to po ju:
 com.minecolonies.coremod.general.and=ati
 
 com.minecolonies.coremod.tooltype.none=Aimo
-com.minecolonies.coremod.tooltype.pickaxe=Pickaxe
-com.minecolonies.coremod.tooltype.shovel=Shovel
+com.minecolonies.coremod.tooltype.pickaxe=Ake
+com.minecolonies.coremod.tooltype.shovel=Ikokuro
 com.minecolonies.coremod.tooltype.axe=Ake
 com.minecolonies.coremod.tooltype.hoe=Oko
-com.minecolonies.coremod.tooltype.sword=Sword
+com.minecolonies.coremod.tooltype.sword=Ida
 com.minecolonies.coremod.tooltype.bow=Bow
 com.minecolonies.coremod.tooltype.fishingrod=Fishingrod
 com.minecolonies.coremod.tooltype.shears=Shears
