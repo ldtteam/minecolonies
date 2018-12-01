@@ -496,9 +496,9 @@ com.minecolonies.coremod.tooltype.shovel=Ikokuro
 com.minecolonies.coremod.tooltype.axe=Ake
 com.minecolonies.coremod.tooltype.hoe=Oko
 com.minecolonies.coremod.tooltype.sword=Ida
-com.minecolonies.coremod.tooltype.bow=Bow
-com.minecolonies.coremod.tooltype.fishingrod=Fishingrod
-com.minecolonies.coremod.tooltype.shears=Shears
+com.minecolonies.coremod.tooltype.bow=Ofa
+com.minecolonies.coremod.tooltype.fishingrod=Opa ipeja
+com.minecolonies.coremod.tooltype.shears=Irekuru
 com.minecolonies.coremod.tooltype.shield=Shield
 
 com.minecolonies.coremod.gui.citizen.requests=Open requests:
