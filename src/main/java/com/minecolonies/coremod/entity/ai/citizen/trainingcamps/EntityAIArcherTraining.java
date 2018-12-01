@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.ai.citizen.trainingCamps;
+package com.minecolonies.coremod.entity.ai.citizen.trainingcamps;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;

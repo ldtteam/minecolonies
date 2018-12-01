@@ -3,10 +3,7 @@ package com.minecolonies.coremod.colony.jobs;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
-import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
-import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIRanger;
-import com.minecolonies.coremod.entity.ai.citizen.trainingCamps.EntityAIArcherTraining;
+import com.minecolonies.coremod.entity.ai.citizen.trainingcamps.EntityAIArcherTraining;
 
 /**
  * The Archers's Training Job class

@@ -35,12 +35,12 @@ public class BuildingArchery extends AbstractBuildingWorker
     /**
      * The Schematic name.
      */
-    private static final String SCHEMATIC_NAME   = "Archery";
+    private static final String SCHEMATIC_NAME = "Archery";
 
     /**
      * The Schematic name.
      */
-    private static final String DESC   = "Archery";
+    private static final String DESC = "Archery";
 
     /**
      * List of shooting stands in the building.
@@ -104,10 +104,10 @@ public class BuildingArchery extends AbstractBuildingWorker
     {
         super.writeToNBT(compound);
 
-        final NBTTagList targetTagList = shootingTargets.stream().map(target ->  BlockPosUtil.writeToNBT(new NBTTagCompound(), TAG_TARGET, target)).collect(NBTUtils.toNBTTagList());
+        final NBTTagList targetTagList = shootingTargets.stream().map(target -> BlockPosUtil.writeToNBT(new NBTTagCompound(), TAG_TARGET, target)).collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_ARCHERY_TARGETS, targetTagList);
 
-        final NBTTagList standTagList = shootingStands.stream().map(target ->  BlockPosUtil.writeToNBT(new NBTTagCompound(), TAG_STAND, target)).collect(NBTUtils.toNBTTagList());
+        final NBTTagList standTagList = shootingStands.stream().map(target -> BlockPosUtil.writeToNBT(new NBTTagCompound(), TAG_STAND, target)).collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_ARCHERY_STANDS, standTagList);
     }
 
@@ -139,12 +139,13 @@ public class BuildingArchery extends AbstractBuildingWorker
 
     /**
      * Get a random position to shoot from.
+     *
      * @param random the random obj.
      * @return a random shooting stand position.
      */
     public BlockPos getRandomShootingStandPosition(final Random random)
     {
-         if (shootingStands.size() > 0)
+        if (!shootingStands.isEmpty())
         {
             return shootingStands.get(random.nextInt(shootingStands.size()));
         }
@@ -153,12 +154,13 @@ public class BuildingArchery extends AbstractBuildingWorker
 
     /**
      * Get a random position to shoot at.
+     *
      * @param random the random obj.
      * @return a random shooting target position.
      */
     public BlockPos getRandomShootingTarget(final Random random)
     {
-        if (shootingTargets.size() > 0)
+        if (!shootingTargets.isEmpty())
         {
             return shootingTargets.get(random.nextInt(shootingTargets.size()));
         }
