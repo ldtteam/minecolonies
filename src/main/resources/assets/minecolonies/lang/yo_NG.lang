@@ -508,8 +508,8 @@ com.minecolonies.coremod.gui.citizen.requestsFulfill=Pari
 
 item.minecolonies.clipboard.name=Sileti
 
-com.minecolonies.coremod.item.clipboard.needColony=Please shift-right click the colony to register your clipboard to it.
-com.minecolonies.coremod.item.clipboard.registered=Registered to colony %d.
+com.minecolonies.coremod.item.clipboard.needColony=Jowo sun si otun ki o te lori ileto naa lati fi oruko sileti re sile sori e.
+com.minecolonies.coremod.item.clipboard.registered=Oruko ti di fifisile si ileto %d.
 achievement.upgrade.guard.first=Apayan
 achievement.upgrade.guard.last=Cleanup crew
 com.minecolonies.requestsystem.playerresolver=%s is in need of %s at %s.
