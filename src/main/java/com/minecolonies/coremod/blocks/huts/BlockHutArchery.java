@@ -15,15 +15,6 @@ import java.util.List;
  */
 public class BlockHutArchery extends AbstractBlockHut<BlockHutArchery>
 {
-    /**
-     * Default constructor.
-     */
-    public BlockHutArchery()
-    {
-        //No different from Abstract parent
-        super();
-    }
-
     @NotNull
     @Override
     public String getName()
