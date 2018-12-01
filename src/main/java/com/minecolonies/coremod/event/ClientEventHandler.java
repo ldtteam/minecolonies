@@ -14,7 +14,6 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.items.ModItems;
-import com.structurize.api.util.BlockUtils;
 import com.structurize.structures.client.TemplateRenderHandler;
 import com.structurize.structures.helpers.Settings;
 import com.structurize.structures.helpers.Structure;
