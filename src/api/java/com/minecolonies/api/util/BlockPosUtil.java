@@ -25,12 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Random;
 
-import static com.minecolonies.api.util.constant.Constants.LENGTH_RANGE;
-import static com.minecolonies.api.util.constant.Constants.MAX_TRIES;
-import static com.minecolonies.api.util.constant.Constants.UP_DOWN_RANGE;
-import static com.minecolonies.api.util.constant.Constants.ROTATE_ONCE;
-import static com.minecolonies.api.util.constant.Constants.ROTATE_THREE_TIMES;
-import static com.minecolonies.api.util.constant.Constants.ROTATE_TWICE;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
