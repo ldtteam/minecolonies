@@ -14,7 +14,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
 import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.coremod.entity.ai.util.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -31,7 +31,7 @@ import java.util.List;
 import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Class taking of the abstract guard methods for all fighting AIs.
@@ -100,11 +100,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     {
         super(job);
         super.registerTargets(
-          new AITarget(DECIDE, true, this::decide),
-          new AITarget(GUARD_PATROL, true, this::patrol),
-          new AITarget(GUARD_FOLLOW, true, this::follow),
-          new AITarget(GUARD_GUARD, true, this::guard),
-          new AITarget(GUARD_REGEN, true, this::regen)
+          new AITarget(DECIDE, this::decide),
+          new AITarget(GUARD_PATROL, this::patrol),
+          new AITarget(GUARD_FOLLOW, this::follow),
+          new AITarget(GUARD_GUARD, this::guard),
+          new AITarget(GUARD_REGEN, this::regen)
 
         );
         buildingGuards = getOwnBuilding();
@@ -114,7 +114,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      * Regen at the building and continue when more than half health.
      * @return next state to go to.
      */
-    private AIState regen()
+    private IAIState regen()
     {
         setDelay(STANDARD_DELAY);
         if (walkToBuilding() || worker.getHealth() < ((int) worker.getMaxHealth() * 0.5D) && buildingGuards.shallRetrieveOnLowHealth())
@@ -129,13 +129,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      * Get the Attack state to go to.
      * @return the next attack state.
      */
-    public abstract AIState getAttackState();
+    public abstract IAIState getAttackState();
 
     /**
      * Guard at a specific position.
      * @return the next state to run into.
      */
-    private AIState guard()
+    private IAIState guard()
     {
         worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), GUARD_POS_RANGE);
         return DECIDE;
@@ -145,7 +145,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      * Follow a player.
      * @return the next state to run into.
      */
-    private AIState follow()
+    private IAIState follow()
     {
         worker.addPotionEffect(new PotionEffect(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER));
         this.world.getScoreboard().addPlayerToTeam(worker.getName(), TEAM_COLONY_NAME + worker.getCitizenColonyHandler().getColonyId());
@@ -179,7 +179,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      * Patrol between a list of patrol points.
      * @return the next patrol point to go to.
      */
-    private AIState patrol()
+    private IAIState patrol()
     {
         if (currentPatrolPoint == null)
         {
@@ -217,9 +217,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     /**
      * Decide what we should do next! Ticked once every 20 Ticks
      *
-     * @return the next AIState.
+     * @return the next IAIState.
      */
-    protected AIState decide()
+    protected IAIState decide()
     {
         setDelay(Constants.TICKS_SECOND);
         for (final ToolType toolType : toolsNeeded)
@@ -282,7 +282,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      * TODO: Check if enemy is in Range?
      * @return the next aiState to go to.
      */
-    public AIState preAttackChecks()
+    public IAIState preAttackChecks()
     {
         if (!hasMainWeapon())
         {
@@ -325,7 +325,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      * Get a target for the guard.
      * First check if we're under attack by anything and switch target if necessary.
      *
-     * @return The next AIState to go to.
+     * @return The next IAIState to go to.
      */
     protected EntityLivingBase getTarget()
     {

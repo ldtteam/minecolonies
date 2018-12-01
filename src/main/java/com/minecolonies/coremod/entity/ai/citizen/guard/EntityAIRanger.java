@@ -5,7 +5,7 @@ import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
-import com.minecolonies.coremod.entity.ai.util.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.PathResult;
 import com.minecolonies.coremod.util.SoundUtils;
@@ -22,8 +22,8 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.coremod.entity.ai.util.AIState.DECIDE;
-import static com.minecolonies.coremod.entity.ai.util.AIState.GUARD_ATTACK_RANGED;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.DECIDE;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_RANGED;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
@@ -87,13 +87,13 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     {
         super(job);
         super.registerTargets(
-          new AITarget(GUARD_ATTACK_RANGED, false, this::attackRanged)
+          new AITarget(GUARD_ATTACK_RANGED, this::attackRanged)
         );
         toolsNeeded.add(ToolType.BOW);
     }
 
     @Override
-    public AIState getAttackState()
+    public IAIState getAttackState()
     {
         return GUARD_ATTACK_RANGED;
     }
@@ -136,7 +136,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     /**
      * Get a target for the guard.
      *
-     * @return The next AIState to go to.
+     * @return The next IAIState to go to.
      */
     @Override
     protected EntityLivingBase getTarget()
@@ -165,11 +165,11 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
      *
      * @return the next state to go to.
      */
-    protected AIState attackRanged()
+    protected IAIState attackRanged()
     {
         // Tick once every half second is enough
         setDelay(10);
-        final AIState state = preAttackChecks();
+        final IAIState state = preAttackChecks();
         if (state != getState())
         {
             setDelay(STANDARD_DELAY);

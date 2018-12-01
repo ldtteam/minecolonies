@@ -1,6 +1,6 @@
-package com.minecolonies.coremod.entity.ai.util;
+package com.minecolonies.coremod.entity.ai.statemachine.states;
 
-public enum AISpecialState
+public enum AIBlockingEventType implements IAIEventType
 {
     /*###Priority NonStates###*/
     /**
@@ -18,5 +18,5 @@ public enum AISpecialState
      * Checked right after AI_BLOCKING_PRIO targets, return true if blocking further executions of AITargets
      * Checked regardless of current state
      */
-    EVENT
+    EVENT;
 }

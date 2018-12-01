@@ -6,7 +6,7 @@ import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.IToolType; 
+import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.huts.BlockHutField;
@@ -15,7 +15,8 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.coremod.entity.ai.util.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.network.messages.CompostParticleMessage;
@@ -46,7 +47,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.BLOCK_BREAK_SOUND_RANGE;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Farmer AI class.
@@ -108,12 +109,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, true, () -> START_WORKING),
-          new AITarget(START_WORKING, true, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, true, this::prepareForFarming),
-          new AITarget(FARMER_HOE, false, this::workAtField),
-          new AITarget(FARMER_PLANT, false, this::workAtField),
-          new AITarget(FARMER_HARVEST, false, this::workAtField)
+          new AITarget(IDLE, () -> START_WORKING),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, this::prepareForFarming),
+          new AITarget(FARMER_HOE, this::workAtField),
+          new AITarget(FARMER_PLANT, this::workAtField),
+          new AITarget(FARMER_HARVEST, this::workAtField)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
         worker.setCanPickUpLoot(true);
@@ -130,7 +131,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      *
      * @return the next state.
      */
-    private AIState startWorkingAtOwnBuilding()
+    private IAIState startWorkingAtOwnBuilding()
     {
         if (walkToBuilding())
         {
@@ -143,10 +144,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * Prepares the farmer for farming.
      * Also requests the tools and checks if the farmer has sufficient fields.
      *
-     * @return the next AIState
+     * @return the next IAIState
      */
     @NotNull
-    private AIState prepareForFarming()
+    private IAIState prepareForFarming()
     {
         @Nullable final BuildingFarmer building = getWorkBuilding();
         if (building == null || building.getBuildingLevel() < 1)
@@ -302,7 +303,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @param buildingFarmer the farmer building.
      * @return true if he is ready.
      */
-    private AIState canGoPlanting(@NotNull final ScarecrowTileEntity currentField, @NotNull final BuildingFarmer buildingFarmer)
+    private IAIState canGoPlanting(@NotNull final ScarecrowTileEntity currentField, @NotNull final BuildingFarmer buildingFarmer)
     {
         if (currentField.getSeed() == null)
         {
@@ -398,7 +399,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * This (re)initializes a field.
      * Checks the block above to see if it is a plant, if so, breaks it. Then tills.
      */
-    private AIState workAtField()
+    private IAIState workAtField()
     {
         @Nullable final BuildingFarmer buildingFarmer = getWorkBuilding();
 
@@ -425,7 +426,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                     return getState();
                 }
 
-                switch (getState())
+                switch ((AIWorkerState) getState())
                 {
                     case FARMER_HOE:
                         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.hoeing"));

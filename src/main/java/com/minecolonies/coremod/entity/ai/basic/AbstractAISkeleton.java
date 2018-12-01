@@ -6,7 +6,13 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.util.*;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIEventType;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.coremod.entity.ai.util.AISpecialTarget;
+import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -27,23 +33,25 @@ import java.util.Map;
 public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAIBase
 {
 
-    private static final int                                      MUTEX_MASK = 3;
+    private static final int                                    MUTEX_MASK = 3;
     @NotNull
-    protected final      J                                        job;
+    protected final      J                                      job;
     @NotNull
-    protected final      EntityCitizen                            worker;
-    protected final      World                                    world;
+    protected final      EntityCitizen                          worker;
+    protected final      World                                  world;
     @NotNull
-    protected final      ChatSpamFilter                           chatSpamFilter;
+    protected final      ChatSpamFilter                         chatSpamFilter;
     @NotNull
-    private final        Map<AIState, ArrayList<AITarget>>        targetMap;
+    private final        Map<IAIState, ArrayList<AITarget>>     targetMap;
     @NotNull
-    private final        Map<AISpecialState, ArrayList<AITarget>> specialTargetMap;
+    private final        Map<IAIEventType, ArrayList<AITarget>> specialTargetMap;
+
     /**
      * The current state the ai is in.
      * Used to compare to state matching targets.
      */
-    private              AIState                                  state;
+    @NotNull
+    private IAIState state;
 
     /**
      * Tick counter for the AI
@@ -71,11 +79,11 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         this.worker = this.job.getCitizen().getCitizenEntity().get();
         this.world = CompatibilityUtils.getWorld(this.worker);
         this.chatSpamFilter = new ChatSpamFilter(job.getCitizen());
-        this.state = AIState.INIT;
-        this.targetMap.put(AIState.INIT, new ArrayList<>());
-        this.specialTargetMap.put(AISpecialState.AI_BLOCKING, new ArrayList<>());
-        this.specialTargetMap.put(AISpecialState.STATE_BLOCKING, new ArrayList<>());
-        this.specialTargetMap.put(AISpecialState.EVENT, new ArrayList<>());
+        this.state = AIWorkerState.INIT;
+        this.targetMap.put(AIWorkerState.INIT, new ArrayList<>());
+        this.specialTargetMap.put(AIBlockingEventType.AI_BLOCKING, new ArrayList<>());
+        this.specialTargetMap.put(AIBlockingEventType.STATE_BLOCKING, new ArrayList<>());
+        this.specialTargetMap.put(AIBlockingEventType.EVENT, new ArrayList<>());
     }
 
     /**
@@ -87,30 +95,11 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     {
         if (target.getState() != null)
         {
-            if (!targetMap.containsKey(target.getState()))
-            {
-                final ArrayList<AITarget> newList = new ArrayList<>();
-                newList.add(target);
-                targetMap.put(target.getState(), newList);
-            }
-            else
-            {
-                targetMap.get(target.getState()).add(target);
-            }
+            targetMap.computeIfAbsent(target.getState(), k -> new ArrayList<>()).add(target);
         }
         else if (target instanceof AISpecialTarget)
         {
-            final AISpecialState state = ((AISpecialTarget) target).getSpecialState();
-            if (!specialTargetMap.containsKey(state))
-            {
-                final ArrayList<AITarget> newList = new ArrayList<>();
-                newList.add(target);
-                specialTargetMap.put(state, newList);
-            }
-            else
-            {
-                specialTargetMap.get(state).add(target);
-            }
+            specialTargetMap.computeIfAbsent(((AISpecialTarget) target).getSpecialState(), k -> new ArrayList<>()).add(target);
         }
     }
 
@@ -119,9 +108,9 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      */
     protected final void unRegisterEvent(final AITarget target)
     {
-        final ArrayList<AITarget> temp = new ArrayList<>(specialTargetMap.get(AISpecialState.EVENT));
+        final ArrayList<AITarget> temp = new ArrayList<>(specialTargetMap.get(AIBlockingEventType.EVENT));
         temp.remove(target);
-        specialTargetMap.put(AISpecialState.EVENT, temp);
+        specialTargetMap.put(AIBlockingEventType.EVENT, temp);
     }
 
     /**
@@ -187,10 +176,9 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
             tickCount = 1;
         }
 
-        // Check targets in order by priority
-        if (!specialTargetMap.get(AISpecialState.AI_BLOCKING).stream().anyMatch(this::checkOnTarget)
-              && !specialTargetMap.get(AISpecialState.EVENT).stream().anyMatch(this::checkOnTarget)
-              && !specialTargetMap.get(AISpecialState.STATE_BLOCKING).stream().anyMatch(this::checkOnTarget))
+        if (!specialTargetMap.get(AIBlockingEventType.AI_BLOCKING).stream().anyMatch(this::checkOnTarget)
+              && !specialTargetMap.get(AIBlockingEventType.EVENT).stream().anyMatch(this::checkOnTarget)
+              && !specialTargetMap.get(AIBlockingEventType.STATE_BLOCKING).stream().anyMatch(this::checkOnTarget))
         {
             targetMap.get(state).stream().anyMatch(this::checkOnTarget);
         }
@@ -265,7 +253,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      */
     private boolean applyTarget(@NotNull final AITarget target)
     {
-        final AIState newState;
+        final IAIState newState;
         try
         {
             newState = target.apply();
@@ -291,9 +279,9 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     /**
      * Get the current state the ai is in.
      *
-     * @return The current AIState.
+     * @return The current IAIState.
      */
-    public final AIState getState()
+    public final IAIState getState()
     {
         return state;
     }
@@ -309,26 +297,10 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     }
 
     /**
-     * Check if it is okay to eat by checking if the current target is good to eat.
-     *
-     * @return true if so.
-     */
-    public boolean isOkayToEat()
-    {
-        if (targetMap.get(state) == null)
-        {
-            return false;
-        }
-        return targetMap.get(state)
-                 .stream()
-                 .anyMatch(AITarget::isOkayToEat);
-    }
-
-    /**
      * Resets the worker AI to Idle state, use with care interrupts all current Actions
      */
     public void resetAIToIdle()
     {
-        state = AIState.IDLE;
+        state = AIWorkerState.IDLE;
     }
 }

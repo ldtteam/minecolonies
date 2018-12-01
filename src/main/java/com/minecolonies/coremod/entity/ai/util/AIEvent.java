@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.entity.ai.util;
 
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;
@@ -21,9 +23,9 @@ public class AIEvent extends AISpecialTarget
      * @param predicate which has to be true to execute
      * @param action    Supplier for the state to transition into
      */
-    public AIEvent(@NotNull final BooleanSupplier predicate, @NotNull final Supplier<AIState> action)
+    public AIEvent(@NotNull final BooleanSupplier predicate, @NotNull final Supplier<IAIState> action)
     {
-        super(AISpecialState.EVENT, false, predicate, action, 1);
+        super(AIBlockingEventType.EVENT, predicate, action, 1);
     }
 
     /**
@@ -32,9 +34,9 @@ public class AIEvent extends AISpecialTarget
      * @param predicate which has to be true to execute
      * @param state     state to transition into
      */
-    public AIEvent(@NotNull final BooleanSupplier predicate, @NotNull final AIState state)
+    public AIEvent(@NotNull final BooleanSupplier predicate, @NotNull final IAIState state)
     {
-        super(AISpecialState.EVENT, false, predicate, () -> state, 1);
+        super(AIBlockingEventType.EVENT, predicate, () -> state, 1);
     }
 
     /**
@@ -42,9 +44,9 @@ public class AIEvent extends AISpecialTarget
      *
      * @param action Supplier for the state to transition into
      */
-    public AIEvent(@NotNull final Supplier<AIState> action)
+    public AIEvent(@NotNull final Supplier<IAIState> action)
     {
-        super(AISpecialState.EVENT, false, () -> true, action, 1);
+        super(AIBlockingEventType.EVENT, () -> true, action, 1);
     }
 
     /**
@@ -52,9 +54,9 @@ public class AIEvent extends AISpecialTarget
      *
      * @param state state to transition into
      */
-    public AIEvent(@NotNull final AIState state)
+    public AIEvent(@NotNull final IAIState state)
     {
-        super(AISpecialState.EVENT, false, () -> true, () -> state, 1);
+        super(AIBlockingEventType.EVENT, () -> true, () -> state, 1);
     }
 
     /**
@@ -65,10 +67,10 @@ public class AIEvent extends AISpecialTarget
      * @return the new state the ai is in. null if no change.
      */
     @Override
-    public AIState apply()
+    public IAIState apply()
     {
         // Unregister once a different state is returned.
-        final AIState result = super.apply();
+        final IAIState result = super.apply();
         if (result != null)
         {
             unregister = true;
