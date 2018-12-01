@@ -537,6 +537,6 @@ com.minecolonies.coremod.resolvers.crafter=Oniyanju ise-owo
 com.minecolonies.coremod.request.smeltableore=Ohun alumoni ti o se yo
 tile.minecolonies.blockHutSmeltery.name=Yiyo ohun alumoni
 com.minecolonies.coremod.gui.workerHuts.Smeltery=Yiyo ohun alumoni
-com.minecolonies.coremod.job.smelter=Smelter
+com.minecolonies.coremod.job.smelter=Oluyo ohun alumoni
 
-tile.minecolonies.blockShingleSlab.name=Shingle slab
+tile.minecolonies.blockShingleSlab.name=Pako pelebe
