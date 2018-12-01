@@ -499,7 +499,7 @@ com.minecolonies.coremod.tooltype.sword=Ida
 com.minecolonies.coremod.tooltype.bow=Ofa
 com.minecolonies.coremod.tooltype.fishingrod=Opa ipeja
 com.minecolonies.coremod.tooltype.shears=Irekuru
-com.minecolonies.coremod.tooltype.shield=Shield
+com.minecolonies.coremod.tooltype.shield=Apata
 
 com.minecolonies.coremod.gui.citizen.requests=Open requests:
 com.minecolonies.coremod.gui.citizen.requestTitle=Requests
