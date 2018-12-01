@@ -154,6 +154,7 @@ public class ClientEventHandler
                         pos = pos.add(-size.getX() + (2 * primaryOffset.getX()) + 1, 0, 0);
                     }
                     smallOffset = new BlockPos(1, 1, 1);
+                    break;
             }
 
             renderBox(pos, pos.add(size).subtract(smallOffset), player, event);
