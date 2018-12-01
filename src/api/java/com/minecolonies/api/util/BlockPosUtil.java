@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -27,6 +28,9 @@ import java.util.Random;
 import static com.minecolonies.api.util.constant.Constants.LENGTH_RANGE;
 import static com.minecolonies.api.util.constant.Constants.MAX_TRIES;
 import static com.minecolonies.api.util.constant.Constants.UP_DOWN_RANGE;
+import static com.minecolonies.api.util.constant.Constants.ROTATE_ONCE;
+import static com.minecolonies.api.util.constant.Constants.ROTATE_THREE_TIMES;
+import static com.minecolonies.api.util.constant.Constants.ROTATE_TWICE;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
@@ -595,5 +599,25 @@ public final class BlockPosUtil
         }
 
         return dist.toString();
+    }
+
+    /**
+     * Get the rotation enum value from the amount of rotations.
+     * @param rotations the amount of rotations.
+     * @return the enum Rotation.
+     */
+    public static Rotation getRotationFromRotations(final int rotations)
+    {
+        switch (rotations)
+        {
+            case ROTATE_ONCE:
+                return Rotation.CLOCKWISE_90;
+            case ROTATE_TWICE:
+                return Rotation.CLOCKWISE_180;
+            case ROTATE_THREE_TIMES:
+                return Rotation.COUNTERCLOCKWISE_90;
+            default:
+                return Rotation.NONE;
+        }
     }
 }

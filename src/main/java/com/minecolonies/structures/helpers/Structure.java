@@ -46,29 +46,9 @@ import static com.minecolonies.api.util.constant.Suppression.RESOURCES_SHOULD_BE
 public class Structure
 {
     /**
-     * Max amount of entities to render.
-     */
-    //private static final int MAX_ENTITIES_TO_RENDER = 10;
-
-    /**
      * Rotation by 90°.
      */
     private static final double NINETY_DEGREES = 90D;
-
-    /**
-     * Rotation by 270°.
-     */
-    //private static final double TWO_HUNDRED_SEVENTY_DEGREES = 270D;
-
-    /**
-     * Rotation by 180°.
-     */
-    //private static final double ONE_HUNDED_EIGHTY_DEGREES = 180D;
-
-    /**
-     * Used for scale.
-     */
-    //private static final double SCALE = 1.001;
 
     /**
      * Size of the buffer.
@@ -81,15 +61,9 @@ public class Structure
     private final DataFixer fixer;
 
     /**
-     * The last starting position.
-     */
-    //private BlockPos lastStartingPos = BlockPos.ORIGIN;
-
-    /**
      * Template of the structure.
      */
     private Template          template;
-    private Minecraft         mc;
     private PlacementSettings settings;
     private String            md5;
 
@@ -106,7 +80,6 @@ public class Structure
         if (world == null || world.isRemote)
         {
             this.settings = settings;
-            this.mc = Minecraft.getMinecraft();
         }
         this.fixer = DataFixesManager.createFixer();
 
@@ -378,11 +351,6 @@ public class Structure
      */
     public Structure(@Nullable final World world)
     {
-        if (world == null || world.isRemote)
-        {
-            this.settings = settings;
-            this.mc = Minecraft.getMinecraft();
-        }
         this.fixer = DataFixesManager.createFixer();
     }
 
