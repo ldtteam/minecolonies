@@ -485,12 +485,12 @@ com.minecolonies.coremod.request.delivery=Ifijisee:
 com.minecolonies.coremod.request.food=Ounje
 com.minecolonies.coremod.request.burnable=Idana
 com.minecolonies.coremod.request.tool.pretype=Ohun elo kilasi:
-com.minecolonies.coremod.request.tool.preminlevel=with minimal level:
-com.minecolonies.coremod.request.tool.premaxlevel=with maximal level:
+com.minecolonies.coremod.request.tool.preminlevel=pelu ipele to kere ju:
+com.minecolonies.coremod.request.tool.premaxlevel=pelu ipele to po ju:
 
-com.minecolonies.coremod.general.and=and
+com.minecolonies.coremod.general.and=ati
 
-com.minecolonies.coremod.tooltype.none=Unknown
+com.minecolonies.coremod.tooltype.none=Aimo
 com.minecolonies.coremod.tooltype.pickaxe=Pickaxe
 com.minecolonies.coremod.tooltype.shovel=Shovel
 com.minecolonies.coremod.tooltype.axe=Ake
