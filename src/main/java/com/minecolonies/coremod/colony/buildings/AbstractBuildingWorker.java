@@ -264,17 +264,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
         // If we set a worker, inform it of such
         if (citizen != null)
         {
-            citizen.getCitizenEntity().ifPresent(tempCitizen -> {
-                if(!tempCitizen.getCitizenJobHandler().getLastJob().isEmpty()
-                     && !tempCitizen.getCitizenJobHandler().getLastJob().equals(getJobName())
-                     && !tempCitizen.getCitizenJobHandler().getLastJob().contains("student")
-                     && !getJobName().contains("student"))
-                {
-                    citizen.resetExperienceAndLevel();
-                }
-                tempCitizen.getCitizenJobHandler().setLastJob(getJobName());
-            });
-
             citizen.setWorkBuilding(this);
             colony.getProgressManager().progressEmploy(colony.getCitizenManager().getCitizens().stream().filter(citizenData -> citizenData.getJob() != null).collect(Collectors.toList()).size());
         }

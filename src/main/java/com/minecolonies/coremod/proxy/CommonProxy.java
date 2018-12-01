@@ -121,12 +121,12 @@ public class CommonProxy implements IProxy
     @Override
     public void registerTileEntities()
     {
-        GameRegistry.registerTileEntity(TileEntityColonyBuilding.class, Constants.MOD_ID + ":ColonyBuilding");
-        GameRegistry.registerTileEntity(ScarecrowTileEntity.class, Constants.MOD_ID + ":Scarecrow");
-        GameRegistry.registerTileEntity(TileEntityWareHouse.class, Constants.MOD_ID + ":WareHouse");
+        GameRegistry.registerTileEntity(TileEntityColonyBuilding.class, Constants.MOD_ID + ":colonybuilding");
+        GameRegistry.registerTileEntity(ScarecrowTileEntity.class, Constants.MOD_ID + ":scarecrow");
+        GameRegistry.registerTileEntity(TileEntityWareHouse.class, Constants.MOD_ID + ":warehouse");
         GameRegistry.registerTileEntity(TileEntityRack.class, Constants.MOD_ID + ":rack");
-        GameRegistry.registerTileEntity(TileEntityInfoPoster.class, Constants.MOD_ID + ":InfoPoster");
-        GameRegistry.registerTileEntity(TileEntityBarrel.class, Constants.MOD_ID + ":Barrel");
+        GameRegistry.registerTileEntity(TileEntityInfoPoster.class, Constants.MOD_ID + ":infoposter");
+        GameRegistry.registerTileEntity(TileEntityBarrel.class, Constants.MOD_ID + ":barrel");
 
         NetworkRegistry.INSTANCE.registerGuiHandler(MineColonies.instance, new GuiHandler());
     }

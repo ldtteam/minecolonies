@@ -200,6 +200,16 @@ public final class NbtTagConstants
     public static final String TAG_INVENTORY = "inventory";
 
     /**
+     * Tag to store the inventory to nbt.
+     */
+    public static final String TAG_LEVEL_MAP = "levelMap";
+
+    /**
+     * Tag to store the inventory to nbt.
+     */
+    public static final String TAG_EXPERIENCE_MAP = "experienceMap";
+
+    /**
      * Tag used when a Compound wraps a list.
      */
     public static final String TAG_LIST = "List";

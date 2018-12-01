@@ -18,6 +18,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -72,7 +73,7 @@ public abstract class AbstractJob
     /**
      * The workerAI for this Job
      */
-    protected AbstractAISkeleton workerAI;
+    private WeakReference<AbstractAISkeleton> workerAI = new WeakReference<>(null);
 
     /**
      * Initialize citizen data.
@@ -167,8 +168,9 @@ public abstract class AbstractJob
      */
     public void addWorkerAIToTaskList(@NotNull final EntityAITasks tasks)
     {
-        workerAI = generateAI();
-        tasks.addTask(TASK_PRIORITY, workerAI);
+        final AbstractAISkeleton tempAI = generateAI();
+        workerAI = new WeakReference<>(tempAI);
+        tasks.addTask(TASK_PRIORITY, tempAI);
     }
 
     /**
@@ -323,7 +325,7 @@ public abstract class AbstractJob
      */
     public boolean isOkayToEat()
     {
-        return (workerAI != null && workerAI.isOkayToEat());
+        return (workerAI.get() != null && workerAI.get().isOkayToEat());
     }
 
     /**
@@ -361,7 +363,7 @@ public abstract class AbstractJob
      */
     public AbstractAISkeleton getWorkerAI()
     {
-        return workerAI;
+        return workerAI.get();
     }
 
     /**
@@ -370,7 +372,7 @@ public abstract class AbstractJob
      */
     public boolean isIdling()
     {
-        return (workerAI != null && workerAI.getState() == AIState.IDLE);
+        return (workerAI.get() != null && workerAI.get().getState() == AIState.IDLE);
     }
 
     /**
@@ -378,7 +380,10 @@ public abstract class AbstractJob
      */
     public void resetAIAfterEating()
     {
-        workerAI.resetAIToIdle();
+        if (workerAI.get() != null)
+        {
+            workerAI.get().resetAIToIdle();
+        }
     }
 
 }

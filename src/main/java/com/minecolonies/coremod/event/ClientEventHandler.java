@@ -14,6 +14,7 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.items.ModItems;
+import com.structurize.api.util.BlockUtils;
 import com.structurize.structures.client.TemplateRenderHandler;
 import com.structurize.structures.helpers.Settings;
 import com.structurize.structures.helpers.Structure;
@@ -30,9 +31,9 @@ import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
+
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
@@ -102,7 +103,6 @@ public class ClientEventHandler
         final Structure structure = Settings.instance.getActiveStructure();
         final WorldClient world = Minecraft.getMinecraft().world;
         final EntityPlayer player = Minecraft.getMinecraft().player;
-
         if (structure != null)
         {
             if (Settings.instance.getStructureName().contains(AbstractEntityAIStructure.WAYPOINT_STRING))
