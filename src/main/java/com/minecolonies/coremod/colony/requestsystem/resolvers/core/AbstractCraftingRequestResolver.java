@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
+import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -14,20 +15,26 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.Constants.MAX_CRAFTING_CYCLE_DEPTH;
-
-public abstract class AbstractCraftingRequestResolver extends AbstractBuildingDependentRequestResolver<Stack>
+public abstract class AbstractCraftingRequestResolver extends AbstractRequestResolver<Stack> implements IBuildingBasedRequester
 {
-    public AbstractCraftingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
+
+    public final boolean isPublicCrafter;
+
+    public AbstractCraftingRequestResolver(
+      @NotNull final ILocation location,
+      @NotNull final IToken<?> token, final boolean isPublicCrafter)
     {
         super(location, token);
+        this.isPublicCrafter = isPublicCrafter;
     }
 
     @Override
@@ -37,7 +44,36 @@ public abstract class AbstractCraftingRequestResolver extends AbstractBuildingDe
     }
 
     @Override
-    public boolean canResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request, @NotNull final AbstractBuilding building)
+    public Optional<IRequester> getBuilding(
+      @NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    {
+        if (!manager.getColony().getWorld().isRemote)
+        {
+            return Optional.ofNullable(manager.getColony().getRequesterBuildingForPosition(getRequesterLocation().getInDimensionLocation()));
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean canResolve(
+      @NotNull final IRequestManager manager, final IRequest<? extends Stack> requestToCheck)
+    {
+        if (!manager.getColony().getWorld().isRemote)
+        {
+            final ILocation requesterLocation = requestToCheck.getRequester().getRequesterLocation();
+            if (isPublicCrafter || requesterLocation.equals(getRequesterLocation()))
+            {
+                final Optional<AbstractBuilding> building = getBuilding(manager, requestToCheck.getToken()).map(r -> (AbstractBuilding) r);
+                return building.map(b -> canResolveForBuilding(manager, requestToCheck, b)).orElse(false);
+            }
+        }
+
+        return false;
+    }
+
+    public boolean canResolveForBuilding(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request, @NotNull final AbstractBuilding building)
     {
         if (createsCraftingCycle(manager, request, request))
         {
@@ -80,6 +116,14 @@ public abstract class AbstractCraftingRequestResolver extends AbstractBuildingDe
 
     @Nullable
     @Override
+    public List<IToken<?>> attemptResolve(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request)
+    {
+        final AbstractBuilding building = getBuilding(manager, request.getToken()).map(r -> (AbstractBuilding) r).get();
+        return attemptResolveForBuilding(manager, request, building);
+    }
+
+    @Nullable
     public List<IToken<?>> attemptResolveForBuilding(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request, @NotNull final AbstractBuilding building)
     {
@@ -152,6 +196,13 @@ public abstract class AbstractCraftingRequestResolver extends AbstractBuildingDe
     }
 
     @Override
+    public void resolve(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request)
+    {
+        final AbstractBuilding building = getBuilding(manager, request.getToken()).map(r -> (AbstractBuilding) r).get();
+        resolveForBuilding(manager, request, building);
+    }
+
     public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request, @NotNull final AbstractBuilding building)
     {
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;

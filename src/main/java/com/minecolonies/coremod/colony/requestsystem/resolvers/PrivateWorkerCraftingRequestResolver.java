@@ -28,7 +28,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
 {
     public PrivateWorkerCraftingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
     {
-        super(location, token);
+        super(location, token, false);
     }
 
     @Nullable

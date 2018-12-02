@@ -5,10 +5,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
-import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.Colony;
@@ -36,47 +34,7 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
 {
     public PublicWorkerCraftingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
     {
-        super(location, token);
-    }
-
-    @Override
-    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends Stack> requestToCheck)
-    {
-        final ILocation location = getRequesterLocation();
-        if (!manager.getColony().getWorld().isRemote)
-        {
-            final Colony colony = (Colony) manager.getColony();
-            canBuildingCraftStack(colony.getBuildingManager().getBuilding(location.getInDimensionLocation(), stack);
-        }
-        return false;
-    }
-
-    @Nullable
-    @Override
-    public Optional<IRequester> getBuilding(
-      @NotNull final IRequestManager manager, @NotNull final IToken<?> token)
-    {
-        final IRequest request = manager.getRequestForToken(token);
-        if (request == null)
-        {
-            return Optional.empty();
-        }
-
-        if (request.hasParent())
-        {
-            final IRequest parent = manager.getRequestForToken(request.getParent());
-            if (parent.getRequester() instanceof IBuildingBasedRequester)
-            {
-                return ((IBuildingBasedRequester) parent.getRequester()).getBuilding(manager, parent.getToken());
-            }
-        }
-
-        if (request.getRequester() instanceof IBuildingBasedRequester)
-        {
-            return ((IBuildingBasedRequester) request.getRequester()).getBuilding(manager, token);
-        }
-
-        return Optional.empty();
+        super(location, token, true);
     }
 
     @Override
@@ -135,34 +93,6 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
         //Noop
     }
 
-    @Nullable
-    @Override
-    public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request)
-    {
-        if (manager.getColony().getWorld().isRemote)
-        {
-            return null;
-        }
-
-        final Colony colony = (Colony) manager.getColony();
-        final Set<AbstractBuildingWorker> crafters = getCraftersInColony(colony, request);
-
-        for (final AbstractBuildingWorker crafter : crafters)
-        {
-            return attemptResolveForBuildingAndStack(manager, crafter, request.getRequest().getStack());
-        }
-        return Lists.newArrayList();
-    }
-
-    private static Set<AbstractBuildingWorker> getCraftersInColony(final Colony colony, @NotNull final IRequest<? extends Stack> request)
-    {
-        return colony.getBuildingManager().getBuildings().values().stream()
-                .filter(building -> building instanceof AbstractBuildingWorker)
-                .map(building -> (AbstractBuildingWorker) building)
-                .filter(AbstractBuildingWorker::canCraftComplexRecipes)
-                .filter(building -> building.getFirstFullFillableRecipe(request.getRequest().getResult()) != null)
-                .collect(Collectors.toSet());
-    }
 
     @NotNull
     @Override
@@ -175,39 +105,7 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
             return new TextComponentString("<UNKNOWN>");
         }
 
-        if (request.hasParent())
-        {
-            request = manager.getRequestForToken(request.getParent());
-        }
-        else
-        {
-            return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_PUBLIC_CRAFTING_RESOLVER_NAME);
-        }
-
-        if (request == null)
-        {
-            return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_PUBLIC_CRAFTING_RESOLVER_NAME);
-        }
-
-        return request.getRequester().getDisplayName(manager, request.getToken())
-                 .appendSibling(new TextComponentString(" ("))
-                 .appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_PUBLIC_CRAFTING_RESOLVER_NAME))
-                 .appendSibling(new TextComponentString(")"));
-    }
-
-    @Override
-    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request)
-    {
-        final IColony colony = manager.getColony();
-        if (colony instanceof Colony)
-        {
-            final Set<AbstractBuildingWorker> crafters = getCraftersInColony((Colony) colony, request);
-
-            for (final AbstractBuildingWorker crafter : crafters)
-            {
-                resolveForBuilding(manager, request, crafter);
-            }
-        }
+        return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_PUBLIC_CRAFTING_RESOLVER_NAME);
     }
 
     @Override
