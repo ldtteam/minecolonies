@@ -30,12 +30,12 @@ event.minecolonies.raidMessage=Sun splits re ko le ọmọdekunrin! Awon ologun 
 
 item.minecolonies.scepterGold.name=Irinse Ikole
 item.minecolonies.scepterSteel.name=Irinse ayewo
-item.minecolonies.caliper.name=Calipali
+item.minecolonies.caliper.name=Kaliba
 
-item.scepterSteel.point=Ipinnu ikinni ti wa ni ipamo
-item.scepterSteel.point2=Ipinnu ikeji ti wa ni ipamo, sọtun lẹẹkansi lati fi awọn onimọ-ọrọ naa pamọ
-item.scepterSteel.samePoint=Ipinnu kanna ni
-item.scepterSteel.scanFormat=Ayewo
+item.scepterSteel.point=Oju ikinni ti wa ni ipamo
+item.scepterSteel.point2=Oju ikeji ti wa ni ipamo, te otun lẹẹkansi lati fi eto imulo naa sipamọ
+item.scepterSteel.samePoint=Oju kanna ni yen
+item.scepterSteel.scanFormat=AYEWO_%s-%s
 item.scepterSteel.scanSuccess=Ayẹwo ni ifijišẹ ti a fipamọ bi
 item.scepterSteel.scanFailure=Ayewo kọ lati jise
 item.caliper.message.same=Aaye kan na ni.
