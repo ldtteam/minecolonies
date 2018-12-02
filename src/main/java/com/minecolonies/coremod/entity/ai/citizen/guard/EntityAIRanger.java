@@ -63,6 +63,11 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     private boolean fleeing = false;
 
     /**
+     * Physical Attack delay in ticks.
+     */
+    public static final int RANGED_ATTACK_DELAY_BASE = 100;
+
+    /**
      * The path for fleeing
      */
     private PathResult fleePath;

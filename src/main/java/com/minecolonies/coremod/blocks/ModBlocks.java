@@ -47,6 +47,7 @@ public final class ModBlocks
     public static        BlockHutSmeltery               blockHutSmeltery;
     public static        BlockHutComposter              blockHutComposter;
     public static        BlockHutLibrary                blockHutLibrary;
+    public static        BlockHutArchery                blockHutArchery;
 
     /**
      * Utility blocks.
@@ -96,6 +97,7 @@ public final class ModBlocks
         blockHutSmeltery = new BlockHutSmeltery().registerBlock(registry);
         blockHutComposter = new BlockHutComposter().registerBlock(registry);
         blockHutLibrary =  new BlockHutLibrary().registerBlock(registry);
+        blockHutArchery =  new BlockHutArchery().registerBlock(registry);
 
         blockInfoPoster = new BlockInfoPoster().registerBlock(registry);
         blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
@@ -132,6 +134,7 @@ public final class ModBlocks
         blockHutSmeltery.registerItemBlock(registry);
         blockHutComposter.registerItemBlock(registry);
         blockHutLibrary.registerItemBlock(registry);
+        blockHutArchery.registerItemBlock(registry);
 
         blockConstructionTape.registerItemBlock(registry);
         blockBarracksTowerSubstitution.registerItemBlock(registry);
