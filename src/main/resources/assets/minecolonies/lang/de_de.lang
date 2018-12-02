@@ -459,7 +459,7 @@ tile.minecolonies.blockHutBarracksTower.name=Kasernen Turm
 tile.minecolonies.blockHutBarracks.name=Kaserne
 com.minecolonies.coremod.gui.workerHuts.buildBarracks=Kaserne
 
-com.minecolonies.coremod.permission.teleport_to_colony=Zur Kolonie Teleportieren
+com.minecolonies.coremod.permission.teleport_to_colony=Zur Kolonie teleportieren
 com.minecolonies.coremod.gui.hiring.buttonFire=Entlassen
 com.minecolonies.coremod.worker.noUpgrade=Keine Aufwertung verfügbar.
 com.minecolonies.coremod.worker.needBarracks=Bitte werte zuerst die Kaserne auf.
