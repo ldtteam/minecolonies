@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.citizen.sawmill.deliveryman;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.jobs.JobSawmill;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,9 +30,20 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
           /**
            * Check if tasks should be executed.
            */
-          new AITarget(IDLE, () -> START_WORKING)
+          new AITarget(IDLE, () -> START_WORKING),
+          new AITarget(START_WORKING, this::startWorking)
         );
         worker.setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
         worker.setCanPickUpLoot(true);
+    }
+
+    public AIState startWorking()
+    {
+
+        //can then let the worker AI check what tasks are assigned to his building resolver
+        //pick the first
+        //do shit
+        //and do "complete" ?
+        return START_WORKING;
     }
 }
