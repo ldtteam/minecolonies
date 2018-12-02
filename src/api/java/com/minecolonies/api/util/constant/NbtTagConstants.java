@@ -400,6 +400,10 @@ public final class NbtTagConstants
     public static final String TAG_TARGET = "target";
     public static final String TAG_ARCHERY_STANDS = "archeryStands";
 
+    /**
+     * Archery building constants.
+     */
+    public static final String TAG_COMBAT_TARGET = "combatTarget";
 
     /**
      * Private constructor to hide the implicit one.

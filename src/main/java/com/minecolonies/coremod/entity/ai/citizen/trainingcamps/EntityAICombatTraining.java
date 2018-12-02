@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.trainingcamps;
 
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingArchery;
-import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
+import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import com.minecolonies.coremod.entity.ai.citizen.guard.GuardArrow;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -20,22 +20,22 @@ import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTraining>
+public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTraining>
 {
     /**
-     * How often should intelligence factor into the archer's skill modifier.
+     * How often should strength factor into the knight's skill modifier.
      */
-    private static final int INTELLIGENCE_MULTIPLIER = 2;
+    private static final int STRENGTH_MULTIPLIER = 2;
 
     /**
-     * How often should dexterity factor into the archer's skill modifier.
+     * How often should dexterity factor into the knight's skill modifier.
      */
-    private static final int STRENGTH_MULTIPLIER = 1;
+    private static final int DEXTERITY_MULTIPLIER = 1;
 
     /**
      * Xp per successful shot.
      */
-    private static final int XP_PER_SUCCESSFUL_SHOT = 1;
+    private static final int XP_PER_SUCCESSFUL_HIT = 1;
 
     /**
      * Number of target tries per building level.
@@ -50,7 +50,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
     /**
      * Physical Attack delay in ticks.
      */
-    private static final int RANGED_ATTACK_DELAY_BASE = 10;
+    private static final int COMBAT_ATTACK_DELAY_BASE = 10;
 
     /**
      * Base rate experience for every shot.
@@ -60,12 +60,12 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
     /**
      * Time to wait before analyzing the shot.
      */
-    private static final int CHECK_SHOT_DELAY = TICKS_20 * 3;
+    private static final int CHECK_HIT_DELAY = TICKS_20 * 3;
 
     /**
-     * Current target to shoot at.
+     * The current pathing target to walk to.
      */
-    private BlockPos currentShootingTarget;
+    private BlockPos currentCombatTarget;
 
     /**
      * Counter of how often we tried to hit the target.
@@ -82,26 +82,28 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
      */
     protected int currentAttackDelay = 0;
 
+    //todo Tasks: Wander around (same) find hitting target (same), hit it (same), find other guard (hit forth and back for a bit)
+
     /**
      * Creates the abstract part of the AI.inte
      * Always use this constructor!
      *
      * @param job the job to fulfill
      */
-    public EntityAIArcherTraining(@NotNull final JobArcherTraining job)
+    public EntityAICombatTraining(@NotNull final JobCombatTraining job)
     {
         //Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
         super(job);
         super.registerTargets(
-          new AITarget(COMBAT_TRAINING, true, this::findShootingStandPosition),
+          new AITarget(ARCHER_FIND_SHOOTING_STAND_POSITION, true, this::findShootingStandPosition),
           new AITarget(ARCHER_SELECT_TARGET, true, this::selectTarget),
           new AITarget(ARCHER_CHECK_SHOT, true, this::checkShot),
           new AITarget(ARCHER_SHOOT, true, this::shoot)
 
         );
         worker.getCitizenExperienceHandler().setSkillModifier(
-          INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
-            + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
+          STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
+            + DEXTERITY_MULTIPLIER * worker.getCitizenData().getDexterity());
     }
 
     /**
@@ -145,13 +147,12 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             return DECIDE;
         }
 
-        stateAfterPathing = ARCHER_SELECT_TARGET;
         currentPathingTarget = shootingPos;
-        return GO_TO_TARGET;
+        return ARCHER_GO_TO_SHOOTING_STAND;
     }
 
     /**
-     * The ranged attack modus
+     * The ranged attack modus.
      *
      * @return the next state to go to.
      */
@@ -161,6 +162,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
         {
             setDelay(STANDARD_DELAY);
             WorkerUtil.faceBlock(currentShootingTarget, worker);
+            //worker.face(target, (float) TURN_AROUND, (float) TURN_AROUND);
             worker.swingArm(EnumHand.MAIN_HAND);
 
             final EntityTippedArrow arrow = new GuardArrow(world, worker);
@@ -188,7 +190,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             worker.resetActiveHand();
             this.incrementActionsDoneAndDecSaturation();
             arrowInProgress = arrow;
-            currentAttackDelay = RANGED_ATTACK_DELAY_BASE;
+            currentAttackDelay = COMBAT_ATTACK_DELAY_BASE;
         }
         else
         {
@@ -200,7 +202,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             return ARCHER_SHOOT;
         }
 
-        setDelay(CHECK_SHOT_DELAY);
+        setDelay(CHECK_HIT_DELAY);
         return ARCHER_CHECK_SHOT;
     }
 
@@ -219,7 +221,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
     {
         if (arrowInProgress.getDistanceSq(currentShootingTarget) < MIN_DISTANCE_FOR_SUCCESS)
         {
-            worker.getCitizenExperienceHandler().addExperience(XP_PER_SUCCESSFUL_SHOT);
+            worker.getCitizenExperienceHandler().addExperience(XP_PER_SUCCESSFUL_HIT);
         }
         else
         {

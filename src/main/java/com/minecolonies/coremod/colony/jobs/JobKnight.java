@@ -13,6 +13,11 @@ import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIKnight;
 public class JobKnight extends AbstractJobGuard
 {
     /**
+     * Desc of knight job.
+     */
+    public static final String DESC = "com.minecolonies.coremod.job.Knight";
+
+    /**
      * Initialize citizen data.
      *
      * @param entity the citizen data.
@@ -41,7 +46,7 @@ public class JobKnight extends AbstractJobGuard
     @Override
     public String getName()
     {
-        return "com.minecolonies.coremod.job.Knight";
+        return DESC;
     }
 
     /**
