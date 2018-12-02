@@ -168,6 +168,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME                     = "com.minecolonies.coremod.resolvers.crafter.private";
     @NonNls
+    public static final String COM_MINECOLONIES_PUBLIC_CRAFTING_RESOLVER_NAME                      = "com.minecolonies.coremod.resolvers.crafter.public";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_COOKING                             = "com.minecolonies.coremod.status.cooking";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_DECIDING                            = "com.minecolonies.coremod.status.deciding";

@@ -152,8 +152,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractBuildingDe
     }
 
     @Override
-    public void resolveForBuilding(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request, @NotNull final AbstractBuilding building)
+    public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request, @NotNull final AbstractBuilding building)
     {
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
         final IRecipeStorage storage = buildingWorker.getFirstFullFillableRecipe(request.getRequest().getStack());

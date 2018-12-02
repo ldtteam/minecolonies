@@ -45,6 +45,7 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new DeliveryRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new WarehouseRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new PrivateWorkerCraftingRequestResolverFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new PublicWorkerCraftingRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new BuildingRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardPlayerRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRetryingRequestResolverFactory());
