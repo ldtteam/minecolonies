@@ -12,9 +12,9 @@ import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.placementhandlers.IPlacementHandler;
-import com.minecolonies.coremod.placementhandlers.PlacementHandlers;
-import com.minecolonies.structures.helpers.StructureProxy;
+import com.structurize.coremod.placementhandlers.IPlacementHandler;
+import com.structurize.coremod.placementhandlers.PlacementHandlers;
+import com.structurize.structures.helpers.StructureProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockStairs;
@@ -53,20 +53,20 @@ public final class StructureWrapper
     /**
      * The minecraft world this struture is displayed in.
      */
-    private final World          world;
+    private final World                    world;
     /**
      * The structure this structure comes from.
      */
-    private final StructureProxy structure;
+    private final StructureProxy           structure;
     /**
      * The name this structure has.
      */
-    private final String         name;
+    private final String                   name;
     /**
      * The anchor position this structure will be
      * placed on in the minecraft world.
      */
-    private       BlockPos       position;
+    private       BlockPos                 position;
 
     /**
      * Load a structure into this world.
@@ -193,7 +193,7 @@ public final class StructureWrapper
 
                     final BlockPos worldPos = pos.add(localPos);
 
-                    if ((localBlock == ModBlocks.blockSubstitution && !complete) || localBlock instanceof AbstractBlockHut)
+                    if ((localBlock == com.structurize.coremod.blocks.ModBlocks.blockSubstitution && !complete) || localBlock instanceof AbstractBlockHut)
                     {
                         continue;
                     }
@@ -427,7 +427,7 @@ public final class StructureWrapper
         final Block structureBlock = structureBlockState.getBlock();
 
         //All worldBlocks are equal the substitution block
-        if (structureBlock == ModBlocks.blockSubstitution)
+        if (structureBlock == com.structurize.coremod.blocks.ModBlocks.blockSubstitution)
         {
             return true;
         }
@@ -436,7 +436,7 @@ public final class StructureWrapper
 
         final IBlockState worldBlockState = world.getBlockState(worldPos);
 
-        if (structureBlock == ModBlocks.blockSolidSubstitution && worldBlockState.getMaterial().isSolid())
+        if (structureBlock == com.structurize.coremod.blocks.ModBlocks.blockSolidSubstitution && worldBlockState.getMaterial().isSolid())
         {
             return true;
         }

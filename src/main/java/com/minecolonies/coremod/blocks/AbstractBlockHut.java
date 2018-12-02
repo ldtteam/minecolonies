@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.structurize.coremod.blocks.interfaces.IAnchorBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.ITileEntityProvider;
@@ -38,7 +39,7 @@ import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
  * <p>
  * All AbstractBlockHut[something] should extend this class.
  */
-public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractBlockMinecolonies<B> implements ITileEntityProvider, IBuilderUndestroyable
+public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractBlockMinecolonies<B> implements ITileEntityProvider, IBuilderUndestroyable, IAnchorBlock
 {
     /**
      * Hardness factor of the pvp mode.

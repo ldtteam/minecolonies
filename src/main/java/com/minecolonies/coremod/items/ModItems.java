@@ -15,8 +15,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 public final class ModItems
 {
     public static Item supplyChest;
-    public static Item buildTool;
-    public static Item scanTool;
     public static Item permTool;
     public static Item caliper;
     public static Item scepterGuard;
@@ -26,7 +24,6 @@ public final class ModItems
     public static Item scimitar;
 
     public static Item clipboard;
-    public static Item itemCactusDoor;
     public static Item compost;
     public static Item resourceScroll;
 
@@ -61,8 +58,6 @@ public final class ModItems
     public static void init(final IForgeRegistry<Item> registry)
     {
         supplyChest = new ItemSupplyChestDeployer();
-        buildTool = new ItemBuildTool();
-        scanTool = new ItemScanTool();
         permTool = new ItemScepterPermission();
         caliper = new ItemCaliper();
         scepterGuard = new ItemScepterGuard();
@@ -73,7 +68,6 @@ public final class ModItems
         clipboard = new ItemClipBoard();
         compost = new ItemCompost();
         resourceScroll = new ItemResourceScroll();
-        itemCactusDoor = new ItemCactusDoor(ModBlocks.blockCactusDoor, "cactusdoor");
 
         pirateHelmet_1 = new ItemPirateGear("pirate_hat", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EntityEquipmentSlot.HEAD);
         pirateChest_1 = new ItemPirateGear("pirate_top", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EntityEquipmentSlot.CHEST);
@@ -91,8 +85,6 @@ public final class ModItems
         itemAchievementProxyMetropolis = new ItemAchievementProxy("sizeMetropolis");
 
         registry.register(supplyChest);
-        registry.register(buildTool);
-        registry.register(scanTool);
         registry.register(permTool);
         registry.register(caliper);
         registry.register(scepterGuard);
@@ -100,7 +92,6 @@ public final class ModItems
         registry.register(ancientTome);
         registry.register(chiefSword);
         registry.register(clipboard);
-        registry.register(itemCactusDoor);
         registry.register(compost);
         registry.register(resourceScroll);
         registry.register(scimitar);

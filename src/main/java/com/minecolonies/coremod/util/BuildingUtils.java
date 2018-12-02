@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.util;
 
-import com.minecolonies.coremod.colony.StructureName;
-import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.AbstractSchematicProvider;
+import com.structurize.coremod.management.StructureName;
+import com.structurize.coremod.management.Structures;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;

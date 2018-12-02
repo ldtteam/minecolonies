@@ -16,16 +16,16 @@ import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.StructureName;
-import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.network.messages.BuildRequestMessage;
 import com.minecolonies.coremod.network.messages.BuildingSetStyleMessage;
-import com.minecolonies.coremod.network.messages.SchematicRequestMessage;
 import com.minecolonies.coremod.util.StructureWrapper;
-import com.minecolonies.structures.helpers.Settings;
-import com.minecolonies.structures.helpers.Structure;
+import com.structurize.coremod.management.StructureName;
+import com.structurize.coremod.management.Structures;
+import com.structurize.coremod.network.messages.SchematicRequestMessage;
+import com.structurize.structures.helpers.Settings;
+import com.structurize.structures.helpers.Structure;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDoor;
@@ -210,7 +210,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             }
             else
             {
-                Log.getLogger().error("WindowBuildTool: Need to download schematic on a standalone client/server. This should never happen");
+                Log.getLogger().error("WindowMinecoloniesBuildTool: Need to download schematic on a standalone client/server. This should never happen");
             }
         }
 
@@ -250,8 +250,8 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             if (block != null
                     && block != Blocks.AIR
                     && !AbstractEntityAIStructure.isBlockFree(block, 0)
-                    && block != ModBlocks.blockSolidSubstitution
-                    && block != ModBlocks.blockSubstitution)
+                    && block != com.structurize.coremod.blocks.ModBlocks.blockSolidSubstitution
+                    && block != com.structurize.coremod.blocks.ModBlocks.blockSubstitution)
             {
                 if (wrapper.getBlockInfo().tileentityData != null)
                 {

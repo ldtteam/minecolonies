@@ -14,10 +14,10 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.ai.util.Structure;
-import com.minecolonies.coremod.placementhandlers.IPlacementHandler;
-import com.minecolonies.coremod.placementhandlers.PlacementHandlers;
 import com.minecolonies.coremod.util.StructureWrapper;
 import com.minecolonies.coremod.util.WorkerUtil;
+import com.structurize.coremod.placementhandlers.IPlacementHandler;
+import com.structurize.coremod.placementhandlers.PlacementHandlers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockGrassPath;
 import net.minecraft.block.state.IBlockState;
@@ -50,8 +50,6 @@ import java.util.function.Supplier;
 
 import static com.minecolonies.api.util.constant.Suppression.MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
-import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.ACCEPT;
-import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.DENY;
 
 /**
  * This base ai class is used by ai's who need to build entire structures.
@@ -446,12 +444,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 final Object result = handlers.handle(world, coords, blockState, job.getStructure().getBlockInfo().tileentityData, false, job.getStructure().getPosition());
                 if (result instanceof IPlacementHandler.ActionProcessingResult)
                 {
-                    if (result == ACCEPT)
+                    if (result == IPlacementHandler.ActionProcessingResult.ACCEPT)
                     {
                         return true;
                     }
 
-                    if (result == DENY)
+                    if (result == IPlacementHandler.ActionProcessingResult.DENY)
                     {
                         return false;
                     }
@@ -698,7 +696,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
             @Nullable Block block = structureBlock.block;
             @Nullable IBlockState blockState = structureBlock.metadata;
-            if (block == ModBlocks.blockSolidSubstitution
+            if (block == com.structurize.coremod.blocks.ModBlocks.blockSolidSubstitution
                   || shallReplaceSolidSubstitutionBlock(structureBlock.worldBlock, structureBlock.worldMetadata))
             {
                 blockState = getSolidSubstitution(structureBlock.blockPosition);
