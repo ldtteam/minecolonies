@@ -211,7 +211,7 @@ com.minecolonies.coremod.gui.workerHuts.assign=Gebe dem Wächter eine Aufgabe:
 com.minecolonies.coremod.gui.workerHuts.patrol=Wegpunkt finden:
 com.minecolonies.coremod.gui.workerHuts.retrieve=Bei niedrigen Lebenspunkten selbst retten:
 com.minecolonies.coremod.gui.workerHuts.knight=Ritter
-com.minecolonies.coremod.gui.workerHuts.ranger=Schwertkämpfer
+com.minecolonies.coremod.gui.workerHuts.ranger=Bogenschütze
 com.minecolonies.coremod.gui.workerHuts.modeM=Manuell
 com.minecolonies.coremod.gui.workerHuts.modeA=Automatisch
 com.minecolonies.coremod.gui.workerHuts.retrieveOff=Aus
@@ -479,7 +479,7 @@ com.minecolonies.coremod.status.retrieving=Retrieving
 com.minecolonies.coremod.status.idling=Wartend
 com.minecolonies.coremod.status.mining=Bergbau
 
-item.minecolonies.scepterPermission.name=Berechtigungs Scepter
+item.minecolonies.scepterPermission.name=Berechtigungs-Zepter
 
 com.minecolonies.coremod.request.delivery=Lieferung von:
 com.minecolonies.coremod.request.food=Nahrung
