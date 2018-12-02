@@ -81,7 +81,7 @@ public class JobSawmill extends AbstractJob
     @Override
     public RenderBipedCitizen.Model getModel()
     {
-        return RenderBipedCitizen.Model.DELIVERYMAN;
+        return RenderBipedCitizen.Model.CRAFTER;
     }
 
     @Override

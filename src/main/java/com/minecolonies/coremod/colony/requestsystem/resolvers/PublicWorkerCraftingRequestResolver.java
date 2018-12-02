@@ -83,7 +83,7 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
             final IRequestResolver resolver = colony.getRequestManager().getResolverForRequest(completedRequest.getToken());
             if(resolver instanceof PublicWorkerCraftingRequestResolver)
             {
-                final Delivery delivery = new Delivery(resolver.getc, completedRequest.getRequester().getRequesterLocation(), completedRequest.getDelivery().copy());
+                final Delivery delivery = new Delivery(resolver.getRequesterLocation(), completedRequest.getRequester().getRequesterLocation(), completedRequest.getDelivery().copy());
 
                 final IToken<?> requestToken =
                         manager.createRequest(new PublicWorkerCraftingRequestResolver(completedRequest.getRequester().getRequesterLocation(), completedRequest.getToken()),
