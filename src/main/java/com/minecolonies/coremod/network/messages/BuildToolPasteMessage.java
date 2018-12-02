@@ -6,17 +6,17 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.StructureName;
-import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.util.StructureWrapper;
+import com.structurize.coremod.client.gui.WindowBuildTool;
+import com.structurize.coremod.management.StructureName;
+import com.structurize.coremod.management.Structures;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
@@ -51,7 +51,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      */
     private static final int SUPPLY_SHIP_CHEST_HEIGHT = 6;
 
-    private boolean complete;
+    private boolean                                                     complete;
     private String                   structureName;
     private String                   workOrderName;
     private int                      rotation;
@@ -224,8 +224,8 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             player.addStat(StatList.getObjectUseStats(ModItems.supplyChest));
             if(InventoryUtils.removeStacksFromItemHandler(new InvWrapper(player.inventory), stacks))
             {
-                StructureWrapper.loadAndPlaceStructureWithRotation(player.world, message.structureName,
-                        message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete);
+                com.structurize.coremod.util.StructureWrapper.loadAndPlaceStructureWithRotation(player.world, message.structureName,
+                  message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete, player);
                 player.getServerWorld().setBlockState(message.pos.up(chestHeight), Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, player.getHorizontalFacing()));
                 fillChest((TileEntityChest) player.getServerWorld().getTileEntity(message.pos.up(chestHeight)));
             }
@@ -249,7 +249,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             return;
         }
         chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownHall));
-        chest.setInventorySlotContents(1, new ItemStack(ModItems.buildTool));
+        chest.setInventorySlotContents(1, new ItemStack(com.structurize.coremod.items.ModItems.buildTool));
         chest.setInventorySlotContents(2, guideBook);
     }
 

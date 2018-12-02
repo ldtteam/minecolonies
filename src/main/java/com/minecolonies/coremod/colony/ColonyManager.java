@@ -17,6 +17,7 @@ import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRecipeManager;
+import com.structurize.coremod.management.Structures;
 import com.minecolonies.coremod.util.BackUpHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import io.netty.buffer.ByteBuf;

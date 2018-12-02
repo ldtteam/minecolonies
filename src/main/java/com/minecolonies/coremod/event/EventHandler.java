@@ -22,9 +22,9 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesChunkCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldColonyManagerCapabilityProvider;
-import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
 import com.minecolonies.coremod.util.ChunkDataHelper;
+import com.structurize.coremod.items.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockSilverfish;
@@ -36,14 +36,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -53,12 +51,12 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
@@ -348,6 +346,33 @@ public class EventHandler
             }
 
             handleEventCancellation(event, player);
+        }
+
+
+        if (event.getHand() == EnumHand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool)
+        {
+            if (event.getWorld().isRemote)
+            {
+                if (event.getUseBlock() == Event.Result.DEFAULT && event.getFace() != null)
+                {
+                    MineColonies.proxy.openBuildToolWindow(event.getPos().offset(event.getFace()));
+                }
+                else
+                {
+                    MineColonies.proxy.openBuildToolWindow(null);
+                }
+            }
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickItem event)
+    {
+        if (event.getHand() == EnumHand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool && event.getWorld().isRemote)
+        {
+            MineColonies.proxy.openBuildToolWindow(null);
+            event.setCanceled(true);
         }
     }
 
