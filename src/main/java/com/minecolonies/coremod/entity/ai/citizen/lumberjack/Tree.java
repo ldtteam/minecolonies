@@ -43,9 +43,9 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 public class Tree
 {
     /**
-     * Radius property for dynamic trees, used to check growth status
+     * Radius propertyname for dynamic trees, used to check growth status
      */
-    private static final PropertyInteger dynamicTreeRadiusProp = PropertyInteger.create("radius", 1, 8);
+    private static final String DYNAMICTREERADIUS = "radius";
 
     /**
      * Number of leaves necessary for a tree to be recognized.
@@ -286,7 +286,7 @@ public class Tree
                 return topLog.add(0, i, 0);
             }
         }
-        return topLog.add(0,1,0);
+        return topLog.add(0, 1, 0);
     }
 
     /**
@@ -309,8 +309,8 @@ public class Tree
         }
 
         // Only harvest nearly fully grown dynamic trees(8 max)
-        if (Compatibility.isDynamicBlock(block) && state.getProperties().containsKey(dynamicTreeRadiusProp)
-              && state.getValue(dynamicTreeRadiusProp) < Configurations.compatibility.dynamicTreeHarvestSize)
+        if (Compatibility.isDynamicBlock(block)
+              && (int) state.getValue(BlockStateUtils.getPropertyByNameFromState(state, DYNAMICTREERADIUS)) < Configurations.compatibility.dynamicTreeHarvestSize)
         {
             return false;
         }
@@ -849,7 +849,7 @@ public class Tree
      */
     public static boolean checkIfInColonyAndNotInBuilding(final BlockPos pos, final Colony colony)
     {
-        if(!colony.isCoordInColony(colony.getWorld(), pos))
+        if (!colony.isCoordInColony(colony.getWorld(), pos))
         {
             return false;
         }
