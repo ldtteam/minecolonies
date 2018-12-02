@@ -39,6 +39,18 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
         super(location, token);
     }
 
+    @Override
+    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends Stack> requestToCheck)
+    {
+        final ILocation location = getRequesterLocation();
+        if (!manager.getColony().getWorld().isRemote)
+        {
+            final Colony colony = (Colony) manager.getColony();
+            canBuildingCraftStack(colony.getBuildingManager().getBuilding(location.getInDimensionLocation(), stack);
+        }
+        return false;
+    }
+
     @Nullable
     @Override
     public Optional<IRequester> getBuilding(
