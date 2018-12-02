@@ -9,12 +9,6 @@ import org.jetbrains.annotations.NotNull;
 public class ModelEntityCrafterMale extends ModelBiped
 {
     //fields
-    ModelRenderer RightArm;
-    ModelRenderer LeftArm;
-    ModelRenderer RightLeg;
-    ModelRenderer LeftLeg;
-    ModelRenderer Body;
-    ModelRenderer Head;
     ModelRenderer HatT;
     ModelRenderer BrimBa;
     ModelRenderer BrimR;
@@ -60,47 +54,47 @@ public class ModelEntityCrafterMale extends ModelBiped
         textureWidth = 256;
         textureHeight = 128;
 
-        RightArm = new ModelRenderer(this, 40, 16);
-        RightArm.addBox(-3F, -2F, -2F, 4, 12, 4);
-        RightArm.setRotationPoint(-5F, 2F, 0F);
-        RightArm.setTextureSize(256, 128);
-        RightArm.mirror = true;
-        setRotation(RightArm, 0F, 0F, 0F);
+        bipedRightArm = new ModelRenderer(this, 40, 16);
+        bipedRightArm.addBox(-3F, -2F, -2F, 4, 12, 4);
+        bipedRightArm.setRotationPoint(-5F, 2F, 0F);
+        bipedRightArm.setTextureSize(256, 128);
+        bipedRightArm.mirror = true;
+        setRotation(bipedRightArm, 0F, 0F, 0F);
 
-        LeftArm = new ModelRenderer(this, 40, 16);
-        LeftArm.addBox(-1F, -2F, -2F, 4, 12, 4);
-        LeftArm.setRotationPoint(5F, 2F, 0F);
-        LeftArm.setTextureSize(256, 128);
-        LeftArm.mirror = true;
-        setRotation(LeftArm, 0F, 0F, 0F);
+        bipedLeftArm = new ModelRenderer(this, 40, 16);
+        bipedLeftArm.addBox(-1F, -2F, -2F, 4, 12, 4);
+        bipedLeftArm.setRotationPoint(5F, 2F, 0F);
+        bipedLeftArm.setTextureSize(256, 128);
+        bipedLeftArm.mirror = true;
+        setRotation(bipedLeftArm, 0F, 0F, 0F);
 
-        RightLeg = new ModelRenderer(this, 0, 16);
-        RightLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
-        RightLeg.setRotationPoint(-2F, 12F, 0F);
-        RightLeg.setTextureSize(256, 128);
-        RightLeg.mirror = true;
-        setRotation(RightLeg, 0F, 0F, 0F);
+        bipedRightLeg = new ModelRenderer(this, 0, 16);
+        bipedRightLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
+        bipedRightLeg.setRotationPoint(-2F, 12F, 0F);
+        bipedRightLeg.setTextureSize(256, 128);
+        bipedRightLeg.mirror = true;
+        setRotation(bipedRightLeg, 0F, 0F, 0F);
 
-        LeftLeg = new ModelRenderer(this, 0, 16);
-        LeftLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
-        LeftLeg.setRotationPoint(2F, 12F, 0F);
-        LeftLeg.setTextureSize(256, 128);
-        LeftLeg.mirror = true;
-        setRotation(LeftLeg, 0F, 0F, 0F);
+        bipedLeftLeg = new ModelRenderer(this, 0, 16);
+        bipedLeftLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
+        bipedLeftLeg.setRotationPoint(2F, 12F, 0F);
+        bipedLeftLeg.setTextureSize(256, 128);
+        bipedLeftLeg.mirror = true;
+        setRotation(bipedLeftLeg, 0F, 0F, 0F);
 
-        Body = new ModelRenderer(this, 16, 16);
-        Body.addBox(-4F, 0F, -2F, 8, 12, 4);
-        Body.setRotationPoint(0F, 0F, 0F);
-        Body.setTextureSize(256, 128);
-        Body.mirror = true;
-        setRotation(Body, 0F, 0F, 0F);
+        bipedBody = new ModelRenderer(this, 16, 16);
+        bipedBody.addBox(-4F, 0F, -2F, 8, 12, 4);
+        bipedBody.setRotationPoint(0F, 0F, 0F);
+        bipedBody.setTextureSize(256, 128);
+        bipedBody.mirror = true;
+        setRotation(bipedBody, 0F, 0F, 0F);
 
-        Head = new ModelRenderer(this, 0, 0);
-        Head.addBox(-4F, -8F, -4F, 8, 8, 8);
-        Head.setRotationPoint(0F, 0F, 0F);
-        Head.setTextureSize(256, 128);
-        Head.mirror = true;
-        setRotation(Head, 0F, 0F, 0F);
+        bipedHead = new ModelRenderer(this, 0, 0);
+        bipedHead.addBox(-4F, -8F, -4F, 8, 8, 8);
+        bipedHead.setRotationPoint(0F, 0F, 0F);
+        bipedHead.setTextureSize(256, 128);
+        bipedHead.mirror = true;
+        setRotation(bipedHead, 0F, 0F, 0F);
 
         HatT = new ModelRenderer(this, 0, 76);
         HatT.addBox(-2F, -11.5F, -2.7F, 4, 1, 5);
@@ -388,24 +382,28 @@ public class ModelEntityCrafterMale extends ModelBiped
     {
         super.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
         setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);
-        RightArm.render(scaleFactor);
-        LeftArm.render(scaleFactor);
-        RightLeg.render(scaleFactor);
-        LeftLeg.render(scaleFactor);
-        Body.render(scaleFactor);
-        Head.render(scaleFactor);
+        bipedRightArm.render(scaleFactor);
+        bipedLeftArm.render(scaleFactor);
+        bipedRightLeg.render(scaleFactor);
+        bipedLeftLeg.render(scaleFactor);
+        bipedBody.render(scaleFactor);
+        bipedHead.render(scaleFactor);
+
+        HatM.render(scaleFactor);
         HatT.render(scaleFactor);
+
         BrimBa.render(scaleFactor);
         BrimR.render(scaleFactor);
         BrimL.render(scaleFactor);
         BrimF.render(scaleFactor);
         BrimBo.render(scaleFactor);
-        HatM.render(scaleFactor);
+
         SpecLB.render(scaleFactor);
         SpecL.render(scaleFactor);
         SpecMid.render(scaleFactor);
         SpecR.render(scaleFactor);
         SpecRB.render(scaleFactor);
+
         FingerL.render(scaleFactor);
         RArmRot.render(scaleFactor);
         FingerM.render(scaleFactor);
@@ -461,12 +459,89 @@ public class ModelEntityCrafterMale extends ModelBiped
         HatT.rotateAngleX = bipedHead.rotateAngleX;
         HatM.rotateAngleY = bipedHead.rotateAngleY;
         HatM.rotateAngleX = bipedHead.rotateAngleX;
+        BrimBa.rotateAngleY = bipedHead.rotateAngleY;
+        BrimR.rotateAngleY = bipedHead.rotateAngleY;
+        BrimL.rotateAngleY = bipedHead.rotateAngleY;
+        BrimF.rotateAngleY = bipedHead.rotateAngleY;
+        BrimBo.rotateAngleY = bipedHead.rotateAngleY;
+        SpecLB.rotateAngleY = bipedHead.rotateAngleY;
+        SpecL.rotateAngleY = bipedHead.rotateAngleY;
+        SpecMid.rotateAngleY = bipedHead.rotateAngleY;
+        SpecR.rotateAngleY = bipedHead.rotateAngleY;
+        SpecRB.rotateAngleY = bipedHead.rotateAngleY;
+
+        BrimBa.rotateAngleX = bipedHead.rotateAngleX;
+        BrimR.rotateAngleX = bipedHead.rotateAngleX;
+        BrimL.rotateAngleX = bipedHead.rotateAngleX;
+        BrimF.rotateAngleX = bipedHead.rotateAngleX;
+        BrimBo.rotateAngleX = bipedHead.rotateAngleX;
+        SpecLB.rotateAngleX = bipedHead.rotateAngleX;
+        SpecL.rotateAngleX = bipedHead.rotateAngleX;
+        SpecMid.rotateAngleX = bipedHead.rotateAngleX;
+        SpecR.rotateAngleX = bipedHead.rotateAngleX;
+        SpecRB.rotateAngleX = bipedHead.rotateAngleX;
+
+        FingerL.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        RArmRot.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        FingerM.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        FingerR.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        Vent13.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        RArmB2.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        RArmB.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        Vent5.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        Vent7.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        Vent9.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        Vent11.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        RArmL.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        RArmM.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        CoreF.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        RArmFT.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        Vent3.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        RArmBT.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        RArmBBB.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        RArmBBM.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        CoreB.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        Vent12.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        Vent10.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        Vent8.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        Vent6.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        Vent4.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        Vent1.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        Vent2.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
 
         bipedRightArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
         bipedLeftArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount * 0.5F;
         bipedRightLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 0.73F * limbSwingAmount;
         bipedLeftLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 0.73F * limbSwingAmount;
 
+
+        FingerL.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        RArmRot.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        FingerM.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        FingerR.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        Vent13.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        RArmB2.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        RArmB.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        Vent5.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        Vent7.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        Vent9.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        Vent11.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        RArmL.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        RArmM.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        CoreF.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        RArmFT.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        Vent3.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        RArmBT.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        RArmBBB.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        RArmBBM.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        CoreB.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        Vent12.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        Vent10.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        Vent8.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        Vent6.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        Vent4.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        Vent1.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        Vent2.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
         bipedRightArm.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
         bipedLeftArm.rotateAngleX -= MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
     }

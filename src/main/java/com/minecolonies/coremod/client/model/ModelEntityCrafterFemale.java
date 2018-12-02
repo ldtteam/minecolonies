@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
 public class ModelEntityCrafterFemale extends ModelBiped
 {
     //fields
-    ModelRenderer Core;
-    ModelRenderer FrontBeam;
+    ModelRenderer core;
+    ModelRenderer frontBeam;
     ModelRenderer SideBeam;
     ModelRenderer skirtBa;
     ModelRenderer skirtF;
@@ -19,13 +19,7 @@ public class ModelEntityCrafterFemale extends ModelBiped
     ModelRenderer skirtT1;
     ModelRenderer skirtL;
     ModelRenderer skirtBo2;
-    ModelRenderer head;
     ModelRenderer chest;
-    ModelRenderer leftarm;
-    ModelRenderer rightleg;
-    ModelRenderer body;
-    ModelRenderer leftleg;
-    ModelRenderer rightarm;
     ModelRenderer HairBack1;
     ModelRenderer HairBack3;
     ModelRenderer HairBack2;
@@ -40,29 +34,36 @@ public class ModelEntityCrafterFemale extends ModelBiped
     ModelRenderer HairBack12;
     ModelRenderer HairBack13;
     ModelRenderer HairBack14;
-    ModelRenderer Lens2;
-    ModelRenderer Strap;
-    ModelRenderer Lens1;
-    ModelRenderer Back;
+    ModelRenderer lens2;
+    ModelRenderer strap;
+    ModelRenderer lens1;
+    ModelRenderer back;
 
     public ModelEntityCrafterFemale()
     {
         textureWidth = 256;
         textureHeight = 128;
 
-        Core = new ModelRenderer(this, 38, 93);
-        Core.addBox(-2F, 8.6F, -2F, 2, 2, 2);
-        Core.setRotationPoint(-4.6F, 2F, 0F);
-        Core.setTextureSize(256, 128);
-        Core.mirror = true;
-        setRotation(Core, 0F, 0.7853982F, 0F);
+        bipedHead = new ModelRenderer(this, 0, 0);
+        bipedHead.addBox(-4F, -8F, -4F, 8, 8, 8);
+        bipedHead.setRotationPoint(0F, 0F, 0F);
+        bipedHead.setTextureSize(256, 128);
+        bipedHead.mirror = true;
+        setRotation(bipedHead, 0F, 0F, 0F);
 
-        FrontBeam = new ModelRenderer(this, 25, 78);
-        FrontBeam.addBox(-1.5F, -2.49F, -2.5F, 1, 13, 5);
-        FrontBeam.setRotationPoint(-5F, 2F, 0F);
-        FrontBeam.setTextureSize(256, 128);
-        FrontBeam.mirror = true;
-        setRotation(FrontBeam, 0F, 0F, 0F);
+        core = new ModelRenderer(this, 38, 93);
+        core.addBox(-2F, 8.6F, -2F, 2, 2, 2);
+        core.setRotationPoint(-4.6F, 2F, 0F);
+        core.setTextureSize(256, 128);
+        core.mirror = true;
+        setRotation(core, 0F, 0.7853982F, 0F);
+
+        frontBeam = new ModelRenderer(this, 25, 78);
+        frontBeam.addBox(-1.5F, -2.49F, -2.5F, 1, 13, 5);
+        frontBeam.setRotationPoint(-5F, 2F, 0F);
+        frontBeam.setTextureSize(256, 128);
+        frontBeam.mirror = true;
+        setRotation(frontBeam, 0F, 0F, 0F);
 
         SideBeam = new ModelRenderer(this, 38, 78);
         SideBeam.addBox(-3.5F, -2.5F, -0.5F, 5, 13, 1);
@@ -120,13 +121,6 @@ public class ModelEntityCrafterFemale extends ModelBiped
         skirtBo2.mirror = true;
         setRotation(skirtBo2, 0F, 0F, 0F);
 
-        head = new ModelRenderer(this, 0, 0);
-        head.addBox(-4F, -8F, -4F, 8, 8, 8);
-        head.setRotationPoint(0F, 0F, 0F);
-        head.setTextureSize(256, 128);
-        head.mirror = true;
-        setRotation(head, 0F, 0F, 0F);
-
         chest = new ModelRenderer(this, 0, 32);
         chest.addBox(-3.5F, -0.5F, -5.5F, 7, 3, 3);
         chest.setRotationPoint(0F, 0F, 0F);
@@ -134,40 +128,40 @@ public class ModelEntityCrafterFemale extends ModelBiped
         chest.mirror = true;
         setRotation(chest, 0.9341126F, 0F, 0F);
 
-        leftarm = new ModelRenderer(this, 40, 16);
-        leftarm.addBox(-1F, -2F, -2F, 4, 12, 4);
-        leftarm.setRotationPoint(5F, 2F, 0F);
-        leftarm.setTextureSize(256, 128);
-        leftarm.mirror = true;
-        setRotation(leftarm, 0F, 0F, 0F);
+        bipedLeftArm = new ModelRenderer(this, 40, 16);
+        bipedLeftArm.addBox(-1F, -2F, -2F, 4, 12, 4);
+        bipedLeftArm.setRotationPoint(5F, 2F, 0F);
+        bipedLeftArm.setTextureSize(256, 128);
+        bipedLeftArm.mirror = true;
+        setRotation(bipedLeftArm, 0F, 0F, 0F);
 
-        rightleg = new ModelRenderer(this, 0, 16);
-        rightleg.addBox(-2F, 0F, -2F, 4, 12, 4);
-        rightleg.setRotationPoint(-2F, 12F, 0F);
-        rightleg.setTextureSize(256, 128);
-        rightleg.mirror = true;
-        setRotation(rightleg, 0F, 0F, 0F);
+        bipedRightLeg = new ModelRenderer(this, 0, 16);
+        bipedRightLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
+        bipedRightLeg.setRotationPoint(-2F, 12F, 0F);
+        bipedRightLeg.setTextureSize(256, 128);
+        bipedRightLeg.mirror = true;
+        setRotation(bipedRightLeg, 0F, 0F, 0F);
 
-        body = new ModelRenderer(this, 16, 16);
-        body.addBox(-4F, 0F, -2F, 8, 12, 4);
-        body.setRotationPoint(0F, 0F, 0F);
-        body.setTextureSize(256, 128);
-        body.mirror = true;
-        setRotation(body, 0F, 0F, 0F);
+        bipedBody = new ModelRenderer(this, 16, 16);
+        bipedBody.addBox(-4F, 0F, -2F, 8, 12, 4);
+        bipedBody.setRotationPoint(0F, 0F, 0F);
+        bipedBody.setTextureSize(256, 128);
+        bipedBody.mirror = true;
+        setRotation(bipedBody, 0F, 0F, 0F);
 
-        leftleg = new ModelRenderer(this, 0, 16);
-        leftleg.addBox(-2F, 0F, -2F, 4, 12, 4);
-        leftleg.setRotationPoint(2F, 12F, 0F);
-        leftleg.setTextureSize(256, 128);
-        leftleg.mirror = true;
-        setRotation(leftleg, 0F, 0F, 0F);
+        bipedLeftLeg = new ModelRenderer(this, 0, 16);
+        bipedLeftLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
+        bipedLeftLeg.setRotationPoint(2F, 12F, 0F);
+        bipedLeftLeg.setTextureSize(256, 128);
+        bipedLeftLeg.mirror = true;
+        setRotation(bipedLeftLeg, 0F, 0F, 0F);
 
-        rightarm = new ModelRenderer(this, 40, 16);
-        rightarm.addBox(-3F, -2F, -2F, 4, 12, 4);
-        rightarm.setRotationPoint(-5F, 2F, 0F);
-        rightarm.setTextureSize(256, 128);
-        rightarm.mirror = true;
-        setRotation(rightarm, 0F, 0F, 0F);
+        bipedRightArm = new ModelRenderer(this, 40, 16);
+        bipedRightArm.addBox(-3F, -2F, -2F, 4, 12, 4);
+        bipedRightArm.setRotationPoint(-5F, 2F, 0F);
+        bipedRightArm.setTextureSize(256, 128);
+        bipedRightArm.mirror = true;
+        setRotation(bipedRightArm, 0F, 0F, 0F);
 
         HairBack1 = new ModelRenderer(this, 0, 80);
         HairBack1.addBox(-4.5F, -5.5F, -4.5F, 1, 1, 1);
@@ -267,33 +261,33 @@ public class ModelEntityCrafterFemale extends ModelBiped
         HairBack14.mirror = true;
         setRotation(HairBack14, 0F, 1.933288F, 0F);
 
-        Lens2 = new ModelRenderer(this, 0, 98);
-        Lens2.addBox(1.25F, -5F, -5F, 1, 1, 1);
-        Lens2.setRotationPoint(0F, 0F, 0F);
-        Lens2.setTextureSize(256, 128);
-        Lens2.mirror = true;
-        setRotation(Lens2, 0F, 0F, 0F);
+        lens2 = new ModelRenderer(this, 0, 98);
+        lens2.addBox(1.25F, -5F, -5F, 1, 1, 1);
+        lens2.setRotationPoint(0F, 0F, 0F);
+        lens2.setTextureSize(256, 128);
+        lens2.mirror = true;
+        setRotation(lens2, 0F, 0F, 0F);
 
-        Strap = new ModelRenderer(this, 0, 85);
-        Strap.addBox(-1.5F, -7.5F, -4.2F, 1, 2, 9);
-        Strap.setRotationPoint(0F, 0F, 0F);
-        Strap.setTextureSize(256, 128);
-        Strap.mirror = true;
-        setRotation(Strap, 0F, 0F, 0.7853982F);
+        strap = new ModelRenderer(this, 0, 85);
+        strap.addBox(-1.5F, -7.5F, -4.2F, 1, 2, 9);
+        strap.setRotationPoint(0F, 0F, 0F);
+        strap.setTextureSize(256, 128);
+        strap.mirror = true;
+        setRotation(strap, 0F, 0F, 0.7853982F);
 
-        Lens1 = new ModelRenderer(this, 0, 96);
-        Lens1.addBox(1F, -5F, -4.6F, 2, 1, 1);
-        Lens1.setRotationPoint(0F, 0F, 0F);
-        Lens1.setTextureSize(256, 128);
-        Lens1.mirror = true;
-        setRotation(Lens1, 0F, 0F, 0F);
+        lens1 = new ModelRenderer(this, 0, 96);
+        lens1.addBox(1F, -5F, -4.6F, 2, 1, 1);
+        lens1.setRotationPoint(0F, 0F, 0F);
+        lens1.setTextureSize(256, 128);
+        lens1.mirror = true;
+        setRotation(lens1, 0F, 0F, 0F);
 
-        Back = new ModelRenderer(this, 12, 96);
-        Back.addBox(0.5F, -5.5F, -4.4F, 3, 2, 1);
-        Back.setRotationPoint(0F, 0F, 0F);
-        Back.setTextureSize(256, 128);
-        Back.mirror = true;
-        setRotation(Back, 0F, 0F, 0F);
+        back = new ModelRenderer(this, 12, 96);
+        back.addBox(0.5F, -5.5F, -4.4F, 3, 2, 1);
+        back.setRotationPoint(0F, 0F, 0F);
+        back.setTextureSize(256, 128);
+        back.mirror = true;
+        setRotation(back, 0F, 0F, 0F);
     }
 
     @Override
@@ -308,8 +302,8 @@ public class ModelEntityCrafterFemale extends ModelBiped
     {
         super.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
         setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);
-        Core.render(scaleFactor);
-        FrontBeam.render(scaleFactor);
+        core.render(scaleFactor);
+        frontBeam.render(scaleFactor);
         SideBeam.render(scaleFactor);
         skirtBa.render(scaleFactor);
         skirtF.render(scaleFactor);
@@ -318,13 +312,13 @@ public class ModelEntityCrafterFemale extends ModelBiped
         skirtT1.render(scaleFactor);
         skirtL.render(scaleFactor);
         skirtBo2.render(scaleFactor);
-        head.render(scaleFactor);
+        bipedHead.render(scaleFactor);
         chest.render(scaleFactor);
-        leftarm.render(scaleFactor);
-        rightleg.render(scaleFactor);
-        body.render(scaleFactor);
-        leftleg.render(scaleFactor);
-        rightarm.render(scaleFactor);
+        bipedHead.render(scaleFactor);
+        bipedRightLeg.render(scaleFactor);
+        bipedBody.render(scaleFactor);
+        bipedLeftLeg.render(scaleFactor);
+        bipedRightArm.render(scaleFactor);
         HairBack1.render(scaleFactor);
         HairBack3.render(scaleFactor);
         HairBack2.render(scaleFactor);
@@ -339,10 +333,10 @@ public class ModelEntityCrafterFemale extends ModelBiped
         HairBack12.render(scaleFactor);
         HairBack13.render(scaleFactor);
         HairBack14.render(scaleFactor);
-        Lens2.render(scaleFactor);
-        Strap.render(scaleFactor);
-        Lens1.render(scaleFactor);
-        Back.render(scaleFactor);
+        lens2.render(scaleFactor);
+        strap.render(scaleFactor);
+        lens1.render(scaleFactor);
+        back.render(scaleFactor);
     }
 
     private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
@@ -395,12 +389,27 @@ public class ModelEntityCrafterFemale extends ModelBiped
         HairBack13.rotateAngleX = bipedHead.rotateAngleX;
         HairBack14.rotateAngleY = bipedHead.rotateAngleY;
         HairBack14.rotateAngleX = bipedHead.rotateAngleX;
+        lens1.rotateAngleX = bipedHead.rotateAngleX;
+        lens1.rotateAngleY = bipedHead.rotateAngleY;
+        lens2.rotateAngleX = bipedHead.rotateAngleX;
+        lens2.rotateAngleY = bipedHead.rotateAngleY;
+        strap.rotateAngleY = bipedHead.rotateAngleY;
+        strap.rotateAngleX = bipedHead.rotateAngleX;
+        back.rotateAngleX = bipedHead.rotateAngleX;
+        back.rotateAngleY = bipedHead.rotateAngleY;
 
+
+
+
+        frontBeam.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
+        core.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
         bipedRightArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
         bipedLeftArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount * 0.5F;
         bipedRightLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 0.73F * limbSwingAmount;
         bipedLeftLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 0.73F * limbSwingAmount;
 
+        frontBeam.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
+        core.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
         bipedRightArm.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
         bipedLeftArm.rotateAngleX -= MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
     }

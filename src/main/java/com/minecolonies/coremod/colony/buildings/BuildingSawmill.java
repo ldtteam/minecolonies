@@ -11,6 +11,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
+import com.minecolonies.coremod.colony.jobs.JobSawmill;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +66,7 @@ public class BuildingSawmill extends AbstractBuildingWorker
     @Override
     public AbstractJob createJob(final CitizenData citizen)
     {
-        return new JobDeliveryman(citizen);
+        return new JobSawmill(citizen);
     }
 
     @NotNull
