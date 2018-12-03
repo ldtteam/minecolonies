@@ -496,7 +496,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     }
 
     @Override
-    public ImmutableCollection<IRequestResolver<?>> getResolvers()
+    public ImmutableCollection<IRequestResolver<?>> createResolvers()
     {
         return ImmutableList.of(
                 new BuildingRequestResolver(getRequester().getRequesterLocation(), getColony().getRequestManager()

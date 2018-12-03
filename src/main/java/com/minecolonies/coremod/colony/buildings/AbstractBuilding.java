@@ -21,6 +21,9 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
+import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
+import com.minecolonies.coremod.colony.requestsystem.management.handlers.ProviderHandler;
+import com.minecolonies.coremod.colony.requestsystem.management.handlers.ResolverHandler;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
@@ -201,7 +204,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
-     * Adds work orders to the {@link Colony#workManager}.
+     * Adds work orders to the {@link Colony#getWorkManager()}.
      *
      * @param level Desired level.
      */
@@ -909,7 +912,21 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    public ImmutableCollection<IRequestResolver<?>> getResolvers()
+    public final ImmutableCollection<IRequestResolver<?>> getResolvers()
+    {
+        if (this.getColony() != null
+              && this.getColony().getRequestManager() != null
+              && this.getColony().getRequestManager() instanceof IStandardRequestManager
+              && !ProviderHandler.getRegisteredResolvers((IStandardRequestManager) this.getColony().getRequestManager(), this).isEmpty())
+        {
+            return ImmutableList.copyOf(ProviderHandler.getRegisteredResolvers((IStandardRequestManager) this.getColony().getRequestManager(), this).stream().map(token -> ResolverHandler.getResolver((IStandardRequestManager) this.getColony().getRequestManager(), token)).collect(
+              Collectors.toList()));
+        }
+
+        return createResolvers();
+    }
+
+    public ImmutableCollection<IRequestResolver<?>> createResolvers()
     {
         return ImmutableList.of(new BuildingRequestResolver(getRequester().getRequesterLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(
                 TypeConstants.ITOKEN)));

@@ -31,60 +31,6 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
         super(location, token, false);
     }
 
-    @Nullable
-    @Override
-    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
-    {
-        final IRequest request = manager.getRequestForToken(token);
-        if (request == null)
-        {
-            return Optional.empty();
-        }
-
-        if (request.hasParent())
-        {
-            final IRequest parent = manager.getRequestForToken(request.getParent());
-            if (parent.getRequester() instanceof IBuildingBasedRequester)
-            {
-                return ((IBuildingBasedRequester) parent.getRequester()).getBuilding(manager, parent.getToken(), 0);
-            }
-        }
-
-        if (request.getRequester() instanceof IBuildingBasedRequester)
-        {
-            return ((IBuildingBasedRequester) request.getRequester()).getBuilding(manager, token, 0);
-        }
-
-        return Optional.empty();
-    }
-
-    @Nullable
-    @Override
-    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token, final int counter)
-    {
-        final IRequest request = manager.getRequestForToken(token);
-        if (request == null || counter > 20)
-        {
-            return Optional.empty();
-        }
-
-        if (request.hasParent())
-        {
-            final IRequest parent = manager.getRequestForToken(request.getParent());
-            if (parent.getRequester() instanceof IBuildingBasedRequester)
-            {
-                return ((IBuildingBasedRequester) parent.getRequester()).getBuilding(manager, parent.getToken(), counter+1);
-            }
-        }
-
-        if (request.getRequester() instanceof IBuildingBasedRequester)
-        {
-            return ((IBuildingBasedRequester) request.getRequester()).getBuilding(manager, token, counter+1);
-        }
-
-        return Optional.empty();
-    }
-
     @Override
     public boolean canBuildingCraftStack(@NotNull final AbstractBuildingWorker building, final ItemStack stack)
     {
