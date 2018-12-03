@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
@@ -871,9 +872,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             return null;
         }
 
+        List<IToken<?>> validRequesterTokens = Lists.newArrayList();
+        validRequesterTokens.add(this.getRequesterId());
+        this.getResolvers().forEach(iRequestResolver -> validRequesterTokens.add(iRequestResolver.getRequesterId()));
+
         return queue
                 .stream()
-                .filter(request -> request.getRequest().matches(stack))
+                .filter(request -> validRequesterTokens.contains(request.getRequester().getRequesterId()) && request.getRequest().matches(stack))
                 .findFirst()
                 .orElseGet(() ->
                         getFirstOverullingRequestFromInputList(queue
