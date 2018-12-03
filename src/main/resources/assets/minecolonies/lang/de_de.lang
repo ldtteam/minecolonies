@@ -232,7 +232,7 @@ com.minecolonies.coremod.job.guard.toolDoubleClick=Neue Wegpunkte wurden hinzuge
 com.minecolonies.coremod.workerHuts.recallFail=Rückruf fehlgeschlagen - Bitte mache hier mehr Platz.
 tile.minecolonies.blockSolidSubstitution.name=Solider Platzhalterblock
 entity.worker.toolRequest=Ich brauche eine %s aus %s oder niedriger.
-entity.worker.pickaxeRequest=Ich brauche eine Spitzhacke, die mindestens aus %s und maximal %s besteht.
+entity.worker.pickaxeRequest=Ich brauche eine Spitzhacke, die mindestens aus %s und maximal aus %s besteht.
 entity.worker.onePickaxeRequest=Ich brauche eine %s Spitzhacke.
 entity.worker.pickaxeRequestBetterHut=Mein Gebäude benötigt mindestens Stufe %d damit ich bessere Spitzhacken benutzen kann.
 entity.worker.simpleToolRequest=Ich brauche eine %s.
@@ -516,7 +516,7 @@ com.minecolonies.requestsystem.playerresolver=%s is in need of %s at %s.
 com.minecolonies.coremod.buildings.warehouse.name=Lagerhaus
 tile.minecolonies.blockPaperwall.name=Papierwand
 
-com.minecolonies.coremod.gui.workerHuts.buildPrio=Priorität der Lieferung:
+com.minecolonies.coremod.gui.workerHuts.buildPrio=Lieferpriorität:
 item.supplyChestDeployer.invalid=Du musst in der Nähe eines großen Wasserbeckens sein.
 item.supplyChestDeployer.missing=Versuchst du mich über's Ohr zu hauen? Das Versorgungsboot noch mal aufnehmen?
 com.minecolonies.coremod.citizen.rename.same=Umbennen fehlgeschlagen: 2 Bewohner können nicht den gleichen Namen haben!
