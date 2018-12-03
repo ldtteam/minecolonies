@@ -110,7 +110,6 @@ public class ChangeDeliveryPriorityMessage extends AbstractMessage<ChangeDeliver
                 {
                     building.alterPickUpPriority(-1);
                     building.markDirty();
-
                 }
             }
         }
