@@ -1001,7 +1001,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (InventoryUtils.isProviderFull(getOwnBuilding()))
         {
-            if (!getOwnBuilding().getPriorityState()) {getOwnBuilding().alterPickUpPriority(MAX_PRIO)};
+            if (!getOwnBuilding().getPriorityState()) {getOwnBuilding().alterPickUpPriority(MAX_PRIO);}
             chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST);
         }
         else if (dumpOneMoreSlot())
