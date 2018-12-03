@@ -58,7 +58,7 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
                 final Delivery delivery = new Delivery(resolver.getRequesterLocation(), completedRequest.getRequester().getRequesterLocation(), completedRequest.getDelivery().copy());
 
                 final IToken<?> requestToken =
-                        manager.createRequest(new PublicWorkerCraftingRequestResolver(completedRequest.getRequester().getRequesterLocation(), completedRequest.getToken()),
+                        manager.createRequest(this,
                                 delivery);
                 return manager.getRequestForToken(requestToken);
             }
@@ -79,13 +79,6 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request)
     {
         //NOOP
-    }
-
-    @NotNull
-    @Override
-    public ILocation getDeliveryLocation()
-    {
-        return null;
     }
 
     @Override
