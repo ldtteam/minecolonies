@@ -93,10 +93,8 @@ public class ChangeDeliveryPriorityStateMessage extends AbstractMessage<ChangeDe
 
             if(building instanceof AbstractBuildingWorker)
             {
-                MineColonies.getLogger().info(building.getPriorityState());
                 building.alterPriorityState();
                 building.markDirty();
-                MineColonies.getLogger().info(building.getPriorityState());
             }
         }
     }
