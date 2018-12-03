@@ -422,11 +422,21 @@ public abstract class AbstractBuildingView implements IRequester
         }
     }
 
+    /**
+     * Get the delivery priority of the building.
+     *
+     * @return int, delivery priority.
+     */
     public int getBuildingDmPrio()
     {
         return buildingDmPrio;
     }
 
+    /**
+     * Get the delivery priority state of the building.
+     *
+     * @return boolean, delivery priority state.
+     */
     public boolean getBuildingDmPrioState()
     {
         return buildingDmPrioState;
