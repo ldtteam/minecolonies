@@ -329,6 +329,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         final NBTTagCompound requestSystemCompound = new NBTTagCompound();
         writeRequestSystemToNBT(requestSystemCompound);
 
+        final ImmutableCollection<IRequestResolver<?>> resolvers = getResolvers();
+        buf.writeInt(resolvers.size());
+        for (final IRequestResolver<?> resolver : resolvers)
+        {
+            ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(resolver.getRequesterId()));
+        }
+        ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(getRequesterId()));
         ByteBufUtils.writeTag(buf, requestSystemCompound);
     }
 
