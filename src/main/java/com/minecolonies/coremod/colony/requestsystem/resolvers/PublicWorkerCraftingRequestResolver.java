@@ -5,8 +5,10 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.Colony;
@@ -77,6 +79,13 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request)
     {
         //NOOP
+    }
+
+    @NotNull
+    @Override
+    public ILocation getDeliveryLocation()
+    {
+        return null;
     }
 
     @Override

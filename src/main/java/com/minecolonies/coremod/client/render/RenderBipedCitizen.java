@@ -150,8 +150,9 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         CHICKEN_FARMER("chickenfarmer", 1),
         COMPOSTER("composter", 1),
         SMELTER("smelter", 1),
-        COOK("cook", 1);
+        COOK("cook", 1),
         CRAFTER("crafter", 1);
+
         /**
          * String describing the citizen.
          * Used by the renderer.

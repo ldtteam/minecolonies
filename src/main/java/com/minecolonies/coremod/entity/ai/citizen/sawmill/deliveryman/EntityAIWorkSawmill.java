@@ -27,13 +27,13 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
     {
         super(sawmill);
         super.registerTargets(
-          /**
+          /*
            * Check if tasks should be executed.
            */
-          new AITarget(IDLE, () -> START_WORKING),
-          new AITarget(START_WORKING, this::startWorking)
+          new AITarget(IDLE, true, () -> START_WORKING),
+          new AITarget(START_WORKING, true, this::startWorking)
         );
-        worker.setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
+        worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
         worker.setCanPickUpLoot(true);
     }
 
