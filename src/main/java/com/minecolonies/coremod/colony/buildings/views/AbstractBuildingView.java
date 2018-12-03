@@ -396,8 +396,7 @@ public abstract class AbstractBuildingView implements IRequester
     @Override
     public IToken<?> getRequesterId()
     {
-        //NOOP; Is Client side view.
-        return null;
+        return requesterId;
     }
 
     @NotNull
@@ -445,5 +444,10 @@ public abstract class AbstractBuildingView implements IRequester
     public int getBuildingDmPrio()
     {
         return buildingDmPrio;
+    }
+
+    public ImmutableCollection<IToken<?>> getResolverIds()
+    {
+        return resolvers;
     }
 }

@@ -221,30 +221,37 @@ public class WindowCitizen extends AbstractWindowSkeleton
                 rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
                   .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
 
-                if (wrapper.getDepth() > 0)
+                if (wrapper.overruleable)
                 {
-                    request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
-                        if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
+                    if (wrapper.getDepth() > 0)
+                    {
+                        request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
+                            if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
+                            {
+                                rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
+                            }
+                        });
+
+                        if (!(request.getRequest() instanceof IDeliverable))
                         {
                             rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
                         }
-                    });
 
-                    if (!(request.getRequest() instanceof IDeliverable))
-                    {
-                        rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
+                        rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();
                     }
-
-                    rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();
+                    else
+                    {
+                        request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
+                            if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
+                            {
+                                rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
+                            }
+                        });
+                    }
                 }
                 else
                 {
-                    request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
-                        if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
-                        {
-                            rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                        }
-                    });
+                    rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
                 }
             }
         });
@@ -486,20 +493,35 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
         final List<RequestWrapper> treeElements = new ArrayList<>();
 
-        getOpenRequestsOfCitizen().stream().forEach(r -> {
-            constructTreeFromRequest(colonyView.getRequestManager(), r, treeElements, 0);
-        });
+        if (citizen.getWorkBuilding() != null)
+        {
+            final AbstractBuildingView view = colonyView.getBuilding(citizen.getWorkBuilding());
+
+            getOpenRequestsOfCitizenFromBuilding(citizen.getWorkBuilding()).forEach(r -> {
+                constructTreeFromRequest(view, colonyView.getRequestManager(), r, treeElements, 0);
+            });
+        }
+
+        if (citizen.getHomeBuilding() != null && citizen.getHomeBuilding() != citizen.getWorkBuilding())
+        {
+            final AbstractBuildingView view = colonyView.getBuilding(citizen.getHomeBuilding());
+
+            getOpenRequestsOfCitizenFromBuilding(citizen.getHomeBuilding()).forEach(r -> {
+                constructTreeFromRequest(view, colonyView.getRequestManager(), r, treeElements, 0);
+            });
+        }
 
         return ImmutableList.copyOf(treeElements);
     }
 
     private void constructTreeFromRequest(
+      @NotNull final AbstractBuildingView buildingView,
       @NotNull final IRequestManager manager,
       @NotNull final IRequest<?> request,
       @NotNull final List<RequestWrapper> list,
       final int currentDepth)
     {
-        list.add(new RequestWrapper(request, currentDepth));
+        list.add(new RequestWrapper(request, currentDepth, buildingView));
         if (request.hasChildren())
         {
             for (final Object o : request.getChildren())
@@ -511,35 +533,11 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
                     if (childRequest != null)
                     {
-                        constructTreeFromRequest(manager, childRequest, list, currentDepth + 1);
+                        constructTreeFromRequest(buildingView, manager, childRequest, list, currentDepth + 1);
                     }
                 }
             }
         }
-    }
-
-    @SuppressWarnings(RAWTYPES)
-    private ImmutableList<IRequest> getOpenRequestsOfCitizen()
-    {
-        final ArrayList<IRequest> requests = new ArrayList<>();
-        if (citizen.getWorkBuilding() != null)
-        {
-            requests.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getWorkBuilding()));
-        }
-
-        if (citizen.getHomeBuilding() != null && !citizen.getHomeBuilding().equals(citizen.getWorkBuilding()))
-        {
-            requests.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getHomeBuilding()));
-        }
-
-        final BlockPos playerPos = Minecraft.getMinecraft().player.getPosition();
-        requests.sort(Comparator.comparing((IRequest request) -> request.getRequester()
-                                                                   .getDeliveryLocation()
-                                                                   .getInDimensionLocation()
-                                                                   .getDistance(playerPos.getX(), playerPos.getY(), playerPos.getZ()))
-                        .thenComparingInt(request -> request.getToken().hashCode()));
-
-        return ImmutableList.copyOf(requests);
     }
 
     @SuppressWarnings(RAWTYPES)
@@ -714,11 +712,13 @@ public class WindowCitizen extends AbstractWindowSkeleton
     {
         private final IRequest request;
         private final int      depth;
+        private final boolean overruleable;
 
-        private RequestWrapper(final IRequest request, final int depth)
+        private RequestWrapper(final IRequest request, final int depth, AbstractBuildingView buildingView)
         {
             this.request = request;
             this.depth = depth;
+            this.overruleable = request.getRequester().getRequesterId().equals(buildingView.getRequesterId()) || buildingView.getResolverIds().contains(request.getRequester().getRequesterId());
         }
 
         public IRequest getRequest()
