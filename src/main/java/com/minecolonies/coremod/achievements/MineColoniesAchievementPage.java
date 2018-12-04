@@ -100,7 +100,6 @@ public class MineColoniesAchievementPage
     public MineColoniesAchievementPage(
             final String name,
             final MineColoniesAchievement achievementGetSupply,
-            final MineColoniesAchievement achievementWandOfbuilding,
             final MineColoniesAchievement achievementTownhall,
             final MineColoniesAchievement achievementBuildingTownhall,
             final MineColoniesAchievement achievementUpgradeTownhallMax,

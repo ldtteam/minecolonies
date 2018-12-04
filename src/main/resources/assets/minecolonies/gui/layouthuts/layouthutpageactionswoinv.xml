@@ -20,9 +20,17 @@
                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                 label="$(com.minecolonies.coremod.gui.workerHuts.recall)"/>
 
-    <label size="164 11" pos="13 148" textalign="MIDDLE" color="black"
-                label="$(com.minecolonies.coremod.gui.workerHuts.buildPrio)"/>
-    <label id="type" size="164 11" pos="13 160" textalign="MIDDLE" color="black"/>
+    <label size="100 11" pos="30 145" textalign="MIDDLE" color="black"
+           label="$(com.minecolonies.coremod.gui.workerHuts.buildPrio)"/>
+    <label id="type" size="27 11" pos="132 145" textalign="MIDDLE" color="black"/>
+
+    <buttonimage id="deliveryPrioState" size="64 17" pos="46 156" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_small.png"/>
+    <buttonimage id="deliveryPrioDown" size="14 15" pos="127 156" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_mini.png" label="-"/>
+    <buttonimage id="deliveryPrioUp" size="14 15" pos="144 156" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_mini.png" label="+"/>
+
 
     <buttonimage id="recipelist" size="129 17" pos="30 174" textcolor="black"
                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"

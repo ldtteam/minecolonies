@@ -13,6 +13,11 @@ import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIRanger;
 public class JobRanger extends AbstractJobGuard
 {
     /**
+     * The name associated with the job.
+     */
+    public static final String DESC = "com.minecolonies.coremod.job.Ranger";
+
+    /**
      * Initialize citizen data.
      *
      * @param entity the citizen data.
@@ -41,7 +46,7 @@ public class JobRanger extends AbstractJobGuard
     @Override
     public String getName()
     {
-        return "com.minecolonies.coremod.job.Ranger";
+        return DESC;
     }
 
     /**

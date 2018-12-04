@@ -351,7 +351,40 @@ public enum AIWorkerState implements IAIState
 ### Student ###
      */
 
-    STUDY(true);
+    STUDY(true),
+    /*
+### Archers in Training ###
+     */
+
+    /**
+     * Wander around the building
+     */
+    ARCHER_WANDER(true),
+
+    /**
+     * Find a good position to shoot from.
+     */
+    ARCHER_FIND_SHOOTING_STAND_POSITION(false),
+
+    /**
+     * Select a random target.
+     */
+    ARCHER_SELECT_TARGET(false),
+
+    /**
+     * Go to the shooting position.
+     */
+    ARCHER_GO_TO_SHOOTING_STAND(false),
+
+    /**
+     * Check the shot result.
+     */
+    ARCHER_CHECK_SHOT(false),
+
+    /**
+     * Archer shoot target.
+     */
+    ARCHER_SHOOT(false);
 
     private boolean isOkayToEat;
 

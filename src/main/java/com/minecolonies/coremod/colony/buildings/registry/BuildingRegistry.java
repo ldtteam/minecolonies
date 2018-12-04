@@ -4,11 +4,11 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.blocks.*;
+import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.huts.*;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.buildings.*;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
@@ -83,7 +83,7 @@ public class BuildingRegistry
         addMapping("Smeltery", BuildingSmeltery.class, BuildingSmeltery.View.class, BlockHutSmeltery.class);
         addMapping("Composter", BuildingComposter.class, BuildingComposter.View.class, BlockHutComposter.class);
         addMapping("Library", BuildingLibrary.class, BuildingLibrary.View.class, BlockHutLibrary.class);
-
+        addMapping("Archery", BuildingArchery.class, BuildingArchery.View.class, BlockHutArchery.class);
     }
 
     /**

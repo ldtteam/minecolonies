@@ -1,6 +1,0 @@
-{
-  "parent": "block/pane_noside",
-  "textures": {
-    "pane": "minecolonies:blocks/paperwall/paperwall_spruce_white"
-  }
-}

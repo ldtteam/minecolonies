@@ -93,6 +93,16 @@ public abstract class AbstractJob
     public abstract String getName();
 
     /**
+     * Getter for the job which will be associated with the experience.
+     *
+     * @return the getName() or the specialized class name.
+     */
+    public String getExperienceTag()
+    {
+        return getName();
+    }
+
+    /**
      * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
      *
      * @return Model of the citizen.

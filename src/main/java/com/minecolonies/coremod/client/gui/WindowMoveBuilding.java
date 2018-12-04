@@ -5,13 +5,14 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.StructureName;
-import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.BuildingMoveMessage;
-import com.minecolonies.coremod.network.messages.SchematicRequestMessage;
-import com.minecolonies.structures.helpers.Settings;
-import com.minecolonies.structures.helpers.Structure;
+import com.structurize.coremod.client.gui.WindowBuildTool;
+import com.structurize.coremod.management.StructureName;
+import com.structurize.coremod.management.Structures;
+import com.structurize.coremod.network.messages.SchematicRequestMessage;
+import com.structurize.structures.helpers.Settings;
+import com.structurize.structures.helpers.Structure;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
@@ -148,7 +149,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
                 }
                 else
                 {
-                    Log.getLogger().error("WindowBuildTool: Need to download schematic on a standalone client/server. This should never happen");
+                    Log.getLogger().error("WindowMinecoloniesBuildTool: Need to download schematic on a standalone client/server. This should never happen");
                 }
             }
             Settings.instance.setStructureName(structureName.toString());

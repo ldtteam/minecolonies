@@ -70,6 +70,12 @@ public abstract class AbstractBuildingView implements IRequester
     private int buildingDmPrio   = 1;
 
     /**
+     * The dm priority.
+     */
+    private boolean buildingDmPrioState = false;
+
+
+    /**
      * Rotation of the building.
      */
     private int rotation;
@@ -273,6 +279,7 @@ public abstract class AbstractBuildingView implements IRequester
         buildingLevel = buf.readInt();
         buildingMaxLevel = buf.readInt();
         buildingDmPrio = buf.readInt();
+        buildingDmPrioState = buf.readBoolean();
         workOrderLevel = buf.readInt();
         style = ByteBufUtils.readUTF8String(buf);
         schematicName = ByteBufUtils.readUTF8String(buf);
@@ -415,8 +422,23 @@ public abstract class AbstractBuildingView implements IRequester
         }
     }
 
+    /**
+     * Get the delivery priority of the building.
+     *
+     * @return int, delivery priority.
+     */
     public int getBuildingDmPrio()
     {
         return buildingDmPrio;
+    }
+
+    /**
+     * Get the delivery priority state of the building.
+     *
+     * @return boolean, delivery priority state.
+     */
+    public boolean getBuildingDmPrioState()
+    {
+        return buildingDmPrioState;
     }
 }

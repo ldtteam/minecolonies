@@ -237,17 +237,6 @@ public final class NbtTagConstants
     public static final String TAG_MISSING_CHUNKS = "missingChunks";
 
     /**
-     * NBT tag constants for MultiBlock tileEntities.
-     */
-    public static final String TAG_INPUT            = "input";
-    public static final String TAG_RANGE            = "range";
-    public static final String TAG_DIRECTION        = "direction";
-    public static final String TAG_LENGTH           = "length";
-    public static final String TAG_PROGRESS         = "progress";
-    public static final String TAG_OUTPUT_DIRECTION = "outputDirection";
-    public static final String TAG_SPEED            = "speed";
-
-    /**
      * Tag used to store the worker to nbt.
      */
     public static final String TAG_WORKER = "worker";
@@ -391,6 +380,15 @@ public final class NbtTagConstants
     public static final String TAG_LOGS                  = "Logs";
     public static final String TAG_STUMPS                = "Stumps";
     public static final String TAG_TOP_LOG               = "topLog";
+
+    /**
+     * Archery building constants.
+     */
+    public static final String TAG_ARCHERY_TARGETS = "archeryTargets";
+    public static final String TAG_STAND           = "stand";
+    public static final String TAG_TARGET          = "target";
+    public static final String TAG_ARCHERY_STANDS  = "archeryStands";
+
 
     /**
      * Private constructor to hide the implicit one.
