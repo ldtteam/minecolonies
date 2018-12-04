@@ -11,7 +11,7 @@
       "ore": "plankWood"
     },
     "B": {
-      "item": "minecolonies:sceptergold"
+      "item": "structurize:sceptergold"
     }
   },
   "result": {
