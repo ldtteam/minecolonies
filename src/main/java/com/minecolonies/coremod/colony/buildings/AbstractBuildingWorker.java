@@ -363,13 +363,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
      * Add a recipe to the building.
      * @param token the id of the recipe.
      */
-    public void addRecipe(final IToken token)
+    public boolean addRecipe(final IToken token)
     {
         if(canRecipeBeAdded(token) && Math.pow(2, getBuildingLevel()) >= (recipes.size() + 1))
         {
             recipes.add(token);
             markDirty();
+            return true;
         }
+        return false;
     }
 
     /**

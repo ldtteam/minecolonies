@@ -305,6 +305,8 @@ public final class TranslationConstants
     public static final String CMC_GUI_TOWNHALL_BUILDING_LEVEL                                     = "com.minecolonies.coremod.gui.townHall.buildingLevel";
     @NonNls
     public static final String PIRATES_SAILING_OFF_MESSAGE                                         = "com.minecolonies.coremod.pirates.sailing.away";
+    @NonNls
+    public static final String UNABLE_TO_ADD_RECIPE_MESSAGE                                        = "com.minecolonies.coremod.recipe.unable";
 
     private TranslationConstants()
     {

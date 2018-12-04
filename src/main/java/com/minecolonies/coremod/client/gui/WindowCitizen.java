@@ -22,6 +22,7 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsToCitizenRequestMessage;
@@ -52,6 +53,11 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
  */
 public class WindowCitizen extends AbstractWindowSkeleton
 {
+    /**
+     * The colony of the citizen.
+     */
+    private final ColonyView colony;
+
     /**
      * The citizenData.View object.
      */
@@ -126,6 +132,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
     {
         super(Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX);
         this.citizen = citizen;
+        colony = ColonyManager.getColonyView(citizen.getColonyId());
     }
 
     @Override
@@ -225,18 +232,31 @@ public class WindowCitizen extends AbstractWindowSkeleton
                 {
                     if (wrapper.getDepth() > 0)
                     {
-                        request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
-                            if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
-                            {
-                                rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                            }
-                        });
-
-                        if (!(request.getRequest() instanceof IDeliverable))
+                        if (colony == null
+                              || citizen.getWorkBuilding() == null
+                              || !(request.getRequester() instanceof IBuildingBasedRequester)
+                              || !((IBuildingBasedRequester) request.getRequester())
+                                    .getBuilding(colony.getRequestManager(),
+                                      request.getToken()).map(
+                            iRequester -> iRequester.getRequesterLocation()
+                                            .equals(colony.getBuilding(citizen.getWorkBuilding()).getRequesterLocation())).isPresent())
                         {
                             rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
                         }
+                        else
+                        {
+                            request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
+                                if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
+                                {
+                                    rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
+                                }
+                            });
 
+                            if (!(request.getRequest() instanceof IDeliverable))
+                            {
+                                rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
+                            }
+                        }
                         rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();
                     }
                     else

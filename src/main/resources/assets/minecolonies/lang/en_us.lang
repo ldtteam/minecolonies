@@ -841,3 +841,5 @@ com.minecolonies.coremod.cook.serve.player=%s: Here you go Sir, take this food!
 tile.minecolonies.blockHutArchery.name=Archery
 com.minecolonies.coremod.gui.workerHuts.Archery=Archery
 com.minecolonies.coremod.gui.workerHuts.Sawmill=Sawmill
+tile.minecolonies.blockHutSawmill.name=Sawmill
+com.minecolonies.coremod.recipe.unable=Unable to store the blueprint. Either the %s has no space for any more blueprints, or the blueprint doesn't correspond with its profession.
