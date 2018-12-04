@@ -152,11 +152,11 @@ com.minecolonies.coremod.gui.citizen.skills.charisma=Iwa isesi: %d
 com.minecolonies.coremod.gui.townHall.permissions=Awọn igbanilaaye
 com.minecolonies.coremod.gui.workerHuts.upgrade=Se igbesoke ile
 com.minecolonies.coremod.gui.buildtool.hut=Awon Ahere
-com.minecolonies.coremod.gui.townHall.addPlayer=Fi osere si:
-com.minecolonies.coremod.gui.townHall.addBlock=Fi ipo si:
+com.minecolonies.coremod.gui.townHall.addPlayer=Fi olukopa si:
+com.minecolonies.coremod.gui.townHall.addBlock=Fi bulooki/ipo si:
 
-com.minecolonies.coremod.gui.warehouse.visitCitizenChests=Ibewo si omoilu:
-com.minecolonies.coremod.gui.townHall.population.unemployed=Alainise
+com.minecolonies.coremod.gui.warehouse.visitCitizenChests=Be apoti omo ilu wo:
+com.minecolonies.coremod.gui.townHall.population.unemployed=Alainiselowo: %d
 com.minecolonies.coremod.gui.workerHuts.minerNode=Oju ipade
 com.minecolonies.coremod.gui.hiring.off=Alaifọwọyi
 com.minecolonies.coremod.gui.workerHuts.settings=Eto
