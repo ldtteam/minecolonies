@@ -302,6 +302,8 @@ com.minecolonies.coremod.gui.structure.rename=Rename Structure
 com.minecolonies.coremod.gui.structure.delete=Delete Structure
 com.minecolonies.coremod.gui.structure.delete.title=Delete Structure
 com.minecolonies.coremod.gui.structure.delete.body=Do you want to delete %s?
+com.minecolonies.coremod.gui.workerHuts.deliveryPrio.static=Static
+com.minecolonies.coremod.gui.workerHuts.deliveryPrio.automatic=Automatic
 
 com.minecolonies.coremod.gui.happiness.happinessModifier=Happiness Modifiers
 com.minecolonies.coremod.gui.happiness.food=Food Modifier

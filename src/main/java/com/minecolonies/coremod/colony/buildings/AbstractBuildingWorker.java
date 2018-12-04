@@ -431,7 +431,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
         {
             buf.writeInt(data == null ? 0 : data.getId());
         }
-
         final List<IRecipeStorage> storages = new ArrayList<>();
         for(final IToken token: new ArrayList<>(recipes))
         {
